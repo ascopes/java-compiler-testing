@@ -64,7 +64,7 @@ public class PathJavaFileManager implements JavaFileManager {
     assertOpen();
 
     return repository
-        .getLocationManager(location)
+        .get(location)
         .map(manager -> manager.contains(fileObject))
         .orElse(false);
   }
@@ -93,7 +93,7 @@ public class PathJavaFileManager implements JavaFileManager {
   @Override
   public ClassLoader getClassLoader(Location location) {
     return repository
-        .getLocationManager(location)
+        .get(location)
         .map(PackageOrientedPathLocationManager::getClassLoader)
         .orElse(null);
   }
@@ -113,7 +113,7 @@ public class PathJavaFileManager implements JavaFileManager {
   public <S> ServiceLoader<S> getServiceLoader(Location location, Class<S> service)
       throws IOException {
     return repository
-        .getLocationManager(location)
+        .get(location)
         .map(manager -> manager.getServiceLoader(service))
         .orElseThrow(() -> formatException(
             NoSuchElementException::new,
@@ -144,7 +144,7 @@ public class PathJavaFileManager implements JavaFileManager {
     assertKnownLocation(location);
 
     return repository
-        .getLocationManager(location)
+        .get(location)
         .flatMap(manager -> manager.getFileForInput(packageName, relativeName))
         .orElse(null);
   }
@@ -174,7 +174,7 @@ public class PathJavaFileManager implements JavaFileManager {
     assertKnownLocation(location);
 
     return repository
-        .getLocationManager(location)
+        .get(location)
         .flatMap(manager -> manager.getFileForOutput(packageName, relativeName))
         .orElse(null);
   }
@@ -201,7 +201,7 @@ public class PathJavaFileManager implements JavaFileManager {
     assertKnownLocation(location);
 
     return repository
-        .getLocationManager(location)
+        .get(location)
         .flatMap(manager -> manager.getJavaFileForInput(className, kind))
         .orElse(null);
   }
@@ -231,7 +231,7 @@ public class PathJavaFileManager implements JavaFileManager {
     assertKnownLocation(location);
 
     return repository
-        .getLocationManager(location)
+        .get(location)
         .flatMap(manager -> manager.getJavaFileForOutput(className, kind))
         .orElse(null);
   }
@@ -274,7 +274,7 @@ public class PathJavaFileManager implements JavaFileManager {
     assertModuleOrientedOrOutputLocation(location);
 
     return repository
-        .getLocationManager(location)
+        .get(location)
         .map(PackageOrModuleOrientedPathLocationManager.class::cast)
         .orElseThrow(() -> unknownLocation(location))
         .getModuleLocationFor(fileObject)
@@ -312,7 +312,7 @@ public class PathJavaFileManager implements JavaFileManager {
   @Override
   public boolean hasLocation(Location location) {
     return repository
-        .getLocationManager(location)
+        .get(location)
         .isPresent();
   }
 
@@ -329,7 +329,7 @@ public class PathJavaFileManager implements JavaFileManager {
   @Override
   public String inferBinaryName(Location location, JavaFileObject file) {
     return repository
-        .getLocationManager(location)
+        .get(location)
         .flatMap(manager -> manager.inferBinaryName(file))
         .orElse(null);
   }
@@ -397,7 +397,7 @@ public class PathJavaFileManager implements JavaFileManager {
       Set<Kind> kinds,
       boolean recurse
   ) throws IOException {
-    var manager = repository.getLocationManager(location);
+    var manager = repository.get(location);
 
     return manager.isPresent()
         ? manager.get().list(packageName, kinds, recurse)
@@ -421,7 +421,7 @@ public class PathJavaFileManager implements JavaFileManager {
     assertModuleOrientedOrOutputLocation(location);
 
     return repository
-        .getLocationManager(location)
+        .get(location)
         .map(PackageOrModuleOrientedPathLocationManager.class::cast)
         .map(PackageOrModuleOrientedPathLocationManager::listLocationsForModules)
         .map(List::of)
@@ -439,7 +439,7 @@ public class PathJavaFileManager implements JavaFileManager {
   }
 
   private void assertKnownLocation(Location location) {
-    if (!repository.hasLocationManager(location)) {
+    if (!repository.contains(location)) {
       throw unknownLocation(location);
     }
   }

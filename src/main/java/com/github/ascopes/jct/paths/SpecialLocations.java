@@ -1,6 +1,6 @@
 package com.github.ascopes.jct.paths;
 
-import com.github.ascopes.jct.utils.StringSlicer;
+import com.github.ascopes.jct.intern.StringSlicer;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.net.URI;

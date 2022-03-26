@@ -1,6 +1,6 @@
 package com.github.ascopes.jct.paths;
 
-import com.github.ascopes.jct.utils.StringUtils;
+import com.github.ascopes.jct.intern.StringUtils;
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
 import java.lang.module.ModuleReference;
@@ -46,7 +46,7 @@ public class PackageOrModuleOrientedPathLocationManager extends PackageOrientedP
           .stream()
           .map(ModuleReference::descriptor)
           .map(ModuleDescriptor::name)
-          .map(this::getOrCreateModuleLocationManager)
+          .map(this::getOrCreateForModule)
           .forEach(manager -> manager.addPath(path));
     } else {
       // If we cannot hold modules, we add the path to this manager directly.
@@ -105,7 +105,7 @@ public class PackageOrModuleOrientedPathLocationManager extends PackageOrientedP
    * @return the manager.
    * @throws IllegalArgumentException if this object is already for a module.
    */
-  public PackageOrientedPathLocationManager getOrCreateModuleLocationManager(String moduleName) {
+  public PackageOrientedPathLocationManager getOrCreateForModule(String moduleName) {
     return modules.computeIfAbsent(
         moduleName,
         this::buildLocationManagerForModule

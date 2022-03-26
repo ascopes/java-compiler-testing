@@ -4,12 +4,12 @@ import com.github.ascopes.jct.compilations.StandardCompilation;
 import com.github.ascopes.jct.diagnostics.LoggingTracingDiagnosticsListener;
 import com.github.ascopes.jct.diagnostics.TeeWriter;
 import com.github.ascopes.jct.diagnostics.TracingDiagnosticsListener;
+import com.github.ascopes.jct.intern.StringUtils;
 import com.github.ascopes.jct.paths.InMemoryPath;
 import com.github.ascopes.jct.paths.LoggingJavaFileManagerProxy;
 import com.github.ascopes.jct.paths.PathJavaFileManager;
 import com.github.ascopes.jct.paths.PathLocationRepository;
 import com.github.ascopes.jct.paths.SpecialLocations;
-import com.github.ascopes.jct.utils.StringUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Clock;
@@ -102,7 +102,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     includeCurrentPlatformClassPath = true;
 
     fileManagerLoggingMode = LoggingMode.DISABLED;
-    diagnosticLoggingMode = LoggingMode.LOGGING;
+    diagnosticLoggingMode = LoggingMode.ENABLED;
   }
 
   /**
@@ -120,6 +120,8 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
         throw new IllegalStateException("No compilation units found");
       }
 
+      LOGGER.debug("Discovered {} compilation units {}", compilationUnits.size(), compilationUnits);
+
       var writer = new TeeWriter(System.err);
 
       var task = compiler.getTask(
@@ -136,9 +138,10 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
 
       if (LOGGER.isInfoEnabled()) {
         LOGGER.info(
-            "Starting compilation of {} file{} using flags {}",
+            "Starting compilation of {} file{} with compiler {} using flags {}",
             compilationUnits.size(),
             compilationUnits.size() == 1 ? "" : "s",
+            name,
             StringUtils.quotedIterable(flags)
         );
       }
@@ -147,18 +150,21 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
 
       try {
         result = task.call();
+
+        if (result == null) {
+          throw new CompilerException("The compiler failed to produce a valid result");
+        }
+
+        LOGGER.info("Compilation with compiler {} {}", name, result ? "succeeded" : "failed");
       } catch (Exception ex) {
         LOGGER.warn(
-            "Compiler threw an exception: {}: {}",
+            "Compiler {} threw an exception: {}: {}",
+            name,
             ex.getClass().getName(),
             ex.getMessage()
         );
         throw new CompilerException("The compiler threw an exception", ex);
 
-      }
-
-      if (result == null) {
-        throw new CompilerException("The compiler failed to produce a valid result");
       }
 
       var outputLines = writer.toString().lines().collect(Collectors.toList());
@@ -179,6 +185,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler configure(CompilerConfigurer<StandardCompiler> configurer) {
+    LOGGER.debug("configure({})", configurer);
     configurer.configure(this);
     return this;
   }
@@ -188,6 +195,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler verbose(boolean enabled) {
+    LOGGER.trace("verbose {} -> {}", verbose, enabled);
     verbose = enabled;
     return this;
   }
@@ -197,6 +205,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler previewFeatures(boolean enabled) {
+    LOGGER.trace("previewFeatures {} -> {}", previewFeatures, enabled);
     previewFeatures = enabled;
     return this;
   }
@@ -206,6 +215,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler warnings(boolean enabled) {
+    LOGGER.trace("warnings {} -> {}", warnings, enabled);
     warnings = enabled;
     return this;
   }
@@ -215,6 +225,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler deprecationWarnings(boolean enabled) {
+    LOGGER.trace("deprecationWarnings {} -> {}", deprecationWarnings, enabled);
     deprecationWarnings = enabled;
     return this;
   }
@@ -224,6 +235,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler failOnWarnings(boolean enabled) {
+    LOGGER.trace("failOnWarnings {} -> {}", failOnWarnings, enabled);
     failOnWarnings = enabled;
     return this;
   }
@@ -233,6 +245,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler addAnnotationProcessorOptions(Iterable<String> options) {
+    LOGGER.trace("annotationProcessorOptions += {}", options);
     for (var option : Objects.requireNonNull(options)) {
       annotationProcessorOptions.add(Objects.requireNonNull(option));
     }
@@ -244,6 +257,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler addAnnotationProcessors(Iterable<? extends Processor> processors) {
+    LOGGER.trace("annotationProcessors += {}", processors);
     for (var processor : Objects.requireNonNull(processors)) {
       annotationProcessors.add(Objects.requireNonNull(processor));
     }
@@ -255,6 +269,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler addCompilerOptions(Iterable<String> options) {
+    LOGGER.trace("compilerOptions += {}", options);
     for (var option : Objects.requireNonNull(options)) {
       compilerOptions.add(Objects.requireNonNull(option));
     }
@@ -266,6 +281,9 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler releaseVersion(String version) {
+    LOGGER.trace("releaseVersion {} -> {}", releaseVersion, version);
+    LOGGER.trace("sourceVersion {} -> null", sourceVersion);
+    LOGGER.trace("targetVersion {} -> null", targetVersion);
     releaseVersion = version;
     sourceVersion = null;
     targetVersion = null;
@@ -277,6 +295,8 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler sourceVersion(String version) {
+    LOGGER.trace("sourceVersion {} -> {}", targetVersion, version);
+    LOGGER.trace("releaseVersion {} -> null", releaseVersion);
     releaseVersion = null;
     sourceVersion = version;
     return this;
@@ -287,6 +307,8 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler targetVersion(String version) {
+    LOGGER.trace("targetVersion {} -> {}", targetVersion, version);
+    LOGGER.trace("releaseVersion {} -> null", releaseVersion);
     releaseVersion = null;
     targetVersion = version;
     return this;
@@ -297,6 +319,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler includeCurrentClassPath(boolean enabled) {
+    LOGGER.trace("includeCurrentClassPath {} -> {}", includeCurrentClassPath, enabled);
     includeCurrentClassPath = enabled;
     return this;
   }
@@ -306,6 +329,11 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler includeCurrentPlatformClassPath(boolean enabled) {
+    LOGGER.trace(
+        "includeCurrentPlatformClassPath {} -> {}",
+        includeCurrentPlatformClassPath,
+        enabled
+    );
     includeCurrentPlatformClassPath = enabled;
     return this;
   }
@@ -315,7 +343,8 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler addPath(Location location, Path path) {
-    fileRepository.getOrCreateLocationManager(location).addPath(path);
+    LOGGER.trace("{}.paths += {}", location.getName(), path);
+    fileRepository.getOrCreate(location).addPath(path);
     return this;
   }
 
@@ -324,7 +353,8 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler addPath(Location location, InMemoryPath path) {
-    fileRepository.getOrCreateLocationManager(location).addPath(path);
+    LOGGER.trace("{}.paths += {}", location.getName(), path);
+    fileRepository.getOrCreate(location).addPath(path);
     return this;
   }
 
@@ -333,7 +363,8 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    */
   @Override
   public StandardCompiler addPaths(Location location, Collection<? extends Path> paths) {
-    fileRepository.getOrCreateLocationManager(location).addPaths(paths);
+    LOGGER.trace("{}.paths += {}", location.getName(), paths);
+    fileRepository.getOrCreate(location).addPaths(paths);
     return this;
   }
 
@@ -344,6 +375,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    * @return this compiler for further call chaining.
    */
   public StandardCompiler addRuntimeOptions(Iterable<String> options) {
+    LOGGER.trace("runtimeOptions += {}", options);
     for (var option : Objects.requireNonNull(options)) {
       runtimeOptions.add(Objects.requireNonNull(option));
     }
@@ -357,6 +389,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    * @return this compiler for further call chaining.
    */
   public StandardCompiler locale(Locale locale) {
+    LOGGER.trace("locale {} -> {}", this.locale, locale);
     this.locale = Objects.requireNonNull(locale);
     return this;
   }
@@ -368,6 +401,11 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    * @return this compiler for further call chaining.
    */
   public StandardCompiler withFileManagerLogging(LoggingMode fileManagerLoggingMode) {
+    LOGGER.trace(
+        "fileManagerLoggingMode {} -> {}",
+        this.fileManagerLoggingMode,
+        fileManagerLoggingMode
+    );
     this.fileManagerLoggingMode = Objects.requireNonNull(fileManagerLoggingMode);
     return this;
   }
@@ -379,6 +417,11 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    * @return this compiler for further call chaining.
    */
   public StandardCompiler withDiagnosticLogging(LoggingMode diagnosticLoggingMode) {
+    LOGGER.trace(
+        "diagnosticLoggingMode {} -> {}",
+        this.diagnosticLoggingMode,
+        diagnosticLoggingMode
+    );
     this.diagnosticLoggingMode = Objects.requireNonNull(diagnosticLoggingMode);
     return this;
   }
@@ -417,37 +460,47 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
   private JavaFileManager buildJavaFileManager() throws IOException {
     var fileManager = new PathJavaFileManager(fileRepository);
 
-    // Ensure we have somewhere to dump our output.
-    var classOutput = InMemoryPath.create("classes");
+    var classOutputManager = fileRepository
+        .getOrCreate(StandardLocation.CLASS_OUTPUT);
 
-    fileRepository
-        .getOrCreateLocationManager(StandardLocation.CLASS_OUTPUT)
-        .addPath(classOutput);
+    // Ensure we have somewhere to dump our output.
+    if (classOutputManager.isEmpty()) {
+      LOGGER.debug("No class output location was specified, so an in-memory path is being created");
+      var classOutput = InMemoryPath.create("classes");
+      classOutputManager.addPath(classOutput);
+    } else {
+      LOGGER.debug("At least one output path is present, so no in-memory path will be created");
+    }
 
     // ECJ requires that we always create this, otherwise it refuses to run.
     var classPath = fileRepository
-        .getOrCreateLocationManager(StandardLocation.CLASS_PATH);
+        .getOrCreate(StandardLocation.CLASS_PATH);
 
     if (includeCurrentClassPath) {
       var currentClassPath = SpecialLocations.currentClassPathLocations();
-      LOGGER.info("Adding current classpath to compiler");
-      LOGGER.debug("Current classpath is {}", currentClassPath);
+
+      LOGGER.debug("Adding current classpath to compiler: {}", currentClassPath);
       classPath.addPaths(currentClassPath);
     }
 
     if (includeCurrentPlatformClassPath) {
       var currentPlatformClassPath = SpecialLocations.currentPlatformClassPathLocations();
-      LOGGER.info("Adding current platform classpath to compiler");
-      LOGGER.debug("Current platform classpath is {}", currentPlatformClassPath);
 
-      fileRepository
-          .getOrCreateLocationManager(StandardLocation.PLATFORM_CLASS_PATH)
-          .addPaths(currentPlatformClassPath);
+      if (!currentPlatformClassPath.isEmpty()) {
+        LOGGER.debug("Adding current platform classpath to compiler: {}", currentPlatformClassPath);
+
+        fileRepository
+            .getOrCreate(StandardLocation.PLATFORM_CLASS_PATH)
+            .addPaths(currentPlatformClassPath);
+      }
     }
 
+    var jrtLocations = SpecialLocations.javaRuntimeLocations();
+    LOGGER.trace("Adding JRT locations to compiler: {}", jrtLocations);
+
     fileRepository
-        .getOrCreateLocationManager(StandardLocation.SYSTEM_MODULES)
-        .addPaths(SpecialLocations.javaRuntimeLocations());
+        .getOrCreate(StandardLocation.SYSTEM_MODULES)
+        .addPaths(jrtLocations);
 
     return fileManager;
   }
@@ -487,11 +540,11 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    * @return the decorated file manager.
    */
   private JavaFileManager applyLoggingToFileManager(JavaFileManager fileManager) {
-    if (fileManagerLoggingMode == LoggingMode.LOGGING_WITH_STACKTRACES) {
+    if (fileManagerLoggingMode == LoggingMode.STACKTRACES) {
       return LoggingJavaFileManagerProxy.wrap(fileManager, true);
     }
 
-    if (fileManagerLoggingMode == LoggingMode.LOGGING) {
+    if (fileManagerLoggingMode == LoggingMode.ENABLED) {
       return LoggingJavaFileManagerProxy.wrap(fileManager, false);
     }
 
@@ -506,11 +559,11 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
   private TracingDiagnosticsListener<JavaFileObject> buildDiagnosticListener() {
     var clock = Clock.systemDefaultZone();
 
-    if (diagnosticLoggingMode == LoggingMode.LOGGING_WITH_STACKTRACES) {
+    if (diagnosticLoggingMode == LoggingMode.STACKTRACES) {
       return new LoggingTracingDiagnosticsListener<>(clock, true);
     }
 
-    if (diagnosticLoggingMode == LoggingMode.LOGGING) {
+    if (diagnosticLoggingMode == LoggingMode.ENABLED) {
       return new LoggingTracingDiagnosticsListener<>(clock, false);
     }
 
@@ -524,12 +577,12 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     /**
      * Enable logging.
      */
-    LOGGING,
+    ENABLED,
 
     /**
      * Enable logging and include stacktraces in the logs for each entry.
      */
-    LOGGING_WITH_STACKTRACES,
+    STACKTRACES,
 
     /**
      * Do not log anything.

@@ -1,8 +1,8 @@
 package com.github.ascopes.jct.paths;
 
-import com.github.ascopes.jct.utils.AsyncResourceCloser;
-import com.github.ascopes.jct.utils.EnumerationAdapter;
-import com.github.ascopes.jct.utils.StringUtils;
+import com.github.ascopes.jct.intern.AsyncResourceCloser;
+import com.github.ascopes.jct.intern.EnumerationAdapter;
+import com.github.ascopes.jct.intern.StringUtils;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.ref.Cleaner;

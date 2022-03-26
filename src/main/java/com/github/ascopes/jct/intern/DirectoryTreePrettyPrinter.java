@@ -1,4 +1,4 @@
-package com.github.ascopes.jct.utils;
+package com.github.ascopes.jct.intern;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

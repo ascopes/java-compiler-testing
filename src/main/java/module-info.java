@@ -14,5 +14,6 @@ module com.github.ascopes.jct {
   exports com.github.ascopes.jct.compilers;
   exports com.github.ascopes.jct.diagnostics;
   exports com.github.ascopes.jct.paths;
-  exports com.github.ascopes.jct.utils;
+
+  exports com.github.ascopes.jct.intern to com.github.ascopes.jct.testing;
 }

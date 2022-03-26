@@ -1,8 +1,8 @@
 package com.github.ascopes.jct.paths;
 
-import com.github.ascopes.jct.utils.Lazy;
-import com.github.ascopes.jct.utils.StringSlicer;
-import com.github.ascopes.jct.utils.StringUtils;
+import com.github.ascopes.jct.intern.Lazy;
+import com.github.ascopes.jct.intern.StringSlicer;
+import com.github.ascopes.jct.intern.StringUtils;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Files;
@@ -276,6 +276,15 @@ public class PackageOrientedPathLocationManager {
     }
 
     return Optional.empty();
+  }
+
+  /**
+   * Determine if the manager is empty or not.
+   *
+   * @return {@code true} if empty, {@code false} otherwise.
+   */
+  public boolean isEmpty() {
+    return roots.isEmpty();
   }
 
   /**

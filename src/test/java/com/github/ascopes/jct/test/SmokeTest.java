@@ -23,8 +23,8 @@ class SmokeTest {
     var sources = InMemoryPath
         .create("sources")
         .createFile(
-            "com/github/ascopes/jct/test/examples/HelloWorld.java",
-            "package com.github.ascopes.jct.test.examples;",
+            "org/me/test/examples/HelloWorld.java",
+            "package org.me.test.examples.test;",
             "",
             "public class HelloWorld {",
             "  public static void main(String[] args) {",
@@ -36,7 +36,7 @@ class SmokeTest {
     var compilation = compiler
         .addSourcePath(sources)
         .releaseVersion(version)
-        .withDiagnosticLogging(LoggingMode.LOGGING)
+        .withDiagnosticLogging(LoggingMode.ENABLED)
         .compile();
 
     assertThat(compilation)

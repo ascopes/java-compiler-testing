@@ -1,6 +1,6 @@
 package com.github.ascopes.jct.paths;
 
-import com.github.ascopes.jct.utils.StringUtils;
+import com.github.ascopes.jct.intern.StringUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;

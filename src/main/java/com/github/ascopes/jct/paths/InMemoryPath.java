@@ -1,7 +1,8 @@
 package com.github.ascopes.jct.paths;
 
-import com.github.ascopes.jct.utils.AsyncResourceCloser;
-import com.github.ascopes.jct.utils.DirectoryTreePrettyPrinter;
+import com.github.ascopes.jct.intern.AsyncResourceCloser;
+import com.github.ascopes.jct.intern.DirectoryTreePrettyPrinter;
+import com.github.ascopes.jct.intern.StringUtils;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
@@ -235,12 +236,20 @@ public class InMemoryPath implements Closeable {
    * @throws IOException if something goes wrong copying the tree out of memory.
    */
   public Path copyToTempDir() throws IOException {
-    return Files.copy(
+    var tempPath = Files.copy(
         path,
         Files.createTempDirectory(identifier),
         StandardCopyOption.REPLACE_EXISTING,
         StandardCopyOption.COPY_ATTRIBUTES
     );
+
+    LOGGER.info(
+        "Copied {} into temporary directory on file system at {}",
+        path.toUri(),
+        tempPath
+    );
+
+    return tempPath;
   }
 
   /**
@@ -251,6 +260,14 @@ public class InMemoryPath implements Closeable {
    */
   public String pretty() throws IOException {
     return DirectoryTreePrettyPrinter.prettyPrint(path);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String toString() {
+    return "InMemoryPath{path=" + StringUtils.quoted(path.toUri()) + "}";
   }
 
   private Path makeRelativeToHere(Path path) {
@@ -318,7 +335,7 @@ public class InMemoryPath implements Closeable {
       CLEANER.register(inMemoryPath, new AsyncResourceCloser(uri, fileSystem));
     }
 
-    LOGGER.info("Created new in-memory directory {}", uri);
+    LOGGER.debug("Created new in-memory directory {}", uri);
 
     return inMemoryPath;
   }
@@ -339,6 +356,7 @@ public class InMemoryPath implements Closeable {
       case "ram":
         return input;
       default:
+        LOGGER.debug("Decided to wrap input {} in a buffer", input);
         return new BufferedInputStream(input);
     }
   }

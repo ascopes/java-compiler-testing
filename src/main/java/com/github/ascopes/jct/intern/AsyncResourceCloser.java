@@ -1,4 +1,4 @@
-package com.github.ascopes.jct.utils;
+package com.github.ascopes.jct.intern;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -56,7 +56,7 @@ public class AsyncResourceCloser implements Runnable {
     closeables.forEach((name, closeable) -> CompletableFuture.runAsync(() -> {
       try {
         closeable.close();
-        LOGGER.info("Closed resource {} ({})", name, closeable);
+        LOGGER.debug("Closed resource {} ({})", name, closeable);
       } catch (Throwable ex) {
         LOGGER.error("Failed to close resource {} ({})", name, closeable, ex);
       }

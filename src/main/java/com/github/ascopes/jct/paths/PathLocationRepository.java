@@ -53,12 +53,29 @@ public class PathLocationRepository implements AutoCloseable {
   }
 
   /**
+   * Determine if the given location is registered with the manager.
+   *
+   * @param location the location to look for.
+   * @return {@code true} if registered, or {@code false} if not registered.
+   */
+  public boolean contains(Location location) {
+    if (location instanceof ModuleLocation) {
+      var moduleLocation = ((ModuleLocation) location);
+      var moduleName = moduleLocation.getModuleName();
+      var manager = managers.get(moduleLocation.getParent());
+      return manager != null && manager.hasModuleLocationManager(moduleName);
+    }
+
+    return managers.containsKey(location);
+  }
+
+  /**
    * Get the manager for a location, if it exists.
    *
    * @param location the location to look up.
    * @return the location manager, if present, or an empty optional if it does not exist.
    */
-  public Optional<PackageOrientedPathLocationManager> getLocationManager(Location location) {
+  public Optional<PackageOrientedPathLocationManager> get(Location location) {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
       var moduleName = moduleLocation.getModuleName();
@@ -80,7 +97,7 @@ public class PathLocationRepository implements AutoCloseable {
    *                                  been created and this operation would create a {@link
    *                                  StandardLocation#SOURCE_PATH} location, or vice-versa.
    */
-  public PackageOrientedPathLocationManager getOrCreateLocationManager(Location location) {
+  public PackageOrientedPathLocationManager getOrCreate(Location location) {
     ensureCompatibleLocation(location);
 
     if (location instanceof ModuleLocation) {
@@ -89,7 +106,7 @@ public class PathLocationRepository implements AutoCloseable {
       var parentLocation = moduleLocation.getParent();
       return managers
           .computeIfAbsent(parentLocation, PackageOrModuleOrientedPathLocationManager::new)
-          .getOrCreateModuleLocationManager(moduleName);
+          .getOrCreateForModule(moduleName);
     }
 
     return managers
@@ -102,7 +119,7 @@ public class PathLocationRepository implements AutoCloseable {
    *
    * @return the map of locations to lists of paths.
    */
-  public SortedMap<Location, List<? extends Path>> getPaths() {
+  public SortedMap<Location, List<? extends Path>> getAllPaths() {
     return managers
         .entrySet()
         .stream()
@@ -117,23 +134,6 @@ public class PathLocationRepository implements AutoCloseable {
             },
             () -> new TreeMap<>(LOCATION_COMPARATOR)
         ));
-  }
-
-  /**
-   * Determine if the given location is registered with the manager.
-   *
-   * @param location the location to look for.
-   * @return {@code true} if registered, or {@code false} if not registered.
-   */
-  public boolean hasLocationManager(Location location) {
-    if (location instanceof ModuleLocation) {
-      var moduleLocation = ((ModuleLocation) location);
-      var moduleName = moduleLocation.getModuleName();
-      var manager = managers.get(moduleLocation.getParent());
-      return manager != null && manager.hasModuleLocationManager(moduleName);
-    }
-
-    return managers.containsKey(location);
   }
 
   /**
