@@ -1,6 +1,22 @@
+/*
+ * Copyright (C) 2022 Ashley Scopes
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.github.ascopes.jct.assertions;
 
-import com.github.ascopes.jct.diagnostics.DiagnosticWithTrace;
+import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import javax.tools.JavaFileObject;
 import org.assertj.core.api.AbstractObjectAssert;
 import org.assertj.core.api.InstantAssert;
@@ -12,16 +28,15 @@ import org.assertj.core.api.InstantAssert;
  * @since 0.0.1
  */
 public final class DiagnosticAssertions
-    extends
-    AbstractObjectAssert<DiagnosticAssertions, DiagnosticWithTrace<? extends JavaFileObject>> {
+    extends AbstractObjectAssert<DiagnosticAssertions, TraceDiagnostic<? extends JavaFileObject>> {
 
   /**
    * Initialize this set of assertions.
    *
-   * @param diagnosticWithTrace the diagnostic to assert upon.
+   * @param traceDiagnostic the diagnostic to assert upon.
    */
-  private DiagnosticAssertions(DiagnosticWithTrace<? extends JavaFileObject> diagnosticWithTrace) {
-    super(diagnosticWithTrace, DiagnosticAssertions.class);
+  private DiagnosticAssertions(TraceDiagnostic<? extends JavaFileObject> traceDiagnostic) {
+    super(traceDiagnostic, DiagnosticAssertions.class);
   }
 
   public InstantAssert timestamp() {
@@ -36,7 +51,7 @@ public final class DiagnosticAssertions
    * @return the assertions.
    */
   public static <S> DiagnosticAssertions assertThat(
-      DiagnosticWithTrace<? extends JavaFileObject> diagnostic
+      TraceDiagnostic<? extends JavaFileObject> diagnostic
   ) {
     return new DiagnosticAssertions(diagnostic);
   }

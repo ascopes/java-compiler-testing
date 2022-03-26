@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2022 Ashley Scopes
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.github.ascopes.jct.diagnostics;
 
 import java.time.Clock;
@@ -18,7 +34,7 @@ import javax.tools.DiagnosticListener;
 public class TracingDiagnosticsListener<S> implements DiagnosticListener<S> {
 
   private final Clock clock;
-  private final ConcurrentLinkedQueue<DiagnosticWithTrace<S>> diagnostics;
+  private final ConcurrentLinkedQueue<TraceDiagnostic<S>> diagnostics;
 
   /**
    * Initialize this listener.
@@ -35,7 +51,7 @@ public class TracingDiagnosticsListener<S> implements DiagnosticListener<S> {
    *
    * @return the diagnostics in a list.
    */
-  public List<DiagnosticWithTrace<? extends S>> getDiagnostics() {
+  public List<TraceDiagnostic<? extends S>> getDiagnostics() {
     return List.copyOf(diagnostics);
   }
 
@@ -47,12 +63,12 @@ public class TracingDiagnosticsListener<S> implements DiagnosticListener<S> {
     diagnostics.add(handleDiagnostic(diagnostic));
   }
 
-  protected DiagnosticWithTrace<S> handleDiagnostic(Diagnostic<? extends S> diagnostic) {
+  protected TraceDiagnostic<S> handleDiagnostic(Diagnostic<? extends S> diagnostic) {
     var now = Instant.now(clock);
     var thisThread = Thread.currentThread();
     var threadId = thisThread.getId();
     var threadName = thisThread.getName();
     var stackTrace = thisThread.getStackTrace();
-    return new DiagnosticWithTrace<>(now, threadId, threadName, stackTrace, diagnostic);
+    return new TraceDiagnostic<>(now, threadId, threadName, stackTrace, diagnostic);
   }
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2022 Ashley Scopes
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.github.ascopes.jct.paths;
 
 import com.github.ascopes.jct.intern.AsyncResourceCloser;
@@ -85,32 +101,89 @@ public class InMemoryPath implements Closeable {
     path.getFileSystem().close();
   }
 
+  /**
+   * Create a file with the given content.
+   *
+   * @param filePath the path to the file.
+   * @param content  the content.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs
+   */
   public InMemoryPath createFile(Path filePath, byte[] content) throws IOException {
     try (var inputStream = new ByteArrayInputStream(content)) {
       return copyFrom(inputStream, filePath);
     }
   }
 
+  /**
+   * Create a file with the given lines of text.
+   *
+   * @param filePath the path to the file.
+   * @param lines    the lines of text to store.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs
+   */
   public InMemoryPath createFile(Path filePath, String... lines) throws IOException {
     return createFile(filePath, String.join("\n", lines).getBytes(StandardCharsets.UTF_8));
   }
 
+  /**
+   * Create a file with the given content.
+   *
+   * @param fileName the path to the file.
+   * @param content  the content.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs
+   */
   public InMemoryPath createFile(String fileName, byte[] content) throws IOException {
     return createFile(Path.of(fileName), content);
   }
 
+  /**
+   * Create a file with the given lines of text.
+   *
+   * @param fileName the path to the file.
+   * @param lines    the lines of text to store.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs
+   */
   public InMemoryPath createFile(String fileName, String... lines) throws IOException {
     return createFile(Path.of(fileName), lines);
   }
 
+  /**
+   * Copy a resource from the classpath into this in-memory path at the target location.
+   *
+   * @param resource   the name of the classpath resource.
+   * @param targetPath the path to store the resource within this location.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyFromClassPath(String resource, Path targetPath) throws IOException {
     return copyFromClassPath(getClass().getClassLoader(), resource, targetPath);
   }
 
+  /**
+   * Copy a resource from the classpath into this in-memory path at the target location.
+   *
+   * @param resource   the name of the classpath resource.
+   * @param targetPath the path to store the resource within this location.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyFromClassPath(String resource, String targetPath) throws IOException {
     return copyFromClassPath(getClass().getClassLoader(), resource, targetPath);
   }
 
+  /**
+   * Copy a resource from the classpath into this in-memory path at the target location.
+   *
+   * @param loader     the classloader to load from.
+   * @param resource   the name of the classpath resource.
+   * @param targetPath the path to store the resource within this location.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyFromClassPath(
       ClassLoader loader,
       String resource,
@@ -125,6 +198,15 @@ public class InMemoryPath implements Closeable {
     }
   }
 
+  /**
+   * Copy a resource from the classpath into this in-memory path at the target location.
+   *
+   * @param loader     the classloader to load from.
+   * @param resource   the name of the classpath resource.
+   * @param targetPath the path to store the resource within this location.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyFromClassPath(
       ClassLoader loader,
       String resource,
@@ -133,6 +215,15 @@ public class InMemoryPath implements Closeable {
     return copyFromClassPath(loader, resource, Path.of(targetPath));
   }
 
+  /**
+   * Copy a tree of resources from the classpath into this in-memory path at the target location.
+   *
+   * @param packageName the name of the classpath package to copy files from.
+   * @param targetPath  the path to store the resources within this location, relative to the
+   *                    provided package name.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyTreeFromClassPath(
       String packageName,
       Path targetPath
@@ -140,6 +231,15 @@ public class InMemoryPath implements Closeable {
     return copyTreeFromClassPath(getClass().getClassLoader(), packageName, targetPath);
   }
 
+  /**
+   * Copy a tree of resources from the classpath into this in-memory path at the target location.
+   *
+   * @param packageName the name of the classpath package to copy files from.
+   * @param targetPath  the path to store the resources within this location, relative to the
+   *                    provided package name.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyTreeFromClassPath(
       String packageName,
       String targetPath
@@ -147,6 +247,16 @@ public class InMemoryPath implements Closeable {
     return copyTreeFromClassPath(getClass().getClassLoader(), packageName, targetPath);
   }
 
+  /**
+   * Copy a tree of resources from the classpath into this in-memory path at the target location.
+   *
+   * @param loader      the class loader to use.
+   * @param packageName the name of the classpath package to copy files from.
+   * @param targetPath  the path to store the resources within this location, relative to the
+   *                    provided package name.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyTreeFromClassPath(
       ClassLoader loader,
       String packageName,
@@ -179,6 +289,16 @@ public class InMemoryPath implements Closeable {
     return this;
   }
 
+  /**
+   * Copy a tree of resources from the classpath into this in-memory path at the target location.
+   *
+   * @param loader      the classloader to use.
+   * @param packageName the name of the classpath package to copy files from.
+   * @param targetPath  the path to store the resources within this location, relative to the
+   *                    provided package name.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyTreeFromClassPath(
       ClassLoader loader,
       String packageName,
@@ -187,33 +307,80 @@ public class InMemoryPath implements Closeable {
     return copyTreeFromClassPath(loader, packageName, Path.of(targetPath));
   }
 
+  /**
+   * Copy an existing path into this location.
+   *
+   * @param existingFile the existing file.
+   * @param targetPath   the path in this location to copy the file to.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyFrom(Path existingFile, Path targetPath) throws IOException {
     try (var input = Files.newInputStream(existingFile)) {
       return copyFrom(input, targetPath);
     }
   }
 
+  /**
+   * Copy an existing path into this location.
+   *
+   * @param existingFile the existing file.
+   * @param targetPath   the path in this location to copy the file to.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyFrom(Path existingFile, String targetPath) throws IOException {
     return copyFrom(existingFile, Path.of(targetPath));
   }
 
-
+  /**
+   * Copy an existing resource at a given URL into this location.
+   *
+   * @param url        the URL of the resource to copy.
+   * @param targetPath the path in this location to copy the file to.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyFrom(URL url, Path targetPath) throws IOException {
     try (var input = url.openStream()) {
       return copyFrom(input, targetPath);
     }
   }
 
+  /**
+   * Copy an existing resource at a given URL into this location.
+   *
+   * @param url        the URL of the resource to copy.
+   * @param targetPath the path in this location to copy the file to.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyFrom(URL url, String targetPath) throws IOException {
     try (var input = url.openStream()) {
       return copyFrom(input, targetPath);
     }
   }
 
+  /**
+   * Copy an existing resource from an input stream into this location.
+   *
+   * @param input      the input stream to use.
+   * @param targetPath the path in this location to copy the file to.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyFrom(InputStream input, String targetPath) throws IOException {
     return copyFrom(input, Path.of(targetPath));
   }
 
+  /**
+   * Copy an existing resource from an input stream into this location.
+   *
+   * @param input      the input stream to use.
+   * @param targetPath the path in this location to copy the file to.
+   * @return this object for further call chaining.
+   * @throws IOException if an IO error occurs.
+   */
   public InMemoryPath copyFrom(InputStream input, Path targetPath) throws IOException {
     input = maybeBuffer(input, targetPath.toUri().getScheme());
     var path = makeRelativeToHere(targetPath);

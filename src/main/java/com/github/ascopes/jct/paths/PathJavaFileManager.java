@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2022 Ashley Scopes
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.github.ascopes.jct.paths;
 
 import java.io.IOException;
@@ -54,7 +70,7 @@ public class PathJavaFileManager implements JavaFileManager {
    * @param location   the location to look up.
    * @param fileObject the file object to check for.
    * @return {@code true} if the location contains the file object, or {@code false} if it does not.
-   * Unregistered locations will always return {@code false}.
+   *     Unregistered locations will always return {@code false}.
    * @throws IllegalStateException if the file manager is closed.
    * @throws IOException           if an IO error occurs.
    */
@@ -157,7 +173,7 @@ public class PathJavaFileManager implements JavaFileManager {
    * @param relativeName the file name.
    * @param sibling      any sibling file if one exists, or {@code null} otherwise.
    * @return the file to use for output, or {@code null} if no paths have been registered for the
-   * location.
+   *     location.
    * @throws IllegalArgumentException if the location is not known to this manager, or if the
    *                                  location is not an output location.
    * @throws IllegalStateException    if the file manager is already closed.
@@ -214,7 +230,7 @@ public class PathJavaFileManager implements JavaFileManager {
    * @param kind      the kind of the file.
    * @param sibling   any sibling file if one exists, or {@code null} otherwise.
    * @return the file to use for output, or {@code null} if no paths have been registered for the
-   * location.
+   *     location.
    * @throws IllegalArgumentException if the location is not known to this manager, or if the
    *                                  location is not an output location.
    * @throws IllegalStateException    if the file manager is already closed.
@@ -307,7 +323,7 @@ public class PathJavaFileManager implements JavaFileManager {
    *
    * @param location the location.
    * @return {@code true} if the location has at least one path associated with it, or {@code false}
-   * if no paths are associated.
+   *     if no paths are associated.
    */
   @Override
   public boolean hasLocation(Location location) {
