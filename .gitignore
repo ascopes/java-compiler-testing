@@ -1,0 +1,19 @@
+# Maven Wrapper
+/.mvn/wrapper/maven-wrapper.jar
+
+# Build output
+build/
+out/
+target/
+
+# IntelliJ
+.idea/
+*.iml
+
+# VSCode
+.vscode/
+.vs/
+
+# Eclipse
+.settings/
+.classpath
