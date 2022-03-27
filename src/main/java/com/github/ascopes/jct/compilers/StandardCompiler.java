@@ -479,7 +479,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     // Ensure we have somewhere to dump our output.
     if (classOutputManager.isEmpty()) {
       LOGGER.debug("No class output location was specified, so an in-memory path is being created");
-      var classOutput = InMemoryPath.create("classes");
+      var classOutput = InMemoryPath.createPath("classes");
       classOutputManager.addPath(classOutput);
     } else {
       LOGGER.debug("At least one output path is present, so no in-memory path will be created");

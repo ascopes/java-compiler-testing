@@ -29,7 +29,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static com.github.ascopes.jct.assertions.CompilationAssertions.assertThat;
+import static com.github.ascopes.jct.assertions.CompilationAssert.assertThat;
 
 @DisplayName("Smoke test")
 class SmokeTest {
@@ -39,7 +39,7 @@ class SmokeTest {
   void i_can_compile_something(StandardCompiler compiler, int version) throws Exception {
 
     var sources = InMemoryPath
-        .create("sources")
+        .createPath()
         .createFile(
             "org/me/test/examples/HelloWorld.java",
             "package org.me.test.examples.test;",
@@ -57,9 +57,13 @@ class SmokeTest {
         .withDiagnosticLogging(LoggingMode.ENABLED)
         .compile();
 
-    assertThat(compilation)
-        .isSuccessfulWithoutWarnings()
-        .diagnostics().isEmpty();
+    assertThat(compilation).isSuccessfulWithoutWarnings();
+    assertThat(compilation).diagnostics().isEmpty();
+
+    assertThat(compilation).classOutput()
+        .file("org/me/test/examples/test/HelloWorld.class")
+        .exists()
+        .isNotEmptyFile();
   }
 
   static Stream<Arguments> compilers() {

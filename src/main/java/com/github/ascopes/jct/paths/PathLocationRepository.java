@@ -45,7 +45,7 @@ public class PathLocationRepository implements AutoCloseable {
       .comparing(Location::getName)
       .thenComparing(ModuleLocation.class::isInstance);
 
-  private final Map<Location, PackageOrModuleOrientedPathLocationManager> managers;
+  private final Map<Location, ParentPathLocationManager> managers;
 
   /**
    * Initialize the repository.
@@ -91,7 +91,7 @@ public class PathLocationRepository implements AutoCloseable {
    * @param location the location to look up.
    * @return the location manager, if present, or an empty optional if it does not exist.
    */
-  public Optional<PackageOrientedPathLocationManager> get(Location location) {
+  public Optional<PathLocationManager> get(Location location) {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
       var moduleName = moduleLocation.getModuleName();
@@ -113,7 +113,7 @@ public class PathLocationRepository implements AutoCloseable {
    *                                  been created and this operation would create a {@link
    *                                  StandardLocation#SOURCE_PATH} location, or vice-versa.
    */
-  public PackageOrientedPathLocationManager getOrCreate(Location location) {
+  public PathLocationManager getOrCreate(Location location) {
     ensureCompatibleLocation(location);
 
     if (location instanceof ModuleLocation) {
@@ -121,12 +121,12 @@ public class PathLocationRepository implements AutoCloseable {
       var moduleName = moduleLocation.getModuleName();
       var parentLocation = moduleLocation.getParent();
       return managers
-          .computeIfAbsent(parentLocation, PackageOrModuleOrientedPathLocationManager::new)
+          .computeIfAbsent(parentLocation, ParentPathLocationManager::new)
           .getOrCreateForModule(moduleName);
     }
 
     return managers
-        .computeIfAbsent(location, PackageOrModuleOrientedPathLocationManager::new);
+        .computeIfAbsent(location, ParentPathLocationManager::new);
   }
 
   /**

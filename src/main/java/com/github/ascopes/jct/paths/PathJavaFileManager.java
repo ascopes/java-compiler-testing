@@ -110,7 +110,7 @@ public class PathJavaFileManager implements JavaFileManager {
   public ClassLoader getClassLoader(Location location) {
     return repository
         .get(location)
-        .map(PackageOrientedPathLocationManager::getClassLoader)
+        .map(PathLocationManager::getClassLoader)
         .orElse(null);
   }
 
@@ -291,7 +291,7 @@ public class PathJavaFileManager implements JavaFileManager {
 
     return repository
         .get(location)
-        .map(PackageOrModuleOrientedPathLocationManager.class::cast)
+        .map(ParentPathLocationManager.class::cast)
         .orElseThrow(() -> unknownLocation(location))
         .getModuleLocationFor(fileObject)
         .orElseThrow(() -> formatException(
@@ -438,8 +438,8 @@ public class PathJavaFileManager implements JavaFileManager {
 
     return repository
         .get(location)
-        .map(PackageOrModuleOrientedPathLocationManager.class::cast)
-        .map(PackageOrModuleOrientedPathLocationManager::listLocationsForModules)
+        .map(ParentPathLocationManager.class::cast)
+        .map(ParentPathLocationManager::listLocationsForModules)
         .map(List::of)
         .orElseGet(Collections::emptyList);
   }

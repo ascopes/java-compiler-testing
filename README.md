@@ -12,5 +12,57 @@ Java 8 due to complexity around implementing this without the ability to
 reference modules, and ideally this tool should be forward compatible to
 prevent future issues for any projects deciding to use it.
 
-This module is still under development. Any contributions or feedback
+**This module is still under development.** Any contributions or feedback
 are always welcome!
+
+## Example
+
+The following is an example of using this library with JUnit Jupiter:
+
+```java
+class HelloWorldTest {
+
+  @Test
+  void i_can_compile_hello_world() {
+    var sources = InMemoryPath
+        .createPath()
+        .createFile(
+            "org/me/test/examples/HelloWorld.java",
+            "package org.me.test.examples.test;",
+            "",
+            "public class HelloWorld {",
+            "  public static void main(String[] args) {",
+            "    System.out.println(\"Hello, World!\");",
+            "  }",
+            "}"
+        );
+
+    var compilation = Compilers
+        .javac()
+        .addSourcePath(sources)
+        .releaseVersion("11")
+        .withDiagnosticLogging(LoggingMode.ENABLED)
+        .compile();
+
+    assertThat(compilation).isSuccessfulWithoutWarnings();
+    assertThat(compilation).diagnostics().isEmpty();
+    assertThat(compilation).classOutput()
+        .file("org/me/test/examples/HelloWorld.class")
+        .exists()
+        .isNotEmptyFile();
+  }
+}
+```
+
+## Features
+
+- Ability to run compilation on real files, classpath resources,
+  and in-memory files.
+- Fluent syntax for creating configurations, executing them, and
+  inspecting the results.
+- Integration with AssertJ for fluent assertions on compilation
+  results.
+- Fuzzy matching of similar path names when asserting files exist
+  to provide helpful assertion errors.
+- Ability to have multiple source roots, just like when using
+  `javac` normally.

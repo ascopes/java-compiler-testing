@@ -18,11 +18,15 @@ package com.github.ascopes.jct.assertions;
 
 import com.github.ascopes.jct.compilations.Compilation;
 import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import com.github.ascopes.jct.paths.ModuleLocation;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.tools.Diagnostic.Kind;
+import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
+import javax.tools.StandardLocation;
 import org.assertj.core.api.AbstractObjectAssert;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ListAssert;
 
 /**
@@ -32,16 +36,16 @@ import org.assertj.core.api.ListAssert;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-public class CompilationAssertions<C extends Compilation>
-    extends AbstractObjectAssert<CompilationAssertions<C>, C> {
+public class CompilationAssert<C extends Compilation>
+    extends AbstractObjectAssert<CompilationAssert<C>, C> {
 
   /**
    * Initialize this set of assertions.
    *
    * @param compilation the compilation type.
    */
-  protected CompilationAssertions(C compilation) {
-    super(compilation, CompilationAssertions.class);
+  protected CompilationAssert(C compilation) {
+    super(compilation, CompilationAssert.class);
   }
 
   /**
@@ -49,7 +53,7 @@ public class CompilationAssertions<C extends Compilation>
    *
    * @return this object.
    */
-  public CompilationAssertions<C> isSuccessful() {
+  public CompilationAssert<C> isSuccessful() {
     if (actual.isSuccessful()) {
       return myself;
     }
@@ -85,7 +89,7 @@ public class CompilationAssertions<C extends Compilation>
    *
    * @return this object.
    */
-  public CompilationAssertions<C> isSuccessfulWithoutWarnings() {
+  public CompilationAssert<C> isSuccessfulWithoutWarnings() {
     isSuccessful();
     warnings().withFailMessage("Expected no warnings").isEmpty();
     mandatoryWarnings().withFailMessage("Expected no mandatory warnings").isEmpty();
@@ -97,7 +101,7 @@ public class CompilationAssertions<C extends Compilation>
    *
    * @return this object.
    */
-  public CompilationAssertions<C> isAFailure() {
+  public CompilationAssert<C> isAFailure() {
     if (actual.isFailure()) {
       return myself;
     }
@@ -114,8 +118,8 @@ public class CompilationAssertions<C extends Compilation>
    *
    * @return the assertions to perform across the diagnostics.
    */
-  public DiagnosticListAssertions diagnostics() {
-    return DiagnosticListAssertions.assertThat(actual.getDiagnostics());
+  public DiagnosticListAssert diagnostics() {
+    return DiagnosticListAssert.assertThat(actual.getDiagnostics());
   }
 
   /**
@@ -124,7 +128,7 @@ public class CompilationAssertions<C extends Compilation>
    * @param predicate the predicate to filter diagnostics by.
    * @return the assertions to perform across the filtered diagnostics.
    */
-  public DiagnosticListAssertions diagnostics(
+  public DiagnosticListAssert diagnostics(
       Predicate<? super TraceDiagnostic<? extends JavaFileObject>> predicate
   ) {
     return actual
@@ -133,7 +137,7 @@ public class CompilationAssertions<C extends Compilation>
         .filter(predicate)
         .collect(Collectors.collectingAndThen(
             Collectors.toList(),
-            DiagnosticListAssertions::assertThat
+            DiagnosticListAssert::assertThat
         ));
   }
 
@@ -142,7 +146,7 @@ public class CompilationAssertions<C extends Compilation>
    *
    * @return the assertions to perform across the error diagnostics.
    */
-  public DiagnosticListAssertions errors() {
+  public DiagnosticListAssert errors() {
     return diagnostics(diagnostic -> diagnostic.getKind() == Kind.ERROR);
   }
 
@@ -151,7 +155,7 @@ public class CompilationAssertions<C extends Compilation>
    *
    * @return the assertions to perform across the warning diagnostics.
    */
-  public DiagnosticListAssertions warnings() {
+  public DiagnosticListAssert warnings() {
     return diagnostics(diagnostic -> diagnostic.getKind() == Kind.WARNING);
   }
 
@@ -160,7 +164,7 @@ public class CompilationAssertions<C extends Compilation>
    *
    * @return the assertions to perform across the warning diagnostics.
    */
-  public DiagnosticListAssertions mandatoryWarnings() {
+  public DiagnosticListAssert mandatoryWarnings() {
     return diagnostics(diagnostic -> diagnostic.getKind() == Kind.MANDATORY_WARNING);
   }
 
@@ -169,7 +173,7 @@ public class CompilationAssertions<C extends Compilation>
    *
    * @return the assertions to perform across the note diagnostics.
    */
-  public DiagnosticListAssertions notes() {
+  public DiagnosticListAssert notes() {
     return diagnostics(diagnostic -> diagnostic.getKind() == Kind.NOTE);
   }
 
@@ -178,7 +182,7 @@ public class CompilationAssertions<C extends Compilation>
    *
    * @return the assertions to perform across the {@link Kind#OTHER}-kinded diagnostics.
    */
-  public DiagnosticListAssertions otherDiagnostics() {
+  public DiagnosticListAssert otherDiagnostics() {
     return diagnostics(diagnostic -> diagnostic.getKind() == Kind.OTHER);
   }
 
@@ -188,11 +192,95 @@ public class CompilationAssertions<C extends Compilation>
    * @return the assertions to perform on the compiler log output.
    */
   public ListAssert<String> outputLines() {
-    return new ListAssert<>(actual.getOutputLines());
+    return Assertions.assertThat(actual.getOutputLines());
   }
 
-  public PathLocationRepositoryAssertions files() {
-    return PathLocationRepositoryAssertions.assertThat(actual.getFileRepository());
+  /**
+   * Get assertions to perform on a given location.
+   *
+   * @param location the location to perform assertions on.
+   * @return the assertions to perform.
+   */
+  public PathLocationManagerAssert location(Location location) {
+    var locationManager = actual
+        .getFileRepository()
+        .get(location)
+        .orElse(null);
+
+    return PathLocationManagerAssert.assertThat(locationManager);
+  }
+
+  /**
+   * Get assertions to perform on a given location of a module.
+   *
+   * @param location   the location to perform assertions on.
+   * @param moduleName the module name within the location to perform assertions on.
+   * @return the assertions to perform.
+   */
+  public PathLocationManagerAssert location(Location location, String moduleName) {
+    var locationManager = actual
+        .getFileRepository()
+        .get(new ModuleLocation(location, moduleName))
+        .orElse(null);
+
+    return PathLocationManagerAssert.assertThat(locationManager);
+  }
+
+  /**
+   * Perform assertions on the class output roots.
+   *
+   * @return the assertions to perform.
+   */
+  public PathLocationManagerAssert classOutput() {
+    return location(StandardLocation.CLASS_OUTPUT);
+  }
+
+  /**
+   * Perform assertions on the class output roots for a given module name.
+   *
+   * @param moduleName the name of the module.
+   * @return the assertions to perform.
+   */
+  public PathLocationManagerAssert classOutput(String moduleName) {
+    return location(StandardLocation.CLASS_OUTPUT, moduleName);
+  }
+
+  /**
+   * Perform assertions on the native header outputs.
+   *
+   * @return the assertions to perform.
+   */
+  public PathLocationManagerAssert nativeHeaders() {
+    return location(StandardLocation.NATIVE_HEADER_OUTPUT);
+  }
+
+  /**
+   * Perform assertions on the native header outputs for a given module name.
+   *
+   * @param moduleName the name of the module.
+   * @return the assertions to perform.
+   */
+  public PathLocationManagerAssert nativeHeaders(String moduleName) {
+    return location(StandardLocation.NATIVE_HEADER_OUTPUT, moduleName);
+  }
+
+  /**
+   * Perform assertions on the generated source outputs.
+   *
+   * @return the assertions to perform.
+   */
+  public PathLocationManagerAssert generatedSources() {
+    return location(StandardLocation.SOURCE_OUTPUT);
+  }
+
+  /**
+   * Perform assertions on the generated source outputs for a given module name.
+   *
+   * @param moduleName the name of the module.
+   * @return the assertions to perform.
+   */
+  public PathLocationManagerAssert generatedSources(String moduleName) {
+    return location(StandardLocation.SOURCE_PATH, moduleName);
   }
 
   /**
@@ -202,9 +290,9 @@ public class CompilationAssertions<C extends Compilation>
    * @param <C>         the compilation type.
    * @return the compilation assertions to use.
    */
-  public static <C extends Compilation> CompilationAssertions<C> assertThat(
+  public static <C extends Compilation> CompilationAssert<C> assertThat(
       C compilation
   ) {
-    return new CompilationAssertions<>(compilation);
+    return new CompilationAssert<>(compilation);
   }
 }
