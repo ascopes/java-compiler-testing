@@ -15,7 +15,6 @@
  */
 
 module com.github.ascopes.jct {
-  requires transitive java.base;
   requires transitive java.compiler;
   requires java.management;
 
