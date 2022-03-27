@@ -36,16 +36,16 @@ import javax.tools.JavaFileManager.Location;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-public class PackageOrModuleOrientedPathLocationManager extends PackageOrientedPathLocationManager {
+public class ParentPathLocationManager extends PathLocationManager {
 
-  private final Map<String, PackageOrientedPathLocationManager> modules;
+  private final Map<String, PathLocationManager> modules;
 
   /**
    * Initialize the manager.
    *
    * @param location the location to represent.
    */
-  public PackageOrModuleOrientedPathLocationManager(Location location) {
+  public ParentPathLocationManager(Location location) {
     super(location);
     modules = new TreeMap<>();
   }
@@ -110,7 +110,7 @@ public class PackageOrModuleOrientedPathLocationManager extends PackageOrientedP
    * @param moduleName the module name.
    * @return the manager if found, or an empty optional if it does not exist.
    */
-  public Optional<PackageOrientedPathLocationManager> getModuleLocationManager(String moduleName) {
+  public Optional<PathLocationManager> getModuleLocationManager(String moduleName) {
     return Optional.ofNullable(modules.get(moduleName));
   }
 
@@ -121,7 +121,7 @@ public class PackageOrModuleOrientedPathLocationManager extends PackageOrientedP
    * @return the manager.
    * @throws IllegalArgumentException if this object is already for a module.
    */
-  public PackageOrientedPathLocationManager getOrCreateForModule(String moduleName) {
+  public PathLocationManager getOrCreateForModule(String moduleName) {
     return modules.computeIfAbsent(
         moduleName,
         this::buildLocationManagerForModule
@@ -147,7 +147,7 @@ public class PackageOrModuleOrientedPathLocationManager extends PackageOrientedP
     return modules
         .values()
         .stream()
-        .map(PackageOrientedPathLocationManager::getLocation)
+        .map(PathLocationManager::getLocation)
         .collect(Collectors.toSet());
   }
 
@@ -164,11 +164,11 @@ public class PackageOrModuleOrientedPathLocationManager extends PackageOrientedP
         + "}";
   }
 
-  private PackageOrientedPathLocationManager buildLocationManagerForModule(
+  private PathLocationManager buildLocationManagerForModule(
       String moduleName
   ) {
     var moduleLocation = new ModuleLocation(location, moduleName);
-    var moduleManager = new PackageOrientedPathLocationManager(moduleLocation);
+    var moduleManager = new PathLocationManager(moduleLocation);
 
     for (var root : roots) {
       moduleManager.addPath(root.resolve(moduleName));

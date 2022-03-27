@@ -18,11 +18,12 @@ module com.github.ascopes.jct {
   requires transitive java.compiler;
   requires java.management;
 
-  requires transitive ecj;
-  requires transitive jimfs;
+  requires ecj;
+  requires jimfs;
+  requires me.xdrop.fuzzywuzzy;
   requires transitive org.assertj.core;
   requires org.reflections;
-  requires transitive org.slf4j;
+  requires org.slf4j;
 
   exports com.github.ascopes.jct.assertions;
   exports com.github.ascopes.jct.compilations;

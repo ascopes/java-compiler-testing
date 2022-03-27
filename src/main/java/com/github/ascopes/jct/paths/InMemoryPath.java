@@ -39,6 +39,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.UUID;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
@@ -456,14 +457,48 @@ public class InMemoryPath implements Closeable {
    * <p>The underlying in-memory file system will be closed and destroyed when the returned
    * object is garbage collected, or when {@link #close()} is called on it manually.
    *
+   * @return the in-memory path.
+   * @see #createPath(String)
+   * @see #createPath(boolean)
+   * @see #createPath(String, boolean)
+   */
+  public static InMemoryPath createPath() {
+    return createPath(UUID.randomUUID().toString(), true);
+  }
+
+  /**
+   * Create a new in-memory path.
+   *
+   * <p>The underlying in-memory file system will be closed and destroyed when the returned
+   * object is garbage collected, or when {@link #close()} is called on it manually.
+   *
    * @param name a symbolic name to give the path. This must be a valid POSIX directory name.
    * @return the in-memory path.
-   * @throws IOException if an IO error occured.
-   * @see #create(String)
-   * @see #create(String, boolean)
+   * @see #createPath()
+   * @see #createPath(boolean)
+   * @see #createPath(String, boolean)
    */
-  public static InMemoryPath create(String name) throws IOException {
-    return create(name, true);
+  public static InMemoryPath createPath(String name) {
+    return createPath(name, true);
+  }
+
+  /**
+   * Create a new in-memory path.
+   *
+   * @param closeOnGarbageCollection if {@code true}, then the {@link #close()} operation will be
+   *                                 called on the underlying {@link java.nio.file.FileSystem} as
+   *                                 soon as the returned object from this method is garbage
+   *                                 collected. If {@code false}, then you must close the underlying
+   *                                 file system manually using the {@link #close()} method on the
+   *                                 returned object. Failing to do so will lead to resources being
+   *                                 leaked.
+   * @return the in-memory path.
+   * @see #createPath()
+   * @see #createPath(String)
+   * @see #createPath(String, boolean)
+   */
+  public static InMemoryPath createPath(boolean closeOnGarbageCollection) {
+    return createPath(UUID.randomUUID().toString(), closeOnGarbageCollection);
   }
 
   /**
@@ -479,9 +514,11 @@ public class InMemoryPath implements Closeable {
    *                                 returned object. Failing to do so will lead to resources being
    *                                 leaked.
    * @return the in-memory path.
-   * @see #create(String)
+   * @see #createPath(boolean)
+   * @see #createPath(String)
+   * @see #createPath(String, boolean)
    */
-  public static InMemoryPath create(String name, boolean closeOnGarbageCollection) {
+  public static InMemoryPath createPath(String name, boolean closeOnGarbageCollection) {
 
     var config = Configuration
         .builder(PathType.unix())

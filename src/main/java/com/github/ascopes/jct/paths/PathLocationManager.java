@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -49,7 +50,7 @@ import javax.tools.JavaFileObject.Kind;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-public class PackageOrientedPathLocationManager {
+public class PathLocationManager implements Iterable<Path> {
 
   private static final StringSlicer PACKAGE_SPLITTER = new StringSlicer(".");
 
@@ -66,12 +67,22 @@ public class PackageOrientedPathLocationManager {
    *
    * @param location the location to represent.
    */
-  public PackageOrientedPathLocationManager(Location location) {
+  public PathLocationManager(Location location) {
     this.location = Objects.requireNonNull(location);
     roots = new LinkedHashSet<>();
     classLoader = new Lazy<>(this::createClassLoaderUnsafe);
 
     inMemoryDirectories = new HashSet<>();
+  }
+
+  /**
+   * Iterate over the paths to assert on.
+   *
+   * @return the iterator.
+   */
+  @Override
+  public Iterator<Path> iterator() {
+    return roots.iterator();
   }
 
   /**
@@ -133,6 +144,33 @@ public class PackageOrientedPathLocationManager {
     }
 
     return false;
+  }
+
+  /**
+   * Get the full path for a given string path to a file by finding the first occurrence where the
+   * given path exists as a file.
+   *
+   * @param path the path to resolve.
+   * @return the first full path that ends with the given path that is an existing file, or an empty
+   *     optional if no results were found.
+   * @throws IllegalArgumentException if an absolute-style path is provided.
+   */
+  public Optional<? extends Path> findFile(String path) {
+    var relativePath = Path.of(path);
+
+    if (relativePath.isAbsolute()) {
+      throw new IllegalArgumentException("Cannot use absolute paths here");
+    }
+
+    for (var root : roots) {
+      var fullPath = root.resolve(path);
+
+      if (Files.exists(fullPath)) {
+        return Optional.of(fullPath);
+      }
+    }
+
+    return Optional.empty();
   }
 
   /**
