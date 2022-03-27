@@ -100,8 +100,6 @@ public final class StandardCompilation implements Compilation {
 
   /**
    * {@inheritDoc}
-   *
-   * @return
    */
   @Override
   public List<TraceDiagnostic<? extends JavaFileObject>> getDiagnostics() {
