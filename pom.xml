@@ -34,6 +34,8 @@
     <reflections.version>0.10.2</reflections.version>
     <slf4j.version>1.7.36</slf4j.version>
 
+    <!-- Maven plugins and depencencies -->
+    <checkstyle.version>10.0</checkstyle.version>
     <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
     <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
@@ -184,6 +186,14 @@
             <goals/>
           </execution>
         </executions>
+
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${checkstyle.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
 
       <plugin>

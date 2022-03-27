@@ -101,7 +101,7 @@ public class CompilationAssert<C extends Compilation>
    *
    * @return this object.
    */
-  public CompilationAssert<C> isAFailure() {
+  public CompilationAssert<C> isFailure() {
     if (actual.isFailure()) {
       return myself;
     }
