@@ -78,7 +78,7 @@ public class OptionalPathAssert extends AbstractAssert<OptionalPathAssert, Path>
 
         throw failure(
             "Path %s was not found in any of the roots for location %s.\n"
-            + "    I did however find some files with similar names in the same location:\n%s",
+            + "    Maybe you meant:\n%s",
             providedPath,
             manager.getLocation().getName(),
             names
