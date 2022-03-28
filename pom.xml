@@ -13,14 +13,14 @@
   <licenses>
     <license>
       <name>Apache License v2.0</name>
-      <url>${scm.url}/blob/${project.scm.tag}/LICENSE.txt</url>
+      <url>${project.scm-url}/blob/main/LICENSE.txt</url>
     </license>
   </licenses>
 
   <scm>
-    <url>scm:git:${scm.url}</url>
-    <connection>scm:git:${scm.url}</connection>
-    <developerConnection>scm:git:${scm.url}</developerConnection>
+    <url>scm:git:${project.scm-url}</url>
+    <connection>scm:git:${project.scm-url}</connection>
+    <developerConnection>scm:git:${project.scm-url}</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
@@ -54,7 +54,7 @@
 
     <!-- Project flags -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <scm.url>https://github.com/ascopes/java-compiler-testing</scm.url>
+    <project.scm-url>https://github.com/ascopes/java-compiler-testing</project.scm-url>
   </properties>
 
   <dependencyManagement>
