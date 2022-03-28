@@ -16,6 +16,8 @@
 
 package com.github.ascopes.jct.test;
 
+import static com.github.ascopes.jct.assertions.CompilationAssert.assertThat;
+
 import com.github.ascopes.jct.compilers.Compilers;
 import com.github.ascopes.jct.compilers.StandardCompiler;
 import com.github.ascopes.jct.compilers.StandardCompiler.LoggingMode;
@@ -29,14 +31,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static com.github.ascopes.jct.assertions.CompilationAssert.assertThat;
-
 @DisplayName("Smoke test")
 class SmokeTest {
 
   @MethodSource("compilers")
   @ParameterizedTest(name = "I can compile something for Java {1} using {0}")
-  void i_can_compile_something(StandardCompiler compiler, int version) throws Exception {
+  void compilationSucceeds(StandardCompiler compiler, int version) throws Exception {
 
     var sources = InMemoryPath
         .createPath()

@@ -24,6 +24,7 @@ open module com.github.ascopes.jct.testing {
   requires org.slf4j.simple;
 
   requires com.github.ascopes.jct;
+  requires org.junit.jupiter.params;
 
   exports com.github.ascopes.jct.test;
 }
