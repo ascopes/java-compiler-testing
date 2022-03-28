@@ -25,12 +25,11 @@
   </scm>
 
   <properties>
-    <aspectj.version>1.9.9</aspectj.version>
     <assertj.version>3.22.0</assertj.version>
     <ecj.version>3.29.0</ecj.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jimfs.version>1.2</jimfs.version>
-    <junit.version>5.8.2</junit.version>
+    <junit-jupiter.version>5.8.2</junit-jupiter.version>
     <reflections.version>0.10.2</reflections.version>
     <slf4j.version>1.7.36</slf4j.version>
 
@@ -57,40 +56,23 @@
     <project.scm-url>https://github.com/ascopes/java-compiler-testing</project.scm-url>
   </properties>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.junit</groupId>
-        <artifactId>junit-bom</artifactId>
-        <version>${junit.version}</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
     <dependency>
+      <!-- In-memory file system -->
       <groupId>com.google.jimfs</groupId>
       <artifactId>jimfs</artifactId>
       <version>${jimfs.version}</version>
     </dependency>
 
     <dependency>
+      <!-- Levenshtein Distance algorithm for matching similar strings -->
       <groupId>me.xdrop</groupId>
       <artifactId>fuzzywuzzy</artifactId>
       <version>${fuzzywuzzy.version}</version>
     </dependency>
 
     <dependency>
-      <!-- AspectJ compiler (optional dependency) -->
-      <groupId>org.aspectj</groupId>
-      <artifactId>aspectjtools</artifactId>
-      <version>${aspectj.version}</version>
-      <optional>true</optional>
-    </dependency>
-
-    <dependency>
+      <!-- Fluent assertions -->
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <version>${assertj.version}</version>
@@ -104,25 +86,29 @@
     </dependency>
 
     <dependency>
+      <!-- Common reflection facilities -->
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
       <version>${reflections.version}</version>
     </dependency>
 
     <dependency>
+      <!-- Logging interface -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
     </dependency>
 
     <!-- Testing dependencies -->
-
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
+      <version>${junit-jupiter.version}</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
+      <!-- Logging interface implementation -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
       <version>${slf4j.version}</version>
@@ -133,6 +119,7 @@
   <build>
     <plugins>
       <plugin>
+        <!-- Coverage tracing -->
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco-maven-plugin.version}</version>
@@ -155,6 +142,7 @@
       </plugin>
 
       <plugin>
+        <!-- Checking style of code matches the Google code style -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${maven-checkstyle-plugin.version}</version>
@@ -189,6 +177,7 @@
 
         <dependencies>
           <dependency>
+            <!-- Force the usage of checkstyle v10 rather than v8.28 -->
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
             <version>${checkstyle.version}</version>
@@ -197,6 +186,7 @@
       </plugin>
 
       <plugin>
+        <!-- Java compiler config -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin.version}</version>
@@ -208,6 +198,7 @@
       </plugin>
 
       <plugin>
+        <!-- JAR config -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>${maven-jar-plugin.version}</version>
@@ -227,6 +218,7 @@
       </plugin>
 
       <plugin>
+        <!-- Unit testing config -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
