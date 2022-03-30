@@ -17,7 +17,6 @@
 package com.github.ascopes.jct.paths;
 
 import com.github.ascopes.jct.intern.AsyncResourceCloser;
-import com.github.ascopes.jct.intern.DirectoryTreePrettyPrinter;
 import com.github.ascopes.jct.intern.StringUtils;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Feature;
@@ -418,16 +417,6 @@ public class InMemoryPath implements Closeable {
     );
 
     return tempPath;
-  }
-
-  /**
-   * Get a pretty-printed string showing the structure of this in-memory path.
-   *
-   * @return the string representation.
-   * @throws IOException if an IO error occurs.
-   */
-  public String pretty() throws IOException {
-    return DirectoryTreePrettyPrinter.prettyPrint(path);
   }
 
   /**
