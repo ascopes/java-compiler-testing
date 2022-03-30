@@ -25,6 +25,7 @@ import static org.assertj.core.api.BDDAssertions.thenCode;
 import static org.awaitility.Awaitility.await;
 
 import com.github.ascopes.jct.intern.AsyncResourceCloser;
+import com.github.ascopes.jct.test.helpers.ConcurrentRuns;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
@@ -106,7 +107,7 @@ class AsyncResourceCloserTest {
   }
 
   @DisplayName("Resources get closed if some fail")
-  @ValueSource(ints = {1, 2, 3, 5, 10, 100, 1000})
+  @ConcurrentRuns
   @ParameterizedTest(name = "{0} resource(s) get closed if some fail")
   void resourcesGetClosedIfSomeFail(int count) {
     // Given

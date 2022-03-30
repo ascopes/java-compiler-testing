@@ -24,11 +24,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.github.ascopes.jct.intern.Lazy;
+import com.github.ascopes.jct.test.helpers.ConcurrentRuns;
 import com.github.ascopes.jct.test.helpers.ThreadPool;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -80,7 +80,7 @@ class LazyTest {
   }
 
   @DisplayName("access() synchronizes correctly")
-  @MethodSource("repeatedConcurrentRuns")
+  @ConcurrentRuns
   @ParameterizedTest(name = "access() synchronizes correctly for {0} concurrent reads")
   @Timeout(10)
   void accessSynchronizesCorrectly(int concurrency) {
@@ -174,10 +174,6 @@ class LazyTest {
 
     // Then
     then(actual).isEqualTo("Lazy{data=<uninitialized>}");
-  }
-
-  static IntStream repeatedConcurrentRuns() {
-    return IntStream.of(2, 5, 10, 100, 1000, 10_000);
   }
 
   static Stream<Arguments> toStringInitializedCases() {
