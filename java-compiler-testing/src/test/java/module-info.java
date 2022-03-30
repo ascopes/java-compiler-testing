@@ -19,12 +19,13 @@ open module com.github.ascopes.jct.testing {
   requires java.compiler;
   requires java.management;
 
-  requires org.assertj.core;
-  requires org.junit.jupiter;
+  requires awaitility;
+  requires transitive net.bytebuddy;         // required for mockito to work with JPMS.
+  requires transitive net.bytebuddy.agent;   // required for mockito to work with JPMS.
+  requires transitive org.assertj.core;
+  requires transitive org.junit.jupiter;
+  requires org.mockito;
   requires org.slf4j.simple;
 
   requires com.github.ascopes.jct;
-  requires org.junit.jupiter.params;
-
-  exports com.github.ascopes.jct.test;
 }

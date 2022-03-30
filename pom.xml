@@ -31,10 +31,12 @@
 
   <properties>
     <assertj.version>3.22.0</assertj.version>
+    <awaitility.version>4.2.0</awaitility.version>
     <ecj.version>3.29.0</ecj.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jimfs.version>1.2</jimfs.version>
     <junit-jupiter.version>5.8.2</junit-jupiter.version>
+    <mockito.version>4.4.0</mockito.version>
     <reflections.version>0.10.2</reflections.version>
     <slf4j.version>1.7.36</slf4j.version>
 
@@ -85,10 +87,31 @@
       </dependency>
 
       <dependency>
+        <!-- Awaitable assertions -->
+        <groupId>org.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>${awaitility.version}</version>
+      </dependency>
+
+      <dependency>
         <!-- Eclipse Compiler for Java  -->
         <groupId>org.eclipse.jdt</groupId>
         <artifactId>ecj</artifactId>
         <version>${ecj.version}</version>
+      </dependency>
+
+      <dependency>
+        <!-- Unit testing -->
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${junit-jupiter.version}</version>
+      </dependency>
+
+      <dependency>
+        <!-- Mocking -->
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-inline</artifactId>
+        <version>${mockito.version}</version>
       </dependency>
 
       <dependency>
@@ -105,20 +128,11 @@
         <version>${slf4j.version}</version>
       </dependency>
 
-      <!-- Testing dependencies -->
-      <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter</artifactId>
-        <version>${junit-jupiter.version}</version>
-        <scope>test</scope>
-      </dependency>
-
       <dependency>
         <!-- Logging interface implementation -->
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
         <version>${slf4j.version}</version>
-        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

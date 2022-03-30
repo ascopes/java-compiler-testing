@@ -25,6 +25,7 @@ import java.util.Objects;
  * @since 0.0.1
  */
 public final class StringUtils {
+  private static final String NULL = "null";
 
   private StringUtils() {
     throw new UnsupportedOperationException("static-only class");
@@ -41,10 +42,6 @@ public final class StringUtils {
    * @return the string representation, surrounded by double quotes.
    */
   public static String quoted(Object object) {
-    if (object == null) {
-      return "null";
-    }
-
     var builder = new StringBuilder();
     appendQuoted(builder, object);
     return builder.toString();
@@ -58,7 +55,7 @@ public final class StringUtils {
    */
   public static String quotedIterable(Iterable<?> iterable) {
     if (iterable == null) {
-      return "null";
+      return NULL;
     }
 
     var builder = new StringBuilder("[");
@@ -78,7 +75,7 @@ public final class StringUtils {
 
   private static void appendQuoted(StringBuilder builder, Object object) {
     if (object == null) {
-      builder.append("null");
+      builder.append(NULL);
       return;
     }
 
