@@ -25,6 +25,7 @@ open module com.github.ascopes.jct.testing {
   requires transitive org.assertj.core;
   requires transitive org.junit.jupiter;
   requires org.mockito;
+  requires org.mockito.junit.jupiter;
   requires org.slf4j.simple;
 
   requires com.github.ascopes.jct;
