@@ -20,15 +20,20 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
- * A writer that also buffers the content being written within an in-memory buffer.
+ * A writer that wraps an output stream and also writes any content to an in-memory buffer.
+ *
+ * <p>This is threadsafe.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 public class TeeWriter extends Writer {
+  private static final Charset CHARSET = StandardCharsets.UTF_8;
 
   private final Writer writer;
   private final StringBuffer buffer;
@@ -36,10 +41,12 @@ public class TeeWriter extends Writer {
   /**
    * Initialize this writer by wrapping an output stream in an internally-held writer.
    *
+   * <p>Note that this will not buffer the output stream itself. That is up to you to do.
+   *
    * @param outputStream the output stream to delegate to.
    */
   public TeeWriter(OutputStream outputStream) {
-    this(new OutputStreamWriter(outputStream));
+    this(new OutputStreamWriter(outputStream, CHARSET));
   }
 
   /**

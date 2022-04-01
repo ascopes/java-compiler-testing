@@ -117,22 +117,6 @@ public abstract class ForwardingDiagnostic<S> implements Diagnostic<S> {
    * {@inheritDoc}
    */
   @Override
-  public boolean equals(Object other) {
-    return other instanceof Diagnostic<?> && original.equals(other);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public int hashCode() {
-    return original.hashCode();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public String toString() {
     return "ForwardingDiagnostic{original=" + original + "}";
   }
