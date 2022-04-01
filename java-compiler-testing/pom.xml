@@ -12,6 +12,7 @@
   </parent>
 
   <artifactId>java-compiler-testing</artifactId>
+  <packaging>bundle</packaging>
 
   <dependencies>
     <dependency>
@@ -78,6 +79,40 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <!--
+            Use the existing MANIFEST.MF from the OSGi plugin, otherwise
+            any default MANIFEST entries like the use of Sealed will just be
+            discarded immediately when maven-bundle-plugin runs.
+            -->
+            <manifestFile>${build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+
+        <configuration>
+          <instructions>
+            <Export-Package>
+              com.github.ascopes.jct,
+              com.github.ascopes.jct.assertions,
+              com.github.ascopes.jct.compilations,
+              com.github.ascopes.jct.compilers,
+              com.github.ascopes.jct.diagnostics,
+              com.github.ascopes.jct.paths
+            </Export-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>

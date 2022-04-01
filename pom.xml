@@ -15,12 +15,24 @@
 
   <inceptionYear>2022</inceptionYear>
 
+  <contributors>
+    <contributor>
+      <name>Ashley Scopes</name>
+      <url>${project.organization.url}</url>
+    </contributor>
+  </contributors>
+
   <licenses>
     <license>
       <name>Apache License v2.0</name>
       <url>${project.scm-url}/blob/main/LICENSE.txt</url>
     </license>
   </licenses>
+
+  <organization>
+    <name>Ashley Scopes (GitHub)</name>
+    <url>${project.organization.url}</url>
+  </organization>
 
   <scm>
     <url>scm:git:${project.scm-url}</url>
@@ -42,6 +54,7 @@
 
     <!-- Maven plugins and depencencies -->
     <checkstyle.version>10.0</checkstyle.version>
+    <maven-bundle-plugin.version>5.1.4</maven-bundle-plugin.version>
     <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
     <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
@@ -60,7 +73,9 @@
 
     <!-- Project flags -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.scm-url>https://github.com/ascopes/java-compiler-testing</project.scm-url>
+
+    <project.organization.url>https://github.com/ascopes</project.organization.url>
+    <project.scm-url>${project.organization.url}/java-compiler-testing</project.scm-url>
   </properties>
 
   <dependencyManagement>
@@ -166,6 +181,12 @@
         </plugin>
 
         <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>${maven-bundle-plugin.version}</version>
+        </plugin>
+
+        <plugin>
           <!-- Java compiler config -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -178,7 +199,6 @@
         </plugin>
 
         <plugin>
-          <!-- JAR config -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>${maven-jar-plugin.version}</version>
