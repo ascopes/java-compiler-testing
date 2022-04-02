@@ -178,8 +178,8 @@ public class ParentPathLocationManager extends PathLocationManager {
   }
 
   private boolean isPathCapableOfHoldingModules(Path path) {
+    // XXX(ascopes): do we want to consider output locations as modules?
     return (location.isModuleOrientedLocation() || location.isOutputLocation())
-        // Check if it is an instance of InMemoryPath separately as to not confuse Jimfs internally.
-        && (path instanceof InMemoryPath || Files.isDirectory(path));
+        && Files.isDirectory(path);
   }
 }
