@@ -169,6 +169,8 @@ public class PathJavaFileObject implements JavaFileObject {
    */
   @Override
   public InputStream openInputStream() throws IOException {
+    // XXX(ascopes): Can we skip buffering if we are a Jimfs path?
+    // Should we benchmark this? Do we even care?
     return new BufferedInputStream(Files.newInputStream(path));
   }
 
@@ -236,6 +238,7 @@ public class PathJavaFileObject implements JavaFileObject {
     try {
       return Files.getLastModifiedTime(path).toMillis();
     } catch (IOException ex) {
+      // TODO(ascopes): log this.
       return 0L;
     }
   }
