@@ -122,6 +122,7 @@ public class ParentPathLocationManager extends PathLocationManager {
    * @throws IllegalArgumentException if this object is already for a module.
    */
   public PathLocationManager getOrCreateForModule(String moduleName) {
+    // TODO(ascopes): Name this method consistently ^^^
     return modules.computeIfAbsent(
         moduleName,
         this::buildLocationManagerForModule
