@@ -41,83 +41,53 @@ public abstract class ForwardingDiagnostic<S> implements Diagnostic<S> {
     this.original = Objects.requireNonNull(original);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public Kind getKind() {
     return original.getKind();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public S getSource() {
     return original.getSource();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public long getPosition() {
     return original.getPosition();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public long getStartPosition() {
     return original.getStartPosition();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public long getEndPosition() {
     return original.getEndPosition();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public long getLineNumber() {
     return original.getLineNumber();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public long getColumnNumber() {
     return original.getColumnNumber();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public String getCode() {
     return original.getCode();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public String getMessage(Locale locale) {
     return original.getMessage(locale);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public String toString() {
-    return "ForwardingDiagnostic{original=" + original + "}";
+    return original.toString();
   }
 }
