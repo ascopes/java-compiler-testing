@@ -419,9 +419,6 @@ public class InMemoryPath implements Closeable {
     return tempPath;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public String toString() {
     return "InMemoryPath{path=" + StringUtils.quoted(path.toUri()) + "}";

@@ -51,9 +51,6 @@ public class LoggingTracingDiagnosticsListener<S extends JavaFileObject>
     this.dumpStackTraces = dumpStackTraces;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   protected TraceDiagnostic<S> handleDiagnostic(Diagnostic<? extends S> diagnostic) {
     var wrappedDiagnostic = super.handleDiagnostic(diagnostic);

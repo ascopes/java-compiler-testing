@@ -121,9 +121,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     diagnosticLoggingMode = LoggingMode.ENABLED;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompilation compile() throws IOException {
 
@@ -195,9 +192,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler configure(CompilerConfigurer<StandardCompiler> configurer) {
     LOGGER.debug("configure({})", configurer);
@@ -205,9 +199,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler verbose(boolean enabled) {
     LOGGER.trace("verbose {} -> {}", verbose, enabled);
@@ -215,9 +206,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler previewFeatures(boolean enabled) {
     LOGGER.trace("previewFeatures {} -> {}", previewFeatures, enabled);
@@ -225,9 +213,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler warnings(boolean enabled) {
     LOGGER.trace("warnings {} -> {}", warnings, enabled);
@@ -235,9 +220,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler deprecationWarnings(boolean enabled) {
     LOGGER.trace("deprecationWarnings {} -> {}", deprecationWarnings, enabled);
@@ -245,9 +227,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler failOnWarnings(boolean enabled) {
     LOGGER.trace("failOnWarnings {} -> {}", failOnWarnings, enabled);
@@ -255,9 +234,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler addAnnotationProcessorOptions(Iterable<String> options) {
     LOGGER.trace("annotationProcessorOptions += {}", options);
@@ -267,9 +243,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler addAnnotationProcessors(Iterable<? extends Processor> processors) {
     LOGGER.trace("annotationProcessors += {}", processors);
@@ -279,9 +252,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler addCompilerOptions(Iterable<String> options) {
     LOGGER.trace("compilerOptions += {}", options);
@@ -291,9 +261,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler releaseVersion(String version) {
     LOGGER.trace("releaseVersion {} -> {}", releaseVersion, version);
@@ -305,9 +272,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler sourceVersion(String version) {
     LOGGER.trace("sourceVersion {} -> {}", targetVersion, version);
@@ -317,9 +281,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler targetVersion(String version) {
     LOGGER.trace("targetVersion {} -> {}", targetVersion, version);
@@ -329,9 +290,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler includeCurrentClassPath(boolean enabled) {
     LOGGER.trace("includeCurrentClassPath {} -> {}", includeCurrentClassPath, enabled);
@@ -339,9 +297,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler includeCurrentPlatformClassPath(boolean enabled) {
     LOGGER.trace(
@@ -353,9 +308,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler addPath(Location location, Path path) {
     LOGGER.trace("{}.paths += {}", location.getName(), path);
@@ -363,9 +315,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler addPath(Location location, InMemoryPath path) {
     LOGGER.trace("{}.paths += {}", location.getName(), path);
@@ -373,9 +322,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return this;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public StandardCompiler addPaths(Location location, Collection<? extends Path> paths) {
     LOGGER.trace("{}.paths += {}", location.getName(), paths);

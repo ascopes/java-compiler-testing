@@ -99,74 +99,36 @@ public class PathJavaFileObject implements JavaFileObject {
     return path;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the kind.
-   */
   @Override
   public Kind getKind() {
     return kind;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param simpleName the simple name.
-   * @param kind       the kind.
-   * @return {@code true} if the name is compatible, {@code false} otherwise.
-   */
   @Override
   public boolean isNameCompatible(String simpleName, Kind kind) {
     return path.getFileName().toString().endsWith(simpleName + kind.extension);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return {@code null}.
-   */
   @Override
   public NestingKind getNestingKind() {
     return null;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return {@code null}.
-   */
   @Override
   public Modifier getAccessLevel() {
     return null;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the URI.
-   */
   @Override
   public URI toUri() {
     return uri;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the name of the object.
-   */
   @Override
   public String getName() {
     return name;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the input stream.
-   * @throws IOException if an IO error occurs.
-   */
   @Override
   public InputStream openInputStream() throws IOException {
     // XXX(ascopes): Can we skip buffering if we are a Jimfs path?
@@ -174,12 +136,6 @@ public class PathJavaFileObject implements JavaFileObject {
     return new BufferedInputStream(Files.newInputStream(path));
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the output stream.
-   * @throws IOException if an IO error occurs.
-   */
   @Override
   public OutputStream openOutputStream() throws IOException {
     // Ensure parent directories exist first.
@@ -187,28 +143,11 @@ public class PathJavaFileObject implements JavaFileObject {
     return new BufferedOutputStream(Files.newOutputStream(path));
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param ignoreEncodingErrors {@code true} to ignore encoding errors, {@code false} to report
-   *                             them using exceptions.
-   * @return the reader.
-   * @throws IOException if the reader cannot be opened.
-   */
   @Override
   public Reader openReader(boolean ignoreEncodingErrors) throws IOException {
     return new InputStreamReader(openInputStream(), decoder(ignoreEncodingErrors));
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param ignoreEncodingErrors {@code true} to ignore encoding errors, {@code false} to report
-   *                             them using exceptions.
-   * @return the text content of the file.
-   * @throws IOException if the reader cannot be opened, or if an encoding error occurs when {@code
-   *                     ignoreEncodingErrors} is set to {@code false}.
-   */
   @Override
   public CharSequence getCharContent(boolean ignoreEncodingErrors) throws IOException {
     return decoder(ignoreEncodingErrors)
@@ -216,23 +155,11 @@ public class PathJavaFileObject implements JavaFileObject {
         .toString();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the writer.
-   * @throws IOException if the writer cannot be opened.
-   */
   @Override
   public Writer openWriter() throws IOException {
     return new OutputStreamWriter(openOutputStream(), encoder());
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the UNIX timestamp of the last-modified time of the file in milliseconds, or {@code 0}
-   *     if unavailable or not supported.
-   */
   @Override
   public long getLastModified() {
     try {
@@ -243,12 +170,6 @@ public class PathJavaFileObject implements JavaFileObject {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return {@code true} if the file was successfully deleted, or {@code false} if the file failed
-   *     to be deleted or was not found on the file system.
-   */
   @Override
   public boolean delete() {
     try {
@@ -258,11 +179,6 @@ public class PathJavaFileObject implements JavaFileObject {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the string representation of this object.
-   */
   @Override
   public String toString() {
     return "PathJavaFileObject{"

@@ -75,44 +75,22 @@ public class ModuleLocation implements Location {
     return moduleName;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the name of the location.
-   */
   @Override
   public String getName() {
     return name;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return {@code true} if an output location, {@code false} if not.
-   */
   @Override
   public boolean isOutputLocation() {
     return parent.isOutputLocation();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return {@code false} always.
-   */
   @Override
   public boolean isModuleOrientedLocation() {
     // Module locations cannot be module-oriented, but their parents can be.
     return false;
   }
 
-  /**
-   * Determine if this object equals another object.
-   *
-   * @param other the other object to compare to.
-   * @return {@code true} if the other object is a {@link ModuleLocation} with an equal {@link
-   *     #getParent()} and {@link #getModuleName()} to this object. Otherwise, {@code false}.
-   */
   @Override
   public boolean equals(Object other) {
     if (!(other instanceof ModuleLocation)) {
@@ -125,21 +103,11 @@ public class ModuleLocation implements Location {
         && moduleName.equals(that.moduleName);
   }
 
-  /**
-   * Determine the hash code for this object.
-   *
-   * @return the hash code of this object.
-   */
   @Override
   public int hashCode() {
     return Objects.hash(parent, moduleName);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the string representation of this object.
-   */
   @Override
   public String toString() {
     return "ModuleLocation{"

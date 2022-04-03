@@ -25,6 +25,7 @@ import java.util.Objects;
  * @since 0.0.1
  */
 public final class StringUtils {
+
   private static final String NULL = "null";
 
   private StringUtils() {

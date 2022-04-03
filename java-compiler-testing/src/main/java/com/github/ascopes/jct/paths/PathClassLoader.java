@@ -100,11 +100,6 @@ public class PathClassLoader extends ClassLoader {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return a string representation of this object.
-   */
   @Override
   public String toString() {
     return "PathClassLoader{"
@@ -112,13 +107,6 @@ public class PathClassLoader extends ClassLoader {
         + "}";
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param name the class name to load.
-   * @return the loaded class.
-   * @throws ClassNotFoundException if the class is not found.
-   */
   @Override
   protected Class<?> findClass(String name) throws ClassNotFoundException {
     var path = Path.of(name.replace('.', '/') + ".class");
