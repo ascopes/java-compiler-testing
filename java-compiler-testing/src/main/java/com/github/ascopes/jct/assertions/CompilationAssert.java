@@ -293,9 +293,7 @@ public class CompilationAssert<C extends Compilation>
    * @param <C>         the compilation type.
    * @return the compilation assertions to use.
    */
-  public static <C extends Compilation> CompilationAssert<C> assertThat(
-      C compilation
-  ) {
+  public static <C extends Compilation> CompilationAssert<C> assertThat(C compilation) {
     return new CompilationAssert<>(compilation);
   }
 }

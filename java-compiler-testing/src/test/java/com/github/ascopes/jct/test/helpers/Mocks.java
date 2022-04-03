@@ -16,6 +16,9 @@
 
 package com.github.ascopes.jct.test.helpers;
 
+import static org.mockito.Answers.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.withSettings;
+
 import org.mockito.Mockito;
 
 /**
@@ -34,14 +37,23 @@ public final class Mocks {
   }
 
   public static <T> T mock(TypeRef<T> typeRef) {
-    return Mockito.mock((typeRef.getType()));
+    return mock(typeRef.getType());
   }
 
   public static <T> T stub(Class<T> type) {
-    return Mockito.mock(type, Mockito.withSettings().stubOnly());
+    return Mockito.mock(type, withSettings().stubOnly());
   }
 
   public static <T> T stub(TypeRef<T> typeRef) {
-    return Mockito.mock(typeRef.getType(), Mockito.withSettings().stubOnly());
+    return stub(typeRef.getType());
+  }
+
+  public static <T> T deepStub(Class<T> type) {
+    return Mockito.mock(type, withSettings().stubOnly().defaultAnswer(RETURNS_DEEP_STUBS)
+    );
+  }
+
+  public static <T> T deepStub(TypeRef<T> typeRef) {
+    return deepStub(typeRef.getType());
   }
 }

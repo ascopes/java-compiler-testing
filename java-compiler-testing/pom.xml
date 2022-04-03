@@ -94,7 +94,7 @@
             any default MANIFEST entries like the use of Sealed will just be
             discarded immediately when maven-bundle-plugin runs.
             -->
-            <manifestFile>${build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
           </archive>
         </configuration>
       </plugin>

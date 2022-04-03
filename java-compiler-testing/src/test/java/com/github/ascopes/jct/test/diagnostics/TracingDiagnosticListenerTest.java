@@ -16,14 +16,15 @@
 
 package com.github.ascopes.jct.test.diagnostics;
 
-import com.github.ascopes.jct.diagnostics.TracingDiagnosticsListener;
+import com.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import org.junit.jupiter.api.DisplayName;
 
 /**
- * {@link TracingDiagnosticsListener} tests.
+ * {@link TracingDiagnosticListener} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("TracingDiagnosticListener tests")
-public class TracingDiagnosticListenerTest {
+@DisplayName("TracingDiagnosticListener test")
+class TracingDiagnosticListenerTest {
+
 }
