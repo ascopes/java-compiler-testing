@@ -52,14 +52,14 @@ public class TraceDiagnostic<S> extends ForwardingDiagnostic<S> {
       Instant timestamp,
       long threadId,
       String threadName,
-      StackTraceElement[] stackTrace,
+      List<StackTraceElement> stackTrace,
       Diagnostic<? extends S> original
   ) {
     super(original);
     this.timestamp = Objects.requireNonNull(timestamp);
     this.threadId = threadId;
     this.threadName = threadName;
-    this.stackTrace = List.of(Objects.requireNonNull(stackTrace));
+    this.stackTrace = Objects.requireNonNull(stackTrace);
   }
 
   /**
@@ -96,15 +96,5 @@ public class TraceDiagnostic<S> extends ForwardingDiagnostic<S> {
    */
   public List<StackTraceElement> getStackTrace() {
     return stackTrace;
-  }
-
-  @Override
-  public String toString() {
-    return String.format(
-        "%s [%s]: %s",
-        getKind(),
-        getCode(),
-        getMessage(Locale.ROOT)
-    );
   }
 }

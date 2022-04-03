@@ -218,7 +218,7 @@ class ForwardingDiagnosticTest {
     var actual = forwarding.toString();
 
     // Then
-    assertThat(actual).isEqualTo("ForwardingDiagnostic{original=%s}", expected);
+    assertThat(actual).isEqualTo(expected);
     // We cannot verify the use of toString with Mockito.
   }
 
