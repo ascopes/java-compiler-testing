@@ -153,7 +153,7 @@ public class PathJavaFileManager implements JavaFileManager {
    * @param relativeName the file name.
    * @param sibling      any sibling file if one exists, or {@code null} otherwise.
    * @return the file to use for output, or {@code null} if no paths have been registered for the
-   * location.
+   *     location.
    * @throws IllegalArgumentException if the location is not known to this manager, or if the
    *                                  location is not an output location.
    * @throws IllegalStateException    if the file manager is already closed.
@@ -210,7 +210,7 @@ public class PathJavaFileManager implements JavaFileManager {
    * @param kind      the kind of the file.
    * @param sibling   any sibling file if one exists, or {@code null} otherwise.
    * @return the file to use for output, or {@code null} if no paths have been registered for the
-   * location.
+   *     location.
    * @throws IllegalArgumentException if the location is not known to this manager, or if the
    *                                  location is not an output location.
    * @throws IllegalStateException    if the file manager is already closed.
