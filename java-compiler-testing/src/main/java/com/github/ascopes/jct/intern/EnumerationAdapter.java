@@ -42,23 +42,11 @@ public class EnumerationAdapter<T> implements Enumeration<T> {
     this.iterator = Objects.requireNonNull(iterator);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return {@code true} if more elements can be yielded, or {@code false} if the enumerator is
-   *     exhausted.
-   */
   @Override
   public boolean hasMoreElements() {
     return iterator.hasNext();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the next element.
-   * @throws java.util.NoSuchElementException if the enumerator has been exhausted.
-   */
   @Override
   public T nextElement() {
     return iterator.next();

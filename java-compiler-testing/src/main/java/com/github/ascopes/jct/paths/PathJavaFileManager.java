@@ -64,16 +64,6 @@ public class PathJavaFileManager implements JavaFileManager {
     closed = true;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param location   the location to look up.
-   * @param fileObject the file object to check for.
-   * @return {@code true} if the location contains the file object, or {@code false} if it does not.
-   *     Unregistered locations will always return {@code false}.
-   * @throws IllegalStateException if the file manager is closed.
-   * @throws IOException           if an IO error occurs.
-   */
   @Override
   public boolean contains(Location location, FileObject fileObject)
       throws IllegalStateException, IOException {
@@ -96,16 +86,6 @@ public class PathJavaFileManager implements JavaFileManager {
     assertOpen();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param location the location to get the classloader for.
-   * @return the classloader.
-   * @throws IllegalArgumentException if the location is a module-oriented location.
-   * @throws IllegalStateException    if the file manager is already closed.
-   * @throws SecurityException        if the classloader cannot be created in the current security
-   *                                  context.
-   */
   @Override
   public ClassLoader getClassLoader(Location location) {
     return repository
@@ -173,7 +153,7 @@ public class PathJavaFileManager implements JavaFileManager {
    * @param relativeName the file name.
    * @param sibling      any sibling file if one exists, or {@code null} otherwise.
    * @return the file to use for output, or {@code null} if no paths have been registered for the
-   *     location.
+   * location.
    * @throws IllegalArgumentException if the location is not known to this manager, or if the
    *                                  location is not an output location.
    * @throws IllegalStateException    if the file manager is already closed.
@@ -230,7 +210,7 @@ public class PathJavaFileManager implements JavaFileManager {
    * @param kind      the kind of the file.
    * @param sibling   any sibling file if one exists, or {@code null} otherwise.
    * @return the file to use for output, or {@code null} if no paths have been registered for the
-   *     location.
+   * location.
    * @throws IllegalArgumentException if the location is not known to this manager, or if the
    *                                  location is not an output location.
    * @throws IllegalStateException    if the file manager is already closed.
@@ -252,17 +232,6 @@ public class PathJavaFileManager implements JavaFileManager {
         .orElse(null);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param location   the location that the module is located in.
-   * @param moduleName the module name to use.
-   * @return the module location.
-   * @throws IllegalArgumentException if the given location is neither module-oriented nor an output
-   *                                  location, or if the location is not known to this manager.
-   * @throws IllegalStateException    if the file manager is already closed.
-   * @throws IOException              if an IO error occurs.
-   */
   @Override
   public Location getLocationForModule(Location location, String moduleName) throws IOException {
     assertOpen();
@@ -272,17 +241,6 @@ public class PathJavaFileManager implements JavaFileManager {
     return new ModuleLocation(location, moduleName);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param location   the location that the module is located in.
-   * @param fileObject the file object that is in the module.
-   * @return the module location.
-   * @throws IllegalArgumentException if the given location is neither module-oriented nor an output
-   *                                  location, or if the location is not known to this manager.
-   * @throws IllegalStateException    if the file manager is already closed.
-   * @throws IOException              if an IO error occurs.
-   */
   @Override
   public Location getLocationForModule(Location location, JavaFileObject fileObject)
       throws IOException {
@@ -303,28 +261,12 @@ public class PathJavaFileManager implements JavaFileManager {
         ));
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param current   the current argument.
-   * @param remaining the remaining arguments.
-   * @return {@code true}, always.
-   * @throws IllegalArgumentException if the option is used incorrectly.
-   * @throws IllegalStateException    if the file manager is already closed.
-   */
   @Override
   public boolean handleOption(String current, Iterator<String> remaining) {
     assertOpen();
     return false;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param location the location.
-   * @return {@code true} if the location has at least one path associated with it, or {@code false}
-   *     if no paths are associated.
-   */
   @Override
   public boolean hasLocation(Location location) {
     return repository
@@ -333,15 +275,6 @@ public class PathJavaFileManager implements JavaFileManager {
   }
 
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param location the location of the file.
-   * @param file     the file.
-   * @return the inferred binary name, or {@code null} if it was unable to be inferred.
-   * @throws IllegalArgumentException if the location is a module-oriented location.
-   * @throws IllegalStateException    if the file manager is already closed.
-   */
   @Override
   public String inferBinaryName(Location location, JavaFileObject file) {
     return repository
@@ -350,15 +283,6 @@ public class PathJavaFileManager implements JavaFileManager {
         .orElse(null);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param location the location to determine.
-   * @return the name of the module.
-   * @throws IllegalArgumentException if the location is not known to this file manager.
-   * @throws IllegalStateException    if the file manager is already closed.
-   * @throws IOException              if an IO error occurred.
-   */
   @Override
   public String inferModuleName(Location location) throws IOException {
     assertKnownLocation(location);
@@ -367,13 +291,6 @@ public class PathJavaFileManager implements JavaFileManager {
     return ((ModuleLocation) location).getModuleName();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param a the first file.
-   * @param b the second file.
-   * @return {@code true} if both files are the same, or {@code false} if they are different.
-   */
   @Override
   public boolean isSameFile(FileObject a, FileObject b) {
     assertPathJavaFileObject(a);
@@ -382,30 +299,11 @@ public class PathJavaFileManager implements JavaFileManager {
     return Objects.equals(a.toUri(), b.toUri());
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param option the option.
-   * @return {@code -1}, always.
-   */
   @Override
   public int isSupportedOption(String option) {
     return -1;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param location    the location to list.
-   * @param packageName the package name to list within.
-   * @param kinds       the set of kinds to return files matching.
-   * @param recurse     {@code true} to recursively walk the package, or {@code false} to consider
-   *                    the specific package only.
-   * @return an iterable of file objects.
-   * @throws IllegalArgumentException if the location is a module-oriented location.
-   * @throws IllegalStateException    if the file manager is already closed.
-   * @throws IOException              if an IO error occurs.
-   */
   @Override
   public Iterable<JavaFileObject> list(
       Location location,
@@ -420,16 +318,6 @@ public class PathJavaFileManager implements JavaFileManager {
         : Collections.emptyList();
   }
 
-  /**
-   * Get locations for modules in the given module-oriented or output location.
-   *
-   * @param location the location to get modules for.
-   * @return the iterable of sets of locations.
-   * @throws IOException              if an IO error occurs.
-   * @throws IllegalArgumentException if the location is not module-oriented nor an output
-   *                                  location.
-   * @throws IllegalStateException    if the file manager is already closed.
-   */
   @Override
   public Iterable<Set<Location>> listLocationsForModules(Location location) throws IOException {
 
@@ -444,11 +332,6 @@ public class PathJavaFileManager implements JavaFileManager {
         .orElseGet(Collections::emptyList);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return a string representation of this object.
-   */
   @Override
   public String toString() {
     return "PathJavaFileManager{}";

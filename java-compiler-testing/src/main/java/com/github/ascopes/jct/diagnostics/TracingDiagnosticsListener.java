@@ -55,9 +55,6 @@ public class TracingDiagnosticsListener<S> implements DiagnosticListener<S> {
     return List.copyOf(diagnostics);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public final void report(Diagnostic<? extends S> diagnostic) {
     diagnostics.add(handleDiagnostic(diagnostic));
@@ -68,7 +65,7 @@ public class TracingDiagnosticsListener<S> implements DiagnosticListener<S> {
     var thisThread = Thread.currentThread();
     var threadId = thisThread.getId();
     var threadName = thisThread.getName();
-    var stackTrace = thisThread.getStackTrace();
+    var stackTrace = List.of(thisThread.getStackTrace());
     return new TraceDiagnostic<>(now, threadId, threadName, stackTrace, diagnostic);
   }
 }

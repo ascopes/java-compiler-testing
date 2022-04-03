@@ -151,11 +151,6 @@ public class ParentPathLocationManager extends PathLocationManager {
         .collect(Collectors.toSet());
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return a string representation of this object.
-   */
   @Override
   public String toString() {
     return "PackageOrModuleOrientedPathLocationManager{"

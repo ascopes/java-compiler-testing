@@ -92,11 +92,6 @@ public class LoggingJavaFileManagerProxy implements InvocationHandler {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return the string representation of this proxy object.
-   */
   @Override
   public String toString() {
     return "TracingJavaFileManagerProxy{"

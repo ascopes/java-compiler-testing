@@ -44,5 +44,4 @@ public final class Mocks {
   public static <T> T stub(TypeRef<T> typeRef) {
     return Mockito.mock(typeRef.getType(), Mockito.withSettings().stubOnly());
   }
-
 }

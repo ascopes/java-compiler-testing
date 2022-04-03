@@ -66,49 +66,31 @@ public final class StandardCompilation implements Compilation {
     this.repository = Objects.requireNonNull(repository);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public boolean isWarningsAsErrors() {
     return warningsAsErrors;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public boolean isSuccessful() {
     return success;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public List<String> getOutputLines() {
     return outputLines;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public Set<? extends JavaFileObject> getCompilationUnits() {
     return compilationUnits;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public List<TraceDiagnostic<? extends JavaFileObject>> getDiagnostics() {
     return diagnostics;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public PathLocationRepository getFileRepository() {
     return repository;

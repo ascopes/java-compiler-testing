@@ -81,11 +81,6 @@ public class Lazy<T> {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return a string representation of this object.
-   */
   @Override
   public String toString() {
     var builder = new StringBuilder("Lazy{data=");

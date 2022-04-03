@@ -68,11 +68,6 @@ public class StringSlicer {
     return splitToArrayList(text).toArray(String[]::new);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return a string representation of this object.
-   */
   @Override
   public String toString() {
     return "StringSlicer{"
