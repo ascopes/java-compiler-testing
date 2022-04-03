@@ -19,9 +19,13 @@ package com.github.ascopes.jct.diagnostics;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Function;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticListener;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 /**
  * A diagnostics listener that wraps all diagnostics in additional invocation information, and then
@@ -31,18 +35,32 @@ import javax.tools.DiagnosticListener;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class TracingDiagnosticsListener<S> implements DiagnosticListener<S> {
 
   private final Clock clock;
   private final ConcurrentLinkedQueue<TraceDiagnostic<S>> diagnostics;
+  private final Function<Thread, List<StackTraceElement>> stackTraceSupplier;
+
+  /**
+   * Initialize this listener.
+   */
+  public TracingDiagnosticsListener() {
+    this(Clock.systemDefaultZone(), Thread::getStackTrace);
+  }
 
   /**
    * Initialize this listener.
    *
-   * @param clock the clock to use for getting the current time.
+   * @param clock              the clock to use for getting the current time.
+   * @param stackTraceSupplier a function that gets the stacktrace to use from a given thread.
    */
-  public TracingDiagnosticsListener(Clock clock) {
-    this.clock = clock;
+  public TracingDiagnosticsListener(
+      Clock clock,
+      Function<Thread, StackTraceElement[]> stackTraceSupplier
+  ) {
+    this.clock = Objects.requireNonNull(clock);
+    this.stackTraceSupplier = Objects.requireNonNull(stackTraceSupplier).andThen(List::of);
     diagnostics = new ConcurrentLinkedQueue<>();
   }
 
@@ -65,7 +83,7 @@ public class TracingDiagnosticsListener<S> implements DiagnosticListener<S> {
     var thisThread = Thread.currentThread();
     var threadId = thisThread.getId();
     var threadName = thisThread.getName();
-    var stackTrace = List.of(thisThread.getStackTrace());
+    var stackTrace = stackTraceSupplier.apply(thisThread);
     return new TraceDiagnostic<>(now, threadId, threadName, stackTrace, diagnostic);
   }
 }

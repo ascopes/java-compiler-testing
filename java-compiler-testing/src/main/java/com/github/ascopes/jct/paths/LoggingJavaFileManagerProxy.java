@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.tools.JavaFileManager;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +39,7 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class LoggingJavaFileManagerProxy implements InvocationHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(LoggingJavaFileManagerProxy.class);

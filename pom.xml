@@ -42,6 +42,7 @@
   </scm>
 
   <properties>
+    <apiguardian.version>1.1.2</apiguardian.version>
     <assertj.version>3.22.0</assertj.version>
     <awaitility.version>4.2.0</awaitility.version>
     <ecj.version>3.29.0</ecj.version>
@@ -92,6 +93,13 @@
         <groupId>me.xdrop</groupId>
         <artifactId>fuzzywuzzy</artifactId>
         <version>${fuzzywuzzy.version}</version>
+      </dependency>
+
+      <dependency>
+        <!-- API versioning annotations -->
+        <groupId>org.apiguardian</groupId>
+        <artifactId>apiguardian-api</artifactId>
+        <version>${apiguardian.version}</version>
       </dependency>
 
       <dependency>

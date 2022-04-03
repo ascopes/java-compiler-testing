@@ -20,6 +20,8 @@ import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.Locale;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileObject;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractComparableAssert;
 import org.assertj.core.api.AbstractInstantAssert;
 import org.assertj.core.api.AbstractLongAssert;
@@ -34,6 +36,7 @@ import org.assertj.core.api.ListAssert;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class DiagnosticAssert
     extends AbstractObjectAssert<DiagnosticAssert, TraceDiagnostic<? extends JavaFileObject>> {
 

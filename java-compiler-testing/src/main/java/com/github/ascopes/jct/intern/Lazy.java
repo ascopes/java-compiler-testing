@@ -18,6 +18,8 @@ package com.github.ascopes.jct.intern;
 
 import java.util.Objects;
 import java.util.function.Supplier;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 /**
  * Helper type that wraps an initializer and invokes it lazily as required.
@@ -30,6 +32,7 @@ import java.util.function.Supplier;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.INTERNAL)
 public class Lazy<T> {
 
   private final Supplier<T> initializer;

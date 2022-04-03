@@ -14,29 +14,16 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.compilers;
+package com.github.ascopes.jct.test.diagnostics;
 
-
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
+import com.github.ascopes.jct.diagnostics.TracingDiagnosticsListener;
+import org.junit.jupiter.api.DisplayName;
 
 /**
- * Function representing a configuration operation that can be applied to a compiler.
+ * {@link TracingDiagnosticsListener} tests.
  *
- * <p>This can allow encapsulating common configuration logic across tests into a single place.
- *
- * @param <C> the compiler type.
  * @author Ashley Scopes
- * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
-@FunctionalInterface
-public interface CompilerConfigurer<C extends Compiler<C, ?>> {
-
-  /**
-   * Apply configuration logic to the given compiler.
-   *
-   * @param compiler the compiler.
-   */
-  void configure(C compiler);
+@DisplayName("TracingDiagnosticListener tests")
+public class TracingDiagnosticListenerTest {
 }

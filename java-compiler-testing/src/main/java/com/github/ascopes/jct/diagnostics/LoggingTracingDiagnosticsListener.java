@@ -16,7 +16,6 @@
 
 package com.github.ascopes.jct.diagnostics;
 
-import java.time.Clock;
 import java.util.Locale;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
@@ -42,12 +41,11 @@ public class LoggingTracingDiagnosticsListener<S extends JavaFileObject>
   /**
    * Initialize this listener.
    *
-   * @param clock           the clock to use for the current time.
    * @param dumpStackTraces {@code true} to dump a stacktrace of each diagnostic to the logger, or
    *                        {@code false} to hide the stack traces in log output.
    */
-  public LoggingTracingDiagnosticsListener(Clock clock, boolean dumpStackTraces) {
-    super(clock);
+  public LoggingTracingDiagnosticsListener(boolean dumpStackTraces) {
+    super();
     this.dumpStackTraces = dumpStackTraces;
   }
 

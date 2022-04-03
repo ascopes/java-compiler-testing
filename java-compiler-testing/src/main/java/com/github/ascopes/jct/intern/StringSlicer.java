@@ -19,6 +19,8 @@ package com.github.ascopes.jct.intern;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 
 /**
@@ -29,6 +31,7 @@ import java.util.stream.Stream;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.INTERNAL)
 public class StringSlicer {
 
   private final String delimiter;

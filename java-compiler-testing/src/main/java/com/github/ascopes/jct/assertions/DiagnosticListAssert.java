@@ -19,6 +19,8 @@ package com.github.ascopes.jct.assertions;
 import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.List;
 import javax.tools.JavaFileObject;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 import org.assertj.core.api.FactoryBasedNavigableListAssert;
 
 /**
@@ -28,6 +30,7 @@ import org.assertj.core.api.FactoryBasedNavigableListAssert;
  * @since 0.0.1
  */
 //@formatter:off
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class DiagnosticListAssert
     extends FactoryBasedNavigableListAssert<
         DiagnosticListAssert,

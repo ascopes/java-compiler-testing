@@ -86,7 +86,7 @@ public class ThreadPool extends AbstractExecutorService implements AutoCloseable
    * Await all callables and return a future that completes when all callables complete.
    *
    * @param callables the callables to run in the pool.
-   * @param <T> the return type of the callables.
+   * @param <T>       the return type of the callables.
    * @return the list of futures.
    */
   public <T> CompletableFuture<List<T>> awaitingAll(Collection<? extends Callable<T>> callables) {

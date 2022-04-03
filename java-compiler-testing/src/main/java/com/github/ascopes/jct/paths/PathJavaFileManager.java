@@ -29,6 +29,8 @@ import javax.tools.FileObject;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 
 /**
@@ -38,6 +40,7 @@ import javax.tools.JavaFileObject.Kind;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 @SuppressWarnings("RedundantThrows")  // We keep the API contract to prevent breaking changes.
 public class PathJavaFileManager implements JavaFileManager {
 

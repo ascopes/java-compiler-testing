@@ -18,6 +18,8 @@ package com.github.ascopes.jct.intern;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,7 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.INTERNAL)
 public class AsyncResourceCloser implements Runnable {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AsyncResourceCloser.class);

@@ -23,15 +23,18 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 /**
  * A writer that wraps an output stream and also writes any content to an in-memory buffer.
  *
- * <p>This is threadsafe.
+ * <p>This is thread-safe.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class TeeWriter extends Writer {
 
   private static final Charset CHARSET = StandardCharsets.UTF_8;

@@ -16,12 +16,16 @@
 
 package com.github.ascopes.jct.compilers;
 
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
+
 /**
  * Exception that is thrown if the compiler fails to run and throws an unhandled exception.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class CompilerException extends RuntimeException {
 
   /**
