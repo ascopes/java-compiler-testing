@@ -22,6 +22,7 @@ import java.lang.module.ModuleFinder;
 import java.lang.module.ModuleReference;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -62,7 +63,7 @@ public class ParentPathLocationManager extends PathLocationManager {
           .stream()
           .map(ModuleReference::descriptor)
           .map(ModuleDescriptor::name)
-          .map(this::getOrCreateForModule)
+          .map(this::getOrCreateModuleLocationManager)
           .forEach(manager -> manager.addPath(path));
     } else {
       // If we cannot hold modules, we add the path to this manager directly.
@@ -91,17 +92,16 @@ public class ParentPathLocationManager extends PathLocationManager {
   public Optional<ModuleLocation> getModuleLocationFor(FileObject fileObject) {
     var path = Path.of(fileObject.toUri());
 
-    for (var root : roots) {
-      if (path.startsWith(root)) {
-        return Optional
-            .of(root.relativize(path).iterator().next())
-            .map(Path::toString)
-            .filter(modules::containsKey)
-            .map(this::getModuleLocationFor);
-      }
-    }
-
-    return Optional.empty();
+    return roots
+        .stream()
+        .filter(path::startsWith)
+        .map(root -> root.relativize(path))
+        .map(Path::iterator)
+        .map(Iterator::next)
+        .map(Path::toString)
+        .filter(modules::containsKey)
+        .map(this::getModuleLocationFor)
+        .findFirst();
   }
 
   /**
@@ -121,8 +121,7 @@ public class ParentPathLocationManager extends PathLocationManager {
    * @return the manager.
    * @throws IllegalArgumentException if this object is already for a module.
    */
-  public PathLocationManager getOrCreateForModule(String moduleName) {
-    // TODO(ascopes): Name this method consistently ^^^
+  public PathLocationManager getOrCreateModuleLocationManager(String moduleName) {
     return modules.computeIfAbsent(
         moduleName,
         this::buildLocationManagerForModule
@@ -171,15 +170,16 @@ public class ParentPathLocationManager extends PathLocationManager {
     var moduleLocation = new ModuleLocation(location, moduleName);
     var moduleManager = new PathLocationManager(moduleLocation);
 
-    for (var root : roots) {
-      moduleManager.addPath(root.resolve(moduleName));
-    }
+    roots
+        .stream()
+        .map(root -> root.resolve(moduleName))
+        .forEach(moduleManager::addPath);
 
     return moduleManager;
   }
 
   private boolean isPathCapableOfHoldingModules(Path path) {
-    // XXX(ascopes): do we want to consider output locations as modules?
+    // TODO(ascopes): do we want to consider output locations as modules?
     return (location.isModuleOrientedLocation() || location.isOutputLocation())
         && Files.isDirectory(path);
   }

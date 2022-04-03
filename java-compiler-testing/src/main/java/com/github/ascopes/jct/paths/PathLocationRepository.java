@@ -122,7 +122,7 @@ public class PathLocationRepository implements AutoCloseable {
       var parentLocation = moduleLocation.getParent();
       return managers
           .computeIfAbsent(parentLocation, ParentPathLocationManager::new)
-          .getOrCreateForModule(moduleName);
+          .getOrCreateModuleLocationManager(moduleName);
     }
 
     return managers
