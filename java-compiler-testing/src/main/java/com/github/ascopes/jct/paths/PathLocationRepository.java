@@ -28,6 +28,8 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 
 /**
@@ -39,6 +41,7 @@ import javax.tools.StandardLocation;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class PathLocationRepository implements AutoCloseable {
 
   private static final Comparator<Location> LOCATION_COMPARATOR = Comparator

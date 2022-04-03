@@ -17,6 +17,8 @@
 package com.github.ascopes.jct.compilers;
 
 import javax.tools.ToolProvider;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 
 /**
@@ -25,6 +27,7 @@ import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class Compilers {
 
   private Compilers() {

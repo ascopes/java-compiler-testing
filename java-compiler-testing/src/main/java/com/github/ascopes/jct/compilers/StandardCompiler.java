@@ -20,15 +20,14 @@ import com.github.ascopes.jct.compilations.StandardCompilation;
 import com.github.ascopes.jct.diagnostics.LoggingTracingDiagnosticsListener;
 import com.github.ascopes.jct.diagnostics.TeeWriter;
 import com.github.ascopes.jct.diagnostics.TracingDiagnosticsListener;
+import com.github.ascopes.jct.intern.SpecialLocations;
 import com.github.ascopes.jct.intern.StringUtils;
 import com.github.ascopes.jct.paths.InMemoryPath;
 import com.github.ascopes.jct.paths.LoggingJavaFileManagerProxy;
 import com.github.ascopes.jct.paths.PathJavaFileManager;
 import com.github.ascopes.jct.paths.PathLocationRepository;
-import com.github.ascopes.jct.paths.SpecialLocations;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,6 +42,8 @@ import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardLocation;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +53,7 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class StandardCompiler implements Compiler<StandardCompiler, StandardCompilation> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(StandardCompiler.class);
@@ -516,17 +518,15 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    * @return the diagnostic listener to use.
    */
   private TracingDiagnosticsListener<JavaFileObject> buildDiagnosticListener() {
-    var clock = Clock.systemDefaultZone();
-
     if (diagnosticLoggingMode == LoggingMode.STACKTRACES) {
-      return new LoggingTracingDiagnosticsListener<>(clock, true);
+      return new LoggingTracingDiagnosticsListener<>(true);
     }
 
     if (diagnosticLoggingMode == LoggingMode.ENABLED) {
-      return new LoggingTracingDiagnosticsListener<>(clock, false);
+      return new LoggingTracingDiagnosticsListener<>(false);
     }
 
-    return new TracingDiagnosticsListener<>(clock);
+    return new TracingDiagnosticsListener<>();
   }
 
   /**

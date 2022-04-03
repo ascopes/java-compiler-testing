@@ -21,6 +21,7 @@ module com.github.ascopes.jct {
   requires ecj;
   requires jimfs;
   requires me.xdrop.fuzzywuzzy;
+  requires org.apiguardian.api;
   requires transitive org.assertj.core;
   requires org.reflections;
   requires org.slf4j;
@@ -30,6 +31,6 @@ module com.github.ascopes.jct {
   exports com.github.ascopes.jct.compilers;
   exports com.github.ascopes.jct.diagnostics;
   exports com.github.ascopes.jct.paths;
-
   exports com.github.ascopes.jct.intern to com.github.ascopes.jct.testing;
+
 }

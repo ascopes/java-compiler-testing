@@ -26,6 +26,7 @@ import java.lang.reflect.ParameterizedType;
  * @author Ashley Scopes.
  */
 public abstract class TypeRef<T> {
+
   private final Class<T> type;
 
   /**

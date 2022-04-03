@@ -26,6 +26,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.PathAssert;
 import org.slf4j.Logger;
@@ -38,6 +40,7 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class OptionalPathAssert extends AbstractAssert<OptionalPathAssert, Path> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(OptionalPathAssert.class);

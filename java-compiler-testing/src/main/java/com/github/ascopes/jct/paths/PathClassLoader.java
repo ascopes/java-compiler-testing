@@ -33,6 +33,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 
 /**
@@ -44,6 +46,7 @@ import java.util.Objects;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class PathClassLoader extends ClassLoader {
 
   static {

@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.tools.JavaFileObject;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 
 /**
@@ -31,6 +33,7 @@ import javax.tools.JavaFileObject;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class StandardCompilation implements Compilation {
 
   private final boolean warningsAsErrors;

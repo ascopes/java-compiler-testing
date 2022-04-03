@@ -18,6 +18,8 @@ package com.github.ascopes.jct.assertions;
 
 import com.github.ascopes.jct.paths.PathLocationManager;
 import java.nio.file.Path;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 import org.assertj.core.api.FactoryBasedNavigableIterableAssert;
 import org.assertj.core.api.PathAssert;
 
@@ -28,6 +30,7 @@ import org.assertj.core.api.PathAssert;
  * @since 0.0.1
  */
 //@formatter:off
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class PathLocationManagerAssert
     extends FactoryBasedNavigableIterableAssert<
         PathLocationManagerAssert,

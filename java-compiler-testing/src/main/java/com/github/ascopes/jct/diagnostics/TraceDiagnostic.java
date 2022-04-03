@@ -16,12 +16,14 @@
 
 package com.github.ascopes.jct.diagnostics;
 
+import com.github.ascopes.jct.intern.ForwardingDiagnostic;
 import java.time.Instant;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import javax.tools.Diagnostic;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 
 /**
@@ -32,6 +34,7 @@ import javax.tools.Diagnostic;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class TraceDiagnostic<S> extends ForwardingDiagnostic<S> {
 
   private final Instant timestamp;

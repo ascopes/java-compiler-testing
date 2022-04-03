@@ -19,6 +19,8 @@ package com.github.ascopes.jct.paths;
 import com.github.ascopes.jct.intern.StringUtils;
 import java.util.Objects;
 import javax.tools.JavaFileManager.Location;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 
 /**
@@ -27,6 +29,7 @@ import javax.tools.JavaFileManager.Location;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class ModuleLocation implements Location {
 
   private final Location parent;

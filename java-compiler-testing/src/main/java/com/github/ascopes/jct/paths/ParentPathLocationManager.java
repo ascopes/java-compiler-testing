@@ -30,6 +30,8 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 /**
  * A path location manager that also supports having nested modules.
@@ -37,6 +39,7 @@ import javax.tools.JavaFileManager.Location;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class ParentPathLocationManager extends PathLocationManager {
 
   private final Map<String, PathLocationManager> modules;

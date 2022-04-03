@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.paths;
+package com.github.ascopes.jct.intern;
 
-import com.github.ascopes.jct.intern.StringSlicer;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.INTERNAL)
 public final class SpecialLocations {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SpecialLocations.class);

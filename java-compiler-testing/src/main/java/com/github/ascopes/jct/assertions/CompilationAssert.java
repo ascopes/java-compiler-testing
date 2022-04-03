@@ -25,6 +25,8 @@ import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractObjectAssert;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ListAssert;
@@ -36,6 +38,7 @@ import org.assertj.core.api.ListAssert;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class CompilationAssert<C extends Compilation>
     extends AbstractObjectAssert<CompilationAssert<C>, C> {
 

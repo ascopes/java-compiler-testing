@@ -19,6 +19,8 @@ package com.github.ascopes.jct.intern;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Objects;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 
 /**
@@ -29,6 +31,7 @@ import java.util.Objects;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.INTERNAL)
 public class EnumerationAdapter<T> implements Enumeration<T> {
 
   private final Iterator<T> iterator;

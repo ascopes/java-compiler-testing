@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 /**
  * Helper to build flags for a standard Javac implementation for the OpenJDK.
@@ -27,6 +29,7 @@ import java.util.stream.Stream;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class JavacFlagBuilder {
 
   private final Stream.Builder<String> craftedFlags;

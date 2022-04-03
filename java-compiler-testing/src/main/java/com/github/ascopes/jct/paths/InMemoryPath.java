@@ -39,6 +39,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
@@ -55,6 +57,7 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class InMemoryPath implements Closeable {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryPath.class);

@@ -40,6 +40,8 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 /**
  * File object that can be used with paths.
@@ -47,6 +49,7 @@ import javax.tools.JavaFileObject;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class PathJavaFileObject implements JavaFileObject {
 
   private final Location location;

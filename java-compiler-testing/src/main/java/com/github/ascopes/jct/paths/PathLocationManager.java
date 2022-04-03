@@ -39,6 +39,8 @@ import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 
 /**
@@ -50,6 +52,7 @@ import javax.tools.JavaFileObject.Kind;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class PathLocationManager implements Iterable<Path> {
 
   private static final StringSlicer PACKAGE_SPLITTER = new StringSlicer(".");
