@@ -152,7 +152,7 @@ public class PathLocationManager implements Iterable<Path> {
    *
    * @param path the path to resolve.
    * @return the first full path that ends with the given path that is an existing file, or an empty
-   * optional if no results were found.
+   *     optional if no results were found.
    * @throws IllegalArgumentException if an absolute-style path is provided.
    */
   public Optional<? extends Path> findFile(String path) {
@@ -274,7 +274,7 @@ public class PathLocationManager implements Iterable<Path> {
    * Get a snapshot of the iterable of the paths in this location.
    *
    * @return the list of the paths that were loaded at the time the method was called, in the order
-   * they are considered.
+   *     they are considered.
    */
   public List<? extends Path> getPaths() {
     return List.copyOf(roots);
