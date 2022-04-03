@@ -17,9 +17,8 @@
 package com.github.ascopes.jct.compilers;
 
 import com.github.ascopes.jct.compilations.StandardCompilation;
-import com.github.ascopes.jct.diagnostics.LoggingTracingDiagnosticsListener;
 import com.github.ascopes.jct.diagnostics.TeeWriter;
-import com.github.ascopes.jct.diagnostics.TracingDiagnosticsListener;
+import com.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import com.github.ascopes.jct.intern.SpecialLocations;
 import com.github.ascopes.jct.intern.StringUtils;
 import com.github.ascopes.jct.paths.InMemoryPath;
@@ -517,16 +516,11 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    *
    * @return the diagnostic listener to use.
    */
-  private TracingDiagnosticsListener<JavaFileObject> buildDiagnosticListener() {
-    if (diagnosticLoggingMode == LoggingMode.STACKTRACES) {
-      return new LoggingTracingDiagnosticsListener<>(true);
-    }
-
-    if (diagnosticLoggingMode == LoggingMode.ENABLED) {
-      return new LoggingTracingDiagnosticsListener<>(false);
-    }
-
-    return new TracingDiagnosticsListener<>();
+  private TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener() {
+    return new TracingDiagnosticListener<>(
+        fileManagerLoggingMode != LoggingMode.DISABLED,
+        fileManagerLoggingMode == LoggingMode.STACKTRACES
+    );
   }
 
   /**
