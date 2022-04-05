@@ -16,7 +16,7 @@
 
 package com.github.ascopes.jct.test.diagnostics;
 
-import static com.github.ascopes.jct.test.helpers.Mocks.stub;
+import static com.github.ascopes.jct.test.helpers.MoreMocks.stub;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.BDDMockito.then;

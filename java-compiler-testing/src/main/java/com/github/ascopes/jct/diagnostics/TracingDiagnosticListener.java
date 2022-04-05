@@ -20,6 +20,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticListener;
@@ -39,21 +40,49 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class TracingDiagnosticListener<S> implements DiagnosticListener<S> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(TracingDiagnosticListener.class);
-
   private final ConcurrentLinkedQueue<TraceDiagnostic<S>> diagnostics;
+  private final Logger logger;
+  private final Supplier<Thread> currentThreadSupplier;
   private final boolean logging;
   private final boolean stackTraces;
 
   /**
    * Initialize this listener.
    *
-   * @param logging     {@code true} if logging is enabled, {@code false} otherwise.
-   * @param stackTraces {@code true} if logging stack traces is enabled, {@code false} otherwise.
-   *                    This is ignored if {@code logging} is {@code false}.
+   * @param logging               {@code true} if logging is enabled, {@code false} otherwise.
+   * @param stackTraces           {@code true} if logging stack traces is enabled, {@code false}
+   *                              otherwise. This is ignored if {@code logging} is {@code false}.
    */
-  public TracingDiagnosticListener(boolean logging, boolean stackTraces) {
+  public TracingDiagnosticListener(
+      boolean logging,
+      boolean stackTraces
+  ) {
+    this(
+        LoggerFactory.getLogger(TracingDiagnosticListener.class),
+        Thread::currentThread,
+        logging,
+        stackTraces
+    );
+  }
+
+  /**
+   * Only visible for testing.
+   *
+   * @param logger the logger to use.
+   * @param currentThreadSupplier the supplier of the current thread.
+   * @param logging whether to enable logging.
+   * @param stackTraces whether to enable stack traces in the logging.
+   */
+  @API(since = "0.0.1", status = Status.INTERNAL)
+  protected TracingDiagnosticListener(
+      Logger logger,
+      Supplier<Thread> currentThreadSupplier,
+      boolean logging,
+      boolean stackTraces
+  ) {
     diagnostics = new ConcurrentLinkedQueue<>();
+    this.logger = logger;
+    this.currentThreadSupplier = currentThreadSupplier;
     this.logging = logging;
     this.stackTraces = stackTraces;
   }
@@ -70,10 +99,10 @@ public class TracingDiagnosticListener<S> implements DiagnosticListener<S> {
   @Override
   public final void report(Diagnostic<? extends S> diagnostic) {
     var now = Instant.now();
-    var thisThread = Thread.currentThread();
+    var thisThread = currentThreadSupplier.get();
     var threadId = thisThread.getId();
     var threadName = thisThread.getName();
-    var stackTrace = List.of(Thread.currentThread().getStackTrace());
+    var stackTrace = List.of(thisThread.getStackTrace());
     var wrapped = new TraceDiagnostic<S>(now, threadId, threadName, stackTrace, diagnostic);
     diagnostics.add(wrapped);
 
@@ -96,16 +125,16 @@ public class TracingDiagnosticListener<S> implements DiagnosticListener<S> {
 
     switch (diagnostic.getKind()) {
       case ERROR:
-        LOGGER.error("{}{}", formattedMessage, formattedStackTrace);
+        logger.error("{}{}", formattedMessage, formattedStackTrace);
         break;
 
       case WARNING:
       case MANDATORY_WARNING:
-        LOGGER.warn("{}{}", formattedMessage, formattedStackTrace);
+        logger.warn("{}{}", formattedMessage, formattedStackTrace);
         break;
 
       default:
-        LOGGER.info("{}{}", formattedMessage, formattedStackTrace);
+        logger.info("{}{}", formattedMessage, formattedStackTrace);
         break;
     }
   }

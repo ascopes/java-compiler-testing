@@ -23,7 +23,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.github.ascopes.jct.intern.EnumerationAdapter;
-import com.github.ascopes.jct.test.helpers.Mocks;
+import com.github.ascopes.jct.test.helpers.MoreMocks;
 import com.github.ascopes.jct.test.helpers.TypeRef;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -53,7 +53,7 @@ class EnumerationAdapterTest {
   @ParameterizedTest(name = "hasMoreElements returns Iterator#hasNext when it returns {0}")
   void hasMoreElementsReturnsTrueWhenIteratorHasNextIsTrue(boolean hasNext) {
     // Given
-    var iterator = Mocks.mock(new TypeRef<Iterator<?>>() {
+    var iterator = MoreMocks.mockCast(new TypeRef<Iterator<?>>() {
     });
 
     when(iterator.hasNext()).thenReturn(hasNext);
@@ -75,7 +75,7 @@ class EnumerationAdapterTest {
     var second = new Object();
     var third = new Object();
 
-    var iterator = Mocks.mock(new TypeRef<Iterator<Object>>() {
+    var iterator = MoreMocks.mockCast(new TypeRef<Iterator<Object>>() {
     });
 
     when(iterator.next()).thenReturn(first, second, third);
@@ -100,7 +100,7 @@ class EnumerationAdapterTest {
     // Given
     var ex = new NoSuchElementException("Nothing left!").fillInStackTrace();
 
-    var iterator = Mocks.mock(new TypeRef<Iterator<?>>() {
+    var iterator = MoreMocks.mockCast(new TypeRef<Iterator<?>>() {
     });
 
     when(iterator.next()).thenThrow(ex);

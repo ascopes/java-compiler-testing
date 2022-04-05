@@ -16,7 +16,7 @@
 
 package com.github.ascopes.jct.test.intern;
 
-import static com.github.ascopes.jct.test.helpers.Mocks.stub;
+import static com.github.ascopes.jct.test.helpers.MoreMocks.stub;
 import static java.time.Duration.ofMillis;
 import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.Assertions.assertThat;
