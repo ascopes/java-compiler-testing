@@ -16,11 +16,11 @@
 
 package com.github.ascopes.jct.test.diagnostics;
 
-import static com.github.ascopes.jct.test.helpers.Mocks.stub;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenCode;
 
 import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import com.github.ascopes.jct.test.helpers.MoreMocks;
 import com.github.ascopes.jct.test.helpers.TypeRef;
 import java.time.Instant;
 import java.util.List;
@@ -41,8 +41,8 @@ class TraceDiagnosticTest {
   @DisplayName("null timestamps are rejected")
   @Test
   void nullTimestampsAreRejected() {
-    var stack = stub(new TypeRef<List<StackTraceElement>>() {});
-    var diag = stub(new TypeRef<Diagnostic<?>>() {});
+    var stack = MoreMocks.stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var diag = MoreMocks.stubCast(new TypeRef<Diagnostic<?>>() {});
     thenCode(() -> new TraceDiagnostic<>(null, 123, "foo", stack, diag))
         .isInstanceOf(NullPointerException.class);
   }
@@ -51,7 +51,7 @@ class TraceDiagnosticTest {
   @Test
   void nullStackTracesAreRejected() {
     var now = Instant.now();
-    var diag = stub(new TypeRef<Diagnostic<?>>() {});
+    var diag = MoreMocks.stubCast(new TypeRef<Diagnostic<?>>() {});
     thenCode(() -> new TraceDiagnostic<>(now, 123, "foo", null, diag))
         .isInstanceOf(NullPointerException.class);
   }
@@ -65,8 +65,8 @@ class TraceDiagnosticTest {
         expectedTimestamp,
         123,
         "foo",
-        stub(new TypeRef<>() {}),
-        stub(new TypeRef<>() {})
+        MoreMocks.stubCast(new TypeRef<>() {}),
+        MoreMocks.stubCast(new TypeRef<>() {})
     );
 
     // When
@@ -85,8 +85,8 @@ class TraceDiagnosticTest {
         Instant.now(),
         expectedThreadId,
         "foo",
-        stub(new TypeRef<>() {}),
-        stub(new TypeRef<>() {})
+        MoreMocks.stubCast(new TypeRef<>() {}),
+        MoreMocks.stubCast(new TypeRef<>() {})
     );
 
     // When
@@ -105,8 +105,8 @@ class TraceDiagnosticTest {
         Instant.now(),
         1234,
         expectedThreadName,
-        stub(new TypeRef<>() {}),
-        stub(new TypeRef<>() {})
+        MoreMocks.stubCast(new TypeRef<>() {}),
+        MoreMocks.stubCast(new TypeRef<>() {})
     );
 
     // When
@@ -124,8 +124,8 @@ class TraceDiagnosticTest {
         Instant.now(),
         1234,
         null,
-        stub(new TypeRef<>() {}),
-        stub(new TypeRef<>() {})
+        MoreMocks.stubCast(new TypeRef<>() {}),
+        MoreMocks.stubCast(new TypeRef<>() {})
     );
 
     // When
@@ -139,13 +139,13 @@ class TraceDiagnosticTest {
   @Test
   void getStackTraceReturnsTheStackTrace() {
     // Given
-    var expectedStackTrace = stub(new TypeRef<List<StackTraceElement>>() {});
+    var expectedStackTrace = MoreMocks.stubCast(new TypeRef<List<StackTraceElement>>() {});
     var diagnostic = new TraceDiagnostic<>(
         Instant.now(),
         1234,
         "foo",
         expectedStackTrace,
-        stub(new TypeRef<>() {})
+        MoreMocks.stubCast(new TypeRef<>() {})
     );
 
     // When
