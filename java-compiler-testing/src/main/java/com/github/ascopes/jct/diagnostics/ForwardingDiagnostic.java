@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.intern;
+package com.github.ascopes.jct.diagnostics;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -25,6 +25,9 @@ import org.apiguardian.api.API.Status;
 /**
  * Partial {@link Diagnostic} implementation that delegates to a provided diagnostic implementation
  * internally.
+ *
+ * <p>This is part of the internal API, and is only visible to ensure OSGi has full access to
+ * classes derived from this one.
  *
  * @param <S> the source file type.
  * @author Ashley Scopes
