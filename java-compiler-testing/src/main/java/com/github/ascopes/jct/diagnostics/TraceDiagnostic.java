@@ -16,7 +16,6 @@
 
 package com.github.ascopes.jct.diagnostics;
 
-import com.github.ascopes.jct.intern.ForwardingDiagnostic;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
