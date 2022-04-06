@@ -42,7 +42,7 @@ public class TracingDiagnosticListener<S> implements DiagnosticListener<S> {
 
   private final ConcurrentLinkedQueue<TraceDiagnostic<S>> diagnostics;
   private final Logger logger;
-  private final Supplier<Thread> currentThreadSupplier;
+  private final Supplier<? extends Thread> currentThreadSupplier;
   private final boolean logging;
   private final boolean stackTraces;
 
@@ -76,7 +76,7 @@ public class TracingDiagnosticListener<S> implements DiagnosticListener<S> {
   @API(since = "0.0.1", status = Status.INTERNAL)
   protected TracingDiagnosticListener(
       Logger logger,
-      Supplier<Thread> currentThreadSupplier,
+      Supplier<? extends Thread> currentThreadSupplier,
       boolean logging,
       boolean stackTraces
   ) {
@@ -92,7 +92,7 @@ public class TracingDiagnosticListener<S> implements DiagnosticListener<S> {
    *
    * @return the diagnostics in a list.
    */
-  public List<TraceDiagnostic<? extends S>> getDiagnostics() {
+  public List<? extends TraceDiagnostic<? extends S>> getDiagnostics() {
     return List.copyOf(diagnostics);
   }
 

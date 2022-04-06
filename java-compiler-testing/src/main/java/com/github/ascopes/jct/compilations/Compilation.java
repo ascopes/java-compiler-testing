@@ -77,7 +77,7 @@ public interface Compilation {
    *
    * @return the diagnostics
    */
-  List<TraceDiagnostic<? extends JavaFileObject>> getDiagnostics();
+  List<? extends TraceDiagnostic<? extends JavaFileObject>> getDiagnostics();
 
   /**
    * Get the location repository that was used to store files.

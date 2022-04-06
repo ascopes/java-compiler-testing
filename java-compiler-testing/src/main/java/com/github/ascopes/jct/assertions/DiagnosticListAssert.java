@@ -34,7 +34,7 @@ import org.assertj.core.api.FactoryBasedNavigableListAssert;
 public final class DiagnosticListAssert
     extends FactoryBasedNavigableListAssert<
         DiagnosticListAssert,
-        List<TraceDiagnostic<? extends JavaFileObject>>,
+        List<? extends TraceDiagnostic<? extends JavaFileObject>>,
         TraceDiagnostic<? extends JavaFileObject>,
         DiagnosticAssert
     > {
@@ -46,7 +46,8 @@ public final class DiagnosticListAssert
    * @param diagnostics the list of assertions to assert on.
    */
   private DiagnosticListAssert(
-      List<TraceDiagnostic<? extends JavaFileObject>> diagnostics) {
+      List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
+  ) {
     super(diagnostics, DiagnosticListAssert.class, DiagnosticAssert::assertThat);
   }
 
@@ -57,7 +58,7 @@ public final class DiagnosticListAssert
    * @return the assertions.
    */
   public static DiagnosticListAssert assertThat(
-      List<TraceDiagnostic<? extends JavaFileObject>> diagnostics
+      List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
   ) {
     return new DiagnosticListAssert(diagnostics);
   }
