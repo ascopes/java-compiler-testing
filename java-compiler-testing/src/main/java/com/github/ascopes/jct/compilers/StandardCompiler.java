@@ -16,6 +16,8 @@
 
 package com.github.ascopes.jct.compilers;
 
+import static com.github.ascopes.jct.intern.IoExceptionUtils.uncheckedIo;
+
 import com.github.ascopes.jct.compilations.StandardCompilation;
 import com.github.ascopes.jct.diagnostics.TeeWriter;
 import com.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
@@ -26,7 +28,6 @@ import com.github.ascopes.jct.paths.LoggingJavaFileManagerProxy;
 import com.github.ascopes.jct.paths.PathJavaFileManager;
 import com.github.ascopes.jct.paths.PathLocationRepository;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -129,7 +130,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     var flags = buildFlags();
     var diagnosticListener = buildDiagnosticListener();
 
-    return rethrowIoExceptions(() -> {
+    return uncheckedIo(() -> {
       try (var fileManager = applyLoggingToFileManager(buildJavaFileManager())) {
         var compilationUnits = discoverCompilationUnits(fileManager);
         if (compilationUnits.isEmpty()) {
@@ -547,17 +548,5 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
      * Do not log anything.
      */
     DISABLED,
-  }
-
-  private static <T> T rethrowIoExceptions(ThrowingSupplier<T> supplier) {
-    try {
-      return supplier.get();
-    } catch (IOException ex) {
-      throw new UncheckedIOException(ex.getMessage(), ex);
-    }
-  }
-
-  private interface ThrowingSupplier<T> {
-    T get() throws IOException;
   }
 }

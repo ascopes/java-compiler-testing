@@ -16,6 +16,8 @@
 
 package com.github.ascopes.jct.paths;
 
+import static com.github.ascopes.jct.intern.IoExceptionUtils.uncheckedIo;
+
 import com.github.ascopes.jct.intern.AsyncResourceCloser;
 import com.github.ascopes.jct.intern.StringUtils;
 import com.google.common.jimfs.Configuration;
@@ -105,7 +107,7 @@ public class InMemoryPath implements Closeable {
    */
   @Override
   public void close() {
-    rethrowIoExceptions(path.getFileSystem()::close);
+    uncheckedIo(path.getFileSystem()::close);
   }
 
   /**
@@ -196,7 +198,7 @@ public class InMemoryPath implements Closeable {
       String resource,
       Path targetPath
   ) {
-    return rethrowIoExceptions(() -> {
+    return uncheckedIo(() -> {
       var input = loader.getResourceAsStream(resource);
       if (input == null) {
         throw new FileNotFoundException("classpath:" + resource);
@@ -271,7 +273,7 @@ public class InMemoryPath implements Closeable {
       String packageName,
       Path targetPath
   ) {
-    return rethrowIoExceptions(() -> {
+    return uncheckedIo(() -> {
       var relativeTargetPath = makeRelativeToHere(targetPath);
       var directory = Files.createDirectories(relativeTargetPath);
 
@@ -279,7 +281,7 @@ public class InMemoryPath implements Closeable {
           .addClassLoaders(loader)
           .forPackages(packageName);
 
-      // TODO(ascopes): can I remove this library?
+      // TODO(ascopes): can I remove this library, or at least make it optional?
       var resources = new Reflections(config).getAll(Scanners.Resources);
 
       for (var resource : resources) {
@@ -328,7 +330,7 @@ public class InMemoryPath implements Closeable {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public InMemoryPath copyFrom(Path existingFile, Path targetPath) {
-    return rethrowIoExceptions(() -> {
+    return uncheckedIo(() -> {
       try (var input = Files.newInputStream(existingFile)) {
         return copyFrom(input, targetPath);
       }
@@ -356,7 +358,7 @@ public class InMemoryPath implements Closeable {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public InMemoryPath copyFrom(URL url, Path targetPath) {
-    return rethrowIoExceptions(() -> {
+    return uncheckedIo(() -> {
       try (var input = url.openStream()) {
         return copyFrom(input, targetPath);
       }
@@ -372,7 +374,7 @@ public class InMemoryPath implements Closeable {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public InMemoryPath copyFrom(URL url, String targetPath) {
-    return rethrowIoExceptions(() -> {
+    return uncheckedIo(() -> {
       try (var input = url.openStream()) {
         return copyFrom(input, targetPath);
       }
@@ -400,7 +402,7 @@ public class InMemoryPath implements Closeable {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public InMemoryPath copyFrom(InputStream input, Path targetPath) {
-    return rethrowIoExceptions(() -> {
+    return uncheckedIo(() -> {
       var bufferedInput = maybeBuffer(input, targetPath.toUri().getScheme());
       var path = makeRelativeToHere(targetPath);
       var options = new OpenOption[]{StandardOpenOption.CREATE,
@@ -424,7 +426,7 @@ public class InMemoryPath implements Closeable {
    * @throws UncheckedIOException if something goes wrong copying the tree out of memory.
    */
   public Path copyToTempDir() {
-    var tempPath = rethrowIoExceptions(() -> Files.copy(
+    var tempPath = uncheckedIo(() -> Files.copy(
         path,
         Files.createTempDirectory(identifier),
         StandardCopyOption.REPLACE_EXISTING,
@@ -570,33 +572,5 @@ public class InMemoryPath implements Closeable {
         LOGGER.debug("Decided to wrap input {} in a buffer", input);
         return new BufferedInputStream(input);
     }
-  }
-
-  private static void rethrowIoExceptions(ThrowingRunnable runnable) {
-    try {
-      runnable.run();
-    } catch (IOException ex) {
-      throw new UncheckedIOException(ex.getMessage(), ex);
-    }
-  }
-
-  private static <T> T rethrowIoExceptions(ThrowingSupplier<T> supplier) {
-    try {
-      return supplier.get();
-    } catch (IOException ex) {
-      throw new UncheckedIOException(ex.getMessage(), ex);
-    }
-  }
-
-  @FunctionalInterface
-  private interface ThrowingRunnable {
-
-    void run() throws IOException;
-  }
-
-  @FunctionalInterface
-  private interface ThrowingSupplier<T> {
-
-    T get() throws IOException;
   }
 }
