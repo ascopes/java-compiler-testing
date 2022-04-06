@@ -26,17 +26,19 @@ import org.apiguardian.api.API.Status;
  * <p>This can allow encapsulating common configuration logic across tests into a single place.
  *
  * @param <C> the compiler type.
+ * @param <T> the exception that may be thrown by the configurer.
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 @FunctionalInterface
-public interface CompilerConfigurer<C extends Compiler<C, ?>> {
+public interface CompilerConfigurer<C extends Compiler<C, ?>, T extends Exception> {
 
   /**
    * Apply configuration logic to the given compiler.
    *
    * @param compiler the compiler.
+   * @throws T any exception that may be thrown by the configurer.
    */
-  void configure(C compiler);
+  void configure(C compiler) throws T;
 }

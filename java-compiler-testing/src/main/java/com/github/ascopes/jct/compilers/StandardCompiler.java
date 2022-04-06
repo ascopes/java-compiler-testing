@@ -194,7 +194,9 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
   }
 
   @Override
-  public StandardCompiler configure(CompilerConfigurer<StandardCompiler> configurer) {
+  public <T extends Exception> StandardCompiler configure(
+      CompilerConfigurer<StandardCompiler, T> configurer
+  ) throws T {
     LOGGER.debug("configure({})", configurer);
     configurer.configure(this);
     return this;

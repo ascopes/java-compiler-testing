@@ -45,10 +45,14 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   /**
    * Apply a given configurer to this compiler.
    *
+   * @param <T> any exception that may be thrown.
    * @param configurer the configurer to invoke.
    * @return this compiler object for further call chaining.
+   * @throws T any exception that may be thrown by the configurer.
    */
-  C configure(CompilerConfigurer<C> configurer);
+  <T extends Exception> C configure(
+      CompilerConfigurer<C, T> configurer
+  ) throws T;
 
   /**
    * Invoke the compilation and return the compilation result.
