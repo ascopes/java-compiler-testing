@@ -28,8 +28,10 @@ import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.lang.ref.Cleaner;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
@@ -59,6 +61,8 @@ import org.slf4j.LoggerFactory;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class InMemoryPath implements Closeable {
+
+  private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryPath.class);
   private static final Cleaner CLEANER = Cleaner.create();
@@ -97,11 +101,11 @@ public class InMemoryPath implements Closeable {
   /**
    * Close the underlying file system.
    *
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
   @Override
-  public void close() throws IOException {
-    path.getFileSystem().close();
+  public void close() {
+    rethrowIoExceptions(path.getFileSystem()::close);
   }
 
   /**
@@ -110,12 +114,11 @@ public class InMemoryPath implements Closeable {
    * @param filePath the path to the file.
    * @param content  the content.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs
+   * @throws UncheckedIOException if an IO error occurs
    */
-  public InMemoryPath createFile(Path filePath, byte[] content) throws IOException {
-    try (var inputStream = new ByteArrayInputStream(content)) {
-      return copyFrom(inputStream, filePath);
-    }
+  public InMemoryPath createFile(Path filePath, byte[] content) {
+    var inputStream = new ByteArrayInputStream(content);
+    return copyFrom(inputStream, filePath);
   }
 
   /**
@@ -124,10 +127,11 @@ public class InMemoryPath implements Closeable {
    * @param filePath the path to the file.
    * @param lines    the lines of text to store.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs
+   * @throws UncheckedIOException if an IO error occurs
    */
-  public InMemoryPath createFile(Path filePath, String... lines) throws IOException {
-    return createFile(filePath, String.join("\n", lines).getBytes(StandardCharsets.UTF_8));
+  public InMemoryPath createFile(Path filePath, String... lines) {
+    return createFile(filePath, String.join("\n", lines)
+        .getBytes(DEFAULT_CHARSET));
   }
 
   /**
@@ -136,9 +140,9 @@ public class InMemoryPath implements Closeable {
    * @param fileName the path to the file.
    * @param content  the content.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs
+   * @throws UncheckedIOException if an IO error occurs
    */
-  public InMemoryPath createFile(String fileName, byte[] content) throws IOException {
+  public InMemoryPath createFile(String fileName, byte[] content) {
     return createFile(Path.of(fileName), content);
   }
 
@@ -148,9 +152,9 @@ public class InMemoryPath implements Closeable {
    * @param fileName the path to the file.
    * @param lines    the lines of text to store.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs
+   * @throws UncheckedIOException if an IO error occurs
    */
-  public InMemoryPath createFile(String fileName, String... lines) throws IOException {
+  public InMemoryPath createFile(String fileName, String... lines) {
     return createFile(Path.of(fileName), lines);
   }
 
@@ -160,9 +164,9 @@ public class InMemoryPath implements Closeable {
    * @param resource   the name of the classpath resource.
    * @param targetPath the path to store the resource within this location.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFromClassPath(String resource, Path targetPath) throws IOException {
+  public InMemoryPath copyFromClassPath(String resource, Path targetPath) {
     return copyFromClassPath(getClass().getClassLoader(), resource, targetPath);
   }
 
@@ -172,9 +176,9 @@ public class InMemoryPath implements Closeable {
    * @param resource   the name of the classpath resource.
    * @param targetPath the path to store the resource within this location.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFromClassPath(String resource, String targetPath) throws IOException {
+  public InMemoryPath copyFromClassPath(String resource, String targetPath) {
     return copyFromClassPath(getClass().getClassLoader(), resource, targetPath);
   }
 
@@ -185,20 +189,22 @@ public class InMemoryPath implements Closeable {
    * @param resource   the name of the classpath resource.
    * @param targetPath the path to store the resource within this location.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
   public InMemoryPath copyFromClassPath(
       ClassLoader loader,
       String resource,
       Path targetPath
-  ) throws IOException {
-    var input = loader.getResourceAsStream(resource);
-    if (input == null) {
-      throw new FileNotFoundException("classpath:" + resource);
-    }
-    try (input) {
-      return copyFrom(input, targetPath);
-    }
+  ) {
+    return rethrowIoExceptions(() -> {
+      var input = loader.getResourceAsStream(resource);
+      if (input == null) {
+        throw new FileNotFoundException("classpath:" + resource);
+      }
+      try (input) {
+        return copyFrom(input, targetPath);
+      }
+    });
   }
 
   /**
@@ -208,13 +214,13 @@ public class InMemoryPath implements Closeable {
    * @param resource   the name of the classpath resource.
    * @param targetPath the path to store the resource within this location.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
   public InMemoryPath copyFromClassPath(
       ClassLoader loader,
       String resource,
       String targetPath
-  ) throws IOException {
+  ) {
     return copyFromClassPath(loader, resource, Path.of(targetPath));
   }
 
@@ -225,12 +231,12 @@ public class InMemoryPath implements Closeable {
    * @param targetPath  the path to store the resources within this location, relative to the
    *                    provided package name.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
   public InMemoryPath copyTreeFromClassPath(
       String packageName,
       Path targetPath
-  ) throws IOException {
+  ) {
     return copyTreeFromClassPath(getClass().getClassLoader(), packageName, targetPath);
   }
 
@@ -241,12 +247,12 @@ public class InMemoryPath implements Closeable {
    * @param targetPath  the path to store the resources within this location, relative to the
    *                    provided package name.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
   public InMemoryPath copyTreeFromClassPath(
       String packageName,
       String targetPath
-  ) throws IOException {
+  ) {
     return copyTreeFromClassPath(getClass().getClassLoader(), packageName, targetPath);
   }
 
@@ -258,38 +264,41 @@ public class InMemoryPath implements Closeable {
    * @param targetPath  the path to store the resources within this location, relative to the
    *                    provided package name.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
   public InMemoryPath copyTreeFromClassPath(
       ClassLoader loader,
       String packageName,
       Path targetPath
-  ) throws IOException {
-    targetPath = makeRelativeToHere(targetPath);
-    var directory = Files.createDirectories(targetPath);
+  ) {
+    return rethrowIoExceptions(() -> {
+      var relativeTargetPath = makeRelativeToHere(targetPath);
+      var directory = Files.createDirectories(relativeTargetPath);
 
-    var config = new ConfigurationBuilder()
-        .addClassLoaders(loader)
-        .forPackages(packageName);
+      var config = new ConfigurationBuilder()
+          .addClassLoaders(loader)
+          .forPackages(packageName);
 
-    var resources = new Reflections(config).getAll(Scanners.Resources);
+      // TODO(ascopes): can I remove this library?
+      var resources = new Reflections(config).getAll(Scanners.Resources);
 
-    for (var resource : resources) {
-      try (var inputStream = loader.getResourceAsStream(resource)) {
-        if (inputStream == null) {
-          // This shouldn't ever happen I don't think, but better safe than sorry with providing
-          // a semi-meaningful error message if it can happen.
-          throw new IOException("Failed to find resource " + resource + " somehow!");
+      for (var resource : resources) {
+        try (var inputStream = loader.getResourceAsStream(resource)) {
+          if (inputStream == null) {
+            // This shouldn't ever happen I don't think, but better safe than sorry with providing
+            // a semi-meaningful error message if it can happen.
+            throw new IOException("Failed to find resource " + resource + " somehow!");
+          }
+
+          // +1 to discard the period.
+          var resourcePath = directory.resolve(resource.substring(packageName.length() + 1));
+          Files.createDirectories(resourcePath.getParent());
+          copyFrom(inputStream, resourcePath);
         }
-
-        // +1 to discard the period.
-        var resourcePath = directory.resolve(resource.substring(packageName.length() + 1));
-        Files.createDirectories(resourcePath.getParent());
-        copyFrom(inputStream, resourcePath);
       }
-    }
 
-    return this;
+      return this;
+    });
   }
 
   /**
@@ -300,13 +309,13 @@ public class InMemoryPath implements Closeable {
    * @param targetPath  the path to store the resources within this location, relative to the
    *                    provided package name.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
   public InMemoryPath copyTreeFromClassPath(
       ClassLoader loader,
       String packageName,
       String targetPath
-  ) throws IOException {
+  ) {
     return copyTreeFromClassPath(loader, packageName, Path.of(targetPath));
   }
 
@@ -316,12 +325,14 @@ public class InMemoryPath implements Closeable {
    * @param existingFile the existing file.
    * @param targetPath   the path in this location to copy the file to.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFrom(Path existingFile, Path targetPath) throws IOException {
-    try (var input = Files.newInputStream(existingFile)) {
-      return copyFrom(input, targetPath);
-    }
+  public InMemoryPath copyFrom(Path existingFile, Path targetPath) {
+    return rethrowIoExceptions(() -> {
+      try (var input = Files.newInputStream(existingFile)) {
+        return copyFrom(input, targetPath);
+      }
+    });
   }
 
   /**
@@ -330,9 +341,9 @@ public class InMemoryPath implements Closeable {
    * @param existingFile the existing file.
    * @param targetPath   the path in this location to copy the file to.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFrom(Path existingFile, String targetPath) throws IOException {
+  public InMemoryPath copyFrom(Path existingFile, String targetPath) {
     return copyFrom(existingFile, Path.of(targetPath));
   }
 
@@ -342,12 +353,14 @@ public class InMemoryPath implements Closeable {
    * @param url        the URL of the resource to copy.
    * @param targetPath the path in this location to copy the file to.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFrom(URL url, Path targetPath) throws IOException {
-    try (var input = url.openStream()) {
-      return copyFrom(input, targetPath);
-    }
+  public InMemoryPath copyFrom(URL url, Path targetPath) {
+    return rethrowIoExceptions(() -> {
+      try (var input = url.openStream()) {
+        return copyFrom(input, targetPath);
+      }
+    });
   }
 
   /**
@@ -356,12 +369,14 @@ public class InMemoryPath implements Closeable {
    * @param url        the URL of the resource to copy.
    * @param targetPath the path in this location to copy the file to.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFrom(URL url, String targetPath) throws IOException {
-    try (var input = url.openStream()) {
-      return copyFrom(input, targetPath);
-    }
+  public InMemoryPath copyFrom(URL url, String targetPath) {
+    return rethrowIoExceptions(() -> {
+      try (var input = url.openStream()) {
+        return copyFrom(input, targetPath);
+      }
+    });
   }
 
   /**
@@ -370,9 +385,9 @@ public class InMemoryPath implements Closeable {
    * @param input      the input stream to use.
    * @param targetPath the path in this location to copy the file to.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFrom(InputStream input, String targetPath) throws IOException {
+  public InMemoryPath copyFrom(InputStream input, String targetPath) {
     return copyFrom(input, Path.of(targetPath));
   }
 
@@ -382,18 +397,21 @@ public class InMemoryPath implements Closeable {
    * @param input      the input stream to use.
    * @param targetPath the path in this location to copy the file to.
    * @return this object for further call chaining.
-   * @throws IOException if an IO error occurs.
+   * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFrom(InputStream input, Path targetPath) throws IOException {
-    input = maybeBuffer(input, targetPath.toUri().getScheme());
-    var path = makeRelativeToHere(targetPath);
-    var options = new OpenOption[]{StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING};
-    Files.createDirectories(path.getParent());
+  public InMemoryPath copyFrom(InputStream input, Path targetPath) {
+    return rethrowIoExceptions(() -> {
+      var bufferedInput = maybeBuffer(input, targetPath.toUri().getScheme());
+      var path = makeRelativeToHere(targetPath);
+      var options = new OpenOption[]{StandardOpenOption.CREATE,
+          StandardOpenOption.TRUNCATE_EXISTING};
+      Files.createDirectories(path.getParent());
 
-    try (var output = Files.newOutputStream(path, options)) {
-      input.transferTo(output);
-    }
-    return this;
+      try (var output = Files.newOutputStream(path, options)) {
+        bufferedInput.transferTo(output);
+      }
+      return this;
+    });
   }
 
   /**
@@ -403,15 +421,15 @@ public class InMemoryPath implements Closeable {
    * <p>You must then delete the created directory manually.
    *
    * @return the path to the temporary directory that was created.
-   * @throws IOException if something goes wrong copying the tree out of memory.
+   * @throws UncheckedIOException if something goes wrong copying the tree out of memory.
    */
-  public Path copyToTempDir() throws IOException {
-    var tempPath = Files.copy(
+  public Path copyToTempDir() {
+    var tempPath = rethrowIoExceptions(() -> Files.copy(
         path,
         Files.createTempDirectory(identifier),
         StandardCopyOption.REPLACE_EXISTING,
         StandardCopyOption.COPY_ATTRIBUTES
-    );
+    ));
 
     LOGGER.info(
         "Copied {} into temporary directory on file system at {}",
@@ -552,5 +570,33 @@ public class InMemoryPath implements Closeable {
         LOGGER.debug("Decided to wrap input {} in a buffer", input);
         return new BufferedInputStream(input);
     }
+  }
+
+  private static void rethrowIoExceptions(ThrowingRunnable runnable) {
+    try {
+      runnable.run();
+    } catch (IOException ex) {
+      throw new UncheckedIOException(ex.getMessage(), ex);
+    }
+  }
+
+  private static <T> T rethrowIoExceptions(ThrowingSupplier<T> supplier) {
+    try {
+      return supplier.get();
+    } catch (IOException ex) {
+      throw new UncheckedIOException(ex.getMessage(), ex);
+    }
+  }
+
+  @FunctionalInterface
+  private interface ThrowingRunnable {
+
+    void run() throws IOException;
+  }
+
+  @FunctionalInterface
+  private interface ThrowingSupplier<T> {
+
+    T get() throws IOException;
   }
 }

@@ -26,6 +26,7 @@ import com.github.ascopes.jct.paths.LoggingJavaFileManagerProxy;
 import com.github.ascopes.jct.paths.PathJavaFileManager;
 import com.github.ascopes.jct.paths.PathLocationRepository;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -123,74 +124,77 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
   }
 
   @Override
-  public StandardCompilation compile() throws IOException {
+  public StandardCompilation compile() {
 
     var flags = buildFlags();
     var diagnosticListener = buildDiagnosticListener();
 
-    try (var fileManager = applyLoggingToFileManager(buildJavaFileManager())) {
-      var compilationUnits = discoverCompilationUnits(fileManager);
-      if (compilationUnits.isEmpty()) {
-        throw new IllegalStateException("No compilation units found");
-      }
-      LOGGER.debug("Discovered {} compilation units {}", compilationUnits.size(), compilationUnits);
+    return rethrowIoExceptions(() -> {
+      try (var fileManager = applyLoggingToFileManager(buildJavaFileManager())) {
+        var compilationUnits = discoverCompilationUnits(fileManager);
+        if (compilationUnits.isEmpty()) {
+          throw new IllegalStateException("No compilation units found");
+        }
+        LOGGER.debug("Discovered {} compilation units {}", compilationUnits.size(),
+            compilationUnits);
 
-      var writer = new TeeWriter(System.err);
+        var writer = new TeeWriter(System.err);
 
-      var task = compiler.getTask(
-          writer,
-          fileManager,
-          diagnosticListener,
-          flags,
-          null,
-          compilationUnits
-      );
-
-      task.setProcessors(annotationProcessors);
-      task.setLocale(locale);
-
-      if (LOGGER.isInfoEnabled()) {
-        LOGGER.info(
-            "Starting compilation of {} file{} with compiler {} using flags {}",
-            compilationUnits.size(),
-            compilationUnits.size() == 1 ? "" : "s",
-            name,
-            StringUtils.quotedIterable(flags)
+        var task = compiler.getTask(
+            writer,
+            fileManager,
+            diagnosticListener,
+            flags,
+            null,
+            compilationUnits
         );
-      }
 
-      Boolean result;
+        task.setProcessors(annotationProcessors);
+        task.setLocale(locale);
 
-      try {
-        result = task.call();
-
-        if (result == null) {
-          throw new CompilerException("The compiler failed to produce a valid result");
+        if (LOGGER.isInfoEnabled()) {
+          LOGGER.info(
+              "Starting compilation of {} file{} with compiler {} using flags {}",
+              compilationUnits.size(),
+              compilationUnits.size() == 1 ? "" : "s",
+              name,
+              StringUtils.quotedIterable(flags)
+          );
         }
 
-        LOGGER.info("Compilation with compiler {} {}", name, result ? "succeeded" : "failed");
-      } catch (Exception ex) {
-        LOGGER.warn(
-            "Compiler {} threw an exception: {}: {}",
-            name,
-            ex.getClass().getName(),
-            ex.getMessage()
-        );
-        throw new CompilerException("The compiler threw an exception", ex);
+        Boolean result;
 
+        try {
+          result = task.call();
+
+          if (result == null) {
+            throw new CompilerException("The compiler failed to produce a valid result");
+          }
+
+          LOGGER.info("Compilation with compiler {} {}", name, result ? "succeeded" : "failed");
+        } catch (Exception ex) {
+          LOGGER.warn(
+              "Compiler {} threw an exception: {}: {}",
+              name,
+              ex.getClass().getName(),
+              ex.getMessage()
+          );
+          throw new CompilerException("The compiler threw an exception", ex);
+
+        }
+
+        var outputLines = writer.toString().lines().collect(Collectors.toList());
+
+        return StandardCompilation.builder()
+            .warningsAsErrors(failOnWarnings || flags.contains("-Werror"))
+            .success(result)
+            .outputLines(outputLines)
+            .compilationUnits(Set.copyOf(compilationUnits))
+            .diagnostics(diagnosticListener.getDiagnostics())
+            .fileRepository(fileRepository)
+            .build();
       }
-
-      var outputLines = writer.toString().lines().collect(Collectors.toList());
-
-      return StandardCompilation.builder()
-          .warningsAsErrors(failOnWarnings || flags.contains("-Werror"))
-          .success(result)
-          .outputLines(outputLines)
-          .compilationUnits(Set.copyOf(compilationUnits))
-          .diagnostics(diagnosticListener.getDiagnostics())
-          .fileRepository(fileRepository)
-          .build();
-    }
+    });
   }
 
   @Override
@@ -421,7 +425,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
    *
    * @return the file manager.
    */
-  private JavaFileManager buildJavaFileManager() throws IOException {
+  private JavaFileManager buildJavaFileManager() {
     var classOutputManager = fileRepository
         .getOrCreate(StandardLocation.CLASS_OUTPUT);
 
@@ -545,4 +549,15 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     DISABLED,
   }
 
+  private static <T> T rethrowIoExceptions(ThrowingSupplier<T> supplier) {
+    try {
+      return supplier.get();
+    } catch (IOException ex) {
+      throw new UncheckedIOException(ex.getMessage(), ex);
+    }
+  }
+
+  private interface ThrowingSupplier<T> {
+    T get() throws IOException;
+  }
 }
