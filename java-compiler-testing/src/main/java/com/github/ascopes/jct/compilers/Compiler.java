@@ -18,7 +18,6 @@ package com.github.ascopes.jct.compilers;
 
 import com.github.ascopes.jct.compilations.Compilation;
 import com.github.ascopes.jct.paths.InMemoryPath;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
@@ -45,7 +44,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   /**
    * Apply a given configurer to this compiler.
    *
-   * @param <T> any exception that may be thrown.
+   * @param <T>        any exception that may be thrown.
    * @param configurer the configurer to invoke.
    * @return this compiler object for further call chaining.
    * @throws T any exception that may be thrown by the configurer.
@@ -58,12 +57,12 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * Invoke the compilation and return the compilation result.
    *
    * @return the compilation result.
-   * @throws CompilerException     if the compiler threw an unhandled exception. This should not
-   *                               occur for compilation failures generally.
-   * @throws IllegalStateException if no compilation units were found.
-   * @throws IOException           if an IO error occurs.
+   * @throws CompilerException            if the compiler threw an unhandled exception. This should
+   *                                      not occur for compilation failures generally.
+   * @throws IllegalStateException        if no compilation units were found.
+   * @throws java.io.UncheckedIOException if an IO error occurs.
    */
-  R compile() throws IOException;
+  R compile();
 
   /**
    * Set whether to use verbose output or not.

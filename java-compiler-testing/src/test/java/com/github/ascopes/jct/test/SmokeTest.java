@@ -36,7 +36,7 @@ class SmokeTest {
 
   @MethodSource("compilers")
   @ParameterizedTest(name = "I can compile something for Java {1} using {0}")
-  void compilationSucceeds(StandardCompiler compiler, int version) throws Exception {
+  void compilationSucceeds(StandardCompiler compiler, int version) {
 
     var sources = InMemoryPath
         .createPath()
