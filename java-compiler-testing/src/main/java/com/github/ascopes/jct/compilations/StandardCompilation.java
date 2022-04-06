@@ -43,30 +43,14 @@ public final class StandardCompilation implements Compilation {
   private final List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
   private final PathLocationRepository repository;
 
-  /**
-   * Initialize the compilation result.
-   *
-   * @param warningsAsErrors {@code true} if warnings were errors, {@code false} otherwise.
-   * @param success          {@code true} if successful, {@code false} otherwise.
-   * @param outputLines      the lines of output from the compiler.
-   * @param compilationUnits the compilation units that were used.
-   * @param diagnostics      the diagnostics that were reported.
-   * @param repository       the file repository that was used.
-   */
-  public StandardCompilation(
-      boolean warningsAsErrors,
-      boolean success,
-      List<String> outputLines,
-      Set<? extends JavaFileObject> compilationUnits,
-      List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics,
-      PathLocationRepository repository
-  ) {
-    this.warningsAsErrors = warningsAsErrors;
-    this.success = success;
-    this.outputLines = Collections.unmodifiableList(Objects.requireNonNull(outputLines));
-    this.compilationUnits = Collections.unmodifiableSet(Objects.requireNonNull(compilationUnits));
-    this.diagnostics = Collections.unmodifiableList(Objects.requireNonNull(diagnostics));
-    this.repository = Objects.requireNonNull(repository);
+  private StandardCompilation(Builder builder) {
+    warningsAsErrors = Objects.requireNonNull(builder.warningsAsErrors);
+    success = Objects.requireNonNull(builder.success);
+    outputLines = Collections.unmodifiableList(Objects.requireNonNull(builder.outputLines));
+    compilationUnits = Collections.unmodifiableSet(
+        Objects.requireNonNull(builder.compilationUnits));
+    diagnostics = Collections.unmodifiableList(Objects.requireNonNull(builder.diagnostics));
+    repository = Objects.requireNonNull(builder.fileRepository);
   }
 
   @Override
@@ -97,5 +81,109 @@ public final class StandardCompilation implements Compilation {
   @Override
   public PathLocationRepository getFileRepository() {
     return repository;
+  }
+
+  /**
+   * Initialize a builder for a new StandardCompilation object.
+   *
+   * @return the builder.
+   */
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  /**
+   * Builder type for a {@link StandardCompilation} to simplify initialization.
+   */
+  public static final class Builder {
+
+    private Boolean warningsAsErrors;
+    private Boolean success;
+    private List<String> outputLines;
+    private Set<? extends JavaFileObject> compilationUnits;
+    private List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
+    private PathLocationRepository fileRepository;
+
+    private Builder() {
+      // Only initialized in this file.
+    }
+
+    /**
+     * Set whether to treat warnings as errors.
+     *
+     * @param warningsAsErrors {@code true} or {@code false}.
+     * @return this builder.
+     */
+    public Builder warningsAsErrors(boolean warningsAsErrors) {
+      this.warningsAsErrors = warningsAsErrors;
+      return this;
+    }
+
+    /**
+     * Set whether the compilation succeeded.
+     *
+     * @param success {@code true} or {@code false}.
+     * @return this builder.
+     */
+    public Builder success(boolean success) {
+      this.success = success;
+      return this;
+    }
+
+    /**
+     * Set the output lines.
+     *
+     * @param outputLines the output lines.
+     * @return this builder.
+     */
+    public Builder outputLines(List<String> outputLines) {
+      this.outputLines = Objects.requireNonNull(outputLines);
+      return this;
+    }
+
+    /**
+     * Set the compilation units.
+     *
+     * @param compilationUnits the compilation units.
+     * @return this builder.
+     */
+    public Builder compilationUnits(Set<? extends JavaFileObject> compilationUnits) {
+      this.compilationUnits = Objects.requireNonNull(compilationUnits);
+      return this;
+    }
+
+    /**
+     * Set the diagnostics.
+     *
+     * @param diagnostics the diagnostics.
+     * @return this builder.
+     */
+    public Builder diagnostics(
+        List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
+    ) {
+      this.diagnostics = Objects.requireNonNull(diagnostics);
+      return this;
+    }
+
+    /**
+     * Set the file repository.
+     *
+     * @param fileRepository the file repository.
+     * @return this builder.
+     */
+    public Builder fileRepository(PathLocationRepository fileRepository) {
+      this.fileRepository = Objects.requireNonNull(fileRepository);
+      return this;
+    }
+
+    /**
+     * Build this builder and output the created {@link StandardCompilation}.
+     *
+     * @return the built object.
+     */
+    public StandardCompilation build() {
+      return new StandardCompilation(this);
+    }
+
   }
 }

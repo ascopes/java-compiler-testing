@@ -182,14 +182,14 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
 
       var outputLines = writer.toString().lines().collect(Collectors.toList());
 
-      return new StandardCompilation(
-          failOnWarnings || flags.contains("-Werror"),
-          result,
-          outputLines,
-          Set.copyOf(compilationUnits),
-          diagnosticListener.getDiagnostics(),
-          fileRepository
-      );
+      return StandardCompilation.builder()
+          .warningsAsErrors(failOnWarnings || flags.contains("-Werror"))
+          .success(result)
+          .outputLines(outputLines)
+          .compilationUnits(Set.copyOf(compilationUnits))
+          .diagnostics(diagnosticListener.getDiagnostics())
+          .fileRepository(fileRepository)
+          .build();
     }
   }
 
