@@ -40,7 +40,7 @@ public final class StandardCompilation implements Compilation {
   private final boolean success;
   private final List<String> outputLines;
   private final Set<? extends JavaFileObject> compilationUnits;
-  private final List<TraceDiagnostic<? extends JavaFileObject>> diagnostics;
+  private final List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
   private final PathLocationRepository repository;
 
   /**
@@ -58,7 +58,7 @@ public final class StandardCompilation implements Compilation {
       boolean success,
       List<String> outputLines,
       Set<? extends JavaFileObject> compilationUnits,
-      List<TraceDiagnostic<? extends JavaFileObject>> diagnostics,
+      List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics,
       PathLocationRepository repository
   ) {
     this.warningsAsErrors = warningsAsErrors;
@@ -90,7 +90,7 @@ public final class StandardCompilation implements Compilation {
   }
 
   @Override
-  public List<TraceDiagnostic<? extends JavaFileObject>> getDiagnostics() {
+  public List<? extends TraceDiagnostic<? extends JavaFileObject>> getDiagnostics() {
     return diagnostics;
   }
 
