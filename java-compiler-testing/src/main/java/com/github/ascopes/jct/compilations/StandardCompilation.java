@@ -16,11 +16,13 @@
 
 package com.github.ascopes.jct.compilations;
 
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
+import static java.util.Objects.requireNonNull;
+
 import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import com.github.ascopes.jct.paths.PathLocationRepository;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
@@ -44,13 +46,12 @@ public final class StandardCompilation implements Compilation {
   private final PathLocationRepository repository;
 
   private StandardCompilation(Builder builder) {
-    warningsAsErrors = Objects.requireNonNull(builder.warningsAsErrors);
-    success = Objects.requireNonNull(builder.success);
-    outputLines = Collections.unmodifiableList(Objects.requireNonNull(builder.outputLines));
-    compilationUnits = Collections.unmodifiableSet(
-        Objects.requireNonNull(builder.compilationUnits));
-    diagnostics = Collections.unmodifiableList(Objects.requireNonNull(builder.diagnostics));
-    repository = Objects.requireNonNull(builder.fileRepository);
+    warningsAsErrors = requireNonNull(builder.warningsAsErrors);
+    success = requireNonNull(builder.success);
+    outputLines = unmodifiableList(requireNonNull(builder.outputLines));
+    compilationUnits = unmodifiableSet(requireNonNull(builder.compilationUnits));
+    diagnostics = unmodifiableList(requireNonNull(builder.diagnostics));
+    repository = requireNonNull(builder.fileRepository);
   }
 
   @Override
@@ -137,7 +138,7 @@ public final class StandardCompilation implements Compilation {
      * @return this builder.
      */
     public Builder outputLines(List<String> outputLines) {
-      this.outputLines = Objects.requireNonNull(outputLines);
+      this.outputLines = requireNonNull(outputLines);
       return this;
     }
 
@@ -148,7 +149,7 @@ public final class StandardCompilation implements Compilation {
      * @return this builder.
      */
     public Builder compilationUnits(Set<? extends JavaFileObject> compilationUnits) {
-      this.compilationUnits = Objects.requireNonNull(compilationUnits);
+      this.compilationUnits = requireNonNull(compilationUnits);
       return this;
     }
 
@@ -161,7 +162,7 @@ public final class StandardCompilation implements Compilation {
     public Builder diagnostics(
         List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
     ) {
-      this.diagnostics = Objects.requireNonNull(diagnostics);
+      this.diagnostics = requireNonNull(diagnostics);
       return this;
     }
 
@@ -172,7 +173,7 @@ public final class StandardCompilation implements Compilation {
      * @return this builder.
      */
     public Builder fileRepository(PathLocationRepository fileRepository) {
-      this.fileRepository = Objects.requireNonNull(fileRepository);
+      this.fileRepository = requireNonNull(fileRepository);
       return this;
     }
 
