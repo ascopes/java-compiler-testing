@@ -87,16 +87,6 @@ public final class JavacFlagBuilder {
   }
 
   /**
-   * Add fail-on-warning preferences.
-   *
-   * @param enabled whether the feature is enabled.
-   * @return this builder.
-   */
-  public JavacFlagBuilder failOnWarnings(boolean enabled) {
-    return flagIfTrue(enabled, "-Werror");
-  }
-
-  /**
    * Add the release version.
    *
    * @param version the release version, or {@code null} if not specified.
