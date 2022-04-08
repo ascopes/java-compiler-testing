@@ -75,7 +75,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
 
   // Common flags.
   private boolean deprecationWarnings;
-  private boolean failOnWarnings;
   private Locale locale;
   private boolean verbose;
   private boolean previewFeatures;
@@ -109,7 +108,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     runtimeOptions = new ArrayList<>();
 
     deprecationWarnings = true;
-    failOnWarnings = false;
     locale = Locale.ROOT;
     previewFeatures = false;
     releaseVersion = null;
@@ -187,7 +185,7 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
         var outputLines = writer.toString().lines().collect(Collectors.toList());
 
         return StandardCompilation.builder()
-            .warningsAsErrors(failOnWarnings || flags.contains("-Werror"))
+            .warningsAsErrors(flags.contains("-Werror"))
             .success(result)
             .outputLines(outputLines)
             .compilationUnits(Set.copyOf(compilationUnits))
@@ -232,13 +230,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
   public StandardCompiler deprecationWarnings(boolean enabled) {
     LOGGER.trace("deprecationWarnings {} -> {}", deprecationWarnings, enabled);
     deprecationWarnings = enabled;
-    return this;
-  }
-
-  @Override
-  public StandardCompiler failOnWarnings(boolean enabled) {
-    LOGGER.trace("failOnWarnings {} -> {}", failOnWarnings, enabled);
-    failOnWarnings = enabled;
     return this;
   }
 
@@ -409,7 +400,6 @@ public final class StandardCompiler implements Compiler<StandardCompiler, Standa
     return new JavacFlagBuilder()
         .annotationProcessorOptions(annotationProcessorOptions)
         .deprecationWarnings(deprecationWarnings)
-        .failOnWarnings(failOnWarnings)
         .options(compilerOptions)
         .previewFeatures(previewFeatures)
         .releaseVersion(releaseVersion)

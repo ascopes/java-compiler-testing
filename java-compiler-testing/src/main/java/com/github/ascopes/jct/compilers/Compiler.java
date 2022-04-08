@@ -99,17 +99,6 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   C deprecationWarnings(boolean enabled);
 
   /**
-   * Set whether to enable failing if warnings occur.
-   *
-   * <p>This is ignored if {@link #warnings(boolean)} is disabled.
-   *
-   * @param enabled {@code true} to enable failure when warnings occur, {@code false} to disable
-   *                this behaviour.
-   * @return this compiler object for further call chaining.
-   */
-  C failOnWarnings(boolean enabled);
-
-  /**
    * Add options to pass to any annotation processors.
    *
    * @param options the options to pass.
