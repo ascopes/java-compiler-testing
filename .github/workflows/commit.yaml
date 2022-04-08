@@ -24,7 +24,7 @@ jobs:
           java-version: '${{ matrix.java-version }}'
 
       - name: Build and run tests
-        run: ./mvnw -B -T4C clean package -Dstyle.color=always
+        run: ./mvnw -B -T4C clean verify -Dstyle.color=always
 
       - name: Report Surefire results
         uses: dorny/test-reporter@v1

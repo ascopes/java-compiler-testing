@@ -11,6 +11,7 @@
 
   <modules>
     <module>java-compiler-testing</module>
+    <module>java-compiler-testing-integration-tests</module>
   </modules>
 
   <inceptionYear>2022</inceptionYear>
