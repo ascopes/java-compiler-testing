@@ -444,7 +444,7 @@ public class InMemoryPath implements Closeable {
 
   @Override
   public String toString() {
-    return "InMemoryPath{path=" + StringUtils.quoted(path.toUri()) + "}";
+    return "InMemoryPath{path=" + StringUtils.quoted(path) + "}";
   }
 
   private Path makeRelativeToHere(Path path) {
@@ -542,13 +542,13 @@ public class InMemoryPath implements Closeable {
     var rootPath = fileSystem.getRootDirectories().iterator().next().resolve(name);
 
     var inMemoryPath = new InMemoryPath(name, rootPath);
-    var uri = inMemoryPath.path.toUri().toString();
+    var path = inMemoryPath.path.toString();
 
     if (closeOnGarbageCollection) {
-      CLEANER.register(inMemoryPath, new AsyncResourceCloser(uri, fileSystem));
+      CLEANER.register(inMemoryPath, new AsyncResourceCloser(path, fileSystem));
     }
 
-    LOGGER.debug("Created new in-memory directory {}", uri);
+    LOGGER.debug("Created new in-memory directory {}", path);
 
     return inMemoryPath;
   }
@@ -560,7 +560,7 @@ public class InMemoryPath implements Closeable {
 
     scheme = scheme == null
         ? "unknown"
-        : scheme.toLowerCase(Locale.ROOT);
+        : scheme.toLowerCase(Locale.ENGLISH);
 
     switch (scheme) {
       case "classpath":

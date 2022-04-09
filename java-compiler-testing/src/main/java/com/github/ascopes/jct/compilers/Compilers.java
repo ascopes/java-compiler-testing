@@ -16,6 +16,9 @@
 
 package com.github.ascopes.jct.compilers;
 
+import com.github.ascopes.jct.compilers.impl.CompilerImpl;
+import com.github.ascopes.jct.compilers.impl.EcjFlagBuilder;
+import com.github.ascopes.jct.compilers.impl.JavacFlagBuilder;
 import javax.tools.ToolProvider;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -39,8 +42,12 @@ public final class Compilers {
    *
    * @return the JDK-provided compiler instance.
    */
-  public static StandardCompiler javac() {
-    return new StandardCompiler("javac", ToolProvider.getSystemJavaCompiler());
+  public static Compiler<?, ?> javac() {
+    return new CompilerImpl(
+        "javac",
+        ToolProvider.getSystemJavaCompiler(),
+        JavacFlagBuilder::new
+    );
   }
 
   /**
@@ -48,9 +55,16 @@ public final class Compilers {
    *
    * <p>This is bundled with this toolkit.
    *
+   * <p><strong>Note:</strong> the ECJ implementation does not currently work correctly with
+   * JPMS modules.
+   *
    * @return the ECJ instance.
    */
-  public static StandardCompiler ecj() {
-    return new StandardCompiler("ecj", new EclipseCompiler());
+  public static Compiler<?, ?> ecj() {
+    return new CompilerImpl(
+        "ecj",
+        new EclipseCompiler(),
+        EcjFlagBuilder::new
+    );
   }
 }

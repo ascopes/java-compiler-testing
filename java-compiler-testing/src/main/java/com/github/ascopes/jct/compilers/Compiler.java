@@ -16,11 +16,11 @@
 
 package com.github.ascopes.jct.compilers;
 
-import com.github.ascopes.jct.compilations.Compilation;
 import com.github.ascopes.jct.paths.InMemoryPath;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaFileManager.Location;
@@ -97,6 +97,17 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @return this compiler object for further call chaining.
    */
   C deprecationWarnings(boolean enabled);
+
+  /**
+   * Set whether to enable treating warnings as errors or not.
+   *
+   * <p>This is ignored if {@link #warnings(boolean)} is disabled.
+   *
+   * @param enabled {@code true} to enable treating warnings as errors. {@code false} to disable
+   *                them.
+   * @return this compiler object for further call chaining.
+   */
+  C warningsAsErrors(boolean enabled);
 
   /**
    * Add options to pass to any annotation processors.
@@ -290,6 +301,39 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @return this compiler object.
    */
   C includeCurrentPlatformClassPath(boolean enabled);
+
+
+  /**
+   * Add options to pass to the Java runtime.
+   *
+   * @param options the options to pass to the runtime.
+   * @return this compiler for further call chaining.
+   */
+  C addRuntimeOptions(Iterable<String> options);
+
+  /**
+   * Set the output locale.
+   *
+   * @param locale the locale to use.
+   * @return this compiler for further call chaining.
+   */
+  C locale(Locale locale);
+
+  /**
+   * Set how to handle logging calls to underlying file managers.
+   *
+   * @param fileManagerLoggingMode the mode to use for file manager logging.
+   * @return this compiler for further call chaining.
+   */
+  C withFileManagerLogging(LoggingMode fileManagerLoggingMode);
+
+  /**
+   * Set how to handle diagnostic capture.
+   *
+   * @param diagnosticLoggingMode the mode to use for diagnostic capture.
+   * @return this compiler for further call chaining.
+   */
+  C withDiagnosticLogging(LoggingMode diagnosticLoggingMode);
 
   /**
    * Add a path to the paths for a given location.
@@ -608,5 +652,25 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    */
   default C addUpgradeModulePaths(Collection<? extends Path> paths) {
     return addPaths(StandardLocation.UPGRADE_MODULE_PATH, paths);
+  }
+
+  /**
+   * Options for how to handle logging on special internal components.
+   */
+  enum LoggingMode {
+    /**
+     * Enable logging.
+     */
+    ENABLED,
+
+    /**
+     * Enable logging and include stacktraces in the logs for each entry.
+     */
+    STACKTRACES,
+
+    /**
+     * Do not log anything.
+     */
+    DISABLED,
   }
 }
