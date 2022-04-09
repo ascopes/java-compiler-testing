@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Ashley Scopes
  */
+@DisplayName("IoExceptionUtils tests")
 class IoExceptionUtilsTest {
 
   @DisplayName("A runnable will be run correctly")

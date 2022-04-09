@@ -26,9 +26,6 @@ import org.apiguardian.api.API.Status;
  * Partial {@link Diagnostic} implementation that delegates to a provided diagnostic implementation
  * internally.
  *
- * <p>This is part of the internal API, and is only visible to ensure OSGi has full access to
- * classes derived from this one.
- *
  * @param <S> the source file type.
  * @author Ashley Scopes
  * @since 0.0.1
