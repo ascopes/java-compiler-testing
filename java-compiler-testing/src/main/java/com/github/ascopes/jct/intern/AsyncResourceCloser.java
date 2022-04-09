@@ -75,9 +75,9 @@ public class AsyncResourceCloser implements Runnable {
     closeables.forEach((name, closeable) -> CompletableFuture.runAsync(() -> {
       try {
         closeable.close();
-        LOGGER.debug("Closed resource {} ({})", name, closeable);
+        LOGGER.trace("Closed resource {} ({})", name, closeable);
       } catch (Throwable ex) {
-        LOGGER.error("Failed to close resource {} ({})", name, closeable, ex);
+        LOGGER.warn("Failed to close resource {} ({})", name, closeable, ex);
       }
     }));
   }

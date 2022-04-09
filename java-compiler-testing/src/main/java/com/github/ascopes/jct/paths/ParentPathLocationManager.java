@@ -17,11 +17,11 @@
 package com.github.ascopes.jct.paths;
 
 import com.github.ascopes.jct.intern.StringUtils;
-import java.lang.module.ModuleDescriptor;
-import java.lang.module.ModuleFinder;
-import java.lang.module.ModuleReference;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -32,6 +32,8 @@ import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A path location manager that also supports having nested modules.
@@ -41,6 +43,8 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class ParentPathLocationManager extends PathLocationManager {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ParentPathLocationManager.class);
 
   private final Map<String, PathLocationManager> modules;
 
@@ -54,24 +58,15 @@ public class ParentPathLocationManager extends PathLocationManager {
     modules = new TreeMap<>();
   }
 
-  @Override
-  public void addPath(Path path) {
-    if (isPathCapableOfHoldingModules(path)) {
-      // If this path can contain modules, then we should convert that to a module location
-      // and store the path there. This just prevent any mistakes where we accidentally put a
-      // module in a module oriented location rather than in the corresponding submodule.
-      ModuleFinder
-          .of(path)
-          .findAll()
-          .stream()
-          .map(ModuleReference::descriptor)
-          .map(ModuleDescriptor::name)
-          .map(this::getOrCreateModuleLocationManager)
-          .forEach(manager -> manager.addPath(path));
-    } else {
-      // If we cannot hold modules, we add the path to this manager directly.
-      super.addPath(path);
-    }
+  /**
+   * Get a collection of all module managers in this location.
+   *
+   * <p>If not applicable, this will be an empty collection.
+   *
+   * @return the collection of module managers.
+   */
+  public Collection<PathLocationManager> getModuleManagers() {
+    return modules.values();
   }
 
   /**
@@ -160,6 +155,34 @@ public class ParentPathLocationManager extends PathLocationManager {
         + "location=" + StringUtils.quoted(location.getName()) + ", "
         + "modules=" + StringUtils.quotedIterable(modules.keySet())
         + "}";
+  }
+
+
+  @Override
+  protected void registerPath(Path path) {
+    if (isPathCapableOfHoldingModules(path)) {
+      // If this path can contain modules, then we should convert that to a module location
+      // and store the path there. This just prevent any mistakes where we accidentally put a
+      // module in a module oriented location rather than in the corresponding submodule.
+      try {
+        Files
+            .list(path)
+            .peek(next -> LOGGER.debug("Checking if {} is a source module", next))
+            .filter(Files::isDirectory)
+            .filter(next -> Files.isRegularFile(next.resolve("module-info.java")))
+            .forEach(module -> {
+              var name = module.getFileName().toString();
+              LOGGER.debug("Found candidate module {} at {}", name, module);
+              var manager = getOrCreateModuleLocationManager(name);
+              // Register the first path.
+              manager.addPath(module);
+            });
+      } catch (IOException ex) {
+        throw new UncheckedIOException("Failed to read files in " + path, ex);
+      }
+    }
+
+    super.registerPath(path);
   }
 
   private PathLocationManager buildLocationManagerForModule(

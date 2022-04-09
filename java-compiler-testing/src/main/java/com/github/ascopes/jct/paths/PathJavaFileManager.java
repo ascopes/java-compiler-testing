@@ -139,7 +139,7 @@ public class PathJavaFileManager implements JavaFileManager {
   public FileObject getFileForInput(Location location, String packageName, String relativeName)
       throws IOException {
 
-    assertNotModuleOrientedLocation(location);
+    //assertNotModuleOrientedLocation(location);
     assertKnownLocation(location);
 
     return repository
@@ -173,8 +173,8 @@ public class PathJavaFileManager implements JavaFileManager {
     assertKnownLocation(location);
 
     return repository
-        .get(location)
-        .flatMap(manager -> manager.getFileForOutput(packageName, relativeName))
+        .getOrCreate(location)
+        .getFileForOutput(packageName, relativeName)
         .orElse(null);
   }
 
@@ -196,7 +196,7 @@ public class PathJavaFileManager implements JavaFileManager {
       String className,
       Kind kind
   ) throws IOException {
-    assertNotModuleOrientedLocation(location);
+    //assertNotModuleOrientedLocation(location);
     assertKnownLocation(location);
 
     return repository
@@ -214,8 +214,7 @@ public class PathJavaFileManager implements JavaFileManager {
    * @param sibling   any sibling file if one exists, or {@code null} otherwise.
    * @return the file to use for output, or {@code null} if no paths have been registered for the
    *     location.
-   * @throws IllegalArgumentException if the location is not known to this manager, or if the
-   *                                  location is not an output location.
+   * @throws IllegalArgumentException if the location is not an output location.
    * @throws IllegalStateException    if the file manager is already closed.
    * @throws IOException              if an IO exception occurred.
    */
@@ -227,11 +226,10 @@ public class PathJavaFileManager implements JavaFileManager {
       FileObject sibling
   ) throws IOException {
     assertOutputLocation(location);
-    assertKnownLocation(location);
 
     return repository
-        .get(location)
-        .flatMap(manager -> manager.getJavaFileForOutput(className, kind))
+        .getOrCreate(location)
+        .getJavaFileForOutput(className, kind)
         .orElse(null);
   }
 

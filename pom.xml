@@ -49,6 +49,7 @@
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jimfs.version>1.2</jimfs.version>
     <junit-jupiter.version>5.8.2</junit-jupiter.version>
+    <logback.version>1.2.11</logback.version>
     <mockito.version>4.4.0</mockito.version>
     <reflections.version>0.10.2</reflections.version>
     <slf4j.version>1.7.36</slf4j.version>
@@ -80,6 +81,13 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <!-- Logging implementation -->
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+
       <dependency>
         <!-- In-memory file system -->
         <groupId>com.google.jimfs</groupId>
@@ -149,13 +157,6 @@
         <!-- Logging interface -->
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
-
-      <dependency>
-        <!-- Logging interface implementation -->
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-simple</artifactId>
         <version>${slf4j.version}</version>
       </dependency>
     </dependencies>

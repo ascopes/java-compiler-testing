@@ -41,6 +41,8 @@ import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -55,6 +57,7 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class PathLocationManager implements Iterable<Path> {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(PathLocationManager.class);
   private static final StringSlicer PACKAGE_SPLITTER = new StringSlicer(".");
 
   protected final Location location;
@@ -71,6 +74,8 @@ public class PathLocationManager implements Iterable<Path> {
    * @param location the location to represent.
    */
   public PathLocationManager(Location location) {
+    LOGGER.debug("Initializing PathLocationManager for location {}", location);
+
     this.location = Objects.requireNonNull(location);
     roots = new LinkedHashSet<>();
     classLoader = new Lazy<>(this::createClassLoaderUnsafe);
@@ -93,12 +98,13 @@ public class PathLocationManager implements Iterable<Path> {
    *
    * <p>This will destroy the existing classloader, if it already exists.
    *
-   * @param inMemoryDirectory the path to add.
+   * @param path the path to add.
    */
-  public void addPath(InMemoryPath inMemoryDirectory) {
-    addPath(inMemoryDirectory.getPath());
+  public void addPath(InMemoryPath path) {
+    LOGGER.debug("Adding InMemoryPath {} to PathLocationManager for location {}", path, location);
+    registerPath(path.getPath());
     // Keep the reference alive.
-    inMemoryDirectories.add(inMemoryDirectory);
+    inMemoryDirectories.add(path);
   }
 
   /**
@@ -109,8 +115,8 @@ public class PathLocationManager implements Iterable<Path> {
    * @param path the path to add.
    */
   public void addPath(Path path) {
-    classLoader.destroy();
-    roots.add(path.toAbsolutePath());
+    LOGGER.debug("Adding Path {} to PathLocationManager for location {}", path, location);
+    registerPath(path);
   }
 
   /**
@@ -123,8 +129,9 @@ public class PathLocationManager implements Iterable<Path> {
   public void addPaths(Collection<? extends Path> paths) {
     // Don't expand paths if this was incorrectly called with a single path, since paths themselves
     // are iterables of paths.
+    LOGGER.debug("Adding Paths {} to PathLocationManager for location {}", paths, location);
     for (var path : paths) {
-      addPath(path);
+      registerPath(path);
     }
   }
 
@@ -374,38 +381,11 @@ public class PathLocationManager implements Iterable<Path> {
       Files
           .walk(path, maxDepth)
           .filter(hasAnyKind(kinds).and(Files::isRegularFile))
-          .map(this::javaFileObjectFromPath)
+          .map(nextFile -> javaFileObjectFromPath(nextFile, root.relativize(nextFile).toString()))
           .forEach(results::add);
     }
 
     return results;
-  }
-
-  /**
-   * Remove an existing path from the manager.
-   *
-   * <p>This will destroy the existing classloader, if it already exists.
-   *
-   * @param path the path to remove.
-   */
-  public void removePath(Path path) {
-    classLoader.destroy();
-    roots.remove(path);
-  }
-
-  /**
-   * Remove one or more paths from the manager if they are present.
-   *
-   * <p>This will destroy the existing classloader, if it already exists.
-   *
-   * <p>This is a best-effort operation.
-   *
-   * @param paths the paths to remove.
-   */
-  public void removePaths(Iterable<? extends Path> paths) {
-    for (var path : paths) {
-      removePath(path);
-    }
   }
 
   @Override
@@ -413,6 +393,11 @@ public class PathLocationManager implements Iterable<Path> {
     return "PackageOrientedPathLocationManager{"
         + "location=" + StringUtils.quoted(location.getName())
         + "}";
+  }
+
+  protected void registerPath(Path path) {
+    classLoader.destroy();
+    roots.add(path.toAbsolutePath());
   }
 
   private ClassLoader createClassLoaderUnsafe() {
@@ -452,10 +437,6 @@ public class PathLocationManager implements Iterable<Path> {
 
   private int walkDepth(boolean recurse) {
     return recurse ? Integer.MAX_VALUE : 1;
-  }
-
-  private PathJavaFileObject javaFileObjectFromPath(Path path) {
-    return javaFileObjectFromPath(path, path.toString());
   }
 
   private PathJavaFileObject javaFileObjectFromPath(Path path, String givenName) {

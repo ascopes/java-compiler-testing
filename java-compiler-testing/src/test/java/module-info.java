@@ -21,12 +21,12 @@ open module com.github.ascopes.jct.testing {
   requires awaitility;
   requires transitive net.bytebuddy;         // required for mockito to work with JPMS.
   requires transitive net.bytebuddy.agent;   // required for mockito to work with JPMS.
+  requires logback.classic;
   requires transitive org.assertj.core;
   requires transitive org.junit.jupiter;
   requires org.mockito;
   requires org.mockito.junit.jupiter;
   requires org.slf4j;
-  requires org.slf4j.simple;
 
   requires com.github.ascopes.jct;
 }
