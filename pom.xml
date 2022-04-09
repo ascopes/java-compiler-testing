@@ -11,7 +11,6 @@
 
   <modules>
     <module>java-compiler-testing</module>
-    <module>java-compiler-testing-integration-tests</module>
   </modules>
 
   <inceptionYear>2022</inceptionYear>
@@ -56,11 +55,10 @@
 
     <!-- Maven plugins and depencencies -->
     <checkstyle.version>10.0</checkstyle.version>
-    <maven-bundle-plugin.version>5.1.4</maven-bundle-plugin.version>
     <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
     <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
-    <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
 
     <!-- Third-party plugins -->
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
@@ -187,12 +185,6 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.felix</groupId>
-          <artifactId>maven-bundle-plugin</artifactId>
-          <version>${maven-bundle-plugin.version}</version>
         </plugin>
 
         <plugin>

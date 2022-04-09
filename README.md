@@ -10,8 +10,7 @@ seamlessly with Java 11 and newer.
 This module comes with full JPMS support. I decided to drop support for
 Java 8 due to complexity around implementing this without the ability to
 reference modules, and ideally this tool should be forward compatible to
-prevent future issues for any projects deciding to use it. OSGi support is
-also provided.
+prevent future issues for any projects deciding to use it.
 
 **This module is still under development.** Any contributions or feedback
 are always welcome!
