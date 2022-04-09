@@ -1,6 +1,6 @@
 # java-compiler-testing
 Facility for running compilation tests and annotation processing tests
-within unit tests, for javac and ecj.
+for `javac` and `ecj`.
 
 I developed this after several months of pulling out my hair trying to
 find easy ways to integration test annotation processors for Java. While
@@ -10,7 +10,8 @@ seamlessly with Java 11 and newer.
 This module comes with full JPMS support. I decided to drop support for
 Java 8 due to complexity around implementing this without the ability to
 reference modules, and ideally this tool should be forward compatible to
-prevent future issues for any projects deciding to use it.
+prevent future issues for any projects deciding to use it. OSGi support is
+also provided.
 
 **This module is still under development.** Any contributions or feedback
 are always welcome!
@@ -58,6 +59,9 @@ class HelloWorldTest {
 
 - Ability to run compilation on real files, classpath resources,
   and in-memory files.
+- Provides support for `javac` and `ecj` out of the box, with the
+  ability to support other JSR-199 implementations if desired.
+- Implements a fully functional JSR-199 Path JavaFileManager.
 - Fluent syntax for creating configurations, executing them, and
   inspecting the results.
 - Integration with AssertJ for fluent assertions on compilation
