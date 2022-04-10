@@ -12,27 +12,28 @@ jobs:
         # TODO: enable Java 18 when supported by this plugin.
         # Alternatively just switch over to using SDKMAN instead.
         java-version: [11, 12, 13, 14, 15, 16, 17]
+        java-distribution: [adopt]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Initialize Java ${{ matrix.java-version }}
+      - name: Initialize Java ${{ matrix.java-version }} (${{ matrix.java-distribution }})
         uses: actions/setup-java@v2
         with:
-          distribution: 'adopt'
+          distribution: '${{ matrix.java-distribution }}'
           java-version: '${{ matrix.java-version }}'
 
-      - name: Build and run tests
-        run: ./mvnw -B -T4C clean verify -Dstyle.color=always
+      - name: Build with Java ${{ matrix.java-version }} (${{ matrix.java-distribution }})
+        run: ./mvnw -B -U -T8C clean verify -Dstyle.color=always
 
       - name: Report Surefire results
         uses: dorny/test-reporter@v1
         continue-on-error: true
         if: success() || failure()
         with:
-          name: Surefire results for Java ${{ matrix.java-version }}
-          path: "target/surefire-reports/TEST-*.xml"
+          name: Surefire results for Java ${{ matrix.java-version }} (${{ matrix.java-distribution }})
+          path: "**/target/surefire-reports/TEST-*.xml"
           reporter: java-junit
 
       - name: Archive Surefire reports
@@ -40,13 +41,13 @@ jobs:
         continue-on-error: true
         if: success() || failure()
         with:
-          name: surefire-reports-java-${{ matrix.java-version }}
-          path: "target/surefire-reports/TEST-*.xml"
+          name: surefire-reports-java-${{ matrix.java-version }}-${{ matrix.java-distribution }}
+          path: "**/target/surefire-reports/TEST-*.xml"
 
       - name: Archive JaCoCo coverage reports
         uses: actions/upload-artifact@v2
         continue-on-error: true
         if: success() || failure()
         with:
-          name: jacoco-reports-java-${{ matrix.java-version }}
-          path: "target/site/jacoco"
+          name: jacoco-reports-java-${{ matrix.java-version }}-${{ matrix.java-distribution }})
+          path: "**/target/site/jacoco"
