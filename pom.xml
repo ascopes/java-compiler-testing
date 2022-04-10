@@ -62,7 +62,7 @@
     <maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
 
     <!-- Third-party plugins -->
-    <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
 
     <!--
       This argument is pulled in by Surefire, and JaCoCo will amend it to ensure the

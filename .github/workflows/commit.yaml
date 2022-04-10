@@ -9,17 +9,15 @@ jobs:
 
     strategy:
       matrix:
-        # TODO: enable Java 18 when supported by this plugin.
-        # Alternatively just switch over to using SDKMAN instead.
-        java-version: [11, 12, 13, 14, 15, 16, 17]
-        java-distribution: [adopt]
+        java-version: [11, 12, 13, 14, 15, 16, 17, 18]
+        java-distribution: [zulu]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Initialize Java ${{ matrix.java-version }} (${{ matrix.java-distribution }})
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: '${{ matrix.java-distribution }}'
           java-version: '${{ matrix.java-version }}'
