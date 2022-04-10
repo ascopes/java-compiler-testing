@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.testing.unit.compilations;
+package com.github.ascopes.jct.testing.unit.compilers;
 
 import static com.github.ascopes.jct.testing.helpers.MoreMocks.stub;
 import static com.github.ascopes.jct.testing.helpers.MoreMocks.stubCast;
 import static org.assertj.core.api.BDDAssertions.then;
 
-import com.github.ascopes.jct.compilers.impl.CompilationImpl;
-import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import com.github.ascopes.jct.compilers.SimpleCompilation;
+import com.github.ascopes.jct.compilers.TraceDiagnostic;
 import com.github.ascopes.jct.paths.PathLocationRepository;
 import com.github.ascopes.jct.testing.helpers.TypeRef;
 import java.util.List;
@@ -36,12 +36,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 /**
- * Tests for {@link CompilationImpl}.
+ * Tests for {@link SimpleCompilation}.
  *
  * @author Ashley Scopes
  */
 @DisplayName("CompilationImpl tests")
-class CompilationImplTest {
+class SimpleCompilationTest {
 
   @DisplayName("isWarningsAsErrors() is expected value")
   @ValueSource(booleans = {true, false})
@@ -134,8 +134,8 @@ class CompilationImplTest {
     then(compilation.getFileRepository()).isSameAs(repo);
   }
 
-  static CompilationImpl.Builder someBuilder() {
-    return CompilationImpl.builder()
+  static SimpleCompilation.Builder someBuilder() {
+    return SimpleCompilation.builder()
         .outputLines(List.of())
         .compilationUnits(Set.of())
         .success(true)

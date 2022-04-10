@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.testing.unit.diagnostics;
+package com.github.ascopes.jct.testing.unit.compilers;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenCode;
 
-import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import com.github.ascopes.jct.compilers.TraceDiagnostic;
 import com.github.ascopes.jct.testing.helpers.MoreMocks;
 import com.github.ascopes.jct.testing.helpers.TypeRef;
 import java.time.Instant;

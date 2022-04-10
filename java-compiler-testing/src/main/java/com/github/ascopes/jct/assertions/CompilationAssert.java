@@ -17,9 +17,8 @@
 package com.github.ascopes.jct.assertions;
 
 import com.github.ascopes.jct.compilers.Compilation;
-import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import com.github.ascopes.jct.compilers.TraceDiagnostic;
 import com.github.ascopes.jct.paths.ModuleLocation;
-import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.tools.Diagnostic.Kind;
@@ -70,13 +69,7 @@ public class CompilationAssert<C extends Compilation>
         .getDiagnostics()
         .stream()
         .filter(it -> filter.test(it.getKind()))
-        .map(it -> String.format(
-            "<[%s]> [%s] %s%n",
-            it.getKind(),
-            it.getCode(),
-            it.getMessage(Locale.ROOT)
-        ))
-        .collect(Collectors.joining("\n"));
+        .collect(Collectors.toList());
 
     if (errors.isEmpty()) {
       throw failureWithActualExpected(
@@ -89,8 +82,8 @@ public class CompilationAssert<C extends Compilation>
     throw failureWithActualExpected(
         "failed",
         "succeeded",
-        "Expected successful compilation but it failed\nDiagnostics:%n%s",
-        errors
+        "Expected successful compilation but it failed with errors:%n%s",
+        new DiagnosticCollectionRepresentation().toStringOf(errors)
     );
   }
 

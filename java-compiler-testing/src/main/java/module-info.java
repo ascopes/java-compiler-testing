@@ -28,19 +28,15 @@ module com.github.ascopes.jct {
 
   exports com.github.ascopes.jct.assertions;
   exports com.github.ascopes.jct.compilers;
-  exports com.github.ascopes.jct.diagnostics;
   exports com.github.ascopes.jct.paths;
 
   // Testing access only.
-  exports com.github.ascopes.jct.compilers.impl to com.github.ascopes.jct.testing;
   exports com.github.ascopes.jct.intern to com.github.ascopes.jct.testing;
 
   opens com.github.ascopes.jct.assertions to com.github.ascopes.jct.testing;
   opens com.github.ascopes.jct.compilers to com.github.ascopes.jct.testing;
-  opens com.github.ascopes.jct.compilers.impl to com.github.ascopes.jct.testing;
-  opens com.github.ascopes.jct.diagnostics to com.github.ascopes.jct.testing;
+  opens com.github.ascopes.jct.compilers.ecj to com.github.ascopes.jct.testing;
+  opens com.github.ascopes.jct.compilers.javac to com.github.ascopes.jct.testing;
   opens com.github.ascopes.jct.paths to com.github.ascopes.jct.testing;
   opens com.github.ascopes.jct.intern to com.github.ascopes.jct.testing;
-  exports com.github.ascopes.jct.diagnostics.impl;
-  opens com.github.ascopes.jct.diagnostics.impl to com.github.ascopes.jct.testing;
 }

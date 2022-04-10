@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.testing.unit.diagnostics;
+package com.github.ascopes.jct.testing.unit.compilers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.github.ascopes.jct.diagnostics.ForwardingDiagnostic;
+import com.github.ascopes.jct.compilers.ForwardingDiagnostic;
 import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;

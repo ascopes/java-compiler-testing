@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.diagnostics;
+package com.github.ascopes.jct.compilers;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -30,7 +30,7 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public abstract class ForwardingDiagnostic<S> implements Diagnostic<S> {
 
   protected final Diagnostic<? extends S> original;

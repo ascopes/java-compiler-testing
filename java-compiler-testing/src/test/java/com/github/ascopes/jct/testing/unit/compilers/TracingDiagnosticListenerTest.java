@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.testing.unit.diagnostics.impl;
+package com.github.ascopes.jct.testing.unit.compilers;
 
 import static com.github.ascopes.jct.testing.helpers.MoreMocks.hasToString;
 import static com.github.ascopes.jct.testing.helpers.MoreMocks.stub;
@@ -33,8 +33,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
-import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
-import com.github.ascopes.jct.diagnostics.impl.TracingDiagnosticListener;
+import com.github.ascopes.jct.compilers.TraceDiagnostic;
+import com.github.ascopes.jct.compilers.TracingDiagnosticListener;
 import com.github.ascopes.jct.testing.helpers.TypeRef;
 import java.time.Instant;
 import java.util.Arrays;

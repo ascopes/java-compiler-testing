@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.compilers.impl;
+package com.github.ascopes.jct.compilers.ecj;
 
+import com.github.ascopes.jct.compilers.FlagBuilder;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,13 +25,16 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Helper to build flags for a standard Javac implementation for the OpenJDK.
+ * Helper to build flags for ECJ.
+ *
+ * <p>This mostly uses the same flags as javac, but some behaviour differs, so the implementations
+ * are kept separate to prevent issues in the future if the implementations totally diverge.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public class JavacFlagBuilder implements FlagBuilder {
+public class EcjFlagBuilder implements FlagBuilder {
 
   protected final Stream.Builder<String> craftedFlags;
   protected final Stream.Builder<String> annotationProcessorOptions;
@@ -39,66 +43,67 @@ public class JavacFlagBuilder implements FlagBuilder {
   /**
    * Initialize this flag builder.
    */
-  public JavacFlagBuilder() {
+  public EcjFlagBuilder() {
     craftedFlags = Stream.builder();
     annotationProcessorOptions = Stream.builder();
     otherOptions = Stream.builder();
   }
 
   @Override
-  public JavacFlagBuilder verbose(boolean enabled) {
+  public EcjFlagBuilder verbose(boolean enabled) {
     return flagIfTrue(enabled, "-verbose");
   }
 
   @Override
-  public JavacFlagBuilder previewFeatures(boolean enabled) {
+  public EcjFlagBuilder previewFeatures(boolean enabled) {
     return flagIfTrue(enabled, "--enable-preview");
   }
 
   @Override
-  public JavacFlagBuilder warnings(boolean enabled) {
+  public EcjFlagBuilder warnings(boolean enabled) {
     return flagIfTrue(!enabled, "-nowarn");
   }
 
   @Override
-  public JavacFlagBuilder warningsAsErrors(boolean enabled) {
-    return flagIfTrue(enabled, "-Werror");
+  public EcjFlagBuilder warningsAsErrors(boolean enabled) {
+    // Differs to javac for some reason.
+    return flagIfTrue(enabled, "--failOnWarning");
   }
 
   @Override
-  public JavacFlagBuilder deprecationWarnings(boolean enabled) {
+  public EcjFlagBuilder deprecationWarnings(boolean enabled) {
     return flagIfTrue(enabled, "-deprecation");
   }
 
   @Override
-  public JavacFlagBuilder releaseVersion(String version) {
+  public EcjFlagBuilder releaseVersion(String version) {
     return versionIfPresent("--release", version);
   }
 
   @Override
-  public JavacFlagBuilder sourceVersion(String version) {
+  public EcjFlagBuilder sourceVersion(String version) {
     return versionIfPresent("-source", version);
   }
 
   @Override
-  public JavacFlagBuilder targetVersion(String version) {
+  public EcjFlagBuilder targetVersion(String version) {
     return versionIfPresent("-target", version);
   }
 
   @Override
-  public JavacFlagBuilder annotationProcessorOptions(List<String> options) {
+  public EcjFlagBuilder annotationProcessorOptions(List<String> options) {
     options.forEach(option -> annotationProcessorOptions.add("-A" + option));
     return this;
   }
 
   @Override
-  public JavacFlagBuilder runtimeOptions(List<String> options) {
+  public EcjFlagBuilder runtimeOptions(List<String> options) {
     options.forEach(option -> annotationProcessorOptions.add("-J" + option));
     return this;
   }
 
   @Override
-  public JavacFlagBuilder options(List<String> options) {
+  public EcjFlagBuilder options(List<String> options) {
     options.forEach(otherOptions::add);
     return this;
   }
@@ -111,7 +116,7 @@ public class JavacFlagBuilder implements FlagBuilder {
         .collect(Collectors.toList());
   }
 
-  private JavacFlagBuilder flagIfTrue(boolean condition, String... flags) {
+  private EcjFlagBuilder flagIfTrue(boolean condition, String... flags) {
     if (condition) {
       for (var flag : flags) {
         craftedFlags.add(flag);
@@ -121,7 +126,7 @@ public class JavacFlagBuilder implements FlagBuilder {
     return this;
   }
 
-  private JavacFlagBuilder versionIfPresent(String flagPrefix, String nullableVersion) {
+  private EcjFlagBuilder versionIfPresent(String flagPrefix, String nullableVersion) {
     Optional
         .ofNullable(nullableVersion)
         .ifPresent(version -> craftedFlags.add(flagPrefix).add(version));
