@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.diagnostics;
+package com.github.ascopes.jct.compilers;
 
 import java.time.Instant;
 import java.util.List;

@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.compilers.impl;
+package com.github.ascopes.jct.compilers;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
-import com.github.ascopes.jct.compilers.Compilation;
-import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import com.github.ascopes.jct.paths.PathLocationRepository;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
@@ -37,7 +36,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class CompilationImpl implements Compilation {
+public final class SimpleCompilation implements Compilation {
 
   private final boolean warningsAsErrors;
   private final boolean success;
@@ -46,13 +45,17 @@ public final class CompilationImpl implements Compilation {
   private final List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
   private final PathLocationRepository repository;
 
-  private CompilationImpl(Builder builder) {
+  private SimpleCompilation(Builder builder) {
     warningsAsErrors = requireNonNull(builder.warningsAsErrors);
     success = requireNonNull(builder.success);
     outputLines = unmodifiableList(requireNonNull(builder.outputLines));
     compilationUnits = unmodifiableSet(requireNonNull(builder.compilationUnits));
     diagnostics = unmodifiableList(requireNonNull(builder.diagnostics));
     repository = requireNonNull(builder.fileRepository);
+
+    outputLines.forEach(Objects::requireNonNull);
+    compilationUnits.forEach(Objects::requireNonNull);
+    outputLines.forEach(Objects::requireNonNull);
   }
 
   @Override
@@ -95,7 +98,7 @@ public final class CompilationImpl implements Compilation {
   }
 
   /**
-   * Builder type for a {@link CompilationImpl} to simplify initialization.
+   * Builder type for a {@link SimpleCompilation} to simplify initialization.
    */
   public static final class Builder {
 
@@ -179,12 +182,12 @@ public final class CompilationImpl implements Compilation {
     }
 
     /**
-     * Build this builder and output the created {@link CompilationImpl}.
+     * Build this builder and output the created {@link SimpleCompilation}.
      *
      * @return the built object.
      */
-    public CompilationImpl build() {
-      return new CompilationImpl(this);
+    public SimpleCompilation build() {
+      return new SimpleCompilation(this);
     }
 
   }

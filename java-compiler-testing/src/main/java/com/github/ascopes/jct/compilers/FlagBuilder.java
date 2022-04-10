@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.compilers.impl;
+package com.github.ascopes.jct.compilers;
 
 import java.util.List;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 /**
- * Interface for defining a common flag builder for standard compilers.
+ * Interface for defining a common flag builder for compilers.
  *
  * @author Ashley Scopes
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public interface FlagBuilder {
 
   /**
@@ -32,7 +35,6 @@ public interface FlagBuilder {
    * @return this builder.
    */
   FlagBuilder verbose(boolean enabled);
-
 
   /**
    * Add preview feature preferences.

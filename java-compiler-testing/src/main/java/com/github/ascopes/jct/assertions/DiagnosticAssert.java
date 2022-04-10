@@ -16,7 +16,7 @@
 
 package com.github.ascopes.jct.assertions;
 
-import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import com.github.ascopes.jct.compilers.TraceDiagnostic;
 import java.util.Locale;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileObject;
@@ -189,7 +189,8 @@ public final class DiagnosticAssert
   public static DiagnosticAssert assertThat(
       TraceDiagnostic<? extends JavaFileObject> diagnostic
   ) {
-    return new DiagnosticAssert(diagnostic);
+    return new DiagnosticAssert(diagnostic)
+        .withRepresentation(new DiagnosticRepresentation());
   }
 }
 

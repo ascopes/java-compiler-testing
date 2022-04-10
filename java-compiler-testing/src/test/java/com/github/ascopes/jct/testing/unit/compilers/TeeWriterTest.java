@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.testing.unit.diagnostics.impl;
+package com.github.ascopes.jct.testing.unit.compilers;
 
 import static com.github.ascopes.jct.testing.helpers.MoreMocks.stub;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 
-import com.github.ascopes.jct.diagnostics.impl.TeeWriter;
+import com.github.ascopes.jct.compilers.TeeWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;

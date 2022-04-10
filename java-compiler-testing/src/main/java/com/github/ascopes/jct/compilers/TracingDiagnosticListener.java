@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.diagnostics.impl;
+package com.github.ascopes.jct.compilers;
 
-import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class TracingDiagnosticListener<S> implements DiagnosticListener<S> {
 
   private final ConcurrentLinkedQueue<TraceDiagnostic<S>> diagnostics;

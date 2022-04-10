@@ -16,13 +16,10 @@
 
 package com.github.ascopes.jct.compilers;
 
-import com.github.ascopes.jct.compilers.impl.CompilerImpl;
-import com.github.ascopes.jct.compilers.impl.EcjFlagBuilder;
-import com.github.ascopes.jct.compilers.impl.JavacFlagBuilder;
-import javax.tools.ToolProvider;
+import com.github.ascopes.jct.compilers.ecj.EcjCompiler;
+import com.github.ascopes.jct.compilers.javac.JavacCompiler;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 
 /**
  * Utility class that allows initialization of several common types of compiler.
@@ -43,11 +40,7 @@ public final class Compilers {
    * @return the JDK-provided compiler instance.
    */
   public static Compiler<?, ?> javac() {
-    return new CompilerImpl(
-        "javac",
-        ToolProvider.getSystemJavaCompiler(),
-        JavacFlagBuilder::new
-    );
+    return new JavacCompiler();
   }
 
   /**
@@ -61,10 +54,6 @@ public final class Compilers {
    * @return the ECJ instance.
    */
   public static Compiler<?, ?> ecj() {
-    return new CompilerImpl(
-        "ecj",
-        new EclipseCompiler(),
-        EcjFlagBuilder::new
-    );
+    return new EcjCompiler();
   }
 }

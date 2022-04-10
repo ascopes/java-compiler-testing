@@ -16,7 +16,7 @@
 
 package com.github.ascopes.jct.assertions;
 
-import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import com.github.ascopes.jct.compilers.TraceDiagnostic;
 import java.util.List;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
@@ -60,6 +60,7 @@ public final class DiagnosticListAssert
   public static DiagnosticListAssert assertThat(
       List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
   ) {
-    return new DiagnosticListAssert(diagnostics);
+    return new DiagnosticListAssert(diagnostics)
+        .withRepresentation(new DiagnosticCollectionRepresentation());
   }
 }

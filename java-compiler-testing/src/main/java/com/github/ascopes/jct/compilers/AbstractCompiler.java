@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.compilers.impl;
+package com.github.ascopes.jct.compilers;
 
 import static com.github.ascopes.jct.intern.IoExceptionUtils.uncheckedIo;
 
-import com.github.ascopes.jct.compilers.Compiler;
-import com.github.ascopes.jct.compilers.CompilerConfigurer;
-import com.github.ascopes.jct.compilers.CompilerException;
-import com.github.ascopes.jct.diagnostics.impl.TeeWriter;
-import com.github.ascopes.jct.diagnostics.impl.TracingDiagnosticListener;
 import com.github.ascopes.jct.intern.SpecialLocations;
 import com.github.ascopes.jct.intern.StringUtils;
 import com.github.ascopes.jct.paths.InMemoryPath;
@@ -30,6 +25,7 @@ import com.github.ascopes.jct.paths.LoggingJavaFileManagerProxy;
 import com.github.ascopes.jct.paths.PathJavaFileManager;
 import com.github.ascopes.jct.paths.PathLocationRepository;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,10 +33,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import javax.annotation.processing.Processor;
+import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
+import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
@@ -52,64 +48,51 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of a wrapper around a {@code javac}-like compiler.
+ * Common functionality for a compiler that can be overridden.
  *
+ * @param <A> the type of the class extending this class.
+ * @param <S> the compilation type.
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
-public final class CompilerImpl implements Compiler<CompilerImpl, CompilationImpl> {
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S extends Compilation>
+    implements Compiler<A, S> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(CompilerImpl.class);
-
-  private final String name;
-  private final JavaCompiler compiler;
-  private final Supplier<FlagBuilder> flagBuilderSupplier;
+  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCompiler.class);
 
   // File workspace.
-  private final PathLocationRepository fileRepository;
+  protected final PathLocationRepository fileRepository;
 
   // Annotation processors that were explicitly added.
-  private final List<Processor> annotationProcessors;
+  protected final List<Processor> annotationProcessors;
 
   // User-defined option collections.
-  private final List<String> annotationProcessorOptions;
-  private final List<String> compilerOptions;
-  private final List<String> runtimeOptions;
+  protected final List<String> annotationProcessorOptions;
+  protected final List<String> compilerOptions;
+  protected final List<String> runtimeOptions;
 
   // Common flags.
-  private boolean deprecationWarnings;
-  private boolean warningsAsErrors;
-  private Locale locale;
-  private boolean verbose;
-  private boolean previewFeatures;
-  private String releaseVersion;
-  private String sourceVersion;
-  private String targetVersion;
-  private boolean warnings;
-  private boolean includeCurrentClassPath;
-  private boolean includeCurrentPlatformClassPath;
+  protected boolean deprecationWarnings;
+  protected boolean warningsAsErrors;
+  protected Locale locale;
+  protected boolean verbose;
+  protected boolean previewFeatures;
+  protected String releaseVersion;
+  protected String sourceVersion;
+  protected String targetVersion;
+  protected boolean warnings;
+  protected boolean includeCurrentClassPath;
+  protected boolean includeCurrentPlatformClassPath;
 
   // Framework-specific functionality.
-  private LoggingMode fileManagerLoggingMode;
-  private LoggingMode diagnosticLoggingMode;
+  protected LoggingMode fileManagerLoggingMode;
+  protected LoggingMode diagnosticLoggingMode;
 
   /**
    * Initialize this compiler handler.
-   *
-   * @param name                the name of the compiler.
-   * @param compiler            the compiler implementation to use.
-   * @param flagBuilderSupplier supplier that creates a flag builder to use to build flags.
    */
-  public CompilerImpl(
-      String name,
-      JavaCompiler compiler,
-      Supplier<FlagBuilder> flagBuilderSupplier
-  ) {
-    this.name = Objects.requireNonNull(name);
-    this.compiler = Objects.requireNonNull(compiler);
-    this.flagBuilderSupplier = Objects.requireNonNull(flagBuilderSupplier);
-
+  protected AbstractCompiler() {
     fileRepository = new PathLocationRepository();
 
     annotationProcessors = new ArrayList<>();
@@ -134,265 +117,193 @@ public final class CompilerImpl implements Compiler<CompilerImpl, CompilationImp
   }
 
   @Override
-  public CompilationImpl compile() {
-    return uncheckedIo(() -> {
-      var flags = buildFlags();
-      var diagnosticListener = buildDiagnosticListener();
-
-      try (var fileManager = applyLoggingToFileManager(buildJavaFileManager())) {
-        var compilationUnits = discoverCompilationUnits(fileManager);
-        LOGGER.debug("Discovered {} compilation units {}", compilationUnits.size(),
-            compilationUnits);
-
-        var writer = new TeeWriter(System.out);
-
-        var task = compiler.getTask(
-            writer,
-            fileManager,
-            diagnosticListener,
-            flags,
-            null,
-            compilationUnits
-        );
-
-        task.setProcessors(annotationProcessors);
-        task.setLocale(locale);
-
-        if (LOGGER.isInfoEnabled()) {
-          LOGGER.info(
-              "Starting compilation of {} file{} with compiler {} using flags {}",
-              compilationUnits.size(),
-              compilationUnits.size() == 1 ? "" : "s",
-              name,
-              StringUtils.quotedIterable(flags)
-          );
-        }
-
-        Boolean result;
-
-        try {
-          result = task.call();
-
-          if (result == null) {
-            throw new CompilerException("The compiler failed to produce a valid result");
-          }
-
-          LOGGER.info("Compilation with compiler {} {}", name, result ? "succeeded" : "failed");
-        } catch (Exception ex) {
-          LOGGER.warn(
-              "Compiler {} threw an exception: {}: {}",
-              name,
-              ex.getClass().getName(),
-              ex.getMessage()
-          );
-          throw new CompilerException("The compiler threw an exception", ex);
-
-        }
-
-        var outputLines = writer.toString().lines().collect(Collectors.toList());
-
-        return CompilationImpl.builder()
-            .warningsAsErrors(warningsAsErrors)
-            .success(result)
-            .outputLines(outputLines)
-            .compilationUnits(Set.copyOf(compilationUnits))
-            .diagnostics(diagnosticListener.getDiagnostics())
-            .fileRepository(fileRepository)
-            .build();
-      }
-    });
+  public final S compile() {
+    return uncheckedIo(this::doCompile);
   }
 
   @Override
-  public <T extends Exception> CompilerImpl configure(
-      CompilerConfigurer<CompilerImpl, T> configurer
-  ) throws T {
+  public final <T extends Exception> A configure(CompilerConfigurer<A, T> configurer) throws T {
     LOGGER.debug("configure({})", configurer);
-    configurer.configure(this);
-    return this;
+    var me = myself();
+    configurer.configure(me);
+    return me;
   }
 
   @Override
-  public CompilerImpl verbose(boolean enabled) {
+  public A verbose(boolean enabled) {
     LOGGER.trace("verbose {} -> {}", verbose, enabled);
     verbose = enabled;
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl previewFeatures(boolean enabled) {
+  public A previewFeatures(boolean enabled) {
     LOGGER.trace("previewFeatures {} -> {}", previewFeatures, enabled);
     previewFeatures = enabled;
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl warnings(boolean enabled) {
+  public A warnings(boolean enabled) {
     LOGGER.trace("warnings {} -> {}", warnings, enabled);
     warnings = enabled;
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl deprecationWarnings(boolean enabled) {
+  public A deprecationWarnings(boolean enabled) {
     LOGGER.trace("deprecationWarnings {} -> {}", deprecationWarnings, enabled);
     deprecationWarnings = enabled;
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl warningsAsErrors(boolean enabled) {
+  public A warningsAsErrors(boolean enabled) {
     LOGGER.trace("warningsAsErrors {} -> {}", warningsAsErrors, enabled);
     warningsAsErrors = enabled;
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl addAnnotationProcessorOptions(Iterable<String> options) {
+  public A addAnnotationProcessorOptions(Iterable<String> options) {
     LOGGER.trace("annotationProcessorOptions += {}", options);
     for (var option : Objects.requireNonNull(options)) {
       annotationProcessorOptions.add(Objects.requireNonNull(option));
     }
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl addAnnotationProcessors(Iterable<? extends Processor> processors) {
+  public A addAnnotationProcessors(Iterable<? extends Processor> processors) {
     LOGGER.trace("annotationProcessors += {}", processors);
     for (var processor : Objects.requireNonNull(processors)) {
       annotationProcessors.add(Objects.requireNonNull(processor));
     }
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl addCompilerOptions(Iterable<String> options) {
+  public A addCompilerOptions(Iterable<String> options) {
     LOGGER.trace("compilerOptions += {}", options);
     for (var option : Objects.requireNonNull(options)) {
       compilerOptions.add(Objects.requireNonNull(option));
     }
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl releaseVersion(String version) {
+  public A releaseVersion(String version) {
     LOGGER.trace("releaseVersion {} -> {}", releaseVersion, version);
     LOGGER.trace("sourceVersion {} -> null", sourceVersion);
     LOGGER.trace("targetVersion {} -> null", targetVersion);
     releaseVersion = version;
     sourceVersion = null;
     targetVersion = null;
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl sourceVersion(String version) {
+  public A sourceVersion(String version) {
     LOGGER.trace("sourceVersion {} -> {}", targetVersion, version);
     LOGGER.trace("releaseVersion {} -> null", releaseVersion);
     releaseVersion = null;
     sourceVersion = version;
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl targetVersion(String version) {
+  public A targetVersion(String version) {
     LOGGER.trace("targetVersion {} -> {}", targetVersion, version);
     LOGGER.trace("releaseVersion {} -> null", releaseVersion);
     releaseVersion = null;
     targetVersion = version;
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl includeCurrentClassPath(boolean enabled) {
+  public A includeCurrentClassPath(boolean enabled) {
     LOGGER.trace("includeCurrentClassPath {} -> {}", includeCurrentClassPath, enabled);
     includeCurrentClassPath = enabled;
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl includeCurrentPlatformClassPath(boolean enabled) {
+  public A includeCurrentPlatformClassPath(boolean enabled) {
     LOGGER.trace(
         "includeCurrentPlatformClassPath {} -> {}",
         includeCurrentPlatformClassPath,
         enabled
     );
     includeCurrentPlatformClassPath = enabled;
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl addPath(Location location, Path path) {
+  public A addPath(Location location, Path path) {
     LOGGER.trace("{}.paths += {}", location.getName(), path);
     fileRepository.getOrCreate(location).addPath(path);
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl addPath(Location location, InMemoryPath path) {
+  public A addPath(Location location, InMemoryPath path) {
     LOGGER.trace("{}.paths += {}", location.getName(), path);
     fileRepository.getOrCreate(location).addPath(path);
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl addPaths(Location location, Collection<? extends Path> paths) {
+  public A addPaths(Location location, Collection<? extends Path> paths) {
     LOGGER.trace("{}.paths += {}", location.getName(), paths);
     fileRepository.getOrCreate(location).addPaths(paths);
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl addRuntimeOptions(Iterable<String> options) {
+  public A addRuntimeOptions(Iterable<String> options) {
     LOGGER.trace("runtimeOptions += {}", options);
     for (var option : Objects.requireNonNull(options)) {
       runtimeOptions.add(Objects.requireNonNull(option));
     }
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl locale(Locale locale) {
+  public A locale(Locale locale) {
     LOGGER.trace("locale {} -> {}", this.locale, locale);
     this.locale = Objects.requireNonNull(locale);
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl withFileManagerLogging(LoggingMode fileManagerLoggingMode) {
+  public A withFileManagerLogging(LoggingMode fileManagerLoggingMode) {
     LOGGER.trace(
         "fileManagerLoggingMode {} -> {}",
         this.fileManagerLoggingMode,
         fileManagerLoggingMode
     );
     this.fileManagerLoggingMode = Objects.requireNonNull(fileManagerLoggingMode);
-    return this;
+    return myself();
   }
 
   @Override
-  public CompilerImpl withDiagnosticLogging(LoggingMode diagnosticLoggingMode) {
+  public A withDiagnosticLogging(LoggingMode diagnosticLoggingMode) {
     LOGGER.trace(
         "diagnosticLoggingMode {} -> {}",
         this.diagnosticLoggingMode,
         diagnosticLoggingMode
     );
     this.diagnosticLoggingMode = Objects.requireNonNull(diagnosticLoggingMode);
-    return this;
+    return myself();
   }
 
   @Override
   public String toString() {
-    return name;
+    return getName();
   }
 
-  /**
-   * Format all command line flags to pass to javac.
-   *
-   * @return the command line flags.
-   */
-  private List<String> buildFlags() {
-    return flagBuilderSupplier
-        .get()
+  protected List<String> buildFlags() {
+    return createFlagBuilder()
         .annotationProcessorOptions(annotationProcessorOptions)
         .deprecationWarnings(deprecationWarnings)
         .warningsAsErrors(warningsAsErrors)
@@ -407,12 +318,7 @@ public final class CompilerImpl implements Compiler<CompilerImpl, CompilationImp
         .build();
   }
 
-  /**
-   * Build the file manager to use for compilation.
-   *
-   * @return the file manager.
-   */
-  private JavaFileManager buildJavaFileManager() {
+  protected JavaFileManager buildJavaFileManager() {
     var classOutputManager = fileRepository
         .getOrCreate(StandardLocation.CLASS_OUTPUT);
 
@@ -458,14 +364,7 @@ public final class CompilerImpl implements Compiler<CompilerImpl, CompilationImp
     return new PathJavaFileManager(fileRepository);
   }
 
-  /**
-   * Discover the compilation units available to compile.
-   *
-   * @param fileManager the file manager to use.
-   * @return the compilation units to use.
-   * @throws IOException if an IO error occurs.
-   */
-  private List<? extends JavaFileObject> discoverCompilationUnits(
+  protected List<? extends JavaFileObject> discoverCompilationUnits(
       JavaFileManager fileManager
   ) throws IOException {
     var locations = new ArrayList<Location>();
@@ -486,13 +385,7 @@ public final class CompilerImpl implements Compiler<CompilerImpl, CompilationImp
     return objects;
   }
 
-  /**
-   * Apply logging interception to a given file manager if the feature has been enabled.
-   *
-   * @param fileManager the file manager to apply to.
-   * @return the decorated file manager.
-   */
-  private JavaFileManager applyLoggingToFileManager(JavaFileManager fileManager) {
+  protected JavaFileManager applyLoggingToFileManager(JavaFileManager fileManager) {
     if (fileManagerLoggingMode == LoggingMode.STACKTRACES) {
       return LoggingJavaFileManagerProxy.wrap(fileManager, true);
     }
@@ -504,15 +397,82 @@ public final class CompilerImpl implements Compiler<CompilerImpl, CompilationImp
     return fileManager;
   }
 
-  /**
-   * Build a diagnostic listener.
-   *
-   * @return the diagnostic listener to use.
-   */
-  private TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener() {
+  protected TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener() {
     return new TracingDiagnosticListener<>(
         fileManagerLoggingMode != LoggingMode.DISABLED,
         fileManagerLoggingMode == LoggingMode.STACKTRACES
     );
   }
+
+  protected CompilationTask buildCompilationTask(
+      Writer writer,
+      JavaFileManager fileManager,
+      DiagnosticListener<? super JavaFileObject> diagnosticListener,
+      List<String> flags,
+      List<? extends JavaFileObject> compilationUnits
+  ) {
+    var name = getName();
+    var compiler = createJsr199Compiler();
+
+    var task = compiler.getTask(
+        writer,
+        fileManager,
+        diagnosticListener,
+        flags,
+        null,
+        compilationUnits
+    );
+
+    task.setProcessors(annotationProcessors);
+    task.setLocale(locale);
+
+    if (LOGGER.isInfoEnabled()) {
+      LOGGER.info(
+          "Starting compilation of {} file{} with compiler {} using flags {}",
+          compilationUnits.size(),
+          compilationUnits.size() == 1 ? "" : "s",
+          name,
+          StringUtils.quotedIterable(flags)
+      );
+    }
+
+    return task;
+  }
+
+  protected Boolean runCompilationTask(CompilationTask task) {
+    var name = getName();
+
+    try {
+      var result = task.call();
+
+      if (result == null) {
+        throw new CompilerException("The compiler failed to produce a valid result");
+      }
+
+      LOGGER.info("Compilation with compiler {} {}", name, result ? "succeeded" : "failed");
+
+      return result;
+    } catch (Exception ex) {
+      LOGGER.warn(
+          "Compiler {} threw an exception: {}: {}",
+          name,
+          ex.getClass().getName(),
+          ex.getMessage()
+      );
+      throw new CompilerException("The compiler threw an exception", ex);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  protected final A myself() {
+    return (A) this;
+  }
+
+  protected abstract S doCompile() throws IOException;
+
+  protected abstract String getName();
+
+  protected abstract JavaCompiler createJsr199Compiler();
+
+  protected abstract FlagBuilder createFlagBuilder();
 }
