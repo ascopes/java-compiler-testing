@@ -23,7 +23,10 @@ jobs:
           java-version: '${{ matrix.java-version }}'
 
       - name: Build with Java ${{ matrix.java-version }} (${{ matrix.java-distribution }})
-        run: ./mvnw -B -U -T8C clean verify -Dstyle.color=always
+        run: >-
+          ./mvnw -B -U -T8C clean verify \
+              -Dstyle.color=always \
+              -Dmaven.artifact.threads=$(($(nproc)*10))
 
       - name: Report Surefire results
         uses: dorny/test-reporter@v1
