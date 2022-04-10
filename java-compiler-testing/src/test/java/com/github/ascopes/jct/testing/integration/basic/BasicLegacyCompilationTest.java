@@ -21,7 +21,9 @@ import static com.github.ascopes.jct.assertions.CompilationAssert.assertThat;
 import com.github.ascopes.jct.compilers.Compilers;
 import com.github.ascopes.jct.paths.InMemoryPath;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import javax.lang.model.SourceVersion;
+import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -35,7 +37,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 class BasicLegacyCompilationTest {
 
   @DisplayName("I can compile a 'Hello, World!' program with javac")
-  @MethodSource("versions")
+  @MethodSource("javacVersions")
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldJavac(int version) {
     var sources = InMemoryPath
@@ -61,7 +63,7 @@ class BasicLegacyCompilationTest {
   }
 
   @DisplayName("I can compile a 'Hello, World!' program with ecj")
-  @MethodSource("versions")
+  @MethodSource("ecjVersions")
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldEcj(int version) {
     var sources = InMemoryPath
@@ -86,7 +88,15 @@ class BasicLegacyCompilationTest {
     assertThat(compilation).isSuccessfulWithoutWarnings();
   }
 
-  static IntStream versions() {
-    return IntStream.rangeClosed(8, SourceVersion.latest().ordinal());
+  static IntStream javacVersions() {
+    return IntStream.rangeClosed(8, SourceVersion.latestSupported().ordinal());
+  }
+
+  static IntStream ecjVersions() {
+    var maxEcjVersion = (ClassFileConstants.getLatestJDKLevel() >> (Short.BYTES * 8))
+        - ClassFileConstants.MAJOR_VERSION_0;
+
+    return LongStream.rangeClosed(8, maxEcjVersion)
+        .mapToInt(i -> (int) i);
   }
 }

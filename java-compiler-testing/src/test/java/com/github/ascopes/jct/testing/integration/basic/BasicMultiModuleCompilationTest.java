@@ -23,7 +23,9 @@ import com.github.ascopes.jct.compilers.Compiler.LoggingMode;
 import com.github.ascopes.jct.compilers.Compilers;
 import com.github.ascopes.jct.paths.InMemoryPath;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import javax.lang.model.SourceVersion;
+import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -37,7 +39,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 class BasicMultiModuleCompilationTest {
 
   @DisplayName("I can compile a multi-module 'Hello, World!' program with javac")
-  @MethodSource("versions")
+  @MethodSource("javacVersions")
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldJavac(int version) {
     var sources = InMemoryPath
@@ -81,7 +83,7 @@ class BasicMultiModuleCompilationTest {
   }
 
   @DisplayName("I can compile a 'Hello, World!' program with ecj")
-  @MethodSource("versions")
+  @MethodSource("ecjVersions")
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldEcj(int version) {
     skipBecauseEcjFailsToSupportModulesCorrectly();
@@ -130,7 +132,7 @@ class BasicMultiModuleCompilationTest {
   }
 
   @DisplayName("I can compile multiple modules with javac")
-  @MethodSource("versions")
+  @MethodSource("javacVersions")
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldMultiModuleJavac(int version) {
     var sources = InMemoryPath
@@ -203,7 +205,7 @@ class BasicMultiModuleCompilationTest {
   }
 
   @DisplayName("I can compile multiple modules with ecj")
-  @MethodSource("versions")
+  @MethodSource("ecjVersions")
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldMultiModuleEcj(int version) {
     skipBecauseEcjFailsToSupportModulesCorrectly();
@@ -277,7 +279,15 @@ class BasicMultiModuleCompilationTest {
         .isNotEmptyFile();
   }
 
-  static IntStream versions() {
-    return IntStream.rangeClosed(9, SourceVersion.latest().ordinal());
+  static IntStream javacVersions() {
+    return IntStream.rangeClosed(9, SourceVersion.latestSupported().ordinal());
+  }
+
+  static IntStream ecjVersions() {
+    var maxEcjVersion = (ClassFileConstants.getLatestJDKLevel() >> (Short.BYTES * 8))
+        - ClassFileConstants.MAJOR_VERSION_0;
+
+    return LongStream.rangeClosed(9, maxEcjVersion)
+        .mapToInt(i -> (int) i);
   }
 }
