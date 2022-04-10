@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.unittests.intern;
+package com.github.ascopes.jct.testing.unit.intern;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenCode;
@@ -23,8 +23,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.github.ascopes.jct.intern.EnumerationAdapter;
-import com.github.ascopes.jct.unittests.helpers.MoreMocks;
-import com.github.ascopes.jct.unittests.helpers.TypeRef;
+import com.github.ascopes.jct.testing.helpers.MoreMocks;
+import com.github.ascopes.jct.testing.helpers.TypeRef;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.DisplayName;
@@ -50,7 +50,7 @@ class EnumerationAdapterTest {
 
   @DisplayName("hasMoreElements() returns Iterator#hasNext()")
   @ValueSource(booleans = {true, false})
-  @ParameterizedTest(name = "hasMoreElements returns Iterator#hasNext when it returns {0}")
+  @ParameterizedTest(name = "when hasNext() returns {0}")
   void hasMoreElementsReturnsTrueWhenIteratorHasNextIsTrue(boolean hasNext) {
     // Given
     var iterator = MoreMocks.mockCast(new TypeRef<Iterator<?>>() {

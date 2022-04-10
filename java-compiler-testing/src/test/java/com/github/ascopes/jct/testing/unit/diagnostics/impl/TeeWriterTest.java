@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.unittests.diagnostics.impl;
+package com.github.ascopes.jct.testing.unit.diagnostics.impl;
 
-import static com.github.ascopes.jct.unittests.helpers.MoreMocks.stub;
+import static com.github.ascopes.jct.testing.helpers.MoreMocks.stub;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.BDDMockito.then;

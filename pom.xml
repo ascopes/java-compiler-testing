@@ -48,7 +48,7 @@
     <ecj.version>3.29.0</ecj.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jimfs.version>1.2</jimfs.version>
-    <junit-jupiter.version>5.8.2</junit-jupiter.version>
+    <junit.version>5.8.2</junit.version>
     <logback.version>1.2.11</logback.version>
     <mockito.version>4.4.0</mockito.version>
     <reflections.version>0.10.2</reflections.version>
@@ -132,9 +132,11 @@
 
       <dependency>
         <!-- Unit testing -->
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter</artifactId>
-        <version>${junit-jupiter.version}</version>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
       </dependency>
 
       <dependency>

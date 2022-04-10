@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.unittests.intern;
+package com.github.ascopes.jct.testing.unit.intern;
 
-import static com.github.ascopes.jct.unittests.helpers.MoreMocks.stub;
+import static com.github.ascopes.jct.testing.helpers.MoreMocks.stub;
 import static java.time.Duration.ofMillis;
 import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +25,7 @@ import static org.assertj.core.api.BDDAssertions.thenCode;
 import static org.awaitility.Awaitility.await;
 
 import com.github.ascopes.jct.intern.AsyncResourceCloser;
-import com.github.ascopes.jct.unittests.helpers.ConcurrentRuns;
+import com.github.ascopes.jct.testing.helpers.ConcurrentRuns;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
@@ -81,7 +81,7 @@ class AsyncResourceCloserTest {
 
   @DisplayName("Resources get closed")
   @ValueSource(ints = {1, 2, 3, 5, 10, 100, 1000})
-  @ParameterizedTest(name = "{0} resource(s) get closed")
+  @ParameterizedTest(name = "for {0} resource(s)")
   void resourcesGetClosed(int count) {
     // Given
     var resources = new HashMap<String, CloseableResource>();
@@ -108,7 +108,7 @@ class AsyncResourceCloserTest {
 
   @DisplayName("Resources get closed if some fail")
   @ConcurrentRuns
-  @ParameterizedTest(name = "{0} resource(s) get closed if some fail")
+  @ParameterizedTest(name = "for {0} resource(s)")
   void resourcesGetClosedIfSomeFail(int count) {
     // Given
     var resources = new HashMap<String, CloseableResource>();

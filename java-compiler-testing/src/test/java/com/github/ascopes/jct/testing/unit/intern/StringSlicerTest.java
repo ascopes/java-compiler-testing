@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.unittests.intern;
+package com.github.ascopes.jct.testing.unit.intern;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenCode;
@@ -54,7 +54,7 @@ class StringSlicerTest {
 
   @DisplayName("Slicing a string into an array returns the expected result")
   @MethodSource("sliceCases")
-  @ParameterizedTest(name = "Slicing \"{1}\" with \"{0}\" into an array returns elements {2}")
+  @ParameterizedTest(name = "where slicing \"{1}\" with \"{0}\" is expected to return {2}")
   void slicingStringIntoArrayReturnsTheExpectedResult(
       String delimiter,
       String input,
@@ -72,7 +72,7 @@ class StringSlicerTest {
 
   @DisplayName("Slicing a string into a stream returns the expected result")
   @MethodSource("sliceCases")
-  @ParameterizedTest(name = "Slicing \"{1}\" with \"{0}\" into a stream returns elements {2}")
+  @ParameterizedTest(name = "where slicing \"{1}\" with \"{0}\" is expected to return {2}")
   void slicingStringIntoStreamReturnsTheExpectedResult(
       String delimiter,
       String input,
@@ -92,7 +92,7 @@ class StringSlicerTest {
 
   @DisplayName("toString returns the expected result")
   @MethodSource("toStringCases")
-  @ParameterizedTest(name = "toString returns the expected result for delimiter {0}")
+  @ParameterizedTest(name = "for delimiter = \"{0}\"")
   void toStringReturnsTheExpectedResult(String delimiter, String expected) {
     // Given
     var slicer = new StringSlicer(delimiter);

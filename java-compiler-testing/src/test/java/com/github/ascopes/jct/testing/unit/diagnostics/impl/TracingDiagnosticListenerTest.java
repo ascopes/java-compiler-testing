@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.unittests.diagnostics.impl;
+package com.github.ascopes.jct.testing.unit.diagnostics.impl;
 
-import static com.github.ascopes.jct.unittests.helpers.MoreMocks.hasToString;
-import static com.github.ascopes.jct.unittests.helpers.MoreMocks.stub;
-import static com.github.ascopes.jct.unittests.helpers.MoreMocks.stubCast;
+import static com.github.ascopes.jct.testing.helpers.MoreMocks.hasToString;
+import static com.github.ascopes.jct.testing.helpers.MoreMocks.stub;
+import static com.github.ascopes.jct.testing.helpers.MoreMocks.stubCast;
 import static java.util.Locale.ROOT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.withSettings;
 
 import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import com.github.ascopes.jct.diagnostics.impl.TracingDiagnosticListener;
-import com.github.ascopes.jct.unittests.helpers.TypeRef;
+import com.github.ascopes.jct.testing.helpers.TypeRef;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -107,9 +107,7 @@ class TracingDiagnosticListenerTest {
 
   @DisplayName("Diagnostics are logged with the expected timestamp")
   @MethodSource("loggingArgs")
-  @ParameterizedTest(
-      name = "Diagnostics are logged with the expected timestamp for logging={0}, stackTraces={1}"
-  )
+  @ParameterizedTest(name = "for logging={0}, stackTraces={1}")
   void diagnosticsAreLoggedWithTheExpectedTimestamp(boolean logging, boolean stackTraces) {
     // Given
     var listener = new AccessibleImpl<>(logging, stackTraces);
@@ -131,9 +129,7 @@ class TracingDiagnosticListenerTest {
 
   @DisplayName("Diagnostics are logged with the expected thread ID")
   @MethodSource("loggingArgs")
-  @ParameterizedTest(
-      name = "Diagnostics are logged with the expected thread ID for logging={0}, stackTraces={1}"
-  )
+  @ParameterizedTest(name = "for logging={0}, stackTraces={1}")
   void diagnosticsAreLoggedWithTheExpectedThreadId(boolean logging, boolean stackTraces) {
     // Given
     var threadId = new Random().nextInt(15_999) + 1L;
@@ -156,9 +152,7 @@ class TracingDiagnosticListenerTest {
 
   @DisplayName("Diagnostics are logged with the expected thread name")
   @MethodSource("loggingArgs")
-  @ParameterizedTest(
-      name = "Diagnostics are logged with the expected thread name for logging={0}, stackTraces={1}"
-  )
+  @ParameterizedTest(name = "For logging={0}, stackTraces={1}")
   void diagnosticsAreLoggedWithTheExpectedThreadName(boolean logging, boolean stackTraces) {
     // Given
     var threadName = UUID.randomUUID().toString();
@@ -182,9 +176,7 @@ class TracingDiagnosticListenerTest {
 
   @DisplayName("Diagnostics are logged with no thread name")
   @MethodSource("loggingArgs")
-  @ParameterizedTest(
-      name = "Diagnostics are logged with no thread name for logging={0}, stackTraces={1}"
-  )
+  @ParameterizedTest(name = "for logging={0}, stackTraces={1}")
   void diagnosticsAreLoggedWithNoThreadName(boolean logging, boolean stackTraces) {
     // Given
     var currentThread = stub(Thread.class);
@@ -206,9 +198,7 @@ class TracingDiagnosticListenerTest {
 
   @DisplayName("Diagnostics are logged with the expected stacktrace")
   @MethodSource("loggingArgs")
-  @ParameterizedTest(
-      name = "Diagnostics are logged with the expected stacktrace for logging={0}, stackTraces={1}"
-  )
+  @ParameterizedTest(name = "for logging={0}, stackTraces={1}")
   void diagnosticsAreLoggedWithTheExpectedStackTrace(boolean logging, boolean stackTraces) {
     // Given
     var stackTrace = someStackTrace();
@@ -230,9 +220,7 @@ class TracingDiagnosticListenerTest {
 
   @DisplayName("Nothing is logged if logging is disabled")
   @MethodSource("loggingDisabledArgs")
-  @ParameterizedTest(
-      name = "Nothing is logged if logging is disabled for kind={0}, stackTraces={1}"
-  )
+  @ParameterizedTest(name = "for kind={0}, stackTraces={1}")
   void nothingIsLoggedIfLoggingIsDisabled(Kind kind, boolean stackTraces) {
     // Given
     var logger = mock(Logger.class);
@@ -248,7 +236,7 @@ class TracingDiagnosticListenerTest {
 
   @DisplayName("Errors should be logged as errors when stacktraces are disabled")
   @EnumSource(value = Kind.class, names = "ERROR")
-  @ParameterizedTest(name = "{0} should be logged as errors when stacktraces are disabled")
+  @ParameterizedTest(name = "for kind = {0}")
   void errorsShouldBeLoggedAsErrorsWhenStackTracesAreDisabled(Kind kind) {
     // Given
     var logger = mock(Logger.class);
@@ -265,7 +253,7 @@ class TracingDiagnosticListenerTest {
 
   @DisplayName("Errors should be logged as errors when stacktraces are enabled")
   @EnumSource(value = Kind.class, names = "ERROR")
-  @ParameterizedTest(name = "{0} should be logged as errors when stacktraces are enabled")
+  @ParameterizedTest(name = "for kind = {0}")
   void errorsShouldBeLoggedAsErrorsWhenStackTracesAreEnabled(Kind kind) {
     // Given
     var logger = mock(Logger.class);
@@ -292,7 +280,7 @@ class TracingDiagnosticListenerTest {
 
   @DisplayName("Warnings should be logged as warnings when stacktraces are disabled")
   @EnumSource(value = Kind.class, names = {"WARNING", "MANDATORY_WARNING"})
-  @ParameterizedTest(name = "{0} should be logged as warnings when stacktraces are disabled")
+  @ParameterizedTest(name = "for kind = {0}")
   void warningsShouldBeLoggedAsWarningsWhenStackTracesAreDisabled(Kind kind) {
     // Given
     var logger = mock(Logger.class);
@@ -309,7 +297,7 @@ class TracingDiagnosticListenerTest {
 
   @DisplayName("Warnings should be logged as warnings when stacktraces are enabled")
   @EnumSource(value = Kind.class, names = {"WARNING", "MANDATORY_WARNING"})
-  @ParameterizedTest(name = "{0} should be logged as warnings when stacktraces are enabled")
+  @ParameterizedTest(name = "for kind = {0}")
   void warningsShouldBeLoggedAsWarningsWhenStackTracesAreEnabled(Kind kind) {
     // Given
     var logger = mock(Logger.class);
@@ -336,7 +324,7 @@ class TracingDiagnosticListenerTest {
 
   @DisplayName("Info should be logged as info when stacktraces are disabled")
   @EnumSource(value = Kind.class, names = {"NOTE", "OTHER"})
-  @ParameterizedTest(name = "{0} should be logged as info when stacktraces are disabled")
+  @ParameterizedTest(name = "for kind = {0}")
   void infoShouldBeLoggedAsInfoWhenStackTracesAreDisabled(Kind kind) {
     // Given
     var logger = mock(Logger.class);
@@ -353,7 +341,7 @@ class TracingDiagnosticListenerTest {
 
   @DisplayName("Info should be logged as info when stacktraces are enabled")
   @EnumSource(value = Kind.class, names = {"NOTE", "OTHER"})
-  @ParameterizedTest(name = "{0} should be logged as info when stacktraces are enabled")
+  @ParameterizedTest(name = "for kind = {0}")
   void infoShouldBeLoggedAsInfoWhenStackTracesAreEnabled(Kind kind) {
     // Given
     var logger = mock(Logger.class);

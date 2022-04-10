@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.integrationtests.basic;
+package com.github.ascopes.jct.testing.integration.basic;
 
 import static com.github.ascopes.jct.assertions.CompilationAssert.assertThat;
+import static com.github.ascopes.jct.testing.helpers.Skipping.skipBecauseEcjFailsToSupportModulesCorrectly;
 
 import com.github.ascopes.jct.compilers.Compilers;
 import com.github.ascopes.jct.paths.InMemoryPath;
@@ -31,12 +32,12 @@ import org.junit.jupiter.params.provider.MethodSource;
  *
  * @author Ashley Scopes
  */
-@DisplayName("Basic legacy compilation integration tests")
-class BasicLegacyCompilationTest {
+@DisplayName("Basic module compilation integration tests")
+class BasicModuleCompilationTest {
 
-  @DisplayName("I can compile a 'Hello, World!' program with javac")
+  @DisplayName("I can compile a 'Hello, World!' module program with javac")
   @MethodSource("versions")
-  @ParameterizedTest(name = "I can compile a 'Hello, World!' program with javac (Java {0})")
+  @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldJavac(int version) {
     var sources = InMemoryPath
         .createPath()
@@ -47,6 +48,13 @@ class BasicLegacyCompilationTest {
             "  public static void main(String[] args) {",
             "    System.out.println(\"Hello, World\");",
             "  }",
+            "}"
+        )
+        .createFile(
+            "module-info.java",
+            "module hello.world {",
+            "  requires java.base;",
+            "  exports com.example;",
             "}"
         );
 
@@ -60,10 +68,12 @@ class BasicLegacyCompilationTest {
     assertThat(compilation).isSuccessfulWithoutWarnings();
   }
 
-  @DisplayName("I can compile a 'Hello, World!' program with ecj")
+  @DisplayName("I can compile a 'Hello, World!' module program with ecj")
   @MethodSource("versions")
-  @ParameterizedTest(name = "I can compile a 'Hello, World!' program with ecj (Java {0})")
+  @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldEcj(int version) {
+    skipBecauseEcjFailsToSupportModulesCorrectly();
+
     var sources = InMemoryPath
         .createPath()
         .createFile(
@@ -73,6 +83,13 @@ class BasicLegacyCompilationTest {
             "  public static void main(String[] args) {",
             "    System.out.println(\"Hello, World\");",
             "  }",
+            "}"
+        )
+        .createFile(
+            "module-info.java",
+            "module hello.world {",
+            "  requires java.base;",
+            "  exports com.example;",
             "}"
         );
 
@@ -87,6 +104,6 @@ class BasicLegacyCompilationTest {
   }
 
   static IntStream versions() {
-    return IntStream.rangeClosed(8, SourceVersion.latest().ordinal());
+    return IntStream.rangeClosed(9, SourceVersion.latest().ordinal());
   }
 }

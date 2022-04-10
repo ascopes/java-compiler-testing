@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.unittests.compilations;
+package com.github.ascopes.jct.testing.unit.compilations;
 
-import static com.github.ascopes.jct.unittests.helpers.MoreMocks.stub;
-import static com.github.ascopes.jct.unittests.helpers.MoreMocks.stubCast;
+import static com.github.ascopes.jct.testing.helpers.MoreMocks.stub;
+import static com.github.ascopes.jct.testing.helpers.MoreMocks.stubCast;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import com.github.ascopes.jct.compilers.impl.CompilationImpl;
 import com.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import com.github.ascopes.jct.paths.PathLocationRepository;
-import com.github.ascopes.jct.unittests.helpers.TypeRef;
+import com.github.ascopes.jct.testing.helpers.TypeRef;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;

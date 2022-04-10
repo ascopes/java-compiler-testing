@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.unittests.intern;
+package com.github.ascopes.jct.testing.unit.intern;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.junit.jupiter.params.provider.Arguments.of;
@@ -42,7 +42,7 @@ class StringUtilsTest {
 
   @DisplayName("quoted() returns the expected value")
   @MethodSource("singleObjectCases")
-  @ParameterizedTest(name = "quoted() returns \"{2}\" for input <{1}> of type {0}")
+  @ParameterizedTest(name = "where a {0} <{1}> is expected to return \"{2}\"")
   void quotedReturnsExpectedValue(Type ignored, Object input, String expected) {
     // Then
     then(StringUtils.quoted(input)).isEqualTo(expected);
@@ -50,7 +50,7 @@ class StringUtilsTest {
 
   @DisplayName("quotedIterable() returns the expected value")
   @MethodSource("iterableCases")
-  @ParameterizedTest(name = "quotedIterable() returns \"{2}\" for input {1} of type {0}")
+  @ParameterizedTest(name = "where a {0} <{1}> is expected to return \"{2}\"")
   void quotedIterableReturnsExpectedValue(Type ignored, Iterable<?> input, String expected) {
     // Then
     then(StringUtils.quotedIterable(input)).isEqualTo(expected);
