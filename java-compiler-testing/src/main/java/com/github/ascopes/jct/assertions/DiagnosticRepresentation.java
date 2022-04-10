@@ -19,7 +19,8 @@ package com.github.ascopes.jct.assertions;
 import com.github.ascopes.jct.compilers.TraceDiagnostic;
 import java.util.Locale;
 import java.util.Objects;
-import javax.tools.JavaFileObject;
+import java.util.regex.Pattern;
+import javax.tools.FileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.presentation.Representation;
@@ -32,6 +33,12 @@ import org.assertj.core.presentation.Representation;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class DiagnosticRepresentation implements Representation {
+  // Pattern that matches the toString output of java.lang.Object when it is not overridden.
+  // We use this to deal with the fact some ECJ diagnostics do not provide a useful toString,
+  // while javac provides a pretty toString including a nice little code snippet.
+  private static final Pattern NO_TO_STRING = Pattern.compile(
+      "^([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*@[A-Za-z0-9]+$"
+  );
 
   @Override
   public String toStringOf(Object object) {
@@ -47,25 +54,28 @@ public class DiagnosticRepresentation implements Representation {
 
     var code = diagnostic.getCode();
     if (code != null) {
-      builder.append("<").append(code).append("> ");
+      builder.append(code);
+    }
+
+    if (diagnostic.getSource() instanceof FileObject) {
+      var name = ((FileObject) diagnostic.getSource()).getName();
+      builder.append(" ").append(name);
     }
 
     builder
-        .append("at line ")
+        .append(" (at line ")
         .append(diagnostic.getLineNumber())
-        .append(", column ")
-        .append(diagnostic.getColumnNumber());
+        .append(", col ")
+        .append(diagnostic.getColumnNumber())
+        .append(")");
 
-    var source = diagnostic.getSource();
+    var message = diagnostic.toString();
 
-    if (source instanceof JavaFileObject) {
-      builder.append(" in ").append(((JavaFileObject) source).getName());
+    if (NO_TO_STRING.matcher(message).matches()) {
+      message = Objects.toString(diagnostic.getMessage(Locale.ROOT));
     }
 
-    builder.append(":");
-
-    Objects
-        .toString(diagnostic.getMessage(Locale.ROOT))
+    message
         .lines()
         .map("   "::concat)
         .forEach(line -> builder.append("\n").append(line));
