@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.INTERNAL)
 public class TracingDiagnosticListener<S> implements DiagnosticListener<S> {
 
   private final ConcurrentLinkedQueue<TraceDiagnostic<S>> diagnostics;
