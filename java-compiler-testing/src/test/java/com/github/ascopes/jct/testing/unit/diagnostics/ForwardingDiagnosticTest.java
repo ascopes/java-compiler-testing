@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.unittests.diagnostics;
+package com.github.ascopes.jct.testing.unit.diagnostics;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -64,7 +64,7 @@ class ForwardingDiagnosticTest {
 
   @DisplayName("getKind() delegates to the inner diagnostic")
   @EnumSource(Kind.class)
-  @ParameterizedTest(name = "getKind() delegates to the inner diagnostic, returning {0}")
+  @ParameterizedTest(name = "for kind = {0}")
   void getKindDelegates(Kind expected) {
     // Given
     given(original.getKind()).willReturn(expected);
@@ -177,7 +177,7 @@ class ForwardingDiagnosticTest {
   @DisplayName("getCode() delegates to the inner diagnostic")
   @NullSource
   @ValueSource(strings = "you.messed.up.something")
-  @ParameterizedTest(name = "getCode() delegates to the inner diagnostic for code {0}")
+  @ParameterizedTest(name = "for code = \"{0}\"")
   void getCodeDelegates(String expected) {
     // Given
     given(original.getCode()).willReturn(expected);

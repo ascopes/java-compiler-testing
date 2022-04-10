@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.unittests.helpers;
+package com.github.ascopes.jct.testing.helpers;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

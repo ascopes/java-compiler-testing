@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.integrationtests.basic;
+package com.github.ascopes.jct.testing.integration.basic;
 
 import static com.github.ascopes.jct.assertions.CompilationAssert.assertThat;
 
@@ -22,7 +22,6 @@ import com.github.ascopes.jct.compilers.Compilers;
 import com.github.ascopes.jct.paths.InMemoryPath;
 import java.util.stream.IntStream;
 import javax.lang.model.SourceVersion;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -32,12 +31,12 @@ import org.junit.jupiter.params.provider.MethodSource;
  *
  * @author Ashley Scopes
  */
-@DisplayName("Basic module compilation integration tests")
-class BasicModuleCompilationTest {
+@DisplayName("Basic legacy compilation integration tests")
+class BasicLegacyCompilationTest {
 
-  @DisplayName("I can compile a 'Hello, World!' module program with javac")
+  @DisplayName("I can compile a 'Hello, World!' program with javac")
   @MethodSource("versions")
-  @ParameterizedTest(name = "I can compile a 'Hello, World!' module program with javac (Java {0})")
+  @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldJavac(int version) {
     var sources = InMemoryPath
         .createPath()
@@ -48,13 +47,6 @@ class BasicModuleCompilationTest {
             "  public static void main(String[] args) {",
             "    System.out.println(\"Hello, World\");",
             "  }",
-            "}"
-        )
-        .createFile(
-            "module-info.java",
-            "module hello.world {",
-            "  requires java.base;",
-            "  exports com.example;",
             "}"
         );
 
@@ -68,16 +60,9 @@ class BasicModuleCompilationTest {
     assertThat(compilation).isSuccessfulWithoutWarnings();
   }
 
-  // FIXME: work out how to get around this.
-  // Looks like passing --module-source-path and --add-modules on the commandline along with the
-  // compilation units may fix this, but I can't get this to work in-code, only via the command
-  // line runner, which is unfortunate.
-  @Disabled(
-      "ECJ currently does not appear to interoperate correctly with JPMS when called from JSR-199"
-  )
-  @DisplayName("I can compile a 'Hello, World!' module program with ecj")
+  @DisplayName("I can compile a 'Hello, World!' program with ecj")
   @MethodSource("versions")
-  @ParameterizedTest(name = "I can compile a 'Hello, World!' module program with ecj (Java {0})")
+  @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldEcj(int version) {
     var sources = InMemoryPath
         .createPath()
@@ -88,13 +73,6 @@ class BasicModuleCompilationTest {
             "  public static void main(String[] args) {",
             "    System.out.println(\"Hello, World\");",
             "  }",
-            "}"
-        )
-        .createFile(
-            "module-info.java",
-            "module hello.world {",
-            "  requires java.base;",
-            "  exports com.example;",
             "}"
         );
 
@@ -109,6 +87,6 @@ class BasicModuleCompilationTest {
   }
 
   static IntStream versions() {
-    return IntStream.rangeClosed(9, SourceVersion.latest().ordinal());
+    return IntStream.rangeClosed(8, SourceVersion.latest().ordinal());
   }
 }

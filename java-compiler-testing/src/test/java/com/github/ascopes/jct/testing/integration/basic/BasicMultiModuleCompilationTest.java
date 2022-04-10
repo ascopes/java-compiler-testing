@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.integrationtests.basic;
+package com.github.ascopes.jct.testing.integration.basic;
 
 import static com.github.ascopes.jct.assertions.CompilationAssert.assertThat;
+import static com.github.ascopes.jct.testing.helpers.Skipping.skipBecauseEcjFailsToSupportModulesCorrectly;
 
 import com.github.ascopes.jct.compilers.Compiler.LoggingMode;
 import com.github.ascopes.jct.compilers.Compilers;
 import com.github.ascopes.jct.paths.InMemoryPath;
 import java.util.stream.IntStream;
 import javax.lang.model.SourceVersion;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -38,7 +38,7 @@ class BasicMultiModuleCompilationTest {
 
   @DisplayName("I can compile a multi-module 'Hello, World!' program with javac")
   @MethodSource("versions")
-  @ParameterizedTest(name = "I can compile a 'Hello, World!' program with javac (Java {0})")
+  @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldJavac(int version) {
     var sources = InMemoryPath
         .createPath()
@@ -80,17 +80,12 @@ class BasicMultiModuleCompilationTest {
         .isNotEmptyFile();
   }
 
-  // FIXME: work out how to get around this.
-  // Looks like passing --module-source-path and --add-modules on the commandline along with the
-  // compilation units may fix this, but I can't get this to work in-code, only via the command
-  // line runner, which is unfortunate.
-  @Disabled(
-      "ECJ currently does not appear to interoperate correctly with JPMS when called from JSR-199"
-  )
   @DisplayName("I can compile a 'Hello, World!' program with ecj")
   @MethodSource("versions")
-  @ParameterizedTest(name = "I can compile a 'Hello, World!' program with ecj (Java {0})")
+  @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldEcj(int version) {
+    skipBecauseEcjFailsToSupportModulesCorrectly();
+
     var sources = InMemoryPath
         .createPath()
         .createFile(
@@ -136,7 +131,7 @@ class BasicMultiModuleCompilationTest {
 
   @DisplayName("I can compile multiple modules with javac")
   @MethodSource("versions")
-  @ParameterizedTest(name = "I can compile multiple modules with javac (Java {0})")
+  @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldMultiModuleJavac(int version) {
     var sources = InMemoryPath
         .createPath()
@@ -207,17 +202,12 @@ class BasicMultiModuleCompilationTest {
         .isNotEmptyFile();
   }
 
-  // FIXME: work out how to get around this.
-  // Looks like passing --module-source-path and --add-modules on the commandline along with the
-  // compilation units may fix this, but I can't get this to work in-code, only via the command
-  // line runner, which is unfortunate.
-  @Disabled(
-      "ECJ currently does not appear to interoperate correctly with JPMS when called from JSR-199"
-  )
   @DisplayName("I can compile multiple modules with ecj")
   @MethodSource("versions")
-  @ParameterizedTest(name = "I can compile multiple modules with ecj (Java {0})")
+  @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldMultiModuleEcj(int version) {
+    skipBecauseEcjFailsToSupportModulesCorrectly();
+
     var sources = InMemoryPath
         .createPath()
         .createFile(

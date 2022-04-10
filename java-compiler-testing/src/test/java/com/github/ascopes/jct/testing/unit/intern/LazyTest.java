@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.ascopes.jct.unittests.intern;
+package com.github.ascopes.jct.testing.unit.intern;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenCode;
@@ -24,8 +24,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.github.ascopes.jct.intern.Lazy;
-import com.github.ascopes.jct.unittests.helpers.ConcurrentRuns;
-import com.github.ascopes.jct.unittests.helpers.ThreadPool;
+import com.github.ascopes.jct.testing.helpers.ConcurrentRuns;
+import com.github.ascopes.jct.testing.helpers.ThreadPool;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -81,7 +81,7 @@ class LazyTest {
 
   @DisplayName("access() synchronizes correctly")
   @ConcurrentRuns
-  @ParameterizedTest(name = "access() synchronizes correctly for {0} concurrent reads")
+  @ParameterizedTest(name = "for {0} concurrent read(s)")
   @Timeout(10)
   void accessSynchronizesCorrectly(int concurrency) {
     try (var executor = new ThreadPool(concurrency)) {
@@ -145,7 +145,7 @@ class LazyTest {
 
   @DisplayName("toString() returns the expected values when initialized")
   @MethodSource("toStringInitializedCases")
-  @ParameterizedTest(name = "toString() returns \"{1}\" for object \"{0}\" when initialized")
+  @ParameterizedTest(name = "with \"{0}\" expected to return \"{1}\"")
   void toStringReturnsExpectedValuesWhenInitialized(Object value, String expected) {
     // Given
     var supplier = (Supplier<Object>) mock(Supplier.class);
