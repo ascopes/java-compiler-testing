@@ -16,7 +16,6 @@
 
 package com.github.ascopes.jct.testing.helpers;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
@@ -89,24 +88,25 @@ public class ThreadPool extends AbstractExecutorService implements AutoCloseable
    * @param <T>       the return type of the callables.
    * @return the list of futures.
    */
-  public <T> CompletableFuture<List<T>> awaitingAll(Collection<? extends Callable<T>> callables) {
-    var futures = new ArrayList<CompletableFuture<T>>();
-    for (var callable : callables) {
-      futures.add(CompletableFuture.supplyAsync(
-          () -> {
-            try {
-              return callable.call();
-            } catch (Exception ex) {
-              throw new CompletionException(ex);
-            }
-          },
-          this
-      ));
-    }
+  public <T> CompletableFuture<? extends List<T>> awaitingAll(Collection<? extends Callable<T>> callables) {
+    var futures = callables
+        .stream()
+        .map(callable -> CompletableFuture.supplyAsync(
+            () -> { 
+              try {
+                return callable.call();
+              } catch (Exception ex) {
+                throw new CompletionException(ex);
+              }
+            },
+            this
+        ))
+        .toArray(CompletableFuture[]::new);
 
     return CompletableFuture
-        .allOf(futures.toArray(CompletableFuture[]::new))
-        .thenApplyAsync(unused -> futures
+        .allOf(futures)
+        .thenApplyAsync(unused -> Stream
+            .of(futures)
             .stream()
             .map(CompletableFuture::join)
             .collect(Collectors.toList()));
