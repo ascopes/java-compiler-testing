@@ -16,7 +16,6 @@
 
 package com.github.ascopes.jct.testing;
 
-import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.SelectPackages;
 import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
@@ -27,8 +26,6 @@ import org.junit.platform.suite.api.SuiteDisplayName;
  * @author Ashley Scopes
  */
 
-@ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "true")
-@ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent")
 @SelectPackages("com.github.ascopes.jct.testing.integration")
 @SuiteDisplayName("Integration Tests")
 @Suite
