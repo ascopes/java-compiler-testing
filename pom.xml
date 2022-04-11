@@ -63,6 +63,7 @@
 
     <!-- Third-party plugins -->
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
+    <surefire-tree-reporter-plugin.version>0.1.0</surefire-tree-reporter-plugin.version>
 
     <!--
       This argument is pulled in by Surefire, and JaCoCo will amend it to ensure the
@@ -228,7 +229,6 @@
           <version>${maven-surefire-plugin.version}</version>
 
           <configuration>
-
             <!--
               This block is needed to show @DisplayName and @ParameterizedTest
               in reports with the provided names.
@@ -242,20 +242,25 @@
               <usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>
               <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
             </statelessTestsetReporter>
-            <consoleOutputReporter
-              implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5ConsoleOutputReporter">
-              <disable>false</disable>
-              <encoding>UTF-8</encoding>
-              <usePhrasedFileName>false</usePhrasedFileName>
+            <consoleOutputReporter>
+              <disable>true</disable>
             </consoleOutputReporter>
             <statelessTestsetInfoReporter
-              implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoReporter">
+              implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
               <disable>false</disable>
               <usePhrasedFileName>false</usePhrasedFileName>
               <usePhrasedClassNameInRunning>true</usePhrasedClassNameInRunning>
               <usePhrasedClassNameInTestCaseSummary>true</usePhrasedClassNameInTestCaseSummary>
             </statelessTestsetInfoReporter>
           </configuration>
+
+          <dependencies>
+            <dependency>
+              <groupId>me.fabriciorby</groupId>
+              <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+              <version>${surefire-tree-reporter-plugin.version}</version>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
