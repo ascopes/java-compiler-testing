@@ -74,7 +74,7 @@ public class PathLocationManager implements Iterable<Path> {
    * @param location the location to represent.
    */
   public PathLocationManager(Location location) {
-    LOGGER.debug("Initializing PathLocationManager for location {}", location);
+    LOGGER.trace("Initializing PathLocationManager for location {}", location);
 
     this.location = Objects.requireNonNull(location);
     roots = new LinkedHashSet<>();

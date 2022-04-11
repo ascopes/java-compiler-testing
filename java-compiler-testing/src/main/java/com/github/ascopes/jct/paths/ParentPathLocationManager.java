@@ -151,7 +151,7 @@ public class ParentPathLocationManager extends PathLocationManager {
 
   @Override
   public String toString() {
-    return "PackageOrModuleOrientedPathLocationManager{"
+    return getClass().getSimpleName() + "{"
         + "location=" + StringUtils.quoted(location.getName()) + ", "
         + "modules=" + StringUtils.quotedIterable(modules.keySet())
         + "}";
@@ -167,7 +167,7 @@ public class ParentPathLocationManager extends PathLocationManager {
       try {
         Files
             .list(path)
-            .peek(next -> LOGGER.debug("Checking if {} is a source module", next))
+            .peek(next -> LOGGER.trace("Checking if {} is a source module", next))
             .filter(Files::isDirectory)
             .filter(next -> Files.isRegularFile(next.resolve("module-info.java")))
             .forEach(module -> {
