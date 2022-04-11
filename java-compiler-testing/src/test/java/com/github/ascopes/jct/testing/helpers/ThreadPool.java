@@ -108,7 +108,6 @@ public class ThreadPool extends AbstractExecutorService implements AutoCloseable
         .allOf(futures)
         .thenApplyAsync(unused -> Stream
             .of(futures)
-            .stream()
             .map(CompletableFuture::join)
             .collect(Collectors.toList()));
   }
