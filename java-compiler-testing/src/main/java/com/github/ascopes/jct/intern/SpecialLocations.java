@@ -76,21 +76,42 @@ public final class SpecialLocations {
   }
 
   /**
+   * Get the module path of the current JVM. This will usually include any dependencies you may have
+   * loaded into memory, and may refer to directories of {@code *.class} files, {@code *.war} files,
+   * or {@code *.jar} files.
+   *
+   * <p>This corresponds to the {@link javax.tools.StandardLocation#MODULE_PATH} location, but
+   * is also added in the {@link javax.tools.StandardLocation#CLASS_PATH} to handle some otherwise
+   * confusing behaviours.
+   *
+   * @return a list across the paths.
+   */
+  public static List<Path> currentModulePathLocations() {
+    return createPaths(System.getProperty("jdk.module.path", ""));
+  }
+
+  /**
    * Get the boot classpath of the current JVM. This will usually include any dependencies you may
    * have loaded into memory, and may refer to directories of {@code *.class} files, {@code *.war}
    * files, or {@code *.jar} files.
    *
    * <p>This corresponds to the {@link javax.tools.StandardLocation#PLATFORM_CLASS_PATH} location.
    *
+   * <p>Most OpenJDK implementations do not appear to support this. In this case, an empty list
+   * will be returned here.
+   *
    * @return a list across the paths.
    */
   public static List<Path> currentPlatformClassPathLocations() {
-    try {
-      return createPaths(ManagementFactory.getRuntimeMXBean().getBootClassPath());
-    } catch (UnsupportedOperationException ex) {
-      LOGGER.debug("Platform classpath (boot classpath) is not supported on this JVM", ex);
-      return List.of();
+    var mxBean = ManagementFactory.getRuntimeMXBean();
+
+    if (mxBean.isBootClassPathSupported()) {
+      LOGGER.debug("Platform (boot) classpath is supported on this JVM, so will be inspected");
+      return createPaths(mxBean.getBootClassPath());
     }
+
+    LOGGER.debug("Platform (boot) classpath is not supported on this JVM, so will be ignored");
+    return List.of();
   }
 
   private static List<Path> createPaths(String raw) {

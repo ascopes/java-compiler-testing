@@ -295,6 +295,14 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   C includeCurrentClassPath(boolean enabled);
 
   /**
+   * Set whether to include the module path of the current JVM in the compilation or not.
+   *
+   * @param enabled {@code true} to include it, or {@code false} to exclude it.
+   * @return this compiler object.
+   */
+  C includeCurrentModulePath(boolean enabled);
+
+  /**
    * Set whether to include the platform classpath of the current JVM in the compilation or not.
    *
    * @param enabled {@code true} to include it, or {@code false} to exclude it.

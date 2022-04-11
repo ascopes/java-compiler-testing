@@ -83,6 +83,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   protected String targetVersion;
   protected boolean warnings;
   protected boolean includeCurrentClassPath;
+  protected boolean includeCurrentModulePath;
   protected boolean includeCurrentPlatformClassPath;
 
   // Framework-specific functionality.
@@ -110,6 +111,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
     verbose = false;
     warnings = true;
     includeCurrentClassPath = true;
+    includeCurrentModulePath = true;
     includeCurrentPlatformClassPath = true;
 
     fileManagerLoggingMode = LoggingMode.DISABLED;
@@ -228,6 +230,13 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   }
 
   @Override
+  public A includeCurrentModulePath(boolean enabled) {
+    LOGGER.trace("includeCurrentModulePath {} -> {}", includeCurrentModulePath, enabled);
+    includeCurrentModulePath = enabled;
+    return myself();
+  }
+
+  @Override
   public A includeCurrentPlatformClassPath(boolean enabled) {
     LOGGER.trace(
         "includeCurrentPlatformClassPath {} -> {}",
@@ -340,6 +349,27 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
 
       LOGGER.debug("Adding current classpath to compiler: {}", currentClassPath);
       classPath.addPaths(currentClassPath);
+    }
+
+    if (includeCurrentClassPath) {
+      var currentModulePath = SpecialLocations.currentModulePathLocations();
+
+      LOGGER.debug(
+          "Adding current module path to compiler class path and module path: {}",
+          currentModulePath
+      );
+
+      // For some reason, the JDK module path has to also be added to the classpath for it
+      // to be recognised. Failing to do this prevents the classes and test-classes directories
+      // being added to the classpath with the other dependencies. This would otherwise result in
+      // all dependencies being loaded, but not the code the user is actually trying to test.
+      //
+      // Weird, but it is what it is, I guess.
+      classPath.addPaths(currentModulePath);
+
+      fileRepository
+          .getOrCreate(StandardLocation.MODULE_PATH)
+          .addPaths(currentModulePath);
     }
 
     if (includeCurrentPlatformClassPath) {
