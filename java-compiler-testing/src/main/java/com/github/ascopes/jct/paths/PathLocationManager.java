@@ -66,7 +66,7 @@ public class PathLocationManager implements Iterable<Path> {
 
   // We use this to keep the references alive while the manager is alive.
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-  private final Set<InMemoryPath> inMemoryDirectories;
+  private final Set<RamPath> inMemoryDirectories;
 
   /**
    * Initialize the manager.
@@ -94,20 +94,6 @@ public class PathLocationManager implements Iterable<Path> {
   }
 
   /**
-   * Add an in-memory directory to the manager, if it has not already been added.
-   *
-   * <p>This will destroy the existing classloader, if it already exists.
-   *
-   * @param path the path to add.
-   */
-  public void addPath(InMemoryPath path) {
-    LOGGER.debug("Adding InMemoryPath {} to PathLocationManager for location {}", path, location);
-    registerPath(path.getPath());
-    // Keep the reference alive.
-    inMemoryDirectories.add(path);
-  }
-
-  /**
    * Add a path to the manager, if it has not already been added.
    *
    * <p>This will destroy the existing classloader, if it already exists.
@@ -126,12 +112,42 @@ public class PathLocationManager implements Iterable<Path> {
    *
    * @param paths the paths to add.
    */
-  public void addPaths(Collection<? extends Path> paths) {
+  public void addPaths(Iterable<? extends Path> paths) {
     // Don't expand paths if this was incorrectly called with a single path, since paths themselves
     // are iterables of paths.
     LOGGER.debug("Adding Paths {} to PathLocationManager for location {}", paths, location);
     for (var path : paths) {
       registerPath(path);
+    }
+  }
+
+  /**
+   * Add an in-memory directory to the manager, if it has not already been added.
+   *
+   * <p>This will destroy the existing classloader, if it already exists.
+   *
+   * @param path the path to add.
+   */
+  public void addRamPath(RamPath path) {
+    LOGGER.debug("Adding InMemoryPath {} to PathLocationManager for location {}", path, location);
+    registerPath(path.getPath());
+    // Keep the reference alive.
+    inMemoryDirectories.add(path);
+  }
+
+  /**
+   * Add in-memory directories to the manager, if it has not already been added.
+   *
+   * <p>This will destroy the existing classloader, if it already exists.
+   *
+   * @param paths the paths to add.
+   */
+  public void addRamPaths(Iterable<? extends RamPath> paths) {
+    LOGGER.debug("Adding InMemoryPaths {} to PathLocationManager for location {}", paths, location);
+    for (var path : paths) {
+      registerPath(path.getPath());
+      // Keep the reference alive.
+      inMemoryDirectories.add(path);
     }
   }
 

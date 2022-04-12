@@ -19,11 +19,11 @@ package com.github.ascopes.jct.compilers.ecj;
 import com.github.ascopes.jct.compilers.FlagBuilder;
 import com.github.ascopes.jct.compilers.SimpleAbstractCompiler;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 
 /**
  * Implementation of an ECJ compiler.
@@ -51,14 +51,13 @@ public final class EcjCompiler extends SimpleAbstractCompiler<EcjCompiler> {
   //      ...
   private static final ReentrantLock lock = new ReentrantLock();
 
-  @Override
-  protected String getName() {
-    return "ecj";
+  private EcjCompiler(Supplier<JavaCompiler> compilerSupplier) {
+    super(compilerSupplier);
   }
 
   @Override
-  protected JavaCompiler createJsr199Compiler() {
-    return new EclipseCompiler();
+  protected String getName() {
+    return "ecj";
   }
 
   @Override
@@ -74,5 +73,14 @@ public final class EcjCompiler extends SimpleAbstractCompiler<EcjCompiler> {
     } finally {
       lock.unlock();
     }
+  }
+
+  /**
+   * Initialize this compiler.
+   *
+   * @param compilerSupplier the supplier of new underlying JSR-199 compiler instances to use.
+   */
+  public static EcjCompiler using(Supplier<JavaCompiler> compilerSupplier) {
+    return new EcjCompiler(compilerSupplier);
   }
 }

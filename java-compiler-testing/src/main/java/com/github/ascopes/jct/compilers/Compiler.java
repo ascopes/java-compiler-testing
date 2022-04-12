@@ -16,10 +16,12 @@
 
 package com.github.ascopes.jct.compilers;
 
-import com.github.ascopes.jct.paths.InMemoryPath;
+import static com.github.ascopes.jct.intern.CollectionUtils.combineOneOrMore;
+import static com.github.ascopes.jct.intern.CollectionUtils.combineTwoOrMore;
+
+import com.github.ascopes.jct.paths.RamPath;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
@@ -54,15 +56,717 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   ) throws T;
 
   /**
-   * Invoke the compilation and return the compilation result.
+   * Add a path to the paths for a given location.
    *
-   * @return the compilation result.
-   * @throws CompilerException            if the compiler threw an unhandled exception. This should
-   *                                      not occur for compilation failures generally.
-   * @throws IllegalStateException        if no compilation units were found.
-   * @throws java.io.UncheckedIOException if an IO error occurs.
+   * @param location the location to add.
+   * @param path     the path to add.
+   * @return this compiler object for further call chaining.
    */
-  R compile();
+  C addPath(Location location, Path path);
+
+  /**
+   * Add paths to the given location.
+   *
+   * @param location the location to add paths to.
+   * @param paths    the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  C addPaths(Location location, Iterable<? extends Path> paths);
+
+  /**
+   * Add paths to the given location.
+   *
+   * @param location the location to add paths to.
+   * @param path1    the first path to add.
+   * @param path2    the second path to add.
+   * @param paths    additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addPaths(Location location, Path path1, Path path2, Path... paths) {
+    return addPaths(location, combineTwoOrMore(path1, path2, paths));
+  }
+
+  /**
+   * Add a path to the class path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassPath(Path path) {
+    return addPath(StandardLocation.CLASS_PATH, path);
+  }
+
+  /**
+   * Add paths to the class path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassPaths(Iterable<? extends Path> paths) {
+    return addPaths(StandardLocation.CLASS_PATH, paths);
+  }
+
+  /**
+   * Add paths to the class path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassPaths(Path path1, Path path2, Path... paths) {
+    return addPaths(StandardLocation.CLASS_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the source path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourcePath(Path path) {
+    return addPath(StandardLocation.SOURCE_PATH, path);
+  }
+
+  /**
+   * Add paths to the source path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourcePaths(Iterable<? extends Path> paths) {
+    return addPaths(StandardLocation.SOURCE_PATH, paths);
+  }
+
+  /**
+   * Add paths to the source path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourcePaths(Path path1, Path path2, Path... paths) {
+    return addPaths(StandardLocation.SOURCE_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the annotation processor path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorPath(Path path) {
+    return addPath(StandardLocation.ANNOTATION_PROCESSOR_PATH, path);
+  }
+
+  /**
+   * Add paths to the annotation processor path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorPaths(Iterable<? extends Path> paths) {
+    return addPaths(StandardLocation.ANNOTATION_PROCESSOR_PATH, paths);
+  }
+
+  /**
+   * Add paths to the annotation processor path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorPaths(Path path1, Path path2, Path... paths) {
+    return addPaths(StandardLocation.ANNOTATION_PROCESSOR_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the annotation processor module path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorModulePath(Path path) {
+    return addPath(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, path);
+  }
+
+  /**
+   * Add paths to the annotation processor path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorModulePaths(Iterable<? extends Path> paths) {
+    return addPaths(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, paths);
+  }
+
+  /**
+   * Add paths to the annotation processor module path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorModulePaths(Path path1, Path path2, Path... paths) {
+    return addPaths(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the platform class path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addPlatformClassPath(Path path) {
+    return addPath(StandardLocation.PLATFORM_CLASS_PATH, path);
+  }
+
+  /**
+   * Add paths to the platform class path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addPlatformClassPaths(Iterable<? extends Path> paths) {
+    return addPaths(StandardLocation.PLATFORM_CLASS_PATH, paths);
+  }
+
+  /**
+   * Add paths to the platform class path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addPlatformClassPaths(Path path1, Path path2, Path... paths) {
+    return addPaths(StandardLocation.PLATFORM_CLASS_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the module source path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModuleSourcePath(Path path) {
+    return addPath(StandardLocation.MODULE_SOURCE_PATH, path);
+  }
+
+  /**
+   * Add paths to the module source path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModuleSourcePaths(Iterable<? extends Path> paths) {
+    return addPaths(StandardLocation.MODULE_SOURCE_PATH, paths);
+  }
+
+  /**
+   * Add paths to the module source path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModuleSourcePaths(Path path1, Path path2, Path... paths) {
+    return addPaths(StandardLocation.MODULE_SOURCE_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the upgrade module path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addUpgradeModulePath(Path path) {
+    return addPath(StandardLocation.UPGRADE_MODULE_PATH, path);
+  }
+
+  /**
+   * Add paths to the upgrade module path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addUpgradeModulePaths(Iterable<? extends Path> paths) {
+    return addPaths(StandardLocation.UPGRADE_MODULE_PATH, paths);
+  }
+
+  /**
+   * Add paths to the upgrade module path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addUpgradeModulePaths(Path path1, Path path2, Path... paths) {
+    return addPaths(StandardLocation.UPGRADE_MODULE_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the system module path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSystemModulePath(Path path) {
+    return addPath(StandardLocation.SYSTEM_MODULES, path);
+  }
+
+  /**
+   * Add paths to the system module path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSystemModulePaths(Iterable<? extends Path> paths) {
+    return addPaths(StandardLocation.SYSTEM_MODULES, paths);
+  }
+
+  /**
+   * Add paths to the system module path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSystemModulePaths(Path path1, Path path2, Path... paths) {
+    return addPaths(StandardLocation.SYSTEM_MODULES, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the module path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModulePath(Path path) {
+    return addPath(StandardLocation.MODULE_PATH, path);
+  }
+
+  /**
+   * Add paths to the module path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModulePaths(Iterable<? extends Path> paths) {
+    return addPaths(StandardLocation.MODULE_PATH, paths);
+  }
+
+  /**
+   * Add paths to the module path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModulePaths(Path path1, Path path2, Path... paths) {
+    return addPaths(StandardLocation.MODULE_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the patch module path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addPatchModulePath(Path path) {
+    return addPath(StandardLocation.PATCH_MODULE_PATH, path);
+  }
+
+  /**
+   * Add paths to the patch module path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addPatchModulePaths(Iterable<? extends Path> paths) {
+    return addPaths(StandardLocation.PATCH_MODULE_PATH, paths);
+  }
+
+  /**
+   * Add paths to the patch module path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addPatchModulePaths(Path path1, Path path2, Path... paths) {
+    return addPaths(StandardLocation.PATCH_MODULE_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add an in-memory directory to the paths for a given location.
+   *
+   * <p>Note that this will take ownership of the path in the underlying file repository.
+   *
+   * @param location the location to add.
+   * @param path     the in-memory directory to add.
+   * @return this compiler object for further call chaining.
+   */
+  C addRamPath(Location location, RamPath path);
+
+  /**
+   * Add multiple in-memory directories to the paths for a given location.
+   *
+   * <p>Note that this will take ownership of the path in the underlying file repository.
+   *
+   * @param location the location to add.
+   * @param paths    the in-memory directories to add.
+   * @return this compiler object for further call chaining.
+   */
+  C addRamPaths(Location location, Iterable<? extends RamPath> paths);
+
+  /**
+   * Add multiple in-memory directories to the paths for a given location.
+   *
+   * <p>Note that this will take ownership of the path in the underlying file repository.
+   *
+   * @param location the location to add.
+   * @param path1    the first in-memory directory to add.
+   * @param path2    the second in-memory directory to add.
+   * @param paths    additional in-memory directories to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addRamPaths(
+      Location location,
+      RamPath path1,
+      RamPath path2,
+      RamPath... paths
+  ) {
+    return addRamPaths(location, combineTwoOrMore(path1, path2, paths));
+  }
+
+  /**
+   * Add a path to the class path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassRamPath(RamPath path) {
+    return addRamPath(StandardLocation.CLASS_PATH, path);
+  }
+
+  /**
+   * Add paths to the class path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassRamPaths(Iterable<? extends RamPath> paths) {
+    return addRamPaths(StandardLocation.CLASS_PATH, paths);
+  }
+
+  /**
+   * Add paths to the class path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
+    return addRamPaths(StandardLocation.CLASS_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the source path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourceRamPath(RamPath path) {
+    return addRamPath(StandardLocation.SOURCE_PATH, path);
+  }
+
+  /**
+   * Add paths to the source path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourceRamPaths(Iterable<? extends RamPath> paths) {
+    return addRamPaths(StandardLocation.SOURCE_PATH, paths);
+  }
+
+  /**
+   * Add paths to the source path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourceRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
+    return addRamPaths(StandardLocation.SOURCE_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the annotation processor path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorRamPath(RamPath path) {
+    return addRamPath(StandardLocation.ANNOTATION_PROCESSOR_PATH, path);
+  }
+
+  /**
+   * Add paths to the annotation processor path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorRamPaths(Iterable<? extends RamPath> paths) {
+    return addRamPaths(StandardLocation.ANNOTATION_PROCESSOR_PATH, paths);
+  }
+
+  /**
+   * Add paths to the annotation processor path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
+    return addRamPaths(StandardLocation.ANNOTATION_PROCESSOR_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the annotation processor module path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorModuleRamPath(RamPath path) {
+    return addRamPath(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, path);
+  }
+
+  /**
+   * Add paths to the annotation processor module path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorModuleRamPaths(Iterable<? extends RamPath> paths) {
+    return addRamPaths(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, paths);
+  }
+
+  /**
+   * Add paths to the annotation processor module path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorModuleRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
+    return addRamPaths(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the platform class path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addPlatformClassRamPath(RamPath path) {
+    return addRamPath(StandardLocation.PLATFORM_CLASS_PATH, path);
+  }
+
+  /**
+   * Add paths to the platform class path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addPlatformClassRamPaths(Iterable<? extends RamPath> paths) {
+    return addRamPaths(StandardLocation.PLATFORM_CLASS_PATH, paths);
+  }
+
+  /**
+   * Add paths to the platform class path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addPlatformClassRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
+    return addRamPaths(StandardLocation.PLATFORM_CLASS_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the module source path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModuleSourceRamPath(RamPath path) {
+    return addRamPath(StandardLocation.MODULE_SOURCE_PATH, path);
+  }
+
+  /**
+   * Add paths to the module source path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModuleSourceRamPaths(Iterable<? extends RamPath> paths) {
+    return addRamPaths(StandardLocation.MODULE_SOURCE_PATH, paths);
+  }
+
+  /**
+   * Add paths to the module source path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModuleSourceRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
+    return addRamPaths(StandardLocation.MODULE_SOURCE_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the upgrade module path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addUpgradeModuleRamPath(RamPath path) {
+    return addRamPath(StandardLocation.UPGRADE_MODULE_PATH, path);
+  }
+
+  /**
+   * Add paths to the upgrade module path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addUpgradeModuleRamPaths(Iterable<? extends RamPath> paths) {
+    return addRamPaths(StandardLocation.UPGRADE_MODULE_PATH, paths);
+  }
+
+  /**
+   * Add paths to the upgrade module path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addUpgradeModuleRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
+    return addRamPaths(StandardLocation.UPGRADE_MODULE_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the system module path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSystemModuleRamPath(RamPath path) {
+    return addRamPath(StandardLocation.SYSTEM_MODULES, path);
+  }
+
+  /**
+   * Add paths to the system module path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSystemModuleRamPaths(Iterable<? extends RamPath> paths) {
+    return addRamPaths(StandardLocation.SYSTEM_MODULES, paths);
+  }
+
+  /**
+   * Add paths to the system module path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSystemModuleRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
+    return addRamPaths(StandardLocation.SYSTEM_MODULES, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the module path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModuleRamPath(RamPath path) {
+    return addRamPath(StandardLocation.MODULE_PATH, path);
+  }
+
+  /**
+   * Add paths to the module path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModuleRamPaths(Iterable<? extends RamPath> paths) {
+    return addRamPaths(StandardLocation.MODULE_PATH, paths);
+  }
+
+  /**
+   * Add paths to the module path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModuleRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
+    return addRamPaths(StandardLocation.MODULE_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the patch module path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addPatchModuleRamPath(RamPath path) {
+    return addRamPath(StandardLocation.PATCH_MODULE_PATH, path);
+  }
+
+  /**
+   * Add paths to the patch module path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addPatchModuleRamPaths(Iterable<? extends RamPath> paths) {
+    return addRamPaths(StandardLocation.PATCH_MODULE_PATH, paths);
+  }
+
+  /**
+   * Add paths to the patch module path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths any additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addPatchModuleRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
+    return addRamPaths(StandardLocation.PATCH_MODULE_PATH, path1, path2, paths);
+  }
 
   /**
    * Set whether to use verbose output or not.
@@ -120,11 +824,12 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   /**
    * Add options to pass to any annotation processors.
    *
-   * @param options the options to pass.
+   * @param option  the first option to pass.
+   * @param options additional options to pass.
    * @return this compiler object for further call chaining.
    */
-  default C addAnnotationProcessorOptions(String... options) {
-    return addAnnotationProcessorOptions(List.of(options));
+  default C addAnnotationProcessorOptions(String option, String... options) {
+    return addAnnotationProcessorOptions(combineOneOrMore(option, options));
   }
 
   /**
@@ -144,11 +849,12 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>This bypasses the discovery process of annotation processors provided in
    * {@link #addAnnotationProcessorPaths}.
    *
-   * @param processors the processors to invoke.
+   * @param processor  the first processor to invoke.
+   * @param processors additional processors to invoke.
    * @return this compiler object for further call chaining.
    */
-  default C addAnnotationProcessors(Processor... processors) {
-    return addAnnotationProcessors(List.of(processors));
+  default C addAnnotationProcessors(Processor processor, Processor... processors) {
+    return addAnnotationProcessors(combineOneOrMore(processor, processors));
   }
 
   /**
@@ -159,15 +865,34 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    */
   C addCompilerOptions(Iterable<String> options);
 
-
   /**
    * Add command line options to pass to {@code javac}.
    *
-   * @param options the options to add.
+   * @param option  the first option to add.
+   * @param options additional options to add.
    * @return this compiler object for further call chaining.
    */
-  default C addCompilerOptions(String... options) {
-    return addCompilerOptions(List.of(options));
+  default C addCompilerOptions(String option, String... options) {
+    return addCompilerOptions(combineOneOrMore(option, options));
+  }
+
+  /**
+   * Add options to pass to the Java runtime.
+   *
+   * @param options the options to pass to the runtime.
+   * @return this compiler for further call chaining.
+   */
+  C addRuntimeOptions(Iterable<String> options);
+
+  /**
+   * Add options to pass to the Java runtime.
+   *
+   * @param option  the first option to pass to the runtime.
+   * @param options additional options to pass to the runtime.
+   * @return this compiler for further call chaining.
+   */
+  default C addRuntimeOptions(String option, String... options) {
+    return addRuntimeOptions(combineOneOrMore(option, options));
   }
 
   /**
@@ -205,7 +930,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @return this compiler object for further call chaining.
    */
   default C releaseVersion(SourceVersion version) {
-    return releaseVersion(version.ordinal());
+    return releaseVersion(Integer.toString(version.ordinal()));
   }
 
   /**
@@ -217,7 +942,6 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @return this compiler object for further call chaining.
    */
   C sourceVersion(String version);
-
 
   /**
    * Set the source version.
@@ -235,7 +959,6 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
     return sourceVersion(Integer.toString(version));
   }
 
-
   /**
    * Set the source version.
    *
@@ -245,7 +968,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @return this compiler object for further call chaining.
    */
   default C sourceVersion(SourceVersion version) {
-    return sourceVersion(version.ordinal());
+    return sourceVersion(Integer.toString(version.ordinal()));
   }
 
   /**
@@ -283,7 +1006,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @return this compiler object for further call chaining.
    */
   default C targetVersion(SourceVersion version) {
-    return targetVersion(version.ordinal());
+    return targetVersion(Integer.toString(version.ordinal()));
   }
 
   /**
@@ -310,15 +1033,6 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    */
   C includeCurrentPlatformClassPath(boolean enabled);
 
-
-  /**
-   * Add options to pass to the Java runtime.
-   *
-   * @param options the options to pass to the runtime.
-   * @return this compiler for further call chaining.
-   */
-  C addRuntimeOptions(Iterable<String> options);
-
   /**
    * Set the output locale.
    *
@@ -344,330 +1058,22 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   C withDiagnosticLogging(LoggingMode diagnosticLoggingMode);
 
   /**
-   * Add a path to the paths for a given location.
+   * Invoke the compilation and return the compilation result.
    *
-   * @param location the location to add.
-   * @param path     the path to add.
-   * @return this compiler object for further call chaining.
+   * @return the compilation result.
+   * @throws CompilerException            if the compiler threw an unhandled exception. This should
+   *                                      not occur for compilation failures generally.
+   * @throws IllegalStateException        if no compilation units were found.
+   * @throws java.io.UncheckedIOException if an IO error occurs.
    */
-  C addPath(Location location, Path path);
-
-  /**
-   * Add an in-memory directory to the paths for a given location.
-   *
-   * <p>Note that this will take ownership of the path in the underlying file repository.
-   *
-   * @param location the location to add.
-   * @param path     the in-memory directory to add.
-   * @return this compiler object for further call chaining.
-   */
-  C addPath(Location location, InMemoryPath path);
-
-  /**
-   * Add paths to the given location.
-   *
-   * @param location the location to add paths to.
-   * @param paths    the paths to add.
-   * @return this compiler object for further call chaining.
-   */
-  C addPaths(Location location, Collection<? extends Path> paths);
-
-  /**
-   * Add a path to look for annotation processors in.
-   *
-   * @param path the path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addAnnotationProcessorPath(Path path) {
-    return addPath(StandardLocation.ANNOTATION_PROCESSOR_PATH, path);
-  }
-
-  /**
-   * Add a RAM path to look for annotation processors in.
-   *
-   * <p>Note that this will take ownership of the path in the underlying file repository.
-   *
-   * @param path the in-memory path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addAnnotationProcessorPath(InMemoryPath path) {
-    return addPath(StandardLocation.ANNOTATION_PROCESSOR_PATH, path);
-  }
-
-  /**
-   * Add paths to look for annotation processors in.
-   *
-   * @param paths the paths to add.
-   * @return this compiler object for further call chaining.
-   */
-  default C addAnnotationProcessorPaths(Collection<? extends Path> paths) {
-    return addPaths(StandardLocation.ANNOTATION_PROCESSOR_PATH, paths);
-  }
-
-  /**
-   * Add a path that contains modules to look for annotation processors in.
-   *
-   * @param path the path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addAnnotationProcessorModulePath(Path path) {
-    return addPath(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, path);
-  }
-
-  /**
-   * Add a RAM path that contains modules to look for annotation processors in.
-   *
-   * <p>Note that this will take ownership of the path in the underlying file repository.
-   *
-   * @param path the in-memory path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addAnnotationProcessorModulePath(InMemoryPath path) {
-    return addPath(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, path);
-  }
-
-  /**
-   * Add paths that contain modules to look for annotation processors in.
-   *
-   * @param paths the paths to add.
-   * @return this compiler object for further call chaining.
-   */
-  default C addAnnotationProcessorModulePaths(Collection<? extends Path> paths) {
-    return addPaths(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, paths);
-  }
-
-  /**
-   * Add a path to the classpath.
-   *
-   * @param path the path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addClassPath(Path path) {
-    return addPath(StandardLocation.CLASS_PATH, path);
-  }
-
-  /**
-   * Add a RAM path to the classpath.
-   *
-   * <p>Note that this will take ownership of the path in the underlying file repository.
-   *
-   * @param path the in-memory path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addClassPath(InMemoryPath path) {
-    return addPath(StandardLocation.CLASS_PATH, path);
-  }
-
-  /**
-   * Add paths to the classpath.
-   *
-   * <p>You can add directory trees, JAR files, and WAR files.
-   *
-   * @param paths the paths to add.
-   * @return this compiler object for further call chaining.
-   */
-  default C addClassPaths(Collection<? extends Path> paths) {
-    return addPaths(StandardLocation.CLASS_PATH, paths);
-  }
-
-  /**
-   * Add a path to the module path.
-   *
-   * @param path the path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addModulePath(Path path) {
-    return addPath(StandardLocation.MODULE_PATH, path);
-  }
-
-  /**
-   * Add a RAM path to the module path.
-   *
-   * <p>Note that this will take ownership of the path in the underlying file repository.
-   *
-   * @param path the in-memory path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addModulePath(InMemoryPath path) {
-    return addPath(StandardLocation.MODULE_PATH, path);
-  }
-
-  /**
-   * Add paths containing modules to the module path.
-   *
-   * @param paths the paths to add.
-   * @return this compiler object for further call chaining.
-   */
-  default C addModulePaths(Collection<? extends Path> paths) {
-    return addPaths(StandardLocation.MODULE_PATH, paths);
-  }
-
-  /**
-   * Add a path to the module source path.
-   *
-   * @param path the path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addModuleSourcePath(Path path) {
-    return addPath(StandardLocation.MODULE_SOURCE_PATH, path);
-  }
-
-  /**
-   * Add a RAM path to the module source path.
-   *
-   * <p>Note that this will take ownership of the path in the underlying file repository.
-   *
-   * @param path the in-memory path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addModuleSourcePath(InMemoryPath path) {
-    return addPath(StandardLocation.MODULE_SOURCE_PATH, path);
-  }
-
-  /**
-   * Add paths containing modules of sources to compile.
-   *
-   * @param paths the paths to add.
-   * @return this compiler object for further call chaining.
-   */
-  default C addModuleSourcePaths(Collection<? extends Path> paths) {
-    return addPaths(StandardLocation.MODULE_SOURCE_PATH, paths);
-  }
-
-  /**
-   * Add a path to the patch module path.
-   *
-   * @param path the path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addPathModulePath(Path path) {
-    return addPath(StandardLocation.PATCH_MODULE_PATH, path);
-  }
-
-  /**
-   * Add a RAM path to the patch module path.
-   *
-   * <p>Note that this will take ownership of the path in the underlying file repository.
-   *
-   * @param path the in-memory path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addPathModulePath(InMemoryPath path) {
-    return addPath(StandardLocation.PATCH_MODULE_PATH, path);
-  }
-
-  /**
-   * Add paths containing patch modules to use during compilation.
-   *
-   * @param paths the paths to add.
-   * @return this compiler object for further call chaining.
-   */
-  default C addPatchModulePaths(Collection<? extends Path> paths) {
-    return addPaths(StandardLocation.PATCH_MODULE_PATH, paths);
-  }
-
-  /**
-   * Add a RAM path to the class path.
-   *
-   * @param path the path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addPlatformClassPath(Path path) {
-    return addPath(StandardLocation.PLATFORM_CLASS_PATH, path);
-  }
-
-  /**
-   * Add a RAM path to the platform class path.
-   *
-   * <p>Note that this will take ownership of the path in the underlying file repository.
-   *
-   * @param path the in-memory path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addPlatformClassPath(InMemoryPath path) {
-    return addPath(StandardLocation.PLATFORM_CLASS_PATH, path);
-  }
-
-  /**
-   * Add paths to the platform class path.
-   *
-   * @param paths the paths to add.
-   * @return this compiler object for further call chaining.
-   */
-  default C addPlatformClassPaths(Collection<? extends Path> paths) {
-    return addPaths(StandardLocation.PLATFORM_CLASS_PATH, paths);
-  }
-
-  /**
-   * Add a path to the source path.
-   *
-   * @param path the path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addSourcePath(Path path) {
-    return addPath(StandardLocation.SOURCE_PATH, path);
-  }
-
-  /**
-   * Add a RAM path to the source path.
-   *
-   * <p>Note that this will take ownership of the path in the underlying file repository.
-   *
-   * @param path the in-memory path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addSourcePath(InMemoryPath path) {
-    return addPath(StandardLocation.SOURCE_PATH, path);
-  }
-
-  /**
-   * Add paths containing sources to compile.
-   *
-   * @param paths the paths to add.
-   * @return this compiler object for further call chaining.
-   */
-  default C addSourcePaths(Collection<? extends Path> paths) {
-    return addPaths(StandardLocation.SOURCE_PATH, paths);
-  }
-
-  /**
-   * Add a path to the upgrade module path.
-   *
-   * @param path the path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addUpgradeModulePath(Path path) {
-    return addPath(StandardLocation.UPGRADE_MODULE_PATH, path);
-  }
-
-  /**
-   * Add a RAM path to the upgrade module path.
-   *
-   * <p>Note that this will take ownership of the path in the underlying file repository.
-   *
-   * @param path the in-memory path.
-   * @return this compiler object for further call chaining.
-   */
-  default C addUpgradeModulePath(InMemoryPath path) {
-    return addPath(StandardLocation.UPGRADE_MODULE_PATH, path);
-  }
-
-  /**
-   * Add paths containing upgraded modules to use during compilation.
-   *
-   * @param paths the paths to add.
-   * @return this compiler object for further call chaining.
-   */
-  default C addUpgradeModulePaths(Collection<? extends Path> paths) {
-    return addPaths(StandardLocation.UPGRADE_MODULE_PATH, paths);
-  }
+  R compile();
 
   /**
    * Options for how to handle logging on special internal components.
    */
   enum LoggingMode {
     /**
-     * Enable logging.
+     * Enable basic logging.
      */
     ENABLED,
 

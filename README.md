@@ -39,7 +39,7 @@ class HelloWorldTest {
 
     var compilation = Compilers
         .javac()
-        .addSourcePath(sources)
+        .addSourceRamPath(sources)
         .releaseVersion("11")
         .withDiagnosticLogging(LoggingMode.ENABLED)
         .compile();

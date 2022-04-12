@@ -19,7 +19,7 @@ package com.github.ascopes.jct.testing.integration.basic;
 import static com.github.ascopes.jct.assertions.CompilationAssert.assertThat;
 
 import com.github.ascopes.jct.compilers.Compilers;
-import com.github.ascopes.jct.paths.InMemoryPath;
+import com.github.ascopes.jct.paths.RamPath;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import javax.lang.model.SourceVersion;
@@ -40,7 +40,7 @@ class BasicLegacyCompilationTest {
   @MethodSource("javacVersions")
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldJavac(int version) {
-    var sources = InMemoryPath
+    var sources = RamPath
         .createPath()
         .createFile(
             "com/example/HelloWorld.java",
@@ -54,7 +54,7 @@ class BasicLegacyCompilationTest {
 
     var compilation = Compilers
         .javac()
-        .addSourcePath(sources)
+        .addSourceRamPath(sources)
         .deprecationWarnings(true)
         .releaseVersion(version)
         .compile();
@@ -66,7 +66,7 @@ class BasicLegacyCompilationTest {
   @MethodSource("ecjVersions")
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldEcj(int version) {
-    var sources = InMemoryPath
+    var sources = RamPath
         .createPath()
         .createFile(
             "com/example/HelloWorld.java",
@@ -80,7 +80,7 @@ class BasicLegacyCompilationTest {
 
     var compilation = Compilers
         .ecj()
-        .addSourcePath(sources)
+        .addSourceRamPath(sources)
         .deprecationWarnings(true)
         .releaseVersion(version)
         .compile();

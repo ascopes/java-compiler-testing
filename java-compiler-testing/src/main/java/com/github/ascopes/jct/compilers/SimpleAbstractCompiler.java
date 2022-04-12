@@ -16,9 +16,13 @@
 
 package com.github.ascopes.jct.compilers;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import javax.tools.JavaCompiler;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -36,6 +40,17 @@ public abstract class SimpleAbstractCompiler<A extends SimpleAbstractCompiler<A>
     extends AbstractCompiler<A, SimpleCompilation> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleAbstractCompiler.class);
+
+  private final Supplier<JavaCompiler> compilerSupplier;
+
+  /**
+   * Initialize this compiler.
+   *
+   * @param compilerSupplier the supplier of the compiler implementation to use internally.
+   */
+  protected SimpleAbstractCompiler(Supplier<JavaCompiler> compilerSupplier) {
+    this.compilerSupplier = requireNonNull(compilerSupplier);
+  }
 
   @Override
   protected final SimpleCompilation doCompile() throws IOException {
@@ -68,5 +83,9 @@ public abstract class SimpleAbstractCompiler<A extends SimpleAbstractCompiler<A>
           .fileRepository(fileRepository)
           .build();
     }
+  }
+
+  protected final JavaCompiler createJsr199Compiler() {
+    return compilerSupplier.get();
   }
 }

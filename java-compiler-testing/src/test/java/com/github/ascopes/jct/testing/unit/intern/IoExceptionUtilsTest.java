@@ -21,6 +21,7 @@ import static org.assertj.core.api.BDDAssertions.thenCode;
 import static org.assertj.core.api.InstanceOfAssertFactories.array;
 
 import com.github.ascopes.jct.intern.IoExceptionUtils;
+import com.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,7 +34,11 @@ import org.junit.jupiter.api.Test;
  * @author Ashley Scopes
  */
 @DisplayName("IoExceptionUtils tests")
-class IoExceptionUtilsTest {
+class IoExceptionUtilsTest implements StaticClassTestTemplate {
+  @Override
+  public Class<?> getTypeBeingTested() {
+    return IoExceptionUtils.class;
+  }
 
   @DisplayName("A runnable will be run correctly")
   @Test

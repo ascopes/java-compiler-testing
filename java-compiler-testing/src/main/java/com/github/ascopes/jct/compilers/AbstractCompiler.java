@@ -20,15 +20,14 @@ import static com.github.ascopes.jct.intern.IoExceptionUtils.uncheckedIo;
 
 import com.github.ascopes.jct.intern.SpecialLocations;
 import com.github.ascopes.jct.intern.StringUtils;
-import com.github.ascopes.jct.paths.InMemoryPath;
 import com.github.ascopes.jct.paths.LoggingJavaFileManagerProxy;
 import com.github.ascopes.jct.paths.PathJavaFileManager;
 import com.github.ascopes.jct.paths.PathLocationRepository;
+import com.github.ascopes.jct.paths.RamPath;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -255,16 +254,23 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   }
 
   @Override
-  public A addPath(Location location, InMemoryPath path) {
-    LOGGER.trace("{}.paths += {}", location.getName(), path);
-    fileRepository.getOrCreate(location).addPath(path);
+  public A addPaths(Location location, Iterable<? extends Path> paths) {
+    LOGGER.trace("{}.paths += {}", location.getName(), paths);
+    fileRepository.getOrCreate(location).addPaths(paths);
     return myself();
   }
 
   @Override
-  public A addPaths(Location location, Collection<? extends Path> paths) {
+  public A addRamPath(Location location, RamPath path) {
+    LOGGER.trace("{}.paths += {}", location.getName(), path);
+    fileRepository.getOrCreate(location).addRamPath(path);
+    return myself();
+  }
+
+  @Override
+  public A addRamPaths(Location location, Iterable<? extends RamPath> paths) {
     LOGGER.trace("{}.paths += {}", location.getName(), paths);
-    fileRepository.getOrCreate(location).addPaths(paths);
+    fileRepository.getOrCreate(location).addRamPaths(paths);
     return myself();
   }
 
@@ -334,8 +340,8 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
     // Ensure we have somewhere to dump our output.
     if (classOutputManager.isEmpty()) {
       LOGGER.debug("No class output location was specified, so an in-memory path is being created");
-      var classOutput = InMemoryPath.createPath("classes");
-      classOutputManager.addPath(classOutput);
+      var classOutput = RamPath.createPath("classes");
+      classOutputManager.addRamPath(classOutput);
     } else {
       LOGGER.debug("At least one output path is present, so no in-memory path will be created");
     }

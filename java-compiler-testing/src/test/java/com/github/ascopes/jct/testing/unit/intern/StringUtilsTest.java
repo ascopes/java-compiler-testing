@@ -20,6 +20,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
 import com.github.ascopes.jct.intern.StringUtils;
+import com.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,7 +39,12 @@ import org.junit.jupiter.params.provider.MethodSource;
  * @author Ashley Scopes
  */
 @DisplayName("StringUtils tests")
-class StringUtilsTest {
+class StringUtilsTest implements StaticClassTestTemplate {
+
+  @Override
+  public Class<?> getTypeBeingTested() {
+    return StringUtils.class;
+  }
 
   @DisplayName("quoted() returns the expected value")
   @MethodSource("singleObjectCases")
