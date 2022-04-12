@@ -40,7 +40,7 @@ import org.junit.jupiter.params.provider.ValueSource;
  *
  * @author Ashley Scopes
  */
-@DisplayName("CompilationImpl tests")
+@DisplayName("SimpleCompilation tests")
 class SimpleCompilationTest {
 
   @DisplayName("isWarningsAsErrors() is expected value")

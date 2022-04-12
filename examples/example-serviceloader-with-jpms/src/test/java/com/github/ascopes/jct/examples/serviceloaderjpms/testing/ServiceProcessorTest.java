@@ -20,7 +20,7 @@ import static com.github.ascopes.jct.assertions.CompilationAssert.assertThat;
 
 import com.github.ascopes.jct.compilers.Compilers;
 import com.github.ascopes.jct.examples.serviceloaderjpms.ServiceProcessor;
-import com.github.ascopes.jct.paths.InMemoryPath;
+import com.github.ascopes.jct.paths.RamPath;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,7 @@ class ServiceProcessorTest {
   @DisplayName("Expected files get created when the processor is run")
   @Test
   void expectedFilesGetCreated() {
-    var sources = InMemoryPath
+    var sources = RamPath
         .createPath()
         .createFile(
             "com/example/InsultProvider.java",
@@ -56,7 +56,7 @@ class ServiceProcessorTest {
     var compilation = Compilers
         .javac()
         .addAnnotationProcessors(new ServiceProcessor())
-        .addSourcePath(sources)
+        .addSourceRamPath(sources)
         .includeCurrentClassPath(true)
         .releaseVersion(11)
         .compile();

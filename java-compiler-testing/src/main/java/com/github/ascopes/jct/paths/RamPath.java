@@ -62,11 +62,11 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class InMemoryPath implements Closeable {
+public class RamPath implements Closeable {
 
   private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryPath.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(RamPath.class);
   private static final Cleaner CLEANER = Cleaner.create();
 
   private final Path path;
@@ -77,7 +77,7 @@ public class InMemoryPath implements Closeable {
    *
    * @param path the path to delegate to.
    */
-  private InMemoryPath(String identifier, Path path) {
+  private RamPath(String identifier, Path path) {
     this.path = path;
     this.identifier = Objects.requireNonNull(identifier);
   }
@@ -118,7 +118,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs
    */
-  public InMemoryPath createFile(Path filePath, byte[] content) {
+  public RamPath createFile(Path filePath, byte[] content) {
     var inputStream = new ByteArrayInputStream(content);
     return copyFrom(inputStream, filePath);
   }
@@ -131,7 +131,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs
    */
-  public InMemoryPath createFile(Path filePath, String... lines) {
+  public RamPath createFile(Path filePath, String... lines) {
     return createFile(filePath, String.join("\n", lines)
         .getBytes(DEFAULT_CHARSET));
   }
@@ -144,7 +144,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs
    */
-  public InMemoryPath createFile(String fileName, byte[] content) {
+  public RamPath createFile(String fileName, byte[] content) {
     return createFile(Path.of(fileName), content);
   }
 
@@ -156,7 +156,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs
    */
-  public InMemoryPath createFile(String fileName, String... lines) {
+  public RamPath createFile(String fileName, String... lines) {
     return createFile(Path.of(fileName), lines);
   }
 
@@ -168,7 +168,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFromClassPath(String resource, Path targetPath) {
+  public RamPath copyFromClassPath(String resource, Path targetPath) {
     return copyFromClassPath(getClass().getClassLoader(), resource, targetPath);
   }
 
@@ -180,7 +180,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFromClassPath(String resource, String targetPath) {
+  public RamPath copyFromClassPath(String resource, String targetPath) {
     return copyFromClassPath(getClass().getClassLoader(), resource, targetPath);
   }
 
@@ -193,7 +193,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFromClassPath(
+  public RamPath copyFromClassPath(
       ClassLoader loader,
       String resource,
       Path targetPath
@@ -218,7 +218,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFromClassPath(
+  public RamPath copyFromClassPath(
       ClassLoader loader,
       String resource,
       String targetPath
@@ -235,7 +235,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyTreeFromClassPath(
+  public RamPath copyTreeFromClassPath(
       String packageName,
       Path targetPath
   ) {
@@ -251,7 +251,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyTreeFromClassPath(
+  public RamPath copyTreeFromClassPath(
       String packageName,
       String targetPath
   ) {
@@ -268,7 +268,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyTreeFromClassPath(
+  public RamPath copyTreeFromClassPath(
       ClassLoader loader,
       String packageName,
       Path targetPath
@@ -313,7 +313,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyTreeFromClassPath(
+  public RamPath copyTreeFromClassPath(
       ClassLoader loader,
       String packageName,
       String targetPath
@@ -329,7 +329,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFrom(Path existingFile, Path targetPath) {
+  public RamPath copyFrom(Path existingFile, Path targetPath) {
     return uncheckedIo(() -> {
       try (var input = Files.newInputStream(existingFile)) {
         return copyFrom(input, targetPath);
@@ -345,7 +345,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFrom(Path existingFile, String targetPath) {
+  public RamPath copyFrom(Path existingFile, String targetPath) {
     return copyFrom(existingFile, Path.of(targetPath));
   }
 
@@ -357,7 +357,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFrom(URL url, Path targetPath) {
+  public RamPath copyFrom(URL url, Path targetPath) {
     return uncheckedIo(() -> {
       try (var input = url.openStream()) {
         return copyFrom(input, targetPath);
@@ -373,7 +373,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFrom(URL url, String targetPath) {
+  public RamPath copyFrom(URL url, String targetPath) {
     return uncheckedIo(() -> {
       try (var input = url.openStream()) {
         return copyFrom(input, targetPath);
@@ -389,7 +389,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFrom(InputStream input, String targetPath) {
+  public RamPath copyFrom(InputStream input, String targetPath) {
     return copyFrom(input, Path.of(targetPath));
   }
 
@@ -401,7 +401,7 @@ public class InMemoryPath implements Closeable {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public InMemoryPath copyFrom(InputStream input, Path targetPath) {
+  public RamPath copyFrom(InputStream input, Path targetPath) {
     return uncheckedIo(() -> {
       var bufferedInput = maybeBuffer(input, targetPath.toUri().getScheme());
       var path = makeRelativeToHere(targetPath);
@@ -471,7 +471,7 @@ public class InMemoryPath implements Closeable {
    * @see #createPath(boolean)
    * @see #createPath(String, boolean)
    */
-  public static InMemoryPath createPath() {
+  public static RamPath createPath() {
     return createPath(UUID.randomUUID().toString(), true);
   }
 
@@ -487,7 +487,7 @@ public class InMemoryPath implements Closeable {
    * @see #createPath(boolean)
    * @see #createPath(String, boolean)
    */
-  public static InMemoryPath createPath(String name) {
+  public static RamPath createPath(String name) {
     return createPath(name, true);
   }
 
@@ -506,7 +506,7 @@ public class InMemoryPath implements Closeable {
    * @see #createPath(String)
    * @see #createPath(String, boolean)
    */
-  public static InMemoryPath createPath(boolean closeOnGarbageCollection) {
+  public static RamPath createPath(boolean closeOnGarbageCollection) {
     return createPath(UUID.randomUUID().toString(), closeOnGarbageCollection);
   }
 
@@ -527,7 +527,7 @@ public class InMemoryPath implements Closeable {
    * @see #createPath(String)
    * @see #createPath(String, boolean)
    */
-  public static InMemoryPath createPath(String name, boolean closeOnGarbageCollection) {
+  public static RamPath createPath(String name, boolean closeOnGarbageCollection) {
 
     var config = Configuration
         .builder(PathType.unix())
@@ -541,7 +541,7 @@ public class InMemoryPath implements Closeable {
     var fileSystem = Jimfs.newFileSystem(config);
     var rootPath = fileSystem.getRootDirectories().iterator().next().resolve(name);
 
-    var inMemoryPath = new InMemoryPath(name, rootPath);
+    var inMemoryPath = new RamPath(name, rootPath);
     var path = inMemoryPath.path.toString();
 
     if (closeOnGarbageCollection) {

@@ -20,7 +20,7 @@ import static com.github.ascopes.jct.assertions.CompilationAssert.assertThat;
 import static com.github.ascopes.jct.testing.helpers.Skipping.skipBecauseEcjFailsToSupportModulesCorrectly;
 
 import com.github.ascopes.jct.compilers.Compilers;
-import com.github.ascopes.jct.paths.InMemoryPath;
+import com.github.ascopes.jct.paths.RamPath;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import javax.lang.model.SourceVersion;
@@ -41,7 +41,7 @@ class BasicModuleCompilationTest {
   @MethodSource("javacVersions")
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldJavac(int version) {
-    var sources = InMemoryPath
+    var sources = RamPath
         .createPath()
         .createFile(
             "com/example/HelloWorld.java",
@@ -62,7 +62,7 @@ class BasicModuleCompilationTest {
 
     var compilation = Compilers
         .javac()
-        .addSourcePath(sources)
+        .addSourceRamPath(sources)
         .deprecationWarnings(true)
         .releaseVersion(version)
         .compile();
@@ -76,7 +76,7 @@ class BasicModuleCompilationTest {
   void helloWorldEcj(int version) {
     skipBecauseEcjFailsToSupportModulesCorrectly();
 
-    var sources = InMemoryPath
+    var sources = RamPath
         .createPath()
         .createFile(
             "com/example/HelloWorld.java",
@@ -97,7 +97,7 @@ class BasicModuleCompilationTest {
 
     var compilation = Compilers
         .ecj()
-        .addSourcePath(sources)
+        .addSourceRamPath(sources)
         .deprecationWarnings(true)
         .releaseVersion(version)
         .compile();
