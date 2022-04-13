@@ -16,12 +16,42 @@
 
 package com.github.ascopes.jct.testing.unit.compilers;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+
 import com.github.ascopes.jct.compilers.Compilation;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * {@link Compilation} tests.
  *
  * @author Ashley Scopes
  */
+@DisplayName("Compilation tests")
+@ExtendWith(MockitoExtension.class)
 class CompilationTest {
+  @Mock
+  Compilation compilation;
+
+  @DisplayName("isFailure() returns opposite of isSuccessful()")
+  @ValueSource(booleans = {true, false})
+  @ParameterizedTest(name = "for isSuccessful() = {0}")
+  void isFailureReturnsOppositeOfIsSuccessful(boolean successful) {
+    // Given
+    given(compilation.isSuccessful()).willReturn(successful);
+    given(compilation.isFailure()).willCallRealMethod();
+
+    // When
+    var failure = compilation.isFailure();
+
+    // Then
+    assertThat(failure).isEqualTo(!successful);
+    then(compilation).should().isSuccessful();
+  }
 }
