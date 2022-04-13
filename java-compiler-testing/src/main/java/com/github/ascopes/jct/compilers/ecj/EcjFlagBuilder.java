@@ -34,11 +34,24 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public class EcjFlagBuilder implements FlagBuilder {
+public final class EcjFlagBuilder implements FlagBuilder {
+  // Visible for testing only.
+  public static final String VERBOSE = "-verbose";
+  public static final String ENABLE_PREVIEW = "--enable-preview";
+  public static final String NOWARN = "-nowarn";
+  public static final String FAIL_ON_WARNING = "--failOnWarning";
+  public static final String DEPRECATION = "-deprecation";
+  public static final String RELEASE = "--release";
+  public static final String SOURCE = "-source";
+  public static final String TARGET = "-target";
+  public static final String ANNOTATION_OPT = "-A";
+  public static final String RUNTIME_OPT = "-J";
 
-  protected final Stream.Builder<String> craftedFlags;
-  protected final Stream.Builder<String> annotationProcessorOptions;
-  protected final Stream.Builder<String> otherOptions;
+
+
+  private final Stream.Builder<String> craftedFlags;
+  private final Stream.Builder<String> annotationProcessorOptions;
+  private final Stream.Builder<String> otherOptions;
 
   /**
    * Initialize this flag builder.
@@ -51,54 +64,54 @@ public class EcjFlagBuilder implements FlagBuilder {
 
   @Override
   public EcjFlagBuilder verbose(boolean enabled) {
-    return flagIfTrue(enabled, "-verbose");
+    return flagIfTrue(enabled, VERBOSE);
   }
 
   @Override
   public EcjFlagBuilder previewFeatures(boolean enabled) {
-    return flagIfTrue(enabled, "--enable-preview");
+    return flagIfTrue(enabled, ENABLE_PREVIEW);
   }
 
   @Override
   public EcjFlagBuilder warnings(boolean enabled) {
-    return flagIfTrue(!enabled, "-nowarn");
+    return flagIfTrue(!enabled, NOWARN);
   }
 
   @Override
   public EcjFlagBuilder warningsAsErrors(boolean enabled) {
     // Differs to javac for some reason.
-    return flagIfTrue(enabled, "--failOnWarning");
+    return flagIfTrue(enabled, FAIL_ON_WARNING);
   }
 
   @Override
   public EcjFlagBuilder deprecationWarnings(boolean enabled) {
-    return flagIfTrue(enabled, "-deprecation");
+    return flagIfTrue(enabled, DEPRECATION);
   }
 
   @Override
   public EcjFlagBuilder releaseVersion(String version) {
-    return versionIfPresent("--release", version);
+    return versionIfPresent(RELEASE, version);
   }
 
   @Override
   public EcjFlagBuilder sourceVersion(String version) {
-    return versionIfPresent("-source", version);
+    return versionIfPresent(SOURCE, version);
   }
 
   @Override
   public EcjFlagBuilder targetVersion(String version) {
-    return versionIfPresent("-target", version);
+    return versionIfPresent(TARGET, version);
   }
 
   @Override
   public EcjFlagBuilder annotationProcessorOptions(List<String> options) {
-    options.forEach(option -> annotationProcessorOptions.add("-A" + option));
+    options.forEach(option -> annotationProcessorOptions.add(ANNOTATION_OPT + option));
     return this;
   }
 
   @Override
   public EcjFlagBuilder runtimeOptions(List<String> options) {
-    options.forEach(option -> annotationProcessorOptions.add("-J" + option));
+    options.forEach(option -> annotationProcessorOptions.add(RUNTIME_OPT + option));
     return this;
   }
 
