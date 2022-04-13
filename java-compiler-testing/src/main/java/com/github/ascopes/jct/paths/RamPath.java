@@ -17,9 +17,9 @@
 package com.github.ascopes.jct.paths;
 
 import static com.github.ascopes.jct.intern.IoExceptionUtils.uncheckedIo;
+import static java.util.Objects.requireNonNull;
 
 import com.github.ascopes.jct.intern.AsyncResourceCloser;
-import com.github.ascopes.jct.intern.StringUtils;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.lang.ref.Cleaner;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -41,7 +42,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.UUID;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -69,6 +69,7 @@ public class RamPath implements Closeable {
   private static final Logger LOGGER = LoggerFactory.getLogger(RamPath.class);
   private static final Cleaner CLEANER = Cleaner.create();
 
+  private final URI uri;
   private final Path path;
   private final String identifier;
 
@@ -78,8 +79,11 @@ public class RamPath implements Closeable {
    * @param path the path to delegate to.
    */
   private RamPath(String identifier, Path path) {
+    requireNonNull(path);
+
+    uri = path.toUri();
     this.path = path;
-    this.identifier = Objects.requireNonNull(identifier);
+    this.identifier = requireNonNull(identifier);
   }
 
   /**
@@ -433,18 +437,14 @@ public class RamPath implements Closeable {
         StandardCopyOption.COPY_ATTRIBUTES
     ));
 
-    LOGGER.info(
-        "Copied {} into temporary directory on file system at {}",
-        path.toUri(),
-        tempPath
-    );
+    LOGGER.info("Copied {} into temporary directory on file system at {}", uri, tempPath);
 
     return tempPath;
   }
 
   @Override
   public String toString() {
-    return "InMemoryPath{path=" + StringUtils.quoted(path) + "}";
+    return uri.toString();
   }
 
   private Path makeRelativeToHere(Path path) {

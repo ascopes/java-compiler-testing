@@ -93,6 +93,8 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
    * Initialize this compiler handler.
    */
   protected AbstractCompiler() {
+    // We may want to be able to customize creation of missing roots in the future. For now,
+    // I am leaving this enabled by default.
     fileRepository = new PathLocationRepository();
 
     annotationProcessors = new ArrayList<>();
@@ -334,69 +336,10 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   }
 
   protected JavaFileManager buildJavaFileManager() {
-    var classOutputManager = fileRepository
-        .getOrCreate(StandardLocation.CLASS_OUTPUT);
-
-    // Ensure we have somewhere to dump our output.
-    if (classOutputManager.isEmpty()) {
-      LOGGER.debug("No class output location was specified, so an in-memory path is being created");
-      var classOutput = RamPath.createPath("classes");
-      classOutputManager.addRamPath(classOutput);
-    } else {
-      LOGGER.debug("At least one output path is present, so no in-memory path will be created");
-    }
-
-    // ECJ requires that we always create this, otherwise it refuses to run.
-    var classPath = fileRepository
-        .getOrCreate(StandardLocation.CLASS_PATH);
-
-    if (includeCurrentClassPath) {
-      var currentClassPath = SpecialLocations.currentClassPathLocations();
-
-      LOGGER.debug("Adding current classpath to compiler: {}", currentClassPath);
-      classPath.addPaths(currentClassPath);
-    }
-
-    if (includeCurrentClassPath) {
-      var currentModulePath = SpecialLocations.currentModulePathLocations();
-
-      LOGGER.debug(
-          "Adding current module path to compiler class path and module path: {}",
-          currentModulePath
-      );
-
-      // For some reason, the JDK module path has to also be added to the classpath for it
-      // to be recognised. Failing to do this prevents the classes and test-classes directories
-      // being added to the classpath with the other dependencies. This would otherwise result in
-      // all dependencies being loaded, but not the code the user is actually trying to test.
-      //
-      // Weird, but it is what it is, I guess.
-      classPath.addPaths(currentModulePath);
-
-      fileRepository
-          .getOrCreate(StandardLocation.MODULE_PATH)
-          .addPaths(currentModulePath);
-    }
-
-    if (includeCurrentPlatformClassPath) {
-      var currentPlatformClassPath = SpecialLocations.currentPlatformClassPathLocations();
-
-      if (!currentPlatformClassPath.isEmpty()) {
-        LOGGER.debug("Adding current platform classpath to compiler: {}", currentPlatformClassPath);
-
-        fileRepository
-            .getOrCreate(StandardLocation.PLATFORM_CLASS_PATH)
-            .addPaths(currentPlatformClassPath);
-      }
-    }
-
-    var jrtLocations = SpecialLocations.javaRuntimeLocations();
-    LOGGER.trace("Adding JRT locations to compiler: {}", jrtLocations);
-
-    fileRepository
-        .getOrCreate(StandardLocation.SYSTEM_MODULES)
-        .addPaths(jrtLocations);
-
+    registerClassOutputPath();
+    registerClassPath();
+    registerPlatformClassPath();
+    registerJrtJimage();
     return new PathJavaFileManager(fileRepository);
   }
 
@@ -497,6 +440,80 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
       );
       throw new CompilerException("The compiler threw an exception", ex);
     }
+  }
+
+  protected void registerClassOutputPath() {
+    // We have to manually create this one as javac will not attempt to access it lazily. Instead,
+    // it will just abort if it is not present. This means we cannot take advantage of the
+    // PathLocationRepository creating the roots as we try to access them for this specific case.
+    var classOutputManager = fileRepository
+        .getOrCreate(StandardLocation.CLASS_OUTPUT);
+
+    // Ensure we have somewhere to dump our output.
+    if (classOutputManager.isEmpty()) {
+      LOGGER.debug("No class output location was specified, so an in-memory path is being created");
+      var classOutput = RamPath.createPath("classes");
+      classOutputManager.addRamPath(classOutput);
+    } else {
+      LOGGER.debug("At least one output path is present, so no in-memory path will be created");
+    }
+  }
+
+  protected void registerClassPath() {
+    // ECJ requires that we always create this, otherwise it refuses to run.
+    var classPath = fileRepository
+        .getOrCreate(StandardLocation.CLASS_PATH);
+
+    if (includeCurrentClassPath) {
+      var currentClassPath = SpecialLocations.currentClassPathLocations();
+
+      LOGGER.debug("Adding current classpath to compiler: {}", currentClassPath);
+      classPath.addPaths(currentClassPath);
+    }
+
+    if (includeCurrentClassPath) {
+      var currentModulePath = SpecialLocations.currentModulePathLocations();
+
+      LOGGER.debug(
+          "Adding current module path to compiler class path and module path: {}",
+          currentModulePath
+      );
+
+      // For some reason, the JDK module path has to also be added to the classpath for it
+      // to be recognised. Failing to do this prevents the classes and test-classes directories
+      // being added to the classpath with the other dependencies. This would otherwise result in
+      // all dependencies being loaded, but not the code the user is actually trying to test.
+      //
+      // Weird, but it is what it is, I guess.
+      classPath.addPaths(currentModulePath);
+
+      fileRepository
+          .getOrCreate(StandardLocation.MODULE_PATH)
+          .addPaths(currentModulePath);
+    }
+  }
+
+  protected void registerPlatformClassPath() {
+    if (includeCurrentPlatformClassPath) {
+      var currentPlatformClassPath = SpecialLocations.currentPlatformClassPathLocations();
+
+      if (!currentPlatformClassPath.isEmpty()) {
+        LOGGER.debug("Adding current platform classpath to compiler: {}", currentPlatformClassPath);
+
+        fileRepository
+            .getOrCreate(StandardLocation.PLATFORM_CLASS_PATH)
+            .addPaths(currentPlatformClassPath);
+      }
+    }
+  }
+
+  protected void registerJrtJimage() {
+    var jrtLocations = SpecialLocations.javaRuntimeLocations();
+    LOGGER.trace("Adding JRT locations to compiler: {}", jrtLocations);
+
+    fileRepository
+        .getOrCreate(StandardLocation.SYSTEM_MODULES)
+        .addPaths(jrtLocations);
   }
 
   @SuppressWarnings("unchecked")
