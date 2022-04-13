@@ -21,7 +21,6 @@ import static com.github.ascopes.jct.intern.CollectionUtils.combineTwoOrMore;
 
 import com.github.ascopes.jct.paths.RamPath;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Locale;
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
@@ -84,6 +83,70 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    */
   default C addPaths(Location location, Path path1, Path path2, Path... paths) {
     return addPaths(location, combineTwoOrMore(path1, path2, paths));
+  }
+
+  /**
+   * Add a path to the class output path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassOutputPath(Path path) {
+    return addPath(StandardLocation.CLASS_OUTPUT, path);
+  }
+
+  /**
+   * Add paths to the class output path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassOutputPaths(Iterable<? extends Path> paths) {
+    return addPaths(StandardLocation.CLASS_OUTPUT, paths);
+  }
+
+  /**
+   * Add paths to the class output path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassOutputPaths(Path path1, Path path2, Path... paths) {
+    return addPaths(StandardLocation.CLASS_OUTPUT, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the source output path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourceOutputPath(Path path) {
+    return addPath(StandardLocation.SOURCE_OUTPUT, path);
+  }
+
+  /**
+   * Add paths to the source output path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourceOutputPaths(Iterable<? extends Path> paths) {
+    return addPaths(StandardLocation.SOURCE_OUTPUT, paths);
+  }
+
+  /**
+   * Add paths to the source output path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourceOutputPaths(Path path1, Path path2, Path... paths) {
+    return addPaths(StandardLocation.SOURCE_OUTPUT, path1, path2, paths);
   }
 
   /**
@@ -449,6 +512,70 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   }
 
   /**
+   * Add a path to the class output path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassOutputRamPath(RamPath path) {
+    return addRamPath(StandardLocation.CLASS_OUTPUT, path);
+  }
+
+  /**
+   * Add paths to the class output path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassOutputRamPaths(Iterable<? extends RamPath> paths) {
+    return addRamPaths(StandardLocation.CLASS_OUTPUT, paths);
+  }
+
+  /**
+   * Add paths to the class output path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassOutputRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
+    return addRamPaths(StandardLocation.CLASS_OUTPUT, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the source output path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourceOutputRamPath(RamPath path) {
+    return addRamPath(StandardLocation.SOURCE_OUTPUT, path);
+  }
+
+  /**
+   * Add paths to the source output path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourceOutputRamPaths(Iterable<? extends RamPath> paths) {
+    return addRamPaths(StandardLocation.SOURCE_OUTPUT, paths);
+  }
+
+  /**
+   * Add paths to the source output path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourceOutputRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
+    return addRamPaths(StandardLocation.SOURCE_OUTPUT, path1, path2, paths);
+  }
+
+  /**
    * Add a path to the class path.
    *
    * @param path the path to add.
@@ -606,6 +733,70 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    */
   default C addPlatformClassRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
     return addRamPaths(StandardLocation.PLATFORM_CLASS_PATH, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the native header output path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addNativeHeaderOutputPath(Path path) {
+    return addPath(StandardLocation.NATIVE_HEADER_OUTPUT, path);
+  }
+
+  /**
+   * Add paths to the native header output path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addNativeHeaderOutputPaths(Iterable<? extends Path> paths) {
+    return addPaths(StandardLocation.NATIVE_HEADER_OUTPUT, paths);
+  }
+
+  /**
+   * Add paths to the native header output path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addNativeHeaderOutputPaths(Path path1, Path path2, Path... paths) {
+    return addPaths(StandardLocation.NATIVE_HEADER_OUTPUT, path1, path2, paths);
+  }
+
+  /**
+   * Add a path to the native header output path.
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addNativeHeaderOutputRamPath(RamPath path) {
+    return addRamPath(StandardLocation.NATIVE_HEADER_OUTPUT, path);
+  }
+
+  /**
+   * Add paths to the native header output path.
+   *
+   * @param paths the paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addNativeHeaderOutputRamPaths(Iterable<? extends RamPath> paths) {
+    return addRamPaths(StandardLocation.NATIVE_HEADER_OUTPUT, paths);
+  }
+
+  /**
+   * Add paths to the native header output path.
+   *
+   * @param path1 the first path to add.
+   * @param path2 the second path to add.
+   * @param paths additional paths to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addNativeHeaderOutputRamPaths(RamPath path1, RamPath path2, RamPath... paths) {
+    return addRamPaths(StandardLocation.NATIVE_HEADER_OUTPUT, path1, path2, paths);
   }
 
   /**
