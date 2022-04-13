@@ -30,6 +30,8 @@ import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -43,6 +45,8 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class PathLocationRepository implements AutoCloseable {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(PathLocationRepository.class);
 
   private static final Comparator<Location> LOCATION_COMPARATOR = Comparator
       .comparing(Location::getName)
@@ -110,6 +114,9 @@ public class PathLocationRepository implements AutoCloseable {
   /**
    * Get the manager for a location, creating it first if it does not yet exist.
    *
+   * <p>Non-module output locations that do not have a path already configured will automatically
+   * have a {@link RamPath} created for them.
+   *
    * @param location the location to look up.
    * @return the location manager.
    * @throws IllegalArgumentException if a {@link StandardLocation#MODULE_SOURCE_PATH} has already
@@ -124,12 +131,12 @@ public class PathLocationRepository implements AutoCloseable {
       var moduleName = moduleLocation.getModuleName();
       var parentLocation = moduleLocation.getParent();
       return managers
-          .computeIfAbsent(parentLocation, ParentPathLocationManager::new)
+          .computeIfAbsent(parentLocation, unused -> new ParentPathLocationManager(location))
           .getOrCreateModuleLocationManager(moduleName);
     }
 
     return managers
-        .computeIfAbsent(location, ParentPathLocationManager::new);
+        .computeIfAbsent(location, unused -> createParentPathLocationManager(location));
   }
 
   /**
@@ -160,7 +167,7 @@ public class PathLocationRepository implements AutoCloseable {
     return "PathLocationManagerRepository{}";
   }
 
-  protected void ensureCompatibleLocation(Location location) {
+  private void ensureCompatibleLocation(Location location) {
     if (location instanceof ModuleLocation) {
       location = ((ModuleLocation) location).getParent();
     }
@@ -180,5 +187,21 @@ public class PathLocationRepository implements AutoCloseable {
               + "run in multi-module compilation mode. This means you cannot add a source-path to "
               + "this configuration as well");
     }
+  }
+
+  private ParentPathLocationManager createParentPathLocationManager(Location location) {
+    var manager = new ParentPathLocationManager(location);
+
+    if (location.isOutputLocation()) {
+      var ramPath = RamPath.createPath(true);
+      LOGGER.debug(
+          "Implicitly created new in-memory path {} for output location {}",
+          ramPath,
+          location.getName()
+      );
+      manager.addRamPath(ramPath);
+    }
+
+    return manager;
   }
 }

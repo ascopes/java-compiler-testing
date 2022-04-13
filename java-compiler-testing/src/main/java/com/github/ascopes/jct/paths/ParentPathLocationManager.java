@@ -191,6 +191,31 @@ public class ParentPathLocationManager extends PathLocationManager {
     var moduleLocation = new ModuleLocation(location, moduleName);
     var moduleManager = new PathLocationManager(moduleLocation);
 
+    var paths = getPaths();
+
+    // For nested modules, if we are an output location, then add a directory in the parent
+    // location manager for the module. This allows implicitly creating output sources as
+    // we need them. We don't bother making a whole new virtual file system here as it is slower,
+    // and more complicated to handle properly.
+    if (location.isOutputLocation()) {
+      if (paths.isEmpty()) {
+        LOGGER.trace(
+            "No paths for location {} exist, so no module directory will be made for {}",
+            location.getName(),
+            moduleName
+        );
+      } else {
+        var modulePath = paths.iterator().next().resolve(moduleName);
+        LOGGER.debug("Creating module directory for {} at {}", moduleLocation, modulePath);
+
+        try {
+          Files.createDirectories(modulePath);
+        } catch (IOException ex) {
+          throw new UncheckedIOException("Failed to create " + modulePath, ex);
+        }
+      }
+    }
+
     roots
         .stream()
         .map(root -> root.resolve(moduleName))

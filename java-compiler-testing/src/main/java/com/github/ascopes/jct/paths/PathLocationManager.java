@@ -129,7 +129,7 @@ public class PathLocationManager implements Iterable<Path> {
    * @param path the path to add.
    */
   public void addRamPath(RamPath path) {
-    LOGGER.debug("Adding InMemoryPath {} to PathLocationManager for location {}", path, location);
+    LOGGER.debug("Registering {} for location {}", path, location);
     registerPath(path.getPath());
     // Keep the reference alive.
     inMemoryDirectories.add(path);
@@ -143,7 +143,7 @@ public class PathLocationManager implements Iterable<Path> {
    * @param paths the paths to add.
    */
   public void addRamPaths(Iterable<? extends RamPath> paths) {
-    LOGGER.debug("Adding InMemoryPaths {} to PathLocationManager for location {}", paths, location);
+    LOGGER.debug("Registering {} for location {}", paths, location);
     for (var path : paths) {
       registerPath(path.getPath());
       // Keep the reference alive.
