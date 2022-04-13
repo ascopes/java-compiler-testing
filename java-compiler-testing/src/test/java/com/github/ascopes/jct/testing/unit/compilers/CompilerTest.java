@@ -77,6 +77,112 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
+  @DisplayName("addClassOutputPath(path) calls addPath(CLASS_OUTPUT, path)")
+  @Test
+  void addClassOutputPathCallsAddPath() {
+    // Given
+    given(compiler.addClassOutputPath(any())).willCallRealMethod();
+    given(compiler.addPath(any(), any())).will(ctx -> compiler);
+    var path = stub(Path.class);
+
+    // When
+    var result = compiler.addClassOutputPath(path);
+
+    // Then
+    then(compiler).should().addPath(StandardLocation.CLASS_OUTPUT, path);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("addClassOutputPaths(paths) calls addPaths(CLASS_OUTPUT, paths)")
+  @Test
+  void addClassOutputPathsWithIterableCallsAddPaths() {
+    // Given
+    given(compiler.addClassOutputPaths(any())).willCallRealMethod();
+    given(compiler.addPaths(any(), any())).will(ctx -> compiler);
+    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+
+    // When
+    var result = compiler.addClassOutputPaths(paths);
+
+    // Then
+    then(compiler).should().addPaths(StandardLocation.CLASS_OUTPUT, paths);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("vararg overload for addClassOutputPaths calls varargs overload for addPaths")
+  @Test
+  void varargOverloadForAddClassOutputPathsCallsVarargsOverloadsAddPaths() {
+    // Given
+    var firstPath = stub(Path.class);
+    var secondPath = stub(Path.class);
+    var thirdPath = stub(Path.class);
+
+    given(compiler.addClassOutputPaths(any(), any(), any())).willCallRealMethod();
+    given(compiler.addPaths(any(), eq(firstPath), eq(secondPath), eq(thirdPath)))
+        .will(ctx -> compiler);
+
+    // When
+    var result = compiler.addClassOutputPaths(firstPath, secondPath, thirdPath);
+
+    // Then
+    then(compiler).should()
+        .addPaths(StandardLocation.CLASS_OUTPUT, firstPath, secondPath, thirdPath);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("addSourceOutputPath(path) calls addPath(SOURCE_OUTPUT, path)")
+  @Test
+  void addSourceOutputPathCallsAddPath() {
+    // Given
+    given(compiler.addSourceOutputPath(any())).willCallRealMethod();
+    given(compiler.addPath(any(), any())).will(ctx -> compiler);
+    var path = stub(Path.class);
+
+    // When
+    var result = compiler.addSourceOutputPath(path);
+
+    // Then
+    then(compiler).should().addPath(StandardLocation.SOURCE_OUTPUT, path);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("addSourceOutputPaths(paths) calls addPaths(SOURCE_OUTPUT, paths)")
+  @Test
+  void addSourceOutputPathsWithIterableCallsAddPaths() {
+    // Given
+    given(compiler.addSourceOutputPaths(any())).willCallRealMethod();
+    given(compiler.addPaths(any(), any())).will(ctx -> compiler);
+    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+
+    // When
+    var result = compiler.addSourceOutputPaths(paths);
+
+    // Then
+    then(compiler).should().addPaths(StandardLocation.SOURCE_OUTPUT, paths);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("vararg overload for addSourceOutputPaths calls varargs overload for addPaths")
+  @Test
+  void varargOverloadForAddSourceOutputPathsCallsVarargsOverloadsAddPaths() {
+    // Given
+    var firstPath = stub(Path.class);
+    var secondPath = stub(Path.class);
+    var thirdPath = stub(Path.class);
+
+    given(compiler.addSourceOutputPaths(any(), any(), any())).willCallRealMethod();
+    given(compiler.addPaths(any(), eq(firstPath), eq(secondPath), eq(thirdPath)))
+        .will(ctx -> compiler);
+
+    // When
+    var result = compiler.addSourceOutputPaths(firstPath, secondPath, thirdPath);
+
+    // Then
+    then(compiler).should()
+        .addPaths(StandardLocation.SOURCE_OUTPUT, firstPath, secondPath, thirdPath);
+    assertThat(result).isSameAs(compiler);
+  }
+
   @DisplayName("addClassPath(path) calls addPath(CLASS_PATH, path)")
   @Test
   void addClassPathCallsAddPath() {
@@ -351,6 +457,59 @@ class CompilerTest {
     // Then
     then(compiler).should()
         .addPaths(StandardLocation.PLATFORM_CLASS_PATH, firstPath, secondPath, thirdPath);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("addNativeHeaderOutputPath(path) calls addPath(NATIVE_HEADER_OUTPUT, path)")
+  @Test
+  void addNativeHeaderOutputPathCallsAddPath() {
+    // Given
+    given(compiler.addNativeHeaderOutputPath(any())).willCallRealMethod();
+    given(compiler.addPath(any(), any())).will(ctx -> compiler);
+    var path = stub(Path.class);
+
+    // When
+    var result = compiler.addNativeHeaderOutputPath(path);
+
+    // Then
+    then(compiler).should().addPath(StandardLocation.NATIVE_HEADER_OUTPUT, path);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("addNativeHeaderOutputPaths(paths) calls addPaths(NATIVE_HEADER_OUTPUT, paths)")
+  @Test
+  void addNativeHeaderOutputPathsWithIterableCallsAddPaths() {
+    // Given
+    given(compiler.addNativeHeaderOutputPaths(any())).willCallRealMethod();
+    given(compiler.addPaths(any(), any())).will(ctx -> compiler);
+    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+
+    // When
+    var result = compiler.addNativeHeaderOutputPaths(paths);
+
+    // Then
+    then(compiler).should().addPaths(StandardLocation.NATIVE_HEADER_OUTPUT, paths);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("vararg overload for addNativeHeaderOutputPaths calls varargs overload for addPaths")
+  @Test
+  void varargOverloadForAddNativeHeaderOutputPathsCallsVarargsOverloadsAddPaths() {
+    // Given
+    var firstPath = stub(Path.class);
+    var secondPath = stub(Path.class);
+    var thirdPath = stub(Path.class);
+
+    given(compiler.addNativeHeaderOutputPaths(any(), any(), any())).willCallRealMethod();
+    given(compiler.addPaths(any(), eq(firstPath), eq(secondPath), eq(thirdPath)))
+        .will(ctx -> compiler);
+
+    // When
+    var result = compiler.addNativeHeaderOutputPaths(firstPath, secondPath, thirdPath);
+
+    // Then
+    then(compiler).should()
+        .addPaths(StandardLocation.NATIVE_HEADER_OUTPUT, firstPath, secondPath, thirdPath);
     assertThat(result).isSameAs(compiler);
   }
 
@@ -658,6 +817,112 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
+  @DisplayName("addClassOutputRamPath(path) calls addPath(CLASS_OUTPUT, path)")
+  @Test
+  void addClassOutputRamPathCallsAddPath() {
+    // Given
+    given(compiler.addClassOutputRamPath(any())).willCallRealMethod();
+    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
+    var ramPath = stub(RamPath.class);
+
+    // When
+    var result = compiler.addClassOutputRamPath(ramPath);
+
+    // Then
+    then(compiler).should().addRamPath(StandardLocation.CLASS_OUTPUT, ramPath);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("addClassOutputRamPaths(paths) calls addPaths(CLASS_OUTPUT, paths)")
+  @Test
+  void addClassOutputRamPathsWithIterableCallsAddPaths() {
+    // Given
+    given(compiler.addClassOutputRamPaths(any())).willCallRealMethod();
+    given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
+    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+
+    // When
+    var result = compiler.addClassOutputRamPaths(ramPaths);
+
+    // Then
+    then(compiler).should().addRamPaths(StandardLocation.CLASS_OUTPUT, ramPaths);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("vararg overload for addClassOutputRamPaths calls varargs overload for addPaths")
+  @Test
+  void varargOverloadForAddClassOutputRamPathsCallsVarargsOverloadsAddPaths() {
+    // Given
+    var firstRamPath = stub(RamPath.class);
+    var secondRamPath = stub(RamPath.class);
+    var thirdRamPath = stub(RamPath.class);
+
+    given(compiler.addClassOutputRamPaths(any(), any(), any())).willCallRealMethod();
+    given(compiler.addRamPaths(any(), eq(firstRamPath), eq(secondRamPath), eq(thirdRamPath)))
+        .will(ctx -> compiler);
+
+    // When
+    var result = compiler.addClassOutputRamPaths(firstRamPath, secondRamPath, thirdRamPath);
+
+    // Then
+    then(compiler).should()
+        .addRamPaths(StandardLocation.CLASS_OUTPUT, firstRamPath, secondRamPath, thirdRamPath);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("addSourceOutputRamPath(path) calls addPath(SOURCE_OUTPUT, path)")
+  @Test
+  void addSourceOutputRamPathCallsAddPath() {
+    // Given
+    given(compiler.addSourceOutputRamPath(any())).willCallRealMethod();
+    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
+    var ramPath = stub(RamPath.class);
+
+    // When
+    var result = compiler.addSourceOutputRamPath(ramPath);
+
+    // Then
+    then(compiler).should().addRamPath(StandardLocation.SOURCE_OUTPUT, ramPath);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("addSourceOutputRamPaths(paths) calls addPaths(SOURCE_OUTPUT, paths)")
+  @Test
+  void addSourceOutputRamPathsWithIterableCallsAddPaths() {
+    // Given
+    given(compiler.addSourceOutputRamPaths(any())).willCallRealMethod();
+    given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
+    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+
+    // When
+    var result = compiler.addSourceOutputRamPaths(ramPaths);
+
+    // Then
+    then(compiler).should().addRamPaths(StandardLocation.SOURCE_OUTPUT, ramPaths);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("vararg overload for addSourceOutputRamPaths calls varargs overload for addPaths")
+  @Test
+  void varargOverloadForAddSourceOutputRamPathsCallsVarargsOverloadsAddPaths() {
+    // Given
+    var firstRamPath = stub(RamPath.class);
+    var secondRamPath = stub(RamPath.class);
+    var thirdRamPath = stub(RamPath.class);
+
+    given(compiler.addSourceOutputRamPaths(any(), any(), any())).willCallRealMethod();
+    given(compiler.addRamPaths(any(), eq(firstRamPath), eq(secondRamPath), eq(thirdRamPath)))
+        .will(ctx -> compiler);
+
+    // When
+    var result = compiler.addSourceOutputRamPaths(firstRamPath, secondRamPath, thirdRamPath);
+
+    // Then
+    then(compiler).should()
+        .addRamPaths(StandardLocation.SOURCE_OUTPUT, firstRamPath, secondRamPath, thirdRamPath);
+    assertThat(result).isSameAs(compiler);
+  }
+
   @DisplayName("addClassRamPath(ramPath) calls addRamPath(CLASS_PATH, ramPath)")
   @Test
   void addClassRamPathCallsAddRamPath() {
@@ -936,6 +1201,60 @@ class CompilerTest {
     then(compiler).should()
         .addRamPaths(StandardLocation.PLATFORM_CLASS_PATH, firstRamPath, secondRamPath,
             thirdRamPath);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("addNativeHeaderOutputRamPath(path) calls addPath(NATIVE_HEADER_OUTPUT, path)")
+  @Test
+  void addNativeHeaderOutputRamPathCallsAddPath() {
+    // Given
+    given(compiler.addNativeHeaderOutputRamPath(any())).willCallRealMethod();
+    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
+    var ramPath = stub(RamPath.class);
+
+    // When
+    var result = compiler.addNativeHeaderOutputRamPath(ramPath);
+
+    // Then
+    then(compiler).should().addRamPath(StandardLocation.NATIVE_HEADER_OUTPUT, ramPath);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("addNativeHeaderOutputRamPaths(paths) calls addPaths(NATIVE_HEADER_OUTPUT, paths)")
+  @Test
+  void addNativeHeaderOutputRamPathsWithIterableCallsAddPaths() {
+    // Given
+    given(compiler.addNativeHeaderOutputRamPaths(any())).willCallRealMethod();
+    given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
+    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+
+    // When
+    var result = compiler.addNativeHeaderOutputRamPaths(ramPaths);
+
+    // Then
+    then(compiler).should().addRamPaths(StandardLocation.NATIVE_HEADER_OUTPUT, ramPaths);
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("vararg overload for addNativeHeaderOutputRamPaths calls " 
+      + "varargs overload for addPaths")
+  @Test
+  void varargOverloadForAddNativeHeaderOutputRamPathsCallsVarargsOverloadsAddPaths() {
+    // Given
+    var firstRamPath = stub(RamPath.class);
+    var secondRamPath = stub(RamPath.class);
+    var thirdRamPath = stub(RamPath.class);
+
+    given(compiler.addNativeHeaderOutputRamPaths(any(), any(), any())).willCallRealMethod();
+    given(compiler.addRamPaths(any(), eq(firstRamPath), eq(secondRamPath), eq(thirdRamPath)))
+        .will(ctx -> compiler);
+
+    // When
+    var result = compiler.addNativeHeaderOutputRamPaths(firstRamPath, secondRamPath, thirdRamPath);
+
+    // Then
+    then(compiler).should().addRamPaths(
+        StandardLocation.NATIVE_HEADER_OUTPUT, firstRamPath, secondRamPath, thirdRamPath);
     assertThat(result).isSameAs(compiler);
   }
 
