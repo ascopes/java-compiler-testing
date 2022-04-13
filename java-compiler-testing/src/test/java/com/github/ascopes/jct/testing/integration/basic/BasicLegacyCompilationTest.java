@@ -41,7 +41,7 @@ class BasicLegacyCompilationTest {
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldJavac(int version) {
     var sources = RamPath
-        .createPath()
+        .createPath("sources")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",
@@ -54,9 +54,9 @@ class BasicLegacyCompilationTest {
 
     var compilation = Compilers
         .javac()
-        .addSourceRamPath(sources)
-        .deprecationWarnings(true)
-        .releaseVersion(version)
+        .addSourceRamPaths(sources)
+        .deprecationWarningsEnabled(true)
+        .withReleaseVersion(version)
         .compile();
 
     assertThat(compilation).isSuccessfulWithoutWarnings();
@@ -67,7 +67,7 @@ class BasicLegacyCompilationTest {
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldEcj(int version) {
     var sources = RamPath
-        .createPath()
+        .createPath("sources")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",
@@ -80,9 +80,9 @@ class BasicLegacyCompilationTest {
 
     var compilation = Compilers
         .ecj()
-        .addSourceRamPath(sources)
-        .deprecationWarnings(true)
-        .releaseVersion(version)
+        .addSourceRamPaths(sources)
+        .deprecationWarningsEnabled(true)
+        .withReleaseVersion(version)
         .compile();
 
     assertThat(compilation).isSuccessfulWithoutWarnings();

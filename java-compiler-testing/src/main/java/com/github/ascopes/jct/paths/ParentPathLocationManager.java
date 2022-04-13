@@ -109,6 +109,7 @@ public class ParentPathLocationManager extends PathLocationManager {
    * @return the manager if found, or an empty optional if it does not exist.
    */
   public Optional<PathLocationManager> getModuleLocationManager(String moduleName) {
+    LOGGER.trace("Getting location manager for module '{}' nested within {}", moduleName, this);
     return Optional.ofNullable(modules.get(moduleName));
   }
 
@@ -120,6 +121,11 @@ public class ParentPathLocationManager extends PathLocationManager {
    * @throws IllegalArgumentException if this object is already for a module.
    */
   public PathLocationManager getOrCreateModuleLocationManager(String moduleName) {
+    LOGGER.trace(
+        "Getting/creating location manager for module '{}' nested within {}",
+        moduleName,
+        this
+    );
     return modules.computeIfAbsent(
         moduleName,
         this::buildLocationManagerForModule
@@ -164,18 +170,17 @@ public class ParentPathLocationManager extends PathLocationManager {
       // If this path can contain modules, then we should convert that to a module location
       // and store the path there. This just prevent any mistakes where we accidentally put a
       // module in a module oriented location rather than in the corresponding submodule.
-      try {
-        Files
-            .list(path)
+      try (var stream = Files.list(path)) {
+        stream
             .peek(next -> LOGGER.trace("Checking if {} is a source module", next))
             .filter(Files::isDirectory)
             .filter(next -> Files.isRegularFile(next.resolve("module-info.java")))
             .forEach(module -> {
               var name = module.getFileName().toString();
               LOGGER.debug("Found candidate module {} at {}", name, module);
-              var manager = getOrCreateModuleLocationManager(name);
-              // Register the first path.
-              manager.addPath(module);
+              // Make sure you call .addPath and not .addPaths. Paths are themselves iterable
+              // and it will cause otherwise confusing behaviour.
+              getOrCreateModuleLocationManager(name).addPath(module);
             });
       } catch (IOException ex) {
         throw new UncheckedIOException("Failed to read files in " + path, ex);
@@ -219,6 +224,7 @@ public class ParentPathLocationManager extends PathLocationManager {
     roots
         .stream()
         .map(root -> root.resolve(moduleName))
+        .peek(root -> LOGGER.trace("Adding {} to {}", root, moduleManager))
         .forEach(moduleManager::addPath);
 
     return moduleManager;

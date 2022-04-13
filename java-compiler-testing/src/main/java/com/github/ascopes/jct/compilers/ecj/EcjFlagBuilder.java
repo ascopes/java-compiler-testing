@@ -35,6 +35,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class EcjFlagBuilder implements FlagBuilder {
+
   // Visible for testing only.
   public static final String VERBOSE = "-verbose";
   public static final String ENABLE_PREVIEW = "--enable-preview";
@@ -46,7 +47,6 @@ public final class EcjFlagBuilder implements FlagBuilder {
   public static final String TARGET = "-target";
   public static final String ANNOTATION_OPT = "-A";
   public static final String RUNTIME_OPT = "-J";
-
 
 
   private final Stream.Builder<String> craftedFlags;

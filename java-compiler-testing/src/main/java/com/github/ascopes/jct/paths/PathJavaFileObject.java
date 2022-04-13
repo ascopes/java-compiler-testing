@@ -42,6 +42,8 @@ import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * File object that can be used with paths.
@@ -51,6 +53,8 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class PathJavaFileObject implements JavaFileObject {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(PathJavaFileObject.class);
 
   private final Location location;
   private final Path path;
@@ -134,8 +138,6 @@ public class PathJavaFileObject implements JavaFileObject {
 
   @Override
   public InputStream openInputStream() throws IOException {
-    // XXX(ascopes): Can we skip buffering if we are a Jimfs path?
-    // Should we benchmark this? Do we even care?
     return new BufferedInputStream(Files.newInputStream(path));
   }
 
@@ -168,7 +170,7 @@ public class PathJavaFileObject implements JavaFileObject {
     try {
       return Files.getLastModifiedTime(path).toMillis();
     } catch (IOException ex) {
-      // TODO(ascopes): log this.
+      LOGGER.warn("Ignoring error reading last modified time for {}", uri, ex);
       return 0L;
     }
   }
@@ -178,6 +180,7 @@ public class PathJavaFileObject implements JavaFileObject {
     try {
       return Files.deleteIfExists(path);
     } catch (IOException ex) {
+      LOGGER.warn("Ignoring error deleting {}", uri, ex);
       return false;
     }
   }

@@ -42,7 +42,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.Locale;
-import java.util.UUID;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.reflections.Reflections;
@@ -466,48 +465,12 @@ public class RamPath implements Closeable {
    * <p>The underlying in-memory file system will be closed and destroyed when the returned
    * object is garbage collected, or when {@link #close()} is called on it manually.
    *
-   * @return the in-memory path.
-   * @see #createPath(String)
-   * @see #createPath(boolean)
-   * @see #createPath(String, boolean)
-   */
-  public static RamPath createPath() {
-    return createPath(UUID.randomUUID().toString(), true);
-  }
-
-  /**
-   * Create a new in-memory path.
-   *
-   * <p>The underlying in-memory file system will be closed and destroyed when the returned
-   * object is garbage collected, or when {@link #close()} is called on it manually.
-   *
    * @param name a symbolic name to give the path. This must be a valid POSIX directory name.
    * @return the in-memory path.
-   * @see #createPath()
-   * @see #createPath(boolean)
    * @see #createPath(String, boolean)
    */
   public static RamPath createPath(String name) {
     return createPath(name, true);
-  }
-
-  /**
-   * Create a new in-memory path.
-   *
-   * @param closeOnGarbageCollection if {@code true}, then the {@link #close()} operation will be
-   *                                 called on the underlying {@link java.nio.file.FileSystem} as
-   *                                 soon as the returned object from this method is garbage
-   *                                 collected. If {@code false}, then you must close the underlying
-   *                                 file system manually using the {@link #close()} method on the
-   *                                 returned object. Failing to do so will lead to resources being
-   *                                 leaked.
-   * @return the in-memory path.
-   * @see #createPath()
-   * @see #createPath(String)
-   * @see #createPath(String, boolean)
-   */
-  public static RamPath createPath(boolean closeOnGarbageCollection) {
-    return createPath(UUID.randomUUID().toString(), closeOnGarbageCollection);
   }
 
   /**
@@ -523,8 +486,6 @@ public class RamPath implements Closeable {
    *                                 returned object. Failing to do so will lead to resources being
    *                                 leaked.
    * @return the in-memory path.
-   * @see #createPath(boolean)
-   * @see #createPath(String)
    * @see #createPath(String, boolean)
    */
   public static RamPath createPath(String name, boolean closeOnGarbageCollection) {
@@ -569,7 +530,7 @@ public class RamPath implements Closeable {
       case "ram":
         return input;
       default:
-        LOGGER.debug("Decided to wrap input {} in a buffer", input);
+        LOGGER.trace("Decided to wrap input {} in a buffer", input);
         return new BufferedInputStream(input);
     }
   }

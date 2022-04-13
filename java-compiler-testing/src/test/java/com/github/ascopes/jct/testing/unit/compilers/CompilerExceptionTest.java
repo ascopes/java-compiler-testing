@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
  */
 @DisplayName("CompilerException tests")
 class CompilerExceptionTest {
+
   @DisplayName("new CompilerException(String) sets the message")
   @Test
   void newCompilerExceptionWithStringSetsTheMessage() {

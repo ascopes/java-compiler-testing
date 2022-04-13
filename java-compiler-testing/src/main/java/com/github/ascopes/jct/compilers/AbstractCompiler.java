@@ -17,6 +17,7 @@
 package com.github.ascopes.jct.compilers;
 
 import static com.github.ascopes.jct.intern.IoExceptionUtils.uncheckedIo;
+import static java.util.Objects.requireNonNull;
 
 import com.github.ascopes.jct.intern.SpecialLocations;
 import com.github.ascopes.jct.intern.StringUtils;
@@ -28,10 +29,13 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import javax.annotation.processing.Processor;
 import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
@@ -72,6 +76,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   protected final List<String> runtimeOptions;
 
   // Common flags.
+  protected boolean warnings;
   protected boolean deprecationWarnings;
   protected boolean warningsAsErrors;
   protected Locale locale;
@@ -80,14 +85,13 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   protected String releaseVersion;
   protected String sourceVersion;
   protected String targetVersion;
-  protected boolean warnings;
   protected boolean includeCurrentClassPath;
   protected boolean includeCurrentModulePath;
   protected boolean includeCurrentPlatformClassPath;
 
   // Framework-specific functionality.
-  protected LoggingMode fileManagerLoggingMode;
-  protected LoggingMode diagnosticLoggingMode;
+  protected LoggingMode fileManagerLogging;
+  protected LoggingMode diagnosticLogging;
 
   /**
    * Initialize this compiler handler.
@@ -103,20 +107,21 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
     compilerOptions = new ArrayList<>();
     runtimeOptions = new ArrayList<>();
 
-    deprecationWarnings = true;
-    locale = Locale.ROOT;
-    previewFeatures = false;
+    warnings = DEFAULT_WARNINGS;
+    deprecationWarnings = DEFAULT_DEPRECATION_WARNINGS;
+    warningsAsErrors = DEFAULT_WARNINGS_AS_ERRORS;
+    locale = DEFAULT_LOCALE;
+    previewFeatures = DEFAULT_PREVIEW_FEATURES;
     releaseVersion = null;
     sourceVersion = null;
     targetVersion = null;
-    verbose = false;
-    warnings = true;
-    includeCurrentClassPath = true;
-    includeCurrentModulePath = true;
-    includeCurrentPlatformClassPath = true;
+    verbose = DEFAULT_VERBOSE;
+    includeCurrentClassPath = DEFAULT_INCLUDE_CURRENT_CLASS_PATH;
+    includeCurrentModulePath = DEFAULT_INCLUDE_CURRENT_MODULE_PATH;
+    includeCurrentPlatformClassPath = DEFAULT_INCLUDE_CURRENT_PLATFORM_CLASS_PATH;
 
-    fileManagerLoggingMode = LoggingMode.DISABLED;
-    diagnosticLoggingMode = LoggingMode.ENABLED;
+    fileManagerLogging = DEFAULT_FILE_MANAGER_LOGGING_MODE;
+    diagnosticLogging = DEFAULT_DIAGNOSTIC_LOGGING_MODE;
   }
 
   @Override
@@ -133,69 +138,133 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   }
 
   @Override
-  public A verbose(boolean enabled) {
+  public PathLocationRepository getPathLocationRepository() {
+    return fileRepository;
+  }
+
+  @Override
+  public boolean isVerboseLoggingEnabled() {
+    return verbose;
+  }
+
+  @Override
+  public A verboseLoggingEnabled(boolean enabled) {
     LOGGER.trace("verbose {} -> {}", verbose, enabled);
     verbose = enabled;
     return myself();
   }
 
   @Override
-  public A previewFeatures(boolean enabled) {
+  public boolean isPreviewFeaturesEnabled() {
+    return previewFeatures;
+  }
+
+  @Override
+  public A previewFeaturesEnabled(boolean enabled) {
     LOGGER.trace("previewFeatures {} -> {}", previewFeatures, enabled);
     previewFeatures = enabled;
     return myself();
   }
 
   @Override
-  public A warnings(boolean enabled) {
+  public boolean isWarningsEnabled() {
+    return warnings;
+  }
+
+  @Override
+  public A warningsEnabled(boolean enabled) {
     LOGGER.trace("warnings {} -> {}", warnings, enabled);
     warnings = enabled;
     return myself();
   }
 
   @Override
-  public A deprecationWarnings(boolean enabled) {
+  public boolean isDeprecationWarningsEnabled() {
+    return deprecationWarnings;
+  }
+
+  @Override
+  public A deprecationWarningsEnabled(boolean enabled) {
     LOGGER.trace("deprecationWarnings {} -> {}", deprecationWarnings, enabled);
     deprecationWarnings = enabled;
     return myself();
   }
 
   @Override
-  public A warningsAsErrors(boolean enabled) {
+  public boolean isTreatingWarningsAsErrors() {
+    return warningsAsErrors;
+  }
+
+  @Override
+  public A treatWarningsAsErrors(boolean enabled) {
     LOGGER.trace("warningsAsErrors {} -> {}", warningsAsErrors, enabled);
     warningsAsErrors = enabled;
     return myself();
   }
 
   @Override
+  public List<String> getAnnotationProcessorOptions() {
+    return List.copyOf(annotationProcessorOptions);
+  }
+
+  @Override
   public A addAnnotationProcessorOptions(Iterable<String> options) {
     LOGGER.trace("annotationProcessorOptions += {}", options);
-    for (var option : Objects.requireNonNull(options)) {
-      annotationProcessorOptions.add(Objects.requireNonNull(option));
+    for (var option : requireNonNull(options)) {
+      annotationProcessorOptions.add(requireNonNull(option));
     }
     return myself();
+  }
+
+  @Override
+  public Set<Processor> getAnnotationProcessors() {
+    return Set.copyOf(annotationProcessors);
   }
 
   @Override
   public A addAnnotationProcessors(Iterable<? extends Processor> processors) {
     LOGGER.trace("annotationProcessors += {}", processors);
-    for (var processor : Objects.requireNonNull(processors)) {
-      annotationProcessors.add(Objects.requireNonNull(processor));
+    for (var processor : requireNonNull(processors)) {
+      annotationProcessors.add(requireNonNull(processor));
     }
     return myself();
+  }
+
+  @Override
+  public List<String> getCompilerOptions() {
+    return List.copyOf(compilerOptions);
   }
 
   @Override
   public A addCompilerOptions(Iterable<String> options) {
     LOGGER.trace("compilerOptions += {}", options);
-    for (var option : Objects.requireNonNull(options)) {
-      compilerOptions.add(Objects.requireNonNull(option));
+    for (var option : requireNonNull(options)) {
+      compilerOptions.add(requireNonNull(option));
     }
     return myself();
   }
 
   @Override
-  public A releaseVersion(String version) {
+  public List<String> getRuntimeOptions() {
+    return List.copyOf(runtimeOptions);
+  }
+
+  @Override
+  public A addRuntimeOptions(Iterable<String> options) {
+    LOGGER.trace("runtimeOptions += {}", options);
+    for (var option : requireNonNull(options)) {
+      runtimeOptions.add(requireNonNull(option));
+    }
+    return myself();
+  }
+
+  @Override
+  public Optional<String> getReleaseVersion() {
+    return Optional.ofNullable(releaseVersion);
+  }
+
+  @Override
+  public A withReleaseVersion(String version) {
     LOGGER.trace("releaseVersion {} -> {}", releaseVersion, version);
     LOGGER.trace("sourceVersion {} -> null", sourceVersion);
     LOGGER.trace("targetVersion {} -> null", targetVersion);
@@ -206,7 +275,12 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   }
 
   @Override
-  public A sourceVersion(String version) {
+  public Optional<String> getSourceVersion() {
+    return Optional.ofNullable(sourceVersion);
+  }
+
+  @Override
+  public A withSourceVersion(String version) {
     LOGGER.trace("sourceVersion {} -> {}", targetVersion, version);
     LOGGER.trace("releaseVersion {} -> null", releaseVersion);
     releaseVersion = null;
@@ -215,12 +289,22 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   }
 
   @Override
-  public A targetVersion(String version) {
+  public Optional<String> getTargetVersion() {
+    return Optional.ofNullable(targetVersion);
+  }
+
+  @Override
+  public A withTargetVersion(String version) {
     LOGGER.trace("targetVersion {} -> {}", targetVersion, version);
     LOGGER.trace("releaseVersion {} -> null", releaseVersion);
     releaseVersion = null;
     targetVersion = version;
     return myself();
+  }
+
+  @Override
+  public boolean isIncludingCurrentClassPath() {
+    return includeCurrentClassPath;
   }
 
   @Override
@@ -231,10 +315,20 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   }
 
   @Override
+  public boolean isIncludingCurrentModulePath() {
+    return includeCurrentModulePath;
+  }
+
+  @Override
   public A includeCurrentModulePath(boolean enabled) {
     LOGGER.trace("includeCurrentModulePath {} -> {}", includeCurrentModulePath, enabled);
     includeCurrentModulePath = enabled;
     return myself();
+  }
+
+  @Override
+  public boolean isIncludingCurrentPlatformClassPath() {
+    return includeCurrentPlatformClassPath;
   }
 
   @Override
@@ -249,68 +343,60 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   }
 
   @Override
-  public A addPath(Location location, Path path) {
-    LOGGER.trace("{}.paths += {}", location.getName(), path);
-    fileRepository.getOrCreate(location).addPath(path);
-    return myself();
-  }
-
-  @Override
-  public A addPaths(Location location, Iterable<? extends Path> paths) {
+  public A addPaths(Location location, Collection<? extends Path> paths) {
     LOGGER.trace("{}.paths += {}", location.getName(), paths);
     fileRepository.getOrCreate(location).addPaths(paths);
     return myself();
   }
 
   @Override
-  public A addRamPath(Location location, RamPath path) {
-    LOGGER.trace("{}.paths += {}", location.getName(), path);
-    fileRepository.getOrCreate(location).addRamPath(path);
-    return myself();
-  }
-
-  @Override
-  public A addRamPaths(Location location, Iterable<? extends RamPath> paths) {
+  public A addRamPaths(Location location, Collection<? extends RamPath> paths) {
     LOGGER.trace("{}.paths += {}", location.getName(), paths);
     fileRepository.getOrCreate(location).addRamPaths(paths);
     return myself();
   }
 
   @Override
-  public A addRuntimeOptions(Iterable<String> options) {
-    LOGGER.trace("runtimeOptions += {}", options);
-    for (var option : Objects.requireNonNull(options)) {
-      runtimeOptions.add(Objects.requireNonNull(option));
-    }
-    return myself();
+  public Locale getLocale() {
+    return locale;
   }
 
   @Override
-  public A locale(Locale locale) {
+  public A withLocale(Locale locale) {
     LOGGER.trace("locale {} -> {}", this.locale, locale);
-    this.locale = Objects.requireNonNull(locale);
+    this.locale = requireNonNull(locale);
     return myself();
   }
 
   @Override
-  public A withFileManagerLogging(LoggingMode fileManagerLoggingMode) {
+  public LoggingMode getFileManagerLogging() {
+    return fileManagerLogging;
+  }
+
+  @Override
+  public A withFileManagerLogging(LoggingMode fileManagerLogging) {
     LOGGER.trace(
         "fileManagerLoggingMode {} -> {}",
-        this.fileManagerLoggingMode,
-        fileManagerLoggingMode
+        this.fileManagerLogging,
+        fileManagerLogging
     );
-    this.fileManagerLoggingMode = Objects.requireNonNull(fileManagerLoggingMode);
+    this.fileManagerLogging = requireNonNull(fileManagerLogging);
     return myself();
   }
 
   @Override
-  public A withDiagnosticLogging(LoggingMode diagnosticLoggingMode) {
+  public LoggingMode getDiagnosticLogging() {
+    return diagnosticLogging;
+  }
+
+  @Override
+  public A withDiagnosticLogging(LoggingMode diagnosticLogging) {
     LOGGER.trace(
         "diagnosticLoggingMode {} -> {}",
-        this.diagnosticLoggingMode,
-        diagnosticLoggingMode
+        this.diagnosticLogging,
+        diagnosticLogging
     );
-    this.diagnosticLoggingMode = Objects.requireNonNull(diagnosticLoggingMode);
+    this.diagnosticLogging = requireNonNull(diagnosticLogging);
     return myself();
   }
 
@@ -346,7 +432,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   protected List<? extends JavaFileObject> discoverCompilationUnits(
       JavaFileManager fileManager
   ) throws IOException {
-    var locations = new ArrayList<Location>();
+    var locations = new LinkedHashSet<Location>();
     locations.add(StandardLocation.SOURCE_PATH);
 
     fileManager
@@ -356,7 +442,8 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
     var objects = new ArrayList<JavaFileObject>();
 
     for (var location : locations) {
-      for (var fileObject : fileManager.list(location, "", Set.of(Kind.SOURCE), true)) {
+      var items = fileManager.list(location, "", Set.of(Kind.SOURCE), true);
+      for (var fileObject : items) {
         objects.add(fileObject);
       }
     }
@@ -365,11 +452,11 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   }
 
   protected JavaFileManager applyLoggingToFileManager(JavaFileManager fileManager) {
-    if (fileManagerLoggingMode == LoggingMode.STACKTRACES) {
+    if (fileManagerLogging == LoggingMode.STACKTRACES) {
       return LoggingJavaFileManagerProxy.wrap(fileManager, true);
     }
 
-    if (fileManagerLoggingMode == LoggingMode.ENABLED) {
+    if (fileManagerLogging == LoggingMode.ENABLED) {
       return LoggingJavaFileManagerProxy.wrap(fileManager, false);
     }
 
@@ -378,8 +465,8 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
 
   protected TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener() {
     return new TracingDiagnosticListener<>(
-        fileManagerLoggingMode != LoggingMode.DISABLED,
-        fileManagerLoggingMode == LoggingMode.STACKTRACES
+        fileManagerLogging != LoggingMode.DISABLED,
+        fileManagerLogging == LoggingMode.STACKTRACES
     );
   }
 
@@ -422,13 +509,18 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
     var name = getName();
 
     try {
+      var start = System.nanoTime();
       var result = task.call();
 
       if (result == null) {
         throw new CompilerException("The compiler failed to produce a valid result");
       }
 
-      LOGGER.info("Compilation with compiler {} {}", name, result ? "succeeded" : "failed");
+      LOGGER.info("Compilation with compiler {} {} after ~{}ms",
+          name,
+          result ? "succeeded" : "failed",
+          Math.round((System.nanoTime() - start) / 1_000_000.0)
+      );
 
       return result;
     } catch (Exception ex) {
@@ -452,7 +544,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
     // Ensure we have somewhere to dump our output.
     if (classOutputManager.isEmpty()) {
       LOGGER.debug("No class output location was specified, so an in-memory path is being created");
-      var classOutput = RamPath.createPath("classes");
+      var classOutput = RamPath.createPath("classes-" + UUID.randomUUID());
       classOutputManager.addRamPath(classOutput);
     } else {
       LOGGER.trace("At least one output path is present, so no in-memory path will be created");
