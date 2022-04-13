@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
  */
 @DisplayName("IoExceptionUtils tests")
 class IoExceptionUtilsTest implements StaticClassTestTemplate {
+
   @Override
   public Class<?> getTypeBeingTested() {
     return IoExceptionUtils.class;

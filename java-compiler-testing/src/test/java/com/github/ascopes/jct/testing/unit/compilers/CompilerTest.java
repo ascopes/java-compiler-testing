@@ -30,6 +30,7 @@ import com.github.ascopes.jct.compilers.Compiler;
 import com.github.ascopes.jct.paths.RamPath;
 import com.github.ascopes.jct.testing.helpers.TypeRef;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
@@ -77,29 +78,13 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addClassOutputPath(path) calls addPath(CLASS_OUTPUT, path)")
-  @Test
-  void addClassOutputPathCallsAddPath() {
-    // Given
-    given(compiler.addClassOutputPath(any())).willCallRealMethod();
-    given(compiler.addPath(any(), any())).will(ctx -> compiler);
-    var path = stub(Path.class);
-
-    // When
-    var result = compiler.addClassOutputPath(path);
-
-    // Then
-    then(compiler).should().addPath(StandardLocation.CLASS_OUTPUT, path);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("addClassOutputPaths(paths) calls addPaths(CLASS_OUTPUT, paths)")
   @Test
   void addClassOutputPathsWithIterableCallsAddPaths() {
     // Given
     given(compiler.addClassOutputPaths(any())).willCallRealMethod();
     given(compiler.addPaths(any(), any())).will(ctx -> compiler);
-    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+    var paths = stubCast(new TypeRef<Collection<Path>>() {});
 
     // When
     var result = compiler.addClassOutputPaths(paths);
@@ -130,29 +115,13 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addSourceOutputPath(path) calls addPath(SOURCE_OUTPUT, path)")
-  @Test
-  void addSourceOutputPathCallsAddPath() {
-    // Given
-    given(compiler.addSourceOutputPath(any())).willCallRealMethod();
-    given(compiler.addPath(any(), any())).will(ctx -> compiler);
-    var path = stub(Path.class);
-
-    // When
-    var result = compiler.addSourceOutputPath(path);
-
-    // Then
-    then(compiler).should().addPath(StandardLocation.SOURCE_OUTPUT, path);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("addSourceOutputPaths(paths) calls addPaths(SOURCE_OUTPUT, paths)")
   @Test
   void addSourceOutputPathsWithIterableCallsAddPaths() {
     // Given
     given(compiler.addSourceOutputPaths(any())).willCallRealMethod();
     given(compiler.addPaths(any(), any())).will(ctx -> compiler);
-    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+    var paths = stubCast(new TypeRef<Collection<Path>>() {});
 
     // When
     var result = compiler.addSourceOutputPaths(paths);
@@ -183,29 +152,13 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addClassPath(path) calls addPath(CLASS_PATH, path)")
-  @Test
-  void addClassPathCallsAddPath() {
-    // Given
-    given(compiler.addClassPath(any())).willCallRealMethod();
-    given(compiler.addPath(any(), any())).will(ctx -> compiler);
-    var path = stub(Path.class);
-
-    // When
-    var result = compiler.addClassPath(path);
-
-    // Then
-    then(compiler).should().addPath(StandardLocation.CLASS_PATH, path);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("addClassPaths(paths) calls addPaths(CLASS_PATH, paths)")
   @Test
   void addClassPathsWithIterableCallsAddPaths() {
     // Given
     given(compiler.addClassPaths(any())).willCallRealMethod();
     given(compiler.addPaths(any(), any())).will(ctx -> compiler);
-    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+    var paths = stubCast(new TypeRef<Collection<Path>>() {});
 
     // When
     var result = compiler.addClassPaths(paths);
@@ -235,29 +188,13 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addSourcePath(path) calls addPath(SOURCE_PATH, path)")
-  @Test
-  void addSourcePathCallsAddPath() {
-    // Given
-    given(compiler.addSourcePath(any())).willCallRealMethod();
-    given(compiler.addPath(any(), any())).will(ctx -> compiler);
-    var path = stub(Path.class);
-
-    // When
-    var result = compiler.addSourcePath(path);
-
-    // Then
-    then(compiler).should().addPath(StandardLocation.SOURCE_PATH, path);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("addSourcePaths(paths) calls addPaths(SOURCE_PATH, paths)")
   @Test
   void addSourcePathsWithIterableCallsAddPaths() {
     // Given
     given(compiler.addSourcePaths(any())).willCallRealMethod();
     given(compiler.addPaths(any(), any())).will(ctx -> compiler);
-    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+    var paths = stubCast(new TypeRef<Collection<Path>>() {});
 
     // When
     var result = compiler.addSourcePaths(paths);
@@ -288,22 +225,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addAnnotationProcessorPath(path) calls addPath(ANNOTATION_PROCESSOR_PATH, path)")
-  @Test
-  void addAnnotationProcessorPathCallsAddPath() {
-    // Given
-    given(compiler.addAnnotationProcessorPath(any())).willCallRealMethod();
-    given(compiler.addPath(any(), any())).will(ctx -> compiler);
-    var path = stub(Path.class);
-
-    // When
-    var result = compiler.addAnnotationProcessorPath(path);
-
-    // Then
-    then(compiler).should().addPath(StandardLocation.ANNOTATION_PROCESSOR_PATH, path);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName(
       "addAnnotationProcessorPaths(paths) calls addPaths(ANNOTATION_PROCESSOR_PATH, paths)"
   )
@@ -312,7 +233,7 @@ class CompilerTest {
     // Given
     given(compiler.addAnnotationProcessorPaths(any())).willCallRealMethod();
     given(compiler.addPaths(any(), any())).will(ctx -> compiler);
-    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+    var paths = stubCast(new TypeRef<Collection<Path>>() {});
 
     // When
     var result = compiler.addAnnotationProcessorPaths(paths);
@@ -345,23 +266,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addAnnotationProcessorModulePath(path) calls "
-      + "addPath(ANNOTATION_PROCESSOR_MODULE_PATH, path)")
-  @Test
-  void addAnnotationProcessorModulePathCallsAddPath() {
-    // Given
-    given(compiler.addAnnotationProcessorModulePath(any())).willCallRealMethod();
-    given(compiler.addPath(any(), any())).will(ctx -> compiler);
-    var path = stub(Path.class);
-
-    // When
-    var result = compiler.addAnnotationProcessorModulePath(path);
-
-    // Then
-    then(compiler).should().addPath(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, path);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("addAnnotationProcessorModulePaths(paths) calls "
       + "addPaths(ANNOTATION_PROCESSOR_MODULE_PATH, paths)")
   @Test
@@ -369,7 +273,7 @@ class CompilerTest {
     // Given
     given(compiler.addAnnotationProcessorModulePaths(any())).willCallRealMethod();
     given(compiler.addPaths(any(), any())).will(ctx -> compiler);
-    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+    var paths = stubCast(new TypeRef<Collection<Path>>() {});
 
     // When
     var result = compiler.addAnnotationProcessorModulePaths(paths);
@@ -403,22 +307,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addPlatformClassPath(path) calls addPath(PLATFORM_CLASS_PATH, path)")
-  @Test
-  void addPlatformClassPathCallsAddPath() {
-    // Given
-    given(compiler.addPlatformClassPath(any())).willCallRealMethod();
-    given(compiler.addPath(any(), any())).will(ctx -> compiler);
-    var path = stub(Path.class);
-
-    // When
-    var result = compiler.addPlatformClassPath(path);
-
-    // Then
-    then(compiler).should().addPath(StandardLocation.PLATFORM_CLASS_PATH, path);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName(
       "addPlatformClassPaths(paths) calls addPaths(PLATFORM_CLASS_PATH, paths)"
   )
@@ -427,7 +315,7 @@ class CompilerTest {
     // Given
     given(compiler.addPlatformClassPaths(any())).willCallRealMethod();
     given(compiler.addPaths(any(), any())).will(ctx -> compiler);
-    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+    var paths = stubCast(new TypeRef<Collection<Path>>() {});
 
     // When
     var result = compiler.addPlatformClassPaths(paths);
@@ -460,29 +348,13 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addNativeHeaderOutputPath(path) calls addPath(NATIVE_HEADER_OUTPUT, path)")
-  @Test
-  void addNativeHeaderOutputPathCallsAddPath() {
-    // Given
-    given(compiler.addNativeHeaderOutputPath(any())).willCallRealMethod();
-    given(compiler.addPath(any(), any())).will(ctx -> compiler);
-    var path = stub(Path.class);
-
-    // When
-    var result = compiler.addNativeHeaderOutputPath(path);
-
-    // Then
-    then(compiler).should().addPath(StandardLocation.NATIVE_HEADER_OUTPUT, path);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("addNativeHeaderOutputPaths(paths) calls addPaths(NATIVE_HEADER_OUTPUT, paths)")
   @Test
   void addNativeHeaderOutputPathsWithIterableCallsAddPaths() {
     // Given
     given(compiler.addNativeHeaderOutputPaths(any())).willCallRealMethod();
     given(compiler.addPaths(any(), any())).will(ctx -> compiler);
-    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+    var paths = stubCast(new TypeRef<Collection<Path>>() {});
 
     // When
     var result = compiler.addNativeHeaderOutputPaths(paths);
@@ -513,22 +385,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addModuleSourcePath(path) calls addPath(MODULE_SOURCE_PATH, path)")
-  @Test
-  void addModuleSourcePathCallsAddPath() {
-    // Given
-    given(compiler.addModuleSourcePath(any())).willCallRealMethod();
-    given(compiler.addPath(any(), any())).will(ctx -> compiler);
-    var path = stub(Path.class);
-
-    // When
-    var result = compiler.addModuleSourcePath(path);
-
-    // Then
-    then(compiler).should().addPath(StandardLocation.MODULE_SOURCE_PATH, path);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName(
       "addModuleSourcePaths(paths) calls addPaths(MODULE_SOURCE_PATH, paths)"
   )
@@ -537,7 +393,7 @@ class CompilerTest {
     // Given
     given(compiler.addModuleSourcePaths(any())).willCallRealMethod();
     given(compiler.addPaths(any(), any())).will(ctx -> compiler);
-    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+    var paths = stubCast(new TypeRef<Collection<Path>>() {});
 
     // When
     var result = compiler.addModuleSourcePaths(paths);
@@ -570,22 +426,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addUpgradeModulePath(path) calls addPath(UPGRADE_MODULE_PATH, path)")
-  @Test
-  void addUpgradeModulePathCallsAddPath() {
-    // Given
-    given(compiler.addUpgradeModulePath(any())).willCallRealMethod();
-    given(compiler.addPath(any(), any())).will(ctx -> compiler);
-    var path = stub(Path.class);
-
-    // When
-    var result = compiler.addUpgradeModulePath(path);
-
-    // Then
-    then(compiler).should().addPath(StandardLocation.UPGRADE_MODULE_PATH, path);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName(
       "addUpgradeModulePaths(paths) calls addPaths(UPGRADE_MODULE_PATH, paths)"
   )
@@ -594,7 +434,7 @@ class CompilerTest {
     // Given
     given(compiler.addUpgradeModulePaths(any())).willCallRealMethod();
     given(compiler.addPaths(any(), any())).will(ctx -> compiler);
-    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+    var paths = stubCast(new TypeRef<Collection<Path>>() {});
 
     // When
     var result = compiler.addUpgradeModulePaths(paths);
@@ -627,22 +467,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addSystemModulePath(path) calls addPath(SYSTEM_MODULES, path)")
-  @Test
-  void addSystemModulePathCallsAddPath() {
-    // Given
-    given(compiler.addSystemModulePath(any())).willCallRealMethod();
-    given(compiler.addPath(any(), any())).will(ctx -> compiler);
-    var path = stub(Path.class);
-
-    // When
-    var result = compiler.addSystemModulePath(path);
-
-    // Then
-    then(compiler).should().addPath(StandardLocation.SYSTEM_MODULES, path);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName(
       "addSystemModulePaths(paths) calls addPaths(SYSTEM_MODULES, paths)"
   )
@@ -651,7 +475,7 @@ class CompilerTest {
     // Given
     given(compiler.addSystemModulePaths(any())).willCallRealMethod();
     given(compiler.addPaths(any(), any())).will(ctx -> compiler);
-    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+    var paths = stubCast(new TypeRef<Collection<Path>>() {});
 
     // When
     var result = compiler.addSystemModulePaths(paths);
@@ -684,22 +508,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addModulePath(path) calls addPath(MODULE_PATH, path)")
-  @Test
-  void addModulePathCallsAddPath() {
-    // Given
-    given(compiler.addModulePath(any())).willCallRealMethod();
-    given(compiler.addPath(any(), any())).will(ctx -> compiler);
-    var path = stub(Path.class);
-
-    // When
-    var result = compiler.addModulePath(path);
-
-    // Then
-    then(compiler).should().addPath(StandardLocation.MODULE_PATH, path);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName(
       "addModulePaths(paths) calls addPaths(MODULE_PATH, paths)"
   )
@@ -708,7 +516,7 @@ class CompilerTest {
     // Given
     given(compiler.addModulePaths(any())).willCallRealMethod();
     given(compiler.addPaths(any(), any())).will(ctx -> compiler);
-    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+    var paths = stubCast(new TypeRef<Collection<Path>>() {});
 
     // When
     var result = compiler.addModulePaths(paths);
@@ -741,22 +549,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addPatchModulePath(path) calls addPath(PATCH_MODULE_PATH, path)")
-  @Test
-  void addPatchModulePathCallsAddPath() {
-    // Given
-    given(compiler.addPatchModulePath(any())).willCallRealMethod();
-    given(compiler.addPath(any(), any())).will(ctx -> compiler);
-    var path = stub(Path.class);
-
-    // When
-    var result = compiler.addPatchModulePath(path);
-
-    // Then
-    then(compiler).should().addPath(StandardLocation.PATCH_MODULE_PATH, path);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName(
       "addPatchModulePaths(paths) calls addPaths(PATCH_MODULE_PATH, paths)"
   )
@@ -765,7 +557,7 @@ class CompilerTest {
     // Given
     given(compiler.addPatchModulePaths(any())).willCallRealMethod();
     given(compiler.addPaths(any(), any())).will(ctx -> compiler);
-    var paths = stubCast(new TypeRef<Iterable<Path>>() {});
+    var paths = stubCast(new TypeRef<Collection<Path>>() {});
 
     // When
     var result = compiler.addPatchModulePaths(paths);
@@ -817,29 +609,13 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addClassOutputRamPath(path) calls addPath(CLASS_OUTPUT, path)")
-  @Test
-  void addClassOutputRamPathCallsAddPath() {
-    // Given
-    given(compiler.addClassOutputRamPath(any())).willCallRealMethod();
-    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
-    var ramPath = stub(RamPath.class);
-
-    // When
-    var result = compiler.addClassOutputRamPath(ramPath);
-
-    // Then
-    then(compiler).should().addRamPath(StandardLocation.CLASS_OUTPUT, ramPath);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("addClassOutputRamPaths(paths) calls addPaths(CLASS_OUTPUT, paths)")
   @Test
   void addClassOutputRamPathsWithIterableCallsAddPaths() {
     // Given
     given(compiler.addClassOutputRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
 
     // When
     var result = compiler.addClassOutputRamPaths(ramPaths);
@@ -870,29 +646,13 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addSourceOutputRamPath(path) calls addPath(SOURCE_OUTPUT, path)")
-  @Test
-  void addSourceOutputRamPathCallsAddPath() {
-    // Given
-    given(compiler.addSourceOutputRamPath(any())).willCallRealMethod();
-    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
-    var ramPath = stub(RamPath.class);
-
-    // When
-    var result = compiler.addSourceOutputRamPath(ramPath);
-
-    // Then
-    then(compiler).should().addRamPath(StandardLocation.SOURCE_OUTPUT, ramPath);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("addSourceOutputRamPaths(paths) calls addPaths(SOURCE_OUTPUT, paths)")
   @Test
   void addSourceOutputRamPathsWithIterableCallsAddPaths() {
     // Given
     given(compiler.addSourceOutputRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
 
     // When
     var result = compiler.addSourceOutputRamPaths(ramPaths);
@@ -923,29 +683,13 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addClassRamPath(ramPath) calls addRamPath(CLASS_PATH, ramPath)")
-  @Test
-  void addClassRamPathCallsAddRamPath() {
-    // Given
-    given(compiler.addClassRamPath(any())).willCallRealMethod();
-    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
-    var ramPath = stub(RamPath.class);
-
-    // When
-    var result = compiler.addClassRamPath(ramPath);
-
-    // Then
-    then(compiler).should().addRamPath(StandardLocation.CLASS_PATH, ramPath);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("addClassRamPaths(ramPaths) calls addRamPaths(CLASS_PATH, ramPaths)")
   @Test
   void addClassRamPathsWithIterableCallsAddRamPaths() {
     // Given
     given(compiler.addClassRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
 
     // When
     var result = compiler.addClassRamPaths(ramPaths);
@@ -976,29 +720,13 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addSourceRamPath(ramPath) calls addRamPath(SOURCE_PATH, ramPath)")
-  @Test
-  void addSourceRamPathCallsAddRamPath() {
-    // Given
-    given(compiler.addSourceRamPath(any())).willCallRealMethod();
-    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
-    var ramPath = stub(RamPath.class);
-
-    // When
-    var result = compiler.addSourceRamPath(ramPath);
-
-    // Then
-    then(compiler).should().addRamPath(StandardLocation.SOURCE_PATH, ramPath);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("addSourceRamPaths(ramPaths) calls addRamPaths(SOURCE_PATH, ramPaths)")
   @Test
   void addSourceRamPathsWithIterableCallsAddRamPaths() {
     // Given
     given(compiler.addSourceRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
 
     // When
     var result = compiler.addSourceRamPaths(ramPaths);
@@ -1029,23 +757,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addAnnotationProcessorRamPath(ramPath) calls "
-      + "addRamPath(ANNOTATION_PROCESSOR_PATH, ramPath)")
-  @Test
-  void addAnnotationProcessorRamPathCallsAddRamPath() {
-    // Given
-    given(compiler.addAnnotationProcessorRamPath(any())).willCallRealMethod();
-    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
-    var ramPath = stub(RamPath.class);
-
-    // When
-    var result = compiler.addAnnotationProcessorRamPath(ramPath);
-
-    // Then
-    then(compiler).should().addRamPath(StandardLocation.ANNOTATION_PROCESSOR_PATH, ramPath);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("addAnnotationProcessorRamPaths(ramPaths) calls "
       + "addRamPaths(ANNOTATION_PROCESSOR_PATH, ramPaths)")
   @Test
@@ -1053,7 +764,7 @@ class CompilerTest {
     // Given
     given(compiler.addAnnotationProcessorRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
 
     // When
     var result = compiler.addAnnotationProcessorRamPaths(ramPaths);
@@ -1087,23 +798,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addAnnotationProcessorModuleRamPath(ramPath) calls "
-      + "addRamPath(ANNOTATION_PROCESSOR_MODULE_PATH, ramPath)")
-  @Test
-  void addAnnotationProcessorModuleRamPathCallsAddRamPath() {
-    // Given
-    given(compiler.addAnnotationProcessorModuleRamPath(any())).willCallRealMethod();
-    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
-    var ramPath = stub(RamPath.class);
-
-    // When
-    var result = compiler.addAnnotationProcessorModuleRamPath(ramPath);
-
-    // Then
-    then(compiler).should().addRamPath(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, ramPath);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("addAnnotationProcessorModuleRamPaths(ramPaths) calls "
       + "addRamPaths(ANNOTATION_PROCESSOR_MODULE_PATH, ramPaths)")
   @Test
@@ -1111,7 +805,7 @@ class CompilerTest {
     // Given
     given(compiler.addAnnotationProcessorModuleRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
 
     // When
     var result = compiler.addAnnotationProcessorModuleRamPaths(ramPaths);
@@ -1123,7 +817,7 @@ class CompilerTest {
   }
 
   @DisplayName("vararg overload for addAnnotationProcessorModuleRamPaths calls varargs overload "
-          + "for addRamPaths")
+      + "for addRamPaths")
   @Test
   void varargOverloadForAddAnnotationProcessorModuleRamPathsCallsVarargsOverloadsAddRamPaths() {
     // Given
@@ -1146,22 +840,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addPlatformClassRamPath(ramPath) calls addRamPath(PLATFORM_CLASS_PATH, ramPath)")
-  @Test
-  void addPlatformClassRamPathCallsAddRamPath() {
-    // Given
-    given(compiler.addPlatformClassRamPath(any())).willCallRealMethod();
-    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
-    var ramPath = stub(RamPath.class);
-
-    // When
-    var result = compiler.addPlatformClassRamPath(ramPath);
-
-    // Then
-    then(compiler).should().addRamPath(StandardLocation.PLATFORM_CLASS_PATH, ramPath);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName(
       "addPlatformClassRamPaths(ramPaths) calls addRamPaths(PLATFORM_CLASS_PATH, ramPaths)"
   )
@@ -1170,7 +848,7 @@ class CompilerTest {
     // Given
     given(compiler.addPlatformClassRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
 
     // When
     var result = compiler.addPlatformClassRamPaths(ramPaths);
@@ -1204,29 +882,13 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addNativeHeaderOutputRamPath(path) calls addPath(NATIVE_HEADER_OUTPUT, path)")
-  @Test
-  void addNativeHeaderOutputRamPathCallsAddPath() {
-    // Given
-    given(compiler.addNativeHeaderOutputRamPath(any())).willCallRealMethod();
-    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
-    var ramPath = stub(RamPath.class);
-
-    // When
-    var result = compiler.addNativeHeaderOutputRamPath(ramPath);
-
-    // Then
-    then(compiler).should().addRamPath(StandardLocation.NATIVE_HEADER_OUTPUT, ramPath);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("addNativeHeaderOutputRamPaths(paths) calls addPaths(NATIVE_HEADER_OUTPUT, paths)")
   @Test
   void addNativeHeaderOutputRamPathsWithIterableCallsAddPaths() {
     // Given
     given(compiler.addNativeHeaderOutputRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
 
     // When
     var result = compiler.addNativeHeaderOutputRamPaths(ramPaths);
@@ -1236,7 +898,7 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("vararg overload for addNativeHeaderOutputRamPaths calls " 
+  @DisplayName("vararg overload for addNativeHeaderOutputRamPaths calls "
       + "varargs overload for addPaths")
   @Test
   void varargOverloadForAddNativeHeaderOutputRamPathsCallsVarargsOverloadsAddPaths() {
@@ -1258,22 +920,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addModuleSourceRamPath(ramPath) calls addRamPath(MODULE_SOURCE_PATH, ramPath)")
-  @Test
-  void addModuleSourceRamPathCallsAddRamPath() {
-    // Given
-    given(compiler.addModuleSourceRamPath(any())).willCallRealMethod();
-    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
-    var ramPath = stub(RamPath.class);
-
-    // When
-    var result = compiler.addModuleSourceRamPath(ramPath);
-
-    // Then
-    then(compiler).should().addRamPath(StandardLocation.MODULE_SOURCE_PATH, ramPath);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName(
       "addModuleSourceRamPaths(ramPaths) calls addRamPaths(MODULE_SOURCE_PATH, ramPaths)"
   )
@@ -1282,7 +928,7 @@ class CompilerTest {
     // Given
     given(compiler.addModuleSourceRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
 
     // When
     var result = compiler.addModuleSourceRamPaths(ramPaths);
@@ -1316,22 +962,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addUpgradeModuleRamPath(ramPath) calls addRamPath(UPGRADE_MODULE_PATH, ramPath)")
-  @Test
-  void addUpgradeModuleRamPathCallsAddRamPath() {
-    // Given
-    given(compiler.addUpgradeModuleRamPath(any())).willCallRealMethod();
-    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
-    var ramPath = stub(RamPath.class);
-
-    // When
-    var result = compiler.addUpgradeModuleRamPath(ramPath);
-
-    // Then
-    then(compiler).should().addRamPath(StandardLocation.UPGRADE_MODULE_PATH, ramPath);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName(
       "addUpgradeModuleRamPaths(ramPaths) calls addRamPaths(UPGRADE_MODULE_PATH, ramPaths)"
   )
@@ -1340,7 +970,7 @@ class CompilerTest {
     // Given
     given(compiler.addUpgradeModuleRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
 
     // When
     var result = compiler.addUpgradeModuleRamPaths(ramPaths);
@@ -1374,22 +1004,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addSystemModuleRamPath(ramPath) calls addRamPath(SYSTEM_MODULES, ramPath)")
-  @Test
-  void addSystemModuleRamPathCallsAddRamPath() {
-    // Given
-    given(compiler.addSystemModuleRamPath(any())).willCallRealMethod();
-    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
-    var ramPath = stub(RamPath.class);
-
-    // When
-    var result = compiler.addSystemModuleRamPath(ramPath);
-
-    // Then
-    then(compiler).should().addRamPath(StandardLocation.SYSTEM_MODULES, ramPath);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName(
       "addSystemModuleRamPaths(ramPaths) calls addRamPaths(SYSTEM_MODULES, ramPaths)"
   )
@@ -1398,7 +1012,7 @@ class CompilerTest {
     // Given
     given(compiler.addSystemModuleRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
 
     // When
     var result = compiler.addSystemModuleRamPaths(ramPaths);
@@ -1431,22 +1045,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addModuleRamPath(ramPath) calls addRamPath(MODULE_PATH, ramPath)")
-  @Test
-  void addModuleRamPathCallsAddRamPath() {
-    // Given
-    given(compiler.addModuleRamPath(any())).willCallRealMethod();
-    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
-    var ramPath = stub(RamPath.class);
-
-    // When
-    var result = compiler.addModuleRamPath(ramPath);
-
-    // Then
-    then(compiler).should().addRamPath(StandardLocation.MODULE_PATH, ramPath);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName(
       "addModuleRamPaths(ramPaths) calls addRamPaths(MODULE_PATH, ramPaths)"
   )
@@ -1455,7 +1053,7 @@ class CompilerTest {
     // Given
     given(compiler.addModuleRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
 
     // When
     var result = compiler.addModuleRamPaths(ramPaths);
@@ -1488,22 +1086,6 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addPatchModuleRamPath(ramPath) calls addRamPath(PATCH_MODULE_PATH, ramPath)")
-  @Test
-  void addPatchModuleRamPathCallsAddRamPath() {
-    // Given
-    given(compiler.addPatchModuleRamPath(any())).willCallRealMethod();
-    given(compiler.addRamPath(any(), any())).will(ctx -> compiler);
-    var ramPath = stub(RamPath.class);
-
-    // When
-    var result = compiler.addPatchModuleRamPath(ramPath);
-
-    // Then
-    then(compiler).should().addRamPath(StandardLocation.PATCH_MODULE_PATH, ramPath);
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName(
       "addPatchModuleRamPaths(ramPaths) calls addRamPaths(PATCH_MODULE_PATH, ramPaths)"
   )
@@ -1512,7 +1094,7 @@ class CompilerTest {
     // Given
     given(compiler.addPatchModuleRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Iterable<RamPath>>() {});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
 
     // When
     var result = compiler.addPatchModuleRamPaths(ramPaths);
@@ -1615,14 +1197,14 @@ class CompilerTest {
   void releaseVersionIntCallsReleaseVersionString(int versionInt) {
     // Given
     var versionString = "" + versionInt;
-    given(compiler.releaseVersion(anyInt())).willCallRealMethod();
-    given(compiler.releaseVersion(anyString())).will(ctx -> compiler);
+    given(compiler.withReleaseVersion(anyInt())).willCallRealMethod();
+    given(compiler.withReleaseVersion(anyString())).will(ctx -> compiler);
 
     // When
-    var result = compiler.releaseVersion(versionInt);
+    var result = compiler.withReleaseVersion(versionInt);
 
     // Then
-    then(compiler).should().releaseVersion(versionString);
+    then(compiler).should().withReleaseVersion(versionString);
     assertThat(result).isSameAs(compiler);
   }
 
@@ -1634,14 +1216,14 @@ class CompilerTest {
       String versionString
   ) {
     // Given
-    given(compiler.releaseVersion(any(SourceVersion.class))).willCallRealMethod();
-    given(compiler.releaseVersion(anyString())).will(ctx -> compiler);
+    given(compiler.withReleaseVersion(any(SourceVersion.class))).willCallRealMethod();
+    given(compiler.withReleaseVersion(anyString())).will(ctx -> compiler);
 
     // When
-    var result = compiler.releaseVersion(versionEnum);
+    var result = compiler.withReleaseVersion(versionEnum);
 
     // Then
-    then(compiler).should().releaseVersion(versionString);
+    then(compiler).should().withReleaseVersion(versionString);
     assertThat(result).isSameAs(compiler);
   }
 
@@ -1651,14 +1233,14 @@ class CompilerTest {
   void sourceVersionIntCallsReleaseVersionString(int versionInt) {
     // Given
     var versionString = "" + versionInt;
-    given(compiler.sourceVersion(anyInt())).willCallRealMethod();
-    given(compiler.sourceVersion(anyString())).will(ctx -> compiler);
+    given(compiler.withSourceVersion(anyInt())).willCallRealMethod();
+    given(compiler.withSourceVersion(anyString())).will(ctx -> compiler);
 
     // When
-    var result = compiler.sourceVersion(versionInt);
+    var result = compiler.withSourceVersion(versionInt);
 
     // Then
-    then(compiler).should().sourceVersion(versionString);
+    then(compiler).should().withSourceVersion(versionString);
     assertThat(result).isSameAs(compiler);
   }
 
@@ -1670,14 +1252,14 @@ class CompilerTest {
       String versionString
   ) {
     // Given
-    given(compiler.sourceVersion(any(SourceVersion.class))).willCallRealMethod();
-    given(compiler.sourceVersion(anyString())).will(ctx -> compiler);
+    given(compiler.withSourceVersion(any(SourceVersion.class))).willCallRealMethod();
+    given(compiler.withSourceVersion(anyString())).will(ctx -> compiler);
 
     // When
-    var result = compiler.sourceVersion(versionEnum);
+    var result = compiler.withSourceVersion(versionEnum);
 
     // Then
-    then(compiler).should().sourceVersion(versionString);
+    then(compiler).should().withSourceVersion(versionString);
     assertThat(result).isSameAs(compiler);
   }
 
@@ -1687,14 +1269,14 @@ class CompilerTest {
   void targetVersionIntCallsReleaseVersionString(int versionInt) {
     // Given
     var versionString = "" + versionInt;
-    given(compiler.targetVersion(anyInt())).willCallRealMethod();
-    given(compiler.targetVersion(anyString())).will(ctx -> compiler);
+    given(compiler.withTargetVersion(anyInt())).willCallRealMethod();
+    given(compiler.withTargetVersion(anyString())).will(ctx -> compiler);
 
     // When
-    var result = compiler.targetVersion(versionInt);
+    var result = compiler.withTargetVersion(versionInt);
 
     // Then
-    then(compiler).should().targetVersion(versionString);
+    then(compiler).should().withTargetVersion(versionString);
     assertThat(result).isSameAs(compiler);
   }
 
@@ -1706,14 +1288,14 @@ class CompilerTest {
       String versionString
   ) {
     // Given
-    given(compiler.targetVersion(any(SourceVersion.class))).willCallRealMethod();
-    given(compiler.targetVersion(anyString())).will(ctx -> compiler);
+    given(compiler.withTargetVersion(any(SourceVersion.class))).willCallRealMethod();
+    given(compiler.withTargetVersion(anyString())).will(ctx -> compiler);
 
     // When
-    var result = compiler.targetVersion(versionEnum);
+    var result = compiler.withTargetVersion(versionEnum);
 
     // Then
-    then(compiler).should().targetVersion(versionString);
+    then(compiler).should().withTargetVersion(versionString);
     assertThat(result).isSameAs(compiler);
   }
 

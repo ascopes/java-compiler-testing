@@ -36,6 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("Compilation tests")
 @ExtendWith(MockitoExtension.class)
 class CompilationTest {
+
   @Mock
   Compilation compilation;
 

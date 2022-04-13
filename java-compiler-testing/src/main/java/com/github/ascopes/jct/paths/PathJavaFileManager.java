@@ -34,8 +34,8 @@ import org.apiguardian.api.API.Status;
 
 
 /**
- * Implementation of a {@link JavaFileManager} that works on a set of paths from any loaded {@link
- * java.nio.file.FileSystem}s.
+ * Implementation of a {@link JavaFileManager} that works on a set of paths from any loaded
+ * {@link java.nio.file.FileSystem}s.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -57,11 +57,6 @@ public class PathJavaFileManager implements JavaFileManager {
     closed = false;
   }
 
-  /**
-   * Close the file manager. This does nothing if already closed.
-   *
-   * @throws IOException if an IO error occurred.
-   */
   @Override
   public void close() throws IOException {
     closed = true;
@@ -78,12 +73,6 @@ public class PathJavaFileManager implements JavaFileManager {
         .orElse(false);
   }
 
-  /**
-   * Flush the file manager.
-   *
-   * @throws IllegalStateException if the file manager is already closed.
-   * @throws IOException           if an IO error occurs.
-   */
   @Override
   public void flush() throws IOException {
     assertOpen();
@@ -97,17 +86,6 @@ public class PathJavaFileManager implements JavaFileManager {
         .orElse(null);
   }
 
-  /**
-   * Get a service loader for the given service type in the given location.
-   *
-   * @param location the location to get.
-   * @param service  the service class to get.
-   * @param <S>      the type of the service.
-   * @return the service loader.
-   * @throws IOException                   if an IO error occurred.
-   * @throws NoSuchElementException        if the loader cannot be found.
-   * @throws UnsupportedOperationException if the operation is unsupported for the given location.
-   */
   @Override
   public <S> ServiceLoader<S> getServiceLoader(Location location, Class<S> service)
       throws IOException {
@@ -123,23 +101,9 @@ public class PathJavaFileManager implements JavaFileManager {
         ));
   }
 
-  /**
-   * Get a file for input.
-   *
-   * @param location     the location of the file.
-   * @param packageName  the name of the package.
-   * @param relativeName the name of the file.
-   * @return the file object, or {@code null} if not found in the location.
-   * @throws IllegalArgumentException if the location is not known to this manager, or if the
-   *                                  location is module-oriented.
-   * @throws IllegalStateException    if the file manager is already closed.
-   * @throws IOException              if an IO exception occurred.
-   */
   @Override
   public FileObject getFileForInput(Location location, String packageName, String relativeName)
       throws IOException {
-
-    //assertNotModuleOrientedLocation(location);
     assertKnownLocation(location);
 
     return repository
@@ -148,20 +112,6 @@ public class PathJavaFileManager implements JavaFileManager {
         .orElse(null);
   }
 
-  /**
-   * Get a file for output.
-   *
-   * @param location     the location to output to.
-   * @param packageName  the name of the package.
-   * @param relativeName the file name.
-   * @param sibling      any sibling file if one exists, or {@code null} otherwise.
-   * @return the file to use for output, or {@code null} if no paths have been registered for the
-   *     location.
-   * @throws IllegalArgumentException if the location is not known to this manager, or if the
-   *                                  location is not an output location.
-   * @throws IllegalStateException    if the file manager is already closed.
-   * @throws IOException              if an IO exception occurred.
-   */
   @Override
   public FileObject getFileForOutput(
       Location location,
@@ -178,25 +128,12 @@ public class PathJavaFileManager implements JavaFileManager {
         .orElse(null);
   }
 
-  /**
-   * Get a file for input.
-   *
-   * @param location  the location of the file.
-   * @param className the name of the class.
-   * @param kind      the kind of the file.
-   * @return the file object, or {@code null} if not found in the location.
-   * @throws IllegalArgumentException if the location is not known to this manager, or if the
-   *                                  location is module-oriented.
-   * @throws IllegalStateException    if the file manager is already closed.
-   * @throws IOException              if an IO exception occurred.
-   */
   @Override
   public JavaFileObject getJavaFileForInput(
       Location location,
       String className,
       Kind kind
   ) throws IOException {
-    //assertNotModuleOrientedLocation(location);
     assertKnownLocation(location);
 
     return repository
@@ -205,19 +142,6 @@ public class PathJavaFileManager implements JavaFileManager {
         .orElse(null);
   }
 
-  /**
-   * Get a file for output.
-   *
-   * @param location  the location to output to.
-   * @param className the name of the class.
-   * @param kind      the kind of the file.
-   * @param sibling   any sibling file if one exists, or {@code null} otherwise.
-   * @return the file to use for output, or {@code null} if no paths have been registered for the
-   *     location.
-   * @throws IllegalArgumentException if the location is not an output location.
-   * @throws IllegalStateException    if the file manager is already closed.
-   * @throws IOException              if an IO exception occurred.
-   */
   @Override
   public JavaFileObject getJavaFileForOutput(
       Location location,
@@ -360,17 +284,6 @@ public class PathJavaFileManager implements JavaFileManager {
       throw formatException(
           IllegalArgumentException::new,
           "Location %s (%s) is not a module-oriented or output location. This is disallowed here.",
-          location.getName(),
-          location.getClass().getName()
-      );
-    }
-  }
-
-  private void assertNotModuleOrientedLocation(Location location) {
-    if (location.isModuleOrientedLocation()) {
-      throw formatException(
-          IllegalArgumentException::new,
-          "Location %s (%s) is a module-oriented location. This is disallowed here.",
           location.getName(),
           location.getClass().getName()
       );

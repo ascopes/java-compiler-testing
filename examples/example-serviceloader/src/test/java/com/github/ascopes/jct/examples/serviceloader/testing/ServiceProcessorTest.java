@@ -31,7 +31,7 @@ class ServiceProcessorTest {
   @Test
   void expectedFilesGetCreated() {
     var sources = RamPath
-        .createPath()
+        .createPath("sources")
         .createFile(
             "com/example/InsultProvider.java",
             "package com.example;",
@@ -57,9 +57,9 @@ class ServiceProcessorTest {
     var compilation = Compilers
         .javac()
         .addAnnotationProcessors(new ServiceProcessor())
-        .addSourceRamPath(sources)
+        .addSourceRamPaths(sources)
         .includeCurrentClassPath(true)
-        .releaseVersion(11)
+        .withReleaseVersion(11)
         .compile();
 
     assertThat(compilation)

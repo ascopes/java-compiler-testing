@@ -42,7 +42,7 @@ class BasicModuleCompilationTest {
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldJavac(int version) {
     var sources = RamPath
-        .createPath()
+        .createPath("sources")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",
@@ -62,9 +62,9 @@ class BasicModuleCompilationTest {
 
     var compilation = Compilers
         .javac()
-        .addSourceRamPath(sources)
-        .deprecationWarnings(true)
-        .releaseVersion(version)
+        .addSourceRamPaths(sources)
+        .deprecationWarningsEnabled(true)
+        .withReleaseVersion(version)
         .compile();
 
     assertThat(compilation).isSuccessfulWithoutWarnings();
@@ -77,7 +77,7 @@ class BasicModuleCompilationTest {
     skipBecauseEcjFailsToSupportModulesCorrectly();
 
     var sources = RamPath
-        .createPath()
+        .createPath("sources")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",
@@ -97,9 +97,9 @@ class BasicModuleCompilationTest {
 
     var compilation = Compilers
         .ecj()
-        .addSourceRamPath(sources)
-        .deprecationWarnings(true)
-        .releaseVersion(version)
+        .addSourceRamPaths(sources)
+        .deprecationWarningsEnabled(true)
+        .withReleaseVersion(version)
         .compile();
 
     assertThat(compilation).isSuccessfulWithoutWarnings();

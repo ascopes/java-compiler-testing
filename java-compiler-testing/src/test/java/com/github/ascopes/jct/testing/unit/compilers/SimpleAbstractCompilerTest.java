@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
  */
 @DisplayName("SimpleAbstractCompiler tests")
 class SimpleAbstractCompilerTest {
+
   @DisplayName("TODO: implement SimpleAbstractCompilerTest")
   @Disabled
   @Test

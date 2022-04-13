@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 
 /**
- * Utilities for handling {@link IOException}s and converting them to {@link
- * UncheckedIOException}s.
+ * Utilities for handling {@link IOException}s and converting them to
+ * {@link UncheckedIOException}s.
  *
  * @author Ashley Scopes
  */
@@ -32,8 +32,8 @@ public final class IoExceptionUtils {
   }
 
   /**
-   * Run some logic with no return value, throwing any {@link IOException} as an {@link
-   * UncheckedIOException}.
+   * Run some logic with no return value, throwing any {@link IOException} as an
+   * {@link UncheckedIOException}.
    *
    * @param runnable the runnable to run.
    * @throws UncheckedIOException if an {@link IOException} occurs.
@@ -47,8 +47,8 @@ public final class IoExceptionUtils {
   }
 
   /**
-   * Run some logic with a return value, throwing any {@link IOException} as an {@link
-   * UncheckedIOException}, or returning the result otherwise.
+   * Run some logic with a return value, throwing any {@link IOException} as an
+   * {@link UncheckedIOException}, or returning the result otherwise.
    *
    * @param supplier the supplier to run.
    * @return the result of the supplier.

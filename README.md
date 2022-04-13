@@ -24,8 +24,9 @@ class HelloWorldTest {
 
   @Test
   void i_can_compile_hello_world() {
+    // Given
     var sources = InMemoryPath
-        .createPath()
+        .createPath("sources")
         .createFile(
             "org/me/test/examples/HelloWorld.java",
             "package org.me.test.examples.test;",
@@ -37,13 +38,15 @@ class HelloWorldTest {
             "}"
         );
 
+    // When
     var compilation = Compilers
         .javac()
-        .addSourceRamPath(sources)
-        .releaseVersion("11")
+        .addSourceRamPaths(sources)
+        .withReleaseVersion(11)
         .withDiagnosticLogging(LoggingMode.ENABLED)
         .compile();
 
+    // Then
     assertThat(compilation).isSuccessfulWithoutWarnings();
     assertThat(compilation).diagnostics().isEmpty();
     assertThat(compilation).classOutput()

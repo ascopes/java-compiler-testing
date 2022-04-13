@@ -29,14 +29,15 @@ import org.apiguardian.api.API.Status;
  * Implementation of an ECJ compiler.
  *
  * <p>ECJ is unable to run in parallel correctly, so this class will ensure that
- * locks are acquired during the compilation process to prevent flaky tests in
- * environments that default to concurrent test execution.
+ * locks are acquired during the compilation process to prevent flaky tests in environments that
+ * default to concurrent test execution.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class EcjCompiler extends SimpleAbstractCompiler<EcjCompiler> {
+
   // Annoyingly, ECJ seems to produce the following exception occasionally if run in
   // parallel. To avoid this, we lock the ECJ compiler globally.
   //

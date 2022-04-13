@@ -56,26 +56,4 @@ class CollectionUtilsTest implements StaticClassTestTemplate {
     assertThat(CollectionUtils.combineOneOrMore(foo, bar, baz, bork))
         .isEqualTo(List.of(foo, bar, baz, bork));
   }
-
-  @DisplayName("combineTwoOrMore(T, T...) returns the expected value")
-  @Test
-  void combineTwoOrMoreReturnsTheExpectedValue() {
-    var foo = new Object();
-    var bar = new Object();
-    var baz = new Object();
-    var bork = new Object();
-    var qux = new Object();
-
-    assertThat(CollectionUtils.combineTwoOrMore(foo, bar))
-        .isEqualTo(List.of(foo, bar));
-
-    assertThat(CollectionUtils.combineTwoOrMore(foo, bar, baz))
-        .isEqualTo(List.of(foo, bar, baz));
-
-    assertThat(CollectionUtils.combineTwoOrMore(foo, bar, baz, bork))
-        .isEqualTo(List.of(foo, bar, baz, bork));
-
-    assertThat(CollectionUtils.combineTwoOrMore(foo, bar, baz, bork, qux))
-        .isEqualTo(List.of(foo, bar, baz, bork, qux));
-  }
 }

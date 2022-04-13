@@ -33,6 +33,7 @@ import org.assertj.core.presentation.Representation;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class DiagnosticRepresentation implements Representation {
+
   // Pattern that matches the toString output of java.lang.Object when it is not overridden.
   // We use this to deal with the fact some ECJ diagnostics do not provide a useful toString,
   // while javac provides a pretty toString including a nice little code snippet.

@@ -36,43 +36,20 @@ public final class CollectionUtils {
   }
 
   /**
-   * Convert variadic arguments with an enforced first element into a list of those
-   * elements.
+   * Convert variadic arguments with an enforced first element into a list of those elements.
    *
    * <p>This pattern is used to ensure vararg overloads take at least one element, by enforcing
    * this at compile-time.
    *
    * @param first the enforced first element.
-   * @param rest the rest of the elements.
-   * @param <T> the type of the elements.
+   * @param rest  the rest of the elements.
+   * @param <T>   the type of the elements.
    * @return the list of the elements.
    */
   @SafeVarargs
-  public static <T> List<T> combineOneOrMore(T first, T ... rest) {
+  public static <T> List<T> combineOneOrMore(T first, T... rest) {
     var list = new ArrayList<T>();
     list.add(first);
-    list.addAll(Arrays.asList(rest));
-    return list;
-  }
-
-  /**
-   * Convert variadic arguments with an enforced first and second element into a list of those
-   * elements.
-   *
-   * <p>This pattern is used to ensure vararg overloads take at least two elements, by enforcing
-   * this at compile-time.
-   *
-   * @param first the enforced first element.
-   * @param second the enforced second element.
-   * @param rest the rest of the elements.
-   * @param <T> the type of the elements.
-   * @return the list of the elements.
-   */
-  @SafeVarargs
-  public static <T> List<T> combineTwoOrMore(T first, T second, T ... rest) {
-    var list = new ArrayList<T>();
-    list.add(first);
-    list.add(second);
     list.addAll(Arrays.asList(rest));
     return list;
   }

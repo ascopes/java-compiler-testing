@@ -72,6 +72,7 @@ public abstract class SimpleAbstractCompiler<A extends SimpleAbstractCompiler<A>
       );
 
       var result = runCompilationTask(task);
+
       var outputLines = writer.toString().lines().collect(Collectors.toList());
 
       return SimpleCompilation.builder()

@@ -43,7 +43,7 @@ class BasicMultiModuleCompilationTest {
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldJavac(int version) {
     var sources = RamPath
-        .createPath()
+        .createPath("sources")
         .createFile(
             "hello.world/com/example/HelloWorld.java",
             "package com.example;",
@@ -62,9 +62,9 @@ class BasicMultiModuleCompilationTest {
 
     var compilation = Compilers
         .javac()
-        .addModuleSourceRamPath(sources)
-        .deprecationWarnings(true)
-        .releaseVersion(version)
+        .addModuleSourceRamPaths(sources)
+        .deprecationWarningsEnabled(true)
+        .withReleaseVersion(version)
         .compile();
 
     assertThat(compilation).isSuccessfulWithoutWarnings();
@@ -89,7 +89,7 @@ class BasicMultiModuleCompilationTest {
     skipBecauseEcjFailsToSupportModulesCorrectly();
 
     var sources = RamPath
-        .createPath()
+        .createPath("sources")
         .createFile(
             "hello.world/com/example/HelloWorld.java",
             "package com.example;",
@@ -108,10 +108,10 @@ class BasicMultiModuleCompilationTest {
 
     var compilation = Compilers
         .ecj()
-        .addModuleSourceRamPath(sources)
-        .deprecationWarnings(true)
-        .releaseVersion(version)
-        .verbose(true)
+        .addModuleSourceRamPaths(sources)
+        .deprecationWarningsEnabled(true)
+        .withReleaseVersion(version)
+        .verboseLoggingEnabled(true)
         .withDiagnosticLogging(LoggingMode.STACKTRACES)
         .withFileManagerLogging(LoggingMode.ENABLED)
         .compile();
@@ -136,7 +136,7 @@ class BasicMultiModuleCompilationTest {
   @ParameterizedTest(name = "targeting Java {0}")
   void helloWorldMultiModuleJavac(int version) {
     var sources = RamPath
-        .createPath()
+        .createPath("sources")
         .createFile(
             "hello.world/com/example/HelloWorld.java",
             "package com.example;",
@@ -172,9 +172,9 @@ class BasicMultiModuleCompilationTest {
 
     var compilation = Compilers
         .javac()
-        .addModuleSourceRamPath(sources)
-        .deprecationWarnings(true)
-        .releaseVersion(version)
+        .addModuleSourceRamPaths(sources)
+        .deprecationWarningsEnabled(true)
+        .withReleaseVersion(version)
         .compile();
 
     assertThat(compilation).isSuccessfulWithoutWarnings();
@@ -211,7 +211,7 @@ class BasicMultiModuleCompilationTest {
     skipBecauseEcjFailsToSupportModulesCorrectly();
 
     var sources = RamPath
-        .createPath()
+        .createPath("sources")
         .createFile(
             "hello.world/com/example/HelloWorld.java",
             "package com.example;",
@@ -247,9 +247,9 @@ class BasicMultiModuleCompilationTest {
 
     var compilation = Compilers
         .ecj()
-        .addModuleSourceRamPath(sources)
-        .deprecationWarnings(true)
-        .releaseVersion(version)
+        .addModuleSourceRamPaths(sources)
+        .deprecationWarningsEnabled(true)
+        .withReleaseVersion(version)
         .compile();
 
     assertThat(compilation).isSuccessfulWithoutWarnings();

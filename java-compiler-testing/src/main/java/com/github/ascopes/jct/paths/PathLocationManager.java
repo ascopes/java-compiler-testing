@@ -101,9 +101,20 @@ public class PathLocationManager implements Iterable<Path> {
    * @param path the path to add.
    */
   public void addPath(Path path) {
-    LOGGER.debug("Adding Path {} to PathLocationManager for location {}", path, location);
+    LOGGER.debug(
+        "Adding paths {} to {} for location {}",
+        path,
+        getClass().getSimpleName(),
+        location
+    );
     registerPath(path);
+    destroyClassLoader();
   }
+
+  // !!! BUG REGRESSION WARNING FOR THIS API !!!:
+  // DO NOT REPLACE COLLECTION<PATH>  WITH ITERABLE<PATH>! THIS WOULD MAKE DIFFERENCES BETWEEN
+  // PATH AND COLLECTIONS OF PATHS DIFFICULT TO DISTINGUISH, SINCE PATHS ARE THEMSELVES
+  // ITERABLES OF PATHS!
 
   /**
    * Add multiple paths to the manager, if they have not already been added.
@@ -112,13 +123,19 @@ public class PathLocationManager implements Iterable<Path> {
    *
    * @param paths the paths to add.
    */
-  public void addPaths(Iterable<? extends Path> paths) {
+  public void addPaths(Collection<? extends Path> paths) {
     // Don't expand paths if this was incorrectly called with a single path, since paths themselves
     // are iterables of paths.
-    LOGGER.debug("Adding Paths {} to PathLocationManager for location {}", paths, location);
+    LOGGER.debug(
+        "Adding paths {} to {} for location {}",
+        paths,
+        getClass().getSimpleName(),
+        location
+    );
     for (var path : paths) {
       registerPath(path);
     }
+    destroyClassLoader();
   }
 
   /**
@@ -129,10 +146,16 @@ public class PathLocationManager implements Iterable<Path> {
    * @param path the path to add.
    */
   public void addRamPath(RamPath path) {
-    LOGGER.debug("Registering {} for location {}", path, location);
+    LOGGER.debug(
+        "Registering {} to {} for location {}",
+        path,
+        getClass().getSimpleName(),
+        location
+    );
     registerPath(path.getPath());
     // Keep the reference alive.
     inMemoryDirectories.add(path);
+    destroyClassLoader();
   }
 
   /**
@@ -142,13 +165,19 @@ public class PathLocationManager implements Iterable<Path> {
    *
    * @param paths the paths to add.
    */
-  public void addRamPaths(Iterable<? extends RamPath> paths) {
-    LOGGER.debug("Registering {} for location {}", paths, location);
+  public void addRamPaths(Collection<? extends RamPath> paths) {
+    LOGGER.debug(
+        "Registering {} to {} for location {}",
+        paths,
+        getClass().getSimpleName(),
+        location
+    );
     for (var path : paths) {
       registerPath(path.getPath());
       // Keep the reference alive.
       inMemoryDirectories.add(path);
     }
+    destroyClassLoader();
   }
 
   /**
@@ -394,11 +423,20 @@ public class PathLocationManager implements Iterable<Path> {
         continue;
       }
 
-      Files
-          .walk(path, maxDepth)
-          .filter(hasAnyKind(kinds).and(Files::isRegularFile))
-          .map(nextFile -> javaFileObjectFromPath(nextFile, root.relativize(nextFile).toString()))
-          .forEach(results::add);
+      try (var stream = Files.walk(path, maxDepth)) {
+        stream
+            .filter(hasAnyKind(kinds).and(Files::isRegularFile))
+            .map(nextFile -> javaFileObjectFromPath(nextFile, root.relativize(nextFile).toString()))
+            .peek(fileObject -> LOGGER.trace(
+                "Found file object {} in root {} for list on package={}, kinds={}, recurse={}",
+                fileObject,
+                root,
+                packageName,
+                kinds,
+                recurse
+            ))
+            .forEach(results::add);
+      }
     }
 
     return results;
@@ -412,8 +450,13 @@ public class PathLocationManager implements Iterable<Path> {
   }
 
   protected void registerPath(Path path) {
+    path = path.toAbsolutePath();
+    LOGGER.trace("Adding root {} to {}", path, this);
+    roots.add(path);
+  }
+
+  protected void destroyClassLoader() {
     classLoader.destroy();
-    roots.add(path.toAbsolutePath());
   }
 
   private ClassLoader createClassLoaderUnsafe() {

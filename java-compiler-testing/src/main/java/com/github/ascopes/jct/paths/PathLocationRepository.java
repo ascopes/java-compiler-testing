@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
@@ -103,10 +104,12 @@ public class PathLocationRepository implements AutoCloseable {
       var moduleLocation = (ModuleLocation) location;
       var moduleName = moduleLocation.getModuleName();
       var parentLocation = moduleLocation.getParent();
-      return Optional
-          .ofNullable(managers.get(parentLocation))
+      return get(parentLocation)
+          .map(ParentPathLocationManager.class::cast)
           .flatMap(manager -> manager.getModuleLocationManager(moduleName));
     }
+
+    LOGGER.trace("Getting manager for {}", location);
 
     return Optional.ofNullable(managers.get(location));
   }
@@ -120,8 +123,8 @@ public class PathLocationRepository implements AutoCloseable {
    * @param location the location to look up.
    * @return the location manager.
    * @throws IllegalArgumentException if a {@link StandardLocation#MODULE_SOURCE_PATH} has already
-   *                                  been created and this operation would create a {@link
-   *                                  StandardLocation#SOURCE_PATH} location, or vice-versa.
+   *                                  been created and this operation would create a
+   *                                  {@link StandardLocation#SOURCE_PATH} location, or vice-versa.
    */
   public PathLocationManager getOrCreate(Location location) {
     ensureCompatibleLocation(location);
@@ -130,8 +133,7 @@ public class PathLocationRepository implements AutoCloseable {
       var moduleLocation = (ModuleLocation) location;
       var moduleName = moduleLocation.getModuleName();
       var parentLocation = moduleLocation.getParent();
-      return managers
-          .computeIfAbsent(parentLocation, unused -> new ParentPathLocationManager(location))
+      return ((ParentPathLocationManager) getOrCreate(parentLocation))
           .getOrCreateModuleLocationManager(moduleName);
     }
 
@@ -193,7 +195,10 @@ public class PathLocationRepository implements AutoCloseable {
     var manager = new ParentPathLocationManager(location);
 
     if (location.isOutputLocation()) {
-      var ramPath = RamPath.createPath(true);
+      var ramPath = RamPath.createPath(
+          location.getName() + "-" + UUID.randomUUID(),
+          true
+      );
       LOGGER.debug(
           "Implicitly created new in-memory path {} for output location {}",
           ramPath,
