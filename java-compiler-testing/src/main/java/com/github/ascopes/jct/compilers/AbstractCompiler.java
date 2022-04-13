@@ -455,7 +455,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
       var classOutput = RamPath.createPath("classes");
       classOutputManager.addRamPath(classOutput);
     } else {
-      LOGGER.debug("At least one output path is present, so no in-memory path will be created");
+      LOGGER.trace("At least one output path is present, so no in-memory path will be created");
     }
   }
 
