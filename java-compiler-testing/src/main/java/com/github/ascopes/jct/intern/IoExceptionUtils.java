@@ -51,6 +51,7 @@ public final class IoExceptionUtils {
    * {@link UncheckedIOException}, or returning the result otherwise.
    *
    * @param supplier the supplier to run.
+   * @param <T> the result of the supplier.
    * @return the result of the supplier.
    * @throws UncheckedIOException if an {@link IOException} occurs.
    */
@@ -71,7 +72,7 @@ public final class IoExceptionUtils {
   /**
    * A supplier interface that may throw an {@link IOException}.
    *
-   * @param <T> the return type.
+   * @param <T> the return type of the supplier.
    */
   @FunctionalInterface
   public interface SupplierWithIo<T> {

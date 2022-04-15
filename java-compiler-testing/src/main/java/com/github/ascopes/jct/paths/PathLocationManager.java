@@ -60,8 +60,8 @@ public class PathLocationManager implements Iterable<Path> {
   private static final Logger LOGGER = LoggerFactory.getLogger(PathLocationManager.class);
   private static final StringSlicer PACKAGE_SPLITTER = new StringSlicer(".");
 
-  protected final Location location;
-  protected final Set<Path> roots;
+  final Location location;
+  final Set<Path> roots;
   private final Lazy<ClassLoader> classLoader;
 
   // We use this to keep the references alive while the manager is alive.
@@ -449,13 +449,18 @@ public class PathLocationManager implements Iterable<Path> {
         + "}";
   }
 
+  /**
+   * Register the given path to the roots of this manager.
+   *
+   * @param path the path to register.
+   */
   protected void registerPath(Path path) {
     path = path.toAbsolutePath();
     LOGGER.trace("Adding root {} to {}", path, this);
     roots.add(path);
   }
 
-  protected void destroyClassLoader() {
+  private void destroyClassLoader() {
     classLoader.destroy();
   }
 
