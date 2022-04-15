@@ -16,12 +16,11 @@
 
 package com.github.ascopes.jct.compilers.ecj;
 
-import com.github.ascopes.jct.compilers.FlagBuilder;
 import com.github.ascopes.jct.compilers.SimpleAbstractCompiler;
+import com.github.ascopes.jct.compilers.SimpleCompilation;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import javax.tools.JavaCompiler;
-import javax.tools.JavaCompiler.CompilationTask;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -53,7 +52,17 @@ public final class EcjCompiler extends SimpleAbstractCompiler<EcjCompiler> {
   private static final ReentrantLock lock = new ReentrantLock();
 
   private EcjCompiler(Supplier<JavaCompiler> compilerSupplier) {
-    super(compilerSupplier);
+    super(compilerSupplier, EcjFlagBuilder::new);
+  }
+
+  @Override
+  public SimpleCompilation compile() {
+    lock.lock();
+    try {
+      return super.compile();
+    } finally {
+      lock.unlock();
+    }
   }
 
   @Override
@@ -61,25 +70,11 @@ public final class EcjCompiler extends SimpleAbstractCompiler<EcjCompiler> {
     return "ecj";
   }
 
-  @Override
-  protected FlagBuilder createFlagBuilder() {
-    return new EcjFlagBuilder();
-  }
-
-  @Override
-  protected Boolean runCompilationTask(CompilationTask task) {
-    lock.lock();
-    try {
-      return super.runCompilationTask(task);
-    } finally {
-      lock.unlock();
-    }
-  }
-
   /**
    * Initialize this compiler.
    *
    * @param compilerSupplier the supplier of new underlying JSR-199 compiler instances to use.
+   * @return the compiler.
    */
   public static EcjCompiler using(Supplier<JavaCompiler> compilerSupplier) {
     return new EcjCompiler(compilerSupplier);

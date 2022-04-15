@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+/**
+ * Java compiler testing facilities.
+ */
 module com.github.ascopes.jct {
   requires transitive java.compiler;
   requires java.management;

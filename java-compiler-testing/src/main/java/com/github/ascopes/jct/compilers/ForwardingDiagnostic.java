@@ -33,7 +33,7 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public abstract class ForwardingDiagnostic<S> implements Diagnostic<S> {
 
-  protected final Diagnostic<? extends S> original;
+  private final Diagnostic<? extends S> original;
 
   /**
    * Initialize this forwarding diagnostic.

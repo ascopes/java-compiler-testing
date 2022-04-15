@@ -20,9 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.ascopes.jct.compilers.AbstractCompiler;
 import com.github.ascopes.jct.compilers.Compiler;
-import com.github.ascopes.jct.compilers.FlagBuilder;
 import com.github.ascopes.jct.compilers.SimpleCompilation;
-import javax.tools.JavaCompiler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -159,23 +157,13 @@ class AbstractCompilerTest {
       AbstractCompiler<StubbedCompiler, SimpleCompilation> {
 
     @Override
-    protected SimpleCompilation doCompile() {
+    public SimpleCompilation compile() {
       throw new UnsupportedOperationException();
     }
 
     @Override
     protected String getName() {
       return getClass().getName() + "#" + Integer.toHexString(System.identityHashCode(this));
-    }
-
-    @Override
-    protected JavaCompiler createJsr199Compiler() {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected FlagBuilder createFlagBuilder() {
-      throw new UnsupportedOperationException();
     }
   }
 }

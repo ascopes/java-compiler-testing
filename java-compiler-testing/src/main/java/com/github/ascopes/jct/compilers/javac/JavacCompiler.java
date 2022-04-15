@@ -16,7 +16,6 @@
 
 package com.github.ascopes.jct.compilers.javac;
 
-import com.github.ascopes.jct.compilers.FlagBuilder;
 import com.github.ascopes.jct.compilers.SimpleAbstractCompiler;
 import java.util.function.Supplier;
 import javax.tools.JavaCompiler;
@@ -33,7 +32,7 @@ import org.apiguardian.api.API.Status;
 public final class JavacCompiler extends SimpleAbstractCompiler<JavacCompiler> {
 
   private JavacCompiler(Supplier<JavaCompiler> compilerSupplier) {
-    super(compilerSupplier);
+    super(compilerSupplier, JavacFlagBuilder::new);
   }
 
   @Override
@@ -41,15 +40,11 @@ public final class JavacCompiler extends SimpleAbstractCompiler<JavacCompiler> {
     return "javac";
   }
 
-  @Override
-  protected FlagBuilder createFlagBuilder() {
-    return new JavacFlagBuilder();
-  }
-
   /**
    * Initialize this compiler.
    *
    * @param compilerSupplier the supplier of new underlying JSR-199 compiler instances to use.
+   * @return the compiler.
    */
   public static JavacCompiler using(Supplier<JavaCompiler> compilerSupplier) {
     return new JavacCompiler(compilerSupplier);

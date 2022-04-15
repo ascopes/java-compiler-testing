@@ -55,11 +55,12 @@
     <reflections.version>0.10.2</reflections.version>
     <slf4j.version>1.7.36</slf4j.version>
 
-    <!-- Maven plugins and depencencies -->
+    <!-- Maven plugins and dependencies -->
     <checkstyle.version>10.0</checkstyle.version>
     <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
     <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
+    <maven-javadoc-plugin.version>3.3.2</maven-javadoc-plugin.version>
     <maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
 
     <!-- Third-party plugins -->
@@ -206,6 +207,22 @@
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven-javadoc-plugin.version}</version>
+
+          <executions>
+            <execution>
+              <id>default-javadoc</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>${maven-jar-plugin.version}</version>
 
@@ -276,7 +293,7 @@
         <executions>
           <execution>
             <id>checkstyle</id>
-            <phase>verify</phase>
+            <phase>compile</phase>
             <goals>
               <goal>check</goal>
             </goals>

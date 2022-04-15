@@ -16,35 +16,19 @@
 
 package com.github.ascopes.jct.compilers;
 
-import static com.github.ascopes.jct.intern.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
-import com.github.ascopes.jct.intern.SpecialLocations;
-import com.github.ascopes.jct.intern.StringUtils;
-import com.github.ascopes.jct.paths.LoggingJavaFileManagerProxy;
-import com.github.ascopes.jct.paths.PathJavaFileManager;
 import com.github.ascopes.jct.paths.PathLocationRepository;
 import com.github.ascopes.jct.paths.RamPath;
-import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import javax.annotation.processing.Processor;
-import javax.tools.DiagnosticListener;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaCompiler.CompilationTask;
-import javax.tools.JavaFileManager;
 import javax.tools.JavaFileManager.Location;
-import javax.tools.JavaFileObject;
-import javax.tools.JavaFileObject.Kind;
-import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -64,33 +48,101 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCompiler.class);
 
-  // File workspace.
+  /**
+   * The file repository in use.
+   */
   protected final PathLocationRepository fileRepository;
 
-  // Annotation processors that were explicitly added.
+  /**
+   * The list of annotation processors in use.
+   */
   protected final List<Processor> annotationProcessors;
 
-  // User-defined option collections.
+  /**
+   * Options to pass to the annotation processors.
+   */
   protected final List<String> annotationProcessorOptions;
+
+  /**
+   * Options to pass to the compiler.
+   */
   protected final List<String> compilerOptions;
+
+  /**
+   * Options to pass to the Java Runtime.
+   */
   protected final List<String> runtimeOptions;
 
-  // Common flags.
+  /**
+   * Whether warnings are enabled or not.
+   */
   protected boolean warnings;
+
+  /**
+   * Whether deprecation are enabled or not.
+   */
   protected boolean deprecationWarnings;
+
+  /**
+   * Whether warnings are treated as errors or not.
+   */
   protected boolean warningsAsErrors;
+
+  /**
+   * The locale to use for diagnostics.
+   */
   protected Locale locale;
+
+  /**
+   * Whether the compiler will run in verbose mode or not.
+   */
   protected boolean verbose;
+
+  /**
+   * Whether preview features are enabled or not.
+   */
   protected boolean previewFeatures;
+
+  /**
+   * The release version, or {@code null} if not explicitly defined.
+   */
   protected String releaseVersion;
+
+  /**
+   * The source version, or {@code null} if not explicitly defined.
+   */
   protected String sourceVersion;
+
+  /**
+   * The target version, or {@code null} if not explicitly defined.
+   */
   protected String targetVersion;
+
+  /**
+   * Whether the classpath of the JVM calling this compiler will be passed to the compiler or not.
+   */
   protected boolean includeCurrentClassPath;
+
+  /**
+   * Whether the module path of the JVM calling this compiler will be passed to the compiler or
+   * not.
+   */
   protected boolean includeCurrentModulePath;
+
+  /**
+   * Whether the platform classpath of the JVM calling this compiler will be passed to the compiler
+   * or not.
+   */
   protected boolean includeCurrentPlatformClassPath;
 
-  // Framework-specific functionality.
+  /**
+   * Logging verbosity for file manager operations.
+   */
   protected LoggingMode fileManagerLogging;
+
+  /**
+   * Logging verbosity for diagnostic reporting.
+   */
   protected LoggingMode diagnosticLogging;
 
   /**
@@ -122,11 +174,6 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
 
     fileManagerLogging = DEFAULT_FILE_MANAGER_LOGGING_MODE;
     diagnosticLogging = DEFAULT_DIAGNOSTIC_LOGGING_MODE;
-  }
-
-  @Override
-  public final S compile() {
-    return uncheckedIo(this::doCompile);
   }
 
   @Override
@@ -405,219 +452,20 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
     return getName();
   }
 
-  protected List<String> buildFlags() {
-    return createFlagBuilder()
-        .annotationProcessorOptions(annotationProcessorOptions)
-        .deprecationWarnings(deprecationWarnings)
-        .warningsAsErrors(warningsAsErrors)
-        .options(compilerOptions)
-        .previewFeatures(previewFeatures)
-        .releaseVersion(releaseVersion)
-        .runtimeOptions(runtimeOptions)
-        .sourceVersion(sourceVersion)
-        .targetVersion(targetVersion)
-        .verbose(verbose)
-        .warnings(warnings)
-        .build();
-  }
-
-  protected JavaFileManager buildJavaFileManager() {
-    registerClassOutputPath();
-    registerClassPath();
-    registerPlatformClassPath();
-    registerJrtJimage();
-    return new PathJavaFileManager(fileRepository);
-  }
-
-  protected List<? extends JavaFileObject> discoverCompilationUnits(
-      JavaFileManager fileManager
-  ) throws IOException {
-    var locations = new LinkedHashSet<Location>();
-    locations.add(StandardLocation.SOURCE_PATH);
-
-    fileManager
-        .listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH)
-        .forEach(locations::addAll);
-
-    var objects = new ArrayList<JavaFileObject>();
-
-    for (var location : locations) {
-      var items = fileManager.list(location, "", Set.of(Kind.SOURCE), true);
-      for (var fileObject : items) {
-        objects.add(fileObject);
-      }
-    }
-
-    return objects;
-  }
-
-  protected JavaFileManager applyLoggingToFileManager(JavaFileManager fileManager) {
-    if (fileManagerLogging == LoggingMode.STACKTRACES) {
-      return LoggingJavaFileManagerProxy.wrap(fileManager, true);
-    }
-
-    if (fileManagerLogging == LoggingMode.ENABLED) {
-      return LoggingJavaFileManagerProxy.wrap(fileManager, false);
-    }
-
-    return fileManager;
-  }
-
-  protected TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener() {
-    return new TracingDiagnosticListener<>(
-        fileManagerLogging != LoggingMode.DISABLED,
-        fileManagerLogging == LoggingMode.STACKTRACES
-    );
-  }
-
-  protected CompilationTask buildCompilationTask(
-      Writer writer,
-      JavaFileManager fileManager,
-      DiagnosticListener<? super JavaFileObject> diagnosticListener,
-      List<String> flags,
-      List<? extends JavaFileObject> compilationUnits
-  ) {
-    var name = getName();
-    var compiler = createJsr199Compiler();
-
-    var task = compiler.getTask(
-        writer,
-        fileManager,
-        diagnosticListener,
-        flags,
-        null,
-        compilationUnits
-    );
-
-    task.setProcessors(annotationProcessors);
-    task.setLocale(locale);
-
-    if (LOGGER.isInfoEnabled()) {
-      LOGGER.info(
-          "Starting compilation of {} file{} with compiler {} using flags {}",
-          compilationUnits.size(),
-          compilationUnits.size() == 1 ? "" : "s",
-          name,
-          StringUtils.quotedIterable(flags)
-      );
-    }
-
-    return task;
-  }
-
-  protected Boolean runCompilationTask(CompilationTask task) {
-    var name = getName();
-
-    try {
-      var start = System.nanoTime();
-      var result = task.call();
-
-      if (result == null) {
-        throw new CompilerException("The compiler failed to produce a valid result");
-      }
-
-      LOGGER.info("Compilation with compiler {} {} after ~{}ms",
-          name,
-          result ? "succeeded" : "failed",
-          Math.round((System.nanoTime() - start) / 1_000_000.0)
-      );
-
-      return result;
-    } catch (Exception ex) {
-      LOGGER.warn(
-          "Compiler {} threw an exception: {}: {}",
-          name,
-          ex.getClass().getName(),
-          ex.getMessage()
-      );
-      throw new CompilerException("The compiler threw an exception", ex);
-    }
-  }
-
-  protected void registerClassOutputPath() {
-    // We have to manually create this one as javac will not attempt to access it lazily. Instead,
-    // it will just abort if it is not present. This means we cannot take advantage of the
-    // PathLocationRepository creating the roots as we try to access them for this specific case.
-    var classOutputManager = fileRepository
-        .getOrCreate(StandardLocation.CLASS_OUTPUT);
-
-    // Ensure we have somewhere to dump our output.
-    if (classOutputManager.isEmpty()) {
-      LOGGER.debug("No class output location was specified, so an in-memory path is being created");
-      var classOutput = RamPath.createPath("classes-" + UUID.randomUUID());
-      classOutputManager.addRamPath(classOutput);
-    } else {
-      LOGGER.trace("At least one output path is present, so no in-memory path will be created");
-    }
-  }
-
-  protected void registerClassPath() {
-    // ECJ requires that we always create this, otherwise it refuses to run.
-    var classPath = fileRepository
-        .getOrCreate(StandardLocation.CLASS_PATH);
-
-    if (includeCurrentClassPath) {
-      var currentClassPath = SpecialLocations.currentClassPathLocations();
-
-      LOGGER.debug("Adding current classpath to compiler: {}", currentClassPath);
-      classPath.addPaths(currentClassPath);
-    }
-
-    if (includeCurrentClassPath) {
-      var currentModulePath = SpecialLocations.currentModulePathLocations();
-
-      LOGGER.debug(
-          "Adding current module path to compiler class path and module path: {}",
-          currentModulePath
-      );
-
-      // For some reason, the JDK module path has to also be added to the classpath for it
-      // to be recognised. Failing to do this prevents the classes and test-classes directories
-      // being added to the classpath with the other dependencies. This would otherwise result in
-      // all dependencies being loaded, but not the code the user is actually trying to test.
-      //
-      // Weird, but it is what it is, I guess.
-      classPath.addPaths(currentModulePath);
-
-      fileRepository
-          .getOrCreate(StandardLocation.MODULE_PATH)
-          .addPaths(currentModulePath);
-    }
-  }
-
-  protected void registerPlatformClassPath() {
-    if (includeCurrentPlatformClassPath) {
-      var currentPlatformClassPath = SpecialLocations.currentPlatformClassPathLocations();
-
-      if (!currentPlatformClassPath.isEmpty()) {
-        LOGGER.debug("Adding current platform classpath to compiler: {}", currentPlatformClassPath);
-
-        fileRepository
-            .getOrCreate(StandardLocation.PLATFORM_CLASS_PATH)
-            .addPaths(currentPlatformClassPath);
-      }
-    }
-  }
-
-  protected void registerJrtJimage() {
-    var jrtLocations = SpecialLocations.javaRuntimeLocations();
-    LOGGER.trace("Adding JRT locations to compiler: {}", jrtLocations);
-
-    fileRepository
-        .getOrCreate(StandardLocation.SYSTEM_MODULES)
-        .addPaths(jrtLocations);
-  }
-
+  /**
+   * Get this implementation of {@link AbstractCompiler}, cast to the type parameter {@link A}.
+   *
+   * @return this implementation of {@link AbstractCompiler}, cast to {@link A}.
+   */
   @SuppressWarnings("unchecked")
   protected final A myself() {
     return (A) this;
   }
 
-  protected abstract S doCompile() throws IOException;
-
+  /**
+   * Get a human-readable name for the compiler.
+   *
+   * @return the human-readable name.
+   */
   protected abstract String getName();
-
-  protected abstract JavaCompiler createJsr199Compiler();
-
-  protected abstract FlagBuilder createFlagBuilder();
 }

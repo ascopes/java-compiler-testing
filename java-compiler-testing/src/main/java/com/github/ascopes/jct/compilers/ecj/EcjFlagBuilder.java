@@ -36,17 +36,16 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class EcjFlagBuilder implements FlagBuilder {
 
-  // Visible for testing only.
-  public static final String VERBOSE = "-verbose";
-  public static final String ENABLE_PREVIEW = "--enable-preview";
-  public static final String NOWARN = "-nowarn";
-  public static final String FAIL_ON_WARNING = "--failOnWarning";
-  public static final String DEPRECATION = "-deprecation";
-  public static final String RELEASE = "--release";
-  public static final String SOURCE = "-source";
-  public static final String TARGET = "-target";
-  public static final String ANNOTATION_OPT = "-A";
-  public static final String RUNTIME_OPT = "-J";
+  private static final String VERBOSE = "-verbose";
+  private static final String ENABLE_PREVIEW = "--enable-preview";
+  private static final String NOWARN = "-nowarn";
+  private static final String FAIL_ON_WARNING = "--failOnWarning";
+  private static final String DEPRECATION = "-deprecation";
+  private static final String RELEASE = "--release";
+  private static final String SOURCE = "-source";
+  private static final String TARGET = "-target";
+  private static final String ANNOTATION_OPT = "-A";
+  private static final String RUNTIME_OPT = "-J";
 
 
   private final Stream.Builder<String> craftedFlags;

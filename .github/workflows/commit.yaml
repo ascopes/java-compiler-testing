@@ -24,9 +24,17 @@ jobs:
 
       - name: Build with Java ${{ matrix.java-version }} (${{ matrix.java-distribution }})
         run: >-
-          ./mvnw -B -U -T8C clean verify \
+          ./mvnw -B -U -T8C clean package \
               -Dstyle.color=always \
               -Dmaven.artifact.threads=$(($(nproc)*10))
+
+      - name: Archive JavaDoc artifacts
+        uses: actions/upload-artifact@v2
+        continue-on-error: true
+        if: success()
+        with:
+          name: javadoc-java-${{ matrix.java-version }}-${{ matrix.java-distribution }}
+          path: "**/target/apidocs/com.github.ascopes.jct"
 
       - name: Report Surefire results
         uses: dorny/test-reporter@v1
