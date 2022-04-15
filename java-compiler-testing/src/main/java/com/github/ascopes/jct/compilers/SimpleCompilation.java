@@ -99,7 +99,11 @@ public final class SimpleCompilation implements Compilation {
 
   /**
    * Builder type for a {@link SimpleCompilation} to simplify initialization.
+   *
+   * @author Ashley Scopes
+   * @since 0.0.1
    */
+  @API(since = "0.0.1", status = Status.EXPERIMENTAL)
   public static final class Builder {
 
     private Boolean warningsAsErrors;

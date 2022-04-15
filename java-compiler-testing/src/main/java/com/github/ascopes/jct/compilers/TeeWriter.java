@@ -63,17 +63,26 @@ public class TeeWriter extends Writer {
     buffer = new StringBuffer();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
     writer.write(cbuf, off, len);
     buffer.append(cbuf, off, len);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void flush() throws IOException {
     writer.flush();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void close() throws IOException {
     writer.close();
