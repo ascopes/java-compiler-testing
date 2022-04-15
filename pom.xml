@@ -74,6 +74,7 @@
       We also disable code sharing to prevent some other warnings during test runs.
     -->
     <argLine>-Xshare:off</argLine>
+    <java-release.version>11</java-release.version>
 
     <!-- Project flags -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -201,7 +202,7 @@
 
           <configuration>
             <showDeprecation>true</showDeprecation>
-            <release>11</release>
+            <release>${java-release.version}</release>
           </configuration>
         </plugin>
 
@@ -209,6 +210,18 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>${maven-javadoc-plugin.version}</version>
+
+          <configuration>
+            <additionalOptions>
+              <option>--override-methods=detail</option>
+              <option>-version</option>
+            </additionalOptions>
+            <source>${java-release.version}</source>
+            <links>
+              <link>https://javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}</link>
+              <link>https://javadoc.io/doc/org.assertj/assertj-core/${assertj.version}</link>
+            </links>
+          </configuration>
 
           <executions>
             <execution>

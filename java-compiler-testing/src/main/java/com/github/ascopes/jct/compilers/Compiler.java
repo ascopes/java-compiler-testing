@@ -111,7 +111,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @throws T any exception that may be thrown by the configurer.
    */
   <T extends Exception> C configure(
-      CompilerConfigurer<C, T> configurer
+      Configurer<C, T> configurer
   ) throws T;
 
   /**
@@ -1266,7 +1266,11 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
 
   /**
    * Options for how to handle logging on special internal components.
+   *
+   * @author Ashley Scopes
+   * @since 0.0.1
    */
+  @API(since = "0.0.1", status = Status.EXPERIMENTAL)
   enum LoggingMode {
     /**
      * Enable basic logging.
@@ -1282,5 +1286,28 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
      * Do not log anything.
      */
     DISABLED,
+  }
+
+  /**
+   * Function representing a configuration operation that can be applied to a compiler.
+   *
+   * <p>This can allow encapsulating common configuration logic across tests into a single place.
+   *
+   * @param <C> the compiler type.
+   * @param <T> the exception that may be thrown by the configurer.
+   * @author Ashley Scopes
+   * @since 0.0.1
+   */
+  @API(since = "0.0.1", status = Status.EXPERIMENTAL)
+  @FunctionalInterface
+  interface Configurer<C extends Compiler<C, ?>, T extends Exception> {
+
+    /**
+     * Apply configuration logic to the given compiler.
+     *
+     * @param compiler the compiler.
+     * @throws T any exception that may be thrown by the configurer.
+     */
+    void configure(C compiler) throws T;
   }
 }

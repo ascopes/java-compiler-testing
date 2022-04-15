@@ -177,7 +177,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A, S>, S exten
   }
 
   @Override
-  public final <T extends Exception> A configure(CompilerConfigurer<A, T> configurer) throws T {
+  public final <T extends Exception> A configure(Configurer<A, T> configurer) throws T {
     LOGGER.debug("configure({})", configurer);
     var me = myself();
     configurer.configure(me);

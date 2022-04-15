@@ -41,6 +41,13 @@ public class DiagnosticRepresentation implements Representation {
       "^([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*@[A-Za-z0-9]+$"
   );
 
+  /**
+   * Initialize this diagnostic representation.
+   */
+  public DiagnosticRepresentation() {
+    // Nothing to see here, move along now.
+  }
+
   @Override
   public String toStringOf(Object object) {
     if (object == null) {

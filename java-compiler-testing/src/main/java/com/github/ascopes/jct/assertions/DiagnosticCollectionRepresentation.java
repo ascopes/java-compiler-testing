@@ -34,6 +34,13 @@ import org.assertj.core.presentation.Representation;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class DiagnosticCollectionRepresentation implements Representation {
 
+  /**
+   * Initialize this diagnostic collection representation.
+   */
+  public DiagnosticCollectionRepresentation() {
+    // Nothing to see here, move along now.
+  }
+
   @Override
   public String toStringOf(Object object) {
     if (object == null) {
