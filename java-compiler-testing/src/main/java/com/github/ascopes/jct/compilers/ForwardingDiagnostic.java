@@ -26,6 +26,8 @@ import org.apiguardian.api.API.Status;
  * Partial {@link Diagnostic} implementation that delegates to a provided diagnostic implementation
  * internally.
  *
+ * <p>Used to provide composition to extend behaviour rather than direct inheritance.
+ *
  * @param <S> the source file type.
  * @author Ashley Scopes
  * @since 0.0.1

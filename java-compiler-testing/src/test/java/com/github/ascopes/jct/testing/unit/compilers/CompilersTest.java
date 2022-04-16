@@ -16,24 +16,16 @@
 
 package com.github.ascopes.jct.testing.unit.compilers;
 
-import static com.github.ascopes.jct.compilers.Compilers.ecj;
-import static com.github.ascopes.jct.compilers.Compilers.javac;
-import static com.github.ascopes.jct.testing.helpers.MoreMocks.stub;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Answers.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mockConstructionWithAnswer;
 
 import com.github.ascopes.jct.compilers.Compilers;
 import com.github.ascopes.jct.compilers.ecj.EcjCompiler;
 import com.github.ascopes.jct.compilers.javac.JavacCompiler;
 import com.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
-import java.util.function.Supplier;
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
-import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Answers;
 
 /**
  * Tests for {@link Compilers}.
@@ -51,77 +43,33 @@ class CompilersTest implements StaticClassTestTemplate {
   @DisplayName("javac() returns a default Javac compiler")
   @Test
   void javacReturnsDefaultJavacCompiler() {
-    try (var staticMock = mockStatic(Compilers.class, Answers.CALLS_REAL_METHODS)) {
+    var javacCompilerMock = mockConstructionWithAnswer(JavacCompiler.class, CALLS_REAL_METHODS);
+
+    try (javacCompilerMock) {
       // When
-      var compiler = javac();
+      var compiler = Compilers.javac();
 
       // Then
-      assertThat(compiler).isInstanceOf(JavacCompiler.class);
-      staticMock.verify(() -> javac(givesSameTypeAs(ToolProvider::getSystemJavaCompiler)));
-    }
-  }
-
-  @DisplayName("javac(Supplier<JavaCompiler>) returns the expected Javac compiler")
-  @Test
-  void javacReturnsExpectedJavacCompiler() {
-    try (var compilerMock = mockStatic(JavacCompiler.class, Answers.CALLS_REAL_METHODS)) {
-      // When
-      var jsr199Compiler = stub(JavaCompiler.class);
-      var compiler = javac(() -> jsr199Compiler);
-
-      // Then
-      assertThat(compiler).isInstanceOf(JavacCompiler.class);
-      compilerMock.verify(() -> JavacCompiler.using(givesSameValueAs(jsr199Compiler)));
+      assertThat(javacCompilerMock.constructed())
+          .singleElement()
+          .isSameAs(compiler);
     }
   }
 
   @DisplayName("ecj() returns a default ECJ compiler")
   @Test
   void ecjReturnsDefaultEcjCompiler() {
-    try (var staticMock = mockStatic(Compilers.class, Answers.CALLS_REAL_METHODS)) {
+    var ecjCompilerMock = mockConstructionWithAnswer(EcjCompiler.class, CALLS_REAL_METHODS);
+
+    try (ecjCompilerMock) {
       // When
-      var compiler = ecj();
+      var compiler = Compilers.ecj();
 
       // Then
-      assertThat(compiler).isInstanceOf(EcjCompiler.class);
-      staticMock.verify(() -> ecj(givesSameTypeAs(EclipseCompiler::new)));
+      assertThat(ecjCompilerMock.constructed())
+          .singleElement()
+          .isSameAs(compiler);
     }
   }
 
-  @DisplayName("ecj(Supplier<JavaCompiler>) returns the expected ECJ compiler")
-  @Test
-  void ecjReturnsExpectedEcjCompiler() {
-    try (var compilerMock = mockStatic(EcjCompiler.class, Answers.CALLS_REAL_METHODS)) {
-      // When
-      var jsr199Compiler = stub(JavaCompiler.class);
-      var compiler = ecj(() -> jsr199Compiler);
-
-      // Then
-      assertThat(compiler).isInstanceOf(EcjCompiler.class);
-      compilerMock.verify(() -> EcjCompiler.using(givesSameValueAs(jsr199Compiler)));
-    }
-  }
-
-  private static <T> Supplier<T> givesSameTypeAs(Supplier<T> supplier) {
-    return argThat(actualSupplier -> {
-      assertThat(actualSupplier)
-          .isNotNull()
-          .extracting(Supplier::get)
-          .isNotNull()
-          .extracting(Object::getClass)
-          .isEqualTo(supplier.get().getClass());
-      return true;
-    });
-  }
-
-  private static <T> Supplier<T> givesSameValueAs(T value) {
-    return argThat(actualSupplier -> {
-      assertThat(actualSupplier)
-          .isNotNull()
-          .extracting(Supplier::get)
-          .isNotNull()
-          .isEqualTo(value);
-      return true;
-    });
-  }
 }

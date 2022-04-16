@@ -16,6 +16,10 @@
 
 package com.github.ascopes.jct.testing.helpers;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.parallel.Isolated;
 
 /**
  * Wrapper around a fixed thread pool that can be used in a try-with-resources block.
@@ -110,5 +115,19 @@ public class ThreadPool extends AbstractExecutorService implements AutoCloseable
             .stream()
             .map(CompletableFuture::join)
             .collect(Collectors.toList()));
+  }
+
+  /**
+   * Annotation to tell junit to run these tests in series. This is useful if running tests in
+   * parallel on GitHub actions or a similar CI environment, as use of a large number of threads may
+   * cause thread starvation and fail the tests.
+   *
+   * <p>Anything using a large number of threads in this thread pool should be annotated with this
+   * annotation for safety.
+   */
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.TYPE, ElementType.METHOD})
+  @Isolated("com.github.ascopes.jct.testing.helpers.ThreadPool")
+  public @interface RunTestsInIsolation {
   }
 }
