@@ -16,10 +16,9 @@
 
 package com.github.ascopes.jct.compilers.ecj;
 
-import com.github.ascopes.jct.compilers.SimpleAbstractCompiler;
 import com.github.ascopes.jct.compilers.SimpleCompilation;
+import com.github.ascopes.jct.compilers.SimpleCompiler;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Supplier;
 import javax.tools.JavaCompiler;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -35,7 +34,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class EcjCompiler extends SimpleAbstractCompiler<EcjCompiler> {
+public class EcjCompiler extends SimpleCompiler<EcjCompiler> {
 
   // Annoyingly, ECJ seems to produce the following exception occasionally if run in
   // parallel. To avoid this, we lock the ECJ compiler globally.
@@ -51,8 +50,13 @@ public final class EcjCompiler extends SimpleAbstractCompiler<EcjCompiler> {
   //      ...
   private static final ReentrantLock lock = new ReentrantLock();
 
-  private EcjCompiler(Supplier<JavaCompiler> compilerSupplier) {
-    super(compilerSupplier, EcjFlagBuilder::new);
+  /**
+   * Initialize a new ECJ compiler.
+   *
+   * @param jsr199Compiler the JSR-199 compiler backend to use.
+   */
+  public EcjCompiler(JavaCompiler jsr199Compiler) {
+    super("ecj", jsr199Compiler, new EcjFlagBuilder());
   }
 
   @Override
@@ -63,20 +67,5 @@ public final class EcjCompiler extends SimpleAbstractCompiler<EcjCompiler> {
     } finally {
       lock.unlock();
     }
-  }
-
-  @Override
-  protected String getName() {
-    return "ecj";
-  }
-
-  /**
-   * Initialize this compiler.
-   *
-   * @param compilerSupplier the supplier of new underlying JSR-199 compiler instances to use.
-   * @return the compiler.
-   */
-  public static EcjCompiler using(Supplier<JavaCompiler> compilerSupplier) {
-    return new EcjCompiler(compilerSupplier);
   }
 }

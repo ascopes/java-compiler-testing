@@ -16,8 +16,12 @@
 
 package com.github.ascopes.jct.testing.unit.compilers.javac;
 
+import static com.github.ascopes.jct.testing.helpers.MoreMocks.stub;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.github.ascopes.jct.compilers.javac.JavacCompiler;
-import org.junit.jupiter.api.Disabled;
+import com.github.ascopes.jct.compilers.javac.JavacFlagBuilder;
+import javax.tools.JavaCompiler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,11 +32,28 @@ import org.junit.jupiter.api.Test;
  */
 @DisplayName("JavacCompiler tests")
 class JavacCompilerTest {
-
-  @DisplayName("TODO: implement JavacCompiler tests")
-  @Disabled
+  @DisplayName("compilers have the expected name")
   @Test
-  void toDoImplementMe() {
-    // TODO: implement
+  void compilersHaveTheExpectedName() {
+    assertThat(new JavacCompiler(stub(JavaCompiler.class)).getName())
+        .isEqualTo("javac");
+  }
+
+  @DisplayName("compilers have the expected JSR-199 compiler implementation")
+  @Test
+  void compilersHaveTheExpectedCompilerImplementation() {
+    // Given
+    var jsr199Compiler = stub(JavaCompiler.class);
+
+    // Then
+    assertThat(new JavacCompiler(jsr199Compiler).getJsr199Compiler())
+        .isSameAs(jsr199Compiler);
+  }
+
+  @DisplayName("compilers have the expected flag builder")
+  @Test
+  void compilersHaveTheExpectedFlagBuilder() {
+    assertThat(new JavacCompiler(stub(JavaCompiler.class)).getFlagBuilder())
+        .isInstanceOf(JavacFlagBuilder.class);
   }
 }

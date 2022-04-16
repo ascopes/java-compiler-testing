@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import com.github.ascopes.jct.intern.Lazy;
 import com.github.ascopes.jct.testing.helpers.ConcurrentRuns;
 import com.github.ascopes.jct.testing.helpers.ThreadPool;
+import com.github.ascopes.jct.testing.helpers.ThreadPool.RunTestsInIsolation;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -82,6 +83,7 @@ class LazyTest {
   @DisplayName("access() synchronizes correctly")
   @ConcurrentRuns
   @ParameterizedTest(name = "for {0} concurrent read(s)")
+  @RunTestsInIsolation
   @Timeout(10)
   void accessSynchronizesCorrectly(int concurrency) {
     try (var executor = new ThreadPool(concurrency)) {

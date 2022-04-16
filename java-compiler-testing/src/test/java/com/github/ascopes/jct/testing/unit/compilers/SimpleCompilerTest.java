@@ -16,21 +16,23 @@
 
 package com.github.ascopes.jct.testing.unit.compilers;
 
+import static com.github.ascopes.jct.testing.helpers.MoreMocks.stubCast;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.ascopes.jct.compilers.AbstractCompiler;
 import com.github.ascopes.jct.compilers.Compiler;
 import com.github.ascopes.jct.compilers.SimpleCompilation;
+import com.github.ascopes.jct.compilers.SimpleCompiler;
+import com.github.ascopes.jct.testing.helpers.TypeRef;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * {@link AbstractCompiler} tests.
+ * {@link SimpleCompiler} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("AbstractCompiler tests")
-class AbstractCompilerTest {
+@DisplayName("SimpleCompiler tests")
+class SimpleCompilerTest {
 
   @DisplayName("Default annotation processors are empty")
   @Test
@@ -153,8 +155,11 @@ class AbstractCompilerTest {
   }
 
   // Extend to allow field access to protected members.
-  static class StubbedCompiler extends
-      AbstractCompiler<StubbedCompiler, SimpleCompilation> {
+  static class StubbedCompiler extends SimpleCompiler<StubbedCompiler> {
+
+    protected StubbedCompiler() {
+      super("stubbed", stubCast(new TypeRef<>() {}), stubCast(new TypeRef<>() {}));
+    }
 
     @Override
     public SimpleCompilation compile() {
@@ -162,7 +167,7 @@ class AbstractCompilerTest {
     }
 
     @Override
-    protected String getName() {
+    public String getName() {
       return getClass().getName() + "#" + Integer.toHexString(System.identityHashCode(this));
     }
   }
