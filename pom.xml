@@ -222,16 +222,6 @@
               <link>https://javadoc.io/doc/org.assertj/assertj-core/${assertj.version}</link>
             </links>
           </configuration>
-
-          <executions>
-            <execution>
-              <id>default-javadoc</id>
-              <phase>package</phase>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
 
         <plugin>
