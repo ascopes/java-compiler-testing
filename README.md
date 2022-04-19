@@ -1,4 +1,5 @@
-[![Build](https://github.com/ascopes/java-compiler-testing/actions/workflows/commit.yaml/badge.svg?branch=main&event=push)](https://github.com/ascopes/java-compiler-testing/actions/workflows/commit.yaml)
+[![Build](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml/badge.svg?branch=main&event=push)](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yaml)
+[![Code Coverage](https://codecov.io/gh/ascopes/java-compiler-testing/branch/main/graph/badge.svg?token=VT74BP2742)](https://codecov.io/gh/ascopes/java-compiler-testing)
 
 # java-compiler-testing
 Facility for running compilation tests and annotation processing tests

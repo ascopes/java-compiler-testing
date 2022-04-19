@@ -1,0 +1,8 @@
+codecov:
+  max_report_age: 12
+  require_ci_to_pass: true
+coverage:
+  precision: 2
+  # TODO: enable this once coverage exists.
+  #range: "90...100"
+  round: down
