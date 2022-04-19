@@ -1,0 +1,171 @@
+name: Build
+on:
+  pull_request:
+    branches: [ main ]
+    types: [ opened, synchronize ]
+  push:
+    branches: [ main ]
+  schedule:
+    # Run a build once per week on the main branch.
+    - cron: "0 0 * * 0"
+
+jobs:
+  codeql:
+    name: Run CodeQL Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: java
+
+      # This can be replaced with a manual build if this begins to fail for any reason.
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v1
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
+
+  test:
+    name: Build and test (Java ${{ matrix.java-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java-version: [ 11, 12, 13, 14, 15, 16, 17, 18 ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Initialize Java ${{ matrix.java-version }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '${{ matrix.java-version }}'
+
+      - name: Build with Java ${{ matrix.java-version }}
+        run: |-
+          concurrency=$(($(nproc) * 10))
+          ./mvnw -B -U -T${concurrency}C clean package \
+              --no-transfer-progress \
+              -Dcheckstyle.skip=true \
+              -Dstyle.color=always \
+              -Dmaven.artifact.threads=${concurrency}
+
+      - name: Mark test and coverage reports as being for this Java version
+        run: ".github/scripts/prepare-test-outputs-for-merge.sh ${{ matrix.java-version }}"
+
+      - name: Archive Surefire reports
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: tests-java-${{ matrix.java-version }}
+          path: "**/target/surefire-reports/TEST-*.xml"
+          retention-days: 5
+
+      - name: Archive Jacoco reports
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: coverage-java-${{ matrix.java-version }}
+          path: "**/target/site/jacoco/jacoco-*.xml"
+          retention-days: 5
+
+  report-test-results:
+    name: Report results
+    needs: [ test ]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          # Seems we need this set to 2 for codecov to work correctly.
+          fetch-depth: 2
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: 'artifacts/'
+
+      - name: Publish unit test results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        continue-on-error: true
+        with:
+          files: "artifacts/**/TEST-*.xml"
+
+      - name: Publish code coverage
+        continue-on-error: true
+        if: always()
+        run: >-
+          bash <(curl -s https://codecov.io/bash)
+
+  checkstyle:
+    name: Run Checkstyle
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Initialize Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Run Checkstyle
+        run: |-
+          concurrency=$(($(nproc) * 10))
+          ./mvnw -B -U -T${concurrency}C clean package \
+              --no-transfer-progress \
+              -DskipTests=true \
+              -Dcheckstyle.skip=true \
+              -Dstyle.color=always \
+              -Dmaven.artifact.threads=${concurrency}
+
+  javadoc:
+    name: Generate JavaDocs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Initialize Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          # We have to use 17 for now, as assertj causes JDK 14 and older to prevent linking
+          # documentation correctly. I have opened an issue on GitHub with AssertJ to discuss
+          # this being generated correctly: https://github.com/assertj/assertj-core/issues/2573.
+          java-version: '17'
+
+      - name: Generate JavaDoc documentation
+        run: |-
+          concurrency=$(($(nproc) * 10))
+          ./mvnw -B -U -T${concurrency}C clean compile javadoc:jar \
+              --no-transfer-progress \
+              -Dmaven.test.skip=true \
+              -Dcheckstyle.skip=true \
+              -Dstyle.color=always \
+              -Dmaven.artifact.threads=${concurrency}
+
+      - name: Archive JavaDoc artifacts
+        uses: actions/upload-artifact@v2
+        continue-on-error: true
+        if: success()
+        with:
+          name: javadocs
+          path: "**/target/apidocs/com.github.ascopes.jct"
+          retention-days: 5
