@@ -1,3 +1,5 @@
+[![Build](https://github.com/ascopes/java-compiler-testing/actions/workflows/commit.yaml/badge.svg?branch=main&event=push)](https://github.com/ascopes/java-compiler-testing/actions/workflows/commit.yaml)
+
 # java-compiler-testing
 Facility for running compilation tests and annotation processing tests
 for `javac` and `ecj`.
