@@ -647,7 +647,16 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
         compilationUnits
     );
 
-    task.setProcessors(annotationProcessors);
+    if (!annotationProcessors.isEmpty()) {
+      // TODO(ascopes): would we ever want to set an empty list for this, to bypass discovery?
+      task.setProcessors(annotationProcessors);
+    } else {
+      // TODO(ascopes): would we ever want to explicitly disable this behaviour?
+      fileRepository
+          .getOrCreate(StandardLocation.ANNOTATION_PROCESSOR_PATH)
+          .addPaths(fileRepository.getExpected(StandardLocation.CLASS_PATH).getRoots());
+    }
+
     task.setLocale(locale);
 
     if (LOGGER.isInfoEnabled()) {

@@ -48,7 +48,7 @@ public final class DiagnosticListAssert
   private DiagnosticListAssert(
       List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
   ) {
-    super(diagnostics, DiagnosticListAssert.class, DiagnosticAssert::assertThat);
+    super(diagnostics, DiagnosticListAssert.class, DiagnosticAssert::assertThatDiagnostic);
   }
 
   /**
@@ -57,7 +57,7 @@ public final class DiagnosticListAssert
    * @param diagnostics the list of diagnostics to assert on.
    * @return the assertions.
    */
-  public static DiagnosticListAssert assertThat(
+  public static DiagnosticListAssert assertThatDiagnostics(
       List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
   ) {
     return new DiagnosticListAssert(diagnostics)

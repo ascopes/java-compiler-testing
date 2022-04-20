@@ -15,6 +15,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>example-lombok</module>
     <module>example-serviceloader</module>
     <module>example-serviceloader-with-jpms</module>
   </modules>
@@ -31,6 +32,8 @@
         <groupId>${project.groupId}</groupId>
         <artifactId>java-compiler-testing</artifactId>
         <version>${project.version}</version>
+        <scope>test</scope>
+        <type>jar</type>
       </dependency>
     </dependencies>
   </dependencyManagement>

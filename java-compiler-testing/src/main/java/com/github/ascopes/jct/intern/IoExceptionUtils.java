@@ -45,7 +45,7 @@ public final class IoExceptionUtils {
     try {
       runnable.run();
     } catch (IOException ex) {
-      rethrow(ex);
+      rethrowAsUncheckedIo(ex);
     }
   }
 
@@ -62,13 +62,26 @@ public final class IoExceptionUtils {
     try {
       return supplier.get();
     } catch (IOException ex) {
-      return rethrow(ex);
+      return rethrowAsUncheckedIo(ex);
     }
   }
 
-  private static <T> T rethrow(IOException ex) {
-    var newEx = new UncheckedIOException(ex.getMessage(), ex);
-    newEx.setStackTrace(ex.getStackTrace());
+  /**
+   * Throw a given {@link IOException} within an {@link UncheckedIOException}.
+   *
+   * <p>The stacktrace of the given exception will be used if one is present.
+   *
+   * @param ex the exception to throw.
+   * @param <T> the dummy return value to pretend to have.
+   * @return nothing, this is just used to fool the type-checker.
+   * @throws UncheckedIOException wrapping {@code ex}, in all cases.
+   */
+  public static <T> T rethrowAsUncheckedIo(IOException ex) {
+    var newEx = new UncheckedIOException(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+    var existingStack = ex.getStackTrace();
+    if (existingStack != null) {
+      newEx.setStackTrace(existingStack);
+    }
     throw newEx;
   }
 

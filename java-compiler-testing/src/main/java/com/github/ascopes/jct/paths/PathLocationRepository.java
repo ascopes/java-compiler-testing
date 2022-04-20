@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedMap;
@@ -46,7 +47,6 @@ import org.slf4j.LoggerFactory;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class PathLocationRepository implements AutoCloseable {
-
   private static final Logger LOGGER = LoggerFactory.getLogger(PathLocationRepository.class);
 
   private static final Comparator<Location> LOCATION_COMPARATOR = Comparator
@@ -109,9 +109,29 @@ public class PathLocationRepository implements AutoCloseable {
           .flatMap(manager -> manager.getModuleLocationManager(moduleName));
     }
 
-    LOGGER.trace("Getting manager for {}", location);
+    LOGGER.trace("Attempting to get location manager for location {}", location.getName());
+    var manager = managers.get(location);
+    LOGGER.trace(
+        "Location manager for location {} was {}",
+        location.getName(),
+        manager == null ? "not present" : "present"
+    );
 
-    return Optional.ofNullable(managers.get(location));
+    return Optional.ofNullable(manager);
+  }
+
+  /**
+   * Get the manager for a location, if it exists, or throw an exception if it doesn't.
+   *
+   * @param location the location to look up.
+   * @return the location manager.
+   * @throws NoSuchElementException if the manager is not found.
+   */
+  public PathLocationManager getExpected(Location location) {
+    return get(location)
+        .orElseThrow(() -> new NoSuchElementException(
+            "No location manager for location " + location.getName() + " was found"
+        ));
   }
 
   /**
@@ -139,29 +159,6 @@ public class PathLocationRepository implements AutoCloseable {
 
     return managers
         .computeIfAbsent(location, unused -> createParentPathLocationManager(location));
-  }
-
-  /**
-   * Get a map of all locations in this repository mapped to their respective paths in the order
-   * those paths are considered.
-   *
-   * @return the map of locations to lists of paths.
-   */
-  public SortedMap<Location, List<? extends Path>> getAllPaths() {
-    return managers
-        .entrySet()
-        .stream()
-        .collect(Collectors.toMap(
-            Entry::getKey,
-            entry -> entry.getValue().getPaths(),
-            (a, b) -> {
-              if (Objects.equals(a, b)) {
-                throw new IllegalStateException("Unexpected duplicate entries a=" + a + ", b=" + b);
-              }
-              return a;
-            },
-            () -> new TreeMap<>(LOCATION_COMPARATOR)
-        ));
   }
 
   @Override

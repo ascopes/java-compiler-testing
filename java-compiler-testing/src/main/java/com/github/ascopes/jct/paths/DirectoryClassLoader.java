@@ -16,21 +16,15 @@
 
 package com.github.ascopes.jct.paths;
 
-import com.github.ascopes.jct.intern.AsyncResourceCloser;
 import com.github.ascopes.jct.intern.EnumerationAdapter;
 import com.github.ascopes.jct.intern.StringUtils;
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.lang.ref.Cleaner;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import org.apiguardian.api.API;
@@ -38,84 +32,47 @@ import org.apiguardian.api.API.Status;
 
 
 /**
- * A classloader for multiple {@link Path} types, similar to {@link java.net.URLClassLoader}.
- *
- * <p>This can be applied to any combination of directory trees, JARs, WARs, and ZIP files to
- * allow resources and classes to be loaded from any of them.
+ * A classloader for multiple {@link Path} types, similar to {@link java.net.URLClassLoader}, but
+ * that can only apply to one or more directory trees.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class PathClassLoader extends ClassLoader {
+public class DirectoryClassLoader extends ClassLoader {
 
   static {
     registerAsParallelCapable();
   }
 
-  private static final Cleaner CLEANER = Cleaner.create();
-
-  private final Collection<Path> paths;
+  private final Collection<Path> dirs;
 
   /**
    * Initialize the classloader, using the system classloader as a parent.
    *
-   * @param candidatePaths the candidate paths to use.
+   * @param dirs the paths of directories to use.
    */
-  public PathClassLoader(Iterable<? extends Path> candidatePaths) {
-    this(candidatePaths, ClassLoader.getSystemClassLoader());
-  }
-
-  /**
-   * Initialize the classloader.
-   *
-   * @param candidatePaths the candidate paths to use.
-   * @param parent         the parent classloader to use.
-   */
-  public PathClassLoader(Iterable<? extends Path> candidatePaths, ClassLoader parent) {
-    Objects.requireNonNull(candidatePaths);
-    Objects.requireNonNull(parent);
+  public DirectoryClassLoader(Iterable<? extends Path> dirs) {
+    Objects.requireNonNull(dirs);
 
     // Retain insertion order.
-    paths = new LinkedHashSet<>();
-
-    // When we get garbage collected, make sure to also close any file system resources we opened.
-    var fileSystems = new HashMap<String, FileSystem>();
-
-    //noinspection ThisEscapedInObjectConstruction
-    CLEANER.register(this, new AsyncResourceCloser(fileSystems));
-
-    for (var path : candidatePaths) {
-      if (isJavaArchive(path)) {
-        // If we have an archive type, treat it like a file system (Java's file system API will
-        // implicitly open it for us).
-        try {
-          var zipFs = FileSystems.newFileSystem(path, (ClassLoader) null);
-          var rootDir = zipFs.getRootDirectories().iterator().next();
-          fileSystems.put(path.toUri().toString(), zipFs);
-          paths.add(rootDir);
-        } catch (IOException ex) {
-          throw new UncheckedIOException("Failed to open zip archive " + path, ex);
-        }
-      } else {
-        paths.add(path);
-      }
-    }
+    this.dirs = new LinkedHashSet<>();
+    dirs.forEach(this.dirs::add);
   }
 
   @Override
   public String toString() {
-    return "PathClassLoader{"
-        + "paths=" + StringUtils.quotedIterable(paths)
+    return "DirectoryClassLoader{"
+        + "dirs=" + StringUtils.quotedIterable(dirs)
         + "}";
   }
 
   @Override
   protected Class<?> findClass(String name) throws ClassNotFoundException {
-    var path = Path.of(name.replace('.', '/') + ".class");
+    var pathName = name.replace('.', '/') + ".class";
 
-    for (var root : paths) {
-      var fullPath = root.resolve(path);
+    for (var root : dirs) {
+      var fullPath = root.resolve(pathName);
       if (Files.isRegularFile(fullPath)) {
         try {
           var classData = Files.readAllBytes(fullPath);
@@ -137,7 +94,7 @@ public class PathClassLoader extends ClassLoader {
    */
   @Override
   protected URL findResource(String name) {
-    return paths
+    return dirs
         .stream()
         .map(root -> root.resolve(name))
         .filter(Files::isRegularFile)
@@ -155,7 +112,7 @@ public class PathClassLoader extends ClassLoader {
   @Override
   protected Enumeration<URL> findResources(String name) throws IOException {
     try {
-      var iterator = paths
+      var iterator = dirs
           .stream()
           .map(root -> root.resolve(name))
           .filter(Files::isRegularFile)
@@ -179,14 +136,6 @@ public class PathClassLoader extends ClassLoader {
       return path.toUri().toURL();
     } catch (MalformedURLException ex) {
       throw new IllegalArgumentException("Cannot convert path to URL", ex);
-    }
-  }
-
-  private boolean isJavaArchive(Path path) {
-    try {
-      return "application/java-archive".equals(Files.probeContentType(path));
-    } catch (IOException ex) {
-      return false;
     }
   }
 }

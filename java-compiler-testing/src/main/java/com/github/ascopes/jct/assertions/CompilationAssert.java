@@ -122,7 +122,7 @@ public class CompilationAssert<C extends Compilation>
    * @return the assertions to perform across the diagnostics.
    */
   public DiagnosticListAssert diagnostics() {
-    return DiagnosticListAssert.assertThat(actual.getDiagnostics());
+    return DiagnosticListAssert.assertThatDiagnostics(actual.getDiagnostics());
   }
 
   /**
@@ -140,7 +140,7 @@ public class CompilationAssert<C extends Compilation>
         .filter(predicate)
         .collect(Collectors.collectingAndThen(
             Collectors.toList(),
-            DiagnosticListAssert::assertThat
+            DiagnosticListAssert::assertThatDiagnostics
         ));
   }
 
@@ -210,7 +210,7 @@ public class CompilationAssert<C extends Compilation>
         .get(location)
         .orElse(null);
 
-    return PathLocationManagerAssert.assertThat(locationManager);
+    return PathLocationManagerAssert.assertThatLocation(locationManager);
   }
 
   /**
@@ -226,7 +226,7 @@ public class CompilationAssert<C extends Compilation>
         .get(new ModuleLocation(location, moduleName))
         .orElse(null);
 
-    return PathLocationManagerAssert.assertThat(locationManager);
+    return PathLocationManagerAssert.assertThatLocation(locationManager);
   }
 
   /**
@@ -293,7 +293,7 @@ public class CompilationAssert<C extends Compilation>
    * @param <C>         the compilation type.
    * @return the compilation assertions to use.
    */
-  public static <C extends Compilation> CompilationAssert<C> assertThat(C compilation) {
+  public static <C extends Compilation> CompilationAssert<C> assertThatCompilation(C compilation) {
     return new CompilationAssert<>(compilation);
   }
 }

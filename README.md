@@ -50,9 +50,9 @@ class HelloWorldTest {
         .compile();
 
     // Then
-    assertThat(compilation).isSuccessfulWithoutWarnings();
-    assertThat(compilation).diagnostics().isEmpty();
-    assertThat(compilation).classOutput()
+    assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+    assertThatCompilation(compilation).diagnostics().isEmpty();
+    assertThatCompilation(compilation).classOutput()
         .file("org/me/test/examples/HelloWorld.class")
         .exists()
         .isNotEmptyFile();

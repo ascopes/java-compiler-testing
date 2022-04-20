@@ -19,6 +19,7 @@ package com.github.ascopes.jct.intern;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,8 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper methods that define special JVM locations that are specific to how the current JVM was
- * invoked, or what platform it is built on.
+ * Helper methods that expose special JVM locations.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 public final class SpecialLocations {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SpecialLocations.class);
+  private static final String SEPARATOR =
+      System.getProperty("path.separator", File.pathSeparator);
 
   private SpecialLocations() {
     throw new UnsupportedOperationException("static-only class");
@@ -115,9 +117,14 @@ public final class SpecialLocations {
   }
 
   private static List<Path> createPaths(String raw) {
-    return new StringSlicer(System.getProperty("path.separator", File.pathSeparator))
+    return new StringSlicer(SEPARATOR)
         .splitToStream(raw)
         .map(Path::of)
+        // We have to check this, annoyingly, because some tools like Maven (Surefire) will report
+        // paths that don't actually exist to the class path, and Java will just ignore this
+        // normally. It will cause random failures during builds, however, if directories such as
+        // src/main/java do not exist.
+        .filter(Files::exists)
         .collect(Collectors.toList());
   }
 }
