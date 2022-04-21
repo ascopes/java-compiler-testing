@@ -145,7 +145,7 @@ public class OptionalPathAssert extends AbstractAssert<OptionalPathAssert, Path>
    * @param resolvedPath the resolved path, or {@code null} if not found.
    * @return the assertions.
    */
-  public static OptionalPathAssert assertThat(
+  public static OptionalPathAssert assertThatPath(
       PathLocationManager manager,
       String providedPath,
       Path resolvedPath

@@ -16,7 +16,7 @@
 
 package com.github.ascopes.jct.testing.integration.basic;
 
-import static com.github.ascopes.jct.assertions.CompilationAssert.assertThat;
+import static com.github.ascopes.jct.assertions.CompilationAssert.assertThatCompilation;
 import static com.github.ascopes.jct.testing.helpers.Skipping.skipBecauseEcjFailsToSupportModulesCorrectly;
 
 import com.github.ascopes.jct.compilers.Compiler.LoggingMode;
@@ -67,15 +67,15 @@ class BasicMultiModuleCompilationTest {
         .withReleaseVersion(version)
         .compile();
 
-    assertThat(compilation).isSuccessfulWithoutWarnings();
+    assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
 
-    assertThat(compilation)
+    assertThatCompilation(compilation)
         .classOutput()
         .file("hello.world/com/example/HelloWorld.class")
         .exists()
         .isNotEmptyFile();
 
-    assertThat(compilation)
+    assertThatCompilation(compilation)
         .classOutput()
         .file("hello.world/module-info.class")
         .exists()
@@ -116,15 +116,15 @@ class BasicMultiModuleCompilationTest {
         .withFileManagerLogging(LoggingMode.ENABLED)
         .compile();
 
-    assertThat(compilation).isSuccessfulWithoutWarnings();
+    assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
 
-    assertThat(compilation)
+    assertThatCompilation(compilation)
         .classOutput()
         .file("hello.world/com/example/HelloWorld.class")
         .exists()
         .isNotEmptyFile();
 
-    assertThat(compilation)
+    assertThatCompilation(compilation)
         .classOutput()
         .file("hello.world/module-info.class")
         .exists()
@@ -177,27 +177,27 @@ class BasicMultiModuleCompilationTest {
         .withReleaseVersion(version)
         .compile();
 
-    assertThat(compilation).isSuccessfulWithoutWarnings();
+    assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
 
-    assertThat(compilation)
+    assertThatCompilation(compilation)
         .classOutput()
         .file("hello.world/com/example/HelloWorld.class")
         .exists()
         .isNotEmptyFile();
 
-    assertThat(compilation)
+    assertThatCompilation(compilation)
         .classOutput()
         .file("hello.world/module-info.class")
         .exists()
         .isNotEmptyFile();
 
-    assertThat(compilation)
+    assertThatCompilation(compilation)
         .classOutput()
         .file("greeter/com/example/greeter/Greeter.class")
         .exists()
         .isNotEmptyFile();
 
-    assertThat(compilation)
+    assertThatCompilation(compilation)
         .classOutput()
         .file("greeter/module-info.class")
         .exists()
@@ -252,27 +252,27 @@ class BasicMultiModuleCompilationTest {
         .withReleaseVersion(version)
         .compile();
 
-    assertThat(compilation).isSuccessfulWithoutWarnings();
+    assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
 
-    assertThat(compilation)
+    assertThatCompilation(compilation)
         .classOutput()
         .file("hello.world/com/example/HelloWorld.class")
         .exists()
         .isNotEmptyFile();
 
-    assertThat(compilation)
+    assertThatCompilation(compilation)
         .classOutput()
         .file("hello.world/module-info.class")
         .exists()
         .isNotEmptyFile();
 
-    assertThat(compilation)
+    assertThatCompilation(compilation)
         .classOutput()
         .file("greeter/com/example/greeter/Greeter.class")
         .exists()
         .isNotEmptyFile();
 
-    assertThat(compilation)
+    assertThatCompilation(compilation)
         .classOutput()
         .file("greeter/module-info.class")
         .exists()

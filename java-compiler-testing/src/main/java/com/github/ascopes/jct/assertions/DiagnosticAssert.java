@@ -186,7 +186,7 @@ public final class DiagnosticAssert
    * @param diagnostic the diagnostic to assert on.
    * @return the assertions.
    */
-  public static DiagnosticAssert assertThat(
+  public static DiagnosticAssert assertThatDiagnostic(
       TraceDiagnostic<? extends JavaFileObject> diagnostic
   ) {
     return new DiagnosticAssert(diagnostic)

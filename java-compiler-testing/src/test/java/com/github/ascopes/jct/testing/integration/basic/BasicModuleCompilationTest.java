@@ -16,7 +16,7 @@
 
 package com.github.ascopes.jct.testing.integration.basic;
 
-import static com.github.ascopes.jct.assertions.CompilationAssert.assertThat;
+import static com.github.ascopes.jct.assertions.CompilationAssert.assertThatCompilation;
 import static com.github.ascopes.jct.testing.helpers.Skipping.skipBecauseEcjFailsToSupportModulesCorrectly;
 
 import com.github.ascopes.jct.compilers.Compilers;
@@ -67,7 +67,7 @@ class BasicModuleCompilationTest {
         .withReleaseVersion(version)
         .compile();
 
-    assertThat(compilation).isSuccessfulWithoutWarnings();
+    assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
   }
 
   @DisplayName("I can compile a 'Hello, World!' module program with ecj")
@@ -102,7 +102,7 @@ class BasicModuleCompilationTest {
         .withReleaseVersion(version)
         .compile();
 
-    assertThat(compilation).isSuccessfulWithoutWarnings();
+    assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
   }
 
   static IntStream javacVersions() {

@@ -16,7 +16,7 @@
 
 package com.github.ascopes.jct.examples.serviceloaderjpms.testing;
 
-import static com.github.ascopes.jct.assertions.CompilationAssert.assertThat;
+import static com.github.ascopes.jct.assertions.CompilationAssert.assertThatCompilation;
 
 import com.github.ascopes.jct.compilers.Compilers;
 import com.github.ascopes.jct.examples.serviceloaderjpms.ServiceProcessor;
@@ -61,7 +61,7 @@ class ServiceProcessorTest {
         .withReleaseVersion(11)
         .compile();
 
-    assertThat(compilation)
+    assertThatCompilation(compilation)
         .isSuccessfulWithoutWarnings()
         .classOutput()
         .file("META-INF/services/com.example.InsultProvider")

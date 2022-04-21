@@ -57,7 +57,7 @@ public final class PathLocationManagerAssert
         .findFile(path)
         .orElse(null);
 
-    return OptionalPathAssert.assertThat(actual, path, actualFile);
+    return OptionalPathAssert.assertThatPath(actual, path, actualFile);
   }
 
   /**
@@ -66,7 +66,9 @@ public final class PathLocationManagerAssert
    * @param pathLocationManager the manager of paths to assert on for a specific location.
    * @return the assertions.
    */
-  public static PathLocationManagerAssert assertThat(PathLocationManager pathLocationManager) {
+  public static PathLocationManagerAssert assertThatLocation(
+      PathLocationManager pathLocationManager
+  ) {
     return new PathLocationManagerAssert(pathLocationManager);
   }
 }
