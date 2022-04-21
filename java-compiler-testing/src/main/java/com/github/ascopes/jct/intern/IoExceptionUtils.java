@@ -71,7 +71,7 @@ public final class IoExceptionUtils {
    *
    * <p>The stacktrace of the given exception will be used if one is present.
    *
-   * @param ex the exception to throw.
+   * @param ex  the exception to throw.
    * @param <T> the dummy return value to pretend to have.
    * @return nothing, this is just used to fool the type-checker.
    * @throws UncheckedIOException wrapping {@code ex}, in all cases.

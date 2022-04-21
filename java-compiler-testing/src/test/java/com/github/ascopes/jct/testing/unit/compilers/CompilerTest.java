@@ -615,7 +615,7 @@ class CompilerTest {
     // Given
     given(compiler.addClassOutputRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>() {});
 
     // When
     var result = compiler.addClassOutputRamPaths(ramPaths);
@@ -652,7 +652,7 @@ class CompilerTest {
     // Given
     given(compiler.addSourceOutputRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>() {});
 
     // When
     var result = compiler.addSourceOutputRamPaths(ramPaths);
@@ -689,7 +689,7 @@ class CompilerTest {
     // Given
     given(compiler.addClassRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>() {});
 
     // When
     var result = compiler.addClassRamPaths(ramPaths);
@@ -726,7 +726,7 @@ class CompilerTest {
     // Given
     given(compiler.addSourceRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>() {});
 
     // When
     var result = compiler.addSourceRamPaths(ramPaths);
@@ -764,7 +764,7 @@ class CompilerTest {
     // Given
     given(compiler.addAnnotationProcessorRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>() {});
 
     // When
     var result = compiler.addAnnotationProcessorRamPaths(ramPaths);
@@ -805,7 +805,7 @@ class CompilerTest {
     // Given
     given(compiler.addAnnotationProcessorModuleRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>() {});
 
     // When
     var result = compiler.addAnnotationProcessorModuleRamPaths(ramPaths);
@@ -848,7 +848,7 @@ class CompilerTest {
     // Given
     given(compiler.addPlatformClassRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>() {});
 
     // When
     var result = compiler.addPlatformClassRamPaths(ramPaths);
@@ -888,7 +888,7 @@ class CompilerTest {
     // Given
     given(compiler.addNativeHeaderOutputRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>() {});
 
     // When
     var result = compiler.addNativeHeaderOutputRamPaths(ramPaths);
@@ -928,7 +928,7 @@ class CompilerTest {
     // Given
     given(compiler.addModuleSourceRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>() {});
 
     // When
     var result = compiler.addModuleSourceRamPaths(ramPaths);
@@ -970,7 +970,7 @@ class CompilerTest {
     // Given
     given(compiler.addUpgradeModuleRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>() {});
 
     // When
     var result = compiler.addUpgradeModuleRamPaths(ramPaths);
@@ -1012,7 +1012,7 @@ class CompilerTest {
     // Given
     given(compiler.addSystemModuleRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>() {});
 
     // When
     var result = compiler.addSystemModuleRamPaths(ramPaths);
@@ -1053,7 +1053,7 @@ class CompilerTest {
     // Given
     given(compiler.addModuleRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>() {});
 
     // When
     var result = compiler.addModuleRamPaths(ramPaths);
@@ -1094,7 +1094,7 @@ class CompilerTest {
     // Given
     given(compiler.addPatchModuleRamPaths(any())).willCallRealMethod();
     given(compiler.addRamPaths(any(), any())).will(ctx -> compiler);
-    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>(){});
+    var ramPaths = stubCast(new TypeRef<Collection<RamPath>>() {});
 
     // When
     var result = compiler.addPatchModuleRamPaths(ramPaths);

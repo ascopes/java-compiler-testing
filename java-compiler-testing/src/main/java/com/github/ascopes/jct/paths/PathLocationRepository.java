@@ -16,18 +16,12 @@
 
 package com.github.ascopes.jct.paths;
 
-import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
@@ -47,6 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class PathLocationRepository implements AutoCloseable {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(PathLocationRepository.class);
 
   private static final Comparator<Location> LOCATION_COMPARATOR = Comparator

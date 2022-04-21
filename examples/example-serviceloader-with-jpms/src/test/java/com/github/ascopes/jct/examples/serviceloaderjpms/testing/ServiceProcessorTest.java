@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 @DisplayName("ServiceProcessor tests (JPMS)")
 class ServiceProcessorTest {
+
   @DisplayName("Expected files get created when the processor is run")
   @Test
   void expectedFilesGetCreated() {

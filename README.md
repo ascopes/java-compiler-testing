@@ -2,6 +2,7 @@
 [![Code Coverage](https://codecov.io/gh/ascopes/java-compiler-testing/branch/main/graph/badge.svg?token=VT74BP2742)](https://codecov.io/gh/ascopes/java-compiler-testing)
 
 # java-compiler-testing
+
 Facility for running compilation tests and annotation processing tests
 for `javac` and `ecj`.
 

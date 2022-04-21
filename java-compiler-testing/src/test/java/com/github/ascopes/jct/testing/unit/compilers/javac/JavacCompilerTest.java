@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
  */
 @DisplayName("JavacCompiler tests")
 class JavacCompilerTest {
+
   @DisplayName("compilers have the expected name")
   @Test
   void compilersHaveTheExpectedName() {

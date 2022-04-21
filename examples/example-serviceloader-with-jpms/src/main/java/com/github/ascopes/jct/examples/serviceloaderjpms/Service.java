@@ -23,8 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation that marks a class to be injected as part of
- * a service loader.
+ * Annotation that marks a class to be injected as part of a service loader.
  *
  * @author Ashley Scopes
  */
