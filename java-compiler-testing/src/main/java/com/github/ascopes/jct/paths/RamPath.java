@@ -26,7 +26,6 @@ import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,11 +35,14 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Locale;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -57,11 +59,14 @@ import org.slf4j.LoggerFactory;
  * <p>This provides a utility for constructing complex and dynamic directory tree structures
  * quickly and simply using fluent chained methods.
  *
+ * <p>These file systems are integrated into the {@link java.nio.file.FileSystem} API, and can
+ * be configured to automatically destroy themselves once this RamPath handle is garbage collected.
+ *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class RamPath implements Closeable {
+public class RamPath {
 
   private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
@@ -70,19 +75,39 @@ public class RamPath implements Closeable {
 
   private final URI uri;
   private final Path path;
-  private final String identifier;
+  private final String name;
 
   /**
-   * Initialize this forwarding path.
+   * Initialize this in-memory path.
    *
-   * @param path the path to delegate to.
+   * @param name                     the name of the file system to create.
+   * @param closeOnGarbageCollection {@code true} to delegate
    */
-  private RamPath(String identifier, Path path) {
-    requireNonNull(path);
+  @SuppressWarnings("ThisEscapedInObjectConstruction")
+  private RamPath(String name, boolean closeOnGarbageCollection) {
+    this.name = requireNonNull(name);
 
+    var config = Configuration
+        .builder(PathType.unix())
+        .setSupportedFeatures(Feature.LINKS, Feature.SYMBOLIC_LINKS, Feature.FILE_CHANNEL)
+        .setAttributeViews("basic", "posix")
+        .setRoots("/")
+        .setWorkingDirectory("/")
+        .setPathEqualityUsesCanonicalForm(true)
+        .build();
+
+    var fileSystem = Jimfs.newFileSystem(config);
+    path = fileSystem.getRootDirectories().iterator().next().resolve(name);
     uri = path.toUri();
-    this.path = path;
-    this.identifier = requireNonNull(identifier);
+
+    // Ensure the base directory exists.
+    uncheckedIo(() -> Files.createDirectories(path));
+
+    if (closeOnGarbageCollection) {
+      CLEANER.register(this, new AsyncResourceCloser(name, fileSystem));
+    }
+
+    LOGGER.trace("Initialized new in-memory directory {}", path);
   }
 
   /**
@@ -90,8 +115,8 @@ public class RamPath implements Closeable {
    *
    * @return the identifier string.
    */
-  public String getIdentifier() {
-    return identifier;
+  public String getName() {
+    return name;
   }
 
   /**
@@ -108,7 +133,6 @@ public class RamPath implements Closeable {
    *
    * @throws UncheckedIOException if an IO error occurs.
    */
-  @Override
   public void close() {
     uncheckedIo(path.getFileSystem()::close);
   }
@@ -420,6 +444,56 @@ public class RamPath implements Closeable {
   }
 
   /**
+   * Copy the contents of the given file tree to the given target path.
+   *
+   * @param tree       the tree to copy.
+   * @param targetPath the target path to copy everything into.
+   * @return this object for further call chaining.
+   * @throws UncheckedIOException if an IO error occurs.
+   */
+  public RamPath copyTreeFrom(Path tree, Path targetPath) {
+    return uncheckedIo(() -> {
+      var relativeTargetPath = makeRelativeToHere(targetPath);
+      Files.walkFileTree(tree, new SimpleFileVisitor<>() {
+        @Override
+        public FileVisitResult preVisitDirectory(
+            Path dir,
+            BasicFileAttributes attrs
+        ) throws IOException {
+          var targetChildDirectory = relativeTargetPath.resolve(tree.relativize(dir).toString());
+          // Ignore if the directory already exists (will occur for the root).
+          Files.createDirectories(targetChildDirectory);
+          return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFile(
+            Path file,
+            BasicFileAttributes attrs
+        ) throws IOException {
+          var targetFile = relativeTargetPath.resolve(tree.relativize(file).toString());
+          Files.copy(file, targetFile);
+          return FileVisitResult.CONTINUE;
+        }
+      });
+
+      return this;
+    });
+  }
+
+  /**
+   * Copy the contents of the given file tree to the given target path.
+   *
+   * @param tree       the tree to copy.
+   * @param targetPath the target path to copy everything into.
+   * @return this object for further call chaining.
+   * @throws UncheckedIOException if an IO error occurs.
+   */
+  public RamPath copyTreeFrom(Path tree, String targetPath) {
+    return copyTreeFrom(tree, Path.of(targetPath));
+  }
+
+  /**
    * Copy the entire tree to a temporary directory on the default file system so that it can be
    * inspected manually in a file explorer.
    *
@@ -431,7 +505,7 @@ public class RamPath implements Closeable {
   public Path copyToTempDir() {
     var tempPath = uncheckedIo(() -> Files.copy(
         path,
-        Files.createTempDirectory(identifier),
+        Files.createTempDirectory(name),
         StandardCopyOption.REPLACE_EXISTING,
         StandardCopyOption.COPY_ATTRIBUTES
     ));
@@ -489,29 +563,7 @@ public class RamPath implements Closeable {
    * @see #createPath(String, boolean)
    */
   public static RamPath createPath(String name, boolean closeOnGarbageCollection) {
-
-    var config = Configuration
-        .builder(PathType.unix())
-        .setSupportedFeatures(Feature.LINKS, Feature.SYMBOLIC_LINKS, Feature.FILE_CHANNEL)
-        .setAttributeViews("basic", "posix")
-        .setRoots("/")
-        .setWorkingDirectory("/")
-        .setPathEqualityUsesCanonicalForm(true)
-        .build();
-
-    var fileSystem = Jimfs.newFileSystem(config);
-    var rootPath = fileSystem.getRootDirectories().iterator().next().resolve(name);
-
-    var inMemoryPath = new RamPath(name, rootPath);
-    var path = inMemoryPath.path.toString();
-
-    if (closeOnGarbageCollection) {
-      CLEANER.register(inMemoryPath, new AsyncResourceCloser(path, fileSystem));
-    }
-
-    LOGGER.debug("Created new in-memory directory {}", path);
-
-    return inMemoryPath;
+    return new RamPath(name, closeOnGarbageCollection);
   }
 
   private static InputStream maybeBuffer(InputStream input, String scheme) {

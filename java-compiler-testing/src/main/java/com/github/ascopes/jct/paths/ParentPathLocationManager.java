@@ -90,7 +90,7 @@ public class ParentPathLocationManager extends PathLocationManager {
   public Optional<ModuleLocation> getModuleLocationFor(FileObject fileObject) {
     var path = Path.of(fileObject.toUri());
 
-    return roots
+    return getRoots()
         .stream()
         .filter(path::startsWith)
         .map(root -> root.relativize(path))
@@ -157,6 +157,7 @@ public class ParentPathLocationManager extends PathLocationManager {
 
   @Override
   public String toString() {
+    var location = getLocation();
     return getClass().getSimpleName() + "{"
         + "location=" + StringUtils.quoted(location.getName()) + ", "
         + "modules=" + StringUtils.quotedIterable(modules.keySet())
@@ -193,10 +194,11 @@ public class ParentPathLocationManager extends PathLocationManager {
   private PathLocationManager buildLocationManagerForModule(
       String moduleName
   ) {
+    var location = getLocation();
     var moduleLocation = new ModuleLocation(location, moduleName);
     var moduleManager = new PathLocationManager(moduleLocation);
 
-    var paths = getPaths();
+    var paths = getRoots();
 
     // For nested modules, if we are an output location, then add a directory in the parent
     // location manager for the module. This allows implicitly creating output sources as
@@ -221,7 +223,7 @@ public class ParentPathLocationManager extends PathLocationManager {
       }
     }
 
-    roots
+    getRoots()
         .stream()
         .map(root -> root.resolve(moduleName))
         .peek(root -> LOGGER.trace("Adding {} to {}", root, moduleManager))
@@ -231,7 +233,7 @@ public class ParentPathLocationManager extends PathLocationManager {
   }
 
   private boolean isPathCapableOfHoldingModules(Path path) {
-    // TODO(ascopes): do we want to consider output locations as modules?
+    var location = getLocation();
     return (location.isModuleOrientedLocation() || location.isOutputLocation())
         && Files.isDirectory(path);
   }

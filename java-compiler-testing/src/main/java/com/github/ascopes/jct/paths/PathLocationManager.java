@@ -16,25 +16,37 @@
 
 package com.github.ascopes.jct.paths;
 
+import static com.github.ascopes.jct.intern.IoExceptionUtils.rethrowAsUncheckedIo;
+import static com.github.ascopes.jct.intern.IoExceptionUtils.uncheckedIo;
+
+import com.github.ascopes.jct.intern.AsyncResourceCloser;
 import com.github.ascopes.jct.intern.Lazy;
 import com.github.ascopes.jct.intern.StringSlicer;
 import com.github.ascopes.jct.intern.StringUtils;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
+import java.lang.ref.Cleaner;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
@@ -57,22 +69,35 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class PathLocationManager implements Iterable<Path> {
 
+  private static final Cleaner CLEANER = Cleaner.create();
   private static final Logger LOGGER = LoggerFactory.getLogger(PathLocationManager.class);
   private static final StringSlicer PACKAGE_SPLITTER = new StringSlicer(".");
 
-  final Location location;
-  final Set<Path> roots;
+  private static final Set<String> JAR_ARCHIVE_TYPES = Set.of(
+      "application/java-archive",
+      "application/x-jar",
+      "application/x-java-archive"
+  );
+
+  private final Location location;
+  private final Set<Path> roots;
   private final Lazy<ClassLoader> classLoader;
 
-  // We use this to keep the references alive while the manager is alive.
+  // We use this to keep the references alive while the manager is alive, but we persist these
+  // outside this context.
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
   private final Set<RamPath> inMemoryDirectories;
+
+  // We open JARs as additional file systems as needed, and discard them when this manager gets
+  // discarded.
+  private final Map<String, FileSystem> jarFileSystems;
 
   /**
    * Initialize the manager.
    *
    * @param location the location to represent.
    */
+  @SuppressWarnings("ThisEscapedInObjectConstruction")
   public PathLocationManager(Location location) {
     LOGGER.trace("Initializing PathLocationManager for location {}", location);
 
@@ -81,6 +106,8 @@ public class PathLocationManager implements Iterable<Path> {
     classLoader = new Lazy<>(this::createClassLoaderUnsafe);
 
     inMemoryDirectories = new HashSet<>();
+    jarFileSystems = new HashMap<>();
+    CLEANER.register(this, new AsyncResourceCloser(jarFileSystems));
   }
 
   /**
@@ -153,6 +180,7 @@ public class PathLocationManager implements Iterable<Path> {
         location
     );
     registerPath(path.getPath());
+
     // Keep the reference alive.
     inMemoryDirectories.add(path);
     destroyClassLoader();
@@ -187,7 +215,9 @@ public class PathLocationManager implements Iterable<Path> {
    * @return {@code true} if present, {@code false} otherwise.
    */
   public boolean contains(FileObject fileObject) {
-    var path = Path.of(fileObject.toUri());
+    // TODO(ascopes): can we get non-path file objects here?
+
+    var path = ((PathJavaFileObject) fileObject).getPath();
 
     // While we could just return `Files.isRegularFile` from the start,
     // we need to make sure the path is one of the roots in the location.
@@ -331,7 +361,7 @@ public class PathLocationManager implements Iterable<Path> {
    * @return the list of the paths that were loaded at the time the method was called, in the order
    *     they are considered.
    */
-  public List<? extends Path> getPaths() {
+  public List<? extends Path> getRoots() {
     return List.copyOf(roots);
   }
 
@@ -374,10 +404,14 @@ public class PathLocationManager implements Iterable<Path> {
    * @return the binary name of the object, or an empty optional if unknown.
    */
   public Optional<String> inferBinaryName(JavaFileObject fileObject) {
-    var path = Path.of(fileObject.toUri());
+    // For some reason, converting a zip entry to a URI gives us a scheme of `jar://file://`, but
+    // we cannot then parse the URI back to a path without removing the `file://` bit first. Since
+    // we assume we always have instances of PathJavaFileObject here, let's just cast to that and
+    // get the correct path immediately.
+    var path = ((PathJavaFileObject) fileObject).getPath();
 
     for (var root : roots) {
-      var resolvedPath = root.resolve(path);
+      var resolvedPath = root.resolve(path.toString());
       if (path.startsWith(root) && Files.isRegularFile(resolvedPath)) {
         var relativePath = root.relativize(resolvedPath);
         return Optional.of(pathToObjectName(relativePath, fileObject.getKind().extension));
@@ -418,15 +452,15 @@ public class PathLocationManager implements Iterable<Path> {
     for (var root : roots) {
       var path = root.resolve(relativePath);
 
-      if (!Files.isDirectory(path)) {
-        // Path doesn't exist, move along.
+      if (!Files.exists(path)) {
         continue;
       }
 
       try (var stream = Files.walk(path, maxDepth)) {
         stream
             .filter(hasAnyKind(kinds).and(Files::isRegularFile))
-            .map(nextFile -> javaFileObjectFromPath(nextFile, root.relativize(nextFile).toString()))
+            .map(nextFile -> javaFileObjectFromPath(nextFile,
+                root.relativize(nextFile).toString()))
             .peek(fileObject -> LOGGER.trace(
                 "Found file object {} in root {} for list on package={}, kinds={}, recurse={}",
                 fileObject,
@@ -444,10 +478,36 @@ public class PathLocationManager implements Iterable<Path> {
 
   @Override
   public String toString() {
-    return "PackageOrientedPathLocationManager{"
-        + "location=" + StringUtils.quoted(location.getName())
+    return getClass().getSimpleName()
+        + "{location=" + StringUtils.quoted(location.getName())
         + "}";
   }
+
+  /**
+   * Perform {@link Files#walk(Path, FileVisitOption...)} across each root path in this location
+   * manager, and return all results in a single stream.
+   *
+   * @param fileVisitOptions the options for file visiting within each root.
+   * @return the stream of paths.
+   */
+  public Stream<? extends Path> walk(FileVisitOption... fileVisitOptions) {
+    return walk(Integer.MAX_VALUE, fileVisitOptions);
+  }
+
+  /**
+   * Perform {@link Files#walk(Path, int, FileVisitOption...)} across each root path in this
+   * location manager, and return all results in a single stream.
+   *
+   * @param maxDepth         the max depth to recurse in each root.
+   * @param fileVisitOptions the options for file visiting within each root.
+   * @return the stream of paths.
+   */
+  public Stream<? extends Path> walk(int maxDepth, FileVisitOption... fileVisitOptions) {
+    return getRoots()
+        .stream()
+        .flatMap(root -> uncheckedIo(() -> Files.walk(root, maxDepth, fileVisitOptions)));
+  }
+
 
   /**
    * Register the given path to the roots of this manager.
@@ -455,9 +515,42 @@ public class PathLocationManager implements Iterable<Path> {
    * @param path the path to register.
    */
   protected void registerPath(Path path) {
-    path = path.toAbsolutePath();
-    LOGGER.trace("Adding root {} to {}", path, this);
-    roots.add(path);
+    if (!Files.exists(path)) {
+      rethrowAsUncheckedIo(new FileNotFoundException(path.toString()));
+    }
+
+    var absolutePath = path.toAbsolutePath();
+
+    if (Files.isDirectory(absolutePath)) {
+      registerDirectory(absolutePath);
+      return;
+    }
+
+    var mimeType = uncheckedIo(() -> Files.probeContentType(absolutePath));
+
+    if (JAR_ARCHIVE_TYPES.contains(mimeType)) {
+      registerJarArchive(absolutePath);
+      return;
+    }
+
+    throw new UnsupportedOperationException(
+        "Path " + absolutePath + " of type " + mimeType + " is not supported"
+    );
+  }
+
+  private void registerDirectory(Path absolutePath) {
+    LOGGER.trace("Adding root {} to {}", absolutePath, this);
+    roots.add(absolutePath);
+  }
+
+  @SuppressWarnings("resource")
+  private void registerJarArchive(Path absolutePath) {
+    // We don't need to close this right now. It is dealt with during garbage collection for us.
+    jarFileSystems.computeIfAbsent(absolutePath.toString(), key -> {
+      var fs = uncheckedIo(() -> FileSystems.newFileSystem(absolutePath, (ClassLoader) null));
+      roots.add(fs.getRootDirectories().iterator().next());
+      return fs;
+    });
   }
 
   private void destroyClassLoader() {
@@ -465,7 +558,7 @@ public class PathLocationManager implements Iterable<Path> {
   }
 
   private ClassLoader createClassLoaderUnsafe() {
-    return new PathClassLoader(roots);
+    return new DirectoryClassLoader(roots);
   }
 
   private String pathToObjectName(Path path, String extension) {

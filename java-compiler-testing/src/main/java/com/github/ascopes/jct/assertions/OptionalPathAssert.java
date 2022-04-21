@@ -112,7 +112,7 @@ public class OptionalPathAssert extends AbstractAssert<OptionalPathAssert, Path>
 
   private Collection<Path> findSimilarlyNamedPaths() {
     var files = new LinkedHashSet<Path>();
-    for (var root : manager.getPaths()) {
+    for (var root : manager.getRoots()) {
       try {
         Files
             .walk(root)

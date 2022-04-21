@@ -67,7 +67,7 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
     thenCode(() -> IoExceptionUtils.uncheckedIo(() -> {
       throw ex;
     })).isInstanceOf(UncheckedIOException.class)
-        .hasMessage(ex.getMessage())
+        .hasMessage("%s: %s", ex.getClass().getName(), ex.getMessage())
         .hasCause(ex)
         .extracting(Throwable::getStackTrace, array(StackTraceElement[].class))
         .isEqualTo(stackTrace);
@@ -109,7 +109,7 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
         return 12345;
       }
     })).isInstanceOf(UncheckedIOException.class)
-        .hasMessage(ex.getMessage())
+        .hasMessage("%s: %s", ex.getClass().getName(), ex.getMessage())
         .hasCause(ex)
         .extracting(Throwable::getStackTrace, array(StackTraceElement[].class))
         .isEqualTo(stackTrace);
