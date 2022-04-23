@@ -22,7 +22,6 @@ import com.github.ascopes.jct.intern.SpecialLocations;
 import com.github.ascopes.jct.intern.StringUtils;
 import com.github.ascopes.jct.paths.LoggingJavaFileManagerProxy;
 import com.github.ascopes.jct.paths.PathJavaFileManager;
-import com.github.ascopes.jct.paths.PathLocationManager;
 import com.github.ascopes.jct.paths.PathLocationRepository;
 import com.github.ascopes.jct.paths.RamPath;
 import java.io.IOException;
@@ -72,21 +71,21 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   private final List<String> annotationProcessorOptions;
   private final List<String> compilerOptions;
   private final List<String> runtimeOptions;
-  private boolean warnings;
-  private boolean deprecationWarnings;
-  private boolean warningsAsErrors;
+  private boolean showWarnings;
+  private boolean showDeprecationWarnings;
+  private boolean failOnWarnings;
   private Locale locale;
   private boolean verbose;
   private boolean previewFeatures;
-  private String releaseVersion;
-  private String sourceVersion;
-  private String targetVersion;
-  private boolean includeCurrentClassPath;
-  private boolean includeCurrentModulePath;
-  private boolean includeCurrentPlatformClassPath;
+  private String release;
+  private String source;
+  private String target;
+  private boolean inheritClassPath;
+  private boolean inheritModulePath;
+  private boolean inheritPlatformClassPath;
   private boolean inheritSystemModulePath;
   private Logging fileManagerLogging;
-  private Logging diagnosticLogging;
+  private Logging diagnostics;
   private ProcessorDiscovery annotationProcessorDiscovery;
 
   /**
@@ -115,29 +114,31 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
     compilerOptions = new ArrayList<>();
     runtimeOptions = new ArrayList<>();
 
-    warnings = DEFAULT_SHOW_WARNINGS;
-    deprecationWarnings = DEFAULT_SHOW_DEPRECATION_WARNINGS;
-    warningsAsErrors = DEFAULT_FAIL_ON_WARNINGS;
+    showWarnings = DEFAULT_SHOW_WARNINGS;
+    showDeprecationWarnings = DEFAULT_SHOW_DEPRECATION_WARNINGS;
+    failOnWarnings = DEFAULT_FAIL_ON_WARNINGS;
     locale = DEFAULT_LOCALE;
     previewFeatures = DEFAULT_PREVIEW_FEATURES;
-    releaseVersion = null;
-    sourceVersion = null;
-    targetVersion = null;
+    release = null;
+    source = null;
+    target = null;
     verbose = DEFAULT_VERBOSE;
-    includeCurrentClassPath = DEFAULT_INHERIT_CLASS_PATH;
-    includeCurrentModulePath = DEFAULT_INHERIT_MODULE_PATH;
-    includeCurrentPlatformClassPath = DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
+    inheritClassPath = DEFAULT_INHERIT_CLASS_PATH;
+    inheritModulePath = DEFAULT_INHERIT_MODULE_PATH;
+    inheritPlatformClassPath = DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
     inheritSystemModulePath = DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
     fileManagerLogging = DEFAULT_FILE_MANAGER_LOGGING;
-    diagnosticLogging = DEFAULT_DIAGNOSTICS;
+    diagnostics = DEFAULT_DIAGNOSTICS;
     annotationProcessorDiscovery = DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
   }
 
   @Override
-  public final <T extends Exception> A configure(Configurer<A, T> configurer) throws T {
-    LOGGER.debug("configure({})", configurer);
+  public final <T extends Exception> A configure(
+      CompilerConfigurer<A, T> compilerConfigurer
+  ) throws T {
+    LOGGER.debug("configure({})", compilerConfigurer);
     var me = myself();
-    configurer.configure(me);
+    compilerConfigurer.configure(me);
     return me;
   }
 
@@ -198,37 +199,37 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
 
   @Override
   public boolean isShowWarnings() {
-    return warnings;
+    return showWarnings;
   }
 
   @Override
   public A showWarnings(boolean enabled) {
-    LOGGER.trace("warnings {} -> {}", warnings, enabled);
-    warnings = enabled;
+    LOGGER.trace("showWarnings {} -> {}", showWarnings, enabled);
+    showWarnings = enabled;
     return myself();
   }
 
   @Override
   public boolean isShowDeprecationWarnings() {
-    return deprecationWarnings;
+    return showDeprecationWarnings;
   }
 
   @Override
   public A showDeprecationWarnings(boolean enabled) {
-    LOGGER.trace("deprecationWarnings {} -> {}", deprecationWarnings, enabled);
-    deprecationWarnings = enabled;
+    LOGGER.trace("showDeprecationWarnings {} -> {}", showDeprecationWarnings, enabled);
+    showDeprecationWarnings = enabled;
     return myself();
   }
 
   @Override
   public boolean isFailOnWarnings() {
-    return warningsAsErrors;
+    return failOnWarnings;
   }
 
   @Override
   public A failOnWarnings(boolean enabled) {
-    LOGGER.trace("warningsAsErrors {} -> {}", warningsAsErrors, enabled);
-    warningsAsErrors = enabled;
+    LOGGER.trace("failOnWarnings {} -> {}", failOnWarnings, enabled);
+    failOnWarnings = enabled;
     return myself();
   }
 
@@ -290,85 +291,85 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
 
   @Override
   public Optional<String> getRelease() {
-    return Optional.ofNullable(releaseVersion);
+    return Optional.ofNullable(release);
   }
 
   @Override
   public A release(String version) {
-    LOGGER.trace("releaseVersion {} -> {}", releaseVersion, version);
-    LOGGER.trace("sourceVersion {} -> null", sourceVersion);
-    LOGGER.trace("targetVersion {} -> null", targetVersion);
-    releaseVersion = version;
-    sourceVersion = null;
-    targetVersion = null;
+    LOGGER.trace("release {} -> {}", release, version);
+    LOGGER.trace("source {} -> null", source);
+    LOGGER.trace("target {} -> null", target);
+    release = version;
+    source = null;
+    target = null;
     return myself();
   }
 
   @Override
   public Optional<String> getSource() {
-    return Optional.ofNullable(sourceVersion);
+    return Optional.ofNullable(source);
   }
 
   @Override
   public A source(String version) {
-    LOGGER.trace("sourceVersion {} -> {}", targetVersion, version);
-    LOGGER.trace("releaseVersion {} -> null", releaseVersion);
-    releaseVersion = null;
-    sourceVersion = version;
+    LOGGER.trace("source {} -> {}", target, version);
+    LOGGER.trace("release {} -> null", release);
+    release = null;
+    source = version;
     return myself();
   }
 
   @Override
   public Optional<String> getTarget() {
-    return Optional.ofNullable(targetVersion);
+    return Optional.ofNullable(target);
   }
 
   @Override
   public A target(String version) {
-    LOGGER.trace("targetVersion {} -> {}", targetVersion, version);
-    LOGGER.trace("releaseVersion {} -> null", releaseVersion);
-    releaseVersion = null;
-    targetVersion = version;
+    LOGGER.trace("target {} -> {}", target, version);
+    LOGGER.trace("release {} -> null", release);
+    release = null;
+    target = version;
     return myself();
   }
 
   @Override
   public boolean isInheritClassPath() {
-    return includeCurrentClassPath;
+    return inheritClassPath;
   }
 
   @Override
   public A inheritClassPath(boolean enabled) {
-    LOGGER.trace("includeCurrentClassPath {} -> {}", includeCurrentClassPath, enabled);
-    includeCurrentClassPath = enabled;
+    LOGGER.trace("inheritClassPath {} -> {}", inheritClassPath, enabled);
+    inheritClassPath = enabled;
     return myself();
   }
 
   @Override
   public boolean isInheritModulePath() {
-    return includeCurrentModulePath;
+    return inheritModulePath;
   }
 
   @Override
   public A inheritModulePath(boolean enabled) {
-    LOGGER.trace("includeCurrentModulePath {} -> {}", includeCurrentModulePath, enabled);
-    includeCurrentModulePath = enabled;
+    LOGGER.trace("inheritModulePath {} -> {}", inheritModulePath, enabled);
+    inheritModulePath = enabled;
     return myself();
   }
 
   @Override
   public boolean isInheritPlatformClassPath() {
-    return includeCurrentPlatformClassPath;
+    return inheritPlatformClassPath;
   }
 
   @Override
   public A inheritPlatformClassPath(boolean enabled) {
     LOGGER.trace(
-        "includeCurrentPlatformClassPath {} -> {}",
-        includeCurrentPlatformClassPath,
+        "inheritPlatformClassPath {} -> {}",
+        inheritPlatformClassPath,
         enabled
     );
-    includeCurrentPlatformClassPath = enabled;
+    inheritPlatformClassPath = enabled;
     return myself();
   }
 
@@ -431,18 +432,18 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public Logging getDiagnosticLogging() {
-    return diagnosticLogging;
+  public Logging getDiagnostics() {
+    return diagnostics;
   }
 
   @Override
-  public A diagnostics(Logging diagnosticLogging) {
+  public A diagnostics(Logging diagnostics) {
     LOGGER.trace(
-        "diagnosticLogging {} -> {}",
-        this.diagnosticLogging,
-        diagnosticLogging
+        "diagnostics {} -> {}",
+        this.diagnostics,
+        diagnostics
     );
-    this.diagnosticLogging = requireNonNull(diagnosticLogging);
+    this.diagnostics = requireNonNull(diagnostics);
     return myself();
   }
 
@@ -536,7 +537,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
         var outputLines = writer.toString().lines().collect(Collectors.toList());
 
         return SimpleCompilation.builder()
-            .warningsAsErrors(warningsAsErrors)
+            .warningsAsErrors(failOnWarnings)
             .success(result)
             .outputLines(outputLines)
             .compilationUnits(Set.copyOf(compilationUnits))
@@ -557,16 +558,16 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   protected List<String> buildFlags() {
     return flagBuilder
         .annotationProcessorOptions(annotationProcessorOptions)
-        .deprecationWarnings(deprecationWarnings)
-        .warningsAsErrors(warningsAsErrors)
+        .deprecationWarnings(showDeprecationWarnings)
+        .warningsAsErrors(failOnWarnings)
         .options(compilerOptions)
         .previewFeatures(previewFeatures)
-        .releaseVersion(releaseVersion)
+        .releaseVersion(release)
         .runtimeOptions(runtimeOptions)
-        .sourceVersion(sourceVersion)
-        .targetVersion(targetVersion)
+        .sourceVersion(source)
+        .targetVersion(target)
         .verbose(verbose)
-        .warnings(warnings)
+        .warnings(showWarnings)
         .build();
   }
 
@@ -761,7 +762,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
     var classPath = fileRepository
         .getOrCreate(StandardLocation.CLASS_PATH);
 
-    if (includeCurrentClassPath) {
+    if (inheritClassPath) {
       var currentClassPath = SpecialLocations.currentClassPathLocations();
 
       LOGGER.debug("Adding current classpath to compiler: {}", currentClassPath);
@@ -789,7 +790,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   private void registerPlatformClassPath() {
-    if (includeCurrentPlatformClassPath) {
+    if (inheritPlatformClassPath) {
       var currentPlatformClassPath = SpecialLocations.currentPlatformClassPathLocations();
 
       if (!currentPlatformClassPath.isEmpty()) {
@@ -834,16 +835,15 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
         fileRepository
             .get(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH)
             .ifPresentOrElse(
-                procModules -> fileRepository
-                    .get(StandardLocation.MODULE_PATH)
-                    .map(PathLocationManager::getRoots)
-                    .ifPresent(procModules::addPaths),
+                procModules -> procModules.addPaths(
+                    fileRepository
+                        .getExpected(StandardLocation.MODULE_PATH)
+                        .getRoots()),
                 () -> fileRepository
-                    .get(StandardLocation.CLASS_PATH)
-                    .map(PathLocationManager::getRoots)
-                    .ifPresent(classPath -> fileRepository
-                        .getOrCreate(StandardLocation.ANNOTATION_PROCESSOR_PATH)
-                        .addPaths(classPath))
+                    .getOrCreate(StandardLocation.ANNOTATION_PROCESSOR_PATH)
+                    .addPaths(fileRepository
+                        .getExpected(StandardLocation.CLASS_PATH)
+                        .getRoots())
             );
         break;
 

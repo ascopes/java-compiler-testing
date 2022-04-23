@@ -158,7 +158,7 @@ class SimpleCompilerTest {
   @DisplayName("Default diagnostics logging setting is the expected value")
   @Test
   void defaultDiagnosticsLoggingSettingIsExpectedValue() {
-    assertThat(new StubbedCompiler().getDiagnosticLogging())
+    assertThat(new StubbedCompiler().getDiagnostics())
         .isEqualTo(Compiler.DEFAULT_DIAGNOSTICS);
   }
 

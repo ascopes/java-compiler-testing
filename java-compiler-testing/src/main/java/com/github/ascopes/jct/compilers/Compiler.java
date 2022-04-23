@@ -118,12 +118,12 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * Apply a given configurer to this compiler.
    *
    * @param <T>        any exception that may be thrown.
-   * @param configurer the configurer to invoke.
+   * @param compilerConfigurer the configurer to invoke.
    * @return this compiler object for further call chaining.
    * @throws T any exception that may be thrown by the configurer.
    */
   <T extends Exception> C configure(
-      Configurer<C, T> configurer
+      CompilerConfigurer<C, T> compilerConfigurer
   ) throws T;
 
   /**
@@ -1279,7 +1279,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    *
    * @return the current diagnostic logging mode.
    */
-  Logging getDiagnosticLogging();
+  Logging getDiagnostics();
 
   /**
    * Set how to handle diagnostic capture.
@@ -1394,7 +1394,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    */
   @API(since = "0.0.1", status = Status.EXPERIMENTAL)
   @FunctionalInterface
-  interface Configurer<C extends Compiler<C, ?>, T extends Exception> {
+  interface CompilerConfigurer<C extends Compiler<C, ?>, T extends Exception> {
 
     /**
      * Apply configuration logic to the given compiler.
