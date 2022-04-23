@@ -21,43 +21,94 @@ are always welcome!
 
 ## Example
 
-The following is an example of using this library with JUnit Jupiter:
+The following is an example of using this library with JUnit Jupiter to run both javac and ECJ:
 
 ```java
 class HelloWorldTest {
 
-  @Test
-  void i_can_compile_hello_world() {
-    // Given
-    var sources = RamPath
-        .createPath("sources")
-        .createFile(
-            "org/me/test/examples/HelloWorld.java",
-            "package org.me.test.examples.test;",
-            "",
-            "public class HelloWorld {",
-            "  public static void main(String[] args) {",
-            "    System.out.println(\"Hello, World!\");",
-            "  }",
-            "}"
-        );
+    @Test
+    void i_can_compile_hello_world_with_javac() {
+        // Given
+        var sources = RamPath
+                .createPath("sources")
+                .createFile(
+                        "org/me/test/examples/HelloWorld.java",
+                        "package org.me.test.examples;",
+                        "",
+                        "public class HelloWorld {",
+                        "  public static void main(String[] args) {",
+                        "    System.out.println(\"Hello, World!\");",
+                        "  }",
+                        "}"
+                )
+                .createFile(
+                        "module-info.java",
+                        "module org.me.test.examples {",
+                        "  exports org.me.test.examples;",
+                        "}"
+                );
 
-    // When
-    var compilation = Compilers
-        .javac()
-        .addSourceRamPaths(sources)
-        .release(11)
-        .diagnostics(Logging.ENABLED)
-        .compile();
+        // When
+        var compilation = Compilers
+                .javac()
+                .addSourceRamPaths(sources)
+                .release(11)
+                .compile();
 
-    // Then
-    assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
-    assertThatCompilation(compilation).diagnostics().isEmpty();
-    assertThatCompilation(compilation).classOutput()
-        .file("org/me/test/examples/HelloWorld.class")
-        .exists()
-        .isNotEmptyFile();
-  }
+        // Then
+        assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+        assertThatCompilation(compilation).diagnostics().isEmpty();
+        assertThatCompilation(compilation).classOutput()
+                .file("org/me/test/examples/HelloWorld.class")
+                .exists()
+                .isNotEmptyFile();
+        assertThatCompilation(compilation).classOutput()
+                .file("module-info.class")
+                .exists()
+                .isNotEmptyFile();
+    }
+
+    @Test
+    void i_can_compile_hello_world_with_ecj() {
+        // Given
+        var sources = RamPath
+                .createPath("sources")
+                .createFile(
+                        "org/me/test/examples/HelloWorld.java",
+                        "package org.me.test.examples;",
+                        "",
+                        "public class HelloWorld {",
+                        "  public static void main(String[] args) {",
+                        "    System.out.println(\"Hello, World!\");",
+                        "  }",
+                        "}"
+                )
+                .createFile(
+                        "module-info.java",
+                        "module org.me.test.examples {",
+                        "  exports org.me.test.examples;",
+                        "}"
+                );
+
+        // When
+        var compilation = Compilers
+                .ecj()
+                .addSourceRamPaths(sources)
+                .release(11)
+                .compile();
+
+        // Then
+        assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+        assertThatCompilation(compilation).diagnostics().isEmpty();
+        assertThatCompilation(compilation).classOutput()
+                .file("org/me/test/examples/HelloWorld.class")
+                .exists()
+                .isNotEmptyFile();
+        assertThatCompilation(compilation).classOutput()
+                .file("module-info.class")
+                .exists()
+                .isNotEmptyFile();
+    }
 }
 ```
 
