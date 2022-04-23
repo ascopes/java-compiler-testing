@@ -58,7 +58,7 @@ class LombokIntegrationTest {
     var compilation = Compilers
         .javac()
         .addSourceRamPaths(sources)
-        .withReleaseVersion(11)
+        .release(11)
         .compile();
 
     assertThatCompilation(compilation)

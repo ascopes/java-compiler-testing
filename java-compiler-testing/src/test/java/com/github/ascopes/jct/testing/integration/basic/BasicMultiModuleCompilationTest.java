@@ -63,8 +63,8 @@ class BasicMultiModuleCompilationTest {
     var compilation = Compilers
         .javac()
         .addModuleSourceRamPaths(sources)
-        .deprecationWarningsEnabled(true)
-        .withReleaseVersion(version)
+        .showDeprecationWarnings(true)
+        .release(version)
         .compile();
 
     assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
@@ -109,11 +109,11 @@ class BasicMultiModuleCompilationTest {
     var compilation = Compilers
         .ecj()
         .addModuleSourceRamPaths(sources)
-        .deprecationWarningsEnabled(true)
-        .withReleaseVersion(version)
-        .verboseLoggingEnabled(true)
-        .withDiagnosticLogging(Logging.STACKTRACES)
-        .withFileManagerLogging(Logging.ENABLED)
+        .showDeprecationWarnings(true)
+        .release(version)
+        .verbose(true)
+        .diagnostics(Logging.STACKTRACES)
+        .fileManagerLogging(Logging.ENABLED)
         .compile();
 
     assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
@@ -173,8 +173,8 @@ class BasicMultiModuleCompilationTest {
     var compilation = Compilers
         .javac()
         .addModuleSourceRamPaths(sources)
-        .deprecationWarningsEnabled(true)
-        .withReleaseVersion(version)
+        .showDeprecationWarnings(true)
+        .release(version)
         .compile();
 
     assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
@@ -248,8 +248,8 @@ class BasicMultiModuleCompilationTest {
     var compilation = Compilers
         .ecj()
         .addModuleSourceRamPaths(sources)
-        .deprecationWarningsEnabled(true)
-        .withReleaseVersion(version)
+        .showDeprecationWarnings(true)
+        .release(version)
         .compile();
 
     assertThatCompilation(compilation).isSuccessfulWithoutWarnings();

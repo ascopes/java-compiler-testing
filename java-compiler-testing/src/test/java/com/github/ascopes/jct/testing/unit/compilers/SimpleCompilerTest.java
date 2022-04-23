@@ -63,22 +63,22 @@ class SimpleCompilerTest {
   @DisplayName("Default warnings setting is the expected value")
   @Test
   void defaultWarningsSettingIsExpectedValue() {
-    assertThat(new StubbedCompiler().isWarningsEnabled())
-        .isEqualTo(Compiler.DEFAULT_WARNINGS);
+    assertThat(new StubbedCompiler().isShowWarnings())
+        .isEqualTo(Compiler.DEFAULT_SHOW_WARNINGS);
   }
 
   @DisplayName("Default deprecation warnings setting is the expected value")
   @Test
   void defaultDeprecationWarningsSettingIsExpectedValue() {
-    assertThat(new StubbedCompiler().isDeprecationWarningsEnabled())
-        .isEqualTo(Compiler.DEFAULT_DEPRECATION_WARNINGS);
+    assertThat(new StubbedCompiler().isShowDeprecationWarnings())
+        .isEqualTo(Compiler.DEFAULT_SHOW_DEPRECATION_WARNINGS);
   }
 
   @DisplayName("Default warnings-as-errors setting is the expected value")
   @Test
   void defaultWarningsAsErrorsSettingIsExpectedValue() {
-    assertThat(new StubbedCompiler().isTreatingWarningsAsErrors())
-        .isEqualTo(Compiler.DEFAULT_WARNINGS_AS_ERRORS);
+    assertThat(new StubbedCompiler().isFailOnWarnings())
+        .isEqualTo(Compiler.DEFAULT_FAIL_ON_WARNINGS);
   }
 
   @DisplayName("Default locale setting is the expected value")
@@ -91,54 +91,54 @@ class SimpleCompilerTest {
   @DisplayName("Default verbose logging setting is the expected value")
   @Test
   void defaultVerboseLoggingSettingIsExpectedValue() {
-    assertThat(new StubbedCompiler().isVerboseLoggingEnabled())
+    assertThat(new StubbedCompiler().isVerbose())
         .isEqualTo(Compiler.DEFAULT_VERBOSE);
   }
 
   @DisplayName("Default preview features setting is the expected value")
   @Test
   void defaultPreviewFeaturesSettingIsExpectedValue() {
-    assertThat(new StubbedCompiler().isPreviewFeaturesEnabled())
+    assertThat(new StubbedCompiler().isPreviewFeatures())
         .isEqualTo(Compiler.DEFAULT_PREVIEW_FEATURES);
   }
 
   @DisplayName("Default release version is empty")
   @Test
   void defaultReleaseVersionIsEmpty() {
-    assertThat(new StubbedCompiler().getReleaseVersion()).isNotPresent();
+    assertThat(new StubbedCompiler().getRelease()).isNotPresent();
   }
 
   @DisplayName("Default source version is empty")
   @Test
   void defaultSourceVersionIsEmpty() {
-    assertThat(new StubbedCompiler().getSourceVersion()).isNotPresent();
+    assertThat(new StubbedCompiler().getSource()).isNotPresent();
   }
 
   @DisplayName("Default target version is empty")
   @Test
   void defaultTargetVersionIsEmpty() {
-    assertThat(new StubbedCompiler().getTargetVersion()).isNotPresent();
+    assertThat(new StubbedCompiler().getTarget()).isNotPresent();
   }
 
   @DisplayName("Default current classpath inclusion setting is the expected value")
   @Test
   void defaultCurrentClassPathInclusionSettingIsExpectedValue() {
-    assertThat(new StubbedCompiler().isIncludingCurrentClassPath())
-        .isEqualTo(Compiler.DEFAULT_INCLUDE_CURRENT_CLASS_PATH);
+    assertThat(new StubbedCompiler().isInheritClassPath())
+        .isEqualTo(Compiler.DEFAULT_INHERIT_CLASS_PATH);
   }
 
   @DisplayName("Default current module path inclusion setting is the expected value")
   @Test
   void defaultCurrentModulePathInclusionSettingIsExpectedValue() {
-    assertThat(new StubbedCompiler().isIncludingCurrentModulePath())
-        .isEqualTo(Compiler.DEFAULT_INCLUDE_CURRENT_MODULE_PATH);
+    assertThat(new StubbedCompiler().isInheritModulePath())
+        .isEqualTo(Compiler.DEFAULT_INHERIT_MODULE_PATH);
   }
 
   @DisplayName("Default current platform classpath inclusion setting is the expected value")
   @Test
   void defaultCurrentPlatformClassPathInclusionSettingIsExpectedValue() {
-    assertThat(new StubbedCompiler().isIncludingCurrentPlatformClassPath())
-        .isEqualTo(Compiler.DEFAULT_INCLUDE_CURRENT_PLATFORM_CLASS_PATH);
+    assertThat(new StubbedCompiler().isInheritPlatformClassPath())
+        .isEqualTo(Compiler.DEFAULT_INHERIT_PLATFORM_CLASS_PATH);
   }
 
   @DisplayName("Default file manager logging setting is the expected value")
@@ -152,13 +152,13 @@ class SimpleCompilerTest {
   @Test
   void defaultDiagnosticsLoggingSettingIsExpectedValue() {
     assertThat(new StubbedCompiler().getDiagnosticLogging())
-        .isEqualTo(Compiler.DEFAULT_DIAGNOSTIC_LOGGING);
+        .isEqualTo(Compiler.DEFAULT_DIAGNOSTICS);
   }
 
   @DisplayName("Default enable annotation processor discovery setting is the expected value")
   @Test
   void defaultEnableAnnotationProcessorDiscoveryIsExpectedValue() {
-    assertThat(new StubbedCompiler().getEnableAnnotationProcessorDiscovery())
+    assertThat(new StubbedCompiler().getAnnotationProcessorDiscovery())
         .isEqualTo(ProcessorDiscovery.INCLUDE_DEPENDENCIES);
   }
 

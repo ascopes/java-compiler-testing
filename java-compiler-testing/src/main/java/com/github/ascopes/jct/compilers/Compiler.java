@@ -50,7 +50,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   /**
    * Default setting for deprecation warnings ({@code true}).
    */
-  boolean DEFAULT_DEPRECATION_WARNINGS = true;
+  boolean DEFAULT_SHOW_DEPRECATION_WARNINGS = true;
 
   /**
    * Default setting for locale ({@link Locale#ROOT}).
@@ -70,27 +70,27 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   /**
    * Default setting for displaying warnings ({@code true}).
    */
-  boolean DEFAULT_WARNINGS = true;
+  boolean DEFAULT_SHOW_WARNINGS = true;
 
   /**
    * Default setting for displaying warnings as errors ({@code false}).
    */
-  boolean DEFAULT_WARNINGS_AS_ERRORS = false;
+  boolean DEFAULT_FAIL_ON_WARNINGS = false;
 
   /**
    * Default setting for inclusion of the current class path ({@code true}).
    */
-  boolean DEFAULT_INCLUDE_CURRENT_CLASS_PATH = true;
+  boolean DEFAULT_INHERIT_CLASS_PATH = true;
 
   /**
    * Default setting for inclusion of the current module path ({@code true}).
    */
-  boolean DEFAULT_INCLUDE_CURRENT_MODULE_PATH = true;
+  boolean DEFAULT_INHERIT_MODULE_PATH = true;
 
   /**
    * Default setting for inclusion of the current platform class path ({@code true}).
    */
-  boolean DEFAULT_INCLUDE_CURRENT_PLATFORM_CLASS_PATH = true;
+  boolean DEFAULT_INHERIT_PLATFORM_CLASS_PATH = true;
 
   /**
    * Default setting for logging file manager operations ({@link Logging#DISABLED}).
@@ -100,7 +100,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   /**
    * Default setting for logging diagnostics ({@link Logging#ENABLED}).
    */
-  Logging DEFAULT_DIAGNOSTIC_LOGGING = Logging.ENABLED;
+  Logging DEFAULT_DIAGNOSTICS = Logging.ENABLED;
 
   /**
    * Default setting for how to apply annotation processor discovery when no processors are
@@ -728,124 +728,6 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   }
 
   /**
-   * Determine whether verbose logging is enabled or not.
-   *
-   * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_VERBOSE}.
-   *
-   * <p>Note that enabling this is compiler-specific behaviour. There is no guarantee that the
-   * output target or the format or verbosity of output will be consistent between different
-   * compiler implementations.
-   *
-   * @return whether verbose logging is enabled or not.
-   */
-  boolean isVerboseLoggingEnabled();
-
-  /**
-   * Set whether to use verbose output or not.
-   *
-   * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_VERBOSE}.
-   *
-   * <p>Note that enabling this is compiler-specific behaviour. There is no guarantee that the
-   * output target or the format or verbosity of output will be consistent between different
-   * compiler implementations.
-   *
-   * @param enabled {@code true} for verbose output, {@code false} for normal output.
-   * @return this compiler for further call chaining.
-   */
-  C verboseLoggingEnabled(boolean enabled);
-
-  /**
-   * Determine whether preview features are enabled or not.
-   *
-   * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_PREVIEW_FEATURES}.
-   *
-   * @return whether preview features are enabled or not.
-   */
-  boolean isPreviewFeaturesEnabled();
-
-  /**
-   * Set whether to enable preview features or not.
-   *
-   * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_PREVIEW_FEATURES}.
-   *
-   * @param enabled {@code true} to enable preview features, or {@code false} to disable them.
-   * @return this compiler object for further call chaining.
-   */
-  C previewFeaturesEnabled(boolean enabled);
-
-  /**
-   * Determine whether warnings are enabled or not.
-   *
-   * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_WARNINGS}.
-   *
-   * @return whether warnings are enabled or not.
-   */
-  boolean isWarningsEnabled();
-
-  /**
-   * Set whether to enable displaying warnings or not.
-   *
-   * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_WARNINGS}.
-   *
-   * @param enabled {@code true} to enable warnings. {@code false} to disable them.
-   * @return this compiler object for further call chaining.
-   */
-  C warningsEnabled(boolean enabled);
-
-  /**
-   * Determine whether deprecation warnings are enabled or not.
-   *
-   * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_DEPRECATION_WARNINGS}.
-   *
-   * @return whether deprecation warnings are enabled or not.
-   */
-  boolean isDeprecationWarningsEnabled();
-
-  /**
-   * Set whether to enable deprecation warnings or not.
-   *
-   * <p>This is ignored if {@link #warningsEnabled(boolean)} is disabled.
-   *
-   * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_DEPRECATION_WARNINGS}.
-   *
-   * @param enabled {@code true} to enable deprecation warnings. {@code false} to disable them.
-   * @return this compiler object for further call chaining.
-   */
-  C deprecationWarningsEnabled(boolean enabled);
-
-  /**
-   * Determine whether warnings are being treated as errors or not.
-   *
-   * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_WARNINGS_AS_ERRORS}.
-   *
-   * @return whether warnings are being treated as errors or not.
-   */
-  boolean isTreatingWarningsAsErrors();
-
-  /**
-   * Set whether to enable treating warnings as errors or not.
-   *
-   * <p>This is ignored if {@link #warningsEnabled(boolean)} is disabled.
-   *
-   * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_WARNINGS_AS_ERRORS}.
-   *
-   * @param enabled {@code true} to enable treating warnings as errors. {@code false} to disable
-   *                them.
-   * @return this compiler object for further call chaining.
-   */
-  C treatWarningsAsErrors(boolean enabled);
-
-  /**
    * Get an <strong>immutable snapshot view</strong> of the current annotation processor options
    * that are set.
    *
@@ -960,6 +842,124 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   }
 
   /**
+   * Determine whether verbose logging is enabled or not.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_VERBOSE}.
+   *
+   * <p>Note that enabling this is compiler-specific behaviour. There is no guarantee that the
+   * output target or the format or verbosity of output will be consistent between different
+   * compiler implementations.
+   *
+   * @return whether verbose logging is enabled or not.
+   */
+  boolean isVerbose();
+
+  /**
+   * Set whether to use verbose output or not.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_VERBOSE}.
+   *
+   * <p>Note that enabling this is compiler-specific behaviour. There is no guarantee that the
+   * output target or the format or verbosity of output will be consistent between different
+   * compiler implementations.
+   *
+   * @param enabled {@code true} for verbose output, {@code false} for normal output.
+   * @return this compiler for further call chaining.
+   */
+  C verbose(boolean enabled);
+
+  /**
+   * Determine whether preview features are enabled or not.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_PREVIEW_FEATURES}.
+   *
+   * @return whether preview features are enabled or not.
+   */
+  boolean isPreviewFeatures();
+
+  /**
+   * Set whether to enable preview features or not.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_PREVIEW_FEATURES}.
+   *
+   * @param enabled {@code true} to enable preview features, or {@code false} to disable them.
+   * @return this compiler object for further call chaining.
+   */
+  C previewFeatures(boolean enabled);
+
+  /**
+   * Determine whether warnings are enabled or not.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_SHOW_WARNINGS}.
+   *
+   * @return whether warnings are enabled or not.
+   */
+  boolean isShowWarnings();
+
+  /**
+   * Set whether to enable displaying warnings or not.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_SHOW_WARNINGS}.
+   *
+   * @param enabled {@code true} to enable warnings. {@code false} to disable them.
+   * @return this compiler object for further call chaining.
+   */
+  C showWarnings(boolean enabled);
+
+  /**
+   * Determine whether deprecation warnings are enabled or not.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_SHOW_DEPRECATION_WARNINGS}.
+   *
+   * @return whether deprecation warnings are enabled or not.
+   */
+  boolean isShowDeprecationWarnings();
+
+  /**
+   * Set whether to enable deprecation warnings or not.
+   *
+   * <p>This is ignored if {@link #showWarnings(boolean)} is disabled.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_SHOW_DEPRECATION_WARNINGS}.
+   *
+   * @param enabled {@code true} to enable deprecation warnings. {@code false} to disable them.
+   * @return this compiler object for further call chaining.
+   */
+  C showDeprecationWarnings(boolean enabled);
+
+  /**
+   * Determine whether warnings are being treated as errors or not.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_FAIL_ON_WARNINGS}.
+   *
+   * @return whether warnings are being treated as errors or not.
+   */
+  boolean isFailOnWarnings();
+
+  /**
+   * Set whether to enable treating warnings as errors or not.
+   *
+   * <p>This is ignored if {@link #showWarnings(boolean)} is disabled.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_FAIL_ON_WARNINGS}.
+   *
+   * @param enabled {@code true} to enable treating warnings as errors. {@code false} to disable
+   *                them.
+   * @return this compiler object for further call chaining.
+   */
+  C failOnWarnings(boolean enabled);
+
+  /**
    * Get the current release version that is set, or an empty optional if left to the compiler
    * default.
    *
@@ -968,7 +968,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    *
    * @return the release version string.
    */
-  Optional<String> getReleaseVersion();
+  Optional<String> getRelease();
 
   /**
    * Set the release version.
@@ -981,7 +981,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @param version the version to set.
    * @return this compiler object for further call chaining.
    */
-  C withReleaseVersion(String version);
+  C release(String version);
 
   /**
    * Set the release version.
@@ -994,12 +994,12 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @param version the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C withReleaseVersion(int version) {
+  default C release(int version) {
     if (version < 0) {
       throw new IllegalArgumentException("Cannot provide a release version less than 0");
     }
 
-    return withReleaseVersion(Integer.toString(version));
+    return release(Integer.toString(version));
   }
 
   /**
@@ -1013,8 +1013,8 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @param version the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C withReleaseVersion(SourceVersion version) {
-    return withReleaseVersion(Integer.toString(version.ordinal()));
+  default C release(SourceVersion version) {
+    return release(Integer.toString(version.ordinal()));
   }
 
   /**
@@ -1026,7 +1026,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    *
    * @return the source version string.
    */
-  Optional<String> getSourceVersion();
+  Optional<String> getSource();
 
   /**
    * Set the source version.
@@ -1039,7 +1039,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @param version the version to set.
    * @return this compiler object for further call chaining.
    */
-  C withSourceVersion(String version);
+  C source(String version);
 
   /**
    * Set the source version.
@@ -1052,12 +1052,12 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @param version the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C withSourceVersion(int version) {
+  default C source(int version) {
     if (version < 0) {
       throw new IllegalArgumentException("Cannot provide a source version less than 0");
     }
 
-    return withSourceVersion(Integer.toString(version));
+    return source(Integer.toString(version));
   }
 
   /**
@@ -1071,8 +1071,8 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @param version the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C withSourceVersion(SourceVersion version) {
-    return withSourceVersion(Integer.toString(version.ordinal()));
+  default C source(SourceVersion version) {
+    return source(Integer.toString(version.ordinal()));
   }
 
   /**
@@ -1084,7 +1084,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    *
    * @return the target version string.
    */
-  Optional<String> getTargetVersion();
+  Optional<String> getTarget();
 
   /**
    * Set the target version.
@@ -1097,7 +1097,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @param version the version to set.
    * @return this compiler object for further call chaining.
    */
-  C withTargetVersion(String version);
+  C target(String version);
 
   /**
    * Set the target version.
@@ -1110,12 +1110,12 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @param version the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C withTargetVersion(int version) {
+  default C target(int version) {
     if (version < 0) {
       throw new IllegalArgumentException("Cannot provide a target version less than 0");
     }
 
-    return withTargetVersion(Integer.toString(version));
+    return target(Integer.toString(version));
   }
 
   /**
@@ -1129,73 +1129,81 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @param version the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C withTargetVersion(SourceVersion version) {
-    return withTargetVersion(Integer.toString(version.ordinal()));
+  default C target(SourceVersion version) {
+    return target(Integer.toString(version.ordinal()));
   }
 
 
   /**
-   * Get whether the current classpath is being included or not.
+   * Get whether the class path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_INCLUDE_CURRENT_CLASS_PATH}.
+   * {@link #DEFAULT_INHERIT_CLASS_PATH}.
    *
-   * @return whether the current classpath is being included or not.
+   * @return whether the current class path is being inherited or not.
    */
-  boolean isIncludingCurrentClassPath();
+  boolean isInheritClassPath();
 
   /**
-   * Set whether to include the classpath of the current JVM in the compilation or not.
+   * Set whether the class path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_INCLUDE_CURRENT_CLASS_PATH}.
+   * {@link #DEFAULT_INHERIT_CLASS_PATH}.
    *
    * @param enabled {@code true} to include it, or {@code false} to exclude it.
-   * @return this compiler object.
+    * @return this compiler object for further call chaining.
    */
-  C includeCurrentClassPath(boolean enabled);
+  C inheritClassPath(boolean enabled);
 
   /**
-   * Get whether the current module path is being included or not.
+   * Get whether the module path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_INCLUDE_CURRENT_MODULE_PATH}.
+   * {@link #DEFAULT_INHERIT_MODULE_PATH}.
    *
    * @return whether the current module path is being included or not.
    */
-  boolean isIncludingCurrentModulePath();
+  boolean isInheritModulePath();
 
   /**
-   * Set whether to include the module path of the current JVM in the compilation or not.
+   * Set whether the module path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_INCLUDE_CURRENT_MODULE_PATH}.
+   * {@link #DEFAULT_INHERIT_MODULE_PATH}.
    *
    * @param enabled {@code true} to include it, or {@code false} to exclude it.
-   * @return this compiler object.
+    * @return this compiler object for further call chaining.
    */
   C includeCurrentModulePath(boolean enabled);
 
   /**
-   * Get whether the current platform classpath is being included or not.
+   * Get whether the current platform class path is being inherited from the caller JVM or not.
+   * 
+   * <p>This may also be known as the "bootstrap class path".
+   * 
+   * <p>Default environments probably will not provide this functionality, in which case it will be
+   * ignored.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_INCLUDE_CURRENT_PLATFORM_CLASS_PATH}.
+   * {@link #DEFAULT_INHERIT_PLATFORM_CLASS_PATH}.
    *
    * @return whether the current platform classpath is being included or not.
    */
-  boolean isIncludingCurrentPlatformClassPath();
+  boolean isInheritPlatformClassPath();
 
   /**
-   * Set whether to include the platform classpath of the current JVM in the compilation or not.
+   * Set whether the current platform class path is being inherited from the caller JVM or not.
    *
-   * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_INCLUDE_CURRENT_PLATFORM_CLASS_PATH}.
+   * <p>This may also be known as the "bootstrap class path".
+   *
+   * <p>Default environments probably will not provide this functionality, in which case it will be
+   * ignored.
+   *
    *
    * @param enabled {@code true} to include it, or {@code false} to exclude it.
-   * @return this compiler object.
+    * @return this compiler object for further call chaining.
    */
-  C includeCurrentPlatformClassPath(boolean enabled);
+  C inheritPlatformClassPath(boolean enabled);
 
   /**
    * Get the output locale.
@@ -1216,7 +1224,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @param locale the locale to use.
    * @return this compiler for further call chaining.
    */
-  C withLocale(Locale locale);
+  C locale(Locale locale);
 
   /**
    * Get the current file manager logging mode.
@@ -1237,13 +1245,13 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @param fileManagerLogging the mode to use for file manager logging.
    * @return this compiler for further call chaining.
    */
-  C withFileManagerLogging(Logging fileManagerLogging);
+  C fileManagerLogging(Logging fileManagerLogging);
 
   /**
    * Get the current diagnostic logging mode.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_DIAGNOSTIC_LOGGING}.
+   * {@link #DEFAULT_DIAGNOSTICS}.
    *
    * @return the current diagnostic logging mode.
    */
@@ -1253,12 +1261,12 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * Set how to handle diagnostic capture.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_DIAGNOSTIC_LOGGING}.
+   * {@link #DEFAULT_DIAGNOSTICS}.
    *
    * @param diagnosticLogging the mode to use for diagnostic capture.
    * @return this compiler for further call chaining.
    */
-  C withDiagnosticLogging(Logging diagnosticLogging);
+  C diagnostics(Logging diagnosticLogging);
 
   /**
    * Get how to perform annotation processor discovery.
@@ -1273,7 +1281,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    *
    * @return the processor discovery mode to use.
    */
-  ProcessorDiscovery getEnableAnnotationProcessorDiscovery();
+  ProcessorDiscovery getAnnotationProcessorDiscovery();
 
   /**
    * Set how to perform annotation processor discovery.

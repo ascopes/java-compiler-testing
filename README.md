@@ -29,7 +29,7 @@ class HelloWorldTest {
   @Test
   void i_can_compile_hello_world() {
     // Given
-    var sources = InMemoryPath
+    var sources = RamPath
         .createPath("sources")
         .createFile(
             "org/me/test/examples/HelloWorld.java",
@@ -46,8 +46,8 @@ class HelloWorldTest {
     var compilation = Compilers
         .javac()
         .addSourceRamPaths(sources)
-        .withReleaseVersion(11)
-        .withDiagnosticLogging(LoggingMode.ENABLED)
+        .release(11)
+        .diagnostics(Logging.ENABLED)
         .compile();
 
     // Then
@@ -63,10 +63,14 @@ class HelloWorldTest {
 
 ## Features
 
-- Ability to run compilation on real files, classpath resources,
+- Ability to run compilation on real files, class path resources,
   and in-memory files.
+- Supports Java 9 JPMS modules as intended.
+- Ability to customise a large assortment of configuration parameters
+  to enable you to test exactly what you need to test.
 - Provides support for `javac` and `ecj` out of the box, with the
-  ability to support other JSR-199 implementations if desired.
+  ability to support other JSR-199 implementations if desired --
+  just make use of one of the compiler classes, or make your own!
 - Implements a fully functional JSR-199 Path JavaFileManager.
 - Fluent syntax for creating configurations, executing them, and
   inspecting the results.
@@ -76,3 +80,6 @@ class HelloWorldTest {
   to provide helpful assertion errors.
 - Ability to have multiple source roots, just like when using
   `javac` normally.
+- Diagnostic reporting includes stacktraces, so you can find out
+  exactly what triggered a diagnostic and begin debugging any
+  issues in your applications quickly.

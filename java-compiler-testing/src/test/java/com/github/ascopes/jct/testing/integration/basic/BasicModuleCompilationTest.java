@@ -63,8 +63,8 @@ class BasicModuleCompilationTest {
     var compilation = Compilers
         .javac()
         .addSourceRamPaths(sources)
-        .deprecationWarningsEnabled(true)
-        .withReleaseVersion(version)
+        .showDeprecationWarnings(true)
+        .release(version)
         .compile();
 
     assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
@@ -98,8 +98,8 @@ class BasicModuleCompilationTest {
     var compilation = Compilers
         .ecj()
         .addSourceRamPaths(sources)
-        .deprecationWarningsEnabled(true)
-        .withReleaseVersion(version)
+        .showDeprecationWarnings(true)
+        .release(version)
         .compile();
 
     assertThatCompilation(compilation).isSuccessfulWithoutWarnings();

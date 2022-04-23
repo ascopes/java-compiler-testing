@@ -114,20 +114,20 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
     compilerOptions = new ArrayList<>();
     runtimeOptions = new ArrayList<>();
 
-    warnings = DEFAULT_WARNINGS;
-    deprecationWarnings = DEFAULT_DEPRECATION_WARNINGS;
-    warningsAsErrors = DEFAULT_WARNINGS_AS_ERRORS;
+    warnings = DEFAULT_SHOW_WARNINGS;
+    deprecationWarnings = DEFAULT_SHOW_DEPRECATION_WARNINGS;
+    warningsAsErrors = DEFAULT_FAIL_ON_WARNINGS;
     locale = DEFAULT_LOCALE;
     previewFeatures = DEFAULT_PREVIEW_FEATURES;
     releaseVersion = null;
     sourceVersion = null;
     targetVersion = null;
     verbose = DEFAULT_VERBOSE;
-    includeCurrentClassPath = DEFAULT_INCLUDE_CURRENT_CLASS_PATH;
-    includeCurrentModulePath = DEFAULT_INCLUDE_CURRENT_MODULE_PATH;
-    includeCurrentPlatformClassPath = DEFAULT_INCLUDE_CURRENT_PLATFORM_CLASS_PATH;
+    includeCurrentClassPath = DEFAULT_INHERIT_CLASS_PATH;
+    includeCurrentModulePath = DEFAULT_INHERIT_MODULE_PATH;
+    includeCurrentPlatformClassPath = DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
     fileManagerLogging = DEFAULT_FILE_MANAGER_LOGGING;
-    diagnosticLogging = DEFAULT_DIAGNOSTIC_LOGGING;
+    diagnosticLogging = DEFAULT_DIAGNOSTICS;
     annotationProcessorDiscovery = DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
   }
 
@@ -171,60 +171,60 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public boolean isVerboseLoggingEnabled() {
+  public boolean isVerbose() {
     return verbose;
   }
 
   @Override
-  public A verboseLoggingEnabled(boolean enabled) {
+  public A verbose(boolean enabled) {
     LOGGER.trace("verbose {} -> {}", verbose, enabled);
     verbose = enabled;
     return myself();
   }
 
   @Override
-  public boolean isPreviewFeaturesEnabled() {
+  public boolean isPreviewFeatures() {
     return previewFeatures;
   }
 
   @Override
-  public A previewFeaturesEnabled(boolean enabled) {
+  public A previewFeatures(boolean enabled) {
     LOGGER.trace("previewFeatures {} -> {}", previewFeatures, enabled);
     previewFeatures = enabled;
     return myself();
   }
 
   @Override
-  public boolean isWarningsEnabled() {
+  public boolean isShowWarnings() {
     return warnings;
   }
 
   @Override
-  public A warningsEnabled(boolean enabled) {
+  public A showWarnings(boolean enabled) {
     LOGGER.trace("warnings {} -> {}", warnings, enabled);
     warnings = enabled;
     return myself();
   }
 
   @Override
-  public boolean isDeprecationWarningsEnabled() {
+  public boolean isShowDeprecationWarnings() {
     return deprecationWarnings;
   }
 
   @Override
-  public A deprecationWarningsEnabled(boolean enabled) {
+  public A showDeprecationWarnings(boolean enabled) {
     LOGGER.trace("deprecationWarnings {} -> {}", deprecationWarnings, enabled);
     deprecationWarnings = enabled;
     return myself();
   }
 
   @Override
-  public boolean isTreatingWarningsAsErrors() {
+  public boolean isFailOnWarnings() {
     return warningsAsErrors;
   }
 
   @Override
-  public A treatWarningsAsErrors(boolean enabled) {
+  public A failOnWarnings(boolean enabled) {
     LOGGER.trace("warningsAsErrors {} -> {}", warningsAsErrors, enabled);
     warningsAsErrors = enabled;
     return myself();
@@ -287,12 +287,12 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public Optional<String> getReleaseVersion() {
+  public Optional<String> getRelease() {
     return Optional.ofNullable(releaseVersion);
   }
 
   @Override
-  public A withReleaseVersion(String version) {
+  public A release(String version) {
     LOGGER.trace("releaseVersion {} -> {}", releaseVersion, version);
     LOGGER.trace("sourceVersion {} -> null", sourceVersion);
     LOGGER.trace("targetVersion {} -> null", targetVersion);
@@ -303,12 +303,12 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public Optional<String> getSourceVersion() {
+  public Optional<String> getSource() {
     return Optional.ofNullable(sourceVersion);
   }
 
   @Override
-  public A withSourceVersion(String version) {
+  public A source(String version) {
     LOGGER.trace("sourceVersion {} -> {}", targetVersion, version);
     LOGGER.trace("releaseVersion {} -> null", releaseVersion);
     releaseVersion = null;
@@ -317,12 +317,12 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public Optional<String> getTargetVersion() {
+  public Optional<String> getTarget() {
     return Optional.ofNullable(targetVersion);
   }
 
   @Override
-  public A withTargetVersion(String version) {
+  public A target(String version) {
     LOGGER.trace("targetVersion {} -> {}", targetVersion, version);
     LOGGER.trace("releaseVersion {} -> null", releaseVersion);
     releaseVersion = null;
@@ -331,19 +331,19 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public boolean isIncludingCurrentClassPath() {
+  public boolean isInheritClassPath() {
     return includeCurrentClassPath;
   }
 
   @Override
-  public A includeCurrentClassPath(boolean enabled) {
+  public A inheritClassPath(boolean enabled) {
     LOGGER.trace("includeCurrentClassPath {} -> {}", includeCurrentClassPath, enabled);
     includeCurrentClassPath = enabled;
     return myself();
   }
 
   @Override
-  public boolean isIncludingCurrentModulePath() {
+  public boolean isInheritModulePath() {
     return includeCurrentModulePath;
   }
 
@@ -355,12 +355,12 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public boolean isIncludingCurrentPlatformClassPath() {
+  public boolean isInheritPlatformClassPath() {
     return includeCurrentPlatformClassPath;
   }
 
   @Override
-  public A includeCurrentPlatformClassPath(boolean enabled) {
+  public A inheritPlatformClassPath(boolean enabled) {
     LOGGER.trace(
         "includeCurrentPlatformClassPath {} -> {}",
         includeCurrentPlatformClassPath,
@@ -390,7 +390,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A withLocale(Locale locale) {
+  public A locale(Locale locale) {
     LOGGER.trace("locale {} -> {}", this.locale, locale);
     this.locale = requireNonNull(locale);
     return myself();
@@ -402,7 +402,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A withFileManagerLogging(Logging fileManagerLogging) {
+  public A fileManagerLogging(Logging fileManagerLogging) {
     LOGGER.trace(
         "fileManagerLogging {} -> {}",
         this.fileManagerLogging,
@@ -418,7 +418,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A withDiagnosticLogging(Logging diagnosticLogging) {
+  public A diagnostics(Logging diagnosticLogging) {
     LOGGER.trace(
         "diagnosticLogging {} -> {}",
         this.diagnosticLogging,
@@ -429,7 +429,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public ProcessorDiscovery getEnableAnnotationProcessorDiscovery() {
+  public ProcessorDiscovery getAnnotationProcessorDiscovery() {
     return annotationProcessorDiscovery;
   }
 

@@ -1197,14 +1197,14 @@ class CompilerTest {
   void releaseVersionIntCallsReleaseVersionString(int versionInt) {
     // Given
     var versionString = "" + versionInt;
-    given(compiler.withReleaseVersion(anyInt())).willCallRealMethod();
-    given(compiler.withReleaseVersion(anyString())).will(ctx -> compiler);
+    given(compiler.release(anyInt())).willCallRealMethod();
+    given(compiler.release(anyString())).will(ctx -> compiler);
 
     // When
-    var result = compiler.withReleaseVersion(versionInt);
+    var result = compiler.release(versionInt);
 
     // Then
-    then(compiler).should().withReleaseVersion(versionString);
+    then(compiler).should().release(versionString);
     assertThat(result).isSameAs(compiler);
   }
 
@@ -1216,14 +1216,14 @@ class CompilerTest {
       String versionString
   ) {
     // Given
-    given(compiler.withReleaseVersion(any(SourceVersion.class))).willCallRealMethod();
-    given(compiler.withReleaseVersion(anyString())).will(ctx -> compiler);
+    given(compiler.release(any(SourceVersion.class))).willCallRealMethod();
+    given(compiler.release(anyString())).will(ctx -> compiler);
 
     // When
-    var result = compiler.withReleaseVersion(versionEnum);
+    var result = compiler.release(versionEnum);
 
     // Then
-    then(compiler).should().withReleaseVersion(versionString);
+    then(compiler).should().release(versionString);
     assertThat(result).isSameAs(compiler);
   }
 
@@ -1233,14 +1233,14 @@ class CompilerTest {
   void sourceVersionIntCallsReleaseVersionString(int versionInt) {
     // Given
     var versionString = "" + versionInt;
-    given(compiler.withSourceVersion(anyInt())).willCallRealMethod();
-    given(compiler.withSourceVersion(anyString())).will(ctx -> compiler);
+    given(compiler.source(anyInt())).willCallRealMethod();
+    given(compiler.source(anyString())).will(ctx -> compiler);
 
     // When
-    var result = compiler.withSourceVersion(versionInt);
+    var result = compiler.source(versionInt);
 
     // Then
-    then(compiler).should().withSourceVersion(versionString);
+    then(compiler).should().source(versionString);
     assertThat(result).isSameAs(compiler);
   }
 
@@ -1252,14 +1252,14 @@ class CompilerTest {
       String versionString
   ) {
     // Given
-    given(compiler.withSourceVersion(any(SourceVersion.class))).willCallRealMethod();
-    given(compiler.withSourceVersion(anyString())).will(ctx -> compiler);
+    given(compiler.source(any(SourceVersion.class))).willCallRealMethod();
+    given(compiler.source(anyString())).will(ctx -> compiler);
 
     // When
-    var result = compiler.withSourceVersion(versionEnum);
+    var result = compiler.source(versionEnum);
 
     // Then
-    then(compiler).should().withSourceVersion(versionString);
+    then(compiler).should().source(versionString);
     assertThat(result).isSameAs(compiler);
   }
 
@@ -1269,14 +1269,14 @@ class CompilerTest {
   void targetVersionIntCallsReleaseVersionString(int versionInt) {
     // Given
     var versionString = "" + versionInt;
-    given(compiler.withTargetVersion(anyInt())).willCallRealMethod();
-    given(compiler.withTargetVersion(anyString())).will(ctx -> compiler);
+    given(compiler.target(anyInt())).willCallRealMethod();
+    given(compiler.target(anyString())).will(ctx -> compiler);
 
     // When
-    var result = compiler.withTargetVersion(versionInt);
+    var result = compiler.target(versionInt);
 
     // Then
-    then(compiler).should().withTargetVersion(versionString);
+    then(compiler).should().target(versionString);
     assertThat(result).isSameAs(compiler);
   }
 
@@ -1288,14 +1288,14 @@ class CompilerTest {
       String versionString
   ) {
     // Given
-    given(compiler.withTargetVersion(any(SourceVersion.class))).willCallRealMethod();
-    given(compiler.withTargetVersion(anyString())).will(ctx -> compiler);
+    given(compiler.target(any(SourceVersion.class))).willCallRealMethod();
+    given(compiler.target(anyString())).will(ctx -> compiler);
 
     // When
-    var result = compiler.withTargetVersion(versionEnum);
+    var result = compiler.target(versionEnum);
 
     // Then
-    then(compiler).should().withTargetVersion(versionString);
+    then(compiler).should().target(versionString);
     assertThat(result).isSameAs(compiler);
   }
 

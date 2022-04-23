@@ -58,8 +58,8 @@ class ServiceProcessorTest {
         .javac()
         .addAnnotationProcessors(new ServiceProcessor())
         .addSourceRamPaths(sources)
-        .includeCurrentClassPath(true)
-        .withReleaseVersion(11)
+        .inheritClassPath(true)
+        .release(11)
         .compile();
 
     assertThatCompilation(compilation)
