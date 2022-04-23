@@ -22,6 +22,7 @@ import com.github.ascopes.jct.intern.SpecialLocations;
 import com.github.ascopes.jct.intern.StringUtils;
 import com.github.ascopes.jct.paths.LoggingJavaFileManagerProxy;
 import com.github.ascopes.jct.paths.PathJavaFileManager;
+import com.github.ascopes.jct.paths.PathLocationManager;
 import com.github.ascopes.jct.paths.PathLocationRepository;
 import com.github.ascopes.jct.paths.RamPath;
 import java.io.IOException;
@@ -83,8 +84,9 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   private boolean includeCurrentClassPath;
   private boolean includeCurrentModulePath;
   private boolean includeCurrentPlatformClassPath;
-  private LoggingMode fileManagerLogging;
-  private LoggingMode diagnosticLogging;
+  private Logging fileManagerLogging;
+  private Logging diagnosticLogging;
+  private ProcessorDiscovery annotationProcessorDiscovery;
 
   /**
    * Initialize this compiler.
@@ -124,9 +126,9 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
     includeCurrentClassPath = DEFAULT_INCLUDE_CURRENT_CLASS_PATH;
     includeCurrentModulePath = DEFAULT_INCLUDE_CURRENT_MODULE_PATH;
     includeCurrentPlatformClassPath = DEFAULT_INCLUDE_CURRENT_PLATFORM_CLASS_PATH;
-
-    fileManagerLogging = DEFAULT_FILE_MANAGER_LOGGING_MODE;
-    diagnosticLogging = DEFAULT_DIAGNOSTIC_LOGGING_MODE;
+    fileManagerLogging = DEFAULT_FILE_MANAGER_LOGGING;
+    diagnosticLogging = DEFAULT_DIAGNOSTIC_LOGGING;
+    annotationProcessorDiscovery = DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
   }
 
   @Override
@@ -395,14 +397,14 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public LoggingMode getFileManagerLogging() {
+  public Logging getFileManagerLogging() {
     return fileManagerLogging;
   }
 
   @Override
-  public A withFileManagerLogging(LoggingMode fileManagerLogging) {
+  public A withFileManagerLogging(Logging fileManagerLogging) {
     LOGGER.trace(
-        "fileManagerLoggingMode {} -> {}",
+        "fileManagerLogging {} -> {}",
         this.fileManagerLogging,
         fileManagerLogging
     );
@@ -411,18 +413,34 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public LoggingMode getDiagnosticLogging() {
+  public Logging getDiagnosticLogging() {
     return diagnosticLogging;
   }
 
   @Override
-  public A withDiagnosticLogging(LoggingMode diagnosticLogging) {
+  public A withDiagnosticLogging(Logging diagnosticLogging) {
     LOGGER.trace(
-        "diagnosticLoggingMode {} -> {}",
+        "diagnosticLogging {} -> {}",
         this.diagnosticLogging,
         diagnosticLogging
     );
     this.diagnosticLogging = requireNonNull(diagnosticLogging);
+    return myself();
+  }
+
+  @Override
+  public ProcessorDiscovery getEnableAnnotationProcessorDiscovery() {
+    return annotationProcessorDiscovery;
+  }
+
+  @Override
+  public A annotationProcessorDiscovery(ProcessorDiscovery annotationProcessorDiscovery) {
+    LOGGER.trace(
+        "annotationProcessorDiscovery {} -> {}",
+        this.annotationProcessorDiscovery,
+        annotationProcessorDiscovery
+    );
+    this.annotationProcessorDiscovery = requireNonNull(annotationProcessorDiscovery);
     return myself();
   }
 
@@ -587,18 +605,18 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
    *
    * <p>The default implementation will wrap the given {@link JavaFileManager} in a
    * {@link LoggingJavaFileManagerProxy} if the {@link #fileManagerLogging} field is
-   * <strong>not</strong> set to {@link LoggingMode#DISABLED}. In the latter scenario, the input
+   * <strong>not</strong> set to {@link Logging#DISABLED}. In the latter scenario, the input
    * will be returned to the caller with no other modifications.
    *
    * @param fileManager the file manager to apply to.
    * @return the file manager to use for future operations.
    */
   protected JavaFileManager applyLoggingToFileManager(JavaFileManager fileManager) {
-    if (fileManagerLogging == LoggingMode.STACKTRACES) {
+    if (fileManagerLogging == Logging.STACKTRACES) {
       return LoggingJavaFileManagerProxy.wrap(fileManager, true);
     }
 
-    if (fileManagerLogging == LoggingMode.ENABLED) {
+    if (fileManagerLogging == Logging.ENABLED) {
       return LoggingJavaFileManagerProxy.wrap(fileManager, false);
     }
 
@@ -614,8 +632,8 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
    */
   protected TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener() {
     return new TracingDiagnosticListener<>(
-        fileManagerLogging != LoggingMode.DISABLED,
-        fileManagerLogging == LoggingMode.STACKTRACES
+        fileManagerLogging != Logging.DISABLED,
+        fileManagerLogging == Logging.STACKTRACES
     );
   }
 
@@ -647,15 +665,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
         compilationUnits
     );
 
-    if (!annotationProcessors.isEmpty()) {
-      // TODO(ascopes): would we ever want to set an empty list for this, to bypass discovery?
-      task.setProcessors(annotationProcessors);
-    } else {
-      // TODO(ascopes): would we ever want to explicitly disable this behaviour?
-      fileRepository
-          .getOrCreate(StandardLocation.ANNOTATION_PROCESSOR_PATH)
-          .addPaths(fileRepository.getExpected(StandardLocation.CLASS_PATH).getRoots());
-    }
+    configureAnnotationProcessors(task);
 
     task.setLocale(locale);
 
@@ -781,5 +791,47 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
     fileRepository
         .getOrCreate(StandardLocation.SYSTEM_MODULES)
         .addPaths(jrtLocations);
+  }
+
+  private void configureAnnotationProcessors(CompilationTask task) {
+    if (annotationProcessors.size() > 0) {
+      LOGGER.debug("Annotation processor discovery is disabled (processors explicitly provided)");
+      task.setProcessors(annotationProcessors);
+      return;
+    }
+
+    switch (annotationProcessorDiscovery) {
+      case ENABLED: {
+        // Ensure the paths exist.
+        fileRepository
+            .get(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH)
+            .orElseGet(() -> fileRepository
+                .getOrCreate(StandardLocation.ANNOTATION_PROCESSOR_PATH));
+        break;
+      }
+
+      case INCLUDE_DEPENDENCIES:
+        fileRepository
+            .get(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH)
+            .ifPresentOrElse(
+                procModules -> fileRepository
+                    .get(StandardLocation.MODULE_PATH)
+                    .map(PathLocationManager::getRoots)
+                    .ifPresent(procModules::addPaths),
+                () -> fileRepository
+                    .get(StandardLocation.CLASS_PATH)
+                    .map(PathLocationManager::getRoots)
+                    .ifPresent(classPath -> fileRepository
+                        .getOrCreate(StandardLocation.ANNOTATION_PROCESSOR_PATH)
+                        .addPaths(classPath))
+            );
+        break;
+
+      case DISABLED:
+      default:
+        // Set the processor list explicitly to instruct the compiler to not perform discovery.
+        task.setProcessors(List.of());
+        break;
+    }
   }
 }

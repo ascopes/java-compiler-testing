@@ -19,7 +19,7 @@ package com.github.ascopes.jct.testing.integration.basic;
 import static com.github.ascopes.jct.assertions.CompilationAssert.assertThatCompilation;
 import static com.github.ascopes.jct.testing.helpers.Skipping.skipBecauseEcjFailsToSupportModulesCorrectly;
 
-import com.github.ascopes.jct.compilers.Compiler.LoggingMode;
+import com.github.ascopes.jct.compilers.Compiler.Logging;
 import com.github.ascopes.jct.compilers.Compilers;
 import com.github.ascopes.jct.paths.RamPath;
 import java.util.stream.IntStream;
@@ -112,8 +112,8 @@ class BasicMultiModuleCompilationTest {
         .deprecationWarningsEnabled(true)
         .withReleaseVersion(version)
         .verboseLoggingEnabled(true)
-        .withDiagnosticLogging(LoggingMode.STACKTRACES)
-        .withFileManagerLogging(LoggingMode.ENABLED)
+        .withDiagnosticLogging(Logging.STACKTRACES)
+        .withFileManagerLogging(Logging.ENABLED)
         .compile();
 
     assertThatCompilation(compilation).isSuccessfulWithoutWarnings();

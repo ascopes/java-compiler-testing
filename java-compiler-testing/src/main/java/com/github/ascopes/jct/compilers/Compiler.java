@@ -93,14 +93,21 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   boolean DEFAULT_INCLUDE_CURRENT_PLATFORM_CLASS_PATH = true;
 
   /**
-   * Default setting for logging file manager operations ({@link LoggingMode#DISABLED}).
+   * Default setting for logging file manager operations ({@link Logging#DISABLED}).
    */
-  LoggingMode DEFAULT_FILE_MANAGER_LOGGING_MODE = LoggingMode.DISABLED;
+  Logging DEFAULT_FILE_MANAGER_LOGGING = Logging.DISABLED;
 
   /**
-   * Default setting for logging diagnostics ({@link LoggingMode#ENABLED}).
+   * Default setting for logging diagnostics ({@link Logging#ENABLED}).
    */
-  LoggingMode DEFAULT_DIAGNOSTIC_LOGGING_MODE = LoggingMode.ENABLED;
+  Logging DEFAULT_DIAGNOSTIC_LOGGING = Logging.ENABLED;
+
+  /**
+   * Default setting for how to apply annotation processor discovery when no processors are
+   * explicitly defined ({@link ProcessorDiscovery#INCLUDE_DEPENDENCIES}).
+   */
+  ProcessorDiscovery DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY =
+      ProcessorDiscovery.INCLUDE_DEPENDENCIES;
 
   /**
    * Apply a given configurer to this compiler.
@@ -1215,43 +1222,74 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * Get the current file manager logging mode.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_FILE_MANAGER_LOGGING_MODE}.
+   * {@link #DEFAULT_FILE_MANAGER_LOGGING}.
    *
    * @return the current file manager logging mode.
    */
-  LoggingMode getFileManagerLogging();
+  Logging getFileManagerLogging();
 
   /**
    * Set how to handle logging calls to underlying file managers.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_FILE_MANAGER_LOGGING_MODE}.
+   * {@link #DEFAULT_FILE_MANAGER_LOGGING}.
    *
-   * @param fileManagerLoggingMode the mode to use for file manager logging.
+   * @param fileManagerLogging the mode to use for file manager logging.
    * @return this compiler for further call chaining.
    */
-  C withFileManagerLogging(LoggingMode fileManagerLoggingMode);
+  C withFileManagerLogging(Logging fileManagerLogging);
 
   /**
    * Get the current diagnostic logging mode.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_DIAGNOSTIC_LOGGING_MODE}.
+   * {@link #DEFAULT_DIAGNOSTIC_LOGGING}.
    *
    * @return the current diagnostic logging mode.
    */
-  LoggingMode getDiagnosticLogging();
+  Logging getDiagnosticLogging();
 
   /**
    * Set how to handle diagnostic capture.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_DIAGNOSTIC_LOGGING_MODE}.
+   * {@link #DEFAULT_DIAGNOSTIC_LOGGING}.
    *
-   * @param diagnosticLoggingMode the mode to use for diagnostic capture.
+   * @param diagnosticLogging the mode to use for diagnostic capture.
    * @return this compiler for further call chaining.
    */
-  C withDiagnosticLogging(LoggingMode diagnosticLoggingMode);
+  C withDiagnosticLogging(Logging diagnosticLogging);
+
+  /**
+   * Get how to perform annotation processor discovery.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY}.
+   *
+   * <p>Specifying any annotation processors explicitly with
+   * {@link #addAnnotationProcessors(Iterable)} or
+   * {@link #addAnnotationProcessors(Processor, Processor...)} will bypass this setting, treating
+   * it as being disabled.
+   *
+   * @return the processor discovery mode to use.
+   */
+  ProcessorDiscovery getEnableAnnotationProcessorDiscovery();
+
+  /**
+   * Set how to perform annotation processor discovery.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY}.
+   *
+   * <p>Specifying any annotation processors explicitly with
+   * {@link #addAnnotationProcessors(Iterable)} or
+   * {@link #addAnnotationProcessors(Processor, Processor...)} will bypass this setting, treating
+   * it as being disabled.
+   *
+   * @param annotationProcessorDiscovery the processor discovery mode to use.
+   * @return this compiler for further call chaining.
+   */
+  C annotationProcessorDiscovery(ProcessorDiscovery annotationProcessorDiscovery);
 
   /**
    * Invoke the compilation and return the compilation result.
@@ -1271,7 +1309,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @since 0.0.1
    */
   @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-  enum LoggingMode {
+  enum Logging {
     /**
      * Enable basic logging.
      */
@@ -1284,6 +1322,31 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
 
     /**
      * Do not log anything.
+     */
+    DISABLED,
+  }
+
+  /**
+   * Mode for annotation processor discovery when no explicit processors are provided.
+   *
+   * @author Ashley Scopes
+   * @since 0.0.1
+   */
+  @API(since = "0.0.1", status = Status.EXPERIMENTAL)
+  enum ProcessorDiscovery {
+    /**
+     * Discovery is enabled, and will also scan any dependencies in the classpath or module
+     * path.
+     */
+    INCLUDE_DEPENDENCIES,
+
+    /**
+     * Discovery is enabled using the provided processor paths.
+     */
+    ENABLED,
+
+    /**
+     * Discovery is disabled.
      */
     DISABLED,
   }

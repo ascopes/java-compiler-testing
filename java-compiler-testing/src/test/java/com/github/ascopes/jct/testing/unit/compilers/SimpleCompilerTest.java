@@ -20,6 +20,7 @@ import static com.github.ascopes.jct.testing.helpers.MoreMocks.stubCast;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.ascopes.jct.compilers.Compiler;
+import com.github.ascopes.jct.compilers.Compiler.ProcessorDiscovery;
 import com.github.ascopes.jct.compilers.SimpleCompilation;
 import com.github.ascopes.jct.compilers.SimpleCompiler;
 import com.github.ascopes.jct.testing.helpers.TypeRef;
@@ -144,14 +145,21 @@ class SimpleCompilerTest {
   @Test
   void defaultFileManagerLoggingSettingIsExpectedValue() {
     assertThat(new StubbedCompiler().getFileManagerLogging())
-        .isEqualTo(Compiler.DEFAULT_FILE_MANAGER_LOGGING_MODE);
+        .isEqualTo(Compiler.DEFAULT_FILE_MANAGER_LOGGING);
   }
 
   @DisplayName("Default diagnostics logging setting is the expected value")
   @Test
   void defaultDiagnosticsLoggingSettingIsExpectedValue() {
     assertThat(new StubbedCompiler().getDiagnosticLogging())
-        .isEqualTo(Compiler.DEFAULT_DIAGNOSTIC_LOGGING_MODE);
+        .isEqualTo(Compiler.DEFAULT_DIAGNOSTIC_LOGGING);
+  }
+
+  @DisplayName("Default enable annotation processor discovery setting is the expected value")
+  @Test
+  void defaultEnableAnnotationProcessorDiscoveryIsExpectedValue() {
+    assertThat(new StubbedCompiler().getEnableAnnotationProcessorDiscovery())
+        .isEqualTo(ProcessorDiscovery.INCLUDE_DEPENDENCIES);
   }
 
   // Extend to allow field access to protected members.

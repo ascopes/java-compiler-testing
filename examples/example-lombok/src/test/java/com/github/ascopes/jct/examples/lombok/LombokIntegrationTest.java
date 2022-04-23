@@ -61,7 +61,16 @@ class LombokIntegrationTest {
         .withReleaseVersion(11)
         .compile();
 
-    assertThatCompilation(compilation).isSuccessful();
+    assertThatCompilation(compilation)
+        .isSuccessful();
+
+    // Github Issue #9 sanity check - Improve annotation processor discovery mechanism
+    assertThatCompilation(compilation)
+        .location(StandardLocation.ANNOTATION_PROCESSOR_PATH)
+        .containsAll(compilation
+            .getFileRepository()
+            .getExpected(StandardLocation.CLASS_PATH)
+            .getRoots());
 
     var animalClass = compilation
         .getFileRepository()
