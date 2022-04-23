@@ -93,6 +93,11 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   boolean DEFAULT_INHERIT_PLATFORM_CLASS_PATH = true;
 
   /**
+   * Default setting for inclusion of the system module path ({@code true}).
+   */
+  boolean DEFAULT_INHERIT_SYSTEM_MODULE_PATH = true;
+
+  /**
    * Default setting for logging file manager operations ({@link Logging#DISABLED}).
    */
   Logging DEFAULT_FILE_MANAGER_LOGGING = Logging.DISABLED;
@@ -1133,7 +1138,6 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
     return target(Integer.toString(version.ordinal()));
   }
 
-
   /**
    * Get whether the class path is inherited from the caller JVM or not.
    *
@@ -1151,7 +1155,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * {@link #DEFAULT_INHERIT_CLASS_PATH}.
    *
    * @param enabled {@code true} to include it, or {@code false} to exclude it.
-    * @return this compiler object for further call chaining.
+   * @return this compiler object for further call chaining.
    */
   C inheritClassPath(boolean enabled);
 
@@ -1161,7 +1165,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_INHERIT_MODULE_PATH}.
    *
-   * @return whether the current module path is being included or not.
+   * @return whether the module path is being inherited or not.
    */
   boolean isInheritModulePath();
 
@@ -1172,22 +1176,22 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * {@link #DEFAULT_INHERIT_MODULE_PATH}.
    *
    * @param enabled {@code true} to include it, or {@code false} to exclude it.
-    * @return this compiler object for further call chaining.
+   * @return this compiler object for further call chaining.
    */
-  C includeCurrentModulePath(boolean enabled);
+  C inheritModulePath(boolean enabled);
 
   /**
    * Get whether the current platform class path is being inherited from the caller JVM or not.
-   * 
+   *
    * <p>This may also be known as the "bootstrap class path".
-   * 
+   *
    * <p>Default environments probably will not provide this functionality, in which case it will be
    * ignored.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_INHERIT_PLATFORM_CLASS_PATH}.
    *
-   * @return whether the current platform classpath is being included or not.
+   * @return whether the platform class path is being inherited or not.
    */
   boolean isInheritPlatformClassPath();
 
@@ -1199,11 +1203,31 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Default environments probably will not provide this functionality, in which case it will be
    * ignored.
    *
-   *
    * @param enabled {@code true} to include it, or {@code false} to exclude it.
-    * @return this compiler object for further call chaining.
+   * @return this compiler object for further call chaining.
    */
   C inheritPlatformClassPath(boolean enabled);
+
+  /**
+   * Get whether the system module path is inherited from the caller JVM or not.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_INHERIT_SYSTEM_MODULE_PATH}.
+   *
+   * @return whether the system module path is being inherited or not.
+   */
+  boolean isInheritSystemModulePath();
+
+  /**
+   * Set whether the system module path is inherited from the caller JVM or not.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_INHERIT_SYSTEM_MODULE_PATH}.
+   *
+   * @param enabled {@code true} to include it, or {@code false} to exclude it.
+   * @return this compiler object for further call chaining.
+   */
+  C inheritSystemModulePath(boolean enabled);
 
   /**
    * Get the output locale.
@@ -1276,8 +1300,8 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    *
    * <p>Specifying any annotation processors explicitly with
    * {@link #addAnnotationProcessors(Iterable)} or
-   * {@link #addAnnotationProcessors(Processor, Processor...)} will bypass this setting, treating
-   * it as being disabled.
+   * {@link #addAnnotationProcessors(Processor, Processor...)} will bypass this setting, treating it
+   * as being disabled.
    *
    * @return the processor discovery mode to use.
    */
@@ -1291,8 +1315,8 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    *
    * <p>Specifying any annotation processors explicitly with
    * {@link #addAnnotationProcessors(Iterable)} or
-   * {@link #addAnnotationProcessors(Processor, Processor...)} will bypass this setting, treating
-   * it as being disabled.
+   * {@link #addAnnotationProcessors(Processor, Processor...)} will bypass this setting, treating it
+   * as being disabled.
    *
    * @param annotationProcessorDiscovery the processor discovery mode to use.
    * @return this compiler for further call chaining.
@@ -1343,8 +1367,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   @API(since = "0.0.1", status = Status.EXPERIMENTAL)
   enum ProcessorDiscovery {
     /**
-     * Discovery is enabled, and will also scan any dependencies in the classpath or module
-     * path.
+     * Discovery is enabled, and will also scan any dependencies in the classpath or module path.
      */
     INCLUDE_DEPENDENCIES,
 

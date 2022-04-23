@@ -84,6 +84,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   private boolean includeCurrentClassPath;
   private boolean includeCurrentModulePath;
   private boolean includeCurrentPlatformClassPath;
+  private boolean inheritSystemModulePath;
   private Logging fileManagerLogging;
   private Logging diagnosticLogging;
   private ProcessorDiscovery annotationProcessorDiscovery;
@@ -126,6 +127,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
     includeCurrentClassPath = DEFAULT_INHERIT_CLASS_PATH;
     includeCurrentModulePath = DEFAULT_INHERIT_MODULE_PATH;
     includeCurrentPlatformClassPath = DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
+    inheritSystemModulePath = DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
     fileManagerLogging = DEFAULT_FILE_MANAGER_LOGGING;
     diagnosticLogging = DEFAULT_DIAGNOSTICS;
     annotationProcessorDiscovery = DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
@@ -348,7 +350,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A includeCurrentModulePath(boolean enabled) {
+  public A inheritModulePath(boolean enabled) {
     LOGGER.trace("includeCurrentModulePath {} -> {}", includeCurrentModulePath, enabled);
     includeCurrentModulePath = enabled;
     return myself();
@@ -367,6 +369,22 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
         enabled
     );
     includeCurrentPlatformClassPath = enabled;
+    return myself();
+  }
+
+  @Override
+  public boolean isInheritSystemModulePath() {
+    return inheritSystemModulePath;
+  }
+
+  @Override
+  public A inheritSystemModulePath(boolean enabled) {
+    LOGGER.trace(
+        "inheritSystemModulePath {} -> {}",
+        inheritSystemModulePath,
+        enabled
+    );
+    inheritSystemModulePath = enabled;
     return myself();
   }
 
@@ -785,12 +803,14 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   private void registerJrtJimage() {
-    var jrtLocations = SpecialLocations.javaRuntimeLocations();
-    LOGGER.trace("Adding JRT locations to compiler: {}", jrtLocations);
+    if (inheritSystemModulePath) {
+      var jrtLocations = SpecialLocations.javaRuntimeLocations();
+      LOGGER.trace("Adding JRT locations to compiler: {}", jrtLocations);
 
-    fileRepository
-        .getOrCreate(StandardLocation.SYSTEM_MODULES)
-        .addPaths(jrtLocations);
+      fileRepository
+          .getOrCreate(StandardLocation.SYSTEM_MODULES)
+          .addPaths(jrtLocations);
+    }
   }
 
   private void configureAnnotationProcessors(CompilationTask task) {

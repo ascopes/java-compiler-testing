@@ -120,7 +120,7 @@ class SimpleCompilerTest {
     assertThat(new StubbedCompiler().getTarget()).isNotPresent();
   }
 
-  @DisplayName("Default current classpath inclusion setting is the expected value")
+  @DisplayName("Default current class path inclusion setting is the expected value")
   @Test
   void defaultCurrentClassPathInclusionSettingIsExpectedValue() {
     assertThat(new StubbedCompiler().isInheritClassPath())
@@ -134,11 +134,18 @@ class SimpleCompilerTest {
         .isEqualTo(Compiler.DEFAULT_INHERIT_MODULE_PATH);
   }
 
-  @DisplayName("Default current platform classpath inclusion setting is the expected value")
+  @DisplayName("Default current platform class path inclusion setting is the expected value")
   @Test
   void defaultCurrentPlatformClassPathInclusionSettingIsExpectedValue() {
     assertThat(new StubbedCompiler().isInheritPlatformClassPath())
         .isEqualTo(Compiler.DEFAULT_INHERIT_PLATFORM_CLASS_PATH);
+  }
+
+  @DisplayName("Default system module path inclusion setting is the expected value")
+  @Test
+  void defaultSystemModulePathInclusionSettingIsExpectedValue() {
+    assertThat(new StubbedCompiler().isInheritSystemModulePath())
+        .isEqualTo(Compiler.DEFAULT_INHERIT_SYSTEM_MODULE_PATH);
   }
 
   @DisplayName("Default file manager logging setting is the expected value")
