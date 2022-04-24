@@ -18,6 +18,7 @@ package com.github.ascopes.jct.paths;
 
 import static com.github.ascopes.jct.intern.IoExceptionUtils.rethrowAsUncheckedIo;
 import static com.github.ascopes.jct.intern.IoExceptionUtils.uncheckedIo;
+import static java.util.Objects.requireNonNull;
 
 import com.github.ascopes.jct.intern.AsyncResourceCloser;
 import com.github.ascopes.jct.intern.Lazy;
@@ -41,7 +42,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -79,6 +79,7 @@ public class PathLocationManager implements Iterable<Path> {
       "application/x-java-archive"
   );
 
+  private final PathJavaFileObjectFactory factory;
   private final Location location;
   private final Set<Path> roots;
   private final Lazy<ClassLoader> classLoader;
@@ -95,13 +96,15 @@ public class PathLocationManager implements Iterable<Path> {
   /**
    * Initialize the manager.
    *
+   * @param factory  the {@link PathJavaFileObject} factory to use.
    * @param location the location to represent.
    */
   @SuppressWarnings("ThisEscapedInObjectConstruction")
-  public PathLocationManager(Location location) {
-    LOGGER.trace("Initializing PathLocationManager for location {}", location);
+  public PathLocationManager(PathJavaFileObjectFactory factory, Location location) {
+    LOGGER.trace("Initializing for location {} with factory {}", location, factory);
 
-    this.location = Objects.requireNonNull(location);
+    this.factory = requireNonNull(factory);
+    this.location = requireNonNull(location);
     roots = new LinkedHashSet<>();
     classLoader = new Lazy<>(this::createClassLoaderUnsafe);
 
@@ -282,7 +285,7 @@ public class PathLocationManager implements Iterable<Path> {
     for (var root : roots) {
       var path = root.resolve(relativePath).resolve(relativeName);
       if (Files.isRegularFile(path)) {
-        return Optional.of(javaFileObjectFromPath(path, relativePath));
+        return Optional.of(factory.create(location, path, relativePath));
       }
     }
 
@@ -305,7 +308,7 @@ public class PathLocationManager implements Iterable<Path> {
         .stream()
         .findFirst()
         .map(root -> root.resolve(relativePath).resolve(relativeName))
-        .map(path -> javaFileObjectFromPath(path, relativePath));
+        .map(path -> factory.create(location, path, relativePath));
   }
 
   /**
@@ -320,7 +323,7 @@ public class PathLocationManager implements Iterable<Path> {
     for (var root : roots) {
       var path = root.resolve(relativePath);
       if (Files.isRegularFile(path)) {
-        return Optional.of(javaFileObjectFromPath(path, className));
+        return Optional.of(factory.create(location, path, className));
       }
     }
 
@@ -343,7 +346,7 @@ public class PathLocationManager implements Iterable<Path> {
         .stream()
         .findFirst()
         .map(root -> root.resolve(relativePath))
-        .map(path -> javaFileObjectFromPath(path, className));
+        .map(path -> factory.create(location, path, className));
   }
 
   /**
@@ -459,8 +462,7 @@ public class PathLocationManager implements Iterable<Path> {
       try (var stream = Files.walk(path, maxDepth)) {
         stream
             .filter(hasAnyKind(kinds).and(Files::isRegularFile))
-            .map(nextFile -> javaFileObjectFromPath(nextFile,
-                root.relativize(nextFile).toString()))
+            .map(nextFile -> factory.create(location, nextFile))
             .peek(fileObject -> LOGGER.trace(
                 "Found file object {} in root {} for list on package={}, kinds={}, recurse={}",
                 fileObject,
@@ -508,6 +510,14 @@ public class PathLocationManager implements Iterable<Path> {
         .flatMap(root -> uncheckedIo(() -> Files.walk(root, maxDepth, fileVisitOptions)));
   }
 
+  /**
+   * Get the factory for creating {@link PathJavaFileObject} instances with.
+   *
+   * @return the factory.
+   */
+  protected PathJavaFileObjectFactory getPathJavaFileObjectFactory() {
+    return factory;
+  }
 
   /**
    * Register the given path to the roots of this manager.
@@ -594,12 +604,5 @@ public class PathLocationManager implements Iterable<Path> {
 
   private int walkDepth(boolean recurse) {
     return recurse ? Integer.MAX_VALUE : 1;
-  }
-
-  private PathJavaFileObject javaFileObjectFromPath(Path path, String givenName) {
-    // The JavaFileManager states we need to take care to keep the same representation of the
-    // file name that we were provided with where possible. Thus, we need to redundantly store
-    // that name as well as the path.
-    return new PathJavaFileObject(location, path, givenName);
   }
 }

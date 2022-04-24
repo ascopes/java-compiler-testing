@@ -53,4 +53,5 @@ public final class CollectionUtils {
     list.addAll(Arrays.asList(rest));
     return list;
   }
+
 }

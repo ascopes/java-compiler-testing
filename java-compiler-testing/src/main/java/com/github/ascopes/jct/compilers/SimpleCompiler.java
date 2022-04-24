@@ -22,10 +22,12 @@ import com.github.ascopes.jct.intern.SpecialLocations;
 import com.github.ascopes.jct.intern.StringUtils;
 import com.github.ascopes.jct.paths.LoggingJavaFileManagerProxy;
 import com.github.ascopes.jct.paths.PathJavaFileManager;
+import com.github.ascopes.jct.paths.PathJavaFileObjectFactory;
 import com.github.ascopes.jct.paths.PathLocationRepository;
 import com.github.ascopes.jct.paths.RamPath;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,6 +68,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   private final String name;
   private final JavaCompiler jsr199Compiler;
   private final FlagBuilder flagBuilder;
+  private final PathJavaFileObjectFactory pathJavaFileObjectFactory;
   private final PathLocationRepository fileRepository;
   private final List<Processor> annotationProcessors;
   private final List<String> annotationProcessorOptions;
@@ -106,7 +109,8 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
 
     // We may want to be able to customize creation of missing roots in the future. For now,
     // I am leaving this enabled by default.
-    fileRepository = new PathLocationRepository();
+    pathJavaFileObjectFactory = new PathJavaFileObjectFactory(DEFAULT_FILE_CHARSET);
+    fileRepository = new PathLocationRepository(pathJavaFileObjectFactory);
 
     annotationProcessors = new ArrayList<>();
 
@@ -282,10 +286,24 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
 
   @Override
   public A addRuntimeOptions(Iterable<String> options) {
+    requireNonNull(options);
     LOGGER.trace("runtimeOptions += {}", options);
-    for (var option : requireNonNull(options)) {
+    for (var option : options) {
       runtimeOptions.add(requireNonNull(option));
     }
+    return myself();
+  }
+
+  @Override
+  public Charset getFileCharset() {
+    return pathJavaFileObjectFactory.getCharset();
+  }
+
+  @Override
+  public A fileCharset(Charset charset) {
+    requireNonNull(charset);
+    LOGGER.trace("fileCharset {} -> {}", pathJavaFileObjectFactory.getCharset(), charset);
+    pathJavaFileObjectFactory.setCharset(charset);
     return myself();
   }
 
@@ -410,8 +428,9 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
 
   @Override
   public A locale(Locale locale) {
+    requireNonNull(locale);
     LOGGER.trace("locale {} -> {}", this.locale, locale);
-    this.locale = requireNonNull(locale);
+    this.locale = locale;
     return myself();
   }
 
@@ -422,12 +441,13 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
 
   @Override
   public A fileManagerLogging(Logging fileManagerLogging) {
+    requireNonNull(fileManagerLogging);
     LOGGER.trace(
         "fileManagerLogging {} -> {}",
         this.fileManagerLogging,
         fileManagerLogging
     );
-    this.fileManagerLogging = requireNonNull(fileManagerLogging);
+    this.fileManagerLogging = fileManagerLogging;
     return myself();
   }
 
@@ -438,12 +458,13 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
 
   @Override
   public A diagnostics(Logging diagnostics) {
+    requireNonNull(diagnostics);
     LOGGER.trace(
         "diagnostics {} -> {}",
         this.diagnostics,
         diagnostics
     );
-    this.diagnostics = requireNonNull(diagnostics);
+    this.diagnostics = diagnostics;
     return myself();
   }
 
@@ -454,12 +475,13 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
 
   @Override
   public A annotationProcessorDiscovery(ProcessorDiscovery annotationProcessorDiscovery) {
+    requireNonNull(annotationProcessorDiscovery);
     LOGGER.trace(
         "annotationProcessorDiscovery {} -> {}",
         this.annotationProcessorDiscovery,
         annotationProcessorDiscovery
     );
-    this.annotationProcessorDiscovery = requireNonNull(annotationProcessorDiscovery);
+    this.annotationProcessorDiscovery = annotationProcessorDiscovery;
     return myself();
   }
 

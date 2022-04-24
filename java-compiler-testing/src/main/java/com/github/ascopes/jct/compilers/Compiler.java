@@ -21,6 +21,8 @@ import static com.github.ascopes.jct.intern.CollectionUtils.combineOneOrMore;
 import com.github.ascopes.jct.paths.PathLocationRepository;
 import com.github.ascopes.jct.paths.RamPath;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
@@ -115,9 +117,14 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
       ProcessorDiscovery.INCLUDE_DEPENDENCIES;
 
   /**
+   * Default charset to use for reading and writing files ({@link StandardCharsets#UTF_8}).
+   */
+  Charset DEFAULT_FILE_CHARSET = StandardCharsets.UTF_8;
+
+  /**
    * Apply a given configurer to this compiler.
    *
-   * @param <T>        any exception that may be thrown.
+   * @param <T>                any exception that may be thrown.
    * @param compilerConfigurer the configurer to invoke.
    * @return this compiler object for further call chaining.
    * @throws T any exception that may be thrown by the configurer.
@@ -845,6 +852,27 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   default C addRuntimeOptions(String option, String... options) {
     return addRuntimeOptions(combineOneOrMore(option, options));
   }
+
+  /**
+   * Get the charset being used to read and write files with.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_FILE_CHARSET}.
+   *
+   * @return the charset.
+   */
+  Charset getFileCharset();
+
+  /**
+   * Set the charset being used to read and write files with.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_FILE_CHARSET}.
+   *
+   * @param charset the charset to use.
+   * @return this compiler for further call chaining.
+   */
+  C fileCharset(Charset charset);
 
   /**
    * Determine whether verbose logging is enabled or not.

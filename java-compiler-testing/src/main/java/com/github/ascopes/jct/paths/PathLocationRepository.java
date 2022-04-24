@@ -16,6 +16,8 @@
 
 package com.github.ascopes.jct.paths;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Comparator;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -44,6 +46,8 @@ public class PathLocationRepository implements AutoCloseable {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PathLocationRepository.class);
 
+  private final PathJavaFileObjectFactory factory;
+
   private static final Comparator<Location> LOCATION_COMPARATOR = Comparator
       .comparing(Location::getName)
       .thenComparing(ModuleLocation.class::isInstance);
@@ -52,11 +56,14 @@ public class PathLocationRepository implements AutoCloseable {
 
   /**
    * Initialize the repository.
+   *
+   * @param factory the factory to use to create {@link PathJavaFileObject} instances.
    */
-  public PathLocationRepository() {
+  public PathLocationRepository(PathJavaFileObjectFactory factory) {
     // We use a navigable map here as there is no concrete guarantee that all implementations of
     // Location will provide consistent equality and hashcode implementations, which may cause
     // us problems when dealing with equivalence.
+    this.factory = requireNonNull(factory);
     managers = new TreeMap<>(LOCATION_COMPARATOR);
   }
 
@@ -78,6 +85,8 @@ public class PathLocationRepository implements AutoCloseable {
    * @return {@code true} if registered, or {@code false} if not registered.
    */
   public boolean contains(Location location) {
+    requireNonNull(location);
+
     if (location instanceof ModuleLocation) {
       var moduleLocation = ((ModuleLocation) location);
       var moduleName = moduleLocation.getModuleName();
@@ -95,6 +104,8 @@ public class PathLocationRepository implements AutoCloseable {
    * @return the location manager, if present, or an empty optional if it does not exist.
    */
   public Optional<PathLocationManager> get(Location location) {
+    requireNonNull(location);
+
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
       var moduleName = moduleLocation.getModuleName();
@@ -123,6 +134,8 @@ public class PathLocationRepository implements AutoCloseable {
    * @throws NoSuchElementException if the manager is not found.
    */
   public PathLocationManager getExpected(Location location) {
+    requireNonNull(location);
+
     return get(location)
         .orElseThrow(() -> new NoSuchElementException(
             "No location manager for location " + location.getName() + " was found"
@@ -142,6 +155,7 @@ public class PathLocationRepository implements AutoCloseable {
    *                                  {@link StandardLocation#SOURCE_PATH} location, or vice-versa.
    */
   public PathLocationManager getOrCreate(Location location) {
+    requireNonNull(location);
     ensureCompatibleLocation(location);
 
     if (location instanceof ModuleLocation) {
@@ -184,7 +198,7 @@ public class PathLocationRepository implements AutoCloseable {
   }
 
   private ParentPathLocationManager createParentPathLocationManager(Location location) {
-    var manager = new ParentPathLocationManager(location);
+    var manager = new ParentPathLocationManager(factory, location);
 
     if (location.isOutputLocation()) {
       var ramPath = RamPath.createPath(

@@ -21,12 +21,11 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
@@ -51,22 +50,12 @@ public class ParentPathLocationManager extends PathLocationManager {
   /**
    * Initialize the manager.
    *
+   * @param factory  the {@link PathJavaFileObject} factory to use.
    * @param location the location to represent.
    */
-  public ParentPathLocationManager(Location location) {
-    super(location);
-    modules = new TreeMap<>();
-  }
-
-  /**
-   * Get a collection of all module managers in this location.
-   *
-   * <p>If not applicable, this will be an empty collection.
-   *
-   * @return the collection of module managers.
-   */
-  public Collection<PathLocationManager> getModuleManagers() {
-    return modules.values();
+  public ParentPathLocationManager(PathJavaFileObjectFactory factory, Location location) {
+    super(factory, location);
+    modules = new HashMap<>();
   }
 
   /**
@@ -196,7 +185,7 @@ public class ParentPathLocationManager extends PathLocationManager {
   ) {
     var location = getLocation();
     var moduleLocation = new ModuleLocation(location, moduleName);
-    var moduleManager = new PathLocationManager(moduleLocation);
+    var moduleManager = new PathLocationManager(getPathJavaFileObjectFactory(), moduleLocation);
 
     var paths = getRoots();
 
