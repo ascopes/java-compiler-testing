@@ -46,8 +46,7 @@ public class PathJavaFileObjectFactory {
     var kinds = new TreeMap<String, Kind>(String::compareToIgnoreCase);
     for (var kind : Kind.values()) {
       if (kind != Kind.OTHER) {
-        // Remove leading '.' on file extension
-        kinds.put(kind.extension.replaceFirst("^\\.", ""), kind);
+        kinds.put(kind.extension, kind);
       }
     }
     EXTENSIONS_TO_KINDS = Collections.unmodifiableSortedMap(kinds);
@@ -110,7 +109,7 @@ public class PathJavaFileObjectFactory {
     var fileName = path.getFileName().toString();
     var dotIndex = Math.max(fileName.lastIndexOf('.'), 0);
 
-    var extension = fileName.substring(dotIndex + 1);
+    var extension = fileName.substring(dotIndex);
 
     return Optional
         .ofNullable(EXTENSIONS_TO_KINDS.get(extension))
