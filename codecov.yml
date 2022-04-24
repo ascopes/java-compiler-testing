@@ -3,6 +3,6 @@ codecov:
   require_ci_to_pass: true
 coverage:
   precision: 2
-  # TODO: enable this once coverage exists.
-  #range: "90...100"
+  # TODO: adjust this once coverage is better.
+  range: "0...100"
   round: down
