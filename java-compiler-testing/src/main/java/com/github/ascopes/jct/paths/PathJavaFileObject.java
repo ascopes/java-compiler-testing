@@ -77,6 +77,7 @@ public class PathJavaFileObject implements JavaFileObject {
 
     var fileName = path.getFileName().toString();
 
+    // TODO(ascopes): swap this out with a frozen map...
     if (fileName.endsWith(Kind.SOURCE.extension)) {
       kind = Kind.SOURCE;
     } else if (fileName.endsWith(Kind.HTML.extension)) {
@@ -118,16 +119,23 @@ public class PathJavaFileObject implements JavaFileObject {
 
   @Override
   public NestingKind getNestingKind() {
+    // We do not have access to this info, so return null to
+    // indicate this to JSR-199.
     return null;
   }
 
   @Override
   public Modifier getAccessLevel() {
+    // We do not have access to this info, so return null to
+    // indicate this to JSR-199.
     return null;
   }
 
   @Override
   public URI toUri() {
+    // TODO(ascopes): mitigate bug where URI from path in JAR starts with
+    // jar://file:/// rather than jar:///, causing filesystem resolution
+    // to fail.
     return uri;
   }
 
@@ -162,6 +170,7 @@ public class PathJavaFileObject implements JavaFileObject {
 
   @Override
   public Writer openWriter() throws IOException {
+    // TODO(ascopes): would buffering the writer be more efficient here?
     return new OutputStreamWriter(openOutputStream(), encoder());
   }
 
@@ -187,8 +196,8 @@ public class PathJavaFileObject implements JavaFileObject {
 
   @Override
   public String toString() {
-    return "PathJavaFileObject{"
-        + "location=" + StringUtils.quoted(location.getName()) + ", "
+    return getClass().getSimpleName()
+        + "{location=" + StringUtils.quoted(location.getName()) + ", "
         + "uri=" + StringUtils.quoted(uri) + ", "
         + "kind=" + kind
         + "}";
@@ -213,6 +222,7 @@ public class PathJavaFileObject implements JavaFileObject {
   }
 
   private static Charset charset() {
+    // TODO(ascopes): provide a mechanism to customize this, perhaps?
     return StandardCharsets.UTF_8;
   }
 }
