@@ -78,6 +78,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   private boolean showDeprecationWarnings;
   private boolean failOnWarnings;
   private Locale locale;
+  private Charset logCharset;
   private boolean verbose;
   private boolean previewFeatures;
   private String release;
@@ -109,7 +110,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
 
     // We may want to be able to customize creation of missing roots in the future. For now,
     // I am leaving this enabled by default.
-    pathJavaFileObjectFactory = new PathJavaFileObjectFactory(DEFAULT_FILE_CHARSET);
+    pathJavaFileObjectFactory = new PathJavaFileObjectFactory(DEFAULT_LOG_CHARSET);
     fileRepository = new PathLocationRepository(pathJavaFileObjectFactory);
 
     annotationProcessors = new ArrayList<>();
@@ -122,6 +123,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
     showDeprecationWarnings = DEFAULT_SHOW_DEPRECATION_WARNINGS;
     failOnWarnings = DEFAULT_FAIL_ON_WARNINGS;
     locale = DEFAULT_LOCALE;
+    logCharset = DEFAULT_LOG_CHARSET;
     previewFeatures = DEFAULT_PREVIEW_FEATURES;
     release = null;
     source = null;
@@ -435,6 +437,19 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
+  public Charset getLogCharset() {
+    return logCharset;
+  }
+
+  @Override
+  public A logCharset(Charset charset) {
+    requireNonNull(charset);
+    LOGGER.trace("logCharset {} -> {}", logCharset, charset);
+    logCharset = charset;
+    return myself();
+  }
+
+  @Override
   public Logging getFileManagerLogging() {
     return fileManagerLogging;
   }
@@ -545,7 +560,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
         LOGGER.debug("Discovered {} compilation units {}", compilationUnits.size(),
             compilationUnits);
 
-        var writer = new TeeWriter(System.out);
+        var writer = new TeeWriter(logCharset, System.out);
         var task = buildCompilationTask(
             writer,
             fileManager,

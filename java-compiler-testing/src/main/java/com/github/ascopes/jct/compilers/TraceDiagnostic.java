@@ -16,6 +16,8 @@
 
 package com.github.ascopes.jct.compilers;
 
+import static java.util.Objects.requireNonNull;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -58,10 +60,11 @@ public class TraceDiagnostic<S> extends ForwardingDiagnostic<S> {
       Diagnostic<? extends S> original
   ) {
     super(original);
-    this.timestamp = Objects.requireNonNull(timestamp);
+    this.timestamp = requireNonNull(timestamp);
     this.threadId = threadId;
+    // Nullable.
     this.threadName = threadName;
-    this.stackTrace = Objects.requireNonNull(stackTrace);
+    this.stackTrace = requireNonNull(stackTrace);
   }
 
   /**

@@ -122,6 +122,11 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   Charset DEFAULT_FILE_CHARSET = StandardCharsets.UTF_8;
 
   /**
+   * Default charset to use for compiler logs ({@link StandardCharsets#UTF_8}).
+   */
+  Charset DEFAULT_LOG_CHARSET = StandardCharsets.UTF_8;
+
+  /**
    * Apply a given configurer to this compiler.
    *
    * @param <T>                any exception that may be thrown.
@@ -857,7 +862,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * Get the charset being used to read and write files with.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_FILE_CHARSET}.
+   * {@link #DEFAULT_LOG_CHARSET}.
    *
    * @return the charset.
    */
@@ -867,7 +872,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * Set the charset being used to read and write files with.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_FILE_CHARSET}.
+   * {@link #DEFAULT_LOG_CHARSET}.
    *
    * @param charset the charset to use.
    * @return this compiler for further call chaining.
@@ -1277,6 +1282,27 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @return this compiler for further call chaining.
    */
   C locale(Locale locale);
+
+  /**
+   * Get the charset being used to write compiler logs with.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_LOG_CHARSET}.
+   *
+   * @return the charset.
+   */
+  Charset getLogCharset();
+
+  /**
+   * Set the charset being used to write compiler logs with.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_LOG_CHARSET}.
+   *
+   * @param charset the charset to use.
+   * @return this compiler for further call chaining.
+   */
+  C logCharset(Charset charset);
 
   /**
    * Get the current file manager logging mode.

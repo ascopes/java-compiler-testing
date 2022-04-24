@@ -16,13 +16,14 @@
 
 package com.github.ascopes.jct.compilers;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -37,8 +38,6 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class TeeWriter extends Writer {
 
-  private static final Charset CHARSET = StandardCharsets.UTF_8;
-
   private final Writer writer;
   private final StringBuffer buffer;
 
@@ -47,10 +46,14 @@ public class TeeWriter extends Writer {
    *
    * <p>Note that this will not buffer the output stream itself. That is up to you to do.
    *
+   * @param charset      the charset to write with.
    * @param outputStream the output stream to delegate to.
    */
-  public TeeWriter(OutputStream outputStream) {
-    this(new OutputStreamWriter(outputStream, CHARSET));
+  public TeeWriter(Charset charset, OutputStream outputStream) {
+    this(new OutputStreamWriter(
+        requireNonNull(outputStream),
+        charset
+    ));
   }
 
   /**
@@ -59,7 +62,7 @@ public class TeeWriter extends Writer {
    * @param writer the writer to delegate to.
    */
   public TeeWriter(Writer writer) {
-    this.writer = Objects.requireNonNull(writer);
+    this.writer = requireNonNull(writer);
     buffer = new StringBuffer();
   }
 

@@ -23,10 +23,12 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 
 import com.github.ascopes.jct.compilers.TeeWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,19 +40,27 @@ import org.junit.jupiter.api.Test;
  * @author Ashley Scopes
  */
 @DisplayName("TeeWriter tests")
+@SuppressWarnings("resource")
 class TeeWriterTest {
+
+  @DisplayName("Null charsets are disallowed")
+  @Test
+  void nullCharsetsAreDisallowed() {
+    assertThatCode(() -> new TeeWriter(null, new ByteArrayOutputStream()))
+        .isInstanceOf(NullPointerException.class);
+  }
 
   @DisplayName("Null output streams are disallowed")
   @Test
   void nullOutputStreamsAreDisallowed() {
-    assertThatCode(() -> new TeeWriter((OutputStream) null))
+    assertThatCode(() -> new TeeWriter(StandardCharsets.UTF_8, null))
         .isInstanceOf(NullPointerException.class);
   }
 
   @DisplayName("Null writers are disallowed")
   @Test
   void nullWritersAreDisallowed() {
-    assertThatCode(() -> new TeeWriter((Writer) null))
+    assertThatCode(() -> new TeeWriter(null))
         .isInstanceOf(NullPointerException.class);
   }
 
@@ -74,7 +84,7 @@ class TeeWriterTest {
   void flushDelegatesToTheWriter() throws IOException {
     // Given
     var writer = mock(OutputStream.class);
-    var tee = new TeeWriter(writer);
+    var tee = new TeeWriter(StandardCharsets.UTF_8, writer);
 
     // When
     tee.flush();
@@ -105,7 +115,7 @@ class TeeWriterTest {
   void toStringShouldReturnTheBufferContent() throws IOException {
     // Given
     var writer = stub(OutputStream.class);
-    var tee = new TeeWriter(writer);
+    var tee = new TeeWriter(StandardCharsets.UTF_8, writer);
 
     // When
     tee.write("Hello, ");

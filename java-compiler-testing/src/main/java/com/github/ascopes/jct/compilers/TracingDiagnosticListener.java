@@ -16,6 +16,8 @@
 
 package com.github.ascopes.jct.compilers;
 
+import static java.util.Objects.requireNonNull;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
@@ -81,8 +83,8 @@ public class TracingDiagnosticListener<S> implements DiagnosticListener<S> {
       boolean stackTraces
   ) {
     diagnostics = new ConcurrentLinkedQueue<>();
-    this.logger = logger;
-    this.currentThreadSupplier = currentThreadSupplier;
+    this.logger = requireNonNull(logger);
+    this.currentThreadSupplier = requireNonNull(currentThreadSupplier);
     this.logging = logging;
     this.stackTraces = stackTraces;
   }
@@ -98,6 +100,8 @@ public class TracingDiagnosticListener<S> implements DiagnosticListener<S> {
 
   @Override
   public final void report(Diagnostic<? extends S> diagnostic) {
+    requireNonNull(diagnostic);
+
     var now = Instant.now();
     var thisThread = currentThreadSupplier.get();
     var threadId = thisThread.getId();
