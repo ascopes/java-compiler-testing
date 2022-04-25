@@ -110,7 +110,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
 
     // We may want to be able to customize creation of missing roots in the future. For now,
     // I am leaving this enabled by default.
-    pathJavaFileObjectFactory = new PathJavaFileObjectFactory(DEFAULT_LOG_CHARSET);
+    pathJavaFileObjectFactory = new PathJavaFileObjectFactory(DEFAULT_FILE_CHARSET);
     fileRepository = new PathLocationRepository(pathJavaFileObjectFactory);
 
     annotationProcessors = new ArrayList<>();
