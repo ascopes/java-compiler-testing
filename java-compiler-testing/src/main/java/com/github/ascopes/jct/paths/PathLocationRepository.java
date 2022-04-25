@@ -46,11 +46,11 @@ public class PathLocationRepository implements AutoCloseable {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PathLocationRepository.class);
 
-  private final PathJavaFileObjectFactory factory;
-
   private static final Comparator<Location> LOCATION_COMPARATOR = Comparator
       .comparing(Location::getName)
       .thenComparing(ModuleLocation.class::isInstance);
+
+  private final PathJavaFileObjectFactory factory;
 
   private final Map<Location, ParentPathLocationManager> managers;
 
@@ -84,7 +84,7 @@ public class PathLocationRepository implements AutoCloseable {
    * @param location the location to look for.
    * @return {@code true} if registered, or {@code false} if not registered.
    */
-  public boolean contains(Location location) {
+  public boolean containsManager(Location location) {
     requireNonNull(location);
 
     if (location instanceof ModuleLocation) {
@@ -98,19 +98,32 @@ public class PathLocationRepository implements AutoCloseable {
   }
 
   /**
+   * Determine if the given module is registered with the manager.
+   *
+   * @param parentLocation the location that the module is contained within.
+   * @param moduleName     the name of the module.
+   * @return {@code true} if registered, or {@code false} if not registered.
+   */
+  public boolean containsModuleManager(Location parentLocation, String moduleName) {
+    requireNonNull(parentLocation);
+    requireNonNull(moduleName);
+    return containsManager(new ModuleLocation(parentLocation, moduleName));
+  }
+
+  /**
    * Get the manager for a location, if it exists.
    *
    * @param location the location to look up.
    * @return the location manager, if present, or an empty optional if it does not exist.
    */
-  public Optional<PathLocationManager> get(Location location) {
+  public Optional<PathLocationManager> getManager(Location location) {
     requireNonNull(location);
 
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
       var moduleName = moduleLocation.getModuleName();
       var parentLocation = moduleLocation.getParent();
-      return get(parentLocation)
+      return getManager(parentLocation)
           .map(ParentPathLocationManager.class::cast)
           .flatMap(manager -> manager.getModuleLocationManager(moduleName));
     }
@@ -127,19 +140,52 @@ public class PathLocationRepository implements AutoCloseable {
   }
 
   /**
+   * Get the manager for a module location, if it exists.
+   *
+   * @param parentLocation the location the module is contained within.
+   * @param moduleName     the name of the module.
+   * @return the location manager, if present, or an empty optional if it does not exist.
+   */
+  public Optional<PathLocationManager> getModuleManager(
+      Location parentLocation,
+      String moduleName
+  ) {
+    requireNonNull(parentLocation);
+    requireNonNull(moduleName);
+    return getManager(new ModuleLocation(parentLocation, moduleName));
+  }
+
+  /**
    * Get the manager for a location, if it exists, or throw an exception if it doesn't.
    *
    * @param location the location to look up.
    * @return the location manager.
    * @throws NoSuchElementException if the manager is not found.
    */
-  public PathLocationManager getExpected(Location location) {
+  public PathLocationManager getExpectedManager(Location location) {
     requireNonNull(location);
 
-    return get(location)
+    return getManager(location)
         .orElseThrow(() -> new NoSuchElementException(
             "No location manager for location " + location.getName() + " was found"
         ));
+  }
+
+  /**
+   * Get the manager for a module location, if it exists, or throw an exception if it doesn't.
+   *
+   * @param parentLocation the location that the module is contained within.
+   * @param moduleName     the name of the module.
+   * @return the location manager.
+   * @throws NoSuchElementException if the manager is not found.
+   */
+  public PathLocationManager getExpectedModuleManager(
+      Location parentLocation,
+      String moduleName
+  ) {
+    requireNonNull(parentLocation);
+    requireNonNull(moduleName);
+    return getExpectedManager(new ModuleLocation(parentLocation, moduleName));
   }
 
   /**
@@ -154,7 +200,7 @@ public class PathLocationRepository implements AutoCloseable {
    *                                  been created and this operation would create a
    *                                  {@link StandardLocation#SOURCE_PATH} location, or vice-versa.
    */
-  public PathLocationManager getOrCreate(Location location) {
+  public PathLocationManager getOrCreateManager(Location location) {
     requireNonNull(location);
     ensureCompatibleLocation(location);
 
@@ -162,12 +208,28 @@ public class PathLocationRepository implements AutoCloseable {
       var moduleLocation = (ModuleLocation) location;
       var moduleName = moduleLocation.getModuleName();
       var parentLocation = moduleLocation.getParent();
-      return ((ParentPathLocationManager) getOrCreate(parentLocation))
+      return ((ParentPathLocationManager) getOrCreateManager(parentLocation))
           .getOrCreateModuleLocationManager(moduleName);
     }
 
     return managers
         .computeIfAbsent(location, unused -> createParentPathLocationManager(location));
+  }
+
+  /**
+   * Get the manager for a module location, creating it first if it does not yet exist.
+   *
+   * @param parentLocation the parent location that the module is contained within.
+   * @param moduleName     the name of the module to get the location for.
+   * @return the location manager.
+   * @throws IllegalArgumentException if a {@link StandardLocation#MODULE_SOURCE_PATH} has already
+   *                                  been created and this operation would create a
+   *                                  {@link StandardLocation#SOURCE_PATH} location, or vice-versa.
+   */
+  public PathLocationManager getOrCreateModuleManager(Location parentLocation, String moduleName) {
+    requireNonNull(parentLocation);
+    requireNonNull(moduleName);
+    return getOrCreateManager(new ModuleLocation(parentLocation, moduleName));
   }
 
   @Override

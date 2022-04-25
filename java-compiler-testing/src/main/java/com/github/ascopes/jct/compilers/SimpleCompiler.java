@@ -412,14 +412,14 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   @Override
   public A addPaths(Location location, Collection<? extends Path> paths) {
     LOGGER.trace("{}.paths += {}", location.getName(), paths);
-    fileRepository.getOrCreate(location).addPaths(paths);
+    fileRepository.getOrCreateManager(location).addPaths(paths);
     return myself();
   }
 
   @Override
   public A addRamPaths(Location location, Collection<? extends RamPath> paths) {
     LOGGER.trace("{}.paths += {}", location.getName(), paths);
-    fileRepository.getOrCreate(location).addRamPaths(paths);
+    fileRepository.getOrCreateManager(location).addRamPaths(paths);
     return myself();
   }
 
@@ -782,7 +782,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
     // it will just abort if it is not present. This means we cannot take advantage of the
     // PathLocationRepository creating the roots as we try to access them for this specific case.
     var classOutputManager = fileRepository
-        .getOrCreate(StandardLocation.CLASS_OUTPUT);
+        .getOrCreateManager(StandardLocation.CLASS_OUTPUT);
 
     // Ensure we have somewhere to dump our output.
     if (classOutputManager.isEmpty()) {
@@ -797,7 +797,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   private void registerClassPath() {
     // ECJ requires that we always create this, otherwise it refuses to run.
     var classPath = fileRepository
-        .getOrCreate(StandardLocation.CLASS_PATH);
+        .getOrCreateManager(StandardLocation.CLASS_PATH);
 
     if (inheritClassPath) {
       var currentClassPath = SpecialLocations.currentClassPathLocations();
@@ -821,7 +821,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
       classPath.addPaths(currentModulePath);
 
       fileRepository
-          .getOrCreate(StandardLocation.MODULE_PATH)
+          .getOrCreateManager(StandardLocation.MODULE_PATH)
           .addPaths(currentModulePath);
     }
   }
@@ -834,7 +834,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
         LOGGER.debug("Adding current platform classpath to compiler: {}", currentPlatformClassPath);
 
         fileRepository
-            .getOrCreate(StandardLocation.PLATFORM_CLASS_PATH)
+            .getOrCreateManager(StandardLocation.PLATFORM_CLASS_PATH)
             .addPaths(currentPlatformClassPath);
       }
     }
@@ -846,7 +846,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
       LOGGER.trace("Adding JRT locations to compiler: {}", jrtLocations);
 
       fileRepository
-          .getOrCreate(StandardLocation.SYSTEM_MODULES)
+          .getOrCreateManager(StandardLocation.SYSTEM_MODULES)
           .addPaths(jrtLocations);
     }
   }
@@ -862,24 +862,24 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
       case ENABLED: {
         // Ensure the paths exist.
         fileRepository
-            .get(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH)
+            .getManager(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH)
             .orElseGet(() -> fileRepository
-                .getOrCreate(StandardLocation.ANNOTATION_PROCESSOR_PATH));
+                .getOrCreateManager(StandardLocation.ANNOTATION_PROCESSOR_PATH));
         break;
       }
 
       case INCLUDE_DEPENDENCIES:
         fileRepository
-            .get(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH)
+            .getManager(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH)
             .ifPresentOrElse(
                 procModules -> procModules.addPaths(
                     fileRepository
-                        .getExpected(StandardLocation.MODULE_PATH)
+                        .getExpectedManager(StandardLocation.MODULE_PATH)
                         .getRoots()),
                 () -> fileRepository
-                    .getOrCreate(StandardLocation.ANNOTATION_PROCESSOR_PATH)
+                    .getOrCreateManager(StandardLocation.ANNOTATION_PROCESSOR_PATH)
                     .addPaths(fileRepository
-                        .getExpected(StandardLocation.CLASS_PATH)
+                        .getExpectedManager(StandardLocation.CLASS_PATH)
                         .getRoots())
             );
         break;

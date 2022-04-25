@@ -69,12 +69,12 @@ class LombokIntegrationTest {
         .location(StandardLocation.ANNOTATION_PROCESSOR_PATH)
         .containsAll(compilation
             .getFileRepository()
-            .getExpected(StandardLocation.CLASS_PATH)
+            .getExpectedManager(StandardLocation.CLASS_PATH)
             .getRoots());
 
     var animalClass = compilation
         .getFileRepository()
-        .get(StandardLocation.CLASS_OUTPUT)
+        .getManager(StandardLocation.CLASS_OUTPUT)
         .orElseThrow()
         .getClassLoader()
         .loadClass("com.github.ascopes.jct.examples.lombok.dataclass.Animal");
