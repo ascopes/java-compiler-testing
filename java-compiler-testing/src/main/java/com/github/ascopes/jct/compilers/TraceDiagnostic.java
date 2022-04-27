@@ -20,7 +20,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import javax.tools.Diagnostic;
 import org.apiguardian.api.API;
