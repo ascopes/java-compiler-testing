@@ -17,9 +17,12 @@
 package com.github.ascopes.jct.testing.unit.compilers.javac;
 
 import com.github.ascopes.jct.compilers.javac.JavacFlagBuilder;
-import org.junit.jupiter.api.Disabled;
+import com.github.ascopes.jct.testing.unit.compilers.FlagBuilderTestSupport;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 /**
  * {@link JavacFlagBuilder} tests.
@@ -27,12 +30,113 @@ import org.junit.jupiter.api.Test;
  * @author Ashley Scopes
  */
 @DisplayName("JavacFlagBuilder tests")
-class JavacFlagBuilderTest {
+class JavacFlagBuilderTest extends FlagBuilderTestSupport<JavacFlagBuilder> {
 
-  @DisplayName("TODO: implement JavacFlagBuilder tests")
-  @Disabled
-  @Test
-  void toDoImplementMe() {
-    // TODO: implement
+  @Override
+  protected JavacFlagBuilder initialize() {
+    return new JavacFlagBuilder();
+  }
+
+  @DisplayName("Verbose flag should be set when enabled")
+  @TestFactory
+  Stream<DynamicTest> verboseFlagShouldBeSetWhenEnabled() {
+    return flagAddedIfEnabled("verbose", "-verbose", JavacFlagBuilder::verbose);
+  }
+
+  @DisplayName("Preview features flag should be set when enabled")
+  @TestFactory
+  Stream<DynamicTest> enablePreviewFlagShouldBeSetWhenEnabled() {
+    return flagAddedIfEnabled(
+        "preview features",
+        "--enable-preview",
+        JavacFlagBuilder::previewFeatures
+    );
+  }
+
+  @DisplayName("No-warnings flag should be set when warnings disabled")
+  @TestFactory
+  Stream<DynamicTest> noWarnFlagShouldBeSetWhenDisabled() {
+    return flagAddedIfDisabled(
+        "warnings",
+        "-nowarn",
+        JavacFlagBuilder::warnings
+    );
+  }
+
+  @DisplayName("Warnings-as-errors flag should be set when enabled")
+  @TestFactory
+  Stream<DynamicTest> warningsAsErrorsFlagShouldBeSetWhenEnabled() {
+    return flagAddedIfEnabled(
+        "warnings-as-errors",
+        "-Werror",
+        JavacFlagBuilder::warningsAsErrors
+    );
+  }
+
+  @DisplayName("Deprecation warnings flag should be set when enabled")
+  @TestFactory
+  Stream<DynamicTest> deprecationWarningsFlagShouldBeSetWhenEnabled() {
+    return flagAddedIfEnabled(
+        "deprecation warnings",
+        "-deprecation",
+        JavacFlagBuilder::deprecationWarnings
+    );
+  }
+
+  @DisplayName("Release flag should be set if specified")
+  @TestFactory
+  Stream<DynamicTest> releaseFlagIsSetWhenSpecified() {
+    return argAddedIfProvided(
+        "release version",
+        "--release",
+        JavacFlagBuilder::releaseVersion,
+        Function.identity(),
+        "10", "11", "17"
+    );
+  }
+
+  @DisplayName("Source flag should be set if specified")
+  @TestFactory
+  Stream<DynamicTest> sourceFlagIsSetWhenSpecified() {
+    return argAddedIfProvided(
+        "source version",
+        "-source",
+        JavacFlagBuilder::sourceVersion,
+        Function.identity(),
+        "10", "11", "17"
+    );
+  }
+
+  @DisplayName("Annotation processor options should be set when provided")
+  @TestFactory
+  Stream<DynamicTest> annotationProcessorOptionsShouldBeSetWhenProvided() {
+    return flagWithArgsSetIfProvided(
+        "annotation processor options",
+        "-A",
+        JavacFlagBuilder::annotationProcessorOptions,
+        Function.identity(),
+        "foo=bar", "baz=bork", "qux=quxx"
+    );
+  }
+
+  @DisplayName("Runtime options should be set when provided")
+  @TestFactory
+  Stream<DynamicTest> runtimeOptionsShouldBeSetWhenProvided() {
+    return flagWithArgsSetIfProvided(
+        "runtime options",
+        "-J",
+        JavacFlagBuilder::runtimeOptions,
+        Function.identity(),
+        "do=ray", "me.far=so", "lah.tea.do=blah"
+    );
+  }
+
+  @DisplayName("Other options should be set when provided")
+  @TestFactory
+  Stream<DynamicTest> otherOptionsShouldBeSetWhenProvided() {
+    return otherArgsAddedWhenProvided(
+        JavacFlagBuilder::options,
+        "--foo.bar=baz", "--explode-on-error", "-rainbow"
+    );
   }
 }
