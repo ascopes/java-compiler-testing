@@ -574,7 +574,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
         var outputLines = writer.toString().lines().collect(Collectors.toList());
 
         return SimpleCompilation.builder()
-            .warningsAsErrors(failOnWarnings)
+            .failOnWarnings(failOnWarnings)
             .success(result)
             .outputLines(outputLines)
             .compilationUnits(Set.copyOf(compilationUnits))

@@ -61,7 +61,7 @@ public class CompilationAssert<C extends Compilation>
       return myself;
     }
 
-    Predicate<Kind> filter = actual.isWarningsAsErrors()
+    Predicate<Kind> filter = actual.isFailOnWarnings()
         ? kind -> kind == Kind.ERROR || kind == Kind.MANDATORY_WARNING || kind == Kind.WARNING
         : kind -> kind == Kind.ERROR;
 

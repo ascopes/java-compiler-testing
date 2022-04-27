@@ -38,7 +38,7 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class SimpleCompilation implements Compilation {
 
-  private final boolean warningsAsErrors;
+  private final boolean failOnWarnings;
   private final boolean success;
   private final List<String> outputLines;
   private final Set<? extends JavaFileObject> compilationUnits;
@@ -46,7 +46,7 @@ public final class SimpleCompilation implements Compilation {
   private final PathLocationRepository repository;
 
   private SimpleCompilation(Builder builder) {
-    warningsAsErrors = requireNonNull(builder.warningsAsErrors);
+    failOnWarnings = requireNonNull(builder.failOnWarnings);
     success = requireNonNull(builder.success);
     outputLines = unmodifiableList(requireNonNull(builder.outputLines));
     compilationUnits = unmodifiableSet(requireNonNull(builder.compilationUnits));
@@ -59,8 +59,8 @@ public final class SimpleCompilation implements Compilation {
   }
 
   @Override
-  public boolean isWarningsAsErrors() {
-    return warningsAsErrors;
+  public boolean isFailOnWarnings() {
+    return failOnWarnings;
   }
 
   @Override
@@ -106,7 +106,7 @@ public final class SimpleCompilation implements Compilation {
   @API(since = "0.0.1", status = Status.EXPERIMENTAL)
   public static final class Builder {
 
-    private Boolean warningsAsErrors;
+    private Boolean failOnWarnings;
     private Boolean success;
     private List<String> outputLines;
     private Set<? extends JavaFileObject> compilationUnits;
@@ -120,11 +120,11 @@ public final class SimpleCompilation implements Compilation {
     /**
      * Set whether to treat warnings as errors.
      *
-     * @param warningsAsErrors {@code true} or {@code false}.
+     * @param failOnWarnings {@code true} or {@code false}.
      * @return this builder.
      */
-    public Builder warningsAsErrors(boolean warningsAsErrors) {
-      this.warningsAsErrors = warningsAsErrors;
+    public Builder failOnWarnings(boolean failOnWarnings) {
+      this.failOnWarnings = failOnWarnings;
       return this;
     }
 

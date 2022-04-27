@@ -37,7 +37,7 @@ public interface Compilation {
    *
    * @return {@code true} if warnings were treated as errors, or {@code false} otherwise.
    */
-  boolean isWarningsAsErrors();
+  boolean isFailOnWarnings();
 
   /**
    * Determine if the compilation was successful or not.
