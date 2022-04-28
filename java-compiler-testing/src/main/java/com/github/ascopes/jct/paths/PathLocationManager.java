@@ -87,7 +87,7 @@ public class PathLocationManager implements Iterable<Path> {
   // We use this to keep the references alive while the manager is alive, but we persist these
   // outside this context.
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-  private final Set<RamPath> inMemoryDirectories;
+  private final Set<RamPath> inMemoryDirectories;  // lgtm [java/unused-container]
 
   // We open JARs as additional file systems as needed, and discard them when this manager gets
   // discarded.
