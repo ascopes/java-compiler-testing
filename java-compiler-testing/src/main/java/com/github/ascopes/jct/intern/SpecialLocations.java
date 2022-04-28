@@ -38,8 +38,9 @@ import org.slf4j.LoggerFactory;
 public final class SpecialLocations {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SpecialLocations.class);
-  private static final String SEPARATOR =
-      System.getProperty("path.separator", File.pathSeparator);
+  private static final StringSlicer SEPARATOR = new StringSlicer(
+      System.getProperty("path.separator", File.pathSeparator)
+  );
 
   private SpecialLocations() {
     throw new UnsupportedOperationException("static-only class");
@@ -61,7 +62,7 @@ public final class SpecialLocations {
     // Had to do a load of digging around the OpenJDK compiler implementation to work this out, and
     // I don't know if this will work on all JDK installations yet.
     var uri = URI.create("jrt:/");
-    return List.of(Path.of(uri));
+    return List.of(Path.of(uri).toAbsolutePath());
   }
 
   /**
@@ -117,7 +118,7 @@ public final class SpecialLocations {
   }
 
   private static List<Path> createPaths(String raw) {
-    return new StringSlicer(SEPARATOR)
+    return SEPARATOR
         .splitToStream(raw)
         .map(Path::of)
         // We have to check this, annoyingly, because some tools like Maven (Surefire) will report

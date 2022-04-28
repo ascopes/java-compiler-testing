@@ -20,6 +20,7 @@ open module com.github.ascopes.jct.testing {
   requires ecj;
   requires java.compiler;
   requires java.management;
+  requires jimfs;
   requires transitive net.bytebuddy;         // required for mockito to work with JPMS.
   requires transitive net.bytebuddy.agent;   // required for mockito to work with JPMS.
   requires transitive org.assertj.core;
