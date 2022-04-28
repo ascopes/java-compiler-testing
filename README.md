@@ -3,6 +3,7 @@
 [![Releases](https://img.shields.io/github/downloads/ascopes/java-compiler-testing/total)](https://github.com/ascopes/java-compiler-testing/releases)
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.ascopes.jct/java-compiler-testing)](https://search.maven.org/artifact/com.github.ascopes.jct/java-compiler-testing)
 ![Total LOC](https://img.shields.io/tokei/lines/github/ascopes/java-compiler-testing)
+[![LGTM](https://img.shields.io/lgtm/alerts/github/ascopes/java-compiler-testing)](https://lgtm.com/projects/g/ascopes/java-compiler-testing)
 [![Issues](https://img.shields.io/github/issues-raw/ascopes/java-compiler-testing)](https://github.com/ascopes/java-compiler-testing/issues)
 [![Closed Issues](https://img.shields.io/github/issues-closed-raw/ascopes/java-compiler-testing)](https://github.com/ascopes/java-compiler-testing/issues?q=is%3Aissue+is%3Aclosed)
 [![License](https://img.shields.io/github/license/ascopes/java-compiler-testing)](https://github.com/ascopes/java-compiler-testing/blob/main/LICENSE.txt)
