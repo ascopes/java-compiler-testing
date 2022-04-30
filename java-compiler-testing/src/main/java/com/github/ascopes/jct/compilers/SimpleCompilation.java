@@ -21,8 +21,8 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
 import com.github.ascopes.jct.paths.PathLocationRepository;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
@@ -38,34 +38,30 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class SimpleCompilation implements Compilation {
 
-  private final boolean failOnWarnings;
   private final boolean success;
+  private final boolean failOnWarnings;
   private final List<String> outputLines;
   private final Set<? extends JavaFileObject> compilationUnits;
   private final List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
-  private final PathLocationRepository repository;
+  private final PathLocationRepository fileRepository;
 
   private SimpleCompilation(Builder builder) {
-    failOnWarnings = requireNonNull(builder.failOnWarnings);
-    success = requireNonNull(builder.success);
-    outputLines = unmodifiableList(requireNonNull(builder.outputLines));
-    compilationUnits = unmodifiableSet(requireNonNull(builder.compilationUnits));
-    diagnostics = unmodifiableList(requireNonNull(builder.diagnostics));
-    repository = requireNonNull(builder.fileRepository);
-
-    outputLines.forEach(Objects::requireNonNull);
-    compilationUnits.forEach(Objects::requireNonNull);
-    outputLines.forEach(Objects::requireNonNull);
-  }
-
-  @Override
-  public boolean isFailOnWarnings() {
-    return failOnWarnings;
+    success = requireNonNull(builder.success, "success");
+    failOnWarnings = requireNonNull(builder.failOnWarnings, "failOnWarnings");
+    outputLines = frozenList(builder.outputLines, "outputLines");
+    compilationUnits = frozenSet(builder.compilationUnits, "compilationUnits");
+    diagnostics = frozenList(builder.diagnostics, "diagnostics");
+    fileRepository = requireNonNull(builder.fileRepository, "fileRepository");
   }
 
   @Override
   public boolean isSuccessful() {
     return success;
+  }
+
+  @Override
+  public boolean isFailOnWarnings() {
+    return failOnWarnings;
   }
 
   @Override
@@ -85,7 +81,7 @@ public final class SimpleCompilation implements Compilation {
 
   @Override
   public PathLocationRepository getFileRepository() {
-    return repository;
+    return fileRepository;
   }
 
   /**
@@ -146,7 +142,7 @@ public final class SimpleCompilation implements Compilation {
      * @return this builder.
      */
     public Builder outputLines(List<String> outputLines) {
-      this.outputLines = requireNonNull(outputLines);
+      this.outputLines = requireNonNull(outputLines, "outputLines");
       return this;
     }
 
@@ -157,7 +153,7 @@ public final class SimpleCompilation implements Compilation {
      * @return this builder.
      */
     public Builder compilationUnits(Set<? extends JavaFileObject> compilationUnits) {
-      this.compilationUnits = requireNonNull(compilationUnits);
+      this.compilationUnits = requireNonNull(compilationUnits, "compilationUnits");
       return this;
     }
 
@@ -170,7 +166,7 @@ public final class SimpleCompilation implements Compilation {
     public Builder diagnostics(
         List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
     ) {
-      this.diagnostics = requireNonNull(diagnostics);
+      this.diagnostics = requireNonNull(diagnostics, "diagnostics");
       return this;
     }
 
@@ -181,7 +177,7 @@ public final class SimpleCompilation implements Compilation {
      * @return this builder.
      */
     public Builder fileRepository(PathLocationRepository fileRepository) {
-      this.fileRepository = requireNonNull(fileRepository);
+      this.fileRepository = requireNonNull(fileRepository, "fileRepository");
       return this;
     }
 
@@ -193,6 +189,28 @@ public final class SimpleCompilation implements Compilation {
     public SimpleCompilation build() {
       return new SimpleCompilation(this);
     }
+  }
 
+  @SuppressWarnings("SameParameterValue")
+  private static <T> Set<T> frozenSet(Set<T> set, String name) {
+    set = unmodifiableSet(requireNonNull(set, name));
+    ensureNoNullElements(set.iterator(), name);
+    return set;
+  }
+
+  private static <T> List<T> frozenList(List<T> list, String name) {
+    list = unmodifiableList(requireNonNull(list, name));
+    ensureNoNullElements(list.iterator(), name);
+    return list;
+  }
+
+  private static void ensureNoNullElements(Iterator<?> iterator, String name) {
+    var index = 0;
+    while (iterator.hasNext()) {
+      // Need to redefine as effectively final for the lambda expression to pick it up.
+      var i = index;
+      requireNonNull(iterator.next(), () -> name + "[" + i + "]");
+      ++index;
+    }
   }
 }
