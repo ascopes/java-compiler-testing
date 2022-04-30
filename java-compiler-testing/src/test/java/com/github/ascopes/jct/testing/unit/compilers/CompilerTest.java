@@ -19,6 +19,7 @@ package com.github.ascopes.jct.testing.unit.compilers;
 import static com.github.ascopes.jct.testing.helpers.MoreMocks.stub;
 import static com.github.ascopes.jct.testing.helpers.MoreMocks.stubCast;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -1208,6 +1209,19 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
+  @DisplayName("releaseVersion(int) throws an IllegalArgumentException for negative versions")
+  @ValueSource(ints = {-1, -2, -5, -100_000})
+  @ParameterizedTest(name = "for version = {0}")
+  void releaseVersionIntThrowsIllegalArgumentExceptionForNegativeVersions(int versionInt) {
+    // Given
+    given(compiler.release(anyInt())).willCallRealMethod();
+
+    // Then
+    assertThatThrownBy(() -> compiler.release(versionInt))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Cannot provide a release version less than 0");
+  }
+
   @DisplayName("releaseVersion(SourceVersion) should call releaseVersion(String)")
   @MethodSource("sourceVersions")
   @ParameterizedTest(name = "for version = {0}")
@@ -1244,6 +1258,19 @@ class CompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
+  @DisplayName("sourceVersion(int) throws an IllegalArgumentException for negative versions")
+  @ValueSource(ints = {-1, -2, -5, -100_000})
+  @ParameterizedTest(name = "for version = {0}")
+  void sourceVersionIntThrowsIllegalArgumentExceptionForNegativeVersions(int versionInt) {
+    // Given
+    given(compiler.source(anyInt())).willCallRealMethod();
+
+    // Then
+    assertThatThrownBy(() -> compiler.source(versionInt))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Cannot provide a source version less than 0");
+  }
+
   @DisplayName("sourceVersion(SourceVersion) should call sourceVersion(String)")
   @MethodSource("sourceVersions")
   @ParameterizedTest(name = "for version = {0}")
@@ -1278,6 +1305,19 @@ class CompilerTest {
     // Then
     then(compiler).should().target(versionString);
     assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("targetVersion(int) throws an IllegalArgumentException for negative versions")
+  @ValueSource(ints = {-1, -2, -5, -100_000})
+  @ParameterizedTest(name = "for version = {0}")
+  void targetVersionIntThrowsIllegalArgumentExceptionForNegativeVersions(int versionInt) {
+    // Given
+    given(compiler.target(anyInt())).willCallRealMethod();
+
+    // Then
+    assertThatThrownBy(() -> compiler.target(versionInt))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Cannot provide a target version less than 0");
   }
 
   @DisplayName("targetVersion(SourceVersion) should call targetVersion(String)")
