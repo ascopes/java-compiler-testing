@@ -80,7 +80,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <project.organization.url>https://github.com/ascopes</project.organization.url>
-    <project.scm-url>${project.organization.url}/java-compiler-testing</project.scm-url>
+    <project.scm-url>${project.organization.url}/jct</project.scm-url>
   </properties>
 
   <dependencyManagement>
