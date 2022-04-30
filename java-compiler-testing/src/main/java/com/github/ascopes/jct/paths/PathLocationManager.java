@@ -16,8 +16,8 @@
 
 package com.github.ascopes.jct.paths;
 
-import static com.github.ascopes.jct.intern.IoExceptionUtils.rethrowAsUncheckedIo;
 import static com.github.ascopes.jct.intern.IoExceptionUtils.uncheckedIo;
+import static com.github.ascopes.jct.intern.IoExceptionUtils.wrapWithUncheckedIoException;
 import static java.util.Objects.requireNonNull;
 
 import com.github.ascopes.jct.intern.AsyncResourceCloser;
@@ -526,7 +526,7 @@ public class PathLocationManager implements Iterable<Path> {
    */
   protected void registerPath(Path path) {
     if (!Files.exists(path)) {
-      rethrowAsUncheckedIo(new FileNotFoundException(path.toString()));
+      throw wrapWithUncheckedIoException(new FileNotFoundException(path.toString()));
     }
 
     var absolutePath = path.toAbsolutePath();
