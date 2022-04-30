@@ -16,10 +16,13 @@
 
 package com.github.ascopes.jct.testing.unit.compilers;
 
+import static com.github.ascopes.jct.testing.helpers.MoreMocks.mockCast;
 import static com.github.ascopes.jct.testing.helpers.MoreMocks.stubCast;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.then;
 
 import com.github.ascopes.jct.compilers.Compiler;
+import com.github.ascopes.jct.compilers.Compiler.CompilerConfigurer;
 import com.github.ascopes.jct.compilers.Compiler.ProcessorDiscovery;
 import com.github.ascopes.jct.compilers.SimpleCompilation;
 import com.github.ascopes.jct.compilers.SimpleCompiler;
@@ -167,6 +170,21 @@ class SimpleCompilerTest {
   void defaultEnableAnnotationProcessorDiscoveryIsExpectedValue() {
     assertThat(new StubbedCompiler().getAnnotationProcessorDiscovery())
         .isEqualTo(ProcessorDiscovery.INCLUDE_DEPENDENCIES);
+  }
+
+  @DisplayName("Applying a configurer invokes the configurer with the compiler")
+  @Test
+  void applyingConfigurerInvokesConfigurerWithCompiler() throws Exception {
+    // Given
+    var compiler = new StubbedCompiler();
+    var configurer = mockCast(new TypeRef<CompilerConfigurer<StubbedCompiler, Exception>>() {});
+
+    // When
+    var result = compiler.configure(configurer);
+
+    // Then
+    assertThat(result).isSameAs(compiler);
+    then(configurer).should().configure(compiler);
   }
 
   // Extend to allow field access to protected members.

@@ -130,13 +130,11 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * Apply a given configurer to this compiler.
    *
    * @param <T>                any exception that may be thrown.
-   * @param compilerConfigurer the configurer to invoke.
+   * @param configurer the configurer to invoke.
    * @return this compiler object for further call chaining.
    * @throws T any exception that may be thrown by the configurer.
    */
-  <T extends Exception> C configure(
-      CompilerConfigurer<C, T> compilerConfigurer
-  ) throws T;
+  <T extends Exception> C configure(CompilerConfigurer<C, T> configurer) throws T;
 
   /**
    * Get the path location repository holding any paths that have been added.

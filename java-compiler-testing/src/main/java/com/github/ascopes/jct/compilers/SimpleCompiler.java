@@ -139,12 +139,10 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public final <T extends Exception> A configure(
-      CompilerConfigurer<A, T> compilerConfigurer
-  ) throws T {
-    LOGGER.debug("configure({})", compilerConfigurer);
+  public final <T extends Exception> A configure(CompilerConfigurer<A, T> configurer) throws T {
+    LOGGER.debug("configure({})", configurer);
     var me = myself();
-    compilerConfigurer.configure(me);
+    configurer.configure(me);
     return me;
   }
 
@@ -694,15 +692,45 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   /**
-   * Build a new compilation task.
+   * Run the compilation task.
    *
-   * @param writer             the writer to dump standard output to.
-   * @param fileManager        the file manager to use.
-   * @param diagnosticListener the diagnostics listener to use.
-   * @param flags              the flags to use.
-   * @param compilationUnits   the compilation units to use.
-   * @return the compilation task.
+   * <p>Any exceptions that get thrown will be wrapped in {@link CompilerException} instances
+   * before being rethrown.
+   *
+   * @param task the task to run.
+   * @return {@code true} if the compilation succeeded, or {@code false} if compilation failed.
+   * @throws CompilerException if compilation throws an unhandled exception.
    */
+  protected boolean runCompilationTask(CompilationTask task) {
+    var name = getName();
+
+    try {
+      var start = System.nanoTime();
+      var result = task.call();
+
+      if (result == null) {
+        throw new CompilerException("The compiler failed to produce a valid result");
+      }
+
+      LOGGER.info("Compilation with compiler {} {} after ~{}ms",
+          name,
+          result ? "succeeded" : "failed",
+          Math.round((System.nanoTime() - start) / 1_000_000.0)
+      );
+
+      return result;
+
+    } catch (Exception ex) {
+      LOGGER.warn(
+          "Compiler {} threw an exception: {}: {}",
+          name,
+          ex.getClass().getName(),
+          ex.getMessage()
+      );
+      throw new CompilerException("The compiler threw an exception", ex);
+    }
+  }
+
   private CompilationTask buildCompilationTask(
       Writer writer,
       JavaFileManager fileManager,
@@ -736,45 +764,6 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
     }
 
     return task;
-  }
-
-  /**
-   * Run the compilation task.
-   *
-   * <p>Any exceptions that get thrown will be wrapped in {@link CompilerException} instances
-   * before being rethrown.
-   *
-   * @param task the task to run.
-   * @return {@code true} if the compilation succeeded, or {@code false} if compilation failed.
-   * @throws CompilerException if compilation throws an unhandled exception.
-   */
-  protected boolean runCompilationTask(CompilationTask task) {
-    var name = getName();
-
-    try {
-      var start = System.nanoTime();
-      var result = task.call();
-
-      if (result == null) {
-        throw new CompilerException("The compiler failed to produce a valid result");
-      }
-
-      LOGGER.info("Compilation with compiler {} {} after ~{}ms",
-          name,
-          result ? "succeeded" : "failed",
-          Math.round((System.nanoTime() - start) / 1_000_000.0)
-      );
-
-      return result;
-    } catch (Exception ex) {
-      LOGGER.warn(
-          "Compiler {} threw an exception: {}: {}",
-          name,
-          ex.getClass().getName(),
-          ex.getMessage()
-      );
-      throw new CompilerException("The compiler threw an exception", ex);
-    }
   }
 
   private void ensureClassOutputPathExists() {
@@ -859,14 +848,13 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
     }
 
     switch (annotationProcessorDiscovery) {
-      case ENABLED: {
+      case ENABLED:
         // Ensure the paths exist.
         fileRepository
             .getManager(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH)
             .orElseGet(() -> fileRepository
                 .getOrCreateManager(StandardLocation.ANNOTATION_PROCESSOR_PATH));
         break;
-      }
 
       case INCLUDE_DEPENDENCIES:
         fileRepository
@@ -884,7 +872,6 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
             );
         break;
 
-      case DISABLED:
       default:
         // Set the processor list explicitly to instruct the compiler to not perform discovery.
         task.setProcessors(List.of());
