@@ -59,7 +59,7 @@ public final class IoExceptionUtils {
    * @throws UncheckedIOException if an {@link IOException} occurs.
    */
   public static <T> T uncheckedIo(IoSupplier<T> supplier) {
-    T result = null;
+    T result;
 
     try {
       result = supplier.get();
@@ -79,12 +79,7 @@ public final class IoExceptionUtils {
    * @return the new unchecked exception.
    */
   public static UncheckedIOException wrapWithUncheckedIoException(IOException ex) {
-    var newEx = new UncheckedIOException(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-    var existingStack = ex.getStackTrace();
-    if (existingStack.length > 0) {
-      newEx.setStackTrace(existingStack);
-    }
-    return newEx;
+    return new UncheckedIOException(ex.getClass().getName() + ": " + ex.getMessage(), ex);
   }
 
   /**

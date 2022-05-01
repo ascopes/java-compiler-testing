@@ -67,15 +67,16 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
     // Given
     var stackTrace = someStackTrace();
 
-    var ex = new IOException("bang");
-    ex.setStackTrace(stackTrace);
+    var originalEx = new IOException("bang");
+    originalEx.setStackTrace(stackTrace);
 
     // Then
     thenCode(() -> IoExceptionUtils.uncheckedIo((IoRunnable) () -> {
-      throw ex;
+      throw originalEx;
     })).isInstanceOf(UncheckedIOException.class)
-        .hasMessage("%s: %s", ex.getClass().getName(), ex.getMessage())
-        .hasCause(ex)
+        .hasMessage("%s: %s", originalEx.getClass().getName(), originalEx.getMessage())
+        .getCause()
+        .isSameAs(originalEx)
         .extracting(Throwable::getStackTrace, array(StackTraceElement[].class))
         .isEqualTo(stackTrace);
   }
@@ -119,7 +120,7 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
   }
 
   @DisplayName(
-      "A supplier will have any IOException rethrown as an UncheckedIOException if an"
+      "A supplier will have any IOException rethrown as an UncheckedIOException if an "
           + "existing stack trace is provided"
   )
   @SuppressWarnings("ConstantConditions")
@@ -128,25 +129,26 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
     // Given
     var stackTrace = someStackTrace();
 
-    var ex = new IOException("bong");
-    ex.setStackTrace(stackTrace);
+    var originalEx = new IOException("bong");
+    originalEx.setStackTrace(stackTrace);
 
     // Then
     thenCode(() -> IoExceptionUtils.uncheckedIo((IoSupplier<Integer>) () -> {
       if (true) {
-        throw ex;
+        throw originalEx;
       } else {
         return 12345;
       }
     })).isInstanceOf(UncheckedIOException.class)
-        .hasMessage("%s: %s", ex.getClass().getName(), ex.getMessage())
-        .hasCause(ex)
+        .hasMessage("%s: %s", originalEx.getClass().getName(), originalEx.getMessage())
+        .getCause()
+        .isSameAs(originalEx)
         .extracting(Throwable::getStackTrace, array(StackTraceElement[].class))
         .isEqualTo(stackTrace);
   }
 
   @DisplayName(
-      "A supplier will have any IOException rethrown as an UncheckedIOException if an"
+      "A supplier will have any IOException rethrown as an UncheckedIOException if an "
           + "existing stack trace is not provided"
   )
   @SuppressWarnings("ConstantConditions")
@@ -183,7 +185,8 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
 
     assertThat(newEx)
         .hasMessage("%s: %s", originalEx.getClass().getName(), originalEx.getMessage())
-        .hasCause(originalEx)
+        .getCause()
+        .isSameAs(originalEx)
         .extracting(Throwable::getStackTrace, array(StackTraceElement[].class))
         .isEqualTo(stackTrace);
   }
@@ -193,6 +196,8 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
   void wrapWithUncheckedIoExceptionWrapsIoExceptionsWithoutStackTracesCorrectly() {
     // Given
     var originalEx = new IOException("no stacktrace set!");
+    // IOException will initialize the stacktrace by default. We want to first undo this.
+    originalEx.setStackTrace(new StackTraceElement[0]);
 
     // When
     var newEx = IoExceptionUtils.wrapWithUncheckedIoException(originalEx);
