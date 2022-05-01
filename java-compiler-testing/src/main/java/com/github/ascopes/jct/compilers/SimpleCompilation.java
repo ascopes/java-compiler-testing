@@ -16,8 +16,8 @@
 
 package com.github.ascopes.jct.compilers;
 
-import static com.github.ascopes.jct.intern.CollectionUtils.nonNullUnmodifiableList;
-import static com.github.ascopes.jct.intern.CollectionUtils.nonNullUnmodifiableSet;
+import static com.github.ascopes.jct.intern.IterableUtils.nonNullUnmodifiableList;
+import static com.github.ascopes.jct.intern.IterableUtils.nonNullUnmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
 import com.github.ascopes.jct.paths.PathLocationRepository;

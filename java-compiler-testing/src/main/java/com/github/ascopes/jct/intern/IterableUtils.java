@@ -31,15 +31,15 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Collection helper utilities.
+ * Iterable and collection helper utilities.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class CollectionUtils {
+public final class IterableUtils {
 
-  private CollectionUtils() {
+  private IterableUtils() {
     throw new UnsupportedOperationException("static-only class");
   }
 
@@ -89,14 +89,14 @@ public final class CollectionUtils {
   /**
    * Ensure there are no {@code null} elements in the given collection.
    *
-   * <p>This also ensures the collection itself is not null either.
+   * <p>This also ensures the iterable itself is not null either.
    *
-   * @param collection     the collection to check.
+   * @param collection     the iterable to check.
    * @param collectionName the name to give in the error message if anything is null.
    * @param <T>            the input collection type.
-   * @return the input collection type.
+   * @return the input iterable type.
    */
-  public static <T extends Collection<?>> T requireNonNullValues(
+  public static <T extends Iterable<?>> T requireNonNullValues(
       T collection,
       String collectionName
   ) {

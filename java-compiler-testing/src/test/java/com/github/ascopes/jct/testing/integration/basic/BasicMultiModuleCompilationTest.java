@@ -112,7 +112,7 @@ class BasicMultiModuleCompilationTest {
         .showDeprecationWarnings(true)
         .release(version)
         .verbose(true)
-        .diagnostics(Logging.STACKTRACES)
+        .diagnosticLogging(Logging.STACKTRACES)
         .fileManagerLogging(Logging.ENABLED)
         .compile();
 

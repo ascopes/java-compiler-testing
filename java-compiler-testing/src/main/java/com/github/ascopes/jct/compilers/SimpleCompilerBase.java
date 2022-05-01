@@ -16,6 +16,7 @@
 
 package com.github.ascopes.jct.compilers;
 
+import static com.github.ascopes.jct.intern.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
 import com.github.ascopes.jct.intern.SpecialLocations;
@@ -56,15 +57,27 @@ import org.slf4j.LoggerFactory;
  * Common functionality for a compiler that can be overridden and that produces a
  * {@link SimpleCompilation} as the compilation result.
  *
+ * <p>Implementations should extend this class and override anything they require.
+ * In most cases, you should not need to override anything other than the constructor.
+ *
+ * <p>Each instance of this class should be considered to be single-use. Mutation
+ * does <strong>not</strong> produce a new instance, meaning that this class is not immutable by
+ * design.
+ *
+ * <p>If you wish to create a common set of configuration settings for instances of
+ * this class, you should consider writing a custom {@link CompilerConfigurer} object to apply the
+ * desired operations, and then apply it to instances of this class using
+ * {@link #configure(CompilerConfigurer)}.
+ *
  * @param <A> the type of the class extending this class.
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimpleCompiler<A extends SimpleCompiler<A>>
+public abstract class SimpleCompilerBase<A extends SimpleCompilerBase<A>>
     implements Compiler<A, SimpleCompilation> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompiler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompilerBase.class);
   private final String name;
   private final JavaCompiler jsr199Compiler;
   private final FlagBuilder flagBuilder;
@@ -89,8 +102,8 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   private boolean inheritPlatformClassPath;
   private boolean inheritSystemModulePath;
   private Logging fileManagerLogging;
-  private Logging diagnostics;
-  private ProcessorDiscovery annotationProcessorDiscovery;
+  private Logging diagnosticLogging;
+  private AnnotationProcessorDiscovery annotationProcessorDiscovery;
 
   /**
    * Initialize this compiler.
@@ -99,14 +112,14 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
    * @param jsr199Compiler the JSR-199 compiler implementation to use.
    * @param flagBuilder    the flag builder to use.
    */
-  protected SimpleCompiler(
+  protected SimpleCompilerBase(
       String name,
       JavaCompiler jsr199Compiler,
       FlagBuilder flagBuilder
   ) {
-    this.name = requireNonNull(name);
-    this.jsr199Compiler = requireNonNull(jsr199Compiler);
-    this.flagBuilder = requireNonNull(flagBuilder);
+    this.name = requireNonNull(name, "name");
+    this.jsr199Compiler = requireNonNull(jsr199Compiler, "jsr199Compiler");
+    this.flagBuilder = requireNonNull(flagBuilder, "flagBuilder");
 
     // We may want to be able to customize creation of missing roots in the future. For now,
     // I am leaving this enabled by default.
@@ -134,16 +147,17 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
     inheritPlatformClassPath = DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
     inheritSystemModulePath = DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
     fileManagerLogging = DEFAULT_FILE_MANAGER_LOGGING;
-    diagnostics = DEFAULT_DIAGNOSTICS;
+    diagnosticLogging = DEFAULT_DIAGNOSTIC_LOGGING;
     annotationProcessorDiscovery = DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
   }
 
-  @Override
-  public final <T extends Exception> A configure(CompilerConfigurer<A, T> configurer) throws T {
-    LOGGER.debug("configure({})", configurer);
-    var me = myself();
-    configurer.configure(me);
-    return me;
+  /**
+   * Get the flag builder to use.
+   *
+   * @return the flag builder.
+   */
+  public FlagBuilder getFlagBuilder() {
+    return flagBuilder;
   }
 
   /**
@@ -156,25 +170,61 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   /**
-   * Get the flag builder to use.
+   * Get the friendly name of the compiler implementation.
    *
-   * @return the flag builder.
+   * @return the friendly name.
    */
-  public FlagBuilder getFlagBuilder() {
-    return flagBuilder;
+  public String getName() {
+    return name;
   }
 
   @Override
   public SimpleCompilation compile() {
     // We delegate to a different method here to allow easier testing of additional behaviour
     // internally, such as the ECJ global lock that we apply to prevent bugs. Without this, we'd
-    // have to mock dozens of additional moving parts.
+    // have to mock dozens of additional moving parts. It is difficult to stub super methods
+    // if we go down that route.
     return performEntireCompilation();
+  }
+
+  @Override
+  public final <T extends Exception> A configure(CompilerConfigurer<A, T> configurer) throws T {
+    LOGGER.debug("configure({})", configurer);
+    var me = myself();
+    configurer.configure(me);
+    return me;
+  }
+
+  @Override
+  public A addPaths(Location location, Collection<? extends Path> paths) {
+    LOGGER.trace("{}.paths += {}", location.getName(), paths);
+    fileRepository.getOrCreateManager(location).addPaths(paths);
+    return myself();
+  }
+
+  @Override
+  public A addRamPaths(Location location, Collection<? extends RamPath> paths) {
+    LOGGER.trace("{}.paths += {}", location.getName(), paths);
+    fileRepository.getOrCreateManager(location).addRamPaths(paths);
+    return myself();
   }
 
   @Override
   public PathLocationRepository getPathLocationRepository() {
     return fileRepository;
+  }
+
+  @Override
+  public Charset getFileCharset() {
+    return pathJavaFileObjectFactory.getCharset();
+  }
+
+  @Override
+  public A fileCharset(Charset fileCharset) {
+    requireNonNull(fileCharset, "fileCharset");
+    LOGGER.trace("fileCharset {} -> {}", pathJavaFileObjectFactory.getCharset(), fileCharset);
+    pathJavaFileObjectFactory.setCharset(fileCharset);
+    return myself();
   }
 
   @Override
@@ -243,11 +293,10 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A addAnnotationProcessorOptions(Iterable<String> options) {
-    LOGGER.trace("annotationProcessorOptions += {}", options);
-    for (var option : requireNonNull(options)) {
-      annotationProcessorOptions.add(requireNonNull(option));
-    }
+  public A addAnnotationProcessorOptions(Iterable<String> annotationProcessorOptions) {
+    requireNonNullValues(annotationProcessorOptions, "annotationProcessorOptions");
+    LOGGER.trace("annotationProcessorOptions += {}", annotationProcessorOptions);
+    annotationProcessorOptions.forEach(this.annotationProcessorOptions::add);
     return myself();
   }
 
@@ -257,11 +306,10 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A addAnnotationProcessors(Iterable<? extends Processor> processors) {
-    LOGGER.trace("annotationProcessors += {}", processors);
-    for (var processor : requireNonNull(processors)) {
-      annotationProcessors.add(requireNonNull(processor));
-    }
+  public A addAnnotationProcessors(Iterable<? extends Processor> annotationProcessors) {
+    requireNonNullValues(annotationProcessors, "annotationProcessors");
+    LOGGER.trace("annotationProcessors += {}", annotationProcessors);
+    annotationProcessors.forEach(this.annotationProcessors::add);
     return myself();
   }
 
@@ -271,11 +319,10 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A addCompilerOptions(Iterable<String> options) {
-    LOGGER.trace("compilerOptions += {}", options);
-    for (var option : requireNonNull(options)) {
-      compilerOptions.add(requireNonNull(option));
-    }
+  public A addCompilerOptions(Iterable<String> compilerOptions) {
+    requireNonNullValues(compilerOptions, "compilerOptions");
+    LOGGER.trace("compilerOptions += {}", compilerOptions);
+    compilerOptions.forEach(this.compilerOptions::add);
     return myself();
   }
 
@@ -285,25 +332,10 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A addRuntimeOptions(Iterable<String> options) {
-    requireNonNull(options);
-    LOGGER.trace("runtimeOptions += {}", options);
-    for (var option : options) {
-      runtimeOptions.add(requireNonNull(option));
-    }
-    return myself();
-  }
-
-  @Override
-  public Charset getFileCharset() {
-    return pathJavaFileObjectFactory.getCharset();
-  }
-
-  @Override
-  public A fileCharset(Charset charset) {
-    requireNonNull(charset);
-    LOGGER.trace("fileCharset {} -> {}", pathJavaFileObjectFactory.getCharset(), charset);
-    pathJavaFileObjectFactory.setCharset(charset);
+  public A addRuntimeOptions(Iterable<String> runtimeOptions) {
+    requireNonNullValues(runtimeOptions, "runtimeOptions");
+    LOGGER.trace("runtimeOptions += {}", runtimeOptions);
+    runtimeOptions.forEach(this.runtimeOptions::add);
     return myself();
   }
 
@@ -313,12 +345,12 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A release(String version) {
-    LOGGER.trace("release {} -> {}", release, version);
+  public A release(String release) {
+    LOGGER.trace("release {} -> {}", this.release, release);
+    this.release = release;
     LOGGER.trace("source {} -> null", source);
-    LOGGER.trace("target {} -> null", target);
-    release = version;
     source = null;
+    LOGGER.trace("target {} -> null", target);
     target = null;
     return myself();
   }
@@ -329,11 +361,11 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A source(String version) {
-    LOGGER.trace("source {} -> {}", target, version);
+  public A source(String source) {
+    LOGGER.trace("source {} -> {}", target, source);
+    this.source = source;
     LOGGER.trace("release {} -> null", release);
     release = null;
-    source = version;
     return myself();
   }
 
@@ -343,11 +375,11 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A target(String version) {
-    LOGGER.trace("target {} -> {}", target, version);
+  public A target(String target) {
+    LOGGER.trace("target {} -> {}", this.target, target);
+    this.target = target;
     LOGGER.trace("release {} -> null", release);
     release = null;
-    target = version;
     return myself();
   }
 
@@ -357,9 +389,9 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A inheritClassPath(boolean enabled) {
-    LOGGER.trace("inheritClassPath {} -> {}", inheritClassPath, enabled);
-    inheritClassPath = enabled;
+  public A inheritClassPath(boolean inheritClassPath) {
+    LOGGER.trace("inheritClassPath {} -> {}", this.inheritClassPath, inheritClassPath);
+    this.inheritClassPath = inheritClassPath;
     return myself();
   }
 
@@ -369,9 +401,9 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A inheritModulePath(boolean enabled) {
-    LOGGER.trace("inheritModulePath {} -> {}", inheritModulePath, enabled);
-    inheritModulePath = enabled;
+  public A inheritModulePath(boolean inheritModulePath) {
+    LOGGER.trace("inheritModulePath {} -> {}", this.inheritModulePath, inheritModulePath);
+    this.inheritModulePath = inheritModulePath;
     return myself();
   }
 
@@ -381,13 +413,13 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A inheritPlatformClassPath(boolean enabled) {
+  public A inheritPlatformClassPath(boolean inheritPlatformClassPath) {
     LOGGER.trace(
         "inheritPlatformClassPath {} -> {}",
-        inheritPlatformClassPath,
-        enabled
+        this.inheritPlatformClassPath,
+        inheritPlatformClassPath
     );
-    inheritPlatformClassPath = enabled;
+    this.inheritPlatformClassPath = inheritPlatformClassPath;
     return myself();
   }
 
@@ -397,27 +429,13 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A inheritSystemModulePath(boolean enabled) {
+  public A inheritSystemModulePath(boolean inheritSystemModulePath) {
     LOGGER.trace(
         "inheritSystemModulePath {} -> {}",
-        inheritSystemModulePath,
-        enabled
+        this.inheritSystemModulePath,
+        inheritSystemModulePath
     );
-    inheritSystemModulePath = enabled;
-    return myself();
-  }
-
-  @Override
-  public A addPaths(Location location, Collection<? extends Path> paths) {
-    LOGGER.trace("{}.paths += {}", location.getName(), paths);
-    fileRepository.getOrCreateManager(location).addPaths(paths);
-    return myself();
-  }
-
-  @Override
-  public A addRamPaths(Location location, Collection<? extends RamPath> paths) {
-    LOGGER.trace("{}.paths += {}", location.getName(), paths);
-    fileRepository.getOrCreateManager(location).addRamPaths(paths);
+    this.inheritSystemModulePath = inheritSystemModulePath;
     return myself();
   }
 
@@ -428,7 +446,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
 
   @Override
   public A locale(Locale locale) {
-    requireNonNull(locale);
+    requireNonNull(locale, "locale");
     LOGGER.trace("locale {} -> {}", this.locale, locale);
     this.locale = locale;
     return myself();
@@ -440,10 +458,10 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A logCharset(Charset charset) {
-    requireNonNull(charset);
-    LOGGER.trace("logCharset {} -> {}", logCharset, charset);
-    logCharset = charset;
+  public A logCharset(Charset logCharset) {
+    requireNonNull(logCharset, "logCharset");
+    LOGGER.trace("logCharset {} -> {}", this.logCharset, logCharset);
+    this.logCharset = logCharset;
     return myself();
   }
 
@@ -454,7 +472,7 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
 
   @Override
   public A fileManagerLogging(Logging fileManagerLogging) {
-    requireNonNull(fileManagerLogging);
+    requireNonNull(fileManagerLogging, "fileManagerLogging");
     LOGGER.trace(
         "fileManagerLogging {} -> {}",
         this.fileManagerLogging,
@@ -465,30 +483,30 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public Logging getDiagnostics() {
-    return diagnostics;
+  public Logging getDiagnosticLogging() {
+    return diagnosticLogging;
   }
 
   @Override
-  public A diagnostics(Logging diagnostics) {
-    requireNonNull(diagnostics);
+  public A diagnosticLogging(Logging diagnosticLogging) {
+    requireNonNull(diagnosticLogging, "diagnosticLogging");
     LOGGER.trace(
-        "diagnostics {} -> {}",
-        this.diagnostics,
-        diagnostics
+        "diagnosticLogging {} -> {}",
+        this.diagnosticLogging,
+        diagnosticLogging
     );
-    this.diagnostics = diagnostics;
+    this.diagnosticLogging = diagnosticLogging;
     return myself();
   }
 
   @Override
-  public ProcessorDiscovery getAnnotationProcessorDiscovery() {
+  public AnnotationProcessorDiscovery getAnnotationProcessorDiscovery() {
     return annotationProcessorDiscovery;
   }
 
   @Override
-  public A annotationProcessorDiscovery(ProcessorDiscovery annotationProcessorDiscovery) {
-    requireNonNull(annotationProcessorDiscovery);
+  public A annotationProcessorDiscovery(AnnotationProcessorDiscovery annotationProcessorDiscovery) {
+    requireNonNull(annotationProcessorDiscovery, "annotationProcessorDiscovery");
     LOGGER.trace(
         "annotationProcessorDiscovery {} -> {}",
         this.annotationProcessorDiscovery,
@@ -498,24 +516,15 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
     return myself();
   }
 
-  /**
-   * Get the friendly name of the compiler implementation.
-   *
-   * @return the friendly name.
-   */
-  public String getName() {
-    return name;
-  }
-
   @Override
   public String toString() {
     return name;
   }
 
   /**
-   * Get this implementation of {@link SimpleCompiler}, cast to the type parameter {@link A}.
+   * Get this implementation of {@link SimpleCompilerBase}, cast to the type parameter {@link A}.
    *
-   * @return this implementation of {@link SimpleCompiler}, cast to {@link A}.
+   * @return this implementation of {@link SimpleCompilerBase}, cast to {@link A}.
    */
   @SuppressWarnings("unchecked")
   protected final A myself() {
@@ -542,6 +551,8 @@ public class SimpleCompiler<A extends SimpleCompiler<A>>
    *   <li>Wrap the JSR-199 compilation result and state in a {@link SimpleCompilation} and
    *        return it.</li>
    * </ol>
+   *
+   * <p>To use a custom implementation, override {@link #compile()} instead.
    *
    * <p>Any {@link IOException}s that get thrown will be converted into
    * {@link CompilerException} instances and rethrown.

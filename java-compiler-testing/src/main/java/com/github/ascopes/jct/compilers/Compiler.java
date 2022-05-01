@@ -16,7 +16,7 @@
 
 package com.github.ascopes.jct.compilers;
 
-import static com.github.ascopes.jct.intern.CollectionUtils.combineOneOrMore;
+import static com.github.ascopes.jct.intern.IterableUtils.combineOneOrMore;
 
 import com.github.ascopes.jct.paths.PathLocationRepository;
 import com.github.ascopes.jct.paths.RamPath;
@@ -107,14 +107,14 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   /**
    * Default setting for logging diagnostics ({@link Logging#ENABLED}).
    */
-  Logging DEFAULT_DIAGNOSTICS = Logging.ENABLED;
+  Logging DEFAULT_DIAGNOSTIC_LOGGING = Logging.ENABLED;
 
   /**
    * Default setting for how to apply annotation processor discovery when no processors are
-   * explicitly defined ({@link ProcessorDiscovery#INCLUDE_DEPENDENCIES}).
+   * explicitly defined ({@link AnnotationProcessorDiscovery#INCLUDE_DEPENDENCIES}).
    */
-  ProcessorDiscovery DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY =
-      ProcessorDiscovery.INCLUDE_DEPENDENCIES;
+  AnnotationProcessorDiscovery DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY =
+      AnnotationProcessorDiscovery.INCLUDE_DEPENDENCIES;
 
   /**
    * Default charset to use for reading and writing files ({@link StandardCharsets#UTF_8}).
@@ -129,7 +129,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   /**
    * Apply a given configurer to this compiler.
    *
-   * @param <T>                any exception that may be thrown.
+   * @param <T>        any exception that may be thrown.
    * @param configurer the configurer to invoke.
    * @return this compiler object for further call chaining.
    * @throws T any exception that may be thrown by the configurer.
@@ -753,20 +753,25 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   /**
    * Add options to pass to any annotation processors.
    *
-   * @param options the options to pass.
+   * @param annotationProcessorOptions the options to pass.
    * @return this compiler object for further call chaining.
    */
-  C addAnnotationProcessorOptions(Iterable<String> options);
+  C addAnnotationProcessorOptions(Iterable<String> annotationProcessorOptions);
 
   /**
    * Add options to pass to any annotation processors.
    *
-   * @param option  the first option to pass.
-   * @param options additional options to pass.
+   * @param annotationProcessorOption  the first option to pass.
+   * @param annotationProcessorOptions additional options to pass.
    * @return this compiler object for further call chaining.
    */
-  default C addAnnotationProcessorOptions(String option, String... options) {
-    return addAnnotationProcessorOptions(combineOneOrMore(option, options));
+  default C addAnnotationProcessorOptions(
+      String annotationProcessorOption,
+      String... annotationProcessorOptions
+  ) {
+    return addAnnotationProcessorOptions(
+        combineOneOrMore(annotationProcessorOption, annotationProcessorOptions)
+    );
   }
 
   /**
@@ -784,10 +789,10 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>This bypasses the discovery process of annotation processors provided in
    * {@link #addAnnotationProcessorPaths}.
    *
-   * @param processors the processors to invoke.
+   * @param annotationProcessors the processors to invoke.
    * @return this compiler object for further call chaining.
    */
-  C addAnnotationProcessors(Iterable<? extends Processor> processors);
+  C addAnnotationProcessors(Iterable<? extends Processor> annotationProcessors);
 
   /**
    * Add annotation processors to invoke.
@@ -795,12 +800,15 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>This bypasses the discovery process of annotation processors provided in
    * {@link #addAnnotationProcessorPaths}.
    *
-   * @param processor  the first processor to invoke.
-   * @param processors additional processors to invoke.
+   * @param annotationProcessor  the first processor to invoke.
+   * @param annotationProcessors additional processors to invoke.
    * @return this compiler object for further call chaining.
    */
-  default C addAnnotationProcessors(Processor processor, Processor... processors) {
-    return addAnnotationProcessors(combineOneOrMore(processor, processors));
+  default C addAnnotationProcessors(
+      Processor annotationProcessor,
+      Processor... annotationProcessors
+  ) {
+    return addAnnotationProcessors(combineOneOrMore(annotationProcessor, annotationProcessors));
   }
 
   /**
@@ -814,20 +822,20 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   /**
    * Add command line options to pass to {@code javac}.
    *
-   * @param options the options to add.
+   * @param compilerOptions the options to add.
    * @return this compiler object for further call chaining.
    */
-  C addCompilerOptions(Iterable<String> options);
+  C addCompilerOptions(Iterable<String> compilerOptions);
 
   /**
    * Add command line options to pass to {@code javac}.
    *
-   * @param option  the first option to add.
-   * @param options additional options to add.
+   * @param compilerOption  the first option to add.
+   * @param compilerOptions additional options to add.
    * @return this compiler object for further call chaining.
    */
-  default C addCompilerOptions(String option, String... options) {
-    return addCompilerOptions(combineOneOrMore(option, options));
+  default C addCompilerOptions(String compilerOption, String... compilerOptions) {
+    return addCompilerOptions(combineOneOrMore(compilerOption, compilerOptions));
   }
 
   /**
@@ -840,20 +848,20 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   /**
    * Add options to pass to the Java runtime.
    *
-   * @param options the options to pass to the runtime.
+   * @param runtimeOptions the options to pass to the runtime.
    * @return this compiler for further call chaining.
    */
-  C addRuntimeOptions(Iterable<String> options);
+  C addRuntimeOptions(Iterable<String> runtimeOptions);
 
   /**
    * Add options to pass to the Java runtime.
    *
-   * @param option  the first option to pass to the runtime.
-   * @param options additional options to pass to the runtime.
+   * @param runtimeOption  the first option to pass to the runtime.
+   * @param runtimeOptions additional options to pass to the runtime.
    * @return this compiler for further call chaining.
    */
-  default C addRuntimeOptions(String option, String... options) {
-    return addRuntimeOptions(combineOneOrMore(option, options));
+  default C addRuntimeOptions(String runtimeOption, String... runtimeOptions) {
+    return addRuntimeOptions(combineOneOrMore(runtimeOption, runtimeOptions));
   }
 
   /**
@@ -872,10 +880,10 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_LOG_CHARSET}.
    *
-   * @param charset the charset to use.
+   * @param fileCharset the charset to use.
    * @return this compiler for further call chaining.
    */
-  C fileCharset(Charset charset);
+  C fileCharset(Charset fileCharset);
 
   /**
    * Determine whether verbose logging is enabled or not.
@@ -1014,10 +1022,10 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
-   * @param version the version to set.
+   * @param release the version to set.
    * @return this compiler object for further call chaining.
    */
-  C release(String version);
+  C release(String release);
 
   /**
    * Set the release version.
@@ -1027,15 +1035,15 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
-   * @param version the version to set.
+   * @param release the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C release(int version) {
-    if (version < 0) {
+  default C release(int release) {
+    if (release < 0) {
       throw new IllegalArgumentException("Cannot provide a release version less than 0");
     }
 
-    return release(Integer.toString(version));
+    return release(Integer.toString(release));
   }
 
   /**
@@ -1046,11 +1054,11 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
-   * @param version the version to set.
+   * @param release the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C release(SourceVersion version) {
-    return release(Integer.toString(version.ordinal()));
+  default C release(SourceVersion release) {
+    return release(Integer.toString(release.ordinal()));
   }
 
   /**
@@ -1072,10 +1080,10 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
-   * @param version the version to set.
+   * @param source the version to set.
    * @return this compiler object for further call chaining.
    */
-  C source(String version);
+  C source(String source);
 
   /**
    * Set the source version.
@@ -1085,15 +1093,15 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
-   * @param version the version to set.
+   * @param source the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C source(int version) {
-    if (version < 0) {
+  default C source(int source) {
+    if (source < 0) {
       throw new IllegalArgumentException("Cannot provide a source version less than 0");
     }
 
-    return source(Integer.toString(version));
+    return source(Integer.toString(source));
   }
 
   /**
@@ -1104,11 +1112,11 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
-   * @param version the version to set.
+   * @param source the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C source(SourceVersion version) {
-    return source(Integer.toString(version.ordinal()));
+  default C source(SourceVersion source) {
+    return source(Integer.toString(source.ordinal()));
   }
 
   /**
@@ -1130,10 +1138,10 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
-   * @param version the version to set.
+   * @param target the version to set.
    * @return this compiler object for further call chaining.
    */
-  C target(String version);
+  C target(String target);
 
   /**
    * Set the target version.
@@ -1143,15 +1151,15 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
-   * @param version the version to set.
+   * @param target the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C target(int version) {
-    if (version < 0) {
+  default C target(int target) {
+    if (target < 0) {
       throw new IllegalArgumentException("Cannot provide a target version less than 0");
     }
 
-    return target(Integer.toString(version));
+    return target(Integer.toString(target));
   }
 
   /**
@@ -1162,11 +1170,11 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
-   * @param version the version to set.
+   * @param target the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C target(SourceVersion version) {
-    return target(Integer.toString(version.ordinal()));
+  default C target(SourceVersion target) {
+    return target(Integer.toString(target.ordinal()));
   }
 
   /**
@@ -1185,10 +1193,10 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_INHERIT_CLASS_PATH}.
    *
-   * @param enabled {@code true} to include it, or {@code false} to exclude it.
+   * @param inheritClassPath {@code true} to include it, or {@code false} to exclude it.
    * @return this compiler object for further call chaining.
    */
-  C inheritClassPath(boolean enabled);
+  C inheritClassPath(boolean inheritClassPath);
 
   /**
    * Get whether the module path is inherited from the caller JVM or not.
@@ -1206,10 +1214,10 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_INHERIT_MODULE_PATH}.
    *
-   * @param enabled {@code true} to include it, or {@code false} to exclude it.
+   * @param inheritModulePath {@code true} to include it, or {@code false} to exclude it.
    * @return this compiler object for further call chaining.
    */
-  C inheritModulePath(boolean enabled);
+  C inheritModulePath(boolean inheritModulePath);
 
   /**
    * Get whether the current platform class path is being inherited from the caller JVM or not.
@@ -1234,10 +1242,10 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Default environments probably will not provide this functionality, in which case it will be
    * ignored.
    *
-   * @param enabled {@code true} to include it, or {@code false} to exclude it.
+   * @param inheritPlatformClassPath {@code true} to include it, or {@code false} to exclude it.
    * @return this compiler object for further call chaining.
    */
-  C inheritPlatformClassPath(boolean enabled);
+  C inheritPlatformClassPath(boolean inheritPlatformClassPath);
 
   /**
    * Get whether the system module path is inherited from the caller JVM or not.
@@ -1255,10 +1263,10 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_INHERIT_SYSTEM_MODULE_PATH}.
    *
-   * @param enabled {@code true} to include it, or {@code false} to exclude it.
+   * @param inheritSystemModulePath {@code true} to include it, or {@code false} to exclude it.
    * @return this compiler object for further call chaining.
    */
-  C inheritSystemModulePath(boolean enabled);
+  C inheritSystemModulePath(boolean inheritSystemModulePath);
 
   /**
    * Get the output locale.
@@ -1297,10 +1305,10 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_LOG_CHARSET}.
    *
-   * @param charset the charset to use.
+   * @param logCharset the charset to use.
    * @return this compiler for further call chaining.
    */
-  C logCharset(Charset charset);
+  C logCharset(Charset logCharset);
 
   /**
    * Get the current file manager logging mode.
@@ -1327,22 +1335,22 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * Get the current diagnostic logging mode.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_DIAGNOSTICS}.
+   * {@link #DEFAULT_DIAGNOSTIC_LOGGING}.
    *
    * @return the current diagnostic logging mode.
    */
-  Logging getDiagnostics();
+  Logging getDiagnosticLogging();
 
   /**
    * Set how to handle diagnostic capture.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_DIAGNOSTICS}.
+   * {@link #DEFAULT_DIAGNOSTIC_LOGGING}.
    *
    * @param diagnosticLogging the mode to use for diagnostic capture.
    * @return this compiler for further call chaining.
    */
-  C diagnostics(Logging diagnosticLogging);
+  C diagnosticLogging(Logging diagnosticLogging);
 
   /**
    * Get how to perform annotation processor discovery.
@@ -1357,7 +1365,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    *
    * @return the processor discovery mode to use.
    */
-  ProcessorDiscovery getAnnotationProcessorDiscovery();
+  AnnotationProcessorDiscovery getAnnotationProcessorDiscovery();
 
   /**
    * Set how to perform annotation processor discovery.
@@ -1373,7 +1381,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @param annotationProcessorDiscovery the processor discovery mode to use.
    * @return this compiler for further call chaining.
    */
-  C annotationProcessorDiscovery(ProcessorDiscovery annotationProcessorDiscovery);
+  C annotationProcessorDiscovery(AnnotationProcessorDiscovery annotationProcessorDiscovery);
 
   /**
    * Invoke the compilation and return the compilation result.
@@ -1417,7 +1425,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * @since 0.0.1
    */
   @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-  enum ProcessorDiscovery {
+  enum AnnotationProcessorDiscovery {
     /**
      * Discovery is enabled, and will also scan any dependencies in the classpath or module path.
      */

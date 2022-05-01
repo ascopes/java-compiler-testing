@@ -16,7 +16,7 @@
 
 package com.github.ascopes.jct.compilers.javac;
 
-import com.github.ascopes.jct.compilers.SimpleCompiler;
+import com.github.ascopes.jct.compilers.SimpleCompilerBase;
 import javax.tools.JavaCompiler;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -28,7 +28,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public class JavacCompiler extends SimpleCompiler<JavacCompiler> {
+public class JavacCompiler extends SimpleCompilerBase<JavacCompiler> {
 
   /**
    * Initialize a new Javac compiler.
