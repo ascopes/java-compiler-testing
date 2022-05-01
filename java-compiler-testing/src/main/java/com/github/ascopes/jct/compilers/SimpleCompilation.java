@@ -16,12 +16,11 @@
 
 package com.github.ascopes.jct.compilers;
 
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableSet;
+import static com.github.ascopes.jct.intern.CollectionUtils.nonNullUnmodifiableList;
+import static com.github.ascopes.jct.intern.CollectionUtils.nonNullUnmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
 import com.github.ascopes.jct.paths.PathLocationRepository;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.tools.JavaFileObject;
@@ -48,9 +47,9 @@ public final class SimpleCompilation implements Compilation {
   private SimpleCompilation(Builder builder) {
     success = requireNonNull(builder.success, "success");
     failOnWarnings = requireNonNull(builder.failOnWarnings, "failOnWarnings");
-    outputLines = frozenList(builder.outputLines, "outputLines");
-    compilationUnits = frozenSet(builder.compilationUnits, "compilationUnits");
-    diagnostics = frozenList(builder.diagnostics, "diagnostics");
+    outputLines = nonNullUnmodifiableList(builder.outputLines, "outputLines");
+    compilationUnits = nonNullUnmodifiableSet(builder.compilationUnits, "compilationUnits");
+    diagnostics = nonNullUnmodifiableList(builder.diagnostics, "diagnostics");
     fileRepository = requireNonNull(builder.fileRepository, "fileRepository");
   }
 
@@ -188,29 +187,6 @@ public final class SimpleCompilation implements Compilation {
      */
     public SimpleCompilation build() {
       return new SimpleCompilation(this);
-    }
-  }
-
-  @SuppressWarnings("SameParameterValue")
-  private static <T> Set<T> frozenSet(Set<T> set, String name) {
-    set = unmodifiableSet(requireNonNull(set, name));
-    ensureNoNullElements(set.iterator(), name);
-    return set;
-  }
-
-  private static <T> List<T> frozenList(List<T> list, String name) {
-    list = unmodifiableList(requireNonNull(list, name));
-    ensureNoNullElements(list.iterator(), name);
-    return list;
-  }
-
-  private static void ensureNoNullElements(Iterator<?> iterator, String name) {
-    var index = 0;
-    while (iterator.hasNext()) {
-      // Need to redefine as effectively final for the lambda expression to pick it up.
-      var i = index;
-      requireNonNull(iterator.next(), () -> name + "[" + i + "]");
-      ++index;
     }
   }
 }

@@ -16,9 +16,17 @@
 
 package com.github.ascopes.jct.intern;
 
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -54,4 +62,64 @@ public final class CollectionUtils {
     return list;
   }
 
+  /**
+   * Ensure a given list has no null elements, then wrap it in an unmodifiable container.
+   *
+   * @param list     the list to check.
+   * @param listName the name of the list to show in error messages.
+   * @param <T>      the element type in the list.
+   * @return the unmodifiable version of the list.
+   */
+  public static <T> List<T> nonNullUnmodifiableList(List<T> list, String listName) {
+    return unmodifiableList(requireNonNullValues(list, listName));
+  }
+
+  /**
+   * Ensure a given set has no null elements, then wrap it in an unmodifiable container.
+   *
+   * @param set     the set to check.
+   * @param setName the name of the set to show in error messages.
+   * @param <T>     the element type in the set.
+   * @return the unmodifiable version of the set.
+   */
+  public static <T> Set<T> nonNullUnmodifiableSet(Set<T> set, String setName) {
+    return unmodifiableSet(requireNonNullValues(set, setName));
+  }
+
+  /**
+   * Ensure there are no {@code null} elements in the given collection.
+   *
+   * <p>This also ensures the collection itself is not null either.
+   *
+   * @param collection     the collection to check.
+   * @param collectionName the name to give in the error message if anything is null.
+   * @param <T>            the input collection type.
+   * @return the input collection type.
+   */
+  public static <T extends Collection<?>> T requireNonNullValues(
+      T collection,
+      String collectionName
+  ) {
+    requireNonNull(collection, collectionName);
+
+    var badElements = Stream.<String>builder();
+
+    var index = 0;
+    for (Object element : collection) {
+      if (element == null) {
+        badElements.add(collectionName + "[" + index + "]");
+      }
+      ++index;
+    }
+
+    var error = badElements
+        .build()
+        .collect(Collectors.joining(", "));
+
+    if (!error.isEmpty()) {
+      throw new NullPointerException(error);
+    }
+
+    return collection;
+  }
 }
