@@ -22,6 +22,8 @@ import static org.assertj.core.api.BDDAssertions.thenCode;
 import static org.assertj.core.api.InstanceOfAssertFactories.array;
 
 import com.github.ascopes.jct.intern.IoExceptionUtils;
+import com.github.ascopes.jct.intern.IoExceptionUtils.IoRunnable;
+import com.github.ascopes.jct.intern.IoExceptionUtils.IoSupplier;
 import com.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -34,6 +36,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Ashley Scopes
  */
+@SuppressWarnings("RedundantCast")
 @DisplayName("IoExceptionUtils tests")
 class IoExceptionUtilsTest implements StaticClassTestTemplate {
 
@@ -49,7 +52,7 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
     var wasRun = new AtomicBoolean(false);
 
     // When
-    IoExceptionUtils.uncheckedIo(() -> wasRun.set(true));
+    IoExceptionUtils.uncheckedIo((IoRunnable) () -> wasRun.set(true));
 
     // Then
     then(wasRun).isTrue();
@@ -68,7 +71,7 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
     ex.setStackTrace(stackTrace);
 
     // Then
-    thenCode(() -> IoExceptionUtils.uncheckedIo(() -> {
+    thenCode(() -> IoExceptionUtils.uncheckedIo((IoRunnable) () -> {
       throw ex;
     })).isInstanceOf(UncheckedIOException.class)
         .hasMessage("%s: %s", ex.getClass().getName(), ex.getMessage())
@@ -87,7 +90,7 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
     var ex = new IOException("bang");
 
     // Then
-    thenCode(() -> IoExceptionUtils.uncheckedIo(() -> {
+    thenCode(() -> IoExceptionUtils.uncheckedIo((IoSupplier<?>) () -> {
       throw ex;
     })).isInstanceOf(UncheckedIOException.class)
         .hasMessage("%s: %s", ex.getClass().getName(), ex.getMessage())
@@ -129,7 +132,7 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
     ex.setStackTrace(stackTrace);
 
     // Then
-    thenCode(() -> IoExceptionUtils.uncheckedIo(() -> {
+    thenCode(() -> IoExceptionUtils.uncheckedIo((IoSupplier<Integer>) () -> {
       if (true) {
         throw ex;
       } else {
@@ -153,7 +156,7 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
     var ex = new IOException("bong");
 
     // Then
-    thenCode(() -> IoExceptionUtils.uncheckedIo(() -> {
+    thenCode(() -> IoExceptionUtils.uncheckedIo((IoSupplier<Integer>) () -> {
       if (true) {
         throw ex;
       } else {

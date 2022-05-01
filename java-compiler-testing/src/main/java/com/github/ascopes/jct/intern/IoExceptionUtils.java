@@ -41,7 +41,7 @@ public final class IoExceptionUtils {
    * @param runnable the runnable to run.
    * @throws UncheckedIOException if an {@link IOException} occurs.
    */
-  public static void uncheckedIo(RunnableWithIo runnable) {
+  public static void uncheckedIo(IoRunnable runnable) {
     try {
       runnable.run();
     } catch (IOException ex) {
@@ -58,7 +58,7 @@ public final class IoExceptionUtils {
    * @return the result of the supplier.
    * @throws UncheckedIOException if an {@link IOException} occurs.
    */
-  public static <T> T uncheckedIo(SupplierWithIo<T> supplier) {
+  public static <T> T uncheckedIo(IoSupplier<T> supplier) {
     T result = null;
 
     try {
@@ -81,10 +81,28 @@ public final class IoExceptionUtils {
   public static UncheckedIOException wrapWithUncheckedIoException(IOException ex) {
     var newEx = new UncheckedIOException(ex.getClass().getName() + ": " + ex.getMessage(), ex);
     var existingStack = ex.getStackTrace();
-    if (existingStack != null) {
+    if (existingStack.length > 0) {
       newEx.setStackTrace(existingStack);
     }
     return newEx;
+  }
+
+  /**
+   * A runnable interface that may throw an {@link IOException}.
+   *
+   * @author Ashley Scopes
+   * @since 0.0.1
+   */
+  @API(since = "0.0.1", status = Status.INTERNAL)
+  @FunctionalInterface
+  public interface IoRunnable {
+
+    /**
+     * Execute the logic.
+     *
+     * @throws IOException if an IOException occurs.
+     */
+    void run() throws IOException;
   }
 
   /**
@@ -96,7 +114,7 @@ public final class IoExceptionUtils {
    */
   @API(since = "0.0.1", status = Status.INTERNAL)
   @FunctionalInterface
-  public interface SupplierWithIo<T> {
+  public interface IoSupplier<T> {
 
     /**
      * Get the result.
@@ -105,23 +123,5 @@ public final class IoExceptionUtils {
      * @throws IOException if an IOException occurs.
      */
     T get() throws IOException;
-  }
-
-  /**
-   * A runnable interface that may throw an {@link IOException}.
-   *
-   * @author Ashley Scopes
-   * @since 0.0.1
-   */
-  @API(since = "0.0.1", status = Status.INTERNAL)
-  @FunctionalInterface
-  public interface RunnableWithIo {
-
-    /**
-     * Execute the logic.
-     *
-     * @throws IOException if an IOException occurs.
-     */
-    void run() throws IOException;
   }
 }
