@@ -17,7 +17,7 @@
 /**
  * Java compiler testing facilities.
  */
-module com.github.ascopes.jct {
+module io.github.ascopes.jct {
   requires transitive java.compiler;
   requires java.management;
 
@@ -29,19 +29,19 @@ module com.github.ascopes.jct {
   requires org.reflections;
   requires org.slf4j;
 
-  exports com.github.ascopes.jct.assertions;
-  exports com.github.ascopes.jct.compilers;
-  exports com.github.ascopes.jct.paths;
+  exports io.github.ascopes.jct.assertions;
+  exports io.github.ascopes.jct.compilers;
+  exports io.github.ascopes.jct.paths;
 
   // Testing access only.
-  exports com.github.ascopes.jct.compilers.ecj to com.github.ascopes.jct.testing;
-  exports com.github.ascopes.jct.compilers.javac to com.github.ascopes.jct.testing;
-  exports com.github.ascopes.jct.intern to com.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.compilers.ecj to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.intern to io.github.ascopes.jct.testing;
 
-  opens com.github.ascopes.jct.assertions to com.github.ascopes.jct.testing;
-  opens com.github.ascopes.jct.compilers to com.github.ascopes.jct.testing;
-  opens com.github.ascopes.jct.compilers.ecj to com.github.ascopes.jct.testing;
-  opens com.github.ascopes.jct.compilers.javac to com.github.ascopes.jct.testing;
-  opens com.github.ascopes.jct.paths to com.github.ascopes.jct.testing;
-  opens com.github.ascopes.jct.intern to com.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.compilers to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.compilers.ecj to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.paths to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.intern to io.github.ascopes.jct.testing;
 }

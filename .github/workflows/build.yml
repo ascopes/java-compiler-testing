@@ -167,5 +167,5 @@ jobs:
         if: success()
         with:
           name: javadocs
-          path: "**/target/apidocs/com.github.ascopes.jct"
+          path: "**/target/apidocs/io.github.ascopes.jct"
           retention-days: 5

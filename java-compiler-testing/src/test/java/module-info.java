@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-open module com.github.ascopes.jct.testing {
+open module io.github.ascopes.jct.testing {
   requires awaitility;
-  requires com.github.ascopes.jct;
   requires ecj;
+  requires io.github.ascopes.jct;
   requires java.compiler;
   requires java.management;
   requires jimfs;
@@ -30,5 +30,5 @@ open module com.github.ascopes.jct.testing {
   requires org.mockito.junit.jupiter;
   requires org.slf4j;
 
-  exports com.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.testing;
 }

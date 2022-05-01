@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-open module com.github.ascopes.jct.examples.serviceloader.testing {
-  requires transitive com.github.ascopes.jct;
-  requires com.github.ascopes.jct.examples.serviceloaderjpms;
+open module io.github.ascopes.jct.examples.serviceloader.testing {
+  requires transitive io.github.ascopes.jct;
+  requires io.github.ascopes.jct.examples.serviceloaderjpms;
   requires transitive org.junit.jupiter;
   requires java.compiler;
 }

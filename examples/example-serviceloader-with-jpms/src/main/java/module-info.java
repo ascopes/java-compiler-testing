@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import com.github.ascopes.jct.examples.serviceloaderjpms.ServiceProcessor;
+import io.github.ascopes.jct.examples.serviceloaderjpms.ServiceProcessor;
 import javax.annotation.processing.Processor;
 
-module com.github.ascopes.jct.examples.serviceloaderjpms {
+module io.github.ascopes.jct.examples.serviceloaderjpms {
   requires java.compiler;
-  exports com.github.ascopes.jct.examples.serviceloaderjpms;
+  exports io.github.ascopes.jct.examples.serviceloaderjpms;
   provides Processor with ServiceProcessor;
 }
