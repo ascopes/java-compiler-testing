@@ -17,7 +17,7 @@
 package io.github.ascopes.jct.compilers.ecj;
 
 import io.github.ascopes.jct.compilers.SimpleCompilation;
-import io.github.ascopes.jct.compilers.SimpleCompilerBase;
+import io.github.ascopes.jct.compilers.SimpleCompiler;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.tools.JavaCompiler;
 import org.apiguardian.api.API;
@@ -34,7 +34,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public class EcjCompiler extends SimpleCompilerBase<EcjCompiler> {
+public class EcjCompiler extends SimpleCompiler<EcjCompiler> {
 
   // Annoyingly, ECJ seems to produce the following exception occasionally if run in
   // parallel. To avoid this, we lock the ECJ compiler globally.

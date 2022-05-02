@@ -68,32 +68,32 @@ public final class JavacFlagBuilder implements FlagBuilder {
   }
 
   @Override
-  public JavacFlagBuilder warnings(boolean enabled) {
+  public JavacFlagBuilder showWarnings(boolean enabled) {
     return flagIfTrue(!enabled, NOWARN);
   }
 
   @Override
-  public JavacFlagBuilder warningsAsErrors(boolean enabled) {
+  public JavacFlagBuilder failOnWarnings(boolean enabled) {
     return flagIfTrue(enabled, WERROR);
   }
 
   @Override
-  public JavacFlagBuilder deprecationWarnings(boolean enabled) {
+  public JavacFlagBuilder showDeprecationWarnings(boolean enabled) {
     return flagIfTrue(enabled, DEPRECATION);
   }
 
   @Override
-  public JavacFlagBuilder releaseVersion(String version) {
+  public JavacFlagBuilder release(String version) {
     return versionIfPresent(RELEASE, version);
   }
 
   @Override
-  public JavacFlagBuilder sourceVersion(String version) {
+  public JavacFlagBuilder source(String version) {
     return versionIfPresent(SOURCE, version);
   }
 
   @Override
-  public JavacFlagBuilder targetVersion(String version) {
+  public JavacFlagBuilder target(String version) {
     return versionIfPresent(TARGET, version);
   }
 
@@ -110,7 +110,7 @@ public final class JavacFlagBuilder implements FlagBuilder {
   }
 
   @Override
-  public JavacFlagBuilder options(List<String> options) {
+  public JavacFlagBuilder compilerOptions(List<String> options) {
     options.forEach(otherOptions::add);
     return this;
   }

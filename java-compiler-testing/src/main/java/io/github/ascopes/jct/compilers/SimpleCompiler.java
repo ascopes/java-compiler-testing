@@ -19,35 +19,20 @@ package io.github.ascopes.jct.compilers;
 import static io.github.ascopes.jct.intern.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.intern.SpecialLocations;
-import io.github.ascopes.jct.intern.StringUtils;
-import io.github.ascopes.jct.paths.LoggingJavaFileManagerProxy;
-import io.github.ascopes.jct.paths.PathJavaFileManager;
 import io.github.ascopes.jct.paths.PathJavaFileObjectFactory;
 import io.github.ascopes.jct.paths.PathLocationRepository;
 import io.github.ascopes.jct.paths.RamPath;
-import java.io.IOException;
-import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.annotation.processing.Processor;
-import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
-import javax.tools.JavaCompiler.CompilationTask;
-import javax.tools.JavaFileManager;
 import javax.tools.JavaFileManager.Location;
-import javax.tools.JavaFileObject;
-import javax.tools.JavaFileObject.Kind;
-import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -74,10 +59,10 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public abstract class SimpleCompilerBase<A extends SimpleCompilerBase<A>>
+public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
     implements Compiler<A, SimpleCompilation> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompilerBase.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompiler.class);
   private final String name;
   private final JavaCompiler jsr199Compiler;
   private final FlagBuilder flagBuilder;
@@ -112,7 +97,7 @@ public abstract class SimpleCompilerBase<A extends SimpleCompilerBase<A>>
    * @param jsr199Compiler the JSR-199 compiler implementation to use.
    * @param flagBuilder    the flag builder to use.
    */
-  protected SimpleCompilerBase(
+  protected SimpleCompiler(
       String name,
       JavaCompiler jsr199Compiler,
       FlagBuilder flagBuilder
@@ -184,7 +169,7 @@ public abstract class SimpleCompilerBase<A extends SimpleCompilerBase<A>>
     // internally, such as the ECJ global lock that we apply to prevent bugs. Without this, we'd
     // have to mock dozens of additional moving parts. It is difficult to stub super methods
     // if we go down that route.
-    return performEntireCompilation();
+    return doCompile();
   }
 
   @Override
@@ -522,9 +507,9 @@ public abstract class SimpleCompilerBase<A extends SimpleCompilerBase<A>>
   }
 
   /**
-   * Get this implementation of {@link SimpleCompilerBase}, cast to the type parameter {@link A}.
+   * Get this implementation of {@link SimpleCompiler}, cast to the type parameter {@link A}.
    *
-   * @return this implementation of {@link SimpleCompilerBase}, cast to {@link A}.
+   * @return this implementation of {@link SimpleCompiler}, cast to {@link A}.
    */
   @SuppressWarnings("unchecked")
   protected final A myself() {
@@ -532,361 +517,15 @@ public abstract class SimpleCompilerBase<A extends SimpleCompilerBase<A>>
   }
 
   /**
-   * Run the entire compilation.
-   *
-   * <p>This will perform several steps. Each step can be overridden if needed.
-   *
-   * <ol>
-   *   <li>Build flags using {@link #buildFlags()};</li>
-   *   <li>Build a diagnostics listener using {@link #buildDiagnosticListener()};</li>
-   *   <li>Build a file manager using {@link #buildJavaFileManager()} ()};</li>
-   *   <li>Wrap said file manager in a logging interceptor using
-   *        {@link #applyLoggingToFileManager(JavaFileManager)};</li>
-   *   <li>Determine compilation units to compile using
-   *        {@link #discoverCompilationUnits(JavaFileManager)}</li>
-   *   <li>Build a compilation task using
-   *        {@link #buildCompilationTask(Writer, JavaFileManager, DiagnosticListener, List, List)}
-   *        </li>
-   *   <li>Run the compilation task using {@link #runCompilationTask(CompilationTask)}</li>
-   *   <li>Wrap the JSR-199 compilation result and state in a {@link SimpleCompilation} and
-   *        return it.</li>
-   * </ol>
-   *
-   * <p>To use a custom implementation, override {@link #compile()} instead.
-   *
-   * <p>Any {@link IOException}s that get thrown will be converted into
-   * {@link CompilerException} instances and rethrown.
+   * Perform the compilation.
    *
    * @return the compilation result.
    */
-  protected SimpleCompilation performEntireCompilation() {
-    try {
-      var flags = buildFlags();
-      var diagnosticListener = buildDiagnosticListener();
-
-      try (var fileManager = applyLoggingToFileManager(buildJavaFileManager())) {
-        var compilationUnits = discoverCompilationUnits(fileManager);
-        LOGGER.debug("Discovered {} compilation units {}", compilationUnits.size(),
-            compilationUnits);
-
-        var writer = new TeeWriter(logCharset, System.out);
-        var task = buildCompilationTask(
-            writer,
-            fileManager,
-            diagnosticListener,
-            flags,
-            compilationUnits
-        );
-
-        var result = runCompilationTask(task);
-
-        var outputLines = writer.toString().lines().collect(Collectors.toList());
-
-        return SimpleCompilation.builder()
-            .failOnWarnings(failOnWarnings)
-            .success(result)
-            .outputLines(outputLines)
-            .compilationUnits(Set.copyOf(compilationUnits))
-            .diagnostics(diagnosticListener.getDiagnostics())
-            .fileRepository(fileRepository)
-            .build();
-      }
-    } catch (IOException ex) {
-      throw new CompilerException("Failed to compile due to an IOException: " + ex, ex);
-    }
-  }
-
-  /**
-   * Build the flags to pass to the JSR-199 compiler.
-   *
-   * @return the flags to use.
-   */
-  protected List<String> buildFlags() {
-    return flagBuilder
-        .annotationProcessorOptions(annotationProcessorOptions)
-        .deprecationWarnings(showDeprecationWarnings)
-        .warningsAsErrors(failOnWarnings)
-        .options(compilerOptions)
-        .previewFeatures(previewFeatures)
-        .releaseVersion(release)
-        .runtimeOptions(runtimeOptions)
-        .sourceVersion(source)
-        .targetVersion(target)
-        .verbose(verbose)
-        .warnings(showWarnings)
-        .build();
-  }
-
-  /**
-   * Build the {@link JavaFileManager} to use.
-   *
-   * <p>Logging will be applied to this via {@link #applyLoggingToFileManager(JavaFileManager)},
-   * which will be handled by {@link #performEntireCompilation()}.
-   *
-   * @return the file manager to use.
-   */
-  private JavaFileManager buildJavaFileManager() {
-    ensureClassOutputPathExists();
-    registerClassPath();
-    registerPlatformClassPath();
-    registerJrtJimage();
-    return new PathJavaFileManager(fileRepository);
-  }
-
-  /**
-   * Discover all relevant compilation units for the file manager.
-   *
-   * <p>The default implementation will consider both {@link StandardLocation#SOURCE_PATH}
-   * <em>and</em> {@link StandardLocation#MODULE_SOURCE_PATH} locations.
-   *
-   * @param fileManager the file manager to get the compilation units for.
-   * @return the list of compilation units.
-   * @throws IOException if an IO error occurs discovering any compilation units.
-   */
-  protected List<? extends JavaFileObject> discoverCompilationUnits(
-      JavaFileManager fileManager
-  ) throws IOException {
-    var locations = new LinkedHashSet<Location>();
-    locations.add(StandardLocation.SOURCE_PATH);
-
-    fileManager
-        .listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH)
-        .forEach(locations::addAll);
-
-    var objects = new ArrayList<JavaFileObject>();
-
-    for (var location : locations) {
-      var items = fileManager.list(location, "", Set.of(Kind.SOURCE), true);
-      for (var fileObject : items) {
-        objects.add(fileObject);
-      }
-    }
-
-    return objects;
-  }
-
-  /**
-   * Apply the logging level to the file manager provided by {@link #buildJavaFileManager()}.
-   *
-   * <p>The default implementation will wrap the given {@link JavaFileManager} in a
-   * {@link LoggingJavaFileManagerProxy} if the {@link #fileManagerLogging} field is
-   * <strong>not</strong> set to {@link Logging#DISABLED}. In the latter scenario, the input
-   * will be returned to the caller with no other modifications.
-   *
-   * @param fileManager the file manager to apply to.
-   * @return the file manager to use for future operations.
-   */
-  protected JavaFileManager applyLoggingToFileManager(JavaFileManager fileManager) {
-    if (fileManagerLogging == Logging.STACKTRACES) {
-      return LoggingJavaFileManagerProxy.wrap(fileManager, true);
-    }
-
-    if (fileManagerLogging == Logging.ENABLED) {
-      return LoggingJavaFileManagerProxy.wrap(fileManager, false);
-    }
-
-    return fileManager;
-  }
-
-  /**
-   * Build a diagnostics listener.
-   *
-   * <p>This will also apply the desired logging configuration to the listener before returning it.
-   *
-   * @return the diagnostics listener.
-   */
-  protected TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener() {
-    return new TracingDiagnosticListener<>(
-        fileManagerLogging != Logging.DISABLED,
-        fileManagerLogging == Logging.STACKTRACES
+  protected SimpleCompilation doCompile() {
+    return new SimpleCompilationFactory<A>().compile(
+        myself(),
+        jsr199Compiler,
+        flagBuilder
     );
-  }
-
-  /**
-   * Run the compilation task.
-   *
-   * <p>Any exceptions that get thrown will be wrapped in {@link CompilerException} instances
-   * before being rethrown.
-   *
-   * @param task the task to run.
-   * @return {@code true} if the compilation succeeded, or {@code false} if compilation failed.
-   * @throws CompilerException if compilation throws an unhandled exception.
-   */
-  protected boolean runCompilationTask(CompilationTask task) {
-    var name = getName();
-
-    try {
-      var start = System.nanoTime();
-      var result = task.call();
-
-      if (result == null) {
-        throw new CompilerException("The compiler failed to produce a valid result");
-      }
-
-      LOGGER.info("Compilation with compiler {} {} after ~{}ms",
-          name,
-          result ? "succeeded" : "failed",
-          Math.round((System.nanoTime() - start) / 1_000_000.0)
-      );
-
-      return result;
-
-    } catch (Exception ex) {
-      LOGGER.warn(
-          "Compiler {} threw an exception: {}: {}",
-          name,
-          ex.getClass().getName(),
-          ex.getMessage()
-      );
-      throw new CompilerException("The compiler threw an exception", ex);
-    }
-  }
-
-  private CompilationTask buildCompilationTask(
-      Writer writer,
-      JavaFileManager fileManager,
-      DiagnosticListener<? super JavaFileObject> diagnosticListener,
-      List<String> flags,
-      List<? extends JavaFileObject> compilationUnits
-  ) {
-    var name = getName();
-
-    var task = jsr199Compiler.getTask(
-        writer,
-        fileManager,
-        diagnosticListener,
-        flags,
-        null,
-        compilationUnits
-    );
-
-    configureAnnotationProcessors(task);
-
-    task.setLocale(locale);
-
-    if (LOGGER.isInfoEnabled()) {
-      LOGGER.info(
-          "Starting compilation of {} file{} with compiler {} using flags {}",
-          compilationUnits.size(),
-          compilationUnits.size() == 1 ? "" : "s",
-          name,
-          StringUtils.quotedIterable(flags)
-      );
-    }
-
-    return task;
-  }
-
-  private void ensureClassOutputPathExists() {
-    // We have to manually create this one as javac will not attempt to access it lazily. Instead,
-    // it will just abort if it is not present. This means we cannot take advantage of the
-    // PathLocationRepository creating the roots as we try to access them for this specific case.
-    var classOutputManager = fileRepository
-        .getOrCreateManager(StandardLocation.CLASS_OUTPUT);
-
-    // Ensure we have somewhere to dump our output.
-    if (classOutputManager.isEmpty()) {
-      LOGGER.debug("No class output location was specified, so an in-memory path is being created");
-      var classOutput = RamPath.createPath("classes-" + UUID.randomUUID(), true);
-      classOutputManager.addRamPath(classOutput);
-    } else {
-      LOGGER.trace("At least one output path is present, so no in-memory path will be created");
-    }
-  }
-
-  private void registerClassPath() {
-    // ECJ requires that we always create this, otherwise it refuses to run.
-    var classPath = fileRepository
-        .getOrCreateManager(StandardLocation.CLASS_PATH);
-
-    if (inheritClassPath) {
-      var currentClassPath = SpecialLocations.currentClassPathLocations();
-
-      LOGGER.debug("Adding current classpath to compiler: {}", currentClassPath);
-      classPath.addPaths(currentClassPath);
-
-      var currentModulePath = SpecialLocations.currentModulePathLocations();
-
-      LOGGER.debug(
-          "Adding current module path to compiler class path and module path: {}",
-          currentModulePath
-      );
-
-      // For some reason, the JDK module path has to also be added to the classpath for it
-      // to be recognised. Failing to do this prevents the classes and test-classes directories
-      // being added to the classpath with the other dependencies. This would otherwise result in
-      // all dependencies being loaded, but not the code the user is actually trying to test.
-      //
-      // Weird, but it is what it is, I guess.
-      classPath.addPaths(currentModulePath);
-
-      fileRepository
-          .getOrCreateManager(StandardLocation.MODULE_PATH)
-          .addPaths(currentModulePath);
-    }
-  }
-
-  private void registerPlatformClassPath() {
-    if (inheritPlatformClassPath) {
-      var currentPlatformClassPath = SpecialLocations.currentPlatformClassPathLocations();
-
-      if (!currentPlatformClassPath.isEmpty()) {
-        LOGGER.debug("Adding current platform classpath to compiler: {}", currentPlatformClassPath);
-
-        fileRepository
-            .getOrCreateManager(StandardLocation.PLATFORM_CLASS_PATH)
-            .addPaths(currentPlatformClassPath);
-      }
-    }
-  }
-
-  private void registerJrtJimage() {
-    if (inheritSystemModulePath) {
-      var jrtLocations = SpecialLocations.javaRuntimeLocations();
-      LOGGER.trace("Adding JRT locations to compiler: {}", jrtLocations);
-
-      fileRepository
-          .getOrCreateManager(StandardLocation.SYSTEM_MODULES)
-          .addPaths(jrtLocations);
-    }
-  }
-
-  private void configureAnnotationProcessors(CompilationTask task) {
-    if (annotationProcessors.size() > 0) {
-      LOGGER.debug("Annotation processor discovery is disabled (processors explicitly provided)");
-      task.setProcessors(annotationProcessors);
-      return;
-    }
-
-    switch (annotationProcessorDiscovery) {
-      case ENABLED:
-        // Ensure the paths exist.
-        fileRepository
-            .getManager(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH)
-            .orElseGet(() -> fileRepository
-                .getOrCreateManager(StandardLocation.ANNOTATION_PROCESSOR_PATH));
-        break;
-
-      case INCLUDE_DEPENDENCIES:
-        fileRepository
-            .getManager(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH)
-            .ifPresentOrElse(
-                procModules -> procModules.addPaths(
-                    fileRepository
-                        .getExpectedManager(StandardLocation.MODULE_PATH)
-                        .getRoots()),
-                () -> fileRepository
-                    .getOrCreateManager(StandardLocation.ANNOTATION_PROCESSOR_PATH)
-                    .addPaths(fileRepository
-                        .getExpectedManager(StandardLocation.CLASS_PATH)
-                        .getRoots())
-            );
-        break;
-
-      default:
-        // Set the processor list explicitly to instruct the compiler to not perform discovery.
-        task.setProcessors(List.of());
-        break;
-    }
   }
 }

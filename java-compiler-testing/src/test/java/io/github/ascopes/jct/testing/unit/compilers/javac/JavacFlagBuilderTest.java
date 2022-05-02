@@ -59,7 +59,7 @@ class JavacFlagBuilderTest extends FlagBuilderTestSupport<JavacFlagBuilder> {
     return flagAddedIfDisabled(
         "warnings",
         "-nowarn",
-        JavacFlagBuilder::warnings
+        JavacFlagBuilder::showWarnings
     );
   }
 
@@ -69,7 +69,7 @@ class JavacFlagBuilderTest extends FlagBuilderTestSupport<JavacFlagBuilder> {
     return flagAddedIfEnabled(
         "warnings-as-errors",
         "-Werror",
-        JavacFlagBuilder::warningsAsErrors
+        JavacFlagBuilder::failOnWarnings
     );
   }
 
@@ -79,7 +79,7 @@ class JavacFlagBuilderTest extends FlagBuilderTestSupport<JavacFlagBuilder> {
     return flagAddedIfEnabled(
         "deprecation warnings",
         "-deprecation",
-        JavacFlagBuilder::deprecationWarnings
+        JavacFlagBuilder::showDeprecationWarnings
     );
   }
 
@@ -89,7 +89,7 @@ class JavacFlagBuilderTest extends FlagBuilderTestSupport<JavacFlagBuilder> {
     return argAddedIfProvided(
         "release version",
         "--release",
-        JavacFlagBuilder::releaseVersion,
+        JavacFlagBuilder::release,
         Function.identity(),
         "10", "11", "17"
     );
@@ -101,7 +101,7 @@ class JavacFlagBuilderTest extends FlagBuilderTestSupport<JavacFlagBuilder> {
     return argAddedIfProvided(
         "source version",
         "-source",
-        JavacFlagBuilder::sourceVersion,
+        JavacFlagBuilder::source,
         Function.identity(),
         "10", "11", "17"
     );
@@ -135,7 +135,7 @@ class JavacFlagBuilderTest extends FlagBuilderTestSupport<JavacFlagBuilder> {
   @TestFactory
   Stream<DynamicTest> otherOptionsShouldBeSetWhenProvided() {
     return otherArgsAddedWhenProvided(
-        JavacFlagBuilder::options,
+        JavacFlagBuilder::compilerOptions,
         "--foo.bar=baz", "--explode-on-error", "-rainbow"
     );
   }

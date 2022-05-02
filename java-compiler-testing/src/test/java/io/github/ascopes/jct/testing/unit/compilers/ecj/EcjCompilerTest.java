@@ -113,7 +113,7 @@ class EcjCompilerTest {
     }
 
     @Override
-    protected SimpleCompilation performEntireCompilation() {
+    protected SimpleCompilation doCompile() {
       try {
         counter.incrementAndGet();
         Thread.sleep(2);

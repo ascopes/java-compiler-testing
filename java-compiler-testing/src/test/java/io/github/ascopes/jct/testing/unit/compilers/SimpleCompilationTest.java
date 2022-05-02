@@ -145,11 +145,11 @@ class SimpleCompilationTest {
     // Given
     var fileRepository = MoreMocks.stub(PathLocationRepository.class);
     var compilation = filledBuilder()
-        .fileRepository(fileRepository)
+        .pathLocationRepository(fileRepository)
         .build();
 
     // Then
-    Assertions.assertThat(compilation.getFileRepository()).isEqualTo(fileRepository);
+    Assertions.assertThat(compilation.getPathLocationRepository()).isEqualTo(fileRepository);
   }
 
 
@@ -163,7 +163,7 @@ class SimpleCompilationTest {
       // Given
       var builder = SimpleCompilation
           .builder()
-          .fileRepository(MoreMocks.stub(PathLocationRepository.class))
+          .pathLocationRepository(MoreMocks.stub(PathLocationRepository.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .compilationUnits(Set.of())
@@ -181,7 +181,7 @@ class SimpleCompilationTest {
       // Given
       var builder = SimpleCompilation
           .builder()
-          .fileRepository(MoreMocks.stub(PathLocationRepository.class))
+          .pathLocationRepository(MoreMocks.stub(PathLocationRepository.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .compilationUnits(Set.of())
@@ -211,7 +211,7 @@ class SimpleCompilationTest {
       // Given
       var builder = SimpleCompilation
           .builder()
-          .fileRepository(MoreMocks.stub(PathLocationRepository.class))
+          .pathLocationRepository(MoreMocks.stub(PathLocationRepository.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .success(RANDOM.nextBoolean())
@@ -229,7 +229,7 @@ class SimpleCompilationTest {
       // Given
       var builder = SimpleCompilation
           .builder()
-          .fileRepository(MoreMocks.stub(PathLocationRepository.class))
+          .pathLocationRepository(MoreMocks.stub(PathLocationRepository.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .success(RANDOM.nextBoolean())
@@ -266,7 +266,7 @@ class SimpleCompilationTest {
       // Given
       var builder = SimpleCompilation
           .builder()
-          .fileRepository(MoreMocks.stub(PathLocationRepository.class))
+          .pathLocationRepository(MoreMocks.stub(PathLocationRepository.class))
           .outputLines(List.of())
           .compilationUnits(Set.of())
           .success(RANDOM.nextBoolean())
@@ -284,7 +284,7 @@ class SimpleCompilationTest {
       // Given
       var builder = SimpleCompilation
           .builder()
-          .fileRepository(MoreMocks.stub(PathLocationRepository.class))
+          .pathLocationRepository(MoreMocks.stub(PathLocationRepository.class))
           .outputLines(List.of())
           .compilationUnits(Set.of())
           .success(RANDOM.nextBoolean())
@@ -308,9 +308,9 @@ class SimpleCompilationTest {
       var builder = filledBuilder();
 
       // Then
-      assertThatThrownBy(() -> builder.fileRepository(null))
+      assertThatThrownBy(() -> builder.pathLocationRepository(null))
           .isInstanceOf(NullPointerException.class)
-          .hasMessage("fileRepository");
+          .hasMessage("pathLocationRepository");
     }
 
     @DisplayName("Building without a file repository raises a NullPointerException")
@@ -328,7 +328,7 @@ class SimpleCompilationTest {
       // Then
       assertThatThrownBy(builder::build)
           .isInstanceOf(NullPointerException.class)
-          .hasMessage("fileRepository");
+          .hasMessage("pathLocationRepository");
     }
 
     @DisplayName("Setting null output lines raises a NullPointerException")
@@ -349,7 +349,7 @@ class SimpleCompilationTest {
       // Given
       var builder = SimpleCompilation
           .builder()
-          .fileRepository(MoreMocks.stub(PathLocationRepository.class))
+          .pathLocationRepository(MoreMocks.stub(PathLocationRepository.class))
           .diagnostics(List.of())
           .compilationUnits(Set.of())
           .success(RANDOM.nextBoolean())
@@ -367,7 +367,7 @@ class SimpleCompilationTest {
       // Given
       var builder = SimpleCompilation
           .builder()
-          .fileRepository(MoreMocks.stub(PathLocationRepository.class))
+          .pathLocationRepository(MoreMocks.stub(PathLocationRepository.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .success(RANDOM.nextBoolean())
@@ -397,7 +397,7 @@ class SimpleCompilationTest {
         .compilationUnits(Set.of())
         .diagnostics(List.of())
         .failOnWarnings(RANDOM.nextBoolean())
-        .fileRepository(MoreMocks.stub(PathLocationRepository.class))
+        .pathLocationRepository(MoreMocks.stub(PathLocationRepository.class))
         .outputLines(List.of())
         .success(RANDOM.nextBoolean());
   }

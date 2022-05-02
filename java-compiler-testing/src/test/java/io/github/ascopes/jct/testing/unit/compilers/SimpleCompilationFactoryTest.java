@@ -14,28 +14,17 @@
  * limitations under the License.
  */
 
-package io.github.ascopes.jct.compilers.javac;
+package io.github.ascopes.jct.testing.unit.compilers;
 
-import io.github.ascopes.jct.compilers.SimpleCompiler;
-import javax.tools.JavaCompiler;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
+import io.github.ascopes.jct.compilers.SimpleCompilationFactory;
+import org.junit.jupiter.api.DisplayName;
 
 /**
- * Implementation of a {@code javac} compiler.
+ * {@link SimpleCompilationFactory} tests.
  *
  * @author Ashley Scopes
- * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
-public class JavacCompiler extends SimpleCompiler<JavacCompiler> {
-
-  /**
-   * Initialize a new Javac compiler.
-   *
-   * @param jsr199Compiler the JSR-199 compiler backend to use.
-   */
-  public JavacCompiler(JavaCompiler jsr199Compiler) {
-    super("javac", jsr199Compiler, new JavacFlagBuilder());
-  }
+@DisplayName("SimpleCompilationFactory tests")
+class SimpleCompilationFactoryTest {
+  // TODO: implement these.
 }

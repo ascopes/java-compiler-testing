@@ -50,7 +50,7 @@ public interface FlagBuilder {
    * @param enabled whether the feature is enabled.
    * @return this builder.
    */
-  FlagBuilder warnings(boolean enabled);
+  FlagBuilder showWarnings(boolean enabled);
 
   /**
    * Set whether to treat warnings as errors or not.
@@ -58,7 +58,7 @@ public interface FlagBuilder {
    * @param enabled whether to treat warnings as errors.
    * @return this builder.
    */
-  FlagBuilder warningsAsErrors(boolean enabled);
+  FlagBuilder failOnWarnings(boolean enabled);
 
   /**
    * Add deprecation warning preferences.
@@ -66,7 +66,7 @@ public interface FlagBuilder {
    * @param enabled whether the feature is enabled.
    * @return this builder.
    */
-  FlagBuilder deprecationWarnings(boolean enabled);
+  FlagBuilder showDeprecationWarnings(boolean enabled);
 
   /**
    * Add the release version.
@@ -74,7 +74,7 @@ public interface FlagBuilder {
    * @param version the release version, or {@code null} if not specified.
    * @return this builder.
    */
-  FlagBuilder releaseVersion(String version);
+  FlagBuilder release(String version);
 
   /**
    * Add the source version.
@@ -82,7 +82,7 @@ public interface FlagBuilder {
    * @param version the source version, or {@code null} if not specified.
    * @return this builder.
    */
-  FlagBuilder sourceVersion(String version);
+  FlagBuilder source(String version);
 
   /**
    * Add the target version.
@@ -90,7 +90,7 @@ public interface FlagBuilder {
    * @param version the target version, or {@code null} if not specified.
    * @return this builder.
    */
-  FlagBuilder targetVersion(String version);
+  FlagBuilder target(String version);
 
   /**
    * Add annotation processor options.
@@ -114,7 +114,7 @@ public interface FlagBuilder {
    * @param options the additional commandline options to add.
    * @return this builder.
    */
-  FlagBuilder options(List<String> options);
+  FlagBuilder compilerOptions(List<String> options);
 
   /**
    * Build the list of command line options to use.

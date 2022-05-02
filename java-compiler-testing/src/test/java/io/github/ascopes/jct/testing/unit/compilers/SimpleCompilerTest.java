@@ -23,9 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
@@ -33,13 +32,13 @@ import io.github.ascopes.jct.compilers.Compiler.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.compilers.Compiler.CompilerConfigurer;
 import io.github.ascopes.jct.compilers.Compiler.Logging;
 import io.github.ascopes.jct.compilers.FlagBuilder;
-import io.github.ascopes.jct.compilers.SimpleCompilation;
-import io.github.ascopes.jct.compilers.SimpleCompilerBase;
+import io.github.ascopes.jct.compilers.SimpleCompilationFactory;
+import io.github.ascopes.jct.compilers.SimpleCompiler;
 import io.github.ascopes.jct.paths.PathLocationRepository;
 import io.github.ascopes.jct.paths.RamPath;
 import io.github.ascopes.jct.testing.helpers.ReflectiveAccess;
 import io.github.ascopes.jct.testing.helpers.TypeRef;
-import io.github.ascopes.jct.testing.unit.compilers.SimpleCompilerBaseTest.AttrTestPack.NullTests;
+import io.github.ascopes.jct.testing.unit.compilers.SimpleCompilerTest.AttrTestPack.NullTests;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -68,12 +67,12 @@ import org.mockito.Answers;
 import org.mockito.Mockito;
 
 /**
- * {@link SimpleCompilerBase} tests.
+ * {@link SimpleCompiler} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("SimpleCompilerBase tests")
-class SimpleCompilerBaseTest {
+@DisplayName("SimpleCompiler tests")
+class SimpleCompilerTest {
 
   @DisplayName("name cannot be null")
   @Test
@@ -164,18 +163,25 @@ class SimpleCompilerBaseTest {
     assertThat(actualName).isEqualTo(expectedName);
   }
 
+  @SuppressWarnings("unchecked")
   @DisplayName("compile calls performEntireCompilation()")
   @Test
   void compileCallsPerformEntireCompilation() {
     // Given
-    var compiler = mock(StubbedCompiler.class);
-    given(compiler.compile()).willCallRealMethod();
+    try (var compilationFactory = mockConstruction(SimpleCompilationFactory.class)) {
+      var jsr199Compiler = stub(JavaCompiler.class);
+      var flagBuilder = stub(FlagBuilder.class);
+      var compiler = new StubbedCompiler("foobar", jsr199Compiler, flagBuilder);
 
-    // When
-    compiler.compile();
+      // When
+      compiler.compile();
 
-    // Then
-    then(compiler).should().performEntireCompilation();
+      // Then
+      assertThat(compilationFactory.constructed())
+          .singleElement()
+          .extracting(factory -> (SimpleCompilationFactory<StubbedCompiler>) factory)
+          .satisfies(factory -> verify(factory).compile(compiler, jsr199Compiler, flagBuilder));
+    }
   }
 
   @DisplayName("Applying a configurer invokes the configurer with the compiler")
@@ -270,8 +276,8 @@ class SimpleCompilerBaseTest {
   AttrTestPack<?> fileCharsetWorksCorrectly() {
     return new AttrTestPack<>(
         "fileCharset",
-        SimpleCompilerBase::getFileCharset,
-        SimpleCompilerBase::fileCharset,
+        SimpleCompiler::getFileCharset,
+        SimpleCompiler::fileCharset,
         NullTests.EXPECT_DISALLOW,
         StandardCharsets.UTF_8,
         StandardCharsets.US_ASCII,
@@ -582,6 +588,22 @@ class SimpleCompilerBaseTest {
         StubbedCompiler.DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY,
         AnnotationProcessorDiscovery.class
     );
+  }
+
+  @DisplayName("toString() returns the name of the compiler")
+  @Test
+  void toStringReturnsTheNameOfTheCompiler() {
+    // Given
+    var expectedName = UUID.randomUUID().toString();
+    var compiler = new StubbedCompiler(
+        expectedName,
+        stub(JavaCompiler.class),
+        stub(FlagBuilder.class)
+    );
+
+    // Then
+    assertThat(compiler)
+        .hasToString(expectedName);
   }
 
   ///////////////////////////
@@ -1011,8 +1033,7 @@ class SimpleCompilerBaseTest {
     }
   }
 
-  // Extend to allow field access to protected members.
-  static class StubbedCompiler extends SimpleCompilerBase<StubbedCompiler> {
+  static class StubbedCompiler extends SimpleCompiler<StubbedCompiler> {
 
     StubbedCompiler() {
       this("stubbed", stubCast(new TypeRef<>() {}), stubCast(new TypeRef<>() {}));
@@ -1020,12 +1041,6 @@ class SimpleCompilerBaseTest {
 
     StubbedCompiler(String name, JavaCompiler jsr199Compiler, FlagBuilder flagBuilder) {
       super(name, jsr199Compiler, flagBuilder);
-    }
-
-    @Override
-    public SimpleCompilation performEntireCompilation() {
-      // Visible for testing only.
-      return super.performEntireCompilation();
     }
   }
 }

@@ -42,7 +42,7 @@ public final class SimpleCompilation implements Compilation {
   private final List<String> outputLines;
   private final Set<? extends JavaFileObject> compilationUnits;
   private final List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
-  private final PathLocationRepository fileRepository;
+  private final PathLocationRepository pathLocationRepository;
 
   private SimpleCompilation(Builder builder) {
     success = requireNonNull(builder.success, "success");
@@ -50,7 +50,10 @@ public final class SimpleCompilation implements Compilation {
     outputLines = nonNullUnmodifiableList(builder.outputLines, "outputLines");
     compilationUnits = nonNullUnmodifiableSet(builder.compilationUnits, "compilationUnits");
     diagnostics = nonNullUnmodifiableList(builder.diagnostics, "diagnostics");
-    fileRepository = requireNonNull(builder.fileRepository, "fileRepository");
+    pathLocationRepository = requireNonNull(
+        builder.pathLocationRepository,
+        "pathLocationRepository"
+    );
   }
 
   @Override
@@ -79,8 +82,8 @@ public final class SimpleCompilation implements Compilation {
   }
 
   @Override
-  public PathLocationRepository getFileRepository() {
-    return fileRepository;
+  public PathLocationRepository getPathLocationRepository() {
+    return pathLocationRepository;
   }
 
   /**
@@ -106,7 +109,7 @@ public final class SimpleCompilation implements Compilation {
     private List<String> outputLines;
     private Set<? extends JavaFileObject> compilationUnits;
     private List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
-    private PathLocationRepository fileRepository;
+    private PathLocationRepository pathLocationRepository;
 
     private Builder() {
       // Only initialized in this file.
@@ -172,11 +175,14 @@ public final class SimpleCompilation implements Compilation {
     /**
      * Set the file repository.
      *
-     * @param fileRepository the file repository.
+     * @param pathLocationRepository the file repository.
      * @return this builder.
      */
-    public Builder fileRepository(PathLocationRepository fileRepository) {
-      this.fileRepository = requireNonNull(fileRepository, "fileRepository");
+    public Builder pathLocationRepository(PathLocationRepository pathLocationRepository) {
+      this.pathLocationRepository = requireNonNull(
+          pathLocationRepository,
+          "pathLocationRepository"
+      );
       return this;
     }
 

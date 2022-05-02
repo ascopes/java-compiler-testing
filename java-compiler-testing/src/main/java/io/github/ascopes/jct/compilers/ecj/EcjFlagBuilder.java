@@ -72,33 +72,33 @@ public final class EcjFlagBuilder implements FlagBuilder {
   }
 
   @Override
-  public EcjFlagBuilder warnings(boolean enabled) {
+  public EcjFlagBuilder showWarnings(boolean enabled) {
     return flagIfTrue(!enabled, NOWARN);
   }
 
   @Override
-  public EcjFlagBuilder warningsAsErrors(boolean enabled) {
+  public EcjFlagBuilder failOnWarnings(boolean enabled) {
     // Differs to javac for some reason.
     return flagIfTrue(enabled, FAIL_ON_WARNING);
   }
 
   @Override
-  public EcjFlagBuilder deprecationWarnings(boolean enabled) {
+  public EcjFlagBuilder showDeprecationWarnings(boolean enabled) {
     return flagIfTrue(enabled, DEPRECATION);
   }
 
   @Override
-  public EcjFlagBuilder releaseVersion(String version) {
+  public EcjFlagBuilder release(String version) {
     return versionIfPresent(RELEASE, version);
   }
 
   @Override
-  public EcjFlagBuilder sourceVersion(String version) {
+  public EcjFlagBuilder source(String version) {
     return versionIfPresent(SOURCE, version);
   }
 
   @Override
-  public EcjFlagBuilder targetVersion(String version) {
+  public EcjFlagBuilder target(String version) {
     return versionIfPresent(TARGET, version);
   }
 
@@ -115,7 +115,7 @@ public final class EcjFlagBuilder implements FlagBuilder {
   }
 
   @Override
-  public EcjFlagBuilder options(List<String> options) {
+  public EcjFlagBuilder compilerOptions(List<String> options) {
     options.forEach(otherOptions::add);
     return this;
   }

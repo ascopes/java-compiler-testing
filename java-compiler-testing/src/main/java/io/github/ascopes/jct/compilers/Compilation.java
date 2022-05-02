@@ -83,5 +83,5 @@ public interface Compilation {
    *
    * @return the location repository.
    */
-  PathLocationRepository getFileRepository();
+  PathLocationRepository getPathLocationRepository();
 }

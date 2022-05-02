@@ -68,12 +68,12 @@ class LombokIntegrationTest {
     CompilationAssert.assertThatCompilation(compilation)
         .location(StandardLocation.ANNOTATION_PROCESSOR_PATH)
         .containsAll(compilation
-            .getFileRepository()
+            .getPathLocationRepository()
             .getExpectedManager(StandardLocation.CLASS_PATH)
             .getRoots());
 
     var animalClass = compilation
-        .getFileRepository()
+        .getPathLocationRepository()
         .getManager(StandardLocation.CLASS_OUTPUT)
         .orElseThrow()
         .getClassLoader()

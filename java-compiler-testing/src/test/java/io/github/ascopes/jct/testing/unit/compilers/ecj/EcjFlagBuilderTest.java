@@ -59,7 +59,7 @@ class EcjFlagBuilderTest extends FlagBuilderTestSupport<EcjFlagBuilder> {
     return flagAddedIfDisabled(
         "warnings",
         "-nowarn",
-        EcjFlagBuilder::warnings
+        EcjFlagBuilder::showWarnings
     );
   }
 
@@ -69,7 +69,7 @@ class EcjFlagBuilderTest extends FlagBuilderTestSupport<EcjFlagBuilder> {
     return flagAddedIfEnabled(
         "warnings-as-errors",
         "--failOnWarning",
-        EcjFlagBuilder::warningsAsErrors
+        EcjFlagBuilder::failOnWarnings
     );
   }
 
@@ -79,7 +79,7 @@ class EcjFlagBuilderTest extends FlagBuilderTestSupport<EcjFlagBuilder> {
     return flagAddedIfEnabled(
         "deprecation warnings",
         "-deprecation",
-        EcjFlagBuilder::deprecationWarnings
+        EcjFlagBuilder::showDeprecationWarnings
     );
   }
 
@@ -89,7 +89,7 @@ class EcjFlagBuilderTest extends FlagBuilderTestSupport<EcjFlagBuilder> {
     return argAddedIfProvided(
         "release version",
         "--release",
-        EcjFlagBuilder::releaseVersion,
+        EcjFlagBuilder::release,
         Function.identity(),
         "10", "11", "17"
     );
@@ -101,7 +101,7 @@ class EcjFlagBuilderTest extends FlagBuilderTestSupport<EcjFlagBuilder> {
     return argAddedIfProvided(
         "source version",
         "-source",
-        EcjFlagBuilder::sourceVersion,
+        EcjFlagBuilder::source,
         Function.identity(),
         "10", "11", "17"
     );
@@ -135,7 +135,7 @@ class EcjFlagBuilderTest extends FlagBuilderTestSupport<EcjFlagBuilder> {
   @TestFactory
   Stream<DynamicTest> otherOptionsShouldBeSetWhenProvided() {
     return otherArgsAddedWhenProvided(
-        EcjFlagBuilder::options,
+        EcjFlagBuilder::compilerOptions,
         "--foo.bar=baz", "--explode-on-error", "-rainbow"
     );
   }
