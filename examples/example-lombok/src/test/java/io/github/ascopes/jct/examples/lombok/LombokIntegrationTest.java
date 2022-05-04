@@ -21,9 +21,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.ascopes.jct.assertions.CompilationAssert;
 import io.github.ascopes.jct.compilers.Compilers;
 import io.github.ascopes.jct.paths.RamPath;
+import java.util.stream.IntStream;
+import javax.lang.model.SourceVersion;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Example integration test that makes use of the Lombok annotation processor.
@@ -37,8 +40,9 @@ import org.junit.jupiter.api.Test;
 class LombokIntegrationTest {
 
   @DisplayName("Lombok @Data compiles the expected data class")
-  @Test
-  void lombokDataCompilesTheExpectedDataClass() throws Exception {
+  @MethodSource("supportedJavacVersions")
+  @ParameterizedTest(name = "for Java version {0}")
+  void lombokDataCompilesTheExpectedDataClass(int version) throws Exception {
     var sources = RamPath
         .createPath("sources")
         .createFile(
@@ -58,7 +62,7 @@ class LombokIntegrationTest {
     var compilation = Compilers
         .javac()
         .addSourceRamPaths(sources)
-        .release(11)
+        .release(version)
         .compile();
 
     CompilationAssert.assertThatCompilation(compilation)
@@ -87,5 +91,9 @@ class LombokIntegrationTest {
         .hasFieldOrPropertyWithValue("name", "Cat")
         .hasFieldOrPropertyWithValue("legCount", 4)
         .hasFieldOrPropertyWithValue("age", 5);
+  }
+
+  static IntStream supportedJavacVersions() {
+    return IntStream.range(11, SourceVersion.values().length);
   }
 }

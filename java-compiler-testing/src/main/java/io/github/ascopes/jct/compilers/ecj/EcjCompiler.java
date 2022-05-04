@@ -16,9 +16,7 @@
 
 package io.github.ascopes.jct.compilers.ecj;
 
-import io.github.ascopes.jct.compilers.SimpleCompilation;
 import io.github.ascopes.jct.compilers.SimpleCompiler;
-import java.util.concurrent.locks.ReentrantLock;
 import javax.tools.JavaCompiler;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -26,29 +24,11 @@ import org.apiguardian.api.API.Status;
 /**
  * Implementation of an ECJ compiler.
  *
- * <p>ECJ is unable to run in parallel correctly, so this class will ensure that
- * locks are acquired during the compilation process to prevent flaky tests in environments that
- * default to concurrent test execution.
- *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 public class EcjCompiler extends SimpleCompiler<EcjCompiler> {
-
-  // Annoyingly, ECJ seems to produce the following exception occasionally if run in
-  // parallel. To avoid this, we lock the ECJ compiler globally.
-  //
-  // java.nio.file.FileSystemAlreadyExistsException
-  //      at jdk.zipfs/...zipfs.ZipFileSystemProvider.newFileSystem(ZipFileSystemProvider.java:104)
-  //      at java.base/java.nio.file.FileSystems.newFileSystem(FileSystems.java:339)
-  //      at java.base/java.nio.file.FileSystems.newFileSystem(FileSystems.java:288)
-  //      at ecj@3.29.0/...batch.ClasspathJep247Jdk12.initialize(ClasspathJep247Jdk12.java:132)
-  //      at ecj@3.29.0/...compiler.batch.ClasspathJsr199.initialize(ClasspathJsr199.java:160)
-  //      at ecj@3.29.0/...compiler.batch.FileSystem.<init>(FileSystem.java:228)
-  //      at ecj@3.29.0/...compiler.batch.Main.getLibraryAccess(Main.java:3492)
-  //      ...
-  private static final ReentrantLock lock = new ReentrantLock();
 
   /**
    * Initialize a new ECJ compiler.
@@ -57,15 +37,5 @@ public class EcjCompiler extends SimpleCompiler<EcjCompiler> {
    */
   public EcjCompiler(JavaCompiler jsr199Compiler) {
     super("ecj", jsr199Compiler, new EcjFlagBuilder());
-  }
-
-  @Override
-  public SimpleCompilation compile() {
-    lock.lock();
-    try {
-      return super.compile();
-    } finally {
-      lock.unlock();
-    }
   }
 }

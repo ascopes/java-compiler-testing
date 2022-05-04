@@ -22,17 +22,24 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.intern.AsyncResourceCloser;
 import io.github.ascopes.jct.intern.Lazy;
+import io.github.ascopes.jct.intern.RecursiveDeleter;
 import io.github.ascopes.jct.intern.StringSlicer;
 import io.github.ascopes.jct.intern.StringUtils;
+import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.lang.ref.Cleaner;
+import java.nio.file.CopyOption;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.spi.FileSystemProvider;
+import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -90,8 +97,9 @@ public class PathLocationManager implements Iterable<Path> {
   private final Set<RamPath> inMemoryDirectories;  // lgtm [java/unused-container]
 
   // We open JARs as additional file systems as needed, and discard them when this manager gets
-  // discarded.
-  private final Map<String, FileSystem> jarFileSystems;
+  // discarded. To prevent parallel tests failing to open the same JAR file system at the same time,
+  // we use symbolic links to vary the name of the JAR first.
+  private final Map<String, JarHandle> jarFileSystems;
 
   /**
    * Initialize the manager.
@@ -475,6 +483,10 @@ public class PathLocationManager implements Iterable<Path> {
       }
     }
 
+    if (results.isEmpty()) {
+      LOGGER.trace("No files found in any roots for {}", relativePath);
+    }
+
     return results;
   }
 
@@ -524,6 +536,7 @@ public class PathLocationManager implements Iterable<Path> {
    *
    * @param path the path to register.
    */
+  @SuppressWarnings("resource")
   protected void registerPath(Path path) {
     if (!Files.exists(path)) {
       throw wrapWithUncheckedIoException(new FileNotFoundException(path.toString()));
@@ -539,7 +552,9 @@ public class PathLocationManager implements Iterable<Path> {
     var mimeType = uncheckedIo(() -> Files.probeContentType(absolutePath));
 
     if (JAR_ARCHIVE_TYPES.contains(mimeType)) {
-      registerJarArchive(absolutePath);
+      // We don't need to close this right now. It is dealt with during garbage collection for us.
+      jarFileSystems
+          .computeIfAbsent(absolutePath.toString(), ignored -> openJarHandle(absolutePath));
       return;
     }
 
@@ -553,13 +568,47 @@ public class PathLocationManager implements Iterable<Path> {
     roots.add(absolutePath);
   }
 
-  @SuppressWarnings("resource")
-  private void registerJarArchive(Path absolutePath) {
-    // We don't need to close this right now. It is dealt with during garbage collection for us.
-    jarFileSystems.computeIfAbsent(absolutePath.toString(), key -> {
-      var fs = uncheckedIo(() -> FileSystems.newFileSystem(absolutePath, (ClassLoader) null));
-      roots.add(fs.getRootDirectories().iterator().next());
-      return fs;
+  private JarHandle openJarHandle(Path path) {
+    return uncheckedIo(() -> {
+      // When we open a JAR, we want to have a unique file name to work with.
+      // The reason behind this is that the ZipFileSystemProvider used to open the JARs only
+      // allows one open instance of each JAR at a time. If any tests using JCT run in parallel,
+      // then we end up with a potential race condition where tests reusing the same JAR cannot
+      // open a file system handle. This could also impact other unrelated unit tests that access
+      // a JAR file in the classpath directly, as it would conflict with this. Unfortunately,
+      // without reimplementing a random-access JAR reader (which the public JarInputStream API
+      // does not appear to provide us), we either have to load the entire JAR into RAM ahead of
+      // time, which is very slow, or we have to force all tests to run in series. If we do not
+      // close the JAR file system, we'd get a memory leak too.
+      var fileName = path.getFileName().toString();
+      var tempDir = Files.createTempDirectory(fileName);
+      try {
+        var link = tempDir.resolve(fileName);
+
+        try {
+          // Symbolic linking is much more space efficient and faster than making a full copy.
+          Files.createSymbolicLink(link, path);
+          LOGGER.trace("Created symlink to {} at {}", path, link);
+        } catch (UnsupportedOperationException ex) {
+          // We can't create symbolic links on the file system. Create a copy instead (slower).
+          Files.copy(path, link);
+          LOGGER.trace("Created copy of {} at {} (fs does not support symlinks)", path, link);
+        }
+
+        for (var provider : FileSystemProvider.installedProviders()) {
+          if (provider.getScheme().equals("jar")) {
+            var fs = provider.newFileSystem(link, Map.of());
+            roots.add(fs.getRootDirectories().iterator().next());
+            return new JarHandle(link, fs);
+          }
+        }
+
+        throw new FileSystemNotFoundException("jar");
+      } catch (IOException ex) {
+        // Ensure we do not leak resources.
+        RecursiveDeleter.deleteAll(tempDir);
+        throw ex;
+      }
     });
   }
 
@@ -604,5 +653,22 @@ public class PathLocationManager implements Iterable<Path> {
 
   private int walkDepth(boolean recurse) {
     return recurse ? Integer.MAX_VALUE : 1;
+  }
+
+  private static final class JarHandle implements Closeable {
+
+    private final Path link;
+    private final FileSystem fileSystem;
+
+    private JarHandle(Path link, FileSystem fileSystem) {
+      this.link = link;
+      this.fileSystem = fileSystem;
+    }
+
+    @Override
+    public void close() throws IOException {
+      fileSystem.close();
+      RecursiveDeleter.deleteAll(link);
+    }
   }
 }
