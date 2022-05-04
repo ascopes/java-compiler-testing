@@ -22,7 +22,6 @@ import io.github.ascopes.jct.compilers.javac.JavacCompiler;
 import io.github.ascopes.jct.compilers.javac.JavacFlagBuilder;
 import io.github.ascopes.jct.testing.helpers.MoreMocks;
 import javax.tools.JavaCompiler;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +36,7 @@ class JavacCompilerTest {
   @DisplayName("compilers have the expected name")
   @Test
   void compilersHaveTheExpectedName() {
-    Assertions.assertThat(new JavacCompiler(MoreMocks.stub(JavaCompiler.class)).getName())
+    assertThat(new JavacCompiler(MoreMocks.stub(JavaCompiler.class)).getName())
         .isEqualTo("javac");
   }
 
@@ -48,7 +47,7 @@ class JavacCompilerTest {
     var jsr199Compiler = MoreMocks.stub(JavaCompiler.class);
 
     // Then
-    Assertions.assertThat(new JavacCompiler(jsr199Compiler).getJsr199Compiler())
+    assertThat(new JavacCompiler(jsr199Compiler).getJsr199Compiler())
         .isSameAs(jsr199Compiler);
   }
 
