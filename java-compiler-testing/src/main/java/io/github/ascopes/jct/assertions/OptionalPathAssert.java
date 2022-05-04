@@ -113,9 +113,8 @@ public class OptionalPathAssert extends AbstractAssert<OptionalPathAssert, Path>
   private Collection<Path> findSimilarlyNamedPaths() {
     var files = new LinkedHashSet<Path>();
     for (var root : manager.getRoots()) {
-      try {
-        Files
-            .walk(root)
+      try (var walker = Files.walk(root)) {
+        walker
             .filter(Files::isRegularFile)
             .map(root::relativize)
             .forEach(files::add);
