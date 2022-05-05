@@ -80,6 +80,7 @@ public class PathLocationManager implements Iterable<Path> {
   private static final Logger LOGGER = LoggerFactory.getLogger(PathLocationManager.class);
   private static final StringSlicer PACKAGE_SPLITTER = new StringSlicer(".");
 
+  // TODO: should I allow zip files here too?
   private static final Set<String> JAR_ARCHIVE_TYPES = Set.of(
       "application/java-archive",
       "application/x-jar",
@@ -92,7 +93,9 @@ public class PathLocationManager implements Iterable<Path> {
   private final Lazy<ClassLoader> classLoader;
 
   // We use this to keep the references alive while the manager is alive, but we persist these
-  // outside this context.
+  // outside this context, as the user may wish to reuse these file systems across multiple tests
+  // or otherwise. When the last reference to a RamPath is destroyed, and the RamPath becomes 
+  // phantom-reachable, the garbage collector will reclaim the file system resource held within.
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
   private final Set<RamPath> inMemoryDirectories;  // lgtm [java/unused-container]
 
@@ -114,8 +117,7 @@ public class PathLocationManager implements Iterable<Path> {
     this.factory = requireNonNull(factory);
     this.location = requireNonNull(location);
     roots = new LinkedHashSet<>();
-    classLoader = new Lazy<>(this::createClassLoaderUnsafe);
-
+    classLoader = new Lazy<>(() -> new DirectoryClassLoader(roots));
     inMemoryDirectories = new HashSet<>();
     jarFileSystems = new HashMap<>();
     CLEANER.register(this, new AsyncResourceCloser(jarFileSystems));
@@ -614,10 +616,6 @@ public class PathLocationManager implements Iterable<Path> {
 
   private void destroyClassLoader() {
     classLoader.destroy();
-  }
-
-  private ClassLoader createClassLoaderUnsafe() {
-    return new DirectoryClassLoader(roots);
   }
 
   private String pathToObjectName(Path path, String extension) {
