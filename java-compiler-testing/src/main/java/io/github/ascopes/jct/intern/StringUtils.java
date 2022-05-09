@@ -36,6 +36,65 @@ public final class StringUtils {
   }
 
   /**
+   * Find the index for the start of the given line number (1-indexed).
+   *
+   * <p>This assumes lines use UNIX line endings ({@code '\n'}).
+   *
+   * <p>The first line number will always be at index 0. If the line is not found, then
+   * {@code -1} is returned.
+   *
+   * @param content the content to read through.
+   * @param lineNumber the 1-indexed line number to find.
+   * @return the index of the line.
+   */
+  public static int indexOfLine(String content, int lineNumber) {
+    var currentLine = 1;
+    var index = 0;
+    var length = content.length();
+
+    while (currentLine < lineNumber && index < length) {
+      if (content.charAt(index) == '\n') {
+        ++currentLine;
+      }
+      ++index;
+    }
+
+    return currentLine == lineNumber
+        ? index
+        : -1;
+  }
+
+  /**
+   * Left-pad the given content with the given padding char until it is the given length.
+   *
+   * @param content the content to process.
+   * @param length the max length of the resultant content.
+   * @param paddingChar the character to pad with.
+   * @return the padded string.
+   */
+  public static String leftPad(String content, int length, char paddingChar) {
+    var builder = new StringBuilder();
+    while (builder.length() + content.length() < length) {
+      builder.append(paddingChar);
+    }
+    return builder.append(content).toString();
+  }
+
+  /**
+   * Find the index of the next UNIX end of line ({@code '\n'}) character from the given offset.
+   *
+   * <p>If there is no further line feed, then the length of the string is returned.
+   *
+   * @param content the content to read through.
+   * @param startAt the 0-indexed position to start at in the string.
+   * @return the index of the end of line or end of string, whichever comes first.
+   */
+  public static int indexOfEndOfLine(String content, int startAt) {
+    var index = content.indexOf('\n', startAt);
+    return index == -1 ? content.length() : index;
+  }
+
+  /**
    * Wrap the string representation of the given argument in double-quotes.
    *
    * <p>Backslashes will be doubled (i.e. '\' will become '\\'), and double-quotes
