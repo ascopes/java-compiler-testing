@@ -16,6 +16,7 @@
 
 package io.github.ascopes.jct.testing.unit.intern;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
@@ -31,6 +32,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 /**
@@ -44,6 +46,42 @@ class StringUtilsTest implements StaticClassTestTemplate {
   @Override
   public Class<?> getTypeBeingTested() {
     return StringUtils.class;
+  }
+
+  @DisplayName("formatNanos() returns the expected value")
+  @CsvSource({
+      "0, 0ns",
+      "1, 1ns",
+      "10, 10ns",
+      "15, 15ns",
+      "100, 100ns",
+      "999, 999ns",
+      "1_000, 1µs",
+      "1_001, 1µs",
+      "1_005, 1.01µs",
+      "1_010, 1.01µs",
+      "1_015, 1.02µs",
+      "1_050, 1.05µs",
+      "1_100, 1.1µs",
+      "1_150, 1.15µs",
+      "1_499, 1.5µs",
+      "1_500, 1.5µs",
+      "1_999, 2µs",
+      "2_000, 2µs",
+      "999_990, 999.99µs",
+      "999_995, 1ms",
+      "1_000_000, 1ms",
+      "999_990_000, 999.99ms",
+      "999_995_000, 1s",
+      "1_000_000_000, 1s",
+      "999_990_000_000, 999.99s",
+      "1_999_990_000_000, 1999.99s",
+  })
+  @ParameterizedTest(name = "expect {0}L to output \"{1}\"")
+  void formatNanosReturnsExpectedValue(long nanos, String expected) {
+    // Then
+    assertThat(StringUtils.formatNanos(nanos))
+        .isEqualTo(expected);
   }
 
   @DisplayName("quoted() returns the expected value")

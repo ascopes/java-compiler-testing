@@ -16,6 +16,10 @@
 
 package io.github.ascopes.jct.intern;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Objects;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -28,6 +32,10 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class StringUtils {
+
+  private static final BigDecimal THOUSAND = BigDecimal.valueOf(1000);
+  private static final List<String> TIME_UNITS = List.of("ns", "µs", "ms", "s");
+  private static final DecimalFormat TIME_FORMAT = new DecimalFormat("0.##");
 
   private static final String NULL = "null";
 
@@ -92,6 +100,27 @@ public final class StringUtils {
   public static int indexOfEndOfLine(String content, int startAt) {
     var index = content.indexOf('\n', startAt);
     return index == -1 ? content.length() : index;
+  }
+
+  /**
+   * Format a given number of nanoseconds into a string with a meaningful time unit, and then return
+   * it.
+   *
+   * @param nanos the nanosecond time to format.
+   * @return the formatted string, in the format {@code {time}{unit}}.
+   */
+  public static String formatNanos(long nanos) {
+    var duration = BigDecimal.valueOf(nanos);
+    var index = 0;
+    while (duration.compareTo(THOUSAND) >= 0 && index < TIME_UNITS.size() - 1) {
+      ++index;
+      duration = duration.divide(
+          THOUSAND,
+          TIME_FORMAT.getMaximumFractionDigits(),
+          RoundingMode.HALF_UP
+      );
+    }
+    return TIME_FORMAT.format(duration) + TIME_UNITS.get(index);
   }
 
   /**

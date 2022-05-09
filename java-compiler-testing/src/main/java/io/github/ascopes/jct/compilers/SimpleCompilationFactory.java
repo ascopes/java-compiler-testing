@@ -58,9 +58,9 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
   /**
    * Run the compilation for the given compiler and return the compilation result.
    *
-   * @param compiler the compiler to run.
+   * @param compiler       the compiler to run.
    * @param jsr199Compiler the underlying JSR-199 compiler to run via.
-   * @param flagBuilder the flag builder to use.
+   * @param flagBuilder    the flag builder to use.
    * @return the compilation result.
    */
   public SimpleCompilation compile(
@@ -118,7 +118,7 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
   /**
    * Build the flags to pass to the JSR-199 compiler.
    *
-   * @param compiler the compiler to use.
+   * @param compiler    the compiler to use.
    * @param flagBuilder the flag builder to use.
    * @return the flags to use.
    */
@@ -215,7 +215,6 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
     }
   }
 
-
   /**
    * Build a diagnostics listener.
    *
@@ -234,47 +233,18 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
   }
 
   /**
-   * Run the compilation task.
+   * Build the compilation task.
    *
-   * <p>Any exceptions that get thrown will be wrapped in {@link CompilerException} instances
-   * before being rethrown.
-   *
-   * @param compiler the compiler to use.
-   * @param task     the task to run.
-   * @return {@code true} if the compilation succeeded, or {@code false} if compilation failed.
-   * @throws CompilerException if compilation throws an unhandled exception.
+   * @param compiler           the compiler to use.
+   * @param jsr199Compiler     the JSR-199 compiler to use internally.
+   * @param writer             the writer to write diagnostics to.
+   * @param fileManager        the file manager to use.
+   * @param diagnosticListener the diagnostic listener to use.
+   * @param flags              the flags to pass to the JSR-199 compiler.
+   * @param compilationUnits   the compilation units to compile with.
+   * @return the compilation task, ready to be run.
    */
-  protected boolean runCompilationTask(A compiler, CompilationTask task) {
-    var name = compiler.toString();
-
-    try {
-      var start = System.nanoTime();
-      var result = task.call();
-
-      if (result == null) {
-        throw new CompilerException("The compiler failed to produce a valid result");
-      }
-
-      LOGGER.info("Compilation with compiler {} {} after ~{}ms",
-          name,
-          result ? "succeeded" : "failed",
-          Math.round((System.nanoTime() - start) / 1_000_000.0)
-      );
-
-      return result;
-
-    } catch (Exception ex) {
-      LOGGER.warn(
-          "Compiler {} threw an exception: {}: {}",
-          name,
-          ex.getClass().getName(),
-          ex.getMessage()
-      );
-      throw new CompilerException("The compiler threw an exception", ex);
-    }
-  }
-
-  private CompilationTask buildCompilationTask(
+  protected CompilationTask buildCompilationTask(
       A compiler,
       JavaCompiler jsr199Compiler,
       Writer writer,
@@ -309,6 +279,48 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
     }
 
     return task;
+  }
+
+  /**
+   * Run the compilation task.
+   *
+   * <p>Any exceptions that get thrown will be wrapped in {@link CompilerException} instances
+   * before being rethrown.
+   *
+   * @param compiler the compiler to use.
+   * @param task     the task to run.
+   * @return {@code true} if the compilation succeeded, or {@code false} if compilation failed.
+   * @throws CompilerException if compilation throws an unhandled exception.
+   */
+  protected boolean runCompilationTask(A compiler, CompilationTask task) {
+    var name = compiler.toString();
+
+    try {
+      var start = System.nanoTime();
+      var result = task.call();
+      var duration = System.nanoTime() - start;
+
+      if (result == null) {
+        throw new CompilerException("The compiler failed to produce a valid result");
+      }
+
+      LOGGER.info("Compilation with compiler {} {} after ~{}",
+          name,
+          result ? "succeeded" : "failed",
+          StringUtils.formatNanos(duration)
+      );
+
+      return result;
+
+    } catch (Exception ex) {
+      LOGGER.warn(
+          "Compiler {} threw an exception: {}: {}",
+          name,
+          ex.getClass().getName(),
+          ex.getMessage()
+      );
+      throw new CompilerException("The compiler threw an exception", ex);
+    }
   }
 
   private void ensureClassOutputPathExists(A compiler) {
