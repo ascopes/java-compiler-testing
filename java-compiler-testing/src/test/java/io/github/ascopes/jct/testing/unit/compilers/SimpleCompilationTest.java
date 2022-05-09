@@ -123,7 +123,7 @@ class SimpleCompilationTest {
   @ParameterizedTest(name = "for diagnosticCount = {0}")
   void getDiagnosticsReturnsExpectedValue(int diagnosticCount) {
     // Given
-    var diagnosticType = new TypeRef<TraceDiagnostic<? extends JavaFileObject>>() {};
+    var diagnosticType = new TypeRef<TraceDiagnostic<JavaFileObject>>() {};
     var diagnostics = Stream
         .generate(() -> MoreMocks.stubCast(diagnosticType))
         .limit(diagnosticCount)
