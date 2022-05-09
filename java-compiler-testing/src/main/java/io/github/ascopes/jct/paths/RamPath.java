@@ -69,7 +69,6 @@ import org.slf4j.LoggerFactory;
 public class RamPath {
 
   private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-
   private static final Logger LOGGER = LoggerFactory.getLogger(RamPath.class);
   private static final Cleaner CLEANER = Cleaner.create();
 
@@ -432,8 +431,10 @@ public class RamPath {
     return uncheckedIo(() -> {
       var bufferedInput = maybeBuffer(input, targetPath.toUri().getScheme());
       var path = makeRelativeToHere(targetPath);
-      var options = new OpenOption[]{StandardOpenOption.CREATE,
-          StandardOpenOption.TRUNCATE_EXISTING};
+      var options = new OpenOption[]{
+          StandardOpenOption.CREATE,
+          StandardOpenOption.TRUNCATE_EXISTING
+      };
       Files.createDirectories(path.getParent());
 
       try (var output = Files.newOutputStream(path, options)) {
@@ -503,9 +504,12 @@ public class RamPath {
    * @throws UncheckedIOException if something goes wrong copying the tree out of memory.
    */
   public Path copyToTempDir() {
+    // https://find-sec-bugs.github.io/bugs.htm#PATH_TRAVERSAL_IN
+    var safeName = name.substring(Math.max(0, name.lastIndexOf('/')));
+
     var tempPath = uncheckedIo(() -> Files.copy(
         path,
-        Files.createTempDirectory(name),
+        Files.createTempDirectory(safeName),
         StandardCopyOption.REPLACE_EXISTING,
         StandardCopyOption.COPY_ATTRIBUTES
     ));
