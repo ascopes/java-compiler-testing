@@ -89,6 +89,7 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
   private Logging fileManagerLogging;
   private Logging diagnosticLogging;
   private AnnotationProcessorDiscovery annotationProcessorDiscovery;
+  private boolean compiled;
 
   /**
    * Initialize this compiler.
@@ -169,6 +170,9 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
     // internally, such as the ECJ global lock that we apply to prevent bugs. Without this, we'd
     // have to mock dozens of additional moving parts. It is difficult to stub super methods
     // if we go down that route.
+	if (compiled)
+		throw new AlreadyUsedCompilerException("There has been a second call to compile() in this Compiler");
+	compiled = true;
     return doCompile();
   }
 
