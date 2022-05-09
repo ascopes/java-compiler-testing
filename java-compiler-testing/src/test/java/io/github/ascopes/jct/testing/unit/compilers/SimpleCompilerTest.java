@@ -28,6 +28,7 @@ import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
+import io.github.ascopes.jct.compilers.AlreadyUsedCompilerException;
 import io.github.ascopes.jct.compilers.Compiler.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.compilers.Compiler.CompilerConfigurer;
 import io.github.ascopes.jct.compilers.Compiler.Logging;
@@ -74,6 +75,26 @@ import org.mockito.Mockito;
 @DisplayName("SimpleCompiler tests")
 class SimpleCompilerTest {
 
+  @DisplayName("AlreadyUsedCompilerException is thrown on second call to compile()")
+  @Test
+  void alreadyUsedCompilerExceptionIsThrown() {
+	  try (var compilationFactory = mockConstruction(SimpleCompilationFactory.class)) {
+	    // Given
+	    var jsr199Compiler = stub(JavaCompiler.class);
+	    var flagBuilder = stub(FlagBuilder.class);
+	    var compiler = new StubbedCompiler("foobar", jsr199Compiler, flagBuilder);
+  
+	    // When
+	    compiler.compile();
+	      
+	    // Then
+	    assertThatThrownBy(
+	    		() -> compiler.compile()
+	    ).isInstanceOf(AlreadyUsedCompilerException.class)
+	         	    .hasMessageContaining("There has been a second call to compile() in this Compiler");
+	  }
+  }
+	
   @DisplayName("name cannot be null")
   @Test
   void nameCannotBeNull() {
