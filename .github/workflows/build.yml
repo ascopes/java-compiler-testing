@@ -130,7 +130,6 @@ jobs:
           ./mvnw -B -U -T${concurrency}C clean package \
               --no-transfer-progress \
               -DskipTests=true \
-              -Dcheckstyle.skip=true \
               -Dstyle.color=always \
               -Dmaven.artifact.threads=${concurrency}
 
