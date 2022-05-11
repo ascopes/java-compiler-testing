@@ -59,16 +59,15 @@ jobs:
           java-version: '${{ matrix.java-version }}'
 
       - name: Compile and run tests
-        # TODO: add back -T8C to run tests in parallel again once Windows is fixed.
         run: >-
           ${{ matrix.build-script }} 
           -B 
           -U
+          -T8C
           --no-transfer-progress
           '-Dcheckstyle.skip=true'
           '-Dstyle.color=always'
           '-Dmaven.artifact.threads=100'
-          '-Pshow-test-logs-in-console'
           clean package
 
       - name: Annotate test reports
