@@ -171,7 +171,7 @@ public class RamPath {
    * @throws UncheckedIOException if an IO error occurs
    */
   public RamPath createFile(String fileName, byte[] content) {
-    return createFile(Path.of(fileName), content);
+    return createFile(path.resolve(fileName), content);
   }
 
   /**
@@ -183,7 +183,7 @@ public class RamPath {
    * @throws UncheckedIOException if an IO error occurs
    */
   public RamPath createFile(String fileName, String... lines) {
-    return createFile(Path.of(fileName), lines);
+    return createFile(path.resolve(fileName), lines);
   }
 
   /**
@@ -249,7 +249,7 @@ public class RamPath {
       String resource,
       String targetPath
   ) {
-    return copyFromClassPath(loader, resource, Path.of(targetPath));
+    return copyFromClassPath(loader, resource, path.resolve(targetPath));
   }
 
   /**
@@ -344,7 +344,7 @@ public class RamPath {
       String packageName,
       String targetPath
   ) {
-    return copyTreeFromClassPath(loader, packageName, Path.of(targetPath));
+    return copyTreeFromClassPath(loader, packageName, path.resolve(targetPath));
   }
 
   /**
@@ -372,7 +372,7 @@ public class RamPath {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public RamPath copyFrom(Path existingFile, String targetPath) {
-    return copyFrom(existingFile, Path.of(targetPath));
+    return copyFrom(existingFile, path.resolve(targetPath));
   }
 
   /**
@@ -416,7 +416,7 @@ public class RamPath {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public RamPath copyFrom(InputStream input, String targetPath) {
-    return copyFrom(input, Path.of(targetPath));
+    return copyFrom(input, path.resolve(targetPath));
   }
 
   /**
@@ -491,7 +491,7 @@ public class RamPath {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public RamPath copyTreeFrom(Path tree, String targetPath) {
-    return copyTreeFrom(tree, Path.of(targetPath));
+    return copyTreeFrom(tree, path.resolve(targetPath));
   }
 
   /**
@@ -524,17 +524,17 @@ public class RamPath {
     return uri.toString();
   }
 
-  private Path makeRelativeToHere(Path path) {
-    // ToString is needed as JIMFS will fail on trying to make a relative path from a different
-    // provider.
-    if (path.isAbsolute()) {
+  private Path makeRelativeToHere(Path relativePath) {
+    if (relativePath.isAbsolute() && !relativePath.startsWith(path)) {
       throw new IllegalArgumentException(
-          "Cannot use absolute paths for the target path (" + path + ")");
+          "Cannot use absolute paths for the target path (" + relativePath + ")");
     }
 
-    return path.getFileSystem() == this.path.getFileSystem()
-        ? path.normalize()
-        : this.path.resolve(path.toString()).normalize();
+    // ToString is needed as JIMFS will fail on trying to make a relative path from a different
+    // provider.
+    return relativePath.getFileSystem() == path.getFileSystem()
+        ? relativePath.normalize()
+        : path.resolve(relativePath.toString()).normalize();
   }
 
   /**
