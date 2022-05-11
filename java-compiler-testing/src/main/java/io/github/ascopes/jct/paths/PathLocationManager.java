@@ -30,16 +30,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.lang.ref.Cleaner;
-import java.nio.file.CopyOption;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystemNotFoundException;
-import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.spi.FileSystemProvider;
-import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -284,11 +280,11 @@ public class PathLocationManager implements Iterable<Path> {
    * @return the file, or an empty optional if not found.
    */
   public Optional<FileObject> getFileForInput(String packageName, String relativeName) {
-    var relativePath = packageNameToRelativePath(packageName);
+    var relativePathParts = packageNameToRelativePathParts(packageName);
     for (var root : roots) {
-      var path = root.resolve(relativePath).resolve(relativeName);
+      var path = resolveNested(root, relativePathParts).resolve(relativeName);
       if (Files.isRegularFile(path)) {
-        return Optional.of(factory.create(location, path, relativePath));
+        return Optional.of(factory.create(location, path, root.relativize(path).toString()));
       }
     }
 
@@ -305,13 +301,14 @@ public class PathLocationManager implements Iterable<Path> {
    * @return the file object for output, or an empty optional if no paths existed to place it in.
    */
   public Optional<FileObject> getFileForOutput(String packageName, String relativeName) {
-    var relativePath = packageNameToRelativePath(packageName);
-
     return roots
         .stream()
         .findFirst()
-        .map(root -> root.resolve(relativePath).resolve(relativeName))
-        .map(path -> factory.create(location, path, relativePath));
+        .flatMap(root -> {
+          var relativePathParts = packageNameToRelativePathParts(packageName);
+          var path = resolveNested(root, relativePathParts).resolve(relativeName);
+          return Optional.of(factory.create(location, path, root.relativize(path).toString()));
+        });
   }
 
   /**
@@ -322,9 +319,9 @@ public class PathLocationManager implements Iterable<Path> {
    * @return the file, or an empty optional if not found.
    */
   public Optional<JavaFileObject> getJavaFileForInput(String className, Kind kind) {
-    var relativePath = classNameToRelativePath(className, kind.extension);
+    var relativePathParts = classNameToRelativePathParts(className, kind.extension);
     for (var root : roots) {
-      var path = root.resolve(relativePath);
+      var path = resolveNested(root, relativePathParts);
       if (Files.isRegularFile(path)) {
         return Optional.of(factory.create(location, path, className));
       }
@@ -343,13 +340,14 @@ public class PathLocationManager implements Iterable<Path> {
    * @return the file object for output, or an empty optional if no paths existed to place it in.
    */
   public Optional<JavaFileObject> getJavaFileForOutput(String className, Kind kind) {
-    var relativePath = classNameToRelativePath(className, kind.extension);
-
     return roots
         .stream()
         .findFirst()
-        .map(root -> root.resolve(relativePath))
-        .map(path -> factory.create(location, path, className));
+        .flatMap(root -> {
+          var relativePathParts = classNameToRelativePathParts(className, kind.extension);
+          var path = resolveNested(root, relativePathParts);
+          return Optional.of(factory.create(location, path, className));
+        });
   }
 
   /**
@@ -451,12 +449,12 @@ public class PathLocationManager implements Iterable<Path> {
       Set<Kind> kinds,
       boolean recurse
   ) throws IOException {
-    var relativePath = packageNameToRelativePath(packageName);
+    var relativePathParts = packageNameToRelativePathParts(packageName);
     var maxDepth = walkDepth(recurse);
     var results = new ArrayList<JavaFileObject>();
 
     for (var root : roots) {
-      var path = root.resolve(relativePath);
+      var path = resolveNested(root, relativePathParts);
 
       if (!Files.exists(path)) {
         continue;
@@ -479,7 +477,7 @@ public class PathLocationManager implements Iterable<Path> {
     }
 
     if (results.isEmpty()) {
-      LOGGER.trace("No files found in any roots for {}", relativePath);
+      LOGGER.trace("No files found in any roots for package {}", packageName);
     }
 
     return results;
@@ -612,22 +610,39 @@ public class PathLocationManager implements Iterable<Path> {
   }
 
   private String pathToObjectName(Path path, String extension) {
-    var pathString = path.toString();
-    return pathString
-        .substring(0, pathString.length() - extension.length())
-        .replace('/', '.');
+    assert path.getNameCount() != 0 : "Got an empty path somehow";
+
+    var parts = new ArrayList<String>();
+    for (var part : path) {
+      parts.add(part.toString());
+    }
+
+    // Remove file extension on the last element.
+    var lastIndex = parts.size() - 1;
+    var fileName = parts.get(lastIndex);
+    parts.set(lastIndex, fileName.substring(0, fileName.length() - extension.length()));
+
+    // Join into a package name.
+    return String.join(".", parts);
   }
 
-  private String packageNameToRelativePath(String packageName) {
+  private String[] packageNameToRelativePathParts(String packageName) {
     // First arg has to be empty to be able to accept variadic arguments properly.
-    return String.join("/", PACKAGE_SPLITTER.splitToArray(packageName));
+    return PACKAGE_SPLITTER.splitToArray(packageName);
   }
 
-  private String classNameToRelativePath(String className, String extension) {
+  private String[] classNameToRelativePathParts(String className, String extension) {
     var parts = PACKAGE_SPLITTER.splitToArray(className);
     assert parts.length > 0 : "did not expect an empty classname";
     parts[parts.length - 1] += extension;
-    return String.join("/", parts);
+    return parts;
+  }
+
+  private Path resolveNested(Path base, String[] parts) {
+    for (var part : parts) {
+      base = base.resolve(part);
+    }
+    return base.normalize();
   }
 
   private Predicate<Path> hasAnyKind(Iterable<Kind> kinds) {
