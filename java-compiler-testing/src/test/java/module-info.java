@@ -25,10 +25,7 @@ open module io.github.ascopes.jct.testing {
   requires transitive net.bytebuddy.agent;   // required for mockito to work with JPMS.
   requires transitive org.assertj.core;
   requires transitive org.junit.jupiter;
-  requires transitive org.junit.platform.suite;
   requires org.mockito;
   requires org.mockito.junit.jupiter;
   requires org.slf4j;
-
-  exports io.github.ascopes.jct.testing;
 }

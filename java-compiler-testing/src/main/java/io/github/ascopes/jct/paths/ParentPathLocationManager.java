@@ -77,7 +77,8 @@ public class ParentPathLocationManager extends PathLocationManager {
    * @return the module location if known, or an empty optional otherwise.
    */
   public Optional<ModuleLocation> getModuleLocationFor(FileObject fileObject) {
-    var path = Path.of(fileObject.toUri());
+    // TODO(ascopes): can we get non-path file objects here?
+    var path = ((PathJavaFileObject) fileObject).getPath();
 
     return getRoots()
         .stream()

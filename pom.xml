@@ -67,6 +67,9 @@
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <surefire-tree-reporter-plugin.version>0.1.0</surefire-tree-reporter-plugin.version>
 
+    <!-- Log verbosity -->
+    <hide-test-logs-in-console>true</hide-test-logs-in-console>
+
     <!--
       This argument is pulled in by Surefire, and JaCoCo will amend it to ensure the
       coverage agent is installed into the forked JVM running the tests. See
@@ -179,13 +182,15 @@
 
           <executions>
             <execution>
-              <id>prepare-jacoco-unittest-agent</id>
+              <id>add-coverage-agent-to-surefire-args</id>
+              <phase>initialize</phase>
               <goals>
                 <goal>prepare-agent</goal>
               </goals>
             </execution>
+
             <execution>
-              <id>report-jacoco-unittest-coverage</id>
+              <id>report-coverage</id>
               <phase>test</phase>
               <goals>
                 <goal>report</goal>
@@ -264,7 +269,7 @@
               <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
             </statelessTestsetReporter>
             <consoleOutputReporter>
-              <disable>true</disable>
+              <disable>${hide-test-logs-in-console}</disable>
             </consoleOutputReporter>
             <statelessTestsetInfoReporter
               implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
@@ -334,4 +339,13 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>show-test-logs-in-console</id>
+      <properties>
+        <hide-test-logs-in-console>false</hide-test-logs-in-console>
+      </properties>
+    </profile>
+  </profiles>
 </project>
