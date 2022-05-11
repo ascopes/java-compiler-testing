@@ -26,7 +26,7 @@ import org.junit.platform.suite.api.SuiteDisplayName;
  * @author Ashley Scopes
  */
 
-@SelectPackages("com.github.ascopes.jct.testing.integration")
+@SelectPackages("io.github.ascopes.jct.testing.integration")
 @SuiteDisplayName("Integration Tests")
 @Suite
 @SuppressWarnings("NewClassNamingConvention")

@@ -229,7 +229,6 @@ public class PathLocationManager implements Iterable<Path> {
    */
   public boolean contains(FileObject fileObject) {
     // TODO(ascopes): can we get non-path file objects here?
-
     var path = ((PathJavaFileObject) fileObject).getPath();
 
     // While we could just return `Files.isRegularFile` from the start,
@@ -254,12 +253,6 @@ public class PathLocationManager implements Iterable<Path> {
    * @throws IllegalArgumentException if an absolute-style path is provided.
    */
   public Optional<? extends Path> findFile(String path) {
-    var relativePath = Path.of(path);
-
-    if (relativePath.isAbsolute()) {
-      throw new IllegalArgumentException("Cannot use absolute paths here");
-    }
-
     for (var root : roots) {
       var fullPath = root.resolve(path);
 

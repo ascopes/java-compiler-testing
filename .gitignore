@@ -1,6 +1,3 @@
-# Maven Wrapper
-/.mvn/wrapper/maven-wrapper.jar
-
 # Build output
 build/
 out/

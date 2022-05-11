@@ -182,7 +182,7 @@ public class DiagnosticRepresentation implements Representation {
       builder
           .append(PADDING)
           .append(" ".repeat(lineNumberWidth))
-          .append(" · ");
+          .append(" + ");
 
       for (int i = startOfLine; i < endOfLine; ++i) {
         builder.append(startOffset <= i && i <= endOffset ? '^' : ' ');
