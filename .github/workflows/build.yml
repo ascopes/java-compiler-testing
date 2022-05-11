@@ -83,7 +83,9 @@ jobs:
         if: always()
         with:
           name: tests-java-${{ matrix.java-version }}-${{ matrix.os }}
-          path: "**/target/surefire-reports/TEST-*.xml"
+          path: |
+            **/target/surefire-reports/*.xml
+            **/target/surefire-reports/*.txt
           retention-days: 5
 
       - name: Archive Jacoco reports
@@ -91,7 +93,7 @@ jobs:
         if: always()
         with:
           name: coverage-java-${{ matrix.java-version }}
-          path: "**/target/site/jacoco/jacoco-*.xml"
+          path: "**/target/site/jacoco/jacoco*.xml"
           retention-days: 5
 
   report-test-results:
