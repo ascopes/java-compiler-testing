@@ -54,6 +54,12 @@ public class RecursiveDeleter extends SimpleFileVisitor<Path> {
     return super.postVisitDirectory(dir, exc);
   }
 
+  /**
+   * Delete all files in the given path recursively.
+   *
+   * @param base the base path to delete within.
+   * @throws IOException if anything goes wrong.
+   */
   public static void deleteAll(Path base) throws IOException {
     if (Files.exists(base)) {
       Files.walkFileTree(base, INSTANCE);

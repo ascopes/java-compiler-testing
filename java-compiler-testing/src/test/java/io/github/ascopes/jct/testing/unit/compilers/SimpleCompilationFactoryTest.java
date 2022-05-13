@@ -99,6 +99,7 @@ class SimpleCompilationFactoryTest {
   @DisplayName("compile tests")
   @Nested
   class CompileTests {
+
     @Disabled("TODO: implement")
     @Test
     void toDo() {
@@ -112,7 +113,7 @@ class SimpleCompilationFactoryTest {
     @DisplayName("annotation processor options should be added")
     @Test
     void annotationProcessorOptionsShouldBeAdded() {
-      var options = aListOfOptions();
+      var options = someListOfOptions();
       given(compiler.getAnnotationProcessorOptions()).willReturn(options);
       execute();
       verify(flagBuilder).annotationProcessorOptions(options);
@@ -139,16 +140,16 @@ class SimpleCompilationFactoryTest {
     @DisplayName("compiler options should be added")
     @Test
     void compilerOptionsShouldBeAdded() {
-      var options = aListOfOptions();
+      var options = someListOfOptions();
       given(compiler.getCompilerOptions()).willReturn(options);
       execute();
       verify(flagBuilder).compilerOptions(options);
     }
-    
+
     @DisplayName("runtime options should be added")
     @Test
     void runtimeOptionsShouldBeAdded() {
-      var options = aListOfOptions();
+      var options = someListOfOptions();
       given(compiler.getRuntimeOptions()).willReturn(options);
       execute();
       verify(flagBuilder).runtimeOptions(options);
@@ -214,7 +215,7 @@ class SimpleCompilationFactoryTest {
     @DisplayName("built flags are passed to the compilation task")
     @Test
     void builtFlagsArePassedToTheCompilationTask() {
-      var flags = aListOfOptions();
+      var flags = someListOfOptions();
       given(flagBuilder.build()).willReturn(flags);
       execute();
       verify(jsr199Compiler).getTask(any(), any(), any(), eq(flags), any(), any());
@@ -244,6 +245,7 @@ class SimpleCompilationFactoryTest {
   @DisplayName("build JavaFileManager tests")
   @Nested
   class BuildJavaFileManagerTest {
+
     @Disabled("TODO: implement")
     @Test
     void toDo() {
@@ -253,6 +255,7 @@ class SimpleCompilationFactoryTest {
   @DisplayName("find compilation units tests")
   @Nested
   class FindCompilationUnitsTest {
+
     @Disabled("TODO: implement")
     @Test
     void toDo() {
@@ -262,6 +265,7 @@ class SimpleCompilationFactoryTest {
   @DisplayName("apply logging to file manager tests")
   @Nested
   class ApplyLoggingToFileManagerTest {
+
     @Disabled("TODO: implement")
     @Test
     void toDo() {
@@ -271,6 +275,7 @@ class SimpleCompilationFactoryTest {
   @DisplayName("build diagnostic listener tests")
   @Nested
   class BuildDiagnosticListenerTest {
+
     @Disabled("TODO: implement")
     @Test
     void toDo() {
@@ -280,6 +285,7 @@ class SimpleCompilationFactoryTest {
   @DisplayName("build compilation task tests")
   @Nested
   class BuildCompilationTaskTest {
+
     @Disabled("TODO: implement")
     @Test
     void toDo() {
@@ -289,6 +295,7 @@ class SimpleCompilationFactoryTest {
   @DisplayName("run compilation task tests")
   @Nested
   class RunCompilationTaskTest {
+
     @Disabled("TODO: implement")
     @Test
     void toDo() {
@@ -299,14 +306,14 @@ class SimpleCompilationFactoryTest {
     return compilationFactory.compile(compiler, jsr199Compiler, flagBuilder);
   }
 
-  private static List<String> aListOfOptions() {
+  private static List<String> someListOfOptions() {
     return Stream
         .generate(() -> Integer.toHexString(RANDOM.nextInt(Integer.MAX_VALUE)))
         .limit(RANDOM.nextInt(5) + 2)
         .collect(Collectors.toList());
   }
 
-  private static abstract class StubbedCompiler
+  private abstract static class StubbedCompiler
       implements Compiler<StubbedCompiler, SimpleCompilation> {
   }
 }

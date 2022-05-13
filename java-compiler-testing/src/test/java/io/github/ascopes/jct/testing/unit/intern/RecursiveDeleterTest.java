@@ -58,7 +58,7 @@ class RecursiveDeleterTest {
   @Test
   void nonExistentDirectoryGetsIgnored() throws IOException {
     // Given
-    var dir = aDirectory("foo");
+    final var dir = someDirectory("foo");
     Files.delete(dir);
 
     // Then
@@ -71,7 +71,7 @@ class RecursiveDeleterTest {
   @Test
   void anEmptyDirectoryGetsDeleted() throws IOException {
     // Given
-    var dir = aDirectory("foo");
+    final var dir = someDirectory("foo");
 
     // When
     RecursiveDeleter.deleteAll(dir);
@@ -85,10 +85,10 @@ class RecursiveDeleterTest {
   @Test
   void directoryWithFilesInItGetsDeleted() throws IOException {
     // Given
-    var dir = aDirectory("foo");
-    var fooTxt = aFile(dir, "foo.txt");
-    var barTxt = aFile(dir, "bar.txt");
-    var bazTxt = aFile(dir, "baz.txt");
+    final var dir = someDirectory("foo");
+    final var fooTxt = someFile(dir, "foo.txt");
+    final var barTxt = someFile(dir, "bar.txt");
+    final var bazTxt = someFile(dir, "baz.txt");
 
     // When
     RecursiveDeleter.deleteAll(dir);
@@ -105,15 +105,15 @@ class RecursiveDeleterTest {
   @Test
   void directoryWithNestedFilesAndDirectoriesInItGetsDeleted() throws IOException {
     // Given
-    var dir = aDirectory("foo");
-    var fooTxt = aFile(dir, "foo.txt");
-    var barTxt = aFile(dir, "bar.txt");
-    var bazTxt = aFile(dir, "baz.txt");
-    var subDir = aDirectory(dir, "aaaaaaaa");
-    var subSubDir = aDirectory(subDir, "bbbbbbb");
-    var nestedFile = aFile(subSubDir, "foobarbaz.txt");
-    var subSubSubDir = aDirectory(subDir, "cccccccccc");
-    var anotherNestedFile = aFile(subSubSubDir, "bleep.txt");
+    final var dir = someDirectory("foo");
+    final var fooTxt = someFile(dir, "foo.txt");
+    final var barTxt = someFile(dir, "bar.txt");
+    final var bazTxt = someFile(dir, "baz.txt");
+    final var subDir = someDirectory(dir, "aaaaaaaa");
+    final var subSubDir = someDirectory(subDir, "bbbbbbb");
+    final var nestedFile = someFile(subSubDir, "foobarbaz.txt");
+    final var subSubSubDir = someDirectory(subDir, "cccccccccc");
+    final var anotherNestedFile = someFile(subSubSubDir, "bleep.txt");
 
     // When
     RecursiveDeleter.deleteAll(dir);
@@ -130,25 +130,25 @@ class RecursiveDeleterTest {
     assertThat(dir).doesNotExist();
   }
 
-  Path aDirectory(String... name) throws IOException {
-    return aDirectory(root, name);
+  Path someDirectory(String... name) throws IOException {
+    return someDirectory(root, name);
   }
 
-  Path aDirectory(Path root, String... name) throws IOException {
-    var dir = Files.createDirectory(resolveEach(root, name));
+  Path someDirectory(Path root, String... name) throws IOException {
+    final var dir = Files.createDirectory(resolveEach(root, name));
     assertThat(dir).exists().isDirectory();
     return dir;
   }
 
-  Path aFile(Path root, String... name) throws IOException {
-    var file = Files.createFile(resolveEach(root, name));
+  Path someFile(Path root, String... name) throws IOException {
+    final var file = Files.createFile(resolveEach(root, name));
     assertThat(file).exists().isRegularFile();
     return file;
   }
 
   Path resolveEach(Path root, String... name) {
     var head = root;
-    for (var part : name) {
+    for (final var part : name) {
       head = head.resolve(part);
     }
 
