@@ -73,7 +73,7 @@ class AsyncResourceCloserTest {
     closer.run();
 
     // Then
-    Thread.sleep(50);
+    Thread.sleep(500);
     then(resource.closed)
         .withFailMessage("resource was not closed")
         .isTrue();
