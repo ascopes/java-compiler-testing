@@ -127,7 +127,7 @@ public class ThreadPool extends AbstractExecutorService implements AutoCloseable
    */
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ElementType.TYPE, ElementType.METHOD})
-  @Isolated("com.github.ascopes.jct.testing.helpers.ThreadPool")
+  @Isolated("io.github.ascopes.jct.testing.helpers.ThreadPool")
   public @interface RunTestsInIsolation {
   }
 }
