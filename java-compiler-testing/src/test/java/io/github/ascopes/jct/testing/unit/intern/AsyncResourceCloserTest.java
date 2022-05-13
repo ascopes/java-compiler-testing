@@ -71,7 +71,7 @@ class AsyncResourceCloserTest {
     // Given
     var resource = new CloseableResource();
     var closer = new AsyncResourceCloser("foobar", resource);
-    then(resource.closed).isFalse();
+    assertThat(resource.closed).isFalse();
 
     // When
     closer.run();
