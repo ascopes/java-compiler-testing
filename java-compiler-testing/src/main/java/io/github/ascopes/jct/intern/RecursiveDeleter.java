@@ -24,6 +24,8 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper file visitor that will recursively delete files.
@@ -33,6 +35,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 public class RecursiveDeleter extends SimpleFileVisitor<Path> {
+  private static final Logger LOGGER = LoggerFactory.getLogger(RecursiveDeleter.class);
   private static final RecursiveDeleter INSTANCE = new RecursiveDeleter();
 
   private RecursiveDeleter() {
@@ -52,6 +55,10 @@ public class RecursiveDeleter extends SimpleFileVisitor<Path> {
   }
 
   public static void deleteAll(Path base) throws IOException {
-    Files.walkFileTree(base, INSTANCE);
+    if (Files.exists(base)) {
+      Files.walkFileTree(base, INSTANCE);
+    } else {
+      LOGGER.trace("{} does not exist, so will not be recursively deleted", base);
+    }
   }
 }
