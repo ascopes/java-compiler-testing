@@ -22,6 +22,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.intern.AsyncResourceCloser;
 import io.github.ascopes.jct.intern.Lazy;
+import io.github.ascopes.jct.intern.PlatformLinkStrategy;
 import io.github.ascopes.jct.intern.RecursiveDeleter;
 import io.github.ascopes.jct.intern.StringSlicer;
 import io.github.ascopes.jct.intern.StringUtils;
@@ -31,7 +32,6 @@ import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.lang.ref.Cleaner;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystemException;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
@@ -86,6 +86,7 @@ public class PathLocationManager implements Iterable<Path> {
   private final Location location;
   private final Set<Path> roots;
   private final Lazy<ClassLoader> classLoader;
+  private final PlatformLinkStrategy platformLinkStrategy;
 
   // We use this to keep the references alive while the manager is alive, but we persist these
   // outside this context, as the user may wish to reuse these file systems across multiple tests
@@ -113,6 +114,7 @@ public class PathLocationManager implements Iterable<Path> {
     this.location = requireNonNull(location);
     roots = new LinkedHashSet<>();
     classLoader = new Lazy<>(() -> new DirectoryClassLoader(roots));
+    platformLinkStrategy = new PlatformLinkStrategy();
     inMemoryDirectories = new HashSet<>();
     jarFileSystems = new HashMap<>();
     CLEANER.register(this, new AsyncResourceCloser(jarFileSystems));
@@ -582,21 +584,7 @@ public class PathLocationManager implements Iterable<Path> {
       var fileName = path.getFileName().toString();
       var tempDir = Files.createTempDirectory(fileName);
       try {
-        var link = tempDir.resolve(fileName);
-
-        try {
-          // Symbolic linking is much more space efficient and faster than making a full copy.
-          Files.createSymbolicLink(link, path);
-          LOGGER.trace("Created symlink to {} at {}", path, link);
-        } catch (FileSystemException ex) {
-          // Windows helpfully does not allow creating symbolic links without root.
-          Files.copy(path, link);
-          LOGGER.trace("Created copy of {} at {} (fs did not allow creation of symlink)", path, ex);
-        } catch (UnsupportedOperationException ex) {
-          // We can't create symbolic links on the file system. Create a copy instead (slower).
-          Files.copy(path, link);
-          LOGGER.trace("Created copy of {} at {} (fs does not support symlinks)", path, link);
-        }
+        var link = platformLinkStrategy.createLinkOrCopy(tempDir.resolve(fileName), path);
 
         for (var provider : FileSystemProvider.installedProviders()) {
           if (provider.getScheme().equals("jar")) {
