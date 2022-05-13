@@ -76,11 +76,9 @@ public class PathLocationManager implements Iterable<Path> {
   private static final Logger LOGGER = LoggerFactory.getLogger(PathLocationManager.class);
   private static final StringSlicer PACKAGE_SPLITTER = new StringSlicer(".");
 
-  // TODO: should I allow zip files here too?
-  private static final Set<String> JAR_ARCHIVE_TYPES = Set.of(
-      "application/java-archive",
-      "application/x-jar",
-      "application/x-java-archive"
+  private static final Set<String> JAR_FILE_EXTENSIONS = Set.of(
+      ".jar",
+      ".war"
   );
 
   private final PathJavaFileObjectFactory factory;
@@ -542,17 +540,24 @@ public class PathLocationManager implements Iterable<Path> {
       return;
     }
 
-    var mimeType = uncheckedIo(() -> Files.probeContentType(absolutePath));
+    // I previously used Files.probeContentType here, but it turns out that this is buggy on
+    // some JREs on MacOS and Windows, where it will always provide a null result.
+    // See https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8080369
+    // Therefore, I am now just using a file extension check instead until I can think of a better
+    // way of probing this without opening each file and checking the header.
+    // TODO(ascopes): reconsider how I do this.
+    var fileName = path.getFileName().toString();
 
-    if (JAR_ARCHIVE_TYPES.contains(mimeType)) {
-      // We don't need to close this right now. It is dealt with during garbage collection for us.
-      jarFileSystems
-          .computeIfAbsent(absolutePath.toString(), ignored -> openJarHandle(absolutePath));
-      return;
+    for (var extension : JAR_FILE_EXTENSIONS) {
+      if (fileName.endsWith(extension)) {
+        jarFileSystems
+            .computeIfAbsent(absolutePath.toString(), ignored -> openJarHandle(absolutePath));
+        return;
+      }
     }
 
     throw new UnsupportedOperationException(
-        "Path " + absolutePath + " of type " + mimeType + " is not supported"
+        "File at URI " + absolutePath.toUri() + " is not supported by this implementation."
     );
   }
 

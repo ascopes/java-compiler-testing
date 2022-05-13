@@ -38,7 +38,6 @@ import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
 import javax.tools.JavaFileManager.Location;
@@ -104,21 +103,6 @@ public class PathJavaFileObject implements JavaFileObject {
    */
   public Path getPath() {
     return path;
-  }
-
-  /**
-   * Determine the mime-type for this file, if known.
-   *
-   * @return the mime-type, or an empty optional if not known. If the file failed to be probed, then
-   *     this will return empty.
-   */
-  public Optional<String> getMimeType() {
-    try {
-      return Optional.ofNullable(Files.probeContentType(path));
-    } catch (IOException ex) {
-      LOGGER.warn("Failed to get content-type for {}", path, ex);
-      return Optional.empty();
-    }
   }
 
   @Override
@@ -211,7 +195,6 @@ public class PathJavaFileObject implements JavaFileObject {
     return getClass().getSimpleName()
         + "{location=" + StringUtils.quoted(location.getName()) + ", "
         + "uri=" + StringUtils.quoted(uri) + ", "
-        + "mimeType=" + StringUtils.quoted(getMimeType().orElse(null)) + ", "
         + "kind=" + kind
         + "}";
   }
