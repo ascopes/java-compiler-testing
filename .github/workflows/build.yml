@@ -40,13 +40,13 @@ jobs:
 
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
-        build-script: [ ./mvnw ]
+        os: [windows-latest, ubuntu-latest]
         java-version: [ 11, 12, 13, 14, 15, 16, 17, 18 ]
         include:
           - os: windows-latest
             build-script: './mvnw.cmd'
-            java-version: 17
+          - os: ubuntu-latest
+            build-script: './mvnw'
 
     steps:
       - name: Checkout repository
