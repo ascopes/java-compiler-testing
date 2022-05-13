@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.lang.ref.Cleaner;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystemException;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
@@ -587,6 +588,10 @@ public class PathLocationManager implements Iterable<Path> {
           // Symbolic linking is much more space efficient and faster than making a full copy.
           Files.createSymbolicLink(link, path);
           LOGGER.trace("Created symlink to {} at {}", path, link);
+        } catch (FileSystemException ex) {
+          // Windows helpfully does not allow creating symbolic links without root.
+          Files.copy(path, link);
+          LOGGER.trace("Created copy of {} at {} (fs did not allow creation of symlink)", path, ex);
         } catch (UnsupportedOperationException ex) {
           // We can't create symbolic links on the file system. Create a copy instead (slower).
           Files.copy(path, link);
