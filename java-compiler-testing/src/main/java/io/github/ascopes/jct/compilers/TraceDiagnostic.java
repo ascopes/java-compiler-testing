@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -35,7 +36,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class TraceDiagnostic<S> extends ForwardingDiagnostic<S> {
+public class TraceDiagnostic<S extends JavaFileObject> extends ForwardingDiagnostic<S> {
 
   private final Instant timestamp;
   private final long threadId;

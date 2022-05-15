@@ -69,7 +69,6 @@ import org.slf4j.LoggerFactory;
 public class RamPath {
 
   private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-
   private static final Logger LOGGER = LoggerFactory.getLogger(RamPath.class);
   private static final Cleaner CLEANER = Cleaner.create();
 
@@ -172,7 +171,7 @@ public class RamPath {
    * @throws UncheckedIOException if an IO error occurs
    */
   public RamPath createFile(String fileName, byte[] content) {
-    return createFile(Path.of(fileName), content);
+    return createFile(path.resolve(fileName), content);
   }
 
   /**
@@ -184,7 +183,7 @@ public class RamPath {
    * @throws UncheckedIOException if an IO error occurs
    */
   public RamPath createFile(String fileName, String... lines) {
-    return createFile(Path.of(fileName), lines);
+    return createFile(path.resolve(fileName), lines);
   }
 
   /**
@@ -250,7 +249,7 @@ public class RamPath {
       String resource,
       String targetPath
   ) {
-    return copyFromClassPath(loader, resource, Path.of(targetPath));
+    return copyFromClassPath(loader, resource, path.resolve(targetPath));
   }
 
   /**
@@ -345,7 +344,7 @@ public class RamPath {
       String packageName,
       String targetPath
   ) {
-    return copyTreeFromClassPath(loader, packageName, Path.of(targetPath));
+    return copyTreeFromClassPath(loader, packageName, path.resolve(targetPath));
   }
 
   /**
@@ -373,7 +372,7 @@ public class RamPath {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public RamPath copyFrom(Path existingFile, String targetPath) {
-    return copyFrom(existingFile, Path.of(targetPath));
+    return copyFrom(existingFile, path.resolve(targetPath));
   }
 
   /**
@@ -417,7 +416,7 @@ public class RamPath {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public RamPath copyFrom(InputStream input, String targetPath) {
-    return copyFrom(input, Path.of(targetPath));
+    return copyFrom(input, path.resolve(targetPath));
   }
 
   /**
@@ -432,8 +431,10 @@ public class RamPath {
     return uncheckedIo(() -> {
       var bufferedInput = maybeBuffer(input, targetPath.toUri().getScheme());
       var path = makeRelativeToHere(targetPath);
-      var options = new OpenOption[]{StandardOpenOption.CREATE,
-          StandardOpenOption.TRUNCATE_EXISTING};
+      var options = new OpenOption[]{
+          StandardOpenOption.CREATE,
+          StandardOpenOption.TRUNCATE_EXISTING
+      };
       Files.createDirectories(path.getParent());
 
       try (var output = Files.newOutputStream(path, options)) {
@@ -490,7 +491,7 @@ public class RamPath {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public RamPath copyTreeFrom(Path tree, String targetPath) {
-    return copyTreeFrom(tree, Path.of(targetPath));
+    return copyTreeFrom(tree, path.resolve(targetPath));
   }
 
   /**
@@ -503,9 +504,12 @@ public class RamPath {
    * @throws UncheckedIOException if something goes wrong copying the tree out of memory.
    */
   public Path copyToTempDir() {
+    // https://find-sec-bugs.github.io/bugs.htm#PATH_TRAVERSAL_IN
+    var safeName = name.substring(Math.max(0, name.lastIndexOf('/')));
+
     var tempPath = uncheckedIo(() -> Files.copy(
         path,
-        Files.createTempDirectory(name),
+        Files.createTempDirectory(safeName),
         StandardCopyOption.REPLACE_EXISTING,
         StandardCopyOption.COPY_ATTRIBUTES
     ));
@@ -520,17 +524,17 @@ public class RamPath {
     return uri.toString();
   }
 
-  private Path makeRelativeToHere(Path path) {
-    // ToString is needed as JIMFS will fail on trying to make a relative path from a different
-    // provider.
-    if (path.isAbsolute()) {
+  private Path makeRelativeToHere(Path relativePath) {
+    if (relativePath.isAbsolute() && !relativePath.startsWith(path)) {
       throw new IllegalArgumentException(
-          "Cannot use absolute paths for the target path (" + path + ")");
+          "Cannot use absolute paths for the target path (" + relativePath + ")");
     }
 
-    return path.getFileSystem() == this.path.getFileSystem()
-        ? path.normalize()
-        : this.path.resolve(path.toString()).normalize();
+    // ToString is needed as JIMFS will fail on trying to make a relative path from a different
+    // provider.
+    return relativePath.getFileSystem() == path.getFileSystem()
+        ? relativePath.normalize()
+        : path.resolve(relativePath.toString()).normalize();
   }
 
   /**

@@ -19,8 +19,8 @@ package io.github.ascopes.jct.testing.unit.intern;
 import static java.time.Duration.ofMillis;
 import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.BDDAssertions.then;
-import static org.assertj.core.api.BDDAssertions.thenCode;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 import io.github.ascopes.jct.intern.AsyncResourceCloser;
@@ -45,7 +45,11 @@ class AsyncResourceCloserTest {
   @DisplayName("Initializing with a null name throws a NullPointerException")
   @Test
   void initializingWithNullNameThrowsNullPointerException() {
-    thenCode(() -> new AsyncResourceCloser(null, MoreMocks.stub(AutoCloseable.class)))
+    // Given
+    var resource = MoreMocks.stub(AutoCloseable.class);
+
+    // Then
+    assertThatThrownBy(() -> new AsyncResourceCloser(null, resource))
         .isInstanceOf(NullPointerException.class);
   }
 
@@ -57,7 +61,7 @@ class AsyncResourceCloserTest {
     var closer = new AsyncResourceCloser(Map.of());
 
     // Then
-    thenCode(closer::run)
+    assertThatCode(closer::run)
         .doesNotThrowAnyException();
   }
 
@@ -67,16 +71,18 @@ class AsyncResourceCloserTest {
     // Given
     var resource = new CloseableResource();
     var closer = new AsyncResourceCloser("foobar", resource);
-    then(resource.closed).isFalse();
+    assertThat(resource.closed).isFalse();
 
     // When
     closer.run();
 
     // Then
-    Thread.sleep(50);
-    then(resource.closed)
-        .withFailMessage("resource was not closed")
-        .isTrue();
+    await()
+        .atMost(ofSeconds(10))
+        .pollInterval(ofMillis(1))
+        .untilAsserted(() -> assertThat(resource.closed)
+            .withFailMessage("resource was not closed")
+            .isTrue());
   }
 
   @DisplayName("Resources get closed")
@@ -87,7 +93,7 @@ class AsyncResourceCloserTest {
     var resources = new HashMap<String, CloseableResource>();
     for (var i = 0; i < count; ++i) {
       var resource = new CloseableResource();
-      then(resource.closed).isFalse();
+      assertThat(resource.closed).isFalse();
       resources.put(Integer.toString(i), resource);
     }
 
@@ -100,7 +106,7 @@ class AsyncResourceCloserTest {
     await()
         .atMost(ofSeconds(10))
         .pollInterval(ofMillis(1))
-        .untilAsserted(() -> then(resources)
+        .untilAsserted(() -> assertThat(resources)
             .allSatisfy((name, resource) -> assertThat(resource.closed)
                 .withFailMessage("resource %s was not closed", name)
                 .isTrue()));
@@ -114,7 +120,7 @@ class AsyncResourceCloserTest {
     var resources = new HashMap<String, CloseableResource>();
     for (var i = 0; i < count; ++i) {
       var resource = new CloseableResource();
-      then(resource.closed).isFalse();
+      assertThat(resource.closed).isFalse();
       resources.put(Integer.toString(i), resource);
     }
 
@@ -132,7 +138,7 @@ class AsyncResourceCloserTest {
     await()
         .atMost(ofSeconds(10))
         .pollInterval(ofMillis(1))
-        .untilAsserted(() -> then(resources)
+        .untilAsserted(() -> assertThat(resources)
             .allSatisfy((name, resource) -> assertThat(resource.closed)
                 .withFailMessage("resource %s was not closed", name)
                 .isTrue()));

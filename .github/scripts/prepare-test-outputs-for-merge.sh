@@ -21,7 +21,8 @@
 
 set -e
 
-echo "Using Java ${1?Pass the Java version as the first argument to this script!}"
+CI_JAVA_VERSION=${1?Pass the Java version as the first argument to this script!}
+CI_OS=${2?Pass the OS name as the second argument to this script!}
 
 if ! command -v xsltproc > /dev/null 2>&1; then
   if [ -z ${CI+_} ]; then
@@ -36,27 +37,27 @@ fi
 
 echo -e "\e[1;35mUpdating Surefire reports...\e[0m"
 surefire_prefix_xslt=$(mktemp --suffix=.xslt)
-cat > "${surefire_prefix_xslt}" <<'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <!--
-   | XSLT transformation to add a prefix to the start of the 'testcase' names in Surefire reports.
-   | This allows us to prefix each test with the Java version before we combine them into a single
-   | test report.
-   |-->
-  <xsl:param name="prefix"/>
-  <xsl:output indent="yes"/>
-  <xsl:template name="identity" match="node()|@*">
-    <xsl:copy>
-      <xsl:apply-templates select="node()|@*"/>
-    </xsl:copy>
-  </xsl:template>
-  <xsl:template name="prefix-testcase-names" match="testcase/@name">
-    <xsl:attribute name="name" namespace="{namespace-uri()}">
-      <xsl:value-of select="concat($prefix, ' ', ../@name)"/>
-    </xsl:attribute>
-  </xsl:template>
-</xsl:stylesheet>
+sed 's/^  //g' > "${surefire_prefix_xslt}" <<'EOF'
+  <?xml version="1.0" encoding="UTF-8"?>
+  <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <!--
+     | XSLT transformation to add a prefix to the start of the 'testcase' names in Surefire reports.
+     | This allows us to prefix each test with the Java version before we combine them into a single
+     | test report.
+     |-->
+    <xsl:param name="prefix"/>
+    <xsl:output indent="yes"/>
+    <xsl:template name="identity" match="node()|@*">
+      <xsl:copy>
+        <xsl:apply-templates select="node()|@*"/>
+      </xsl:copy>
+    </xsl:template>
+    <xsl:template name="prefix-testcase-names" match="testcase/@name">
+      <xsl:attribute name="name" namespace="{namespace-uri()}">
+        <xsl:value-of select="concat($prefix, ' ', ../@name)"/>
+      </xsl:attribute>
+    </xsl:template>
+  </xsl:stylesheet>
 EOF
 
 function find-all-surefire-reports() {
@@ -73,8 +74,8 @@ function find-all-jacoco-reports() {
 
 for surefire_report in $(find-all-surefire-reports); do
   echo -e "\e[1;34mAdding Java version to test case names in ${surefire_report}...\e[0m"
-  new_surefire_report=${surefire_report/.xml/-java-${CI_JAVA_VERSION}.xml}
-  xsltproc --stringparam prefix "[Java-${CI_JAVA_VERSION}]" \
+  new_surefire_report=${surefire_report/.xml/-java-${CI_JAVA_VERSION}-${CI_OS}.xml}
+  xsltproc --stringparam prefix "[Java-${CI_JAVA_VERSION}-${CI_OS}]" \
       "${surefire_prefix_xslt}" "${surefire_report}" > "${new_surefire_report}"
   echo -e "\e[1;34mReplacing ${surefire_report} with ${new_surefire_report}\e[0m"
   rm "${surefire_report}"
@@ -84,7 +85,7 @@ rm "${surefire_prefix_xslt}"
 
 echo -e "\e[1;35mUpdating Jacoco reports...\e[0m"
 for jacoco_report in $(find-all-jacoco-reports); do
-  new_jacoco_report="${jacoco_report/.xml/-java-${CI_JAVA_VERSION}.xml}"
+  new_jacoco_report="${jacoco_report/.xml/-java-${CI_JAVA_VERSION}-${CI_OS}.xml}"
   echo -e "\e[1;34mRenaming ${jacoco_report} to ${new_jacoco_report}\e[0m"
   mv "${jacoco_report}" "${new_jacoco_report}"
 done

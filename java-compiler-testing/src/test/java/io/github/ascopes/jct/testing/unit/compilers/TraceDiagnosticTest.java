@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +43,7 @@ class TraceDiagnosticTest {
   @Test
   void nullTimestampsAreRejected() {
     var stack = MoreMocks.stubCast(new TypeRef<List<StackTraceElement>>() {});
-    var diag = MoreMocks.stubCast(new TypeRef<Diagnostic<?>>() {});
+    var diag = MoreMocks.stubCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
     thenCode(() -> new TraceDiagnostic<>(null, 123, "foo", stack, diag))
         .isInstanceOf(NullPointerException.class);
   }
@@ -51,7 +52,7 @@ class TraceDiagnosticTest {
   @Test
   void nullStackTracesAreRejected() {
     var now = Instant.now();
-    var diag = MoreMocks.stubCast(new TypeRef<Diagnostic<?>>() {});
+    var diag = MoreMocks.stubCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
     thenCode(() -> new TraceDiagnostic<>(now, 123, "foo", null, diag))
         .isInstanceOf(NullPointerException.class);
   }

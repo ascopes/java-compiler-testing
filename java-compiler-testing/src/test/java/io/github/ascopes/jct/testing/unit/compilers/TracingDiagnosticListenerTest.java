@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
+import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -384,8 +385,11 @@ class TracingDiagnosticListenerTest {
         ));
   }
 
-  static <T> Diagnostic<T> someDiagnostic(Kind kind, String message) {
-    var diagnostic = stubCast(new TypeRef<Diagnostic<T>>() {}, withSettings().lenient());
+  static Diagnostic<JavaFileObject> someDiagnostic(Kind kind, String message) {
+    var diagnostic = stubCast(
+        new TypeRef<Diagnostic<JavaFileObject>>() {},
+        withSettings().lenient()
+    );
     when(diagnostic.getKind()).thenReturn(kind);
     when(diagnostic.getMessage(any())).thenReturn(message);
     return diagnostic;
@@ -403,7 +407,7 @@ class TracingDiagnosticListenerTest {
     return () -> thread;
   }
 
-  static class AccessibleImpl<T> extends TracingDiagnosticListener<T> {
+  static class AccessibleImpl<T extends JavaFileObject> extends TracingDiagnosticListener<T> {
 
     AccessibleImpl(
         boolean logging,

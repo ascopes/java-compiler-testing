@@ -16,6 +16,10 @@
 
 package io.github.ascopes.jct.intern;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Objects;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -29,10 +33,94 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class StringUtils {
 
+  private static final BigDecimal THOUSAND = BigDecimal.valueOf(1000);
+  private static final List<String> TIME_UNITS = List.of("ns", "µs", "ms", "s");
+  private static final DecimalFormat TIME_FORMAT = new DecimalFormat("0.##");
+
   private static final String NULL = "null";
 
   private StringUtils() {
     throw new UnsupportedOperationException("static-only class");
+  }
+
+  /**
+   * Find the index for the start of the given line number (1-indexed).
+   *
+   * <p>This assumes lines use UNIX line endings ({@code '\n'}).
+   *
+   * <p>The first line number will always be at index 0. If the line is not found, then
+   * {@code -1} is returned.
+   *
+   * @param content the content to read through.
+   * @param lineNumber the 1-indexed line number to find.
+   * @return the index of the line.
+   */
+  public static int indexOfLine(String content, int lineNumber) {
+    var currentLine = 1;
+    var index = 0;
+    var length = content.length();
+
+    while (currentLine < lineNumber && index < length) {
+      if (content.charAt(index) == '\n') {
+        ++currentLine;
+      }
+      ++index;
+    }
+
+    return currentLine == lineNumber
+        ? index
+        : -1;
+  }
+
+  /**
+   * Left-pad the given content with the given padding char until it is the given length.
+   *
+   * @param content the content to process.
+   * @param length the max length of the resultant content.
+   * @param paddingChar the character to pad with.
+   * @return the padded string.
+   */
+  public static String leftPad(String content, int length, char paddingChar) {
+    var builder = new StringBuilder();
+    while (builder.length() + content.length() < length) {
+      builder.append(paddingChar);
+    }
+    return builder.append(content).toString();
+  }
+
+  /**
+   * Find the index of the next UNIX end of line ({@code '\n'}) character from the given offset.
+   *
+   * <p>If there is no further line feed, then the length of the string is returned.
+   *
+   * @param content the content to read through.
+   * @param startAt the 0-indexed position to start at in the string.
+   * @return the index of the end of line or end of string, whichever comes first.
+   */
+  public static int indexOfEndOfLine(String content, int startAt) {
+    var index = content.indexOf('\n', startAt);
+    return index == -1 ? content.length() : index;
+  }
+
+  /**
+   * Format a given number of nanoseconds into a string with a meaningful time unit, and then return
+   * it.
+   *
+   * @param nanos the nanosecond time to format.
+   * @return the formatted string, in the format {@code {time}{unit}}.
+   */
+  public static String formatNanos(long nanos) {
+    var duration = BigDecimal.valueOf(nanos);
+    var index = 0;
+    while (duration.compareTo(THOUSAND) >= 0 && index < TIME_UNITS.size() - 1) {
+      ++index;
+      duration = duration.divide(
+          THOUSAND,
+          TIME_FORMAT.getMaximumFractionDigits(),
+          RoundingMode.HALF_UP
+      );
+    }
+    return TIME_FORMAT.format(duration) + TIME_UNITS.get(index);
   }
 
   /**
