@@ -21,6 +21,7 @@ import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
+import java.util.Properties;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -49,8 +50,13 @@ public final class PlatformLinkStrategy {
   /**
    * Initialize this strategy.
    */
-  public PlatformLinkStrategy() {
-    if (System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("windows")) {
+  public PlatformLinkStrategy(Properties systemProperties) {
+    var windows = systemProperties
+        .getProperty("os.name", "")
+        .toLowerCase(Locale.ROOT)
+        .startsWith("windows");
+
+    if (windows) {
       // Windows cannot create symbolic links without root.
       impl = Files::createLink;
       name = "hard link";

@@ -114,7 +114,7 @@ public class PathLocationManager implements Iterable<Path> {
     this.location = requireNonNull(location);
     roots = new LinkedHashSet<>();
     classLoader = new Lazy<>(() -> new DirectoryClassLoader(roots));
-    platformLinkStrategy = new PlatformLinkStrategy();
+    platformLinkStrategy = new PlatformLinkStrategy(System.getProperties());
     inMemoryDirectories = new HashSet<>();
     jarFileSystems = new HashMap<>();
     CLEANER.register(this, new AsyncResourceCloser(jarFileSystems));
