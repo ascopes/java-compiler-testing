@@ -121,4 +121,43 @@ public final class IterableUtils {
 
     return collection;
   }
+
+  /**
+   * Ensure there are no {@code null} elements in the given array.
+   *
+   * <p>This also ensures the array itself is not null either.
+   *
+   * @param array     the array to check.
+   * @param arrayName the name to give in the error message if anything is null.
+   * @param <T>       the input collection type.
+   * @return the input array.
+   */
+  public static <T> T[] requireNonNullValues(
+      T[] array,
+      String arrayName
+  ) {
+    // Duplicate this logic so that we do not have to wrap the array in Arrays.list. This prevents
+    // a copy of the entire array each time we do this check.
+    requireNonNull(array, arrayName);
+
+    var badElements = Stream.<String>builder();
+
+    var index = 0;
+    for (Object element : array) {
+      if (element == null) {
+        badElements.add(arrayName + "[" + index + "]");
+      }
+      ++index;
+    }
+
+    var error = badElements
+        .build()
+        .collect(Collectors.joining(", "));
+
+    if (!error.isEmpty()) {
+      throw new NullPointerException(error);
+    }
+
+    return array;
+  }
 }
