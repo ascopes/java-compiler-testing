@@ -165,9 +165,9 @@ class IterableUtilsTest implements StaticClassTestTemplate {
         .hasMessage("pete[2]");
   }
 
-  @DisplayName("requireNonNullValues(Collection<?>) succeeds when no null elements are present")
+  @DisplayName("requireNonNullValues(Iterable<?>) succeeds when no null elements are present")
   @Test
-  void requireNonNullValuesSucceedsWhenNoNullElementsArePresent() {
+  void requireNonNullValuesIterableSucceedsWhenNoNullElementsArePresent() {
     // Given
     var collection = List.of("foo", "bar", "", "baz", "bork");
 
@@ -176,18 +176,18 @@ class IterableUtilsTest implements StaticClassTestTemplate {
         .isThrownBy(() -> IterableUtils.requireNonNullValues(collection, "dave"));
   }
 
-  @DisplayName("requireNonNullValues(Collection<?>) fails when the collection is null")
+  @DisplayName("requireNonNullValues(Iterable<?>) fails when the collection is null")
   @Test
-  void requireNonNullValuesFailsWhenCollectionIsNull() {
+  void requireNonNullValuesIterableFailsWhenCollectionIsNull() {
     // Then
-    assertThatThrownBy(() -> IterableUtils.requireNonNullValues(null, "dave"))
+    assertThatThrownBy(() -> IterableUtils.requireNonNullValues((Iterable<?>) null, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("dave");
   }
 
-  @DisplayName("requireNonNullValues(Collection<?>) fails when a single null element is present")
+  @DisplayName("requireNonNullValues(Iterable<?>) fails when a single null element is present")
   @Test
-  void requireNonNullValuesFailsWhenSingleNullElementIsPresent() {
+  void requireNonNullValuesIterableFailsWhenSingleNullElementIsPresent() {
     // Given
     var collection = Arrays.asList("foo", "bar", "", null, "baz", "bork");
 
@@ -197,14 +197,58 @@ class IterableUtilsTest implements StaticClassTestTemplate {
         .hasMessage("dave[3]");
   }
 
-  @DisplayName("requireNonNullValues(Collection<?>) fails when multiple null elements are present")
+  @DisplayName("requireNonNullValues(Iterable<?>) fails when multiple null elements are present")
   @Test
-  void requireNonNullValuesFailsWhenMultipleNullElementsArePresent() {
+  void requireNonNullValuesIterableFailsWhenMultipleNullElementsArePresent() {
     // Given
     var collection = Arrays.asList("foo", "bar", null, "", null, null, "baz", "bork");
 
     // Then
     assertThatThrownBy(() -> IterableUtils.requireNonNullValues(collection, "dave"))
+        .isExactlyInstanceOf(NullPointerException.class)
+        .hasMessage("dave[2], dave[4], dave[5]");
+  }
+
+  @DisplayName("requireNonNullValues(T[]) succeeds when no null elements are present")
+  @Test
+  void requireNonNullValuesArraySucceedsWhenNoNullElementsArePresent() {
+    // Given
+    var array = new String[]{"foo", "bar", "", "baz", "bork"};
+
+    // Then
+    assertThatNoException()
+        .isThrownBy(() -> IterableUtils.requireNonNullValues(array, "dave"));
+  }
+
+  @DisplayName("requireNonNullValues(T[]) fails when the collection is null")
+  @Test
+  void requireNonNullValuesArrayFailsWhenCollectionIsNull() {
+    // Then
+    assertThatThrownBy(() -> IterableUtils.requireNonNullValues((String[]) null, "dave"))
+        .isExactlyInstanceOf(NullPointerException.class)
+        .hasMessage("dave");
+  }
+
+  @DisplayName("requireNonNullValues(T[]) fails when a single null element is present")
+  @Test
+  void requireNonNullValuesArrayFailsWhenSingleNullElementIsPresent() {
+    // Given
+    var array = new String[]{"foo", "bar", "", null, "baz", "bork"};
+
+    // Then
+    assertThatThrownBy(() -> IterableUtils.requireNonNullValues(array, "dave"))
+        .isExactlyInstanceOf(NullPointerException.class)
+        .hasMessage("dave[3]");
+  }
+
+  @DisplayName("requireNonNullValues(T[]) fails when multiple null elements are present")
+  @Test
+  void requireNonNullValuesArrayFailsWhenMultipleNullElementsArePresent() {
+    // Given
+    var array = new String[]{"foo", "bar", null, "", null, null, "baz", "bork"};
+
+    // Then
+    assertThatThrownBy(() -> IterableUtils.requireNonNullValues(array, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("dave[2], dave[4], dave[5]");
   }
