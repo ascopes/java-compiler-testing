@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.ascopes.jct.paths.v2;
+package io.github.ascopes.jct.paths.v2.containers;
 
+import io.github.ascopes.jct.paths.v2.PathFileObject;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;

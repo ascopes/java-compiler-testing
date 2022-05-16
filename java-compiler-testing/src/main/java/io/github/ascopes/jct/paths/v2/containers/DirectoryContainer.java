@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package io.github.ascopes.jct.paths.v2;
+package io.github.ascopes.jct.paths.v2.containers;
 
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.intern.FileUtils;
+import io.github.ascopes.jct.paths.v2.PathFileObject;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.net.URL;
@@ -29,8 +30,6 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.Stream.Builder;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
