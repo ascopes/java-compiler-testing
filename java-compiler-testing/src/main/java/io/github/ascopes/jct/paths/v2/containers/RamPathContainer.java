@@ -1,4 +1,4 @@
-package io.github.ascopes.jct.paths.v2;
+package io.github.ascopes.jct.paths.v2.containers;
 
 import static java.util.Objects.requireNonNull;
 

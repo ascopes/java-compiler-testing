@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package io.github.ascopes.jct.paths.v2;
+package io.github.ascopes.jct.paths.v2.groups;
 
-import static io.github.ascopes.jct.intern.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.intern.EnumerationAdapter;
-import io.github.ascopes.jct.intern.IoExceptionUtils;
 import io.github.ascopes.jct.intern.Lazy;
 import io.github.ascopes.jct.paths.ModuleLocation;
 import io.github.ascopes.jct.paths.RamPath;
-import java.io.Closeable;
+import io.github.ascopes.jct.paths.v2.PathFileObject;
+import io.github.ascopes.jct.paths.v2.containers.Container;
+import io.github.ascopes.jct.paths.v2.containers.DirectoryContainer;
+import io.github.ascopes.jct.paths.v2.containers.JarContainer;
+import io.github.ascopes.jct.paths.v2.containers.RamPathContainer;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.net.URL;
@@ -38,14 +40,12 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
-import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A group of containers that relate to a specific location.
@@ -58,16 +58,17 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class ContainerGroup implements Closeable {
+public class SimplePackageOrientedContainerGroup implements PackageOrientedContainerGroup {
+
   private static final Set<String> ARCHIVE_EXTENSIONS = Set.of(
       ".zip",
       ".jar",
       ".war"
   );
 
-  private final Location location;
+  protected final Location location;
+  protected final String release;
   private final List<Container> containers;
-  private final String release;
   private final Lazy<ClassLoader> classLoaderLazy;
 
   /**
@@ -76,21 +77,28 @@ public class ContainerGroup implements Closeable {
    * @param location the location of the container group.
    * @param release  the release to use for multi-release JARs.
    */
-  public ContainerGroup(Location location, String release) {
+  public SimplePackageOrientedContainerGroup(Location location, String release) {
     this.location = requireNonNull(location, "location");
-    containers = new ArrayList<>();
+
+    if (location.isOutputLocation()) {
+      throw new UnsupportedOperationException(
+          "Cannot use output locations with this container group"
+      );
+    }
+
+    if (location.isModuleOrientedLocation()) {
+      throw new UnsupportedOperationException(
+          "Cannot use module-oriented locations with this container group"
+      );
+    }
+
     this.release = requireNonNull(release, "release");
-    classLoaderLazy = new Lazy<>(() -> new ContainerClassLoader(this));
+
+    containers = new ArrayList<>();
+    classLoaderLazy = new Lazy<>(() -> new SimpleContainerClassLoader(this));
   }
 
-  /**
-   * Add a path to this group.
-   *
-   * <p>Note that this will destroy the {@link #getClassLoader() classloader} if one is already
-   * allocated.
-   *
-   * @param path the path to add.
-   */
+  @Override
   public void addPath(Path path) throws IOException {
     var archive = ARCHIVE_EXTENSIONS
         .stream()
@@ -103,27 +111,12 @@ public class ContainerGroup implements Closeable {
     containers.add(container);
   }
 
-  /**
-   * Add a RAM path to this group.
-   *
-   * <p>This is the same as {@link #addPath(Path)}, but ensures that the RAM path is kept
-   * allocated for at least as long as this group is.
-   *
-   * <p>Note that this will destroy the {@link #getClassLoader() classloader} if one is already
-   * allocated.
-   *
-   * @param ramPath the RAM path to add.
-   */
+  @Override
   public void addRamPath(RamPath ramPath) {
     containers.add(new RamPathContainer(ramPath));
   }
 
-  /**
-   * Determine whether this group contains the given file object anywhere.
-   *
-   * @param fileObject the file object to look for.
-   * @return {@code true} if the file object is contained in this group, or {@code false} otherwise.
-   */
+  @Override
   public boolean contains(PathFileObject fileObject) {
     return containers
         .stream()
@@ -156,12 +149,7 @@ public class ContainerGroup implements Closeable {
     }
   }
 
-  /**
-   * Find the first occurrence of a given path to a file.
-   *
-   * @param path the path to the file to find.
-   * @return the first occurrence of the path in this group, or an empty optional if not found.
-   */
+  @Override
   public Optional<? extends Path> findFile(String path) {
     return containers
         .stream()
@@ -169,24 +157,13 @@ public class ContainerGroup implements Closeable {
         .findFirst();
   }
 
-  /**
-   * Get a classloader for this group of paths.
-   *
-   * @return the classloader.
-   */
+
+  @Override
   public ClassLoader getClassLoader() {
     return classLoaderLazy.access();
   }
 
-  /**
-   * Get a {@link FileObject} that can have content read from it.
-   *
-   * <p>This will return an empty optional if no file is found.
-   *
-   * @param packageName  the package name of the file to read.
-   * @param relativeName the relative name of the file to read.
-   * @return the file object, or an empty optional if the file is not found.
-   */
+  @Override
   public Optional<? extends PathFileObject> getFileForInput(
       String packageName,
       String relativeName
@@ -197,17 +174,7 @@ public class ContainerGroup implements Closeable {
         .findFirst();
   }
 
-  /**
-   * Get a {@link FileObject} that can have content written to it for the given file.
-   *
-   * <p>This will attempt to write to the first writeable path in this group. An empty optional
-   * will be returned if no writeable paths exist in this group.
-   *
-   * @param packageName  the name of the package the file is in.
-   * @param relativeName the relative name of the file within the package.
-   * @return the {@link FileObject} to write to, or an empty optional if this group has no paths
-   *     that can be written to.
-   */
+  @Override
   public Optional<? extends PathFileObject> getFileForOutput(
       String packageName,
       String relativeName
@@ -218,17 +185,7 @@ public class ContainerGroup implements Closeable {
         .findFirst();
   }
 
-  /**
-   * Get a {@link JavaFileObject} that can have content written to it for the given file.
-   *
-   * <p>This will attempt to write to the first writeable path in this group. An empty optional
-   * will be returned if no writeable paths exist in this group.
-   *
-   * @param className the binary name of the class to read.
-   * @param kind      the kind of file to read.
-   * @return the {@link JavaFileObject} to write to, or an empty optional if this group has no paths
-   *     that can be written to.
-   */
+  @Override
   public Optional<? extends PathFileObject> getJavaFileForInput(
       String className,
       Kind kind
@@ -239,17 +196,7 @@ public class ContainerGroup implements Closeable {
         .findFirst();
   }
 
-  /**
-   * Get a {@link JavaFileObject} that can have content written to it for the given class.
-   *
-   * <p>This will attempt to write to the first writeable path in this group. An empty optional
-   * will be returned if no writeable paths exist in this group.
-   *
-   * @param className the name of the class.
-   * @param kind      the kind of the class file.
-   * @return the {@link JavaFileObject} to write to, or an empty optional if this group has no paths
-   *     that can be written to.
-   */
+  @Override
   public Optional<? extends PathFileObject> getJavaFileForOutput(
       String className,
       Kind kind
@@ -260,22 +207,12 @@ public class ContainerGroup implements Closeable {
         .findFirst();
   }
 
-  /**
-   * Get the location that this group of paths is for.
-   *
-   * @return the location.
-   */
+  @Override
   public Location getLocation() {
     return location;
   }
 
-  /**
-   * Get a service loader for the given service class.
-   *
-   * @param service the service class to get.
-   * @param <S>     the service class type.
-   * @return the service loader.
-   */
+  @Override
   public <S> ServiceLoader<S> getServiceLoader(Class<S> service) {
     if (location instanceof ModuleLocation) {
       throw new UnsupportedOperationException("Cannot load services from specific modules");
@@ -303,12 +240,7 @@ public class ContainerGroup implements Closeable {
     return ServiceLoader.load(layer, service);
   }
 
-  /**
-   * Try to infer the binary name of a given file object.
-   *
-   * @param fileObject the file object to infer the binary name for.
-   * @return the binary name if known, or an empty optional otherwise.
-   */
+  @Override
   public Optional<? extends String> inferBinaryName(PathFileObject fileObject) {
     return containers
         .stream()
@@ -316,25 +248,12 @@ public class ContainerGroup implements Closeable {
         .findFirst();
   }
 
-  /**
-   * Determine if this group has no paths registered.
-   *
-   * @return {@code true} if no paths are registered. {@code false} if paths are registered.
-   */
+  @Override
   public boolean isEmpty() {
     return containers.isEmpty();
   }
 
-  /**
-   * List all the file objects that match the given criteria in this group.
-   *
-   * @param packageName the package name to look in.
-   * @param kinds       the kinds of file to look for.
-   * @param recurse     {@code true} to recurse subpackages, {@code false} to only consider the
-   *                    given package.
-   * @return an iterable of resultant file objects.
-   * @throws IOException if the file lookup fails.
-   */
+  @Override
   public Collection<? extends PathFileObject> list(
       String packageName,
       Set<? extends Kind> kinds,
@@ -349,35 +268,36 @@ public class ContainerGroup implements Closeable {
     return items;
   }
 
-  private static class ContainerClassLoader extends ClassLoader {
+  private static class SimpleContainerClassLoader extends ClassLoader {
+
     static {
       ClassLoader.registerAsParallelCapable();
     }
 
-    private final ContainerGroup owner;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleContainerClassLoader.class);
 
-    private ContainerClassLoader(ContainerGroup owner) {
+    private final SimplePackageOrientedContainerGroup owner;
+
+    private SimpleContainerClassLoader(SimplePackageOrientedContainerGroup owner) {
       this.owner = owner;
     }
 
     protected Class<?> findClass(String binaryName) throws ClassNotFoundException {
-      for (var container : owner.containers) {
-        try {
-          var maybeBinary = container.getClassBinary(binaryName);
+      try {
+        for (var container : owner.containers) {
+          var clazz = container
+              .getClassBinary(binaryName)
+              .map(data -> defineClass(null, data, 0, data.length));
 
-          if (maybeBinary.isPresent()) {
-            var binary = maybeBinary.get();
-            return defineClass(null, binary, 0, binary.length);
+          if (clazz.isPresent()) {
+            return clazz.get();
           }
-        } catch (IOException ex) {
-          throw new ClassNotFoundException(
-              "Failed to load class " + binaryName + " due to an IOException",
-              ex
-          );
         }
-      }
 
-      throw new ClassNotFoundException(binaryName);
+        throw new ClassNotFoundException("Class not found: " + binaryName);
+      } catch (IOException ex) {
+        throw new ClassNotFoundException("Class loading aborted for: " + binaryName, ex);
+      }
     }
 
     @Override
@@ -393,7 +313,12 @@ public class ContainerGroup implements Closeable {
 
       } catch (IOException ex) {
         // We ignore this, according to the spec for how this should be handled.
-        // TODO: maybe log this.
+        LOGGER.warn(
+            "Failed to look up resource {} because {}: {} - this will be ignored",
+            resourcePath,
+            ex.getClass().getName(),
+            ex.getMessage()
+        );
       }
 
       return null;
