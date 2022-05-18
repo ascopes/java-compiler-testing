@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -43,15 +44,18 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class DirectoryContainer implements Container {
 
+  private final Location location;
   private final Path root;
   private final String name;
 
   /**
    * Initialize this container.
    *
-   * @param root the root directory to
+   * @param location the location.
+   * @param root the root directory to hold.
    */
-  public DirectoryContainer(Path root) {
+  public DirectoryContainer(Location location, Path root) {
+    this.location = requireNonNull(location, "location");
     this.root = requireNonNull(root, "root");
     name = root.toString();
   }
@@ -68,14 +72,18 @@ public class DirectoryContainer implements Container {
   }
 
   @Override
-  public Optional<? extends Path> findFile(String path) {
+  public Optional<Path> findFile(String path) {
+    if (path.startsWith("/")) {
+      throw new IllegalArgumentException("Absolute paths are not supported (got '" + path + "')");
+    }
+
     return Optional
         .of(FileUtils.relativeResourceNameToPath(root, path))
         .filter(Files::isRegularFile);
   }
 
   @Override
-  public Optional<? extends byte[]> getClassBinary(String binaryName) throws IOException {
+  public Optional<byte[]> getClassBinary(String binaryName) throws IOException {
     var path = FileUtils.binaryNameToPath(root, binaryName, Kind.CLASS);
     return Files.isRegularFile(path)
         ? Optional.of(Files.readAllBytes(path))
@@ -83,45 +91,50 @@ public class DirectoryContainer implements Container {
   }
 
   @Override
-  public Optional<? extends PathFileObject> getFileForInput(
+  public Optional<PathFileObject> getFileForInput(
       String packageName,
       String relativeName
   ) {
     return Optional
         .of(FileUtils.resourceNameToPath(root, packageName, relativeName))
         .filter(Files::isRegularFile)
-        .map(PathFileObject::new);
+        .map(PathFileObject.forLocation(location));
   }
 
   @Override
-  public Optional<? extends PathFileObject> getFileForOutput(
+  public Optional<PathFileObject> getFileForOutput(
       String packageName,
       String relativeName
   ) {
     return Optional
         .of(FileUtils.resourceNameToPath(root, packageName, relativeName))
-        .map(PathFileObject::new);
+        .map(PathFileObject.forLocation(location));
   }
 
   @Override
-  public Optional<? extends PathFileObject> getJavaFileForInput(
+  public Optional<PathFileObject> getJavaFileForInput(
       String binaryName,
       Kind kind
   ) {
     return Optional
         .of(FileUtils.binaryNameToPath(root, binaryName, kind))
         .filter(Files::isRegularFile)
-        .map(PathFileObject::new);
+        .map(PathFileObject.forLocation(location));
   }
 
   @Override
-  public Optional<? extends PathFileObject> getJavaFileForOutput(
+  public Optional<PathFileObject> getJavaFileForOutput(
       String className,
       Kind kind
   ) {
     return Optional
         .of(FileUtils.binaryNameToPath(root, className, kind))
-        .map(PathFileObject::new);
+        .map(PathFileObject.forLocation(location));
+  }
+
+  @Override
+  public Location getLocation() {
+    return location;
   }
 
   @Override
@@ -135,7 +148,7 @@ public class DirectoryContainer implements Container {
   }
 
   @Override
-  public Optional<? extends URL> getResource(String resourcePath) throws IOException {
+  public Optional<URL> getResource(String resourcePath) throws IOException {
     var path = FileUtils.relativeResourceNameToPath(root, resourcePath);
     return Files.isRegularFile(path)
         ? Optional.of(path.toUri().toURL())
@@ -143,7 +156,7 @@ public class DirectoryContainer implements Container {
   }
 
   @Override
-  public Optional<? extends String> inferBinaryName(PathFileObject javaFileObject) {
+  public Optional<String> inferBinaryName(PathFileObject javaFileObject) {
     return Optional
         .of(javaFileObject.getPath())
         .filter(path -> path.startsWith(root))
@@ -162,7 +175,7 @@ public class DirectoryContainer implements Container {
     try (var walker = Files.walk(root, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
       return walker
           .filter(FileUtils.fileWithAnyKind(kinds))
-          .map(PathFileObject::new)
+          .map(PathFileObject.forLocation(location))
           .collect(Collectors.toList());
     }
   }

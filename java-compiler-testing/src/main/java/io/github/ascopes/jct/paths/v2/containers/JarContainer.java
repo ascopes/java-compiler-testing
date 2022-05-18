@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.StreamSupport;
+import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -53,6 +54,7 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class JarContainer implements Container {
 
+  private final Location location;
   private final Path jarPath;
   private final FileSystem fileSystem;
   private final Map<String, Path> packages;
@@ -60,11 +62,13 @@ public final class JarContainer implements Container {
   /**
    * Initialize this JAR container.
    *
+   * @param location the location.
    * @param jarPath the path to the JAR to open.
    * @param release the release version to use for {@code Multi-Release} JARs.
    * @throws IOException if an IO exception occurs opening the initial ZIP file system.
    */
-  public JarContainer(Path jarPath, String release) throws IOException {
+  public JarContainer(Location location, Path jarPath, String release) throws IOException {
+    this.location = requireNonNull(location, "location");
     this.jarPath = requireNonNull(jarPath, "jarPath");
 
     // It turns out that we can open more than one ZIP file system pointing to the
@@ -113,7 +117,11 @@ public final class JarContainer implements Container {
   }
 
   @Override
-  public Optional<? extends Path> findFile(String path) {
+  public Optional<Path> findFile(String path) {
+    if (path.startsWith("/")) {
+      throw new IllegalArgumentException("Absolute paths are not supported (got '" + path + "')");
+    }
+
     for (var root : fileSystem.getRootDirectories()) {
       var fullPath = FileUtils.relativeResourceNameToPath(root, path);
       if (Files.isRegularFile(fullPath)) {
@@ -125,7 +133,7 @@ public final class JarContainer implements Container {
   }
 
   @Override
-  public Optional<? extends byte[]> getClassBinary(String binaryName) throws IOException {
+  public Optional<byte[]> getClassBinary(String binaryName) throws IOException {
     var packageName = FileUtils.binaryNameToPackageName(binaryName);
     var packageDir = packages.get(packageName);
 
@@ -142,24 +150,24 @@ public final class JarContainer implements Container {
   }
 
   @Override
-  public Optional<? extends PathFileObject> getFileForInput(String packageName,
+  public Optional<PathFileObject> getFileForInput(String packageName,
       String relativeName) {
     return Optional
         .ofNullable(packages.get(packageName))
         .map(packageDir -> FileUtils.relativeResourceNameToPath(packageDir, relativeName))
         .filter(Files::isRegularFile)
-        .map(PathFileObject::new);
+        .map(PathFileObject.forLocation(location));
   }
 
   @Override
-  public Optional<? extends PathFileObject> getFileForOutput(String packageName,
+  public Optional<PathFileObject> getFileForOutput(String packageName,
       String relativeName) {
     // This JAR is read-only.
     return Optional.empty();
   }
 
   @Override
-  public Optional<? extends PathFileObject> getJavaFileForInput(String binaryName,
+  public Optional<PathFileObject> getJavaFileForInput(String binaryName,
       Kind kind) {
     var packageName = FileUtils.binaryNameToPackageName(binaryName);
     var className = FileUtils.binaryNameToClassName(binaryName);
@@ -168,14 +176,19 @@ public final class JarContainer implements Container {
         .ofNullable(packages.get(packageName))
         .map(packageDir -> FileUtils.classNameToPath(packageDir, className, kind))
         .filter(Files::isRegularFile)
-        .map(PathFileObject::new);
+        .map(PathFileObject.forLocation(location));
   }
 
   @Override
-  public Optional<? extends PathFileObject> getJavaFileForOutput(String className,
+  public Optional<PathFileObject> getJavaFileForOutput(String className,
       Kind kind) {
     // This JAR is read-only.
     return Optional.empty();
+  }
+
+  @Override
+  public Location getLocation() {
+    return location;
   }
 
   @Override
@@ -192,7 +205,7 @@ public final class JarContainer implements Container {
   }
 
   @Override
-  public Optional<? extends URL> getResource(String resourcePath) throws IOException {
+  public Optional<URL> getResource(String resourcePath) throws IOException {
     // TODO: use poackage index for this instead.
     for (var root : fileSystem.getRootDirectories()) {
       var path = FileUtils.relativeResourceNameToPath(root, resourcePath);
@@ -205,7 +218,7 @@ public final class JarContainer implements Container {
   }
 
   @Override
-  public Optional<? extends String> inferBinaryName(PathFileObject javaFileObject) {
+  public Optional<String> inferBinaryName(PathFileObject javaFileObject) {
     // For some reason, converting a zip entry to a URI gives us a scheme of `jar://file://`, but
     // we cannot then parse the URI back to a path without removing the `file://` bit first. Since
     // we assume we always have instances of PathJavaFileObject here, let's just cast to that and
@@ -245,7 +258,7 @@ public final class JarContainer implements Container {
     try (var walker = Files.walk(packageDir, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
       walker
           .filter(FileUtils.fileWithAnyKind(kinds))
-          .map(PathFileObject::new)
+          .map(PathFileObject.forLocation(location))
           .forEach(items::add);
     }
 

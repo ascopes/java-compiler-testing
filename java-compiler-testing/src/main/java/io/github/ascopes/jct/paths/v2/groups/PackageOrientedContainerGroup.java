@@ -18,7 +18,6 @@ package io.github.ascopes.jct.paths.v2.groups;
 
 import io.github.ascopes.jct.paths.RamPath;
 import io.github.ascopes.jct.paths.v2.PathFileObject;
-import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -64,7 +63,7 @@ public interface PackageOrientedContainerGroup extends ContainerGroup {
    * @param ramPath the RAM path to add.
    * @throws IOException if an IO exception occurs.
    */
-  void addRamPath(RamPath ramPath) throws IOException;
+  void addPath(RamPath ramPath) throws IOException;
 
   /**
    * Determine whether this group contains the given file object anywhere.
@@ -80,16 +79,17 @@ public interface PackageOrientedContainerGroup extends ContainerGroup {
    * @param path the path to the file to find.
    * @return the first occurrence of the path in this group, or an empty optional if not found.
    */
-  Optional<? extends Path> findFile(String path);
+  Optional<Path> findFile(String path);
 
   /**
    * Get a classloader for this group of paths.
    *
-   * @return the classloader.
+   * @return the classloader, if this group supports loading plugins. If not, an empty optional is
+   *     returned instead.
    * @throws UnsupportedOperationException if the container group does not provide this
    *                                       functionality.
    */
-  ClassLoader getClassLoader();
+  Optional<ClassLoader> getClassLoader();
 
   /**
    * Get a {@link FileObject} that can have content read from it.
@@ -100,7 +100,7 @@ public interface PackageOrientedContainerGroup extends ContainerGroup {
    * @param relativeName the relative name of the file to read.
    * @return the file object, or an empty optional if the file is not found.
    */
-  Optional<? extends PathFileObject> getFileForInput(
+  Optional<PathFileObject> getFileForInput(
       String packageName,
       String relativeName
   );
@@ -116,7 +116,7 @@ public interface PackageOrientedContainerGroup extends ContainerGroup {
    * @return the {@link FileObject} to write to, or an empty optional if this group has no paths
    *     that can be written to.
    */
-  Optional<? extends PathFileObject> getFileForOutput(
+  Optional<PathFileObject> getFileForOutput(
       String packageName,
       String relativeName
   );
@@ -132,7 +132,7 @@ public interface PackageOrientedContainerGroup extends ContainerGroup {
    * @return the {@link JavaFileObject} to write to, or an empty optional if this group has no paths
    *     that can be written to.
    */
-  Optional<? extends PathFileObject> getJavaFileForInput(
+  Optional<PathFileObject> getJavaFileForInput(
       String className,
       Kind kind
   );
@@ -148,7 +148,7 @@ public interface PackageOrientedContainerGroup extends ContainerGroup {
    * @return the {@link JavaFileObject} to write to, or an empty optional if this group has no paths
    *     that can be written to.
    */
-  Optional<? extends PathFileObject> getJavaFileForOutput(
+  Optional<PathFileObject> getJavaFileForOutput(
       String className,
       Kind kind
   );
@@ -165,11 +165,12 @@ public interface PackageOrientedContainerGroup extends ContainerGroup {
    *
    * @param service the service class to get.
    * @param <S>     the service class type.
-   * @return the service loader.
+   * @return the service loader, if this location supports loading plugins. If not, an empty
+   *     optional is returned instead.
    * @throws UnsupportedOperationException if the container group does not provide this
    *                                       functionality.
    */
-  <S> ServiceLoader<S> getServiceLoader(Class<S> service);
+  <S> Optional<ServiceLoader<S>> getServiceLoader(Class<S> service);
 
   /**
    * Try to infer the binary name of a given file object.
@@ -177,7 +178,7 @@ public interface PackageOrientedContainerGroup extends ContainerGroup {
    * @param fileObject the file object to infer the binary name for.
    * @return the binary name if known, or an empty optional otherwise.
    */
-  Optional<? extends String> inferBinaryName(PathFileObject fileObject);
+  Optional<String> inferBinaryName(PathFileObject fileObject);
 
   /**
    * Determine if this group has no paths registered.

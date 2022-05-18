@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.tools.FileObject;
+import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
@@ -55,7 +56,7 @@ public interface Container extends Closeable {
    * @param path the path to the file to find.
    * @return the path if the file exists, or an empty optional if it does not exist.
    */
-  Optional<? extends Path> findFile(String path);
+  Optional<Path> findFile(String path);
 
   /**
    * Get the binary data for a class, if it exists.
@@ -64,7 +65,7 @@ public interface Container extends Closeable {
    * @return the binary data, if it exists, otherwise an empty optional.
    * @throws IOException if an IO exception occurs.
    */
-  Optional<? extends byte[]> getClassBinary(String binaryName) throws IOException;
+  Optional<byte[]> getClassBinary(String binaryName) throws IOException;
 
   /**
    * Get a {@link FileObject} for reading, if it exists.
@@ -75,7 +76,7 @@ public interface Container extends Closeable {
    * @param relativeName the relative name of the file in the package.
    * @return the file object, or an empty optional if it does not exist.
    */
-  Optional<? extends PathFileObject> getFileForInput(
+  Optional<PathFileObject> getFileForInput(
       String packageName,
       String relativeName
   );
@@ -89,7 +90,7 @@ public interface Container extends Closeable {
    * @param relativeName the relative name of the file in the package.
    * @return the file object, or an empty optional if this container is read-only.
    */
-  Optional<? extends PathFileObject> getFileForOutput(
+  Optional<PathFileObject> getFileForOutput(
       String packageName,
       String relativeName
   );
@@ -103,7 +104,7 @@ public interface Container extends Closeable {
    * @param kind      the kind of file to open.
    * @return the file object, or an empty optional if it does not exist.
    */
-  Optional<? extends PathFileObject> getJavaFileForInput(
+  Optional<PathFileObject> getJavaFileForInput(
       String className,
       Kind kind
   );
@@ -117,10 +118,17 @@ public interface Container extends Closeable {
    * @param kind      the kind of file to open.
    * @return the file object, or an empty optional if this container is read-only.
    */
-  Optional<? extends PathFileObject> getJavaFileForOutput(
+  Optional<PathFileObject> getJavaFileForOutput(
       String className,
       Kind kind
   );
+
+  /**
+   * Get the location of this container.
+   *
+   * @return the location.
+   */
+  Location getLocation();
 
   /**
    * Get a module finder for this container.
@@ -145,7 +153,7 @@ public interface Container extends Closeable {
    * @return the URL to the resource if it exists, or an empty optional if it does not exist.
    * @throws IOException if an IO error occurs looking for the resource.
    */
-  Optional<? extends URL> getResource(String resourcePath) throws IOException;
+  Optional<URL> getResource(String resourcePath) throws IOException;
 
   /**
    * Infer the binary name of a given Java file object.
@@ -153,7 +161,7 @@ public interface Container extends Closeable {
    * @param javaFileObject the Java file object to infer the binary name of.
    * @return the name, or an empty optional if the file does not exist in this container.
    */
-  Optional<? extends String> inferBinaryName(PathFileObject javaFileObject);
+  Optional<String> inferBinaryName(PathFileObject javaFileObject);
 
   /**
    * List all the file objects that match the given criteria in this group.
