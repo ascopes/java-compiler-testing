@@ -19,7 +19,9 @@ package io.github.ascopes.jct.paths.v2.groups;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.paths.ModuleLocation;
+import io.github.ascopes.jct.paths.RamPath;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,6 +67,18 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
     }
 
     modules = new HashMap<>();
+  }
+
+  @Override
+  @SuppressWarnings("resource")
+  public void addPath(Path path, String module) throws IOException {
+    forModule(module).addPath(path);
+  }
+
+  @Override
+  @SuppressWarnings("resource")
+  public void addPath(RamPath ramPath, String module) throws IOException {
+    forModule(module).addPath(ramPath);
   }
 
   @Override

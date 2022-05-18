@@ -39,8 +39,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.Function;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
+import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -59,6 +61,7 @@ public class PathFileObject implements JavaFileObject {
   private static final Logger LOGGER = LoggerFactory.getLogger(PathFileObject.class);
   private static final long NOT_MODIFIED = 0L;
 
+  private final Location location;
   private final Path path;
   private final String name;
   private final URI uri;
@@ -69,7 +72,8 @@ public class PathFileObject implements JavaFileObject {
    *
    * @param path the path to point to.
    */
-  public PathFileObject(Path path) {
+  public PathFileObject(Location location, Path path) {
+    this.location = requireNonNull(location, "location");
     this.path = requireNonNull(path, "path");
     name = path.toString();
     uri = path.toUri();
@@ -112,6 +116,15 @@ public class PathFileObject implements JavaFileObject {
       LOGGER.warn("Ignoring error reading last modified time for {}", uri, ex);
       return NOT_MODIFIED;
     }
+  }
+
+  /**
+   * Get the location of this path file object.
+   *
+   * @return the location.
+   */
+  public Location getLocation() {
+    return location;
   }
 
   @Override
@@ -198,5 +211,9 @@ public class PathFileObject implements JavaFileObject {
         .newEncoder()
         .onUnmappableCharacter(CodingErrorAction.REPORT)
         .onMalformedInput(CodingErrorAction.REPORT);
+  }
+
+  public static Function<? super Path, ? extends PathFileObject> forLocation(Location location) {
+    return path -> new PathFileObject(location, path);
   }
 }
