@@ -149,7 +149,7 @@ class SimpleCompilationTest {
         .build();
 
     // Then
-    Assertions.assertThat(compilation.getPathLocationRepository()).isEqualTo(fileRepository);
+    Assertions.assertThat(compilation.getFileManager()).isEqualTo(fileRepository);
   }
 
 

@@ -20,7 +20,8 @@ import static io.github.ascopes.jct.intern.IterableUtils.nonNullUnmodifiableList
 import static io.github.ascopes.jct.intern.IterableUtils.nonNullUnmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.paths.PathLocationRepository;
+import io.github.ascopes.jct.paths.v2.FileManager;
+import io.github.ascopes.jct.paths.v2.SimpleFileManager;
 import java.util.List;
 import java.util.Set;
 import javax.tools.JavaFileObject;
@@ -42,7 +43,7 @@ public final class SimpleCompilation implements Compilation {
   private final List<String> outputLines;
   private final Set<? extends JavaFileObject> compilationUnits;
   private final List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
-  private final PathLocationRepository pathLocationRepository;
+  private final FileManager fileManager;
 
   private SimpleCompilation(Builder builder) {
     success = requireNonNull(builder.success, "success");
@@ -50,10 +51,7 @@ public final class SimpleCompilation implements Compilation {
     outputLines = nonNullUnmodifiableList(builder.outputLines, "outputLines");
     compilationUnits = nonNullUnmodifiableSet(builder.compilationUnits, "compilationUnits");
     diagnostics = nonNullUnmodifiableList(builder.diagnostics, "diagnostics");
-    pathLocationRepository = requireNonNull(
-        builder.pathLocationRepository,
-        "pathLocationRepository"
-    );
+    fileManager = requireNonNull(builder.fileManager, "fileManager");
   }
 
   @Override
@@ -82,8 +80,8 @@ public final class SimpleCompilation implements Compilation {
   }
 
   @Override
-  public PathLocationRepository getPathLocationRepository() {
-    return pathLocationRepository;
+  public FileManager getFileManager() {
+    return fileManager;
   }
 
   /**
@@ -109,7 +107,7 @@ public final class SimpleCompilation implements Compilation {
     private List<String> outputLines;
     private Set<? extends JavaFileObject> compilationUnits;
     private List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
-    private PathLocationRepository pathLocationRepository;
+    private FileManager fileManager;
 
     private Builder() {
       // Only initialized in this file.
@@ -173,16 +171,13 @@ public final class SimpleCompilation implements Compilation {
     }
 
     /**
-     * Set the file repository.
+     * Set the file manager.
      *
-     * @param pathLocationRepository the file repository.
+     * @param fileManager the file manager.
      * @return this builder.
      */
-    public Builder pathLocationRepository(PathLocationRepository pathLocationRepository) {
-      this.pathLocationRepository = requireNonNull(
-          pathLocationRepository,
-          "pathLocationRepository"
-      );
+    public Builder fileManager(FileManager fileManager) {
+      this.fileManager = requireNonNull(this.fileManager, "fileManager");
       return this;
     }
 

@@ -16,9 +16,12 @@
 
 package io.github.ascopes.jct.paths.v2.groups;
 
+import io.github.ascopes.jct.paths.ModuleLocation;
 import io.github.ascopes.jct.paths.RamPath;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -38,23 +41,32 @@ public interface ModuleOrientedContainerGroup extends ContainerGroup {
   /**
    * Add a path to this group for a module.
    *
-   * @param path the path to add.
    * @param module the name of the module that this is for.
+   * @param path   the path to add.
    * @throws IOException if an IO exception occurs.
    */
-  void addPath(Path path, String module) throws IOException;
+  void addPath(String module, Path path) throws IOException;
 
   /**
    * Add a RAM path to this group for a module.
    *
-   * <p>This is the same as {@link #addPath(Path, String)}, but ensures that the RAM path is kept
+   * <p>This is the same as {@link #addPath(String, Path)}, but ensures that the RAM path is kept
    * allocated for at least as long as this group is.
-   *
+
+   * @param module  the name of the module that this is for.
    * @param ramPath the RAM path to add.
-   * @param module the name of the module that this is for.
    * @throws IOException if an IO exception occurs.
    */
-  void addPath(RamPath ramPath, String module) throws IOException;
+  void addPath(String module, RamPath ramPath) throws IOException;
+
+  /**
+   * Get the {@link PackageOrientedContainerGroup} for a given module name, creating it if it does
+   * not yet exist.
+   *
+   * @param moduleName the module name to look up.
+   * @return the container group.
+   */
+  PackageOrientedContainerGroup forModule(String moduleName);
 
   /**
    * Get the module-oriented location.
@@ -65,11 +77,17 @@ public interface ModuleOrientedContainerGroup extends ContainerGroup {
   Location getLocation();
 
   /**
-   * Get the {@link PackageOrientedContainerGroup} for a given module name, creating it if it does
-   * not yet exist.
+   * Get all locations that are modules.
    *
-   * @param moduleName the module name to look up.
-   * @return the container group.
+   * @return the locations that are modules.
    */
-  PackageOrientedContainerGroup forModule(String moduleName);
+  List<Set<Location>> getLocationsForModules();
+
+  /**
+   * Determine if this group contains a given module.
+   *
+   * @param location the module location to look for.
+   * @return {@code true} if present, or {@code false} if not.
+   */
+  boolean hasLocation(ModuleLocation location);
 }

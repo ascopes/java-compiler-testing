@@ -32,6 +32,7 @@ module io.github.ascopes.jct {
   exports io.github.ascopes.jct.assertions;
   exports io.github.ascopes.jct.compilers;
   exports io.github.ascopes.jct.paths;
+  exports io.github.ascopes.jct.paths.v2;
 
   // Testing access only.
   exports io.github.ascopes.jct.compilers.ecj to io.github.ascopes.jct.testing;

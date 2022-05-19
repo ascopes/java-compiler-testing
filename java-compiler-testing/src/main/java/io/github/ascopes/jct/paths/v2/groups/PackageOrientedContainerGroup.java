@@ -66,30 +66,12 @@ public interface PackageOrientedContainerGroup extends ContainerGroup {
   void addPath(RamPath ramPath) throws IOException;
 
   /**
-   * Determine whether this group contains the given file object anywhere.
-   *
-   * @param fileObject the file object to look for.
-   * @return {@code true} if the file object is contained in this group, or {@code false} otherwise.
-   */
-  boolean contains(PathFileObject fileObject);
-
-  /**
    * Find the first occurrence of a given path to a file.
    *
    * @param path the path to the file to find.
    * @return the first occurrence of the path in this group, or an empty optional if not found.
    */
   Optional<Path> findFile(String path);
-
-  /**
-   * Get a classloader for this group of paths.
-   *
-   * @return the classloader, if this group supports loading plugins. If not, an empty optional is
-   *     returned instead.
-   * @throws UnsupportedOperationException if the container group does not provide this
-   *                                       functionality.
-   */
-  Optional<ClassLoader> getClassLoader();
 
   /**
    * Get a {@link FileObject} that can have content read from it.
@@ -159,18 +141,6 @@ public interface PackageOrientedContainerGroup extends ContainerGroup {
    * @return the package-oriented location.
    */
   Location getLocation();
-
-  /**
-   * Get a service loader for the given service class.
-   *
-   * @param service the service class to get.
-   * @param <S>     the service class type.
-   * @return the service loader, if this location supports loading plugins. If not, an empty
-   *     optional is returned instead.
-   * @throws UnsupportedOperationException if the container group does not provide this
-   *                                       functionality.
-   */
-  <S> Optional<ServiceLoader<S>> getServiceLoader(Class<S> service);
 
   /**
    * Try to infer the binary name of a given file object.

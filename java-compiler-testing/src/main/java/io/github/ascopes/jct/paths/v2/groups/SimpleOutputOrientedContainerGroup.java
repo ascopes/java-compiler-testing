@@ -21,11 +21,15 @@ import io.github.ascopes.jct.intern.ModulePrefix;
 import io.github.ascopes.jct.paths.ModuleLocation;
 import io.github.ascopes.jct.paths.RamPath;
 import io.github.ascopes.jct.paths.v2.PathFileObject;
+import io.github.ascopes.jct.paths.v2.classloaders.ContainerClassLoader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
@@ -46,7 +50,7 @@ public class SimpleOutputOrientedContainerGroup
     implements OutputOrientedContainerGroup {
 
   private final Location location;
-  private final Map<ModuleLocation, PackageOrientedContainerGroup> modules;
+  private final Map<ModuleLocation, SimpleOutputOrientedModuleContainerGroup> modules;
 
   /**
    * Initialize this container group.
@@ -74,13 +78,13 @@ public class SimpleOutputOrientedContainerGroup
 
   @Override
   @SuppressWarnings("resource")
-  public void addPath(Path path, String module) throws IOException {
+  public void addPath(String module, Path path) throws IOException {
     forModule(module).addPath(path);
   }
 
   @Override
   @SuppressWarnings("resource")
-  public void addPath(RamPath ramPath, String module) throws IOException {
+  public void addPath(String module, RamPath ramPath) throws IOException {
     forModule(module).addPath(ramPath);
   }
 
@@ -163,10 +167,26 @@ public class SimpleOutputOrientedContainerGroup
   }
 
   @Override
-  protected PackageOrientedClassLoader createClassLoader() {
-    throw new UnsupportedOperationException(
-        "Getting a classloader for an output location is not yet supported."
-    );
+  public List<Set<Location>> getLocationsForModules() {
+    return List.of(Set.copyOf(modules.keySet()));
+  }
+
+  @Override
+  public boolean hasLocation(ModuleLocation location) {
+    return modules.containsKey(location);
+  }
+
+  @Override
+  protected ContainerClassLoader createClassLoader() {
+    var moduleMapping = modules
+        .entrySet()
+        .stream()
+        .collect(Collectors.toUnmodifiableMap(
+            entry -> entry.getKey().getModuleName(),
+            entry -> entry.getValue().getContainers()
+        ));
+
+    return new ContainerClassLoader(location, getContainers(), moduleMapping);
   }
 
   /**
