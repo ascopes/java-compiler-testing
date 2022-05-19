@@ -206,7 +206,7 @@ public class CompilationAssert<C extends Compilation>
    */
   public PathLocationManagerAssert location(Location location) {
     var locationManager = actual
-        .getPathLocationRepository()
+        .getFileManager()
         .getManager(location)
         .orElse(null);
 
@@ -222,7 +222,7 @@ public class CompilationAssert<C extends Compilation>
    */
   public PathLocationManagerAssert location(Location location, String moduleName) {
     var locationManager = actual
-        .getPathLocationRepository()
+        .getFileManager()
         .getManager(new ModuleLocation(location, moduleName))
         .orElse(null);
 

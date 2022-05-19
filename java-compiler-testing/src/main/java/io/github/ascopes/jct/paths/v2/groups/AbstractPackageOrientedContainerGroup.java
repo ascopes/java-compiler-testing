@@ -6,12 +6,12 @@ import io.github.ascopes.jct.intern.Lazy;
 import io.github.ascopes.jct.paths.ModuleLocation;
 import io.github.ascopes.jct.paths.RamPath;
 import io.github.ascopes.jct.paths.v2.PathFileObject;
+import io.github.ascopes.jct.paths.v2.classloaders.ContainerClassLoader;
 import io.github.ascopes.jct.paths.v2.containers.Container;
 import io.github.ascopes.jct.paths.v2.containers.DirectoryContainer;
 import io.github.ascopes.jct.paths.v2.containers.JarContainer;
 import io.github.ascopes.jct.paths.v2.containers.RamPathContainer;
 import java.io.IOException;
-import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -177,32 +177,7 @@ public abstract class AbstractPackageOrientedContainerGroup
       throw new UnsupportedOperationException("Cannot load services from specific modules");
     }
 
-    getClass().getModule().addUses(service);
-
-    ServiceLoader<S> loader;
-
-    if (!location.isModuleOrientedLocation()) {
-      loader = ServiceLoader.load(service, classLoaderLazy.access());
-
-    } else {
-      var finders = containers
-          .stream()
-          .map(Container::getModuleFinder)
-          .toArray(ModuleFinder[]::new);
-
-      var composedFinder = ModuleFinder.compose(finders);
-      var bootLayer = ModuleLayer.boot();
-      var config = bootLayer
-          .configuration()
-          .resolveAndBind(ModuleFinder.of(), composedFinder, Collections.emptySet());
-
-      var layer = bootLayer
-          .defineModulesWithOneLoader(config, ClassLoader.getSystemClassLoader());
-
-      loader = ServiceLoader.load(layer, service);
-    }
-
-    return Optional.of(loader);
+    return Optional.of(ServiceLoader.load(service, classLoaderLazy.access()));
   }
 
   @Override
@@ -233,8 +208,11 @@ public abstract class AbstractPackageOrientedContainerGroup
     return items;
   }
 
-  protected PackageOrientedClassLoader createClassLoader() {
-    var containers = Collections.unmodifiableList(this.containers);
-    return new PackageOrientedClassLoader(containers);
+  protected ContainerClassLoader createClassLoader() {
+    return new ContainerClassLoader(getLocation(), getContainers());
+  }
+
+  protected final List<? extends Container> getContainers() {
+    return Collections.unmodifiableList(containers);
   }
 }

@@ -18,13 +18,24 @@ package io.github.ascopes.jct.paths.v2.groups;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.intern.Lazy;
 import io.github.ascopes.jct.paths.ModuleLocation;
 import io.github.ascopes.jct.paths.RamPath;
+import io.github.ascopes.jct.paths.v2.PathFileObject;
+import io.github.ascopes.jct.paths.v2.classloaders.ContainerClassLoader;
+import io.github.ascopes.jct.paths.v2.containers.Container;
 import java.io.IOException;
+import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -39,8 +50,9 @@ import org.apiguardian.api.API.Status;
 public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContainerGroup {
 
   private final Location location;
-  private final Map<ModuleLocation, PackageOrientedContainerGroup> modules;
+  private final Map<ModuleLocation, SimpleModuleOrientedModuleContainerGroup> modules;
   private final String release;
+  private final Lazy<ContainerClassLoader> classLoaderLazy;
 
   /**
    * Initialize this container group.
@@ -67,17 +79,18 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
     }
 
     modules = new HashMap<>();
+    classLoaderLazy = new Lazy<>(this::createClassLoader);
   }
 
   @Override
   @SuppressWarnings("resource")
-  public void addPath(Path path, String module) throws IOException {
+  public void addPath(String module, Path path) throws IOException {
     forModule(module).addPath(path);
   }
 
   @Override
   @SuppressWarnings("resource")
-  public void addPath(RamPath ramPath, String module) throws IOException {
+  public void addPath(String module, RamPath ramPath) throws IOException {
     forModule(module).addPath(ramPath);
   }
 
@@ -100,8 +113,56 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
   }
 
   @Override
+  @SuppressWarnings("SuspiciousMethodCalls")
+  public boolean contains(PathFileObject fileObject) {
+    return Optional
+        .ofNullable(modules.get(fileObject.getLocation()))
+        .map(module -> module.contains(fileObject))
+        .orElse(false);
+  }
+
+  @Override
+  public Optional<ClassLoader> getClassLoader() {
+    return Optional.of(classLoaderLazy.access());
+  }
+
+  @Override
   public Location getLocation() {
     return location;
+  }
+
+  @Override
+  public List<Set<Location>> getLocationsForModules() {
+    return List.of(Set.copyOf(modules.keySet()));
+  }
+
+  @Override
+  public boolean hasLocation(ModuleLocation location) {
+    return modules.containsKey(location);
+  }
+
+  @Override
+  public <S> Optional<ServiceLoader<S>> getServiceLoader(Class<S> service) {
+    getClass().getModule().addUses(service);
+
+    var finders = modules
+        .values()
+        .stream()
+        .map(SimpleModuleOrientedModuleContainerGroup::getContainers)
+        .flatMap(List::stream)
+        .map(Container::getModuleFinder)
+        .toArray(ModuleFinder[]::new);
+
+    var composedFinder = ModuleFinder.compose(finders);
+    var bootLayer = ModuleLayer.boot();
+    var config = bootLayer
+        .configuration()
+        .resolveAndBind(ModuleFinder.of(), composedFinder, Collections.emptySet());
+
+    var layer = bootLayer
+        .defineModulesWithOneLoader(config, ClassLoader.getSystemClassLoader());
+
+    return Optional.of(ServiceLoader.load(layer, service));
   }
 
   @Override
@@ -109,7 +170,39 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
     return modules
         .computeIfAbsent(
             new ModuleLocation(location, moduleName),
-            loc -> new SimplePackageOrientedContainerGroup(loc, release)
+            SimpleModuleOrientedModuleContainerGroup::new
         );
+  }
+
+  private ContainerClassLoader createClassLoader() {
+    var moduleMapping = modules
+        .entrySet()
+        .stream()
+        .collect(Collectors.toUnmodifiableMap(
+            entry -> entry.getKey().getModuleName(),
+            entry -> entry.getValue().getContainers()
+        ));
+
+    return new ContainerClassLoader(location, moduleMapping);
+  }
+
+  /**
+   * Wrapper around a location that lacks the constraints that
+   * {@link SimplePackageOrientedContainerGroup} imposes.
+   */
+  private class SimpleModuleOrientedModuleContainerGroup
+      extends AbstractPackageOrientedContainerGroup {
+
+    private final Location location;
+
+    private SimpleModuleOrientedModuleContainerGroup(Location location) {
+      super(SimpleModuleOrientedContainerGroup.this.release);
+      this.location = requireNonNull(location, "location");
+    }
+
+    @Override
+    public Location getLocation() {
+      return location;
+    }
   }
 }
