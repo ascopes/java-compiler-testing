@@ -15,6 +15,6 @@
  */
 
 /**
- * JSR-199 compiler integration, management, and configuration.
+ * Compiler frontends that allow invoking compilers easily from tests.
  */
 package io.github.ascopes.jct.compilers;

@@ -16,12 +16,15 @@
 
 package io.github.ascopes.jct.compilers;
 
+import io.github.ascopes.jct.compilers.Compiler.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.compilers.Compiler.Logging;
-import io.github.ascopes.jct.intern.SpecialLocations;
-import io.github.ascopes.jct.intern.StringUtils;
-import io.github.ascopes.jct.paths.LoggingJavaFileManagerProxy;
-import io.github.ascopes.jct.paths.PathJavaFileManager;
 import io.github.ascopes.jct.paths.RamPath;
+import io.github.ascopes.jct.jsr199.diagnostics.TeeWriter;
+import io.github.ascopes.jct.jsr199.diagnostics.TracingDiagnosticListener;
+import io.github.ascopes.jct.utils.SpecialLocations;
+import io.github.ascopes.jct.utils.StringUtils;
+import io.github.ascopes.jct.compilers.managers.LoggingFileManagerProxy;
+import io.github.ascopes.jct.paths.PathJavaFileManager;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -51,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> {
+public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleCompilation>> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompilationFactory.class);
 
@@ -142,8 +145,8 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
    * Build the {@link JavaFileManager} to use.
    *
    * <p>Logging will be applied to this via
-   * {@link #applyLoggingToFileManager(Compiler, JavaFileManager)}, which will be handled by
-   * {@link #compile(Compiler, JavaCompiler, FlagBuilder)}.
+   * {@link #applyLoggingToFileManager(java.lang.Compiler, JavaFileManager)}, which will be handled by
+   * {@link #compile(java.lang.Compiler, JavaCompiler, FlagBuilder)}.
    *
    * @param compiler the compiler to use.
    * @return the file manager to use.
@@ -190,10 +193,10 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
 
   /**
    * Apply the logging level to the file manager provided by
-   * {@link #buildJavaFileManager(Compiler)}.
+   * {@link #buildJavaFileManager(java.lang.Compiler)}.
    *
    * <p>The default implementation will wrap the given {@link JavaFileManager} in a
-   * {@link LoggingJavaFileManagerProxy} if the {@link Compiler#getFileManagerLogging()} field is
+   * {@link LoggingFileManagerProxy} if the {@link java.lang.Compiler#getFileManagerLogging()} field is
    * <strong>not</strong> set to {@link Logging#DISABLED}. In the latter scenario, the input
    * will be returned to the caller with no other modifications.
    *
@@ -206,10 +209,10 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
       JavaFileManager fileManager
   ) {
     switch (compiler.getFileManagerLogging()) {
-      case STACKTRACES:
-        return LoggingJavaFileManagerProxy.wrap(fileManager, true);
-      case ENABLED:
-        return LoggingJavaFileManagerProxy.wrap(fileManager, false);
+      case Logging.STACKTRACES:
+        return LoggingFileManagerProxy.wrap(fileManager, true);
+      case Logging.ENABLED:
+        return LoggingFileManagerProxy.wrap(fileManager, false);
       default:
         return fileManager;
     }
@@ -415,7 +418,7 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
     }
 
     switch (compiler.getAnnotationProcessorDiscovery()) {
-      case ENABLED:
+      case AnnotationProcessorDiscovery.ENABLED:
         // Ensure the paths exist.
         compiler
             .getPathLocationRepository()
@@ -425,7 +428,7 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
                 .getOrCreateManager(StandardLocation.ANNOTATION_PROCESSOR_PATH));
         break;
 
-      case INCLUDE_DEPENDENCIES:
+      case AnnotationProcessorDiscovery.INCLUDE_DEPENDENCIES:
         compiler
             .getPathLocationRepository()
             .getManager(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH)

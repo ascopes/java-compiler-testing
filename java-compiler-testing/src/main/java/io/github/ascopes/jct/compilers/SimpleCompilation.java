@@ -16,12 +16,12 @@
 
 package io.github.ascopes.jct.compilers;
 
-import static io.github.ascopes.jct.intern.IterableUtils.nonNullUnmodifiableList;
-import static io.github.ascopes.jct.intern.IterableUtils.nonNullUnmodifiableSet;
+import static io.github.ascopes.jct.utils.IterableUtils.nonNullUnmodifiableList;
+import static io.github.ascopes.jct.utils.IterableUtils.nonNullUnmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.paths.v2.FileManager;
-import io.github.ascopes.jct.paths.v2.SimpleFileManager;
+import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.compilers.managers.FileManager;
 import java.util.List;
 import java.util.Set;
 import javax.tools.JavaFileObject;

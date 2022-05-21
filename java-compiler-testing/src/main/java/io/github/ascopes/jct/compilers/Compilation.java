@@ -16,6 +16,7 @@
 
 package io.github.ascopes.jct.compilers;
 
+import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.paths.PathLocationRepository;
 import java.util.List;
 import java.util.Set;

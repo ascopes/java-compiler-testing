@@ -16,7 +16,7 @@
 
 package io.github.ascopes.jct.assertions;
 
-import io.github.ascopes.jct.compilers.TraceDiagnostic;
+import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
 import java.util.Locale;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileObject;
