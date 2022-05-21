@@ -18,8 +18,10 @@ package io.github.ascopes.jct.jsr199.containers;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.jsr199.PathFileObject;
+import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.utils.FileUtils;
+import io.github.ascopes.jct.utils.StringUtils;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.net.URL;
@@ -45,16 +47,16 @@ import org.apiguardian.api.API.Status;
 public class DirectoryContainer implements Container {
 
   private final Location location;
-  private final Path root;
+  private final PathLike root;
   private final String name;
 
   /**
    * Initialize this container.
    *
    * @param location the location.
-   * @param root the root directory to hold.
+   * @param root     the root directory to hold.
    */
-  public DirectoryContainer(Location location, Path root) {
+  public DirectoryContainer(Location location, PathLike root) {
     this.location = requireNonNull(location, "location");
     this.root = requireNonNull(root, "root");
     name = root.toString();
@@ -68,7 +70,7 @@ public class DirectoryContainer implements Container {
   @Override
   public boolean contains(PathFileObject fileObject) {
     var path = fileObject.getPath();
-    return path.startsWith(root) && Files.isRegularFile(path);
+    return path.startsWith(root.getPath()) && Files.isRegularFile(path);
   }
 
   @Override
@@ -78,13 +80,13 @@ public class DirectoryContainer implements Container {
     }
 
     return Optional
-        .of(FileUtils.relativeResourceNameToPath(root, path))
+        .of(FileUtils.relativeResourceNameToPath(root.getPath(), path))
         .filter(Files::isRegularFile);
   }
 
   @Override
   public Optional<byte[]> getClassBinary(String binaryName) throws IOException {
-    var path = FileUtils.binaryNameToPath(root, binaryName, Kind.CLASS);
+    var path = FileUtils.binaryNameToPath(root.getPath(), binaryName, Kind.CLASS);
     return Files.isRegularFile(path)
         ? Optional.of(Files.readAllBytes(path))
         : Optional.empty();
@@ -96,7 +98,7 @@ public class DirectoryContainer implements Container {
       String relativeName
   ) {
     return Optional
-        .of(FileUtils.resourceNameToPath(root, packageName, relativeName))
+        .of(FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName))
         .filter(Files::isRegularFile)
         .map(PathFileObject.forLocation(location));
   }
@@ -107,7 +109,7 @@ public class DirectoryContainer implements Container {
       String relativeName
   ) {
     return Optional
-        .of(FileUtils.resourceNameToPath(root, packageName, relativeName))
+        .of(FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName))
         .map(PathFileObject.forLocation(location));
   }
 
@@ -117,7 +119,7 @@ public class DirectoryContainer implements Container {
       Kind kind
   ) {
     return Optional
-        .of(FileUtils.binaryNameToPath(root, binaryName, kind))
+        .of(FileUtils.binaryNameToPath(root.getPath(), binaryName, kind))
         .filter(Files::isRegularFile)
         .map(PathFileObject.forLocation(location));
   }
@@ -128,7 +130,7 @@ public class DirectoryContainer implements Container {
       Kind kind
   ) {
     return Optional
-        .of(FileUtils.binaryNameToPath(root, className, kind))
+        .of(FileUtils.binaryNameToPath(root.getPath(), className, kind))
         .map(PathFileObject.forLocation(location));
   }
 
@@ -148,8 +150,15 @@ public class DirectoryContainer implements Container {
   }
 
   @Override
+  public PathLike getPath() {
+    return root;
+  }
+
+  @Override
   public Optional<URL> getResource(String resourcePath) throws IOException {
-    var path = FileUtils.relativeResourceNameToPath(root, resourcePath);
+    var path = FileUtils.relativeResourceNameToPath(root.getPath(), resourcePath);
+    // Getting a URL of a directory within a JAR breaks the JAR file system implementation
+    // completely.
     return Files.isRegularFile(path)
         ? Optional.of(path.toUri().toURL())
         : Optional.empty();
@@ -159,8 +168,9 @@ public class DirectoryContainer implements Container {
   public Optional<String> inferBinaryName(PathFileObject javaFileObject) {
     return Optional
         .of(javaFileObject.getPath())
-        .filter(path -> path.startsWith(root))
+        .filter(path -> path.startsWith(root.getPath()))
         .filter(Files::isRegularFile)
+        .map(path -> root.getPath().relativize(path))
         .map(FileUtils::pathToBinaryName);
   }
 
@@ -172,11 +182,16 @@ public class DirectoryContainer implements Container {
   ) throws IOException {
     var maxDepth = recurse ? Integer.MAX_VALUE : 1;
 
-    try (var walker = Files.walk(root, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
+    try (var walker = Files.walk(root.getPath(), maxDepth, FileVisitOption.FOLLOW_LINKS)) {
       return walker
           .filter(FileUtils.fileWithAnyKind(kinds))
           .map(PathFileObject.forLocation(location))
           .collect(Collectors.toList());
     }
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + "{uri=" + StringUtils.quoted(root.getUri()) + "}";
   }
 }

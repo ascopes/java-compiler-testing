@@ -24,6 +24,7 @@ import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
 import io.github.ascopes.jct.utils.AsyncResourceCloser;
+import io.github.ascopes.jct.utils.StringUtils;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -35,6 +36,7 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
@@ -44,6 +46,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Locale;
+import java.util.Objects;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.reflections.Reflections;
@@ -59,21 +62,21 @@ import org.slf4j.LoggerFactory;
  * <p>This provides a utility for constructing complex and dynamic directory tree structures
  * quickly and simply using fluent chained methods.
  *
- * <p>These file systems are integrated into the {@link java.nio.file.FileSystem} API, and can
- * be configured to automatically destroy themselves once this RamPath handle is garbage collected.
+ * <p>These file systems are integrated into the {@link FileSystem} API, and can be configured to
+ * automatically destroy themselves once this RamPath handle is garbage collected.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class RamPath {
+public final class RamPath implements PathLike {
 
   private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
   private static final Logger LOGGER = LoggerFactory.getLogger(RamPath.class);
   private static final Cleaner CLEANER = Cleaner.create();
 
-  private final URI uri;
   private final Path path;
+  private final URI uri;
   private final String name;
 
   /**
@@ -109,6 +112,16 @@ public class RamPath {
     LOGGER.trace("Initialized new in-memory directory {}", path);
   }
 
+  @Override
+  public Path getPath() {
+    return path;
+  }
+
+  @Override
+  public URI getUri() {
+    return uri;
+  }
+
   /**
    * Get the identifying name of the temporary file system.
    *
@@ -116,15 +129,6 @@ public class RamPath {
    */
   public String getName() {
     return name;
-  }
-
-  /**
-   * Get the root path of the in-memory directory.
-   *
-   * @return the root path.
-   */
-  public Path getPath() {
-    return path;
   }
 
   /**
@@ -520,8 +524,28 @@ public class RamPath {
   }
 
   @Override
+  public boolean equals(Object other) {
+    if (!(other instanceof RamPath)) {
+      return false;
+    }
+
+    var that = (RamPath) other;
+
+    return name.equals(that.name)
+        && uri.equals(that.uri);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, uri);
+  }
+
+  @Override
   public String toString() {
-    return uri.toString();
+    return getClass().getSimpleName() + "{"
+        + "name=" + StringUtils.quoted(name) + ", "
+        + "path=" + StringUtils.quoted(uri)
+        + "}";
   }
 
   private Path makeRelativeToHere(Path relativePath) {
@@ -557,12 +581,11 @@ public class RamPath {
    * @param name                     a symbolic name to give the path. This must be a valid POSIX
    *                                 directory name.
    * @param closeOnGarbageCollection if {@code true}, then the {@link #close()} operation will be
-   *                                 called on the underlying {@link java.nio.file.FileSystem} as
-   *                                 soon as the returned object from this method is garbage
-   *                                 collected. If {@code false}, then you must close the underlying
-   *                                 file system manually using the {@link #close()} method on the
-   *                                 returned object. Failing to do so will lead to resources being
-   *                                 leaked.
+   *                                 called on the underlying {@link FileSystem} as soon as the
+   *                                 returned object from this method is garbage collected. If
+   *                                 {@code false}, then you must close the underlying file system
+   *                                 manually using the {@link #close()} method on the returned
+   *                                 object. Failing to do so will lead to resources being leaked.
    * @return the in-memory path.
    * @see #createPath(String, boolean)
    */

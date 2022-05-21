@@ -46,6 +46,7 @@
     <apiguardian.version>1.1.2</apiguardian.version>
     <assertj.version>3.22.0</assertj.version>
     <awaitility.version>4.2.0</awaitility.version>
+    <commons-vfs2.version>2.9.0</commons-vfs2.version>
     <ecj.version>3.29.0</ecj.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jimfs.version>1.2</jimfs.version>

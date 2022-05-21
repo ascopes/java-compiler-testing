@@ -21,10 +21,10 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenCode;
 import static org.assertj.core.api.InstanceOfAssertFactories.array;
 
+import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
 import io.github.ascopes.jct.utils.IoExceptionUtils;
 import io.github.ascopes.jct.utils.IoExceptionUtils.IoRunnable;
 import io.github.ascopes.jct.utils.IoExceptionUtils.IoSupplier;
-import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.concurrent.atomic.AtomicBoolean;

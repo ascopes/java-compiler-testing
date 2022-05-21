@@ -18,10 +18,9 @@ package io.github.ascopes.jct.compilers;
 
 import io.github.ascopes.jct.compilers.ecj.EcjCompiler;
 import io.github.ascopes.jct.compilers.javac.JavacCompiler;
-import javax.tools.ToolProvider;
+import javax.tools.JavaCompiler;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 
 /**
  * Utility class that allows initialization of several common types of compiler.
@@ -42,7 +41,17 @@ public final class Compilers {
    * @return the JDK-provided compiler instance.
    */
   public static Compiler<?, ?> javac() {
-    return new JavacCompiler(ToolProvider.getSystemJavaCompiler());
+    return new JavacCompiler();
+  }
+
+  /**
+   * Create an instance of the JDK-provided compiler.
+   *
+   * @param compiler the JSR-199 compiler to use internally.
+   * @return the JDK-provided compiler instance.
+   */
+  public static Compiler<?, ?> javac(JavaCompiler compiler) {
+    return new JavacCompiler(compiler);
   }
 
   /**
@@ -53,9 +62,24 @@ public final class Compilers {
    * <p><strong>Note:</strong> the ECJ implementation does not currently work correctly with
    * JPMS modules.
    *
-   * @return the ECJ instance.
+   * @return the ECJ compiler instance.
    */
   public static Compiler<?, ?> ecj() {
-    return new EcjCompiler(new EclipseCompiler());
+    return new EcjCompiler();
+  }
+
+  /**
+   * Create an instance of the Eclipse Compiler for Java.
+   *
+   * <p>This is bundled with this toolkit.
+   *
+   * <p><strong>Note:</strong> the ECJ implementation does not currently work correctly with
+   * JPMS modules.
+   *
+   * @param compiler the JSR-199 compiler to use internally.
+   * @return the ECJ compiler instance.
+   */
+  public static Compiler<?, ?> ecj(JavaCompiler compiler) {
+    return new EcjCompiler(compiler);
   }
 }

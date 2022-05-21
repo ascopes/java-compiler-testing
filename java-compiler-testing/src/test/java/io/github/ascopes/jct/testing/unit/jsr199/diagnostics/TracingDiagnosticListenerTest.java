@@ -280,7 +280,7 @@ class TracingDiagnosticListenerTest {
   }
 
   @DisplayName("Warnings should be logged as warnings when stacktraces are disabled")
-  @EnumSource(value = Kind.class, names = {"WARNING", "MANDATORY_WARNING"})
+  @EnumSource(value = Kind.class, names = {"WARNING", "MANDATORY_WARNING" })
   @ParameterizedTest(name = "for kind = {0}")
   void warningsShouldBeLoggedAsWarningsWhenStackTracesAreDisabled(Kind kind) {
     // Given
@@ -297,7 +297,7 @@ class TracingDiagnosticListenerTest {
   }
 
   @DisplayName("Warnings should be logged as warnings when stacktraces are enabled")
-  @EnumSource(value = Kind.class, names = {"WARNING", "MANDATORY_WARNING"})
+  @EnumSource(value = Kind.class, names = {"WARNING", "MANDATORY_WARNING" })
   @ParameterizedTest(name = "for kind = {0}")
   void warningsShouldBeLoggedAsWarningsWhenStackTracesAreEnabled(Kind kind) {
     // Given
@@ -324,7 +324,7 @@ class TracingDiagnosticListenerTest {
   }
 
   @DisplayName("Info should be logged as info when stacktraces are disabled")
-  @EnumSource(value = Kind.class, names = {"NOTE", "OTHER"})
+  @EnumSource(value = Kind.class, names = {"NOTE", "OTHER" })
   @ParameterizedTest(name = "for kind = {0}")
   void infoShouldBeLoggedAsInfoWhenStackTracesAreDisabled(Kind kind) {
     // Given
@@ -341,7 +341,7 @@ class TracingDiagnosticListenerTest {
   }
 
   @DisplayName("Info should be logged as info when stacktraces are enabled")
-  @EnumSource(value = Kind.class, names = {"NOTE", "OTHER"})
+  @EnumSource(value = Kind.class, names = {"NOTE", "OTHER" })
   @ParameterizedTest(name = "for kind = {0}")
   void infoShouldBeLoggedAsInfoWhenStackTracesAreEnabled(Kind kind) {
     // Given

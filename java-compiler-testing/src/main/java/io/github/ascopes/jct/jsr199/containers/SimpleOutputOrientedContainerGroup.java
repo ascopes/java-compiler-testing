@@ -17,11 +17,14 @@ package io.github.ascopes.jct.jsr199.containers;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.utils.ModulePrefix;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
-import io.github.ascopes.jct.paths.RamPath;
 import io.github.ascopes.jct.jsr199.PathFileObject;
-import java.io.IOException;
+import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.paths.SubPath;
+import io.github.ascopes.jct.utils.IoExceptionUtils;
+import io.github.ascopes.jct.utils.ModulePrefix;
+import io.github.ascopes.jct.utils.StringUtils;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -64,27 +67,25 @@ public class SimpleOutputOrientedContainerGroup
 
     if (location.isModuleOrientedLocation()) {
       throw new UnsupportedOperationException(
-          "Cannot use module-oriented locations with this container group"
+          "Cannot use module-oriented locations such as "
+              + StringUtils.quoted(location.getName())
+              + " with this container"
       );
     }
 
     if (!location.isOutputLocation()) {
       throw new UnsupportedOperationException(
-          "Cannot use non-output locations with this container group"
+          "Cannot use non-output locations such as "
+              + StringUtils.quoted(location.getName())
+              + " with this container"
       );
     }
   }
 
   @Override
   @SuppressWarnings("resource")
-  public void addPath(String module, Path path) throws IOException {
+  public void addPath(String module, PathLike path) {
     forModule(module).addPath(path);
-  }
-
-  @Override
-  @SuppressWarnings("resource")
-  public void addPath(String module, RamPath ramPath) throws IOException {
-    forModule(module).addPath(ramPath);
   }
 
   @Override
@@ -156,8 +157,18 @@ public class SimpleOutputOrientedContainerGroup
 
   @Override
   public PackageOrientedContainerGroup forModule(String moduleName) {
-    var location = new ModuleLocation(this.location, moduleName);
-    return modules.computeIfAbsent(location, SimpleOutputOrientedModuleContainerGroup::new);
+    return modules.computeIfAbsent(
+        new ModuleLocation(location, moduleName),
+        moduleLocation -> {
+          // For output locations, we only need the first root. We then just put a subdirectory
+          // in there, as it reduces the complexity of this tenfold and means we don't have to
+          // worry about creating more in-memory locations on the fly.
+          var group = new SimpleOutputOrientedModuleContainerGroup(moduleLocation);
+          var path = new SubPath(getContainers().iterator().next().getPath(), moduleName);
+          IoExceptionUtils.uncheckedIo(() -> Files.createDirectories(path.getPath()));
+          group.addPath(path);
+          return group;
+        });
   }
 
   @Override

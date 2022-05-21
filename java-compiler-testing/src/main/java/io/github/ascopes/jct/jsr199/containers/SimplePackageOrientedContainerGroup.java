@@ -18,6 +18,7 @@ package io.github.ascopes.jct.jsr199.containers;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.utils.StringUtils;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -34,6 +35,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class SimplePackageOrientedContainerGroup extends AbstractPackageOrientedContainerGroup {
+
   private final Location location;
 
   public SimplePackageOrientedContainerGroup(Location location, String release) {
@@ -43,13 +45,17 @@ public class SimplePackageOrientedContainerGroup extends AbstractPackageOriented
 
     if (location.isOutputLocation()) {
       throw new UnsupportedOperationException(
-          "Cannot use output locations with this container group"
+          "Cannot use output locations such as "
+              + StringUtils.quoted(location.getName())
+              + " with this container"
       );
     }
 
     if (location.isModuleOrientedLocation()) {
       throw new UnsupportedOperationException(
-          "Cannot use module-oriented locations with this container group"
+          "Cannot use module-oriented locations such as "
+              + StringUtils.quoted(location.getName())
+              + " with this container"
       );
     }
   }

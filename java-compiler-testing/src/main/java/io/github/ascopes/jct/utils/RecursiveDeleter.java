@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 public class RecursiveDeleter extends SimpleFileVisitor<Path> {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(RecursiveDeleter.class);
   private static final RecursiveDeleter INSTANCE = new RecursiveDeleter();
 

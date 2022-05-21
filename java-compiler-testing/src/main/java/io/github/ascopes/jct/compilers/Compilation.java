@@ -16,8 +16,8 @@
 
 package io.github.ascopes.jct.compilers;
 
+import io.github.ascopes.jct.jsr199.FileManager;
 import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
-import io.github.ascopes.jct.paths.PathLocationRepository;
 import java.util.List;
 import java.util.Set;
 import javax.tools.JavaFileObject;
@@ -80,9 +80,9 @@ public interface Compilation {
   List<? extends TraceDiagnostic<? extends JavaFileObject>> getDiagnostics();
 
   /**
-   * Get the location repository that was used to store files.
+   * Get the file manager that was used to store and manage files.
    *
-   * @return the location repository.
+   * @return the file manager.
    */
-  PathLocationRepository getFileManager();
+  FileManager getFileManager();
 }

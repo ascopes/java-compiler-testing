@@ -23,6 +23,7 @@ import io.github.ascopes.jct.testing.helpers.Skipping;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import javax.lang.model.SourceVersion;
+import javax.tools.StandardLocation;
 import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -61,7 +62,7 @@ class BasicModuleCompilationTest {
 
     var compilation = Compilers
         .javac()
-        .addSourceRamPaths(sources)
+        .addPath(StandardLocation.SOURCE_PATH, sources)
         .showDeprecationWarnings(true)
         .release(version)
         .compile();
@@ -96,7 +97,7 @@ class BasicModuleCompilationTest {
 
     var compilation = Compilers
         .ecj()
-        .addSourceRamPaths(sources)
+        .addPath(StandardLocation.SOURCE_PATH, sources)
         .showDeprecationWarnings(true)
         .release(version)
         .compile();

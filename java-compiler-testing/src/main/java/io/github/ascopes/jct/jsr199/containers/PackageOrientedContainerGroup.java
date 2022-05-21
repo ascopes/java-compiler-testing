@@ -16,8 +16,8 @@
 
 package io.github.ascopes.jct.jsr199.containers;
 
-import io.github.ascopes.jct.paths.RamPath;
 import io.github.ascopes.jct.jsr199.PathFileObject;
+import io.github.ascopes.jct.paths.PathLike;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -46,23 +46,9 @@ public interface PackageOrientedContainerGroup extends ContainerGroup {
    * allocated.
    *
    * @param path the path to add.
-   * @throws IOException if an IO exception occurs.
    */
-  void addPath(Path path) throws IOException;
+  void addPath(PathLike path);
 
-  /**
-   * Add a RAM path to this group.
-   *
-   * <p>This is the same as {@link #addPath(Path)}, but ensures that the RAM path is kept
-   * allocated for at least as long as this group is.
-   *
-   * <p>Note that this will destroy the {@link #getClassLoader() classloader} if one is already
-   * allocated.
-   *
-   * @param ramPath the RAM path to add.
-   * @throws IOException if an IO exception occurs.
-   */
-  void addPath(RamPath ramPath) throws IOException;
 
   /**
    * Find the first occurrence of a given path to a file.

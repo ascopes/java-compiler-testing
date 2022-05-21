@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import io.github.ascopes.jct.utils.IterableUtils;
 import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
+import io.github.ascopes.jct.utils.IterableUtils;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -213,7 +213,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
   @Test
   void requireNonNullValuesArraySucceedsWhenNoNullElementsArePresent() {
     // Given
-    var array = new String[]{"foo", "bar", "", "baz", "bork"};
+    var array = new String[]{"foo", "bar", "", "baz", "bork" };
 
     // Then
     assertThatNoException()
@@ -233,7 +233,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
   @Test
   void requireNonNullValuesArrayFailsWhenSingleNullElementIsPresent() {
     // Given
-    var array = new String[]{"foo", "bar", "", null, "baz", "bork"};
+    var array = new String[]{"foo", "bar", "", null, "baz", "bork" };
 
     // Then
     assertThatThrownBy(() -> IterableUtils.requireNonNullValues(array, "dave"))
@@ -245,7 +245,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
   @Test
   void requireNonNullValuesArrayFailsWhenMultipleNullElementsArePresent() {
     // Given
-    var array = new String[]{"foo", "bar", null, "", null, null, "baz", "bork"};
+    var array = new String[]{"foo", "bar", null, "", null, null, "baz", "bork" };
 
     // Then
     assertThatThrownBy(() -> IterableUtils.requireNonNullValues(array, "dave"))

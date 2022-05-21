@@ -17,6 +17,7 @@
 package io.github.ascopes.jct.jsr199.containers;
 
 import io.github.ascopes.jct.jsr199.PathFileObject;
+import io.github.ascopes.jct.paths.PathLike;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
@@ -144,6 +145,13 @@ public interface Container extends Closeable {
   String getName();
 
   /**
+   * Get the path of the container.
+   *
+   * @return the path.
+   */
+  PathLike getPath();
+
+  /**
    * Get a classpath resource for the given resource path if it exists.
    *
    * <p>If the resource does not exist, then return an empty optional.
@@ -176,4 +184,6 @@ public interface Container extends Closeable {
       Set<? extends Kind> kinds,
       boolean recurse
   ) throws IOException;
+
+
 }

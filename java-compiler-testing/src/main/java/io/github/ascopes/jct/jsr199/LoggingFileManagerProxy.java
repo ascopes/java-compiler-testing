@@ -22,7 +22,6 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.tools.JavaFileManager;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * A proxy that wraps a {@link JavaFileManager} in a proxy that can log all interactions with the
+ * A proxy that wraps a {@link FileManager} in a proxy that can log all interactions with the
  * JavaFileManager, along with a corresponding stacktrace.
  *
  * <p>This is useful for diagnosing difficult-to-find errors being produced by {@code javac}
@@ -44,10 +43,10 @@ public class LoggingFileManagerProxy implements InvocationHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFileManagerProxy.class);
 
-  private final JavaFileManager inner;
+  private final FileManager inner;
   private final boolean stackTraces;
 
-  private LoggingFileManagerProxy(JavaFileManager inner, boolean stackTraces) {
+  private LoggingFileManagerProxy(FileManager inner, boolean stackTraces) {
     this.inner = inner;
     this.stackTraces = stackTraces;
   }
@@ -104,17 +103,17 @@ public class LoggingFileManagerProxy implements InvocationHandler {
   }
 
   /**
-   * Wrap the given {@link JavaFileManager} in a proxy that logs any calls.
+   * Wrap the given {@link FileManager} in a proxy that logs any calls.
    *
    * @param manager     the manager to wrap.
    * @param stackTraces {@code true} to dump stacktraces on each interception, or {@code false} to
    *                    omit them.
-   * @return the proxy {@link JavaFileManager} to use.
+   * @return the proxy {@link FileManager} to use.
    */
-  public static JavaFileManager wrap(JavaFileManager manager, boolean stackTraces) {
-    return (JavaFileManager) Proxy.newProxyInstance(
-        JavaFileManager.class.getClassLoader(),
-        new Class<?>[]{JavaFileManager.class},
+  public static FileManager wrap(FileManager manager, boolean stackTraces) {
+    return (FileManager) Proxy.newProxyInstance(
+        FileManager.class.getClassLoader(),
+        new Class<?>[]{FileManager.class},
         new LoggingFileManagerProxy(manager, stackTraces)
     );
   }

@@ -23,9 +23,9 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
-import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import io.github.ascopes.jct.testing.helpers.ConcurrentRuns;
 import io.github.ascopes.jct.testing.helpers.MoreMocks;
+import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;

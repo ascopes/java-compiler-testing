@@ -2,10 +2,10 @@ package io.github.ascopes.jct.jsr199.containers;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
-import io.github.ascopes.jct.paths.RamPath;
 import io.github.ascopes.jct.jsr199.PathFileObject;
+import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.utils.Lazy;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -57,21 +57,18 @@ public abstract class AbstractPackageOrientedContainerGroup
   }
 
   @Override
-  public void addPath(Path path) throws IOException {
+  public void addPath(PathLike path) {
+    var actualPath = path.getPath();
+
     var archive = ARCHIVE_EXTENSIONS
         .stream()
-        .anyMatch(path.getFileName().toString().toLowerCase(Locale.ROOT)::endsWith);
+        .anyMatch(actualPath.getFileName().toString().toLowerCase(Locale.ROOT)::endsWith);
 
     var container = archive
         ? new JarContainer(getLocation(), path, release)
         : new DirectoryContainer(getLocation(), path);
 
     containers.add(container);
-  }
-
-  @Override
-  public void addPath(RamPath ramPath) {
-    containers.add(new RamPathContainer(getLocation(), ramPath));
   }
 
   @Override
