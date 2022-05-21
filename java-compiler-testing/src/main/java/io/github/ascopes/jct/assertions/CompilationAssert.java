@@ -17,8 +17,8 @@
 package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.compilers.Compilation;
-import io.github.ascopes.jct.compilers.TraceDiagnostic;
-import io.github.ascopes.jct.paths.ModuleLocation;
+import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.jsr199.ModuleLocation;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.tools.Diagnostic.Kind;

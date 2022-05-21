@@ -16,9 +16,9 @@
 
 package io.github.ascopes.jct.compilers;
 
-import io.github.ascopes.jct.intern.IterableUtils;
-import io.github.ascopes.jct.paths.PathLocationRepository;
 import io.github.ascopes.jct.paths.RamPath;
+import io.github.ascopes.jct.utils.IterableUtils;
+import io.github.ascopes.jct.paths.PathLocationRepository;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;

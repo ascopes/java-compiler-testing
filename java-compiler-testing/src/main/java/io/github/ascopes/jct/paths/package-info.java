@@ -15,8 +15,6 @@
  */
 
 /**
- * Implementation of a JSR-199-compliant Path {@link javax.tools.JavaFileManager} which supports
- * modules, multiple paths per {@link javax.tools.JavaFileManager.Location}, and the ability to use
- * in-memory file systems provided by {@link com.google.common.jimfs.Jimfs}.
+ * Facilities for handling paths.
  */
 package io.github.ascopes.jct.paths;

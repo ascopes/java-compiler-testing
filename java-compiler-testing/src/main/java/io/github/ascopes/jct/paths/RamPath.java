@@ -16,14 +16,14 @@
 
 package io.github.ascopes.jct.paths;
 
-import static io.github.ascopes.jct.intern.IoExceptionUtils.uncheckedIo;
+import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
-import io.github.ascopes.jct.intern.AsyncResourceCloser;
+import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;

@@ -16,7 +16,7 @@
 
 package io.github.ascopes.jct.assertions;
 
-import io.github.ascopes.jct.compilers.TraceDiagnostic;
+import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
 import java.util.List;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;

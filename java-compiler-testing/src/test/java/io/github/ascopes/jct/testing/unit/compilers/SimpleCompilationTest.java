@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.iterable;
 
 import io.github.ascopes.jct.compilers.SimpleCompilation;
-import io.github.ascopes.jct.compilers.TraceDiagnostic;
+import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.paths.PathLocationRepository;
 import io.github.ascopes.jct.testing.helpers.MoreMocks;
 import io.github.ascopes.jct.testing.helpers.TypeRef;

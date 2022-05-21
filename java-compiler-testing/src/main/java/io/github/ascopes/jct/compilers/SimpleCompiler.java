@@ -16,12 +16,15 @@
 
 package io.github.ascopes.jct.compilers;
 
-import static io.github.ascopes.jct.intern.IterableUtils.requireNonNullValues;
+import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.compilers.Compiler.AnnotationProcessorDiscovery;
+import io.github.ascopes.jct.compilers.Compiler.CompilerConfigurer;
+import io.github.ascopes.jct.compilers.Compiler.Logging;
+import io.github.ascopes.jct.paths.RamPath;
 import io.github.ascopes.jct.paths.PathJavaFileObjectFactory;
 import io.github.ascopes.jct.paths.PathLocationRepository;
-import io.github.ascopes.jct.paths.RamPath;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -60,7 +63,7 @@ import org.slf4j.LoggerFactory;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
-    implements Compiler<A, SimpleCompilation> {
+    implements java.lang.Compiler<A, SimpleCompilation> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompiler.class);
   private final String name;
@@ -108,7 +111,7 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
 
     // We may want to be able to customize creation of missing roots in the future. For now,
     // I am leaving this enabled by default.
-    pathJavaFileObjectFactory = new PathJavaFileObjectFactory(DEFAULT_FILE_CHARSET);
+    pathJavaFileObjectFactory = new PathJavaFileObjectFactory(Compiler.DEFAULT_FILE_CHARSET);
     fileRepository = new PathLocationRepository(pathJavaFileObjectFactory);
 
     annotationProcessors = new ArrayList<>();
@@ -117,23 +120,23 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
     compilerOptions = new ArrayList<>();
     runtimeOptions = new ArrayList<>();
 
-    showWarnings = DEFAULT_SHOW_WARNINGS;
-    showDeprecationWarnings = DEFAULT_SHOW_DEPRECATION_WARNINGS;
-    failOnWarnings = DEFAULT_FAIL_ON_WARNINGS;
-    locale = DEFAULT_LOCALE;
-    logCharset = DEFAULT_LOG_CHARSET;
-    previewFeatures = DEFAULT_PREVIEW_FEATURES;
+    showWarnings = Compiler.DEFAULT_SHOW_WARNINGS;
+    showDeprecationWarnings = Compiler.DEFAULT_SHOW_DEPRECATION_WARNINGS;
+    failOnWarnings = Compiler.DEFAULT_FAIL_ON_WARNINGS;
+    locale = Compiler.DEFAULT_LOCALE;
+    logCharset = Compiler.DEFAULT_LOG_CHARSET;
+    previewFeatures = Compiler.DEFAULT_PREVIEW_FEATURES;
     release = null;
     source = null;
     target = null;
-    verbose = DEFAULT_VERBOSE;
-    inheritClassPath = DEFAULT_INHERIT_CLASS_PATH;
-    inheritModulePath = DEFAULT_INHERIT_MODULE_PATH;
-    inheritPlatformClassPath = DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
-    inheritSystemModulePath = DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
-    fileManagerLogging = DEFAULT_FILE_MANAGER_LOGGING;
-    diagnosticLogging = DEFAULT_DIAGNOSTIC_LOGGING;
-    annotationProcessorDiscovery = DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
+    verbose = Compiler.DEFAULT_VERBOSE;
+    inheritClassPath = Compiler.DEFAULT_INHERIT_CLASS_PATH;
+    inheritModulePath = Compiler.DEFAULT_INHERIT_MODULE_PATH;
+    inheritPlatformClassPath = Compiler.DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
+    inheritSystemModulePath = Compiler.DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
+    fileManagerLogging = Compiler.DEFAULT_FILE_MANAGER_LOGGING;
+    diagnosticLogging = Compiler.DEFAULT_DIAGNOSTIC_LOGGING;
+    annotationProcessorDiscovery = Compiler.DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
   }
 
   /**
