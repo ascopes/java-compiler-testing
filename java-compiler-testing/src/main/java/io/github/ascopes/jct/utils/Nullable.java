@@ -25,8 +25,8 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Annotation for documentation purposes indicating that the annotated element may have a
- * null value.
+ * Annotation for documentation purposes indicating that the annotated element may have a null
+ * value.
  *
  * @author Ashley Scopes
  * @since 0.0.1

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2022 Ashley Scopes
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.ascopes.jct.jsr199;
 
 import static java.util.Objects.requireNonNull;
@@ -9,10 +25,12 @@ import io.github.ascopes.jct.jsr199.containers.PackageOrientedContainerGroup;
 import io.github.ascopes.jct.jsr199.containers.SimpleModuleOrientedContainerGroup;
 import io.github.ascopes.jct.jsr199.containers.SimpleOutputOrientedContainerGroup;
 import io.github.ascopes.jct.jsr199.containers.SimplePackageOrientedContainerGroup;
-import io.github.ascopes.jct.paths.RamPath;
+import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.paths.SubPath;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collection;
+import java.lang.module.ModuleDescriptor;
+import java.lang.module.ModuleFinder;
+import java.lang.module.ModuleReference;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,11 +40,20 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.tools.FileObject;
-import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
+/**
+ * Simple implementation of a {@link FileManager}.
+ *
+ * @author Ashley Scopes
+ * @since 0.0.1
+ */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class SimpleFileManager implements FileManager {
 
   private final String release;
@@ -34,6 +61,11 @@ public class SimpleFileManager implements FileManager {
   private final Map<Location, ModuleOrientedContainerGroup> modules;
   private final Map<Location, OutputOrientedContainerGroup> outputs;
 
+  /**
+   * Initialize this file manager.
+   *
+   * @param release the release to use for multi-release JARs internally.
+   */
   public SimpleFileManager(String release) {
     this.release = requireNonNull(release, "release");
     packages = new HashMap<>();
@@ -42,80 +74,98 @@ public class SimpleFileManager implements FileManager {
   }
 
   @SuppressWarnings("resource")
-  public void addPath(Location location, Path path) throws IOException {
+  public void addPath(Location location, PathLike path) {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
 
       if (location.isOutputLocation()) {
         outputs
             .computeIfAbsent(
-                location,
+                moduleLocation.getParent(),
                 parent -> new SimpleOutputOrientedContainerGroup(parent, release)
             )
             .addPath(moduleLocation.getModuleName(), path);
       } else {
         modules
             .computeIfAbsent(
-                location,
+                moduleLocation.getParent(),
                 parent -> new SimpleModuleOrientedContainerGroup(parent, release)
             )
             .addPath(moduleLocation.getModuleName(), path);
       }
+    } else if (location.isOutputLocation()) {
+      outputs
+          .computeIfAbsent(
+              location,
+              parent -> new SimpleOutputOrientedContainerGroup(parent, release)
+          )
+          .addPath(path);
+
+    } else if (location.isModuleOrientedLocation()) {
+      // Attempt to find modules.
+      var moduleGroup = modules
+          .computeIfAbsent(
+              location,
+              parent -> new SimpleModuleOrientedContainerGroup(parent, release)
+          );
+
+      ModuleFinder
+          .of(path.getPath())
+          .findAll()
+          .stream()
+          .map(ModuleReference::descriptor)
+          .map(ModuleDescriptor::name)
+          .forEach(module -> moduleGroup
+              .forModule(module)
+              .addPath(new SubPath(path, module)));
+
     } else {
-      if (location.isOutputLocation()) {
-        outputs
-            .computeIfAbsent(
-                location,
-                parent -> new SimpleOutputOrientedContainerGroup(parent, release)
-            )
-            .addPath(path);
-      } else {
-        packages
-            .computeIfAbsent(
-                location,
-                parent -> new SimplePackageOrientedContainerGroup(parent, release)
-            )
-            .addPath(path);
-      }
+      packages
+          .computeIfAbsent(
+              location,
+              parent -> new SimplePackageOrientedContainerGroup(parent, release)
+          )
+          .addPath(path);
     }
   }
 
+  @Override
   @SuppressWarnings("resource")
-  public void addPath(Location location, RamPath path) throws IOException {
+  public void ensureEmptyLocationExists(Location location) {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
 
       if (location.isOutputLocation()) {
         outputs
             .computeIfAbsent(
-                location,
+                moduleLocation.getParent(),
                 parent -> new SimpleOutputOrientedContainerGroup(parent, release)
             )
-            .addPath(moduleLocation.getModuleName(), path);
+            .forModule(moduleLocation.getModuleName());
+
       } else {
         modules
             .computeIfAbsent(
-                location,
+                moduleLocation.getParent(),
                 parent -> new SimpleModuleOrientedContainerGroup(parent, release)
             )
-            .addPath(moduleLocation.getModuleName(), path);
+            .forModule(moduleLocation.getModuleName());
       }
+    } else if (location.isOutputLocation()) {
+      outputs.computeIfAbsent(
+          location,
+          ignored -> new SimpleOutputOrientedContainerGroup(location, release)
+      );
+    } else if (location.isModuleOrientedLocation()) {
+      modules.computeIfAbsent(
+          location,
+          ignored -> new SimpleModuleOrientedContainerGroup(location, release)
+      );
     } else {
-      if (location.isOutputLocation()) {
-        outputs
-            .computeIfAbsent(
-                location,
-                parent -> new SimpleOutputOrientedContainerGroup(parent, release)
-            )
-            .addPath(path);
-      } else {
-        packages
-            .computeIfAbsent(
-                location,
-                parent -> new SimplePackageOrientedContainerGroup(parent, release)
-            )
-            .addPath(path);
-      }
+      packages.computeIfAbsent(
+          location,
+          ignored -> new SimplePackageOrientedContainerGroup(location, release)
+      );
     }
   }
 
@@ -141,11 +191,14 @@ public class SimpleFileManager implements FileManager {
       return List.of();
     }
 
-    // TODO(ascopes): fix this to not be unchecked.
-    @SuppressWarnings("unchecked")
-    var listing = (Collection<JavaFileObject>) maybeGroup.get().list(packageName, kinds, recurse);
-
-    return listing;
+    // Coerce the generic type to help the compiler a bit.
+    // TODO(ascopes): avoid doing this by finding a workaround.
+    return maybeGroup
+        .get()
+        .list(packageName, kinds, recurse)
+        .stream()
+        .map(JavaFileObject.class::cast)
+        .collect(Collectors.toUnmodifiableList());
   }
 
   @Override
@@ -342,8 +395,8 @@ public class SimpleFileManager implements FileManager {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
       return Optional
-          .ofNullable(modules.get(location))
-          .or(() -> Optional.ofNullable(outputs.get(location)))
+          .ofNullable(modules.get(moduleLocation.getParent()))
+          .or(() -> Optional.ofNullable(outputs.get(moduleLocation.getParent())))
           .map(group -> group.forModule(moduleLocation.getModuleName()));
     }
 

@@ -19,6 +19,7 @@ package io.github.ascopes.jct.jsr199;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.utils.FileUtils;
+import io.github.ascopes.jct.utils.StringUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -149,7 +150,7 @@ public class PathFileObject implements JavaFileObject {
 
   @Override
   public boolean isNameCompatible(String simpleName, Kind kind) {
-    return simpleName.endsWith(kind.extension);
+    return path.getFileName().toString().equals(simpleName + kind.extension);
   }
 
   @Override
@@ -175,6 +176,11 @@ public class PathFileObject implements JavaFileObject {
   @Override
   public URI toUri() {
     return uri;
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + "{uri=" + StringUtils.quoted(uri) + "}";
   }
 
   private InputStream openUnbufferedInputStream() throws IOException {

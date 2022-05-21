@@ -38,6 +38,7 @@ import org.assertj.core.presentation.Representation;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class DiagnosticRepresentation implements Representation {
+
   private static final int ADDITIONAL_CONTEXT_LINES = 2;
   private static final String PADDING = " ".repeat(8);
 

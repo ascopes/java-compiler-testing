@@ -118,7 +118,7 @@ class PlatformLinkStrategyTest {
   }
 
   @DisplayName("Copies are created when links are not supported")
-  @MethodSource({"windowsOses", "otherOses"})
+  @MethodSource({"windowsOses", "otherOses" })
   @ParameterizedTest(name = "for os.name = \"{0}\"")
   void copiesAreCreatedWhenLinksAreNotSupported(String osName) throws IOException {
     var config = Configuration

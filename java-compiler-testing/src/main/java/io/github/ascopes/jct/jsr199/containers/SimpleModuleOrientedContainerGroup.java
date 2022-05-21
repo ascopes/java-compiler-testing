@@ -18,13 +18,13 @@ package io.github.ascopes.jct.jsr199.containers;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
-import io.github.ascopes.jct.paths.RamPath;
 import io.github.ascopes.jct.jsr199.PathFileObject;
+import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.utils.Lazy;
+import io.github.ascopes.jct.utils.StringUtils;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,13 +66,17 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
 
     if (location.isOutputLocation()) {
       throw new UnsupportedOperationException(
-          "Cannot use output-oriented locations with this container"
+          "Cannot use output-oriented locations such as "
+              + StringUtils.quoted(location.getName())
+              + " with this container"
       );
     }
 
     if (!location.isModuleOrientedLocation()) {
       throw new UnsupportedOperationException(
-          "Cannot use package-oriented locations with this container"
+          "Cannot use package-oriented locations such as "
+              + StringUtils.quoted(location.getName())
+              + " with this container"
       );
     }
 
@@ -82,14 +86,8 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
 
   @Override
   @SuppressWarnings("resource")
-  public void addPath(String module, Path path) throws IOException {
+  public void addPath(String module, PathLike path) {
     forModule(module).addPath(path);
-  }
-
-  @Override
-  @SuppressWarnings("resource")
-  public void addPath(String module, RamPath ramPath) throws IOException {
-    forModule(module).addPath(ramPath);
   }
 
   @Override

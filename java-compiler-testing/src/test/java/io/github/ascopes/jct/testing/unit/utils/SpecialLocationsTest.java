@@ -21,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import io.github.ascopes.jct.utils.SpecialLocations;
 import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
+import io.github.ascopes.jct.utils.SpecialLocations;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;

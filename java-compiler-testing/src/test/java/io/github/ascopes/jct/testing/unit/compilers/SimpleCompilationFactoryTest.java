@@ -22,12 +22,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import io.github.ascopes.jct.compilers.Compiler;
 import io.github.ascopes.jct.compilers.FlagBuilder;
 import io.github.ascopes.jct.compilers.SimpleCompilation;
 import io.github.ascopes.jct.compilers.SimpleCompilationFactory;
-import io.github.ascopes.jct.paths.PathLocationRepository;
+import io.github.ascopes.jct.compilers.SimpleFileManagerTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -76,7 +77,7 @@ class SimpleCompilationFactoryTest {
   CompilationTask compilationTask;
 
   @Mock(lenient = true, answer = Answers.RETURNS_DEEP_STUBS)
-  PathLocationRepository pathLocationRepository;
+  SimpleFileManagerTemplate fileManagerTemplate;
 
   Boolean expectedCompilationResult;
 
@@ -85,8 +86,6 @@ class SimpleCompilationFactoryTest {
     compilationFactory = new SimpleCompilationFactory<>();
     expectedCompilationResult = true;
 
-    given(compiler.getPathLocationRepository())
-        .willAnswer(ctx -> pathLocationRepository);
     given(jsr199Compiler.getTask(any(), any(), any(), any(), any(), any()))
         .willAnswer(ctx -> compilationTask);
     given(flagBuilder.build())
@@ -165,7 +164,7 @@ class SimpleCompilationFactoryTest {
 
     @DisplayName("release should be added")
     @NullSource
-    @ValueSource(strings = {"8", "11", "17"})
+    @ValueSource(strings = {"8", "11", "17" })
     @ParameterizedTest(name = "for release = {0}")
     void releaseShouldBeAdded(String release) {
       given(compiler.getRelease()).willReturn(Optional.ofNullable(release));
@@ -175,7 +174,7 @@ class SimpleCompilationFactoryTest {
 
     @DisplayName("source should be added")
     @NullSource
-    @ValueSource(strings = {"8", "11", "17"})
+    @ValueSource(strings = {"8", "11", "17" })
     @ParameterizedTest(name = "for source = {0}")
     void sourceShouldBeAdded(String source) {
       given(compiler.getSource()).willReturn(Optional.ofNullable(source));
@@ -185,7 +184,7 @@ class SimpleCompilationFactoryTest {
 
     @DisplayName("target should be added")
     @NullSource
-    @ValueSource(strings = {"8", "11", "17"})
+    @ValueSource(strings = {"8", "11", "17" })
     @ParameterizedTest(name = "for target = {0}")
     void targetShouldBeAdded(String target) {
       given(compiler.getTarget()).willReturn(Optional.ofNullable(target));
@@ -302,7 +301,7 @@ class SimpleCompilationFactoryTest {
   }
 
   private SimpleCompilation execute() {
-    return compilationFactory.compile(compiler, jsr199Compiler, flagBuilder);
+    return compilationFactory.compile(compiler, fileManagerTemplate, jsr199Compiler, flagBuilder);
   }
 
   private static List<String> someListOfOptions() {

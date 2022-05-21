@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 import javax.tools.JavaFileObject.Kind;
 
 public final class FileUtils {
+
   private static final StringSlicer PACKAGE_SLICER = new StringSlicer(".");
   private static final StringSlicer RESOURCE_SPLITTER = new StringSlicer("/");
 
@@ -104,6 +105,7 @@ public final class FileUtils {
     for (var part : parts) {
       root = root.resolve(part);
     }
+    //return root.normalize().relativize(root);
     return root.normalize();
   }
 

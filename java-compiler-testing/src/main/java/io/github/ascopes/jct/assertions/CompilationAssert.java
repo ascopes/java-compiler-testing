@@ -18,13 +18,10 @@ package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.compilers.Compilation;
 import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
-import io.github.ascopes.jct.jsr199.ModuleLocation;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.tools.Diagnostic.Kind;
-import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
-import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractObjectAssert;
@@ -198,93 +195,95 @@ public class CompilationAssert<C extends Compilation>
     return Assertions.assertThat(actual.getOutputLines());
   }
 
-  /**
-   * Get assertions to perform on a given location.
-   *
-   * @param location the location to perform assertions on.
-   * @return the assertions to perform.
-   */
-  public PathLocationManagerAssert location(Location location) {
-    var locationManager = actual
-        .getFileManager()
-        .getManager(location)
-        .orElse(null);
-
-    return PathLocationManagerAssert.assertThatLocation(locationManager);
-  }
-
-  /**
-   * Get assertions to perform on a given location of a module.
-   *
-   * @param location   the location to perform assertions on.
-   * @param moduleName the module name within the location to perform assertions on.
-   * @return the assertions to perform.
-   */
-  public PathLocationManagerAssert location(Location location, String moduleName) {
-    var locationManager = actual
-        .getFileManager()
-        .getManager(new ModuleLocation(location, moduleName))
-        .orElse(null);
-
-    return PathLocationManagerAssert.assertThatLocation(locationManager);
-  }
-
-  /**
-   * Perform assertions on the class output roots.
-   *
-   * @return the assertions to perform.
-   */
-  public PathLocationManagerAssert classOutput() {
-    return location(StandardLocation.CLASS_OUTPUT);
-  }
-
-  /**
-   * Perform assertions on the class output roots for a given module name.
-   *
-   * @param moduleName the name of the module.
-   * @return the assertions to perform.
-   */
-  public PathLocationManagerAssert classOutput(String moduleName) {
-    return location(StandardLocation.CLASS_OUTPUT, moduleName);
-  }
-
-  /**
-   * Perform assertions on the native header outputs.
-   *
-   * @return the assertions to perform.
-   */
-  public PathLocationManagerAssert nativeHeaders() {
-    return location(StandardLocation.NATIVE_HEADER_OUTPUT);
-  }
-
-  /**
-   * Perform assertions on the native header outputs for a given module name.
-   *
-   * @param moduleName the name of the module.
-   * @return the assertions to perform.
-   */
-  public PathLocationManagerAssert nativeHeaders(String moduleName) {
-    return location(StandardLocation.NATIVE_HEADER_OUTPUT, moduleName);
-  }
-
-  /**
-   * Perform assertions on the generated source outputs.
-   *
-   * @return the assertions to perform.
-   */
-  public PathLocationManagerAssert generatedSources() {
-    return location(StandardLocation.SOURCE_OUTPUT);
-  }
-
-  /**
-   * Perform assertions on the generated source outputs for a given module name.
-   *
-   * @param moduleName the name of the module.
-   * @return the assertions to perform.
-   */
-  public PathLocationManagerAssert generatedSources(String moduleName) {
-    return location(StandardLocation.SOURCE_PATH, moduleName);
-  }
+  // TODO(ascopes): reimplement all of these.
+  //
+  //  /**
+  //   * Get assertions to perform on a given location.
+  //   *
+  //   * @param location the location to perform assertions on.
+  //   * @return the assertions to perform.
+  //   */
+  //  public PathLocationManagerAssert location(Location location) {
+  //    var locationManager = actual
+  //        .getFileManager()
+  //        .getManager(location)
+  //        .orElse(null);
+  //
+  //    return PathLocationManagerAssert.assertThatLocation(locationManager);
+  //  }
+  //
+  //  /**
+  //   * Get assertions to perform on a given location of a module.
+  //   *
+  //   * @param location   the location to perform assertions on.
+  //   * @param moduleName the module name within the location to perform assertions on.
+  //   * @return the assertions to perform.
+  //   */
+  //  public PathLocationManagerAssert location(Location location, String moduleName) {
+  //    var locationManager = actual
+  //        .getFileManager()
+  //        .getManager(new ModuleLocation(location, moduleName))
+  //        .orElse(null);
+  //
+  //    return PathLocationManagerAssert.assertThatLocation(locationManager);
+  //  }
+  //
+  //  /**
+  //   * Perform assertions on the class output roots.
+  //   *
+  //   * @return the assertions to perform.
+  //   */
+  //  public PathLocationManagerAssert classOutput() {
+  //    return location(StandardLocation.CLASS_OUTPUT);
+  //  }
+  //
+  //  /**
+  //   * Perform assertions on the class output roots for a given module name.
+  //   *
+  //   * @param moduleName the name of the module.
+  //   * @return the assertions to perform.
+  //   */
+  //  public PathLocationManagerAssert classOutput(String moduleName) {
+  //    return location(StandardLocation.CLASS_OUTPUT, moduleName);
+  //  }
+  //
+  //  /**
+  //   * Perform assertions on the native header outputs.
+  //   *
+  //   * @return the assertions to perform.
+  //   */
+  //  public PathLocationManagerAssert nativeHeaders() {
+  //    return location(StandardLocation.NATIVE_HEADER_OUTPUT);
+  //  }
+  //
+  //  /**
+  //   * Perform assertions on the native header outputs for a given module name.
+  //   *
+  //   * @param moduleName the name of the module.
+  //   * @return the assertions to perform.
+  //   */
+  //  public PathLocationManagerAssert nativeHeaders(String moduleName) {
+  //    return location(StandardLocation.NATIVE_HEADER_OUTPUT, moduleName);
+  //  }
+  //
+  //  /**
+  //   * Perform assertions on the generated source outputs.
+  //   *
+  //   * @return the assertions to perform.
+  //   */
+  //  public PathLocationManagerAssert generatedSources() {
+  //    return location(StandardLocation.SOURCE_OUTPUT);
+  //  }
+  //
+  //  /**
+  //   * Perform assertions on the generated source outputs for a given module name.
+  //   *
+  //   * @param moduleName the name of the module.
+  //   * @return the assertions to perform.
+  //   */
+  //  public PathLocationManagerAssert generatedSources(String moduleName) {
+  //    return location(StandardLocation.SOURCE_PATH, moduleName);
+  //  }
 
   /**
    * Create a new assertion object.

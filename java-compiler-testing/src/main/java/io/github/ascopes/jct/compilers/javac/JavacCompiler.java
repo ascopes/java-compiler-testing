@@ -17,7 +17,10 @@
 package io.github.ascopes.jct.compilers.javac;
 
 import io.github.ascopes.jct.compilers.SimpleCompiler;
+import io.github.ascopes.jct.compilers.SimpleFileManagerTemplate;
+import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -32,10 +35,22 @@ public class JavacCompiler extends SimpleCompiler<JavacCompiler> {
 
   /**
    * Initialize a new Javac compiler.
+   */
+  public JavacCompiler() {
+    this(ToolProvider.getSystemJavaCompiler());
+  }
+
+  /**
+   * Initialize a new Javac compiler.
    *
    * @param jsr199Compiler the JSR-199 compiler backend to use.
    */
   public JavacCompiler(JavaCompiler jsr199Compiler) {
-    super("javac", jsr199Compiler, new JavacFlagBuilder());
+    super("javac", new SimpleFileManagerTemplate(), jsr199Compiler, new JavacFlagBuilder());
+  }
+
+  @Override
+  public String getDefaultRelease() {
+    return Integer.toString(SourceVersion.latestSupported().ordinal());
   }
 }

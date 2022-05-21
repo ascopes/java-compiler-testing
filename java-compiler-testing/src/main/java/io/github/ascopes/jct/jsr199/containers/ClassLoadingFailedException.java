@@ -38,8 +38,8 @@ public final class ClassLoadingFailedException extends ClassNotFoundException {
    * Initialize the exception.
    *
    * @param binaryName the binary name of the class being loaded.
-   * @param location the location the class was being loaded from.
-   * @param cause the reason that the loading failed.
+   * @param location   the location the class was being loaded from.
+   * @param cause      the reason that the loading failed.
    */
   public ClassLoadingFailedException(String binaryName, Location location, Throwable cause) {
     super(

@@ -29,6 +29,7 @@ import org.apiguardian.api.API.Status;
  *
  * <p>This is thread-safe.
  *
+ * @param <T> the type of lazy value to return when accessed.
  * @author Ashley Scopes
  * @since 0.0.1
  */
@@ -78,8 +79,28 @@ public class Lazy<T> {
   public void destroy() {
     if (initialized) {
       synchronized (lock) {
-        initialized = false;
-        data = null;
+        if (initialized) {
+          initialized = false;
+          data = null;
+        }
+      }
+    }
+  }
+
+  /**
+   * Attempt to run some logic on the initialized value if and only if the value has already been
+   * initialized by the time this is called.
+   *
+   * @param consumer the consumer to consume the value if it is initialized.
+   * @param <E>      the exception type that the consumer can throw.
+   * @throws E the exception type that the consumer can throw.
+   */
+  public <E extends Throwable> void ifInitialized(ThrowingConsumer<T, E> consumer) throws E {
+    if (initialized) {
+      synchronized (lock) {
+        if (initialized) {
+          consumer.consume(data);
+        }
       }
     }
   }
@@ -97,5 +118,26 @@ public class Lazy<T> {
     }
 
     return builder.append("}").toString();
+  }
+
+  /**
+   * Consumer that throws some form of checked exception if something goes wrong.
+   *
+   * @param <E> the exception type.
+   * @param <T> the type to consume.
+   * @author Ashley Scopes
+   * @since 0.0.1
+   */
+  @API(since = "0.0.1", status = Status.INTERNAL)
+  @FunctionalInterface
+  public interface ThrowingConsumer<T, E extends Throwable> {
+
+    /**
+     * Consume a value.
+     *
+     * @param arg the value to consume.
+     * @throws E the exception that may be thrown if something goes wrong in the consumer.
+     */
+    void consume(T arg) throws E;
   }
 }

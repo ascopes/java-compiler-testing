@@ -51,7 +51,7 @@ public final class StringUtils {
    * <p>The first line number will always be at index 0. If the line is not found, then
    * {@code -1} is returned.
    *
-   * @param content the content to read through.
+   * @param content    the content to read through.
    * @param lineNumber the 1-indexed line number to find.
    * @return the index of the line.
    */
@@ -75,8 +75,8 @@ public final class StringUtils {
   /**
    * Left-pad the given content with the given padding char until it is the given length.
    *
-   * @param content the content to process.
-   * @param length the max length of the resultant content.
+   * @param content     the content to process.
+   * @param length      the max length of the resultant content.
    * @param paddingChar the character to pad with.
    * @return the padded string.
    */

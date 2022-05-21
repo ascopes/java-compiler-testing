@@ -20,8 +20,8 @@ import static io.github.ascopes.jct.utils.IterableUtils.nonNullUnmodifiableList;
 import static io.github.ascopes.jct.utils.IterableUtils.nonNullUnmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.jsr199.FileManager;
 import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
-import io.github.ascopes.jct.compilers.managers.FileManager;
 import java.util.List;
 import java.util.Set;
 import javax.tools.JavaFileObject;
@@ -177,7 +177,7 @@ public final class SimpleCompilation implements Compilation {
      * @return this builder.
      */
     public Builder fileManager(FileManager fileManager) {
-      this.fileManager = requireNonNull(this.fileManager, "fileManager");
+      this.fileManager = requireNonNull(fileManager, "fileManager");
       return this;
     }
 

@@ -23,10 +23,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.testing.helpers.ConcurrentRuns;
 import io.github.ascopes.jct.testing.helpers.ThreadPool;
 import io.github.ascopes.jct.testing.helpers.ThreadPool.RunTestsInIsolation;
+import io.github.ascopes.jct.utils.Lazy;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;

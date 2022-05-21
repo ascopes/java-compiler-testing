@@ -19,16 +19,9 @@ package io.github.ascopes.jct.compilers;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.compilers.Compiler.AnnotationProcessorDiscovery;
-import io.github.ascopes.jct.compilers.Compiler.CompilerConfigurer;
-import io.github.ascopes.jct.compilers.Compiler.Logging;
-import io.github.ascopes.jct.paths.RamPath;
-import io.github.ascopes.jct.paths.PathJavaFileObjectFactory;
-import io.github.ascopes.jct.paths.PathLocationRepository;
+import io.github.ascopes.jct.paths.PathLike;
 import java.nio.charset.Charset;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -63,14 +56,13 @@ import org.slf4j.LoggerFactory;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
-    implements java.lang.Compiler<A, SimpleCompilation> {
+    implements Compiler<A, SimpleCompilation> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompiler.class);
   private final String name;
   private final JavaCompiler jsr199Compiler;
   private final FlagBuilder flagBuilder;
-  private final PathJavaFileObjectFactory pathJavaFileObjectFactory;
-  private final PathLocationRepository fileRepository;
+  private final SimpleFileManagerTemplate fileManagerTemplate;
   private final List<Processor> annotationProcessors;
   private final List<String> annotationProcessorOptions;
   private final List<String> compilerOptions;
@@ -96,23 +88,21 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
   /**
    * Initialize this compiler.
    *
-   * @param name           the friendly name of the compiler.
-   * @param jsr199Compiler the JSR-199 compiler implementation to use.
-   * @param flagBuilder    the flag builder to use.
+   * @param name                the friendly name of the compiler.
+   * @param fileManagerTemplate the simple file manager template to use.
+   * @param jsr199Compiler      the JSR-199 compiler implementation to use.
+   * @param flagBuilder         the flag builder to use.
    */
   protected SimpleCompiler(
       String name,
+      SimpleFileManagerTemplate fileManagerTemplate,
       JavaCompiler jsr199Compiler,
       FlagBuilder flagBuilder
   ) {
     this.name = requireNonNull(name, "name");
+    this.fileManagerTemplate = requireNonNull(fileManagerTemplate, "fileManagerTemplate");
     this.jsr199Compiler = requireNonNull(jsr199Compiler, "jsr199Compiler");
     this.flagBuilder = requireNonNull(flagBuilder, "flagBuilder");
-
-    // We may want to be able to customize creation of missing roots in the future. For now,
-    // I am leaving this enabled by default.
-    pathJavaFileObjectFactory = new PathJavaFileObjectFactory(Compiler.DEFAULT_FILE_CHARSET);
-    fileRepository = new PathLocationRepository(pathJavaFileObjectFactory);
 
     annotationProcessors = new ArrayList<>();
 
@@ -184,34 +174,16 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public A addPaths(Location location, Collection<? extends Path> paths) {
-    LOGGER.trace("{}.paths += {}", location.getName(), paths);
-    fileRepository.getOrCreateManager(location).addPaths(paths);
+  public A addPath(Location location, PathLike pathLike) {
+    LOGGER.trace("{}.paths += {}", location.getName(), pathLike.getPath());
+    fileManagerTemplate.addPath(location, pathLike);
     return myself();
   }
 
   @Override
-  public A addRamPaths(Location location, Collection<? extends RamPath> paths) {
-    LOGGER.trace("{}.paths += {}", location.getName(), paths);
-    fileRepository.getOrCreateManager(location).addRamPaths(paths);
-    return myself();
-  }
-
-  @Override
-  public PathLocationRepository getPathLocationRepository() {
-    return fileRepository;
-  }
-
-  @Override
-  public Charset getFileCharset() {
-    return pathJavaFileObjectFactory.getCharset();
-  }
-
-  @Override
-  public A fileCharset(Charset fileCharset) {
-    requireNonNull(fileCharset, "fileCharset");
-    LOGGER.trace("fileCharset {} -> {}", pathJavaFileObjectFactory.getCharset(), fileCharset);
-    pathJavaFileObjectFactory.setCharset(fileCharset);
+  public A addPath(Location location, String moduleName, PathLike pathLike) {
+    LOGGER.trace("{}[{}].paths += {}", location.getName(), moduleName, pathLike.getPath());
+    fileManagerTemplate.addPath(location, moduleName, pathLike);
     return myself();
   }
 
@@ -527,6 +499,7 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
   protected SimpleCompilation doCompile() {
     return new SimpleCompilationFactory<A>().compile(
         myself(),
+        fileManagerTemplate,
         jsr199Compiler,
         flagBuilder
     );

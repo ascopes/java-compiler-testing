@@ -17,9 +17,7 @@
 package io.github.ascopes.jct.jsr199.containers;
 
 import io.github.ascopes.jct.jsr199.ModuleLocation;
-import io.github.ascopes.jct.paths.RamPath;
-import java.io.IOException;
-import java.nio.file.Path;
+import io.github.ascopes.jct.paths.PathLike;
 import java.util.List;
 import java.util.Set;
 import javax.tools.JavaFileManager.Location;
@@ -43,21 +41,8 @@ public interface ModuleOrientedContainerGroup extends ContainerGroup {
    *
    * @param module the name of the module that this is for.
    * @param path   the path to add.
-   * @throws IOException if an IO exception occurs.
    */
-  void addPath(String module, Path path) throws IOException;
-
-  /**
-   * Add a RAM path to this group for a module.
-   *
-   * <p>This is the same as {@link #addPath(String, Path)}, but ensures that the RAM path is kept
-   * allocated for at least as long as this group is.
-
-   * @param module  the name of the module that this is for.
-   * @param ramPath the RAM path to add.
-   * @throws IOException if an IO exception occurs.
-   */
-  void addPath(String module, RamPath ramPath) throws IOException;
+  void addPath(String module, PathLike path);
 
   /**
    * Get the {@link PackageOrientedContainerGroup} for a given module name, creating it if it does

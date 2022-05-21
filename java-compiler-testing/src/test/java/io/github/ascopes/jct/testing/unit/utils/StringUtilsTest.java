@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
-import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
+import io.github.ascopes.jct.utils.StringUtils;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;

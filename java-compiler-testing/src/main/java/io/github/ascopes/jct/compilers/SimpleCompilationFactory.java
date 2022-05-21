@@ -18,13 +18,14 @@ package io.github.ascopes.jct.compilers;
 
 import io.github.ascopes.jct.compilers.Compiler.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.compilers.Compiler.Logging;
-import io.github.ascopes.jct.paths.RamPath;
+import io.github.ascopes.jct.jsr199.FileManager;
+import io.github.ascopes.jct.jsr199.LoggingFileManagerProxy;
 import io.github.ascopes.jct.jsr199.diagnostics.TeeWriter;
 import io.github.ascopes.jct.jsr199.diagnostics.TracingDiagnosticListener;
+import io.github.ascopes.jct.paths.NioPath;
+import io.github.ascopes.jct.paths.RamPath;
 import io.github.ascopes.jct.utils.SpecialLocations;
 import io.github.ascopes.jct.utils.StringUtils;
-import io.github.ascopes.jct.compilers.managers.LoggingFileManagerProxy;
-import io.github.ascopes.jct.paths.PathJavaFileManager;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleCompilation>> {
+public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompilationFactory.class);
 
@@ -62,12 +63,14 @@ public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleComp
    * Run the compilation for the given compiler and return the compilation result.
    *
    * @param compiler       the compiler to run.
+   * @param template       the template to compile files within.
    * @param jsr199Compiler the underlying JSR-199 compiler to run via.
    * @param flagBuilder    the flag builder to use.
    * @return the compilation result.
    */
   public SimpleCompilation compile(
       A compiler,
+      SimpleFileManagerTemplate template,
       JavaCompiler jsr199Compiler,
       FlagBuilder flagBuilder
   ) {
@@ -76,7 +79,7 @@ public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleComp
       var diagnosticListener = buildDiagnosticListener(compiler);
       var writer = buildWriter(compiler);
 
-      try (var fileManager = buildJavaFileManager(compiler)) {
+      try (var fileManager = buildFileManager(compiler, template)) {
         var compilationUnits = findCompilationUnits(fileManager);
         LOGGER.debug("Found {} compilation units {}", compilationUnits.size(), compilationUnits);
 
@@ -100,7 +103,7 @@ public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleComp
             .outputLines(outputLines)
             .compilationUnits(Set.copyOf(compilationUnits))
             .diagnostics(diagnosticListener.getDiagnostics())
-            .pathLocationRepository(compiler.getPathLocationRepository())
+            .fileManager(fileManager)
             .build();
       }
     } catch (IOException ex) {
@@ -145,18 +148,50 @@ public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleComp
    * Build the {@link JavaFileManager} to use.
    *
    * <p>Logging will be applied to this via
-   * {@link #applyLoggingToFileManager(java.lang.Compiler, JavaFileManager)}, which will be handled by
-   * {@link #compile(java.lang.Compiler, JavaCompiler, FlagBuilder)}.
+   * {@link #applyLoggingToFileManager(Compiler, FileManager)}, which will be handled by
+   * {@link #compile(Compiler, SimpleFileManagerTemplate, JavaCompiler, FlagBuilder)}.
    *
    * @param compiler the compiler to use.
    * @return the file manager to use.
    */
-  protected JavaFileManager buildJavaFileManager(A compiler) {
-    ensureClassOutputPathExists(compiler);
-    registerClassPath(compiler);
-    registerPlatformClassPath(compiler);
-    registerSystemModulePath(compiler);
-    return new PathJavaFileManager(compiler.getPathLocationRepository());
+  protected FileManager buildFileManager(A compiler, SimpleFileManagerTemplate template) {
+    var release = compiler.getRelease()
+        .or(compiler::getTarget)
+        .orElseGet(compiler::getDefaultRelease);
+
+    var fileManager = template.createFileManager(release);
+
+    switch (compiler.getAnnotationProcessorDiscovery()) {
+      case ENABLED:
+        fileManager.ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
+        break;
+
+      case INCLUDE_DEPENDENCIES: {
+        // https://stackoverflow.com/q/53084037
+        // Seems that javac will always use the classpath to implement this behaviour, and never
+        // the module path. Let's keep this simple and mimic this behaviour. If someone complains
+        // about it being problematic in the future, then I am open to change how this works to
+        // keep it sensible.
+
+        for (var path : template.getPaths(StandardLocation.CLASS_PATH)) {
+          fileManager.addPath(StandardLocation.ANNOTATION_PROCESSOR_PATH, path);
+        }
+
+        break;
+      }
+
+      default:
+        // There is nothing to do to the file manager to configure annotation processing at this
+        // time.
+        break;
+    }
+
+    ensureClassOutputPathExists(fileManager);
+    registerClassPath(compiler, fileManager);
+    registerPlatformClassPath(compiler, fileManager);
+    registerSystemModulePath(compiler, fileManager);
+
+    return fileManager;
   }
 
   /**
@@ -193,10 +228,10 @@ public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleComp
 
   /**
    * Apply the logging level to the file manager provided by
-   * {@link #buildJavaFileManager(java.lang.Compiler)}.
+   * {@link #buildFileManager(Compiler, SimpleFileManagerTemplate)}.
    *
    * <p>The default implementation will wrap the given {@link JavaFileManager} in a
-   * {@link LoggingFileManagerProxy} if the {@link java.lang.Compiler#getFileManagerLogging()} field is
+   * {@link LoggingFileManagerProxy} if the {@link Compiler#getFileManagerLogging()} field is
    * <strong>not</strong> set to {@link Logging#DISABLED}. In the latter scenario, the input
    * will be returned to the caller with no other modifications.
    *
@@ -204,14 +239,14 @@ public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleComp
    * @param fileManager the file manager to apply to.
    * @return the file manager to use for future operations.
    */
-  protected JavaFileManager applyLoggingToFileManager(
+  protected FileManager applyLoggingToFileManager(
       A compiler,
-      JavaFileManager fileManager
+      FileManager fileManager
   ) {
     switch (compiler.getFileManagerLogging()) {
-      case Logging.STACKTRACES:
+      case STACKTRACES:
         return LoggingFileManagerProxy.wrap(fileManager, true);
-      case Logging.ENABLED:
+      case ENABLED:
         return LoggingFileManagerProxy.wrap(fileManager, false);
       default:
         return fileManager;
@@ -251,7 +286,7 @@ public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleComp
       A compiler,
       JavaCompiler jsr199Compiler,
       Writer writer,
-      JavaFileManager fileManager,
+      FileManager fileManager,
       DiagnosticListener<? super JavaFileObject> diagnosticListener,
       List<String> flags,
       List<? extends JavaFileObject> compilationUnits
@@ -267,7 +302,14 @@ public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleComp
         compilationUnits
     );
 
-    configureAnnotationProcessors(compiler, task);
+    if (compiler.getAnnotationProcessors().size() > 0) {
+      LOGGER.debug("Annotation processor discovery is disabled (processors explicitly provided)");
+      task.setProcessors(compiler.getAnnotationProcessors());
+    } else if (compiler.getAnnotationProcessorDiscovery()
+        == AnnotationProcessorDiscovery.DISABLED) {
+      // Set the processor list explicitly to instruct the compiler to not perform discovery.
+      task.setProcessors(List.of());
+    }
 
     task.setLocale(compiler.getLocale());
 
@@ -326,30 +368,21 @@ public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleComp
     }
   }
 
-  private void ensureClassOutputPathExists(A compiler) {
+  private void ensureClassOutputPathExists(FileManager fileManager) {
     // We have to manually create this one as javac will not attempt to access it lazily. Instead,
     // it will just abort if it is not present. This means we cannot take advantage of the
     // PathLocationRepository creating the roots as we try to access them for this specific case.
-    var classOutputManager = compiler
-        .getPathLocationRepository()
-        .getOrCreateManager(StandardLocation.CLASS_OUTPUT);
-
-    // Ensure we have somewhere to dump our output.
-    if (classOutputManager.isEmpty()) {
+    if (!fileManager.hasLocation(StandardLocation.CLASS_OUTPUT)) {
       LOGGER.debug("No class output location was specified, so an in-memory path is being created");
       var classOutput = RamPath.createPath("classes-" + UUID.randomUUID(), true);
-      classOutputManager.addRamPath(classOutput);
+      fileManager.addPath(StandardLocation.CLASS_OUTPUT, classOutput);
     } else {
       LOGGER.trace("At least one output path is present, so no in-memory path will be created");
     }
   }
 
-  private void registerClassPath(A compiler) {
+  private void registerClassPath(A compiler, FileManager fileManager) {
     // ECJ requires that we always create this, otherwise it refuses to run.
-    var classPath = compiler
-        .getPathLocationRepository()
-        .getOrCreateManager(StandardLocation.CLASS_PATH);
-
     if (!compiler.isInheritClassPath()) {
       return;
     }
@@ -357,7 +390,9 @@ public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleComp
     var currentClassPath = SpecialLocations.currentClassPathLocations();
 
     LOGGER.debug("Adding current classpath to compiler: {}", currentClassPath);
-    classPath.addPaths(currentClassPath);
+    for (var classPath : currentClassPath) {
+      fileManager.addPath(StandardLocation.CLASS_PATH, new NioPath(classPath));
+    }
 
     var currentModulePath = SpecialLocations.currentModulePathLocations();
 
@@ -372,15 +407,14 @@ public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleComp
     // all dependencies being loaded, but not the code the user is actually trying to test.
     //
     // Weird, but it is what it is, I guess.
-    classPath.addPaths(currentModulePath);
-
-    compiler
-        .getPathLocationRepository()
-        .getOrCreateManager(StandardLocation.MODULE_PATH)
-        .addPaths(currentModulePath);
+    for (var modulePath : currentModulePath) {
+      var modulePathLike = new NioPath(modulePath);
+      fileManager.addPath(StandardLocation.CLASS_PATH, modulePathLike);
+      fileManager.addPath(StandardLocation.MODULE_PATH, modulePathLike);
+    }
   }
 
-  private void registerPlatformClassPath(A compiler) {
+  private void registerPlatformClassPath(A compiler, FileManager fileManager) {
     if (!compiler.isInheritPlatformClassPath()) {
       return;
     }
@@ -390,13 +424,13 @@ public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleComp
     if (!currentPlatformClassPath.isEmpty()) {
       LOGGER.debug("Adding current platform classpath to compiler: {}", currentPlatformClassPath);
 
-      compiler.getPathLocationRepository()
-          .getOrCreateManager(StandardLocation.PLATFORM_CLASS_PATH)
-          .addPaths(currentPlatformClassPath);
+      for (var classPath : currentPlatformClassPath) {
+        fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH, new NioPath(classPath));
+      }
     }
   }
 
-  private void registerSystemModulePath(A compiler) {
+  private void registerSystemModulePath(A compiler, FileManager fileManager) {
     if (!compiler.isInheritSystemModulePath()) {
       return;
     }
@@ -404,54 +438,8 @@ public class SimpleCompilationFactory<A extends java.lang.Compiler<A, SimpleComp
     var jrtLocations = SpecialLocations.javaRuntimeLocations();
     LOGGER.trace("Adding JRT locations to compiler: {}", jrtLocations);
 
-    compiler
-        .getPathLocationRepository()
-        .getOrCreateManager(StandardLocation.SYSTEM_MODULES)
-        .addPaths(jrtLocations);
-  }
-
-  private void configureAnnotationProcessors(A compiler, CompilationTask task) {
-    if (compiler.getAnnotationProcessors().size() > 0) {
-      LOGGER.debug("Annotation processor discovery is disabled (processors explicitly provided)");
-      task.setProcessors(compiler.getAnnotationProcessors());
-      return;
-    }
-
-    switch (compiler.getAnnotationProcessorDiscovery()) {
-      case AnnotationProcessorDiscovery.ENABLED:
-        // Ensure the paths exist.
-        compiler
-            .getPathLocationRepository()
-            .getManager(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH)
-            .orElseGet(() -> compiler
-                .getPathLocationRepository()
-                .getOrCreateManager(StandardLocation.ANNOTATION_PROCESSOR_PATH));
-        break;
-
-      case AnnotationProcessorDiscovery.INCLUDE_DEPENDENCIES:
-        compiler
-            .getPathLocationRepository()
-            .getManager(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH)
-            .ifPresentOrElse(
-                procModules -> procModules.addPaths(
-                    compiler
-                        .getPathLocationRepository()
-                        .getExpectedManager(StandardLocation.MODULE_PATH)
-                        .getRoots()),
-                () -> compiler
-                    .getPathLocationRepository()
-                    .getOrCreateManager(StandardLocation.ANNOTATION_PROCESSOR_PATH)
-                    .addPaths(compiler
-                        .getPathLocationRepository()
-                        .getExpectedManager(StandardLocation.CLASS_PATH)
-                        .getRoots())
-            );
-        break;
-
-      default:
-        // Set the processor list explicitly to instruct the compiler to not perform discovery.
-        task.setProcessors(List.of());
-        break;
+    for (var jrtLocation : jrtLocations) {
+      fileManager.addPath(StandardLocation.SYSTEM_MODULES, new NioPath(jrtLocation));
     }
   }
 }

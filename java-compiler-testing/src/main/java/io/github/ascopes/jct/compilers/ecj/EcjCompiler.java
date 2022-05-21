@@ -17,9 +17,12 @@
 package io.github.ascopes.jct.compilers.ecj;
 
 import io.github.ascopes.jct.compilers.SimpleCompiler;
+import io.github.ascopes.jct.compilers.SimpleFileManagerTemplate;
 import javax.tools.JavaCompiler;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
+import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 
 /**
  * Implementation of an ECJ compiler.
@@ -32,10 +35,24 @@ public class EcjCompiler extends SimpleCompiler<EcjCompiler> {
 
   /**
    * Initialize a new ECJ compiler.
+   */
+  public EcjCompiler() {
+    this(new EclipseCompiler());
+  }
+
+  /**
+   * Initialize a new ECJ compiler.
    *
    * @param jsr199Compiler the JSR-199 compiler backend to use.
    */
   public EcjCompiler(JavaCompiler jsr199Compiler) {
-    super("ecj", jsr199Compiler, new EcjFlagBuilder());
+    super("ecj", new SimpleFileManagerTemplate(), jsr199Compiler, new EcjFlagBuilder());
+  }
+
+  @Override
+  public String getDefaultRelease() {
+    var maxEcjVersion = (ClassFileConstants.getLatestJDKLevel() >> (Short.BYTES * 8))
+        - ClassFileConstants.MAJOR_VERSION_0;
+    return Long.toString(maxEcjVersion);
   }
 }

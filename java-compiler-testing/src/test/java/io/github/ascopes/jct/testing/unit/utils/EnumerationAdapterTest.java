@@ -22,9 +22,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.github.ascopes.jct.utils.EnumerationAdapter;
 import io.github.ascopes.jct.testing.helpers.MoreMocks;
 import io.github.ascopes.jct.testing.helpers.TypeRef;
+import io.github.ascopes.jct.utils.EnumerationAdapter;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.DisplayName;
