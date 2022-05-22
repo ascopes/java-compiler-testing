@@ -78,6 +78,13 @@ public final class FileUtils {
     return resolve(directory, parts);
   }
 
+  public static Path packageNameToPath(Path root, String packageName) {
+    for (var part : PACKAGE_SLICER.splitToArray(packageName)) {
+      root = root.resolve(part);
+    }
+    return root;
+  }
+
   public static Path resourceNameToPath(Path directory, String packageName, String relativeName) {
     // If we have a relative name that starts with a `/`, then we assume that it is relative
     // to the root package, so we ignore the given package name.

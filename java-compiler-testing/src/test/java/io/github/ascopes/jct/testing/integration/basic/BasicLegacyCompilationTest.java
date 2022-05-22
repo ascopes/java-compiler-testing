@@ -17,6 +17,7 @@
 package io.github.ascopes.jct.testing.integration.basic;
 
 import io.github.ascopes.jct.assertions.CompilationAssert;
+import io.github.ascopes.jct.compilers.Compiler.Logging;
 import io.github.ascopes.jct.compilers.Compilers;
 import io.github.ascopes.jct.paths.RamPath;
 import java.util.stream.IntStream;
@@ -56,6 +57,8 @@ class BasicLegacyCompilationTest {
         .javac()
         .addPath(StandardLocation.SOURCE_PATH, sources)
         .showDeprecationWarnings(true)
+        //.diagnosticLogging(Logging.STACKTRACES)
+        //.fileManagerLogging(Logging.ENABLED)
         .release(version)
         .compile();
 
@@ -82,6 +85,8 @@ class BasicLegacyCompilationTest {
         .ecj()
         .addPath(StandardLocation.SOURCE_PATH, sources)
         .showDeprecationWarnings(true)
+        //.diagnosticLogging(Logging.STACKTRACES)
+        //.fileManagerLogging(Logging.ENABLED)
         .release(version)
         .compile();
 

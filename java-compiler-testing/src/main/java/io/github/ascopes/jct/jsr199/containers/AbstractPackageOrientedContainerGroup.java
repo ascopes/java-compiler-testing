@@ -113,8 +113,8 @@ public abstract class AbstractPackageOrientedContainerGroup
   }
 
   @Override
-  public Optional<ClassLoader> getClassLoader() {
-    return Optional.of(classLoaderLazy.access());
+  public ClassLoader getClassLoader() {
+    return classLoaderLazy.access();
   }
 
   @Override

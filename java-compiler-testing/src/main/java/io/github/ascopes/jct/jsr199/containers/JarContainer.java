@@ -34,6 +34,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.ProviderNotFoundException;
+import java.nio.file.spi.FileSystemProvider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -291,8 +293,12 @@ public final class JarContainer implements Container {
           "multi-release", release
       );
 
-      var uri = URI.create("jar:" + actualJarPath.toUri());
-      fileSystem = FileSystems.newFileSystem(uri, env);
+      // So, for some reason. I cannot make more than one instance of a ZipFileSystem
+      // if I pass a URI in here. If I pass a Path in here instead, then I can make
+      // multiple copies of it in memory. No idea why this is the way it is, but it
+      // appears to be how the JavacFileManager in the JDK can make itself run in parallel
+      // safely. While in Rome, I guess.
+      fileSystem = getJarFileSystemProvider().newFileSystem(actualJarPath, env);
 
       // Index packages ahead-of-time to improve performance.
       for (var root : fileSystem.getRootDirectories()) {
@@ -326,5 +332,15 @@ public final class JarContainer implements Container {
     private Stream<? extends Path> getRootDirectoriesStream() {
       return StreamSupport.stream(fileSystem.getRootDirectories().spliterator(), false);
     }
+  }
+
+  private static FileSystemProvider getJarFileSystemProvider() {
+    for (var fsProvider : FileSystemProvider.installedProviders()) {
+      if (fsProvider.getScheme().equals("jar")) {
+        return fsProvider;
+      }
+    }
+
+    throw new ProviderNotFoundException("jar");
   }
 }

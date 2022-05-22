@@ -40,7 +40,7 @@ import org.assertj.core.presentation.Representation;
 public class DiagnosticRepresentation implements Representation {
 
   private static final int ADDITIONAL_CONTEXT_LINES = 2;
-  private static final String PADDING = " ".repeat(8);
+  private static final String PADDING = " ".repeat(4);
 
   /**
    * Initialize this diagnostic representation.
@@ -66,15 +66,18 @@ public class DiagnosticRepresentation implements Representation {
       builder.append(code);
     }
 
-    builder
-        .append(' ')
-        .append(diagnostic.getSource().getName())
-        .append(" (at line ")
-        .append(diagnostic.getLineNumber())
-        .append(", col ")
-        .append(diagnostic.getColumnNumber())
-        .append(")")
-        .append("\n\n");
+    if (diagnostic.getSource() != null) {
+      builder
+          .append(' ')
+          .append(diagnostic.getSource().getName())
+          .append(" (at line ")
+          .append(diagnostic.getLineNumber())
+          .append(", col ")
+          .append(diagnostic.getColumnNumber())
+          .append(")");
+    }
+
+    builder.append("\n\n");
 
     IoExceptionUtils.uncheckedIo(() -> {
       extractSnippet(diagnostic)
@@ -93,7 +96,13 @@ public class DiagnosticRepresentation implements Representation {
   private Optional<Snippet> extractSnippet(
       Diagnostic<? extends JavaFileObject> diagnostic
   ) throws IOException {
-    if (diagnostic.getStartPosition() == NOPOS || diagnostic.getEndPosition() == NOPOS) {
+    var source = diagnostic.getSource();
+
+    var noSnippet = source == null
+        || diagnostic.getStartPosition() == NOPOS
+        || diagnostic.getEndPosition() == NOPOS;
+
+    if (noSnippet) {
       // No info available about position, so don't bother extracting anything.
       return Optional.empty();
     }

@@ -64,6 +64,8 @@ class BasicModuleCompilationTest {
         .javac()
         .addPath(StandardLocation.SOURCE_PATH, sources)
         .showDeprecationWarnings(true)
+        //.diagnosticLogging(Logging.STACKTRACES)
+        //.fileManagerLogging(Logging.ENABLED)
         .release(version)
         .compile();
 
@@ -99,6 +101,8 @@ class BasicModuleCompilationTest {
         .ecj()
         .addPath(StandardLocation.SOURCE_PATH, sources)
         .showDeprecationWarnings(true)
+        //.diagnosticLogging(Logging.STACKTRACES)
+        //.fileManagerLogging(Logging.ENABLED)
         .release(version)
         .compile();
 
