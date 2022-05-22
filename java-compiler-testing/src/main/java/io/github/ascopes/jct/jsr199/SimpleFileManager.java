@@ -27,6 +27,7 @@ import io.github.ascopes.jct.jsr199.containers.SimpleOutputOrientedContainerGrou
 import io.github.ascopes.jct.jsr199.containers.SimplePackageOrientedContainerGroup;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.paths.SubPath;
+import io.github.ascopes.jct.utils.Nullable;
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
@@ -169,13 +170,12 @@ public class SimpleFileManager implements FileManager {
     }
   }
 
+  @Nullable
   @Override
   public ClassLoader getClassLoader(Location location) {
     return getPackageOrientedOrOutputGroup(location)
-        .flatMap(PackageOrientedContainerGroup::getClassLoader)
-        .orElseThrow(() -> new UnsupportedOperationException(
-            "Location " + location + " does not support loading classes"
-        ));
+        .map(ContainerGroup::getClassLoader)
+        .orElse(null);
   }
 
   @Override
@@ -201,6 +201,7 @@ public class SimpleFileManager implements FileManager {
         .collect(Collectors.toUnmodifiableList());
   }
 
+  @Nullable
   @Override
   public String inferBinaryName(Location location, JavaFileObject file) {
     if (!(file instanceof PathFileObject)) {
@@ -239,6 +240,7 @@ public class SimpleFileManager implements FileManager {
         || outputs.containsKey(location);
   }
 
+  @Nullable
   @Override
   public JavaFileObject getJavaFileForInput(
       Location location,
@@ -250,6 +252,7 @@ public class SimpleFileManager implements FileManager {
         .orElse(null);
   }
 
+  @Nullable
   @Override
   public JavaFileObject getJavaFileForOutput(
       Location location,
@@ -262,6 +265,7 @@ public class SimpleFileManager implements FileManager {
         .orElse(null);
   }
 
+  @Nullable
   @Override
   public FileObject getFileForInput(
       Location location,
@@ -273,6 +277,7 @@ public class SimpleFileManager implements FileManager {
         .orElse(null);
   }
 
+  @Nullable
   @Override
   public FileObject getFileForOutput(
       Location location,
@@ -330,6 +335,7 @@ public class SimpleFileManager implements FileManager {
         ));
   }
 
+  @Nullable
   @Override
   public String inferModuleName(Location location) {
     requirePackageOrientedLocation(location);

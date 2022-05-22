@@ -17,6 +17,7 @@
 package io.github.ascopes.jct.jsr199;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
@@ -88,9 +89,13 @@ public class LoggingFileManagerProxy implements InvocationHandler {
         LOGGER.info("<<< {}({}) returns {}", method.getName(), argsStr, result);
       }
       return result;
-    } catch (Throwable ex) {
-      LOGGER.error("!!! {}({}) throws exception", method.getName(), argsStr, ex);
-      throw ex;
+    } catch (InvocationTargetException ex) {
+      var cause = ex.getCause() == null
+          ? ex
+          : ex.getCause();
+
+      LOGGER.error("!!! {}({}) throws exception", method.getName(), argsStr, cause);
+      throw cause;
     }
   }
 

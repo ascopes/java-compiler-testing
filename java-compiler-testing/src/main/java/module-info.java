@@ -41,4 +41,15 @@ module io.github.ascopes.jct {
   exports io.github.ascopes.jct.compilers.ecj to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
+
+  // Open the module for testing only.
+  opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.compilers to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.compilers.ecj to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.jsr199 to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.jsr199.containers to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.jsr199.diagnostics to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.paths to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
 }

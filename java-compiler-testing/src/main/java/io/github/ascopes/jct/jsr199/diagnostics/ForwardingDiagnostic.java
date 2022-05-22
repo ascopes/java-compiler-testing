@@ -16,6 +16,7 @@
 
 package io.github.ascopes.jct.jsr199.diagnostics;
 
+import io.github.ascopes.jct.utils.Nullable;
 import java.util.Locale;
 import java.util.Objects;
 import javax.tools.Diagnostic;
@@ -51,6 +52,7 @@ public abstract class ForwardingDiagnostic<S> implements Diagnostic<S> {
     return original.getKind();
   }
 
+  @Nullable
   @Override
   public S getSource() {
     return original.getSource();

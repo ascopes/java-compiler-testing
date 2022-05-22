@@ -27,8 +27,11 @@ import java.lang.module.ModuleFinder;
 import java.net.URL;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -182,11 +185,15 @@ public class DirectoryContainer implements Container {
   ) throws IOException {
     var maxDepth = recurse ? Integer.MAX_VALUE : 1;
 
-    try (var walker = Files.walk(root.getPath(), maxDepth, FileVisitOption.FOLLOW_LINKS)) {
+    var basePath = FileUtils.packageNameToPath(root.getPath(), packageName);
+
+    try (var walker = Files.walk(basePath, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
       return walker
           .filter(FileUtils.fileWithAnyKind(kinds))
           .map(PathFileObject.forLocation(location))
-          .collect(Collectors.toList());
+          .collect(Collectors.toUnmodifiableList());
+    } catch (NoSuchFileException ex) {
+      return List.of();
     }
   }
 

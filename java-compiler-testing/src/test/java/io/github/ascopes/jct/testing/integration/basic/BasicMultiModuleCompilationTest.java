@@ -64,8 +64,8 @@ class BasicMultiModuleCompilationTest {
         .javac()
         .addPath(StandardLocation.MODULE_SOURCE_PATH, "hello.world", source)
         .showDeprecationWarnings(true)
-        .diagnosticLogging(Logging.STACKTRACES)
-        .fileManagerLogging(Logging.ENABLED)
+        //.diagnosticLogging(Logging.STACKTRACES)
+        //.fileManagerLogging(Logging.ENABLED)
         .release(version)
         .compile();
 
@@ -115,8 +115,8 @@ class BasicMultiModuleCompilationTest {
         .showDeprecationWarnings(true)
         .release(version)
         .verbose(true)
-        .diagnosticLogging(Logging.STACKTRACES)
-        .fileManagerLogging(Logging.ENABLED)
+        //.diagnosticLogging(Logging.STACKTRACES)
+        //.fileManagerLogging(Logging.ENABLED)
         .compile();
 
     CompilationAssert.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
@@ -180,8 +180,8 @@ class BasicMultiModuleCompilationTest {
         .javac()
         .addPath(StandardLocation.MODULE_SOURCE_PATH, "hello.world", helloWorld)
         .addPath(StandardLocation.MODULE_SOURCE_PATH, "greeter", greeter)
-        .showDeprecationWarnings(true)
-        .diagnosticLogging(Logging.STACKTRACES)
+        //.showDeprecationWarnings(true)
+        //.diagnosticLogging(Logging.STACKTRACES)
         .release(version)
         .compile();
 
@@ -261,6 +261,8 @@ class BasicMultiModuleCompilationTest {
         .addPath(StandardLocation.MODULE_SOURCE_PATH, "hello.world", helloWorld)
         .addPath(StandardLocation.MODULE_SOURCE_PATH, "greeter", greeter)
         .showDeprecationWarnings(true)
+        //.diagnosticLogging(Logging.STACKTRACES)
+        //.fileManagerLogging(Logging.ENABLED)
         .release(version)
         .compile();
 

@@ -47,10 +47,9 @@ public interface ContainerGroup extends Closeable {
    * <p>Note that adding additional containers to this group after accessing this class loader
    * may result in the class loader being destroyed or re-created.
    *
-   * @return the class loader, if the implementation provides one. If no class loader is available,
-   *     then an empty optional is returned instead.
+   * @return the class loader.
    */
-  Optional<ClassLoader> getClassLoader();
+  ClassLoader getClassLoader();
 
   /**
    * Get the location of this container group.

@@ -53,5 +53,4 @@ public interface PathLike {
    * @return the URI.
    */
   URI getUri();
-
 }
