@@ -16,7 +16,11 @@
 
 package io.github.ascopes.jct.jsr199;
 
+import io.github.ascopes.jct.jsr199.containers.ModuleOrientedContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.OutputOrientedContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.PackageOrientedContainerGroup;
 import io.github.ascopes.jct.paths.PathLike;
+import java.util.Optional;
 import javax.tools.JavaFileManager;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -50,4 +54,36 @@ public interface FileManager extends JavaFileManager {
    * @param location the location to apply an empty container for.
    */
   void ensureEmptyLocationExists(Location location);
+
+  /**
+   * Copy all containers from the first location to the second location.
+   *
+   * @param from the first location.
+   * @param to   the second location.
+   */
+  void copyContainers(Location from, Location to);
+
+  /**
+   * Get the container group for the given package-oriented location.
+   *
+   * @param location the package oriented location.
+   * @return the container group, or an empty optional if one does not exist.
+   */
+  Optional<PackageOrientedContainerGroup> getPackageContainerGroup(Location location);
+
+  /**
+   * Get the container group for the given module-oriented location.
+   *
+   * @param location the module oriented location.
+   * @return the container group, or an empty optional if one does not exist.
+   */
+  Optional<ModuleOrientedContainerGroup> getModuleContainer(Location location);
+
+  /**
+   * Get the container group for the given output-oriented location.
+   *
+   * @param location the output oriented location.
+   * @return the container group, or an empty optional if one does not exist.
+   */
+  Optional<OutputOrientedContainerGroup> getOutputContainers(Location location);
 }

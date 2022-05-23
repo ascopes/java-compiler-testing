@@ -40,7 +40,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.function.Function;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
 import javax.tools.JavaFileManager.Location;
@@ -63,7 +62,9 @@ public class PathFileObject implements JavaFileObject {
   private static final long NOT_MODIFIED = 0L;
 
   private final Location location;
-  private final Path path;
+  private final Path root;
+  private final Path relativePath;
+  private final Path fullPath;
   private final String name;
   private final URI uri;
   private final Kind kind;
@@ -71,20 +72,23 @@ public class PathFileObject implements JavaFileObject {
   /**
    * Initialize this file object.
    *
-   * @param path the path to point to.
+   * @param root the root directory that the path is a package within.
+   * @param relativePath the path to point to.
    */
-  public PathFileObject(Location location, Path path) {
+  public PathFileObject(Location location, Path root, Path relativePath) {
     this.location = requireNonNull(location, "location");
-    this.path = requireNonNull(path, "path");
-    name = path.toString();
-    uri = path.toUri();
-    kind = FileUtils.pathToKind(path);
+    this.root = requireNonNull(root, "root");
+    this.relativePath = root.relativize(requireNonNull(relativePath, "relativePath"));
+    fullPath = root.resolve(relativePath);
+    name = relativePath.toString();
+    uri = fullPath.toUri();
+    kind = FileUtils.pathToKind(relativePath);
   }
 
   @Override
   public boolean delete() {
     try {
-      return Files.deleteIfExists(path);
+      return Files.deleteIfExists(relativePath);
     } catch (IOException ex) {
       LOGGER.warn("Ignoring error deleting {}", uri, ex);
       return false;
@@ -100,7 +104,7 @@ public class PathFileObject implements JavaFileObject {
   @Override
   public String getCharContent(boolean ignoreEncodingErrors) throws IOException {
     return decoder(ignoreEncodingErrors)
-        .decode(ByteBuffer.wrap(Files.readAllBytes(path)))
+        .decode(ByteBuffer.wrap(Files.readAllBytes(fullPath)))
         .toString();
   }
 
@@ -112,7 +116,7 @@ public class PathFileObject implements JavaFileObject {
   @Override
   public long getLastModified() {
     try {
-      return Files.getLastModifiedTime(path).toMillis();
+      return Files.getLastModifiedTime(relativePath).toMillis();
     } catch (IOException ex) {
       LOGGER.warn("Ignoring error reading last modified time for {}", uri, ex);
       return NOT_MODIFIED;
@@ -140,17 +144,26 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * Get the path of this file object.
+   * Get the full path of this file object.
+   *
+   * @return the full path.
+   */
+  public Path getFullPath() {
+    return fullPath;
+  }
+
+  /**
+   * Get the relative path of this file object.
    *
    * @return the path of this file object.
    */
-  public Path getPath() {
-    return path;
+  public Path getRelativePath() {
+    return relativePath;
   }
 
   @Override
   public boolean isNameCompatible(String simpleName, Kind kind) {
-    return path.getFileName().toString().equals(simpleName + kind.extension);
+    return relativePath.getFileName().toString().equals(simpleName + kind.extension);
   }
 
   @Override
@@ -184,13 +197,13 @@ public class PathFileObject implements JavaFileObject {
   }
 
   private InputStream openUnbufferedInputStream() throws IOException {
-    return Files.newInputStream(path);
+    return Files.newInputStream(fullPath);
   }
 
   private OutputStream openUnbufferedOutputStream() throws IOException {
     // Ensure parent directories exist first.
-    Files.createDirectories(path.getParent());
-    return Files.newOutputStream(path);
+    Files.createDirectories(fullPath.getParent());
+    return Files.newOutputStream(fullPath);
   }
 
   private Reader openUnbufferedReader(boolean ignoreEncodingErrors) throws IOException {
@@ -217,9 +230,5 @@ public class PathFileObject implements JavaFileObject {
         .newEncoder()
         .onUnmappableCharacter(CodingErrorAction.REPORT)
         .onMalformedInput(CodingErrorAction.REPORT);
-  }
-
-  public static Function<? super Path, ? extends PathFileObject> forLocation(Location location) {
-    return path -> new PathFileObject(location, path);
   }
 }

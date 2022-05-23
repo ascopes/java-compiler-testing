@@ -40,6 +40,13 @@ import org.apiguardian.api.API.Status;
 public interface PackageOrientedContainerGroup extends ContainerGroup {
 
   /**
+   * Add a container to this group.
+   *
+   * @param container the container to add.
+   */
+  void addPackage(Container container);
+
+  /**
    * Add a path to this group.
    *
    * <p>Note that this will destroy the {@link #getClassLoader() classloader} if one is already
@@ -47,8 +54,7 @@ public interface PackageOrientedContainerGroup extends ContainerGroup {
    *
    * @param path the path to add.
    */
-  void addPath(PathLike path);
-
+  void addPackage(PathLike path);
 
   /**
    * Find the first occurrence of a given path to a file.
@@ -126,6 +132,13 @@ public interface PackageOrientedContainerGroup extends ContainerGroup {
    * @return the package-oriented location.
    */
   Location getLocation();
+
+  /**
+   * Get the package containers in this group.
+   *
+   * @return the containers.
+   */
+  Iterable<? extends Container> getPackages();
 
   /**
    * Try to infer the binary name of a given file object.

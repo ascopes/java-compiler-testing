@@ -160,37 +160,11 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
         .orElseGet(compiler::getDefaultRelease);
 
     var fileManager = template.createFileManager(release);
-
-    switch (compiler.getAnnotationProcessorDiscovery()) {
-      case ENABLED:
-        fileManager.ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
-        break;
-
-      case INCLUDE_DEPENDENCIES: {
-        // https://stackoverflow.com/q/53084037
-        // Seems that javac will always use the classpath to implement this behaviour, and never
-        // the module path. Let's keep this simple and mimic this behaviour. If someone complains
-        // about it being problematic in the future, then I am open to change how this works to
-        // keep it sensible.
-
-        for (var path : template.getPaths(StandardLocation.CLASS_PATH)) {
-          fileManager.addPath(StandardLocation.ANNOTATION_PROCESSOR_PATH, path);
-        }
-
-        break;
-      }
-
-      default:
-        // There is nothing to do to the file manager to configure annotation processing at this
-        // time.
-        break;
-    }
-
     ensureClassOutputPathExists(fileManager);
     registerClassPath(compiler, fileManager);
     registerPlatformClassPath(compiler, fileManager);
     registerSystemModulePath(compiler, fileManager);
-
+    registerAnnotationProcessorPaths(compiler, fileManager);
     return fileManager;
   }
 
@@ -302,14 +276,7 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
         compilationUnits
     );
 
-    if (compiler.getAnnotationProcessors().size() > 0) {
-      LOGGER.debug("Annotation processor discovery is disabled (processors explicitly provided)");
-      task.setProcessors(compiler.getAnnotationProcessors());
-    } else if (compiler.getAnnotationProcessorDiscovery()
-        == AnnotationProcessorDiscovery.DISABLED) {
-      // Set the processor list explicitly to instruct the compiler to not perform discovery.
-      task.setProcessors(List.of());
-    }
+    configureAnnotationProcessorDiscovery(compiler, task);
 
     task.setLocale(compiler.getLocale());
 
@@ -440,6 +407,44 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
 
     for (var jrtLocation : jrtLocations) {
       fileManager.addPath(StandardLocation.SYSTEM_MODULES, new NioPath(jrtLocation));
+    }
+  }
+
+  private void registerAnnotationProcessorPaths(A compiler, FileManager fileManager) {
+    switch (compiler.getAnnotationProcessorDiscovery()) {
+      case ENABLED:
+        fileManager.ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
+        break;
+
+      case INCLUDE_DEPENDENCIES: {
+        // https://stackoverflow.com/q/53084037
+        // Seems that javac will always use the classpath to implement this behaviour, and never
+        // the module path. Let's keep this simple and mimic this behaviour. If someone complains
+        // about it being problematic in the future, then I am open to change how this works to
+        // keep it sensible.
+        fileManager.copyContainers(
+            StandardLocation.CLASS_PATH,
+            StandardLocation.ANNOTATION_PROCESSOR_PATH
+        );
+
+        break;
+      }
+
+      default:
+        // There is nothing to do to the file manager to configure annotation processing at this
+        // time.
+        break;
+    }
+  }
+
+  private void configureAnnotationProcessorDiscovery(A compiler, CompilationTask task) {
+    if (compiler.getAnnotationProcessors().size() > 0) {
+      LOGGER.debug("Annotation processor discovery is disabled (processors explicitly provided)");
+      task.setProcessors(compiler.getAnnotationProcessors());
+    } else if (compiler.getAnnotationProcessorDiscovery()
+        == AnnotationProcessorDiscovery.DISABLED) {
+      // Set the processor list explicitly to instruct the compiler to not perform discovery.
+      task.setProcessors(List.of());
     }
   }
 }

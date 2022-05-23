@@ -19,6 +19,7 @@ package io.github.ascopes.jct.jsr199.containers;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.jsr199.PathFileObject;
+import io.github.ascopes.jct.paths.NioPath;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.IoExceptionUtils;
@@ -27,10 +28,8 @@ import io.github.ascopes.jct.utils.Nullable;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
-import java.net.URI;
 import java.net.URL;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -92,7 +91,7 @@ public final class JarContainer implements Container {
 
   @Override
   public boolean contains(PathFileObject fileObject) {
-    var path = fileObject.getPath();
+    var path = fileObject.getFullPath();
     for (var root : holder.access().getRootDirectories()) {
       return path.startsWith(root) && Files.isRegularFile(path);
     }
@@ -140,7 +139,7 @@ public final class JarContainer implements Container {
         .map(PathLike::getPath)
         .map(packageDir -> FileUtils.relativeResourceNameToPath(packageDir, relativeName))
         .filter(Files::isRegularFile)
-        .map(PathFileObject.forLocation(location));
+        .map(path -> new PathFileObject(location, path.getRoot(), path));
   }
 
   @Override
@@ -160,7 +159,7 @@ public final class JarContainer implements Container {
         .map(PathLike::getPath)
         .map(packageDir -> FileUtils.classNameToPath(packageDir, className, kind))
         .filter(Files::isRegularFile)
-        .map(PathFileObject.forLocation(location));
+        .map(path -> new PathFileObject(location, path.getRoot(), path));
   }
 
   @Override
@@ -213,17 +212,12 @@ public final class JarContainer implements Container {
     // we cannot then parse the URI back to a path without removing the `file://` bit first. Since
     // we assume we always have instances of PathJavaFileObject here, let's just cast to that and
     // get the correct path immediately.
-    var path = javaFileObject.getPath();
+    var fullPath = javaFileObject.getFullPath();
 
     for (var root : holder.access().getRootDirectories()) {
-      if (!path.startsWith(root)) {
-        continue;
+      if (fullPath.startsWith(root)) {
+        return Optional.of(FileUtils.pathToBinaryName(javaFileObject.getRelativePath()));
       }
-
-      return Optional
-          .of(path)
-          .filter(Files::isRegularFile)
-          .map(FileUtils::pathToBinaryName);
     }
 
     return Optional.empty();
@@ -246,10 +240,11 @@ public final class JarContainer implements Container {
     var items = new ArrayList<PathFileObject>();
 
     var packagePath = packageDir.getPath();
+
     try (var walker = Files.walk(packagePath, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
       walker
           .filter(FileUtils.fileWithAnyKind(kinds))
-          .map(PathFileObject.forLocation(location))
+          .map(path -> new PathFileObject(location, path.getRoot(), path))
           .forEach(items::add);
     }
 
@@ -306,7 +301,10 @@ public final class JarContainer implements Container {
           walker
               .filter(Files::isDirectory)
               .map(root::relativize)
-              .forEach(path -> packages.put(FileUtils.pathToBinaryName(path), jarPath));
+              .forEach(path -> packages.put(
+                  FileUtils.pathToBinaryName(path),
+                  new NioPath(root.resolve(path))
+              ));
         }
       }
     }
