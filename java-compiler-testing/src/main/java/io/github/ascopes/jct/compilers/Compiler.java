@@ -16,11 +16,13 @@
 
 package io.github.ascopes.jct.compilers;
 
+import io.github.ascopes.jct.paths.NioPath;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -28,6 +30,7 @@ import java.util.Set;
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaFileManager.Location;
+import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -126,13 +129,20 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    */
   <T extends Exception> C configure(CompilerConfigurer<C, T> configurer) throws T;
 
-  // !!! BUG REGRESSION WARNING FOR THIS API !!!:
-  // DO NOT REPLACE COLLECTION<PATH>  WITH ITERABLE<PATH>! THIS WOULD MAKE DIFFERENCES BETWEEN
-  // PATH AND COLLECTIONS OF PATHS DIFFICULT TO DISTINGUISH, SINCE PATHS ARE THEMSELVES
-  // ITERABLES OF PATHS!
-
   /**
    * Add a path-like object to a given location.
+   *
+   * <p>The location <strong>must not</strong> be
+   * {@link Location#isModuleOrientedLocation() module-oriented}.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
    *
    * @param location the location to add.
    * @param pathLike the path-like object to add.
@@ -143,9 +153,45 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    */
   C addPath(Location location, PathLike pathLike);
 
+  /**
+   * Add a {@link Path NIO Path} object to a given location.
+   *
+   * <p>The location <strong>must not</strong> be
+   * {@link Location#isModuleOrientedLocation() module-oriented}.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * @param location the location to add.
+   * @param path     the path to add.
+   * @return this compiler object for further call chaining.
+   * @throws IllegalArgumentException if the location is not
+   *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
+   */
+  default C addPath(Location location, Path path) {
+    return addPath(location, new NioPath(path));
+  }
 
   /**
-   * Add a path-like object to a given location.
+   * Add a path-like object within a module to a given location.
+   *
+   * <p>The location <strong>must</strong> be
+   * {@link Location#isModuleOrientedLocation() module-oriented}.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
    *
    * @param location the location to add.
    * @param pathLike the path-like object to add.
@@ -154,6 +200,309 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
    */
   C addPath(Location location, String moduleName, PathLike pathLike);
+
+  /**
+   * Add a {@link Path NIO Path} object within a module to a given location.
+   *
+   * <p>The location <strong>must</strong> be
+   * {@link Location#isModuleOrientedLocation() module-oriented}.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * @param location the location to add.
+   * @param path     the path to add.
+   * @return this compiler object for further call chaining.
+   * @throws IllegalArgumentException if the location is not
+   *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
+   */
+  default C addPath(Location location, String moduleName, Path path) {
+    return addPath(location, moduleName, new NioPath(path));
+  }
+
+  /**
+   * Add a path-like object that contains a package to the class path.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * <p><strong>Note:</strong> to add modules, consider using
+   * {@link #addModulePath(String, PathLike)} instead.</p>
+   *
+   * @param pathLike the path-like object to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassPath(PathLike pathLike) {
+    return addPath(StandardLocation.CLASS_PATH, pathLike);
+  }
+
+  /**
+   * Add a {@link Path NIO Path} that contains a package to the class path.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * <p><strong>Note:</strong> to add modules, consider using
+   * {@link #addModulePath(String, Path)} instead.</p>
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addClassPath(Path path) {
+    return addPath(StandardLocation.CLASS_PATH, path);
+  }
+
+  /**
+   * Add a path-like object that contains a module package to the module path.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * <p><strong>Note:</strong> to add regular packages, consider using
+   * {@link #addClassPath(PathLike)} instead.</p>
+   *
+   * @param moduleName the name of the module.
+   * @param pathLike the path-like object to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModulePath(String moduleName, PathLike pathLike) {
+    return addPath(StandardLocation.MODULE_PATH, moduleName, pathLike);
+  }
+
+  /**
+   * Add a {@link Path NIO Path} that contains a module package to the module path.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * <p><strong>Note:</strong> to add regular packages, consider using
+   * {@link #addClassPath(Path)} instead.</p>
+   *
+   * @param moduleName the name of the module.
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModulePath(String moduleName, Path path) {
+    return addPath(StandardLocation.MODULE_PATH, moduleName, path);
+  }
+
+  /**
+   * Add a path-like object that contains a package to the source path.
+   *
+   * <p>Anything placed in here will be treated as a compilation unit by default.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * <p><strong>Note:</strong> to add modules, consider using
+   * {@link #addModuleSourcePath(String, PathLike)} instead. You will not be able to mix this
+   * method and that method together.</p>
+   *
+   * @param pathLike the path-like object to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourcePath(PathLike pathLike) {
+    return addPath(StandardLocation.SOURCE_PATH, pathLike);
+  }
+
+  /**
+   * Add a {@link Path NIO Path} that contains a package to the class path.
+   *
+   * <p>Anything placed in here will be treated as a compilation unit by default.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * <p><strong>Note:</strong> to add modules, consider using
+   * {@link #addModuleSourcePath(String, PathLike)} instead. You will not be able to mix this
+   * method and that method together.</p>
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addSourcePath(Path path) {
+    return addPath(StandardLocation.SOURCE_PATH, path);
+  }
+
+  /**
+   * Add a path-like object that contains a module package to the source path.
+   *
+   * <p>Anything placed in here will be treated as a compilation unit by default.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * <p><strong>Note:</strong> to add non-modules, consider using
+   * {@link #addSourcePath(PathLike)} instead. You will not be able to mix this
+   * method and that method together.</p>
+   *
+   * @param moduleName the name of the module to add.
+   * @param pathLike the path-like object to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModuleSourcePath(String moduleName, PathLike pathLike) {
+    return addPath(StandardLocation.MODULE_SOURCE_PATH, moduleName, pathLike);
+  }
+
+  /**
+   * Add a {@link Path NIO Path} that contains a module package to the class path.
+   *
+   * <p>Anything placed in here will be treated as a compilation unit by default.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * <p><strong>Note:</strong> to add non-modules, consider using
+   * {@link #addSourcePath(Path)} instead. You will not be able to mix this
+   * method and that method together.</p>
+   *
+   * @param moduleName the name of the module to add.
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addModuleSourcePath(String moduleName, Path path) {
+    return addPath(StandardLocation.MODULE_SOURCE_PATH, moduleName, path);
+  }
+
+  /**
+   * Add a path-like object that contains a package to compiled annotation processors.
+   *
+   * <p>This will be used for annotation processor discovery.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * @param pathLike the path-like object to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorPath(PathLike pathLike) {
+    return addPath(StandardLocation.ANNOTATION_PROCESSOR_PATH, pathLike);
+  }
+
+  /**
+   * Add a {@link Path NIO Path} that contains a package to compiled annotation processors.
+   *
+   * <p>This will be used for annotation processor discovery.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorPath(Path path) {
+    return addPath(StandardLocation.ANNOTATION_PROCESSOR_PATH, path);
+  }
+
+  /**
+   * Add a path-like object that contains a module package to compiled annotation processors.
+   *
+   * <p>This will be used for annotation processor discovery.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * @param moduleName the name of the module.
+   * @param pathLike the path-like object to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorModulePath(String moduleName, PathLike pathLike) {
+    return addPath(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, moduleName, pathLike);
+  }
+
+  /**
+   * Add a {@link Path NIO Path} that contains a module package to compiled annotation processors.
+   *
+   * <p>This will be used for annotation processor discovery.
+   *
+   * <p>The path can be one of:
+   *
+   * <ul>
+   *   <li>A path to a directory containing a <strong>package</strong>;</li>
+   *   <li>A path to a JAR containing a <strong>package</strong> or <strong>module</strong>;</li>
+   *   <li>A path to a WAR containing a <strong>package</strong> or <strong>module</strong>; or</li>
+   *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
+   * </ul>
+   *
+   * @param moduleName the name of the module.
+   * @param path the path to add.
+   * @return this compiler object for further call chaining.
+   */
+  default C addAnnotationProcessorModulePath(String moduleName, Path path) {
+    return addPath(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, moduleName, path);
+  }
 
   /**
    * Get an <strong>immutable snapshot view</strong> of the current annotation processor options
@@ -200,7 +549,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * Add annotation processors to invoke.
    *
    * <p>This bypasses the discovery process of annotation processors provided in
-   * {@link #addAnnotationProcessorPaths}.
+   * {@link #addAnnotationProcessorPath}.
    *
    * @param annotationProcessors the processors to invoke.
    * @return this compiler object for further call chaining.
@@ -211,7 +560,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * Add annotation processors to invoke.
    *
    * <p>This bypasses the discovery process of annotation processors provided in
-   * {@link #addAnnotationProcessorPaths}.
+   * {@link #addAnnotationProcessorPath}.
    *
    * @param annotationProcessor  the first processor to invoke.
    * @param annotationProcessors additional processors to invoke.

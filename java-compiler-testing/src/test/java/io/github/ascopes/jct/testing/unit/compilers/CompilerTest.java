@@ -16,18 +16,30 @@
 
 package io.github.ascopes.jct.testing.unit.compilers;
 
+import static io.github.ascopes.jct.testing.helpers.MoreMocks.mockCast;
+import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
+import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.withSettings;
 
 import io.github.ascopes.jct.compilers.Compiler;
+import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.testing.helpers.TypeRef;
+import java.nio.file.Path;
 import java.util.stream.Stream;
 import javax.lang.model.SourceVersion;
+import javax.tools.JavaFileManager.Location;
+import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -47,6 +59,50 @@ class CompilerTest {
 
   @Mock
   Compiler<?, ?> compiler;
+
+  @DisplayName("addClassPath(...) tests")
+  @TestFactory
+  Stream<DynamicTest> addClassPathTests() {
+    return addPackagePathTestsFor(
+        "addClassPath",
+        Compiler::addClassPath,
+        Compiler::addClassPath,
+        StandardLocation.CLASS_PATH
+    );
+  }
+
+  @DisplayName("addModulePath(...) tests")
+  @TestFactory
+  Stream<DynamicTest> addModulePathTests() {
+    return addModulePathTestsFor(
+        "addModulePath",
+        Compiler::addModulePath,
+        Compiler::addModulePath,
+        StandardLocation.MODULE_PATH
+    );
+  }
+
+  @DisplayName("addSourcePath(...) tests")
+  @TestFactory
+  Stream<DynamicTest> addSourcePathTests() {
+    return addPackagePathTestsFor(
+        "addSourcePath",
+        Compiler::addSourcePath,
+        Compiler::addSourcePath,
+        StandardLocation.SOURCE_PATH
+    );
+  }
+
+  @DisplayName("addModuleSourcePath(...) tests")
+  @TestFactory
+  Stream<DynamicTest> addModuleSourcePathTests() {
+    return addModulePathTestsFor(
+        "addModuleSourcePath",
+        Compiler::addModuleSourcePath,
+        Compiler::addModuleSourcePath,
+        StandardLocation.MODULE_SOURCE_PATH
+    );
+  }
 
   @DisplayName("releaseVersion(int) should call releaseVersion(String)")
   @ValueSource(ints = {11, 12, 13, 14, 15, 16, 17})
@@ -199,5 +255,242 @@ class CompilerTest {
     return Stream
         .of(SourceVersion.values())
         .map(version -> Arguments.of(version, "" + version.ordinal()));
+  }
+
+  static Stream<DynamicTest> addPackagePathTestsFor(
+      String name,
+      AddPackagePathAliasMethod<PathLike> pathLikeAdder,
+      AddPackagePathAliasMethod<Path> pathAdder,
+      Location location
+  ) {
+    var locName = location.getName();
+
+    var isPackageOriented = dynamicTest(
+        "expect location for " + name + " to not be module-oriented",
+        () -> {
+          // Then
+          assertThat(location)
+              .withFailMessage("%s is module oriented!", locName)
+              .matches(not(Location::isModuleOrientedLocation));
+        }
+    );
+
+    var isNotOutputLocation = dynamicTest(
+        "expect location for " + name + " to not be an output location",
+        () -> {
+          // Then
+          assertThat(location)
+              .withFailMessage("%s is an output location!", locName)
+              .matches(not(Location::isOutputLocation));
+        }
+    );
+
+    var pathLikeReturnsCompiler = dynamicTest(
+        name + "(PathLike) should return the compiler",
+        () -> {
+          // Given
+          var pathLike = stub(PathLike.class);
+          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
+          // Stub this method to keep results consistent, even though we shouldn't call it.
+          // Just keeps the failure test results consistent and meaningful.
+          given(compiler.addPath(any(), any(), any(Path.class))).will(ctx -> compiler);
+          given(pathLikeAdder.add(compiler, pathLike)).willCallRealMethod();
+
+          // When
+          var result = pathLikeAdder.add(compiler, pathLike);
+
+          // Then
+          assertThat(result).isSameAs(compiler);
+        }
+    );
+
+    var pathReturnsCompiler = dynamicTest(
+        name + "(Path) should return the compiler",
+        () -> {
+          // Given
+          var path = stub(Path.class);
+          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
+          // Stub this method to keep results consistent, even though we shouldn't call it.
+          // Just keeps the failure test results consistent and meaningful.
+          given(compiler.addPath(any(), any(), any(Path.class))).will(ctx -> compiler);
+          given(pathAdder.add(compiler, path)).willCallRealMethod();
+
+          // When
+          var result = pathAdder.add(compiler, path);
+
+          // Then
+          assertThat(result).isSameAs(compiler);
+        }
+    );
+
+    var callsAddPathLike = dynamicTest(
+        name + "(PathLike) should delegate to addPath(" + locName + ", PathLike)",
+        () -> {
+          // Given
+          var pathLike = stub(PathLike.class);
+          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
+          given(pathLikeAdder.add(compiler, pathLike)).willCallRealMethod();
+
+          // When
+          pathLikeAdder.add(compiler, pathLike);
+
+          // Then
+          then(compiler).should().addPath(location, pathLike);
+        }
+    );
+
+    var callsAddPath = dynamicTest(
+        name + "(Path) should delegate to addPath(" + locName + ", Path)",
+        () -> {
+          // Given
+          var path = stub(Path.class);
+          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
+          given(pathAdder.add(compiler, path)).willCallRealMethod();
+
+          // When
+          pathAdder.add(compiler, path);
+
+          // Then
+          then(compiler).should().addPath(location, path);
+        }
+    );
+
+    return Stream.of(
+        isPackageOriented,
+        isNotOutputLocation,
+        pathLikeReturnsCompiler,
+        pathReturnsCompiler,
+        callsAddPathLike,
+        callsAddPath
+    );
+  }
+
+  static Stream<DynamicTest> addModulePathTestsFor(
+      String name,
+      AddModulePathAliasMethod<PathLike> pathLikeAdder,
+      AddModulePathAliasMethod<Path> pathAdder,
+      Location location
+  ) {
+    var locName = location.getName();
+    var moduleName = "foobar.baz";
+
+    var isModuleOriented = dynamicTest(
+        "expect location for " + name + " to be module-oriented",
+        () -> {
+          // Then
+          assertThat(location)
+              .withFailMessage("%s is not module-oriented!", locName)
+              .matches(Location::isModuleOrientedLocation);
+        }
+    );
+
+    var isNotOutputLocation = dynamicTest(
+        "expect location for " + name + " to not be an output location",
+        () -> {
+          // Then
+          assertThat(location)
+              .withFailMessage("%s is an output location!", locName)
+              .matches(not(Location::isOutputLocation));
+        }
+    );
+
+    var pathLikeReturnsCompiler = dynamicTest(
+        name + "(String, PathLike) should return the compiler",
+        () -> {
+          // Given
+          var pathLike = stub(PathLike.class);
+          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          // Stub this method to keep results consistent, even though we shouldn't call it.
+          // Just keeps the failure test results consistent and meaningful.
+          given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
+          given(compiler.addPath(any(), any(), any(PathLike.class))).will(ctx -> compiler);
+          given(pathLikeAdder.add(compiler, moduleName, pathLike)).willCallRealMethod();
+
+          // When
+          var result = pathLikeAdder.add(compiler, moduleName, pathLike);
+
+          // Then
+          assertThat(result).isSameAs(compiler);
+        }
+    );
+
+    var pathReturnsCompiler = dynamicTest(
+        name + "(String, Path) should return the compiler",
+        () -> {
+          // Given
+          var path = stub(Path.class);
+          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          // Stub this method to keep results consistent, even though we shouldn't call it.
+          // Just keeps the failure test results consistent and meaningful.
+          given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
+          given(compiler.addPath(any(), any(), any(Path.class))).will(ctx -> compiler);
+          given(pathAdder.add(compiler, moduleName, path)).willCallRealMethod();
+
+          // When
+          var result = pathAdder.add(compiler, moduleName, path);
+
+          // Then
+          assertThat(result).isSameAs(compiler);
+        }
+    );
+
+    var callsAddPathLike = dynamicTest(
+        name + "(String, PathLike) should delegate to addPath(" + locName + ", String, PathLike)",
+        () -> {
+          // Given
+          var pathLike = stub(PathLike.class);
+          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
+          given(pathLikeAdder.add(compiler, moduleName, pathLike)).willCallRealMethod();
+
+          // When
+          pathLikeAdder.add(compiler, moduleName, pathLike);
+
+          // Then
+          then(compiler).should().addPath(location, moduleName, pathLike);
+        }
+    );
+
+    var callsAddPath = dynamicTest(
+        name + "(String, Path) should delegate to addPath(" + locName + ", String, Path)",
+        () -> {
+          // Given
+          var path = stub(Path.class);
+          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
+          given(pathAdder.add(compiler, moduleName, path)).willCallRealMethod();
+
+          // When
+          pathAdder.add(compiler, moduleName, path);
+
+          // Then
+          then(compiler).should().addPath(location, moduleName, path);
+        }
+    );
+
+    return Stream.of(
+        isModuleOriented,
+        isNotOutputLocation,
+        pathLikeReturnsCompiler,
+        pathReturnsCompiler,
+        callsAddPathLike,
+        callsAddPath
+    );
+  }
+
+  @FunctionalInterface
+  interface AddPackagePathAliasMethod<P> {
+
+    Compiler<?, ?> add(Compiler<?, ?> compiler, P path);
+  }
+
+  @FunctionalInterface
+  interface AddModulePathAliasMethod<P> {
+
+    Compiler<?, ?> add(Compiler<?, ?> compiler, String moduleName, P path);
   }
 }
