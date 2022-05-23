@@ -112,11 +112,6 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
       AnnotationProcessorDiscovery.INCLUDE_DEPENDENCIES;
 
   /**
-   * Default charset to use for reading and writing files ({@link StandardCharsets#UTF_8}).
-   */
-  Charset DEFAULT_FILE_CHARSET = StandardCharsets.UTF_8;
-
-  /**
    * Default charset to use for compiler logs ({@link StandardCharsets#UTF_8}).
    */
   Charset DEFAULT_LOG_CHARSET = StandardCharsets.UTF_8;
