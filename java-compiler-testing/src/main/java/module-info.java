@@ -17,7 +17,6 @@
 /**
  * Java compiler testing facilities.
  */
-@SuppressWarnings("module not found")
 module io.github.ascopes.jct {
   requires transitive java.compiler;
   requires java.management;
