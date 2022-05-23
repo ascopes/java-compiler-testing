@@ -262,9 +262,6 @@ public final class JarContainer implements Container {
   private class PackageFileSystemHolder {
 
     private final Map<String, PathLike> packages;
-
-    // TODO: totally ditch having a file system here as we cannot work around it allowing one
-    //  instance per JVM. Instead, I'll have to implement all of this manually...
     private final FileSystem fileSystem;
 
     private PackageFileSystemHolder() throws IOException {
