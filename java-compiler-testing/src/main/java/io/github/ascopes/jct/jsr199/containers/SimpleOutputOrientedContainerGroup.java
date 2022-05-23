@@ -84,8 +84,14 @@ public class SimpleOutputOrientedContainerGroup
 
   @Override
   @SuppressWarnings("resource")
-  public void addPath(String module, PathLike path) {
-    forModule(module).addPath(path);
+  public void addModule(String module, Container container) {
+    forModule(module).addPackage(container);
+  }
+
+  @Override
+  @SuppressWarnings("resource")
+  public void addModule(String module, PathLike path) {
+    forModule(module).addPackage(path);
   }
 
   @Override
@@ -164,9 +170,9 @@ public class SimpleOutputOrientedContainerGroup
           // in there, as it reduces the complexity of this tenfold and means we don't have to
           // worry about creating more in-memory locations on the fly.
           var group = new SimpleOutputOrientedModuleContainerGroup(moduleLocation);
-          var path = new SubPath(getContainers().iterator().next().getPath(), moduleName);
+          var path = new SubPath(getPackages().iterator().next().getPath(), moduleName);
           IoExceptionUtils.uncheckedIo(() -> Files.createDirectories(path.getPath()));
-          group.addPath(path);
+          group.addPackage(path);
           return group;
         });
   }
@@ -182,6 +188,11 @@ public class SimpleOutputOrientedContainerGroup
   }
 
   @Override
+  public Map<ModuleLocation, ? extends PackageOrientedContainerGroup> getModules() {
+    return null;
+  }
+
+  @Override
   public boolean hasLocation(ModuleLocation location) {
     return modules.containsKey(location);
   }
@@ -193,10 +204,10 @@ public class SimpleOutputOrientedContainerGroup
         .stream()
         .collect(Collectors.toUnmodifiableMap(
             entry -> entry.getKey().getModuleName(),
-            entry -> entry.getValue().getContainers()
+            entry -> entry.getValue().getPackages()
         ));
 
-    return new ContainerClassLoader(location, getContainers(), moduleMapping);
+    return new ContainerClassLoader(location, getPackages(), moduleMapping);
   }
 
   /**

@@ -19,6 +19,7 @@ package io.github.ascopes.jct.examples.lombok;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.assertions.CompilationAssert;
+import io.github.ascopes.jct.compilers.Compiler.Logging;
 import io.github.ascopes.jct.compilers.Compilers;
 import io.github.ascopes.jct.paths.RamPath;
 import java.util.stream.IntStream;
@@ -63,6 +64,8 @@ class LombokIntegrationTest {
         .javac()
         .addPath(StandardLocation.SOURCE_PATH, sources)
         .release(version)
+        .fileManagerLogging(Logging.ENABLED)
+        .diagnosticLogging(Logging.STACKTRACES)
         .compile();
 
     CompilationAssert.assertThatCompilation(compilation)

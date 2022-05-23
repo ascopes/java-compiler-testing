@@ -57,7 +57,12 @@ public abstract class AbstractPackageOrientedContainerGroup
   }
 
   @Override
-  public void addPath(PathLike path) {
+  public void addPackage(Container container) {
+    containers.add(container);
+  }
+
+  @Override
+  public void addPackage(PathLike path) {
     var actualPath = path.getPath();
 
     var archive = ARCHIVE_EXTENSIONS
@@ -68,7 +73,7 @@ public abstract class AbstractPackageOrientedContainerGroup
         ? new JarContainer(getLocation(), path, release)
         : new DirectoryContainer(getLocation(), path);
 
-    containers.add(container);
+    addPackage(container);
   }
 
   @Override
@@ -162,6 +167,11 @@ public abstract class AbstractPackageOrientedContainerGroup
   }
 
   @Override
+  public final List<? extends Container> getPackages() {
+    return Collections.unmodifiableList(containers);
+  }
+
+  @Override
   public <S> Optional<ServiceLoader<S>> getServiceLoader(Class<S> service) {
     var location = getLocation();
 
@@ -201,10 +211,6 @@ public abstract class AbstractPackageOrientedContainerGroup
   }
 
   protected ContainerClassLoader createClassLoader() {
-    return new ContainerClassLoader(getLocation(), getContainers());
-  }
-
-  protected final List<? extends Container> getContainers() {
-    return Collections.unmodifiableList(containers);
+    return new ContainerClassLoader(getLocation(), getPackages());
   }
 }

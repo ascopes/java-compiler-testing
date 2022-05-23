@@ -80,35 +80,19 @@ public class SimpleFileManager implements FileManager {
       var moduleLocation = (ModuleLocation) location;
 
       if (location.isOutputLocation()) {
-        outputs
-            .computeIfAbsent(
-                moduleLocation.getParent(),
-                parent -> new SimpleOutputOrientedContainerGroup(parent, release)
-            )
-            .addPath(moduleLocation.getModuleName(), path);
+        getOrCreateOutput(moduleLocation.getParent())
+            .addModule(moduleLocation.getModuleName(), path);
       } else {
-        modules
-            .computeIfAbsent(
-                moduleLocation.getParent(),
-                parent -> new SimpleModuleOrientedContainerGroup(parent, release)
-            )
-            .addPath(moduleLocation.getModuleName(), path);
+        getOrCreateModule(moduleLocation.getParent())
+            .addModule(moduleLocation.getModuleName(), path);
       }
     } else if (location.isOutputLocation()) {
-      outputs
-          .computeIfAbsent(
-              location,
-              parent -> new SimpleOutputOrientedContainerGroup(parent, release)
-          )
-          .addPath(path);
+      getOrCreateOutput(location)
+          .addPackage(path);
 
     } else if (location.isModuleOrientedLocation()) {
       // Attempt to find modules.
-      var moduleGroup = modules
-          .computeIfAbsent(
-              location,
-              parent -> new SimpleModuleOrientedContainerGroup(parent, release)
-          );
+      var moduleGroup = getOrCreateModule(location);
 
       ModuleFinder
           .of(path.getPath())
@@ -118,15 +102,11 @@ public class SimpleFileManager implements FileManager {
           .map(ModuleDescriptor::name)
           .forEach(module -> moduleGroup
               .forModule(module)
-              .addPath(new SubPath(path, module)));
+              .addPackage(new SubPath(path, module)));
 
     } else {
-      packages
-          .computeIfAbsent(
-              location,
-              parent -> new SimplePackageOrientedContainerGroup(parent, release)
-          )
-          .addPath(path);
+      getOrCreatePackage(location)
+          .addPackage(path);
     }
   }
 
@@ -137,37 +117,92 @@ public class SimpleFileManager implements FileManager {
       var moduleLocation = (ModuleLocation) location;
 
       if (location.isOutputLocation()) {
-        outputs
-            .computeIfAbsent(
-                moduleLocation.getParent(),
-                parent -> new SimpleOutputOrientedContainerGroup(parent, release)
-            )
+        getOrCreateOutput(moduleLocation.getParent())
             .forModule(moduleLocation.getModuleName());
 
       } else {
-        modules
-            .computeIfAbsent(
-                moduleLocation.getParent(),
-                parent -> new SimpleModuleOrientedContainerGroup(parent, release)
-            )
+        getOrCreateModule(moduleLocation.getParent())
             .forModule(moduleLocation.getModuleName());
       }
     } else if (location.isOutputLocation()) {
-      outputs.computeIfAbsent(
-          location,
-          ignored -> new SimpleOutputOrientedContainerGroup(location, release)
-      );
+      getOrCreateOutput(location);
     } else if (location.isModuleOrientedLocation()) {
-      modules.computeIfAbsent(
-          location,
-          ignored -> new SimpleModuleOrientedContainerGroup(location, release)
-      );
+      getOrCreateModule(location);
     } else {
-      packages.computeIfAbsent(
-          location,
-          ignored -> new SimplePackageOrientedContainerGroup(location, release)
-      );
+      getOrCreatePackage(location);
     }
+  }
+
+  @Override
+  @SuppressWarnings("resource")
+  public void copyContainers(Location from, Location to) {
+    if (from.isOutputLocation()) {
+      if (!to.isOutputLocation()) {
+        throw new IllegalArgumentException(
+            "Expected " + from.getName() + " and " + to.getName() + " to both be output locations"
+        );
+      }
+    }
+
+    if (from.isModuleOrientedLocation()) {
+      if (!to.isModuleOrientedLocation()) {
+        throw new IllegalArgumentException(
+            "Expected " + from.getName() + " and " + to.getName() + " to both be "
+                + "module-oriented locations"
+        );
+      }
+    }
+
+    if (from.isOutputLocation()) {
+      var toOutputs = getOrCreateOutput(to);
+
+      Optional
+          .ofNullable(outputs.get(from))
+          .ifPresent(fromOutputs -> {
+            fromOutputs.getPackages().forEach(toOutputs::addPackage);
+            fromOutputs.getModules().forEach((module, containers) -> {
+              for (var packageContainer : containers.getPackages()) {
+                toOutputs.addModule(module.getModuleName(), packageContainer);
+              }
+            });
+          });
+
+    } else if (from.isModuleOrientedLocation()) {
+      var toModules = getOrCreateModule(to);
+
+      Optional
+          .ofNullable(modules.get(from))
+          .map(ModuleOrientedContainerGroup::getModules)
+          .ifPresent(fromModules -> {
+            fromModules.forEach((module, containers) -> {
+              for (var packageContainer : containers.getPackages()) {
+                toModules.addModule(module.getModuleName(), packageContainer);
+              }
+            });
+          });
+
+    } else {
+      var toPackages = getOrCreatePackage(to);
+
+      Optional
+          .ofNullable(packages.get(from))
+          .ifPresent(fromPackages -> fromPackages.getPackages().forEach(toPackages::addPackage));
+    }
+  }
+
+  @Override
+  public Optional<PackageOrientedContainerGroup> getPackageContainerGroup(Location location) {
+    return Optional.ofNullable(packages.get(location));
+  }
+
+  @Override
+  public Optional<ModuleOrientedContainerGroup> getModuleContainer(Location location) {
+    return Optional.ofNullable(modules.get(location));
+  }
+
+  @Override
+  public Optional<OutputOrientedContainerGroup> getOutputContainers(Location location) {
+    return Optional.ofNullable(outputs.get(location));
   }
 
   @Nullable
@@ -409,6 +444,34 @@ public class SimpleFileManager implements FileManager {
     return Optional
         .ofNullable(packages.get(location))
         .or(() -> Optional.ofNullable(outputs.get(location)));
+  }
+
+  private PackageOrientedContainerGroup getOrCreatePackage(Location location) {
+    if (location instanceof ModuleLocation) {
+      throw new IllegalArgumentException("Cannot get a package for a module like this");
+    }
+
+    return packages
+        .computeIfAbsent(
+            location,
+            unused -> new SimplePackageOrientedContainerGroup(location, release)
+        );
+  }
+
+  private ModuleOrientedContainerGroup getOrCreateModule(Location location) {
+    return modules
+        .computeIfAbsent(
+            location,
+            unused -> new SimpleModuleOrientedContainerGroup(location, release)
+        );
+  }
+
+  private OutputOrientedContainerGroup getOrCreateOutput(Location location) {
+    return outputs
+        .computeIfAbsent(
+            location,
+            unused -> new SimpleOutputOrientedContainerGroup(location, release)
+        );
   }
 
   private void requireOutputOrModuleOrientedLocation(Location location) {

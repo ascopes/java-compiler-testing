@@ -45,7 +45,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContainerGroup {
+          public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContainerGroup {
 
   private final Location location;
   private final Map<ModuleLocation, SimpleModuleOrientedModuleContainerGroup> modules;
@@ -86,8 +86,14 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
 
   @Override
   @SuppressWarnings("resource")
-  public void addPath(String module, PathLike path) {
-    forModule(module).addPath(path);
+  public void addModule(String module, Container container) {
+    forModule(module).addPackage(container);
+  }
+
+  @Override
+  @SuppressWarnings("resource")
+  public void addModule(String module, PathLike path) {
+    forModule(module).addPackage(path);
   }
 
   @Override
@@ -133,6 +139,11 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
   }
 
   @Override
+  public Map<ModuleLocation, ? extends PackageOrientedContainerGroup> getModules() {
+    return Map.copyOf(modules);
+  }
+
+  @Override
   public boolean hasLocation(ModuleLocation location) {
     return modules.containsKey(location);
   }
@@ -144,7 +155,7 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
     var finders = modules
         .values()
         .stream()
-        .map(SimpleModuleOrientedModuleContainerGroup::getContainers)
+        .map(SimpleModuleOrientedModuleContainerGroup::getPackages)
         .flatMap(List::stream)
         .map(Container::getModuleFinder)
         .toArray(ModuleFinder[]::new);
@@ -176,7 +187,7 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
         .stream()
         .collect(Collectors.toUnmodifiableMap(
             entry -> entry.getKey().getModuleName(),
-            entry -> entry.getValue().getContainers()
+            entry -> entry.getValue().getPackages()
         ));
 
     return new ContainerClassLoader(location, moduleMapping);

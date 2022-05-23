@@ -30,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -72,7 +71,7 @@ public class DirectoryContainer implements Container {
 
   @Override
   public boolean contains(PathFileObject fileObject) {
-    var path = fileObject.getPath();
+    var path = fileObject.getFullPath();
     return path.startsWith(root.getPath()) && Files.isRegularFile(path);
   }
 
@@ -103,7 +102,7 @@ public class DirectoryContainer implements Container {
     return Optional
         .of(FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName))
         .filter(Files::isRegularFile)
-        .map(PathFileObject.forLocation(location));
+        .map(path -> new PathFileObject(location, root.getPath(), path));
   }
 
   @Override
@@ -113,7 +112,7 @@ public class DirectoryContainer implements Container {
   ) {
     return Optional
         .of(FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName))
-        .map(PathFileObject.forLocation(location));
+        .map(path -> new PathFileObject(location, root.getPath(), path));
   }
 
   @Override
@@ -124,7 +123,7 @@ public class DirectoryContainer implements Container {
     return Optional
         .of(FileUtils.binaryNameToPath(root.getPath(), binaryName, kind))
         .filter(Files::isRegularFile)
-        .map(PathFileObject.forLocation(location));
+        .map(path -> new PathFileObject(location, root.getPath(), path));
   }
 
   @Override
@@ -134,7 +133,7 @@ public class DirectoryContainer implements Container {
   ) {
     return Optional
         .of(FileUtils.binaryNameToPath(root.getPath(), className, kind))
-        .map(PathFileObject.forLocation(location));
+        .map(path -> new PathFileObject(location, root.getPath(), path));
   }
 
   @Override
@@ -169,12 +168,9 @@ public class DirectoryContainer implements Container {
 
   @Override
   public Optional<String> inferBinaryName(PathFileObject javaFileObject) {
-    return Optional
-        .of(javaFileObject.getPath())
-        .filter(path -> path.startsWith(root.getPath()))
-        .filter(Files::isRegularFile)
-        .map(path -> root.getPath().relativize(path))
-        .map(FileUtils::pathToBinaryName);
+    return javaFileObject.getFullPath().startsWith(root.getPath())
+        ? Optional.of(FileUtils.pathToBinaryName(javaFileObject.getRelativePath()))
+        : Optional.empty();
   }
 
   @Override
@@ -190,7 +186,7 @@ public class DirectoryContainer implements Container {
     try (var walker = Files.walk(basePath, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
       return walker
           .filter(FileUtils.fileWithAnyKind(kinds))
-          .map(PathFileObject.forLocation(location))
+          .map(path -> new PathFileObject(location, root.getPath(), path))
           .collect(Collectors.toUnmodifiableList());
     } catch (NoSuchFileException ex) {
       return List.of();

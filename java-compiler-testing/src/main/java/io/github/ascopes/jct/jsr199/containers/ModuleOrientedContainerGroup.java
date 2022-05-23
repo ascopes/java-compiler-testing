@@ -19,6 +19,7 @@ package io.github.ascopes.jct.jsr199.containers;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
 import io.github.ascopes.jct.paths.PathLike;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
@@ -37,12 +38,20 @@ import org.apiguardian.api.API.Status;
 public interface ModuleOrientedContainerGroup extends ContainerGroup {
 
   /**
+   * Add a container to this group.
+   *
+   * @param module the module that the container is for.
+   * @param container the container to add.
+   */
+  void addModule(String module, Container container);
+
+  /**
    * Add a path to this group for a module.
    *
    * @param module the name of the module that this is for.
    * @param path   the path to add.
    */
-  void addPath(String module, PathLike path);
+  void addModule(String module, PathLike path);
 
   /**
    * Get the {@link PackageOrientedContainerGroup} for a given module name, creating it if it does
@@ -67,6 +76,13 @@ public interface ModuleOrientedContainerGroup extends ContainerGroup {
    * @return the locations that are modules.
    */
   List<Set<Location>> getLocationsForModules();
+
+  /**
+   * Get the module container groups in this group.
+   *
+   * @return the container groups.
+   */
+  Map<ModuleLocation, ? extends PackageOrientedContainerGroup> getModules();
 
   /**
    * Determine if this group contains a given module.
