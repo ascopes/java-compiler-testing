@@ -19,6 +19,7 @@ package io.github.ascopes.jct.examples.lombok;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.assertions.CompilationAssert;
+import io.github.ascopes.jct.assertions.JctAssertions;
 import io.github.ascopes.jct.compilers.Compiler.Logging;
 import io.github.ascopes.jct.compilers.Compilers;
 import io.github.ascopes.jct.paths.RamPath;
@@ -68,7 +69,8 @@ class LombokIntegrationTest {
         .diagnosticLogging(Logging.STACKTRACES)
         .compile();
 
-    CompilationAssert.assertThatCompilation(compilation)
+    JctAssertions
+        .assertThatCompilation(compilation)
         .isSuccessful();
 
     // Github Issue #9 sanity check - Improve annotation processor discovery mechanism

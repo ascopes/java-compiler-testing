@@ -48,6 +48,37 @@ class StringUtilsTest implements StaticClassTestTemplate {
     return StringUtils.class;
   }
 
+  @DisplayName("toWordedList() returns the expected results")
+  @MethodSource("toWordedListCases")
+  @ParameterizedTest(name = "expect {0} to produce <{3}> when separated by <{1}> and <{2}>")
+  void toWordedListReturnsTheExpectedResults(
+      List<String> inputs,
+      String connector,
+      String lastConnector,
+      String expected
+  ) {
+    // When
+    var actual = StringUtils.toWordedList(inputs, connector, lastConnector);
+
+    // Then
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  static Stream<Arguments> toWordedListCases() {
+    return Stream.of(
+        of(List.of(), ", ", ", and ", ""),
+        of(List.of("foo"), ", ", ", and ", "foo"),
+        of(List.of("foo", "bar"), ", ", ", and ", "foo, and bar"),
+        of(List.of("foo", "bar", "baz"), ", ", ", and ", "foo, bar, and baz"),
+        of(List.of("foo", "bar", "baz", "bork"), ", ", ", and ", "foo, bar, baz, and bork"),
+
+        of(List.of(), ", or ", ", or even ", ""),
+        of(List.of("foo"), ", or ", ", or even ", "foo"),
+        of(List.of("foo", "bar"), ", or ", ", or even ", "foo, or even bar"),
+        of(List.of("foo", "bar", "baz"), ", or ", ", or even ", "foo, or bar, or even baz")
+    );
+  }
+
   @DisplayName("leftPad() pads the string on the left")
   @CsvSource({
       "'foo', -1, 'x', 'foo'",

@@ -252,4 +252,24 @@ class IterableUtilsTest implements StaticClassTestTemplate {
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("dave[2], dave[4], dave[5]");
   }
+
+  @DisplayName("asList produces the expected result for one item")
+  @Test
+  void asListProducesTheExpectedResultForOneItem() {
+    // When
+    var list = IterableUtils.asList("foo");
+
+    // Then
+    assertThat(list).singleElement().isEqualTo("foo");
+  }
+
+  @DisplayName("asList produces the expected result for multiple items")
+  @Test
+  void asListProducesTheExpectedResultForMultipleItems() {
+    // When
+    var list = IterableUtils.asList("foo", "bar", "baz", "bork");
+
+    // Then
+    assertThat(list).containsExactly("foo", "bar", "baz", "bork");
+  }
 }
