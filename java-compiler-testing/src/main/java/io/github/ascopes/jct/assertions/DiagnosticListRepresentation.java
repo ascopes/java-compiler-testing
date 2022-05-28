@@ -32,12 +32,21 @@ import org.assertj.core.presentation.Representation;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class DiagnosticCollectionRepresentation implements Representation {
+public class DiagnosticListRepresentation implements Representation {
+
+  private static final DiagnosticListRepresentation INSTANCE
+      = new DiagnosticListRepresentation();
 
   /**
-   * Initialize this diagnostic collection representation.
+   * Get an instance of this diagnostic collection representation.
+   *
+   * @return the instance.
    */
-  public DiagnosticCollectionRepresentation() {
+  public static DiagnosticListRepresentation getInstance() {
+    return INSTANCE;
+  }
+
+  private DiagnosticListRepresentation() {
     // Nothing to see here, move along now.
   }
 
@@ -52,7 +61,7 @@ public class DiagnosticCollectionRepresentation implements Representation {
 
     return diagnostics
         .stream()
-        .map(new DiagnosticRepresentation()::toStringOf)
+        .map(DiagnosticRepresentation.getInstance()::toStringOf)
         .map(" - "::concat)
         .collect(joining("\n\n"));
   }

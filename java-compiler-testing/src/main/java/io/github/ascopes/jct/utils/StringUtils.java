@@ -21,6 +21,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -33,6 +34,7 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class StringUtils {
 
+  private static final Set<String> ES_ENDINGS = Set.of("s", "z", "ch", "sh", "x");
   private static final BigDecimal THOUSAND = BigDecimal.valueOf(1000);
   private static final List<String> TIME_UNITS = List.of("ns", "µs", "ms", "s");
   private static final DecimalFormat TIME_FORMAT = new DecimalFormat("0.##");
@@ -41,6 +43,66 @@ public final class StringUtils {
 
   private StringUtils() {
     throw new UnsupportedOperationException("static-only class");
+  }
+
+  /**
+   * Take the given list of strings and produce a connected single string, separating all but the
+   * last element by the {@code connector} value, and the last element by the {@code lastConnector}
+   * element.
+   *
+   * <p>This is designed to be able to take an input such as {@code List.of("foo", "bar", "baz")},
+   * and be able to produce a string result such as {@code "foo, bar, or baz"} (where
+   * {@code connector} in this case would be {@code ", "} and {@code lastConnector} would be
+   * {@code ", or "}.
+   *
+   * <p>If no arguments are available, then an empty string is output instead.
+   *
+   * <p>Effectively, this is a more complex version of
+   * {@link String#join(CharSequence, CharSequence...)}.
+   *
+   * @param words         the words to connect.
+   * @param connector     the connector string to use.
+   * @param lastConnector the last connector string to use.
+   * @return the resulting string.
+   */
+  public static String toWordedList(
+      List<? extends CharSequence> words,
+      CharSequence connector,
+      CharSequence lastConnector
+  ) {
+    if (words.isEmpty()) {
+      return "";
+    }
+
+    var builder = new StringBuilder(words.get(0));
+
+    var index = 1;
+
+    for (; index < words.size() - 1; ++index) {
+      builder.append(connector).append(words.get(index));
+    }
+
+    if (index < words.size()) {
+      builder.append(lastConnector).append(words.get(index));
+    }
+
+    return builder.toString();
+  }
+
+  /**
+   * Left-pad the given content with the given padding char until it is the given length.
+   *
+   * @param content     the content to process.
+   * @param length      the max length of the resultant content.
+   * @param paddingChar the character to pad with.
+   * @return the padded string.
+   */
+  public static String leftPad(String content, int length, char paddingChar) {
+    var builder = new StringBuilder();
+    while (builder.length() + content.length() < length) {
+      builder.append(paddingChar);
+    }
+    return builder.append(content).toString();
   }
 
   /**
@@ -70,22 +132,6 @@ public final class StringUtils {
     return currentLine == lineNumber
         ? index
         : -1;
-  }
-
-  /**
-   * Left-pad the given content with the given padding char until it is the given length.
-   *
-   * @param content     the content to process.
-   * @param length      the max length of the resultant content.
-   * @param paddingChar the character to pad with.
-   * @return the padded string.
-   */
-  public static String leftPad(String content, int length, char paddingChar) {
-    var builder = new StringBuilder();
-    while (builder.length() + content.length() < length) {
-      builder.append(paddingChar);
-    }
-    return builder.append(content).toString();
   }
 
   /**

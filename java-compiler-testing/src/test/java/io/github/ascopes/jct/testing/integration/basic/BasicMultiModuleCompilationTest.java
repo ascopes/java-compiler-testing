@@ -17,6 +17,7 @@
 package io.github.ascopes.jct.testing.integration.basic;
 
 import io.github.ascopes.jct.assertions.CompilationAssert;
+import io.github.ascopes.jct.assertions.JctAssertions;
 import io.github.ascopes.jct.compilers.Compiler.Logging;
 import io.github.ascopes.jct.compilers.Compilers;
 import io.github.ascopes.jct.paths.RamPath;
@@ -69,7 +70,7 @@ class BasicMultiModuleCompilationTest {
         .release(version)
         .compile();
 
-    CompilationAssert.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
 
     // TODO(ascopes): fix this to work with the file manager rewrite.
     //CompilationAssert.assertThatCompilation(compilation)
@@ -119,7 +120,7 @@ class BasicMultiModuleCompilationTest {
         //.fileManagerLogging(Logging.ENABLED)
         .compile();
 
-    CompilationAssert.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
 
     // TODO(ascopes): fix this to work with the file manager rewrite.
     //CompilationAssert.assertThatCompilation(compilation)
@@ -185,7 +186,7 @@ class BasicMultiModuleCompilationTest {
         .release(version)
         .compile();
 
-    CompilationAssert.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
 
     // TODO(ascopes): fix this to work with the file manager rewrite.
     //CompilationAssert.assertThatCompilation(compilation)
@@ -266,7 +267,7 @@ class BasicMultiModuleCompilationTest {
         .release(version)
         .compile();
 
-    CompilationAssert.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
 
     // TODO(ascopes): fix this to work with the file manager rewrite.
     //CompilationAssert.assertThatCompilation(compilation)

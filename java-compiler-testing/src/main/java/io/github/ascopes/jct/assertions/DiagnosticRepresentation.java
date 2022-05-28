@@ -39,13 +39,22 @@ import org.assertj.core.presentation.Representation;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class DiagnosticRepresentation implements Representation {
 
+  private static final DiagnosticRepresentation INSTANCE
+      = new DiagnosticRepresentation();
+
+  /**
+   * Get an instance of this diagnostic representation.
+   *
+   * @return the instance.
+   */
+  public static DiagnosticRepresentation getInstance() {
+    return INSTANCE;
+  }
+
   private static final int ADDITIONAL_CONTEXT_LINES = 2;
   private static final String PADDING = " ".repeat(4);
 
-  /**
-   * Initialize this diagnostic representation.
-   */
-  public DiagnosticRepresentation() {
+  private DiagnosticRepresentation() {
     // Nothing to see here, move along now.
   }
 

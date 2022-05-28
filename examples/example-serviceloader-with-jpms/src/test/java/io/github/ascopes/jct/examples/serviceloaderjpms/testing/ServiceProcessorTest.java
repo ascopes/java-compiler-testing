@@ -17,6 +17,7 @@
 package io.github.ascopes.jct.examples.serviceloaderjpms.testing;
 
 import io.github.ascopes.jct.assertions.CompilationAssert;
+import io.github.ascopes.jct.assertions.JctAssertions;
 import io.github.ascopes.jct.compilers.Compilers;
 import io.github.ascopes.jct.examples.serviceloaderjpms.ServiceProcessor;
 import io.github.ascopes.jct.paths.RamPath;
@@ -62,7 +63,8 @@ class ServiceProcessorTest {
         .release(11)
         .compile();
 
-    CompilationAssert.assertThatCompilation(compilation)
+    JctAssertions
+        .assertThatCompilation(compilation)
         .isSuccessfulWithoutWarnings();
         // TODO(ascopes): fix this to work with the file manager rewrite.
         //.classOutput()

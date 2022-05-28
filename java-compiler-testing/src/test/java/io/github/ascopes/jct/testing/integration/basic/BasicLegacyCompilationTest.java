@@ -17,6 +17,7 @@
 package io.github.ascopes.jct.testing.integration.basic;
 
 import io.github.ascopes.jct.assertions.CompilationAssert;
+import io.github.ascopes.jct.assertions.JctAssertions;
 import io.github.ascopes.jct.compilers.Compiler.Logging;
 import io.github.ascopes.jct.compilers.Compilers;
 import io.github.ascopes.jct.paths.RamPath;
@@ -62,7 +63,7 @@ class BasicLegacyCompilationTest {
         .release(version)
         .compile();
 
-    CompilationAssert.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
   }
 
   @DisplayName("I can compile a 'Hello, World!' program with ecj")
@@ -90,7 +91,7 @@ class BasicLegacyCompilationTest {
         .release(version)
         .compile();
 
-    CompilationAssert.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
   }
 
   static IntStream javacVersions() {

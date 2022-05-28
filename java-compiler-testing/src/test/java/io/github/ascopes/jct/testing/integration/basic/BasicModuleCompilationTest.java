@@ -17,6 +17,7 @@
 package io.github.ascopes.jct.testing.integration.basic;
 
 import io.github.ascopes.jct.assertions.CompilationAssert;
+import io.github.ascopes.jct.assertions.JctAssertions;
 import io.github.ascopes.jct.compilers.Compilers;
 import io.github.ascopes.jct.paths.RamPath;
 import io.github.ascopes.jct.testing.helpers.Skipping;
@@ -69,7 +70,7 @@ class BasicModuleCompilationTest {
         .release(version)
         .compile();
 
-    CompilationAssert.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
   }
 
   @DisplayName("I can compile a 'Hello, World!' module program with ecj")
@@ -106,7 +107,7 @@ class BasicModuleCompilationTest {
         .release(version)
         .compile();
 
-    CompilationAssert.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
   }
 
   static IntStream javacVersions() {
