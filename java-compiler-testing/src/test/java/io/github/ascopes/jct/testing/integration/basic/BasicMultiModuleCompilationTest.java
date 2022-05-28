@@ -20,10 +20,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import static io.github.ascopes.jct.paths.RamPath.createPath;
 
 import io.github.ascopes.jct.compilers.Compilable;
-import io.github.ascopes.jct.compilers.ecj.EcjCompiler;
-import io.github.ascopes.jct.junit.EcjCompilers;
 import io.github.ascopes.jct.junit.JavacCompilers;
-import io.github.ascopes.jct.testing.helpers.Skipping;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,15 +33,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 @DisplayName("Basic multi-module compilation integration tests")
 class BasicMultiModuleCompilationTest {
 
+  // We skip ECJ as it does not support handling modules correctly on a non-default file system.
   @DisplayName("I can compile a single module using multi-module layout")
   @JavacCompilers(modules = true)
-  @EcjCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")
   void singleModuleInMultiModuleLayout(Compilable<?, ?> compiler) {
-    if (compiler instanceof EcjCompiler) {
-      Skipping.becauseEcjFailsToSupportModulesCorrectly();
-    }
-
     var source = createPath("hello.world")
         .createFile(
             "com/example/HelloWorld.java",
@@ -84,15 +77,11 @@ class BasicMultiModuleCompilationTest {
     //    .isNotEmptyFile();
   }
 
+  // We skip ECJ as it does not support handling modules correctly on a non-default file system.
   @DisplayName("I can compile multiple modules using multi-module layout")
   @JavacCompilers(modules = true)
-  @EcjCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")
   void multipleModulesInMultiModuleLayout(Compilable<?, ?> compiler) {
-    if (compiler instanceof EcjCompiler) {
-      Skipping.becauseEcjFailsToSupportModulesCorrectly();
-    }
-
     var helloWorld = createPath("hello.world")
         .createFile(
             "com/example/HelloWorld.java",
