@@ -28,10 +28,10 @@ import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
-import io.github.ascopes.jct.compilers.Compiler.AnnotationProcessorDiscovery;
-import io.github.ascopes.jct.compilers.Compiler.CompilerConfigurer;
-import io.github.ascopes.jct.compilers.Compiler.Logging;
+import io.github.ascopes.jct.compilers.AnnotationProcessorDiscovery;
+import io.github.ascopes.jct.compilers.CompilerConfigurer;
 import io.github.ascopes.jct.compilers.FlagBuilder;
+import io.github.ascopes.jct.compilers.LoggingMode;
 import io.github.ascopes.jct.compilers.SimpleCompilationFactory;
 import io.github.ascopes.jct.compilers.SimpleCompiler;
 import io.github.ascopes.jct.compilers.SimpleFileManagerTemplate;
@@ -214,12 +214,13 @@ class SimpleCompilerTest {
     }
   }
 
-  @DisplayName("Applying a configurer invokes the configurer with the compiler")
+  @DisplayName("Applying a throwable configurer invokes the configurer with the compiler")
   @Test
-  void applyingConfigurerInvokesConfigurerWithCompiler() throws Exception {
+  void applyingThrowableConfigurerInvokesConfigurerWithCompiler() throws Exception {
     // Given
     var compiler = new StubbedCompiler();
-    var configurer = mockCast(new TypeRef<CompilerConfigurer<StubbedCompiler, Exception>>() {});
+    var type = new TypeRef<CompilerConfigurer<StubbedCompiler, Exception>>() {};
+    var configurer = mockCast(type);
 
     // When
     var result = compiler.configure(configurer);
@@ -556,25 +557,25 @@ class SimpleCompilerTest {
   @TestFactory
   AttrTestPack<?> fileManagerLoggingWorksAsExpected() {
     return AttrTestPack.forEnum(
-        "fileManagerLogging",
-        StubbedCompiler::getFileManagerLogging,
-        StubbedCompiler::fileManagerLogging,
+        "fileManagerLoggingMode",
+        StubbedCompiler::getFileManagerLoggingMode,
+        StubbedCompiler::fileManagerLoggingMode,
         NullTests.EXPECT_DISALLOW,
-        StubbedCompiler.DEFAULT_FILE_MANAGER_LOGGING,
-        Logging.class
+        StubbedCompiler.DEFAULT_FILE_MANAGER_LOGGING_MODE,
+        LoggingMode.class
     );
   }
 
-  @DisplayName("getDiagnosticLogging and diagnosticLogging tests")
+  @DisplayName("getDiagnosticLoggingMode and diagnosticLogging tests")
   @TestFactory
-  AttrTestPack<?> diagnosticLoggingWorksAsExpected() {
+  AttrTestPack<?> diagnosticLoggingModeWorksAsExpected() {
     return AttrTestPack.forEnum(
-        "diagnosticLogging",
-        StubbedCompiler::getDiagnosticLogging,
-        StubbedCompiler::diagnosticLogging,
+        "diagnosticLoggingMode",
+        StubbedCompiler::getDiagnosticLoggingMode,
+        StubbedCompiler::diagnosticLoggingMode,
         NullTests.EXPECT_DISALLOW,
-        StubbedCompiler.DEFAULT_DIAGNOSTIC_LOGGING,
-        Logging.class
+        StubbedCompiler.DEFAULT_DIAGNOSTIC_LOGGING_MODE,
+        LoggingMode.class
     );
   }
 

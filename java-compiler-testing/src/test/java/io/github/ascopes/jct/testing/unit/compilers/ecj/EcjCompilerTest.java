@@ -34,11 +34,11 @@ import org.junit.jupiter.api.Test;
 @DisplayName("EcjCompiler tests")
 class EcjCompilerTest {
 
-  @DisplayName("compilers have the expected name")
+  @DisplayName("compilers have the expected default name")
   @Test
-  void compilersHaveTheExpectedName() {
+  void compilersHaveTheExpectedDefaultName() {
     Assertions.assertThat(new EcjCompiler(MoreMocks.stub(JavaCompiler.class)).getName())
-        .isEqualTo("ecj");
+        .isEqualTo("Eclipse Compiler for Java");
   }
 
   @DisplayName("compilers have the expected JSR-199 compiler implementation")

@@ -30,27 +30,61 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class JavacCompiler extends SimpleCompiler<JavacCompiler> {
 
+  private static final String NAME = "JDK Compiler";
+
+
   /**
-   * Initialize a new Javac compiler.
+   * Initialize a new Java compiler.
    */
   public JavacCompiler() {
     this(ToolProvider.getSystemJavaCompiler());
   }
 
   /**
-   * Initialize a new Javac compiler.
+   * Initialize a new Java compiler.
    *
    * @param jsr199Compiler the JSR-199 compiler backend to use.
    */
   public JavacCompiler(JavaCompiler jsr199Compiler) {
-    super("javac", new SimpleFileManagerTemplate(), jsr199Compiler, new JavacFlagBuilder());
+    this(NAME, jsr199Compiler);
+  }
+
+  /**
+   * Initialize a new Java compiler.
+   *
+   * @param name the name to give the compiler.
+   */
+  public JavacCompiler(String name) {
+    super(
+        name,
+        new SimpleFileManagerTemplate(),
+        ToolProvider.getSystemJavaCompiler(),
+        new JavacFlagBuilder()
+    );
+  }
+
+  /**
+   * Initialize a new Java compiler.
+   *
+   * @param name           the name to give the compiler.
+   * @param jsr199Compiler the JSR-199 compiler backend to use.
+   */
+  public JavacCompiler(String name, JavaCompiler jsr199Compiler) {
+    super(name, new SimpleFileManagerTemplate(), jsr199Compiler, new JavacFlagBuilder());
   }
 
   @Override
   public String getDefaultRelease() {
-    return Integer.toString(SourceVersion.latestSupported().ordinal());
+    return Integer.toString(getMaxVersion());
+  }
+
+  /**
+   * Get the maximum version of Javac that is supported.
+   */
+  public static int getMaxVersion() {
+    return SourceVersion.latestSupported().ordinal();
   }
 }

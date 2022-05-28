@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
-    implements Compiler<A, SimpleCompilation> {
+    implements Compilable<A, SimpleCompilation> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompiler.class);
   private final String name;
@@ -81,8 +81,8 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
   private boolean inheritModulePath;
   private boolean inheritPlatformClassPath;
   private boolean inheritSystemModulePath;
-  private Logging fileManagerLogging;
-  private Logging diagnosticLogging;
+  private LoggingMode fileManagerLoggingMode;
+  private LoggingMode diagnosticLoggingMode;
   private AnnotationProcessorDiscovery annotationProcessorDiscovery;
 
   /**
@@ -110,23 +110,23 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
     compilerOptions = new ArrayList<>();
     runtimeOptions = new ArrayList<>();
 
-    showWarnings = Compiler.DEFAULT_SHOW_WARNINGS;
-    showDeprecationWarnings = Compiler.DEFAULT_SHOW_DEPRECATION_WARNINGS;
-    failOnWarnings = Compiler.DEFAULT_FAIL_ON_WARNINGS;
-    locale = Compiler.DEFAULT_LOCALE;
-    logCharset = Compiler.DEFAULT_LOG_CHARSET;
-    previewFeatures = Compiler.DEFAULT_PREVIEW_FEATURES;
+    showWarnings = Compilable.DEFAULT_SHOW_WARNINGS;
+    showDeprecationWarnings = Compilable.DEFAULT_SHOW_DEPRECATION_WARNINGS;
+    failOnWarnings = Compilable.DEFAULT_FAIL_ON_WARNINGS;
+    locale = Compilable.DEFAULT_LOCALE;
+    logCharset = Compilable.DEFAULT_LOG_CHARSET;
+    previewFeatures = Compilable.DEFAULT_PREVIEW_FEATURES;
     release = null;
     source = null;
     target = null;
-    verbose = Compiler.DEFAULT_VERBOSE;
-    inheritClassPath = Compiler.DEFAULT_INHERIT_CLASS_PATH;
-    inheritModulePath = Compiler.DEFAULT_INHERIT_MODULE_PATH;
-    inheritPlatformClassPath = Compiler.DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
-    inheritSystemModulePath = Compiler.DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
-    fileManagerLogging = Compiler.DEFAULT_FILE_MANAGER_LOGGING;
-    diagnosticLogging = Compiler.DEFAULT_DIAGNOSTIC_LOGGING;
-    annotationProcessorDiscovery = Compiler.DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
+    verbose = Compilable.DEFAULT_VERBOSE;
+    inheritClassPath = Compilable.DEFAULT_INHERIT_CLASS_PATH;
+    inheritModulePath = Compilable.DEFAULT_INHERIT_MODULE_PATH;
+    inheritPlatformClassPath = Compilable.DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
+    inheritSystemModulePath = Compilable.DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
+    fileManagerLoggingMode = Compilable.DEFAULT_FILE_MANAGER_LOGGING_MODE;
+    diagnosticLoggingMode = Compilable.DEFAULT_DIAGNOSTIC_LOGGING_MODE;
+    annotationProcessorDiscovery = Compilable.DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
   }
 
   /**
@@ -166,7 +166,9 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public final <T extends Exception> A configure(CompilerConfigurer<A, T> configurer) throws T {
+  public final <T extends Exception> A configure(
+      CompilerConfigurer<? super A, T> configurer
+  ) throws T {
     LOGGER.debug("configure({})", configurer);
     var me = myself();
     configurer.configure(me);
@@ -426,36 +428,36 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public Logging getFileManagerLogging() {
-    return fileManagerLogging;
+  public LoggingMode getFileManagerLoggingMode() {
+    return fileManagerLoggingMode;
   }
 
   @Override
-  public A fileManagerLogging(Logging fileManagerLogging) {
-    requireNonNull(fileManagerLogging, "fileManagerLogging");
+  public A fileManagerLoggingMode(LoggingMode fileManagerLoggingMode) {
+    requireNonNull(fileManagerLoggingMode, "fileManagerLoggingMode");
     LOGGER.trace(
-        "fileManagerLogging {} -> {}",
-        this.fileManagerLogging,
-        fileManagerLogging
+        "fileManagerLoggingMode {} -> {}",
+        this.fileManagerLoggingMode,
+        fileManagerLoggingMode
     );
-    this.fileManagerLogging = fileManagerLogging;
+    this.fileManagerLoggingMode = fileManagerLoggingMode;
     return myself();
   }
 
   @Override
-  public Logging getDiagnosticLogging() {
-    return diagnosticLogging;
+  public LoggingMode getDiagnosticLoggingMode() {
+    return diagnosticLoggingMode;
   }
 
   @Override
-  public A diagnosticLogging(Logging diagnosticLogging) {
-    requireNonNull(diagnosticLogging, "diagnosticLogging");
+  public A diagnosticLoggingMode(LoggingMode diagnosticLoggingMode) {
+    requireNonNull(diagnosticLoggingMode, "diagnosticLoggingMode");
     LOGGER.trace(
-        "diagnosticLogging {} -> {}",
-        this.diagnosticLogging,
-        diagnosticLogging
+        "diagnosticLoggingMode {} -> {}",
+        this.diagnosticLoggingMode,
+        diagnosticLoggingMode
     );
-    this.diagnosticLogging = diagnosticLogging;
+    this.diagnosticLoggingMode = diagnosticLoggingMode;
     return myself();
   }
 

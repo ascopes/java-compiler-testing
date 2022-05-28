@@ -16,8 +16,6 @@
 
 package io.github.ascopes.jct.compilers;
 
-import io.github.ascopes.jct.compilers.Compiler.AnnotationProcessorDiscovery;
-import io.github.ascopes.jct.compilers.Compiler.Logging;
 import io.github.ascopes.jct.jsr199.FileManager;
 import io.github.ascopes.jct.jsr199.LoggingFileManagerProxy;
 import io.github.ascopes.jct.jsr199.diagnostics.TeeWriter;
@@ -55,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> {
+public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompilationFactory.class);
 
@@ -147,9 +145,9 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
   /**
    * Build the {@link JavaFileManager} to use.
    *
-   * <p>Logging will be applied to this via
-   * {@link #applyLoggingToFileManager(Compiler, FileManager)}, which will be handled by
-   * {@link #compile(Compiler, SimpleFileManagerTemplate, JavaCompiler, FlagBuilder)}.
+   * <p>LoggingMode will be applied to this via
+   * {@link #applyLoggingToFileManager(Compilable, FileManager)}, which will be handled by
+   * {@link #compile(Compilable, SimpleFileManagerTemplate, JavaCompiler, FlagBuilder)}.
    *
    * @param compiler the compiler to use.
    * @return the file manager to use.
@@ -202,11 +200,11 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
 
   /**
    * Apply the logging level to the file manager provided by
-   * {@link #buildFileManager(Compiler, SimpleFileManagerTemplate)}.
+   * {@link #buildFileManager(Compilable, SimpleFileManagerTemplate)}.
    *
    * <p>The default implementation will wrap the given {@link JavaFileManager} in a
-   * {@link LoggingFileManagerProxy} if the {@link Compiler#getFileManagerLogging()} field is
-   * <strong>not</strong> set to {@link Logging#DISABLED}. In the latter scenario, the input
+   * {@link LoggingFileManagerProxy} if the {@link Compilable#getFileManagerLoggingMode()} field is
+   * <strong>not</strong> set to {@link LoggingMode#DISABLED}. In the latter scenario, the input
    * will be returned to the caller with no other modifications.
    *
    * @param compiler    the compiler to use.
@@ -217,7 +215,7 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
       A compiler,
       FileManager fileManager
   ) {
-    switch (compiler.getFileManagerLogging()) {
+    switch (compiler.getFileManagerLoggingMode()) {
       case STACKTRACES:
         return LoggingFileManagerProxy.wrap(fileManager, true);
       case ENABLED:
@@ -236,11 +234,11 @@ public class SimpleCompilationFactory<A extends Compiler<A, SimpleCompilation>> 
    * @return the diagnostics listener.
    */
   protected TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener(A compiler) {
-    var logging = compiler.getDiagnosticLogging();
+    var logging = compiler.getDiagnosticLoggingMode();
 
     return new TracingDiagnosticListener<>(
-        logging != Logging.DISABLED,
-        logging == Logging.STACKTRACES
+        logging != LoggingMode.DISABLED,
+        logging == LoggingMode.STACKTRACES
     );
   }
 

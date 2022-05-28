@@ -29,7 +29,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.withSettings;
 
-import io.github.ascopes.jct.compilers.Compiler;
+import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.testing.helpers.TypeRef;
 import java.nio.file.Path;
@@ -49,24 +49,24 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * {@link Compiler} tests.
+ * {@link Compilable} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("Compiler tests")
+@DisplayName("Compilable tests")
 @ExtendWith(MockitoExtension.class)
-class CompilerTest {
+class CompilableTest {
 
   @Mock
-  Compiler<?, ?> compiler;
+  Compilable<?, ?> compiler;
 
   @DisplayName("addClassPath(...) tests")
   @TestFactory
   Stream<DynamicTest> addClassPathTests() {
     return addPackagePathTestsFor(
         "addClassPath",
-        Compiler::addClassPath,
-        Compiler::addClassPath,
+        Compilable::addClassPath,
+        Compilable::addClassPath,
         StandardLocation.CLASS_PATH
     );
   }
@@ -76,8 +76,8 @@ class CompilerTest {
   Stream<DynamicTest> addModulePathTests() {
     return addModulePathTestsFor(
         "addModulePath",
-        Compiler::addModulePath,
-        Compiler::addModulePath,
+        Compilable::addModulePath,
+        Compilable::addModulePath,
         StandardLocation.MODULE_PATH
     );
   }
@@ -87,8 +87,8 @@ class CompilerTest {
   Stream<DynamicTest> addSourcePathTests() {
     return addPackagePathTestsFor(
         "addSourcePath",
-        Compiler::addSourcePath,
-        Compiler::addSourcePath,
+        Compilable::addSourcePath,
+        Compilable::addSourcePath,
         StandardLocation.SOURCE_PATH
     );
   }
@@ -98,8 +98,8 @@ class CompilerTest {
   Stream<DynamicTest> addModuleSourcePathTests() {
     return addModulePathTestsFor(
         "addModuleSourcePath",
-        Compiler::addModuleSourcePath,
-        Compiler::addModuleSourcePath,
+        Compilable::addModuleSourcePath,
+        Compilable::addModuleSourcePath,
         StandardLocation.MODULE_SOURCE_PATH
     );
   }
@@ -290,7 +290,7 @@ class CompilerTest {
         () -> {
           // Given
           var pathLike = stub(PathLike.class);
-          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
           given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
@@ -310,7 +310,7 @@ class CompilerTest {
         () -> {
           // Given
           var path = stub(Path.class);
-          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
           given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
@@ -330,7 +330,7 @@ class CompilerTest {
         () -> {
           // Given
           var pathLike = stub(PathLike.class);
-          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
           given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
           given(pathLikeAdder.add(compiler, pathLike)).willCallRealMethod();
 
@@ -347,7 +347,7 @@ class CompilerTest {
         () -> {
           // Given
           var path = stub(Path.class);
-          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
           given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
           given(pathAdder.add(compiler, path)).willCallRealMethod();
 
@@ -403,7 +403,7 @@ class CompilerTest {
         () -> {
           // Given
           var pathLike = stub(PathLike.class);
-          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
           given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
@@ -423,7 +423,7 @@ class CompilerTest {
         () -> {
           // Given
           var path = stub(Path.class);
-          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
           given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
@@ -443,7 +443,7 @@ class CompilerTest {
         () -> {
           // Given
           var pathLike = stub(PathLike.class);
-          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
           given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
           given(pathLikeAdder.add(compiler, moduleName, pathLike)).willCallRealMethod();
 
@@ -460,7 +460,7 @@ class CompilerTest {
         () -> {
           // Given
           var path = stub(Path.class);
-          Compiler<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
           given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
           given(pathAdder.add(compiler, moduleName, path)).willCallRealMethod();
 
@@ -485,12 +485,12 @@ class CompilerTest {
   @FunctionalInterface
   interface AddPackagePathAliasMethod<P> {
 
-    Compiler<?, ?> add(Compiler<?, ?> compiler, P path);
+    Compilable<?, ?> add(Compilable<?, ?> compiler, P path);
   }
 
   @FunctionalInterface
   interface AddModulePathAliasMethod<P> {
 
-    Compiler<?, ?> add(Compiler<?, ?> compiler, String moduleName, P path);
+    Compilable<?, ?> add(Compilable<?, ?> compiler, String moduleName, P path);
   }
 }

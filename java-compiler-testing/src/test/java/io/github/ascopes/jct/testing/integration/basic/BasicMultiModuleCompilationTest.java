@@ -16,20 +16,17 @@
 
 package io.github.ascopes.jct.testing.integration.basic;
 
-import io.github.ascopes.jct.assertions.CompilationAssert;
-import io.github.ascopes.jct.assertions.JctAssertions;
-import io.github.ascopes.jct.compilers.Compiler.Logging;
-import io.github.ascopes.jct.compilers.Compilers;
-import io.github.ascopes.jct.paths.RamPath;
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
+import static io.github.ascopes.jct.paths.RamPath.createPath;
+
+import io.github.ascopes.jct.compilers.Compilable;
+import io.github.ascopes.jct.compilers.ecj.EcjCompiler;
+import io.github.ascopes.jct.junit.EcjCompilers;
+import io.github.ascopes.jct.junit.JavacCompilers;
 import io.github.ascopes.jct.testing.helpers.Skipping;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import javax.lang.model.SourceVersion;
 import javax.tools.StandardLocation;
-import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Basic multi-module compilation tests.
@@ -39,12 +36,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 @DisplayName("Basic multi-module compilation integration tests")
 class BasicMultiModuleCompilationTest {
 
-  @DisplayName("I can compile a multi-module 'Hello, World!' program with javac")
-  @MethodSource("javacVersions")
-  @ParameterizedTest(name = "targeting Java {0}")
-  void helloWorldJavac(int version) {
-    var source = RamPath
-        .createPath("hello.world")
+  @DisplayName("I can compile a single module using multi-module layout")
+  @JavacCompilers(modules = true)
+  @EcjCompilers(modules = true)
+  @ParameterizedTest(name = "targeting {0}")
+  void singleModuleInMultiModuleLayout(Compilable<?, ?> compiler) {
+    if (compiler instanceof EcjCompiler) {
+      Skipping.becauseEcjFailsToSupportModulesCorrectly();
+    }
+
+    var source = createPath("hello.world")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",
@@ -61,16 +62,13 @@ class BasicMultiModuleCompilationTest {
             "}"
         );
 
-    var compilation = Compilers
-        .javac()
+    var compilation = compiler
         .addPath(StandardLocation.MODULE_SOURCE_PATH, "hello.world", source)
         .showDeprecationWarnings(true)
-        //.diagnosticLogging(Logging.STACKTRACES)
-        //.fileManagerLogging(Logging.ENABLED)
-        .release(version)
         .compile();
 
-    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings();
 
     // TODO(ascopes): fix this to work with the file manager rewrite.
     //CompilationAssert.assertThatCompilation(compilation)
@@ -86,62 +84,16 @@ class BasicMultiModuleCompilationTest {
     //    .isNotEmptyFile();
   }
 
-  @DisplayName("I can compile a 'Hello, World!' program with ecj")
-  @MethodSource("ecjVersions")
-  @ParameterizedTest(name = "targeting Java {0}")
-  void helloWorldEcj(int version) {
-    Skipping.skipBecauseEcjFailsToSupportModulesCorrectly();
+  @DisplayName("I can compile multiple modules using multi-module layout")
+  @JavacCompilers(modules = true)
+  @EcjCompilers(modules = true)
+  @ParameterizedTest(name = "targeting {0}")
+  void multipleModulesInMultiModuleLayout(Compilable<?, ?> compiler) {
+    if (compiler instanceof EcjCompiler) {
+      Skipping.becauseEcjFailsToSupportModulesCorrectly();
+    }
 
-    var source = RamPath
-        .createPath("hello.world")
-        .createFile(
-            "com/example/HelloWorld.java",
-            "package com.example;",
-            "public class HelloWorld {",
-            "  public static void main(String[] args) {",
-            "    System.out.println(\"Hello, World\");",
-            "  }",
-            "}"
-        )
-        .createFile(
-            "module-info.java",
-            "module hello.world {",
-            "  exports com.example;",
-            "}"
-        );
-
-    var compilation = Compilers
-        .ecj()
-        .addPath(StandardLocation.MODULE_SOURCE_PATH, "hello.world", source)
-        .showDeprecationWarnings(true)
-        .release(version)
-        .verbose(true)
-        //.diagnosticLogging(Logging.STACKTRACES)
-        //.fileManagerLogging(Logging.ENABLED)
-        .compile();
-
-    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
-
-    // TODO(ascopes): fix this to work with the file manager rewrite.
-    //CompilationAssert.assertThatCompilation(compilation)
-    //    .classOutput()
-    //    .file("hello.world/com/example/HelloWorld.class")
-    //    .exists()
-    //    .isNotEmptyFile();
-    //
-    //CompilationAssert.assertThatCompilation(compilation)
-    //    .classOutput()
-    //    .file("hello.world/module-info.class")
-    //    .exists()
-    //    .isNotEmptyFile();
-  }
-
-  @DisplayName("I can compile multiple modules with javac")
-  @MethodSource("javacVersions")
-  @ParameterizedTest(name = "targeting Java {0}")
-  void helloWorldMultiModuleJavac(int version) {
-    var helloWorld = RamPath
-        .createPath("hello.world")
+    var helloWorld = createPath("hello.world")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",
@@ -159,8 +111,7 @@ class BasicMultiModuleCompilationTest {
             "  exports com.example;",
             "}"
         );
-    var greeter = RamPath
-        .createPath("greeter")
+    var greeter = createPath("greeter")
         .createFile(
             "com/example/greeter/Greeter.java",
             "package com.example.greeter;",
@@ -177,16 +128,13 @@ class BasicMultiModuleCompilationTest {
             "}"
         );
 
-    var compilation = Compilers
-        .javac()
-        .addPath(StandardLocation.MODULE_SOURCE_PATH, "hello.world", helloWorld)
-        .addPath(StandardLocation.MODULE_SOURCE_PATH, "greeter", greeter)
-        //.showDeprecationWarnings(true)
-        //.diagnosticLogging(Logging.STACKTRACES)
-        .release(version)
+    var compilation = compiler
+        .addModuleSourcePath("hello.world", helloWorld)
+        .addModuleSourcePath("greeter", greeter)
         .compile();
 
-    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings();
 
     // TODO(ascopes): fix this to work with the file manager rewrite.
     //CompilationAssert.assertThatCompilation(compilation)
@@ -212,98 +160,5 @@ class BasicMultiModuleCompilationTest {
     //    .file("greeter/module-info.class")
     //    .exists()
     //    .isNotEmptyFile();
-  }
-
-  @DisplayName("I can compile multiple modules with ecj")
-  @MethodSource("ecjVersions")
-  @ParameterizedTest(name = "targeting Java {0}")
-  void helloWorldMultiModuleEcj(int version) {
-    Skipping.skipBecauseEcjFailsToSupportModulesCorrectly();
-
-    var helloWorld = RamPath
-        .createPath("hello.world")
-        .createFile(
-            "com/example/HelloWorld.java",
-            "package com.example;",
-            "import com.example.greeter.Greeter;",
-            "public class HelloWorld {",
-            "  public static void main(String[] args) {",
-            "    System.out.println(Greeter.greet(\"World\"));",
-            "  }",
-            "}"
-        )
-        .createFile(
-            "module-info.java",
-            "module hello.world {",
-            "  requires greeter;",
-            "  exports com.example;",
-            "}"
-        );
-    var greeter = RamPath
-        .createPath("greeter")
-        .createFile(
-            "com/example/greeter/Greeter.java",
-            "package com.example.greeter;",
-            "public class Greeter {",
-            "  public static String greet(String name) {",
-            "    return \"Hello, \" + name + \"!\";",
-            "  }",
-            "}"
-        )
-        .createFile(
-            "module-info.java",
-            "module greeter {",
-            "  exports com.example.greeter;",
-            "}"
-        );
-
-    var compilation = Compilers
-        .ecj()
-        .addPath(StandardLocation.MODULE_SOURCE_PATH, "hello.world", helloWorld)
-        .addPath(StandardLocation.MODULE_SOURCE_PATH, "greeter", greeter)
-        .showDeprecationWarnings(true)
-        //.diagnosticLogging(Logging.STACKTRACES)
-        //.fileManagerLogging(Logging.ENABLED)
-        .release(version)
-        .compile();
-
-    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
-
-    // TODO(ascopes): fix this to work with the file manager rewrite.
-    //CompilationAssert.assertThatCompilation(compilation)
-    //    .classOutput()
-    //    .file("hello.world/com/example/HelloWorld.class")
-    //    .exists()
-    //    .isNotEmptyFile();
-    //
-    //CompilationAssert.assertThatCompilation(compilation)
-    //    .classOutput()
-    //    .file("hello.world/module-info.class")
-    //    .exists()
-    //    .isNotEmptyFile();
-    //
-    //CompilationAssert.assertThatCompilation(compilation)
-    //    .classOutput()
-    //    .file("greeter/com/example/greeter/Greeter.class")
-    //    .exists()
-    //    .isNotEmptyFile();
-    //
-    //CompilationAssert.assertThatCompilation(compilation)
-    //    .classOutput()
-    //    .file("greeter/module-info.class")
-    //    .exists()
-    //    .isNotEmptyFile();
-  }
-
-  static IntStream javacVersions() {
-    return IntStream.rangeClosed(9, SourceVersion.latestSupported().ordinal());
-  }
-
-  static IntStream ecjVersions() {
-    var maxEcjVersion = (ClassFileConstants.getLatestJDKLevel() >> (Short.BYTES * 8))
-        - ClassFileConstants.MAJOR_VERSION_0;
-
-    return LongStream.rangeClosed(9, maxEcjVersion)
-        .mapToInt(i -> (int) i);
   }
 }

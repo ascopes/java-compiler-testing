@@ -16,23 +16,29 @@
 
 package io.github.ascopes.jct.examples.serviceloaderjpms.testing;
 
-import io.github.ascopes.jct.assertions.CompilationAssert;
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
+import static io.github.ascopes.jct.paths.RamPath.*;
+
 import io.github.ascopes.jct.assertions.JctAssertions;
-import io.github.ascopes.jct.compilers.Compilers;
+import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.examples.serviceloaderjpms.ServiceProcessor;
+import io.github.ascopes.jct.junit.EcjCompilers;
+import io.github.ascopes.jct.junit.JavacCompilers;
 import io.github.ascopes.jct.paths.RamPath;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @DisplayName("ServiceProcessor tests (JPMS)")
 class ServiceProcessorTest {
 
   @DisplayName("Expected files get created when the processor is run")
-  @Test
-  void expectedFilesGetCreated() {
-    var sources = RamPath
-        .createPath("sources")
+  @EcjCompilers(modules = true)
+  @JavacCompilers(modules = true)
+  @ParameterizedTest(name = "for {0}")
+  void expectedFilesGetCreated(Compilable<?, ?> compiler) {
+    var sources = createPath("sources")
         .createFile(
             "com/example/InsultProvider.java",
             "package com.example;",
@@ -55,21 +61,17 @@ class ServiceProcessorTest {
             "}"
         );
 
-    var compilation = Compilers
-        .javac()
+    var compilation = compiler
         .addAnnotationProcessors(new ServiceProcessor())
-        .addPath(StandardLocation.SOURCE_PATH, sources)
-        .inheritClassPath(true)
-        .release(11)
+        .addSourcePath(sources)
         .compile();
 
-    JctAssertions
-        .assertThatCompilation(compilation)
+    assertThatCompilation(compilation)
         .isSuccessfulWithoutWarnings();
-        // TODO(ascopes): fix this to work with the file manager rewrite.
-        //.classOutput()
-        //.file("META-INF/services/com.example.InsultProvider")
-        //.exists()
-        //.hasContent("com.example.MeanInsultProviderImpl");
+    // TODO(ascopes): fix this to work with the file manager rewrite.
+    //.classOutput()
+    //.file("META-INF/services/com.example.InsultProvider")
+    //.exists()
+    //.hasContent("com.example.MeanInsultProviderImpl");
   }
 }

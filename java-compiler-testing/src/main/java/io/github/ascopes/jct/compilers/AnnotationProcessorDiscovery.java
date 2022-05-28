@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-package io.github.ascopes.jct.assertions;
+package io.github.ascopes.jct.compilers;
 
-import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
-import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.assertj.core.api.AbstractAssert;
 
 /**
- * Assertions for an individual diagnostic.
+ * Mode for annotation processor discovery when no explicit processors are provided.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class DiagnosticAssert
-    extends AbstractAssert<DiagnosticAssert, TraceDiagnostic<? extends JavaFileObject>> {
+public enum AnnotationProcessorDiscovery {
+  /**
+   * Discovery is enabled, and will also scan any dependencies in the classpath or module path.
+   */
+  INCLUDE_DEPENDENCIES,
 
   /**
-   * Initialize this assertion type.
-   *
-   * @param value the value to assert on.
+   * Discovery is enabled using the provided processor paths.
    */
-  public DiagnosticAssert(TraceDiagnostic<? extends JavaFileObject> value) {
-    super(value, DiagnosticAssert.class);
-    setCustomRepresentation(DiagnosticRepresentation.getInstance());
-  }
+  ENABLED,
+
+  /**
+   * Discovery is disabled.
+   */
+  DISABLED,
 }

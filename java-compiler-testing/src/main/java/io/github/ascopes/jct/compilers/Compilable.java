@@ -45,7 +45,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
+public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
 
   /**
    * Default setting for deprecation warnings ({@code true}).
@@ -98,14 +98,14 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   boolean DEFAULT_INHERIT_SYSTEM_MODULE_PATH = true;
 
   /**
-   * Default setting for logging file manager operations ({@link Logging#DISABLED}).
+   * Default setting for logging file manager operations ({@link LoggingMode#DISABLED}).
    */
-  Logging DEFAULT_FILE_MANAGER_LOGGING = Logging.DISABLED;
+  LoggingMode DEFAULT_FILE_MANAGER_LOGGING_MODE = LoggingMode.DISABLED;
 
   /**
-   * Default setting for logging diagnostics ({@link Logging#ENABLED}).
+   * Default setting for logging diagnostics ({@link LoggingMode#ENABLED}).
    */
-  Logging DEFAULT_DIAGNOSTIC_LOGGING = Logging.ENABLED;
+  LoggingMode DEFAULT_DIAGNOSTIC_LOGGING_MODE = LoggingMode.ENABLED;
 
   /**
    * Default setting for how to apply annotation processor discovery when no processors are
@@ -120,14 +120,14 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
   Charset DEFAULT_LOG_CHARSET = StandardCharsets.UTF_8;
 
   /**
-   * Apply a given configurer to this compiler.
+   * Apply a given configurer to this compiler that can throw a checked exception.
    *
    * @param <T>        any exception that may be thrown.
    * @param configurer the configurer to invoke.
    * @return this compiler object for further call chaining.
    * @throws T any exception that may be thrown by the configurer.
    */
-  <T extends Exception> C configure(CompilerConfigurer<C, T> configurer) throws T;
+  <T extends Exception> C configure(CompilerConfigurer<? super C, T> configurer) throws T;
 
   /**
    * Add a path-like object to a given location.
@@ -286,7 +286,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * {@link #addClassPath(PathLike)} instead.</p>
    *
    * @param moduleName the name of the module.
-   * @param pathLike the path-like object to add.
+   * @param pathLike   the path-like object to add.
    * @return this compiler object for further call chaining.
    */
   default C addModulePath(String moduleName, PathLike pathLike) {
@@ -309,7 +309,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * {@link #addClassPath(Path)} instead.</p>
    *
    * @param moduleName the name of the module.
-   * @param path the path to add.
+   * @param path       the path to add.
    * @return this compiler object for further call chaining.
    */
   default C addModulePath(String moduleName, Path path) {
@@ -385,7 +385,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * method and that method together.</p>
    *
    * @param moduleName the name of the module to add.
-   * @param pathLike the path-like object to add.
+   * @param pathLike   the path-like object to add.
    * @return this compiler object for further call chaining.
    */
   default C addModuleSourcePath(String moduleName, PathLike pathLike) {
@@ -411,7 +411,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * method and that method together.</p>
    *
    * @param moduleName the name of the module to add.
-   * @param path the path to add.
+   * @param path       the path to add.
    * @return this compiler object for further call chaining.
    */
   default C addModuleSourcePath(String moduleName, Path path) {
@@ -475,7 +475,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * </ul>
    *
    * @param moduleName the name of the module.
-   * @param pathLike the path-like object to add.
+   * @param pathLike   the path-like object to add.
    * @return this compiler object for further call chaining.
    */
   default C addAnnotationProcessorModulePath(String moduleName, PathLike pathLike) {
@@ -497,7 +497,7 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * </ul>
    *
    * @param moduleName the name of the module.
-   * @param path the path to add.
+   * @param path       the path to add.
    * @return this compiler object for further call chaining.
    */
   default C addAnnotationProcessorModulePath(String moduleName, Path path) {
@@ -1065,43 +1065,43 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    * Get the current file manager logging mode.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_FILE_MANAGER_LOGGING}.
+   * {@link #DEFAULT_FILE_MANAGER_LOGGING_MODE}.
    *
    * @return the current file manager logging mode.
    */
-  Logging getFileManagerLogging();
+  LoggingMode getFileManagerLoggingMode();
 
   /**
    * Set how to handle logging calls to underlying file managers.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_FILE_MANAGER_LOGGING}.
+   * {@link #DEFAULT_FILE_MANAGER_LOGGING_MODE}.
    *
-   * @param fileManagerLogging the mode to use for file manager logging.
+   * @param fileManagerLoggingMode the mode to use for file manager logging.
    * @return this compiler for further call chaining.
    */
-  C fileManagerLogging(Logging fileManagerLogging);
+  C fileManagerLoggingMode(LoggingMode fileManagerLoggingMode);
 
   /**
    * Get the current diagnostic logging mode.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_DIAGNOSTIC_LOGGING}.
+   * {@link #DEFAULT_DIAGNOSTIC_LOGGING_MODE}.
    *
    * @return the current diagnostic logging mode.
    */
-  Logging getDiagnosticLogging();
+  LoggingMode getDiagnosticLoggingMode();
 
   /**
    * Set how to handle diagnostic capture.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_DIAGNOSTIC_LOGGING}.
+   * {@link #DEFAULT_DIAGNOSTIC_LOGGING_MODE}.
    *
-   * @param diagnosticLogging the mode to use for diagnostic capture.
+   * @param diagnosticLoggingMode the mode to use for diagnostic capture.
    * @return this compiler for further call chaining.
    */
-  C diagnosticLogging(Logging diagnosticLogging);
+  C diagnosticLoggingMode(LoggingMode diagnosticLoggingMode);
 
   /**
    * Get how to perform annotation processor discovery.
@@ -1145,74 +1145,4 @@ public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
    */
   R compile();
 
-  /**
-   * Options for how to handle logging on special internal components.
-   *
-   * @author Ashley Scopes
-   * @since 0.0.1
-   */
-  @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-  enum Logging {
-    /**
-     * Enable basic logging.
-     */
-    ENABLED,
-
-    /**
-     * Enable logging and include stacktraces in the logs for each entry.
-     */
-    STACKTRACES,
-
-    /**
-     * Do not log anything.
-     */
-    DISABLED,
-  }
-
-  /**
-   * Mode for annotation processor discovery when no explicit processors are provided.
-   *
-   * @author Ashley Scopes
-   * @since 0.0.1
-   */
-  @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-  enum AnnotationProcessorDiscovery {
-    /**
-     * Discovery is enabled, and will also scan any dependencies in the classpath or module path.
-     */
-    INCLUDE_DEPENDENCIES,
-
-    /**
-     * Discovery is enabled using the provided processor paths.
-     */
-    ENABLED,
-
-    /**
-     * Discovery is disabled.
-     */
-    DISABLED,
-  }
-
-  /**
-   * Function representing a configuration operation that can be applied to a compiler.
-   *
-   * <p>This can allow encapsulating common configuration logic across tests into a single place.
-   *
-   * @param <C> the compiler type.
-   * @param <T> the exception that may be thrown by the configurer.
-   * @author Ashley Scopes
-   * @since 0.0.1
-   */
-  @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-  @FunctionalInterface
-  interface CompilerConfigurer<C extends Compiler<C, ?>, T extends Exception> {
-
-    /**
-     * Apply configuration logic to the given compiler.
-     *
-     * @param compiler the compiler.
-     * @throws T any exception that may be thrown by the configurer.
-     */
-    void configure(C compiler) throws T;
-  }
 }
