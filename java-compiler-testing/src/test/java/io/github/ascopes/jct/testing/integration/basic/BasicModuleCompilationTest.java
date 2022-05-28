@@ -20,10 +20,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import static io.github.ascopes.jct.paths.RamPath.createPath;
 
 import io.github.ascopes.jct.compilers.Compilable;
-import io.github.ascopes.jct.compilers.ecj.EcjCompiler;
-import io.github.ascopes.jct.junit.EcjCompilers;
 import io.github.ascopes.jct.junit.JavacCompilers;
-import io.github.ascopes.jct.testing.helpers.Skipping;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -35,16 +32,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 @DisplayName("Basic module compilation integration tests")
 class BasicModuleCompilationTest {
 
+  // We skip ECJ as it does not support handling modules correctly on a non-default file system.
   @DisplayName("I can compile a 'Hello, World!' module program")
   @JavacCompilers(modules = true)
-  @EcjCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")
   void helloWorld(Compilable<?, ?> compiler) {
-    if (compiler instanceof EcjCompiler) {
-      Skipping.becauseEcjFailsToSupportModulesCorrectly();
-    }
-
-    var sources = createPath("sources")
+    var sources = createPath("hello.world")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",
