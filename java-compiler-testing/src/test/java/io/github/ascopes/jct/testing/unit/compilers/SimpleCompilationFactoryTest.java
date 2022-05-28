@@ -24,7 +24,7 @@ import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-import io.github.ascopes.jct.compilers.Compiler;
+import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.compilers.FlagBuilder;
 import io.github.ascopes.jct.compilers.SimpleCompilation;
 import io.github.ascopes.jct.compilers.SimpleCompilationFactory;
@@ -164,7 +164,7 @@ class SimpleCompilationFactoryTest {
 
     @DisplayName("release should be added")
     @NullSource
-    @ValueSource(strings = {"8", "11", "17" })
+    @ValueSource(strings = {"8", "11", "17"})
     @ParameterizedTest(name = "for release = {0}")
     void releaseShouldBeAdded(String release) {
       given(compiler.getRelease()).willReturn(Optional.ofNullable(release));
@@ -174,7 +174,7 @@ class SimpleCompilationFactoryTest {
 
     @DisplayName("source should be added")
     @NullSource
-    @ValueSource(strings = {"8", "11", "17" })
+    @ValueSource(strings = {"8", "11", "17"})
     @ParameterizedTest(name = "for source = {0}")
     void sourceShouldBeAdded(String source) {
       given(compiler.getSource()).willReturn(Optional.ofNullable(source));
@@ -184,7 +184,7 @@ class SimpleCompilationFactoryTest {
 
     @DisplayName("target should be added")
     @NullSource
-    @ValueSource(strings = {"8", "11", "17" })
+    @ValueSource(strings = {"8", "11", "17"})
     @ParameterizedTest(name = "for target = {0}")
     void targetShouldBeAdded(String target) {
       given(compiler.getTarget()).willReturn(Optional.ofNullable(target));
@@ -262,7 +262,7 @@ class SimpleCompilationFactoryTest {
 
   @DisplayName("apply logging to file manager tests")
   @Nested
-  class ApplyLoggingToFileManagerTest {
+  class ApplyLoggingToFileManagerTestMode {
 
     @Disabled("TODO: implement")
     @Test
@@ -312,6 +312,6 @@ class SimpleCompilationFactoryTest {
   }
 
   private abstract static class StubbedCompiler
-      implements Compiler<StubbedCompiler, SimpleCompilation> {
+      implements Compilable<StubbedCompiler, SimpleCompilation> {
   }
 }

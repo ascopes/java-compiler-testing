@@ -30,8 +30,10 @@ import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class EcjCompiler extends SimpleCompiler<EcjCompiler> {
+
+  private static final String NAME = "Eclipse Compiler for Java";
 
   /**
    * Initialize a new ECJ compiler.
@@ -46,13 +48,40 @@ public class EcjCompiler extends SimpleCompiler<EcjCompiler> {
    * @param jsr199Compiler the JSR-199 compiler backend to use.
    */
   public EcjCompiler(JavaCompiler jsr199Compiler) {
-    super("ecj", new SimpleFileManagerTemplate(), jsr199Compiler, new EcjFlagBuilder());
+    this(NAME, jsr199Compiler);
+  }
+
+  /**
+   * Initialize a new ECJ compiler.
+   *
+   * @param name the name to give the compiler.
+   */
+  public EcjCompiler(String name) {
+    super(name, new SimpleFileManagerTemplate(), new EclipseCompiler(), new EcjFlagBuilder());
+  }
+
+  /**
+   * Initialize a new ECJ compiler.
+   *
+   * @param name           the name to give the compiler.
+   * @param jsr199Compiler the JSR-199 compiler backend to use.
+   */
+  public EcjCompiler(String name, JavaCompiler jsr199Compiler) {
+    super(name, new SimpleFileManagerTemplate(), jsr199Compiler, new EcjFlagBuilder());
   }
 
   @Override
   public String getDefaultRelease() {
-    var maxEcjVersion = (ClassFileConstants.getLatestJDKLevel() >> (Short.BYTES * 8))
+    return Integer.toString(getMaxVersion());
+  }
+
+  /**
+   * Get the maximum version of ECJ that is supported.
+   */
+  public static int getMaxVersion() {
+    var version = (ClassFileConstants.getLatestJDKLevel() >> (Short.BYTES * 8))
         - ClassFileConstants.MAJOR_VERSION_0;
-    return Long.toString(maxEcjVersion);
+
+    return (int) version;
   }
 }

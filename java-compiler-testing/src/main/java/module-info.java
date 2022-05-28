@@ -24,21 +24,26 @@ module io.github.ascopes.jct {
   requires ecj;
   requires jimfs;
   requires me.xdrop.fuzzywuzzy;
-  requires org.apiguardian.api;
+  requires static org.apiguardian.api;
+  requires static org.junit.jupiter.params;
   requires transitive org.assertj.core;
   requires org.reflections;
   requires org.slf4j;
 
   exports io.github.ascopes.jct.assertions;
   exports io.github.ascopes.jct.compilers;
+  exports io.github.ascopes.jct.compilers.ecj;
+  exports io.github.ascopes.jct.compilers.javac;
+  exports io.github.ascopes.jct.junit;
   exports io.github.ascopes.jct.jsr199;
   exports io.github.ascopes.jct.jsr199.containers;
   exports io.github.ascopes.jct.jsr199.diagnostics;
   exports io.github.ascopes.jct.paths;
 
+  // Junit annotation support.
+  opens io.github.ascopes.jct.junit;
+
   // Testing exports only.
-  exports io.github.ascopes.jct.compilers.ecj to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
 
   // Open the module for testing only.

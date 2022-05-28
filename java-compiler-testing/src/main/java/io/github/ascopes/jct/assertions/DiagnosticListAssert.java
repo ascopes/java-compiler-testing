@@ -216,7 +216,7 @@ public class DiagnosticListAssert extends AbstractListAssert<
   /**
    * Assert that this list has no diagnostics matching any of the given kinds.
    *
-   * @param kind the first kind to check for.
+   * @param kind      the first kind to check for.
    * @param moreKinds any additional kinds to check for.
    * @return this assertion object for further call chaining.
    */

@@ -14,31 +14,30 @@
  * limitations under the License.
  */
 
-package io.github.ascopes.jct.assertions;
+package io.github.ascopes.jct.compilers;
 
-import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
-import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.assertj.core.api.AbstractAssert;
 
 /**
- * Assertions for an individual diagnostic.
+ * Function representing a configuration operation that can be applied to a compiler.
  *
+ * <p>This can allow encapsulating common configuration logic across tests into a single place.
+ *
+ * @param <C> the compiler type.
+ * @param <T> the exception that may be thrown by the configurer.
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class DiagnosticAssert
-    extends AbstractAssert<DiagnosticAssert, TraceDiagnostic<? extends JavaFileObject>> {
+@FunctionalInterface
+public interface CompilerConfigurer<C extends Compilable<C, ?>, T extends Exception> {
 
   /**
-   * Initialize this assertion type.
+   * Apply configuration logic to the given compiler.
    *
-   * @param value the value to assert on.
+   * @param compiler the compiler.
+   * @throws T any exception that may be thrown by the configurer.
    */
-  public DiagnosticAssert(TraceDiagnostic<? extends JavaFileObject> value) {
-    super(value, DiagnosticAssert.class);
-    setCustomRepresentation(DiagnosticRepresentation.getInstance());
-  }
+  void configure(C compiler) throws T;
 }

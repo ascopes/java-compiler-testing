@@ -1,0 +1,60 @@
+package io.github.ascopes.jct.junit;
+
+import io.github.ascopes.jct.compilers.Compilable;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+
+@API(since = "0.0.1", status = Status.INTERNAL)
+abstract class AbstractCompilersProvider implements ArgumentsProvider {
+
+  private final IntFunction<? extends Compilable<?, ?>> compilerSupplier;
+  private final int minCompilerVersionWithoutModules;
+  private final int minCompilerVersionWithModules;
+  private final int maxCompilerVersion;
+
+  // Configured values by JUnit.
+  private int minVersion;
+  private int maxVersion;
+
+  AbstractCompilersProvider(
+      IntFunction<? extends Compilable<?, ?>> compilerSupplier,
+      int minCompilerVersionWithoutModules,
+      int minCompilerVersionWithModules,
+      int maxCompilerVersion
+  ) {
+    this.compilerSupplier = compilerSupplier;
+    this.minCompilerVersionWithoutModules = minCompilerVersionWithoutModules;
+    this.minCompilerVersionWithModules = minCompilerVersionWithModules;
+    this.maxCompilerVersion = maxCompilerVersion;
+    minVersion = Integer.MIN_VALUE;
+    maxVersion = Integer.MAX_VALUE;
+  }
+
+  @Override
+  public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+    return IntStream
+        .rangeClosed(minVersion, maxVersion)
+        .mapToObj(compilerSupplier)
+        .map(Arguments::of);
+  }
+
+  final void configure(int min, int max, boolean modules) {
+    min = Math.max(min, modules ? minCompilerVersionWithModules : minCompilerVersionWithoutModules);
+    max = Math.min(max, maxCompilerVersion);
+
+    if (min > max) {
+      throw new IllegalArgumentException(
+          "Cannot set min version to a version higher than the max version"
+      );
+    }
+
+    minVersion = min;
+    maxVersion = max;
+  }
+}

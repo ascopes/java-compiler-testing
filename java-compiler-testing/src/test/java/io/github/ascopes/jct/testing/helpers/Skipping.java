@@ -32,7 +32,7 @@ public final class Skipping {
   /**
    * Skip the test because ECJ fails to support modules correctly.
    */
-  public static void skipBecauseEcjFailsToSupportModulesCorrectly() {
+  public static void becauseEcjFailsToSupportModulesCorrectly() {
     // FIXME(ascopes): Attempt to find the root cause of these issues.
     //
     // It appears to depend on passing the `--add-module` and `--module-source-paths` flags

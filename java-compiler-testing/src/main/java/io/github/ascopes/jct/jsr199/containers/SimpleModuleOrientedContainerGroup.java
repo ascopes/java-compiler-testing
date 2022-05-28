@@ -45,7 +45,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-          public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContainerGroup {
+public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContainerGroup {
 
   private final Location location;
   private final Map<ModuleLocation, SimpleModuleOrientedModuleContainerGroup> modules;

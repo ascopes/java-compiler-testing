@@ -16,19 +16,16 @@
 
 package io.github.ascopes.jct.testing.integration.basic;
 
-import io.github.ascopes.jct.assertions.CompilationAssert;
-import io.github.ascopes.jct.assertions.JctAssertions;
-import io.github.ascopes.jct.compilers.Compilers;
-import io.github.ascopes.jct.paths.RamPath;
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
+import static io.github.ascopes.jct.paths.RamPath.createPath;
+
+import io.github.ascopes.jct.compilers.Compilable;
+import io.github.ascopes.jct.compilers.ecj.EcjCompiler;
+import io.github.ascopes.jct.junit.EcjCompilers;
+import io.github.ascopes.jct.junit.JavacCompilers;
 import io.github.ascopes.jct.testing.helpers.Skipping;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import javax.lang.model.SourceVersion;
-import javax.tools.StandardLocation;
-import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Basic legacy compilation tests.
@@ -38,12 +35,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 @DisplayName("Basic module compilation integration tests")
 class BasicModuleCompilationTest {
 
-  @DisplayName("I can compile a 'Hello, World!' module program with javac")
-  @MethodSource("javacVersions")
-  @ParameterizedTest(name = "targeting Java {0}")
-  void helloWorldJavac(int version) {
-    var sources = RamPath
-        .createPath("sources")
+  @DisplayName("I can compile a 'Hello, World!' module program")
+  @JavacCompilers(modules = true)
+  @EcjCompilers(modules = true)
+  @ParameterizedTest(name = "targeting {0}")
+  void helloWorld(Compilable<?, ?> compiler) {
+    if (compiler instanceof EcjCompiler) {
+      Skipping.becauseEcjFailsToSupportModulesCorrectly();
+    }
+
+    var sources = createPath("sources")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",
@@ -61,64 +62,11 @@ class BasicModuleCompilationTest {
             "}"
         );
 
-    var compilation = Compilers
-        .javac()
-        .addPath(StandardLocation.SOURCE_PATH, sources)
-        .showDeprecationWarnings(true)
-        //.diagnosticLogging(Logging.STACKTRACES)
-        //.fileManagerLogging(Logging.ENABLED)
-        .release(version)
+    var compilation = compiler
+        .addSourcePath(sources)
         .compile();
 
-    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
-  }
-
-  @DisplayName("I can compile a 'Hello, World!' module program with ecj")
-  @MethodSource("ecjVersions")
-  @ParameterizedTest(name = "targeting Java {0}")
-  void helloWorldEcj(int version) {
-    Skipping.skipBecauseEcjFailsToSupportModulesCorrectly();
-
-    var sources = RamPath
-        .createPath("sources")
-        .createFile(
-            "com/example/HelloWorld.java",
-            "package com.example;",
-            "public class HelloWorld {",
-            "  public static void main(String[] args) {",
-            "    System.out.println(\"Hello, World\");",
-            "  }",
-            "}"
-        )
-        .createFile(
-            "module-info.java",
-            "module hello.world {",
-            "  requires java.base;",
-            "  exports com.example;",
-            "}"
-        );
-
-    var compilation = Compilers
-        .ecj()
-        .addPath(StandardLocation.SOURCE_PATH, sources)
-        .showDeprecationWarnings(true)
-        //.diagnosticLogging(Logging.STACKTRACES)
-        //.fileManagerLogging(Logging.ENABLED)
-        .release(version)
-        .compile();
-
-    JctAssertions.assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
-  }
-
-  static IntStream javacVersions() {
-    return IntStream.rangeClosed(9, SourceVersion.latestSupported().ordinal());
-  }
-
-  static IntStream ecjVersions() {
-    var maxEcjVersion = (ClassFileConstants.getLatestJDKLevel() >> (Short.BYTES * 8))
-        - ClassFileConstants.MAJOR_VERSION_0;
-
-    return LongStream.rangeClosed(9, maxEcjVersion)
-        .mapToInt(i -> (int) i);
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings();
   }
 }

@@ -27,95 +27,113 @@ prevent future issues for any projects deciding to use it.
 **This module is still under development.** Any contributions or feedback
 are always welcome!
 
-## Example
+## Examples
 
-The following is an example of using this library with JUnit Jupiter to run both javac and ECJ:
+The following is an example of using this library with JUnit Jupiter to run both javac and ECJ
+across a single package:
 
 ```java
-class HelloWorldTest {
 
-    @Test
-    void i_can_compile_hello_world_with_javac() {
-        // Given
-        var sources = RamPath
-                .createPath("sources")
+@DisplayName("Example tests")
+class ExampleTest {
+
+    @DisplayName("I can compile a Hello World application")
+    @EcjCompilers
+    @JavacCompilers
+    @ParameterizedTest(name = "using {0}")
+    void canCompileHelloWorld(Compilable<?, ?> compiler) {
+        var sources = createPath("src")
                 .createFile(
-                        "org/me/test/examples/HelloWorld.java",
-                        "package org.me.test.examples;",
-                        "",
-                        "public class HelloWorld {",
-                        "  public static void main(String[] args) {",
-                        "    System.out.println(\"Hello, World!\");",
-                        "  }",
-                        "}"
-                )
-                .createFile(
-                        "module-info.java",
-                        "module org.me.test.examples {",
-                        "  exports org.me.test.examples;",
-                        "}"
+                        "org/example/Message.java",
+                        """
+                        package org.example;
+
+                        import lombok.Data;
+                        import lombok.NonNull;
+
+                        @Data
+                        public class HelloWorld {
+                            public static void main(String[] args) {
+                                System.out.println("Hello, World!");
+                            }
+                        }
+                        """
                 );
 
         // When
-        var compilation = Compilers
-                .javac()
-                .addSourceRamPaths(sources)
-                .release(11)
+        var compilation = compiler
+                .addSourcePath(sources)
                 .compile();
 
         // Then
-        assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
-        assertThatCompilation(compilation).diagnostics().isEmpty();
-        assertThatCompilation(compilation).classOutput()
-                .file("org/me/test/examples/HelloWorld.class")
-                .exists()
-                .isNotEmptyFile();
-        assertThatCompilation(compilation).classOutput()
-                .file("module-info.class")
-                .exists()
-                .isNotEmptyFile();
+        assertThatCompilation(compilation)
+                .isSuccessfulWithoutWarnings();
     }
+}
+```
 
-    @Test
-    void i_can_compile_hello_world_with_ecj() {
+Likewise, the following shows an example of compiling a multi-module style application with JPMS
+support, running the Lombok annotation processor over the input. This assumes that the Lombok
+JAR is already on the classpath for the JUnit test runner.
+
+```java
+@DisplayName("Example tests")
+class ExampleTest {
+
+    @DisplayName("I can compile a module that is using Lombok")
+    @JavacCompilers(modules = true)
+    @ParameterizedTest(name = "using {0}")
+    void canCompileModuleUsingLombok(Compilable<?, ?> compiler) {
         // Given
-        var sources = RamPath
-                .createPath("sources")
+        var sources = createPath("hello.world")
                 .createFile(
-                        "org/me/test/examples/HelloWorld.java",
-                        "package org.me.test.examples;",
-                        "",
-                        "public class HelloWorld {",
-                        "  public static void main(String[] args) {",
-                        "    System.out.println(\"Hello, World!\");",
-                        "  }",
-                        "}"
+                        "org/example/Message.java",
+                        """
+                        package org.example;
+
+                        import lombok.Data;
+                        import lombok.NonNull;
+
+                        @Data
+                        public class Message {
+                            @NonNull
+                            private final String content;
+                        }
+                        """
+                )
+                .createFile(
+                        "org/example/Main.java",
+                        """
+                        package org.example;
+
+                        public class Main {
+                            public static void main(String[] args) {
+                                for (var arg : args) {
+                                    var message = new Message(arg);
+                                    System.out.println(arg);
+                                }
+                            }
+                        }
+                        """
                 )
                 .createFile(
                         "module-info.java",
-                        "module org.me.test.examples {",
-                        "  exports org.me.test.examples;",
-                        "}"
+                        """
+                        module hello.world {
+                            requires java.base;
+                            requires static lombok;
+                        }
+                        """
                 );
 
         // When
-        var compilation = Compilers
-                .ecj()
-                .addSourceRamPaths(sources)
-                .release(11)
+        var compilation = compiler
+                .addModuleSourcePath("hello.world", sources)
                 .compile();
 
         // Then
-        assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
-        assertThatCompilation(compilation).diagnostics().isEmpty();
-        assertThatCompilation(compilation).classOutput()
-                .file("org/me/test/examples/HelloWorld.class")
-                .exists()
-                .isNotEmptyFile();
-        assertThatCompilation(compilation).classOutput()
-                .file("module-info.class")
-                .exists()
-                .isNotEmptyFile();
+        assertThatCompilation(compilation)
+                .isSuccessfulWithoutWarnings();
     }
 }
 ```

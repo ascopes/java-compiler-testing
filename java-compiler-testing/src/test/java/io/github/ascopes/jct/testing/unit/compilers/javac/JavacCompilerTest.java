@@ -33,11 +33,11 @@ import org.junit.jupiter.api.Test;
 @DisplayName("JavacCompiler tests")
 class JavacCompilerTest {
 
-  @DisplayName("compilers have the expected name")
+  @DisplayName("compilers have the expected default name")
   @Test
-  void compilersHaveTheExpectedName() {
+  void compilersHaveTheExpectedDefaultName() {
     assertThat(new JavacCompiler(MoreMocks.stub(JavaCompiler.class)).getName())
-        .isEqualTo("javac");
+        .isEqualTo("JDK Compiler");
   }
 
   @DisplayName("compilers have the expected JSR-199 compiler implementation")

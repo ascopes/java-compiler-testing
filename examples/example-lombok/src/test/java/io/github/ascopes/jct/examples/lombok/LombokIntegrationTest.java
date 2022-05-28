@@ -16,19 +16,16 @@
 
 package io.github.ascopes.jct.examples.lombok;
 
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.ascopes.jct.assertions.CompilationAssert;
-import io.github.ascopes.jct.assertions.JctAssertions;
-import io.github.ascopes.jct.compilers.Compiler.Logging;
-import io.github.ascopes.jct.compilers.Compilers;
+import io.github.ascopes.jct.compilers.Compilable;
+import io.github.ascopes.jct.compilers.LoggingMode;
+import io.github.ascopes.jct.junit.JavacCompilers;
 import io.github.ascopes.jct.paths.RamPath;
-import java.util.stream.IntStream;
-import javax.lang.model.SourceVersion;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Example integration test that makes use of the Lombok annotation processor.
@@ -42,9 +39,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 class LombokIntegrationTest {
 
   @DisplayName("Lombok @Data compiles the expected data class")
-  @MethodSource("supportedJavacVersions")
-  @ParameterizedTest(name = "for Java version {0}")
-  void lombokDataCompilesTheExpectedDataClass(int version) throws Exception {
+  @JavacCompilers
+  @ParameterizedTest(name = "for {0}")
+  void lombokDataCompilesTheExpectedDataClass(Compilable<?, ?> compiler) throws Exception {
     var sources = RamPath
         .createPath("sources")
         .createFile(
@@ -61,16 +58,13 @@ class LombokIntegrationTest {
             "}"
         );
 
-    var compilation = Compilers
-        .javac()
-        .addPath(StandardLocation.SOURCE_PATH, sources)
-        .release(version)
-        .fileManagerLogging(Logging.ENABLED)
-        .diagnosticLogging(Logging.STACKTRACES)
+    var compilation = compiler
+        .addSourcePath(sources)
+        //.fileManagerLogging(LoggingMode.ENABLED)
+        //.diagnosticLogging(LoggingMode.STACKTRACES)
         .compile();
 
-    JctAssertions
-        .assertThatCompilation(compilation)
+    assertThatCompilation(compilation)
         .isSuccessful();
 
     // Github Issue #9 sanity check - Improve annotation processor discovery mechanism
@@ -95,9 +89,5 @@ class LombokIntegrationTest {
         .hasFieldOrPropertyWithValue("name", "Cat")
         .hasFieldOrPropertyWithValue("legCount", 4)
         .hasFieldOrPropertyWithValue("age", 5);
-  }
-
-  static IntStream supportedJavacVersions() {
-    return IntStream.range(11, SourceVersion.values().length);
   }
 }

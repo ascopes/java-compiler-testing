@@ -40,7 +40,7 @@ public interface ModuleOrientedContainerGroup extends ContainerGroup {
   /**
    * Add a container to this group.
    *
-   * @param module the module that the container is for.
+   * @param module    the module that the container is for.
    * @param container the container to add.
    */
   void addModule(String module, Container container);
