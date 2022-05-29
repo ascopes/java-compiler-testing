@@ -34,7 +34,6 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractListAssert;
 
-//@formatter:off
 /**
  * Assertions for a list of diagnostics.
  *
@@ -42,14 +41,8 @@ import org.assertj.core.api.AbstractListAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class DiagnosticListAssert extends AbstractListAssert<
-    DiagnosticListAssert,
-    List<? extends TraceDiagnostic<? extends JavaFileObject>>,
-    TraceDiagnostic<? extends JavaFileObject>,
-    DiagnosticAssert
->
-//@formatter:on
-{
+public class DiagnosticListAssert
+    extends AbstractListAssert<DiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, DiagnosticAssert> {
 
   /**
    * Initialize this assertion.

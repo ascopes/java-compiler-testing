@@ -1,5 +1,3 @@
-package io.github.ascopes.jct.assertions;
-
 /*
  * Copyright (C) 2022 Ashley Scopes
  *
@@ -15,6 +13,8 @@ package io.github.ascopes.jct.assertions;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package io.github.ascopes.jct.assertions;
 
 import java.util.List;
 import org.apiguardian.api.API;

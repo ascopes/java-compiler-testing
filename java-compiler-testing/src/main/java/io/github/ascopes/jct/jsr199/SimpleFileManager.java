@@ -74,7 +74,12 @@ public class SimpleFileManager implements FileManager {
     outputs = new HashMap<>();
   }
 
-  @SuppressWarnings("resource")
+  /**
+   * Add a path to the given location.
+   *
+   * @param location the location to use for the path.
+   * @param path     the path to add.
+   */
   public void addPath(Location location, PathLike path) {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
@@ -134,7 +139,6 @@ public class SimpleFileManager implements FileManager {
   }
 
   @Override
-  @SuppressWarnings("resource")
   public void copyContainers(Location from, Location to) {
     if (from.isOutputLocation()) {
       if (!to.isOutputLocation()) {
@@ -160,11 +164,10 @@ public class SimpleFileManager implements FileManager {
           .ofNullable(outputs.get(from))
           .ifPresent(fromOutputs -> {
             fromOutputs.getPackages().forEach(toOutputs::addPackage);
-            fromOutputs.getModules().forEach((module, containers) -> {
-              for (var packageContainer : containers.getPackages()) {
-                toOutputs.addModule(module.getModuleName(), packageContainer);
-              }
-            });
+            fromOutputs.getModules().forEach((module, containers) -> containers
+                .getPackages()
+                .forEach(container -> toOutputs.addModule(module.getModuleName(), container))
+            );
           });
 
     } else if (from.isModuleOrientedLocation()) {
@@ -173,13 +176,12 @@ public class SimpleFileManager implements FileManager {
       Optional
           .ofNullable(modules.get(from))
           .map(ModuleOrientedContainerGroup::getModules)
-          .ifPresent(fromModules -> {
-            fromModules.forEach((module, containers) -> {
-              for (var packageContainer : containers.getPackages()) {
-                toModules.addModule(module.getModuleName(), packageContainer);
-              }
-            });
-          });
+          .ifPresent(fromModules -> fromModules
+              .forEach((module, containers) -> containers
+                  .getPackages()
+                  .forEach(container -> toModules.addModule(module.getModuleName(), container))
+              )
+          );
 
     } else {
       var toPackages = getOrCreatePackage(to);
@@ -188,6 +190,7 @@ public class SimpleFileManager implements FileManager {
           .ofNullable(packages.get(from))
           .ifPresent(fromPackages -> fromPackages.getPackages().forEach(toPackages::addPackage));
     }
+
   }
 
   @Override

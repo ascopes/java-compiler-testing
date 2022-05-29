@@ -47,8 +47,13 @@
   <module name="LineLength">
     <property name="fileExtensions" value="java"/>
     <property name="max" value="100"/>
+    <!--
+      NOTE(ascopes): modified this to also ignore extends/implements clauses in class
+      and interface declarations, as formatting becomes less readable if we follow the google style
+      here.
+    -->
     <property name="ignorePattern"
-      value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
+      value="^package.*|^import.*|a href|href|http://|https://|ftp://|\s+extends |\s+implements "/>
   </module>
 
   <module name="TreeWalker">

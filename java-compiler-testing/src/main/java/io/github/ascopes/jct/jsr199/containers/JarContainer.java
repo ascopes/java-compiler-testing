@@ -123,8 +123,8 @@ public final class JarContainer implements Container {
       return Optional.empty();
     }
 
-    var className = FileUtils.binaryNameToClassName(binaryName);
-    var classPath = FileUtils.classNameToPath(packageDir.getPath(), className, Kind.CLASS);
+    var className = FileUtils.binaryNameToSimpleClassName(binaryName);
+    var classPath = FileUtils.simpleClassNameToPath(packageDir.getPath(), className, Kind.CLASS);
 
     return Files.isRegularFile(classPath)
         ? Optional.of(Files.readAllBytes(classPath))
@@ -152,12 +152,12 @@ public final class JarContainer implements Container {
   @Override
   public Optional<PathFileObject> getJavaFileForInput(String binaryName, Kind kind) {
     var packageName = FileUtils.binaryNameToPackageName(binaryName);
-    var className = FileUtils.binaryNameToClassName(binaryName);
+    var className = FileUtils.binaryNameToSimpleClassName(binaryName);
 
     return Optional
         .ofNullable(holder.access().getPackage(packageName))
         .map(PathLike::getPath)
-        .map(packageDir -> FileUtils.classNameToPath(packageDir, className, kind))
+        .map(packageDir -> FileUtils.simpleClassNameToPath(packageDir, className, kind))
         .filter(Files::isRegularFile)
         .map(path -> new PathFileObject(location, path.getRoot(), path));
   }

@@ -17,18 +17,14 @@
 package io.github.ascopes.jct.examples.serviceloaderjpms.testing;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static io.github.ascopes.jct.paths.RamPath.*;
+import static io.github.ascopes.jct.paths.RamPath.createPath;
 
-import io.github.ascopes.jct.assertions.JctAssertions;
 import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.examples.serviceloaderjpms.ServiceProcessor;
 import io.github.ascopes.jct.junit.EcjCompilers;
 import io.github.ascopes.jct.junit.JavacCompilers;
-import io.github.ascopes.jct.paths.RamPath;
-import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 @DisplayName("ServiceProcessor tests (JPMS)")
 class ServiceProcessorTest {
