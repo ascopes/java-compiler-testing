@@ -43,6 +43,9 @@
   </scm>
 
   <properties>
+    <assertj.version>3.22.0</assertj.version>
+    <jimfs.version>1.2</jimfs.version>
+
     <!-- Log verbosity -->
     <hide-test-logs-in-console>true</hide-test-logs-in-console>
 
@@ -75,7 +78,7 @@
         <!-- In-memory file system -->
         <groupId>com.google.jimfs</groupId>
         <artifactId>jimfs</artifactId>
-        <version>1.2</version>
+        <version>${jimfs.version}</version>
       </dependency>
 
       <dependency>
@@ -96,7 +99,7 @@
         <!-- Fluent assertions -->
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.22.0</version>
+        <version>${assertj.version}</version>
       </dependency>
 
       <dependency>
@@ -192,6 +195,7 @@
           <version>3.8.1</version>
 
           <configuration>
+            <failOnWarning>true</failOnWarning>
             <showDeprecation>true</showDeprecation>
             <release>${java-release.version}</release>
           </configuration>
