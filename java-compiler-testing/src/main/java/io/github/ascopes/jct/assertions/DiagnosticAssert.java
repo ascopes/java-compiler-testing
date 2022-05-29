@@ -67,8 +67,8 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the source of the diagnostic.
    */
-  public ObjectAssert<? extends JavaFileObject> source() {
-    return new ObjectAssert<>(actual.getSource());
+  public JavaFileObjectAssert source() {
+    return new JavaFileObjectAssert(actual.getSource());
   }
 
   /**
