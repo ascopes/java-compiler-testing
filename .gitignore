@@ -3,9 +3,11 @@ build/
 out/
 target/
 
-# IntelliJ
-.idea/
+# IntelliJ junk
 *.iml
+.idea/*
+# Allow providing file templates for simplicity.
+!.idea/fileTemplates
 
 # VSCode
 .vscode/
