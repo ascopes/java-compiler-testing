@@ -43,31 +43,6 @@
   </scm>
 
   <properties>
-    <apiguardian.version>1.1.2</apiguardian.version>
-    <assertj.version>3.22.0</assertj.version>
-    <awaitility.version>4.2.0</awaitility.version>
-    <commons-vfs2.version>2.9.0</commons-vfs2.version>
-    <ecj.version>3.29.0</ecj.version>
-    <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
-    <jimfs.version>1.2</jimfs.version>
-    <junit.version>5.8.2</junit.version>
-    <logback.version>1.2.11</logback.version>
-    <mockito.version>4.4.0</mockito.version>
-    <reflections.version>0.10.2</reflections.version>
-    <slf4j.version>1.7.36</slf4j.version>
-
-    <!-- Maven plugins and dependencies -->
-    <checkstyle.version>10.0</checkstyle.version>
-    <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
-    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-    <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
-    <maven-javadoc-plugin.version>3.3.2</maven-javadoc-plugin.version>
-    <maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
-
-    <!-- Third-party plugins -->
-    <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
-    <surefire-tree-reporter-plugin.version>0.1.0</surefire-tree-reporter-plugin.version>
-
     <!-- Log verbosity -->
     <hide-test-logs-in-console>true</hide-test-logs-in-console>
 
@@ -93,56 +68,56 @@
         <!-- Logging implementation -->
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>${logback.version}</version>
+        <version>1.2.11</version>
       </dependency>
 
       <dependency>
         <!-- In-memory file system -->
         <groupId>com.google.jimfs</groupId>
         <artifactId>jimfs</artifactId>
-        <version>${jimfs.version}</version>
+        <version>1.2</version>
       </dependency>
 
       <dependency>
         <!-- Levenshtein Distance algorithm for matching similar strings -->
         <groupId>me.xdrop</groupId>
         <artifactId>fuzzywuzzy</artifactId>
-        <version>${fuzzywuzzy.version}</version>
+        <version>1.4.0</version>
       </dependency>
 
       <dependency>
         <!-- API versioning annotations -->
         <groupId>org.apiguardian</groupId>
         <artifactId>apiguardian-api</artifactId>
-        <version>${apiguardian.version}</version>
+        <version>1.1.2</version>
       </dependency>
 
       <dependency>
         <!-- Fluent assertions -->
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>${assertj.version}</version>
+        <version>3.22.0</version>
       </dependency>
 
       <dependency>
         <!-- Awaitable assertions -->
         <groupId>org.awaitility</groupId>
         <artifactId>awaitility</artifactId>
-        <version>${awaitility.version}</version>
+        <version>4.2.0</version>
       </dependency>
 
       <dependency>
         <!-- Eclipse Compiler for Java  -->
         <groupId>org.eclipse.jdt</groupId>
         <artifactId>ecj</artifactId>
-        <version>${ecj.version}</version>
+        <version>3.29.0</version>
       </dependency>
 
       <dependency>
         <!-- Unit testing -->
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>${junit.version}</version>
+        <version>5.8.2</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -151,23 +126,33 @@
         <!-- Mocking -->
         <groupId>org.mockito</groupId>
         <artifactId>mockito-bom</artifactId>
-        <version>${mockito.version}</version>
+        <version>4.5.1</version>
         <scope>import</scope>
         <type>pom</type>
+      </dependency>
+
+      <dependency>
+        <!--
+          Used within one of the example modules to prove compatibility with third-party
+          annotation processors.
+        -->
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.24</version>
       </dependency>
 
       <dependency>
         <!-- Common reflection facilities -->
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
-        <version>${reflections.version}</version>
+        <version>0.10.2</version>
       </dependency>
 
       <dependency>
         <!-- Logging interface -->
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>${slf4j.version}</version>
+        <version>1.7.36</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -179,7 +164,7 @@
           <!-- Coverage tracing -->
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${jacoco-maven-plugin.version}</version>
+          <version>0.8.8</version>
 
           <executions>
             <execution>
@@ -204,7 +189,7 @@
           <!-- Java compiler config -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>${maven-compiler-plugin.version}</version>
+          <version>3.8.1</version>
 
           <configuration>
             <showDeprecation>true</showDeprecation>
@@ -215,7 +200,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>${maven-javadoc-plugin.version}</version>
+          <version>3.3.2</version>
 
           <configuration>
             <additionalOptions>
@@ -233,7 +218,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>${maven-jar-plugin.version}</version>
+          <version>3.2.2</version>
 
           <configuration>
             <archive>
@@ -255,7 +240,7 @@
           <!-- Unit testing config -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>${maven-surefire-plugin.version}</version>
+          <version>3.0.0-M6</version>
 
           <configuration>
             <!--
@@ -287,7 +272,7 @@
             <dependency>
               <groupId>me.fabriciorby</groupId>
               <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-              <version>${surefire-tree-reporter-plugin.version}</version>
+              <version>0.1.0</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -299,7 +284,7 @@
         <!-- Checking style of code matches the Google code style -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${maven-checkstyle-plugin.version}</version>
+        <version>3.1.2</version>
 
         <executions>
           <execution>
@@ -336,7 +321,7 @@
             <!-- Force the usage of checkstyle v10 rather than v8.28 -->
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>${checkstyle.version}</version>
+            <version>10.0</version>
           </dependency>
         </dependencies>
       </plugin>
