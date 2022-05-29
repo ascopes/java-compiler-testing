@@ -276,56 +276,54 @@
             </dependency>
           </dependencies>
         </plugin>
+
+        <plugin>
+          <!-- Checking style of code matches the Google code style -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>3.1.2</version>
+
+          <executions>
+            <execution>
+              <id>checkstyle</id>
+              <phase>compile</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+              <configuration>
+                <configLocation>
+                  <!--suppress UnresolvedMavenProperty -->
+                  ${maven.multiModuleProjectDirectory}/.mvn/checkstyle/checkstyle.xml
+                </configLocation>
+                <consoleOutput>true</consoleOutput>
+                <encoding>UTF-8</encoding>
+                <failsOnError>true</failsOnError>
+                <!--suppress UnresolvedMavenProperty -->
+                <headerLocation>
+                  ${maven.multiModuleProjectDirectory}/.mvn/checkstyle/license-header.txt
+                </headerLocation>
+                <includeResources>true</includeResources>
+                <sourceDirectories>${project.basedir}/src</sourceDirectories>
+                <suppressionsLocation>
+                  <!--suppress UnresolvedMavenProperty -->
+                  ${maven.multiModuleProjectDirectory}/.mvn/checkstyle/suppressions.xml
+                </suppressionsLocation>
+                <violationSeverity>info</violationSeverity>
+              </configuration>
+            </execution>
+          </executions>
+
+          <dependencies>
+            <dependency>
+              <!-- Force the usage of checkstyle v10 rather than v8.28 -->
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>10.0</version>
+            </dependency>
+          </dependencies>
+        </plugin>
       </plugins>
     </pluginManagement>
-
-    <plugins>
-      <plugin>
-        <!-- Checking style of code matches the Google code style -->
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.1.2</version>
-
-        <executions>
-          <execution>
-            <id>checkstyle</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <configuration>
-              <configLocation>
-                <!--suppress UnresolvedMavenProperty -->
-                ${maven.multiModuleProjectDirectory}/.mvn/checkstyle/checkstyle.xml
-              </configLocation>
-              <consoleOutput>true</consoleOutput>
-              <encoding>UTF-8</encoding>
-              <failsOnError>true</failsOnError>
-              <!--suppress UnresolvedMavenProperty -->
-              <headerLocation>
-                ${maven.multiModuleProjectDirectory}/.mvn/checkstyle/license-header.txt
-              </headerLocation>
-              <includeResources>true</includeResources>
-              <sourceDirectories>${project.basedir}/src</sourceDirectories>
-              <suppressionsLocation>
-                <!--suppress UnresolvedMavenProperty -->
-                ${maven.multiModuleProjectDirectory}/.mvn/checkstyle/suppressions.xml
-              </suppressionsLocation>
-              <violationSeverity>info</violationSeverity>
-            </configuration>
-          </execution>
-        </executions>
-
-        <dependencies>
-          <dependency>
-            <!-- Force the usage of checkstyle v10 rather than v8.28 -->
-            <groupId>com.puppycrawl.tools</groupId>
-            <artifactId>checkstyle</artifactId>
-            <version>10.0</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-    </plugins>
   </build>
 
   <profiles>

@@ -35,6 +35,7 @@ import org.assertj.core.api.AbstractAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@SuppressWarnings("UnusedReturnValue")
 public final class CompilationAssert extends AbstractAssert<CompilationAssert, Compilation> {
 
   private static final Set<Kind> WARNING_DIAGNOSTIC_KINDS = Stream

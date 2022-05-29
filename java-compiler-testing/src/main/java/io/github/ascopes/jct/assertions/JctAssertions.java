@@ -17,9 +17,6 @@
 package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.compilers.Compilation;
-import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
-import java.util.List;
-import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -54,29 +51,5 @@ public final class JctAssertions {
    */
   public static CompilationAssert thenCompilation(Compilation compilation) {
     return new CompilationAssert(compilation);
-  }
-
-  /**
-   * Perform a regular diagnostic list assertion.
-   *
-   * @param diagnostics the list of diagnostics to assert on.
-   * @return the assertion.
-   */
-  public static DiagnosticListAssert assertThatDiagnostics(
-      List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
-  ) {
-    return thenDiagnostics(diagnostics);
-  }
-
-  /**
-   * Perform a BDD-style diagnostic list assertion.
-   *
-   * @param diagnostics the list of diagnostics to assert on.
-   * @return the assertion.
-   */
-  public static DiagnosticListAssert thenDiagnostics(
-      List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
-  ) {
-    return new DiagnosticListAssert(diagnostics);
   }
 }

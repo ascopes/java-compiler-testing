@@ -262,7 +262,7 @@ public class DiagnosticListAssert extends AbstractListAssert<
       TraceDiagnostic<? extends JavaFileObject> value,
       String description
   ) {
-    return new DiagnosticAssert(value);
+    return new DiagnosticAssert(value).describedAs(description);
   }
 
   @Override

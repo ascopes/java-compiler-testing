@@ -16,9 +16,10 @@
 
 package io.github.ascopes.jct.jsr199.diagnostics;
 
+import static java.util.Objects.requireNonNull;
+
 import io.github.ascopes.jct.utils.Nullable;
 import java.util.Locale;
-import java.util.Objects;
 import javax.tools.Diagnostic;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -44,7 +45,7 @@ public abstract class ForwardingDiagnostic<S> implements Diagnostic<S> {
    * @param original the original diagnostic to delegate to.
    */
   protected ForwardingDiagnostic(Diagnostic<? extends S> original) {
-    this.original = Objects.requireNonNull(original);
+    this.original = requireNonNull(original, "original");
   }
 
   @Override
@@ -83,16 +84,25 @@ public abstract class ForwardingDiagnostic<S> implements Diagnostic<S> {
     return original.getColumnNumber();
   }
 
+  @Nullable
   @Override
   public String getCode() {
     return original.getCode();
   }
 
   @Override
-  public String getMessage(Locale locale) {
+  public String getMessage(@Nullable Locale locale) {
     return original.getMessage(locale);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p><strong>Note:</strong> this representation may vary depending on the compiler that
+   * initialized it.</p>
+   *
+   * @return the string representation of the diagnostic.
+   */
   @Override
   public String toString() {
     return original.toString();
