@@ -38,6 +38,13 @@ public class SimplePackageOrientedContainerGroup extends AbstractPackageOriented
 
   private final Location location;
 
+  /**
+   * Initialize this group.
+   *
+   * @param location the location of the group.
+   * @param release the release version to use for handling {@code Multi-Release} JARs in this
+   *                location.
+   */
   public SimplePackageOrientedContainerGroup(Location location, String release) {
     super(release);
 

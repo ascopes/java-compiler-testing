@@ -22,7 +22,6 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractListAssert;
 
-//@formatter:off
 /**
  * Assertions for a list of {@link StackTraceElement stack trace frames}.
  *
@@ -30,14 +29,8 @@ import org.assertj.core.api.AbstractListAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class StackTraceAssert extends AbstractListAssert<
-    StackTraceAssert,
-    List<? extends StackTraceElement>,
-    StackTraceElement,
-    StackTraceElementAssert
->
-//@formatter:on
-{
+public final class StackTraceAssert
+    extends AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
 
   /**
    * Initialize a new assertions object.
