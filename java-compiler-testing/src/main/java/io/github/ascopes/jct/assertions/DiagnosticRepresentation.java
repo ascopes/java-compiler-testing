@@ -37,7 +37,7 @@ import org.assertj.core.presentation.Representation;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class DiagnosticRepresentation implements Representation {
+public final class DiagnosticRepresentation implements Representation {
 
   private static final DiagnosticRepresentation INSTANCE
       = new DiagnosticRepresentation();
