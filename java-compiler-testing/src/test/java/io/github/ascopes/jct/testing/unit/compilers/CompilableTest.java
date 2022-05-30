@@ -47,6 +47,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.quality.Strictness;
 
 /**
  * {@link Compilable} tests.
@@ -290,7 +291,10 @@ class CompilableTest {
         () -> {
           // Given
           var pathLike = stub(PathLike.class);
-          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(
+              new TypeRef<>() {},
+              withSettings().strictness(Strictness.LENIENT)
+          );
           given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
@@ -310,7 +314,10 @@ class CompilableTest {
         () -> {
           // Given
           var path = stub(Path.class);
-          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(
+              new TypeRef<>() {},
+              withSettings().strictness(Strictness.LENIENT)
+          );
           given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
@@ -330,7 +337,10 @@ class CompilableTest {
         () -> {
           // Given
           var pathLike = stub(PathLike.class);
-          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(
+              new TypeRef<>() {},
+              withSettings().strictness(Strictness.LENIENT)
+          );
           given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
           given(pathLikeAdder.add(compiler, pathLike)).willCallRealMethod();
 
@@ -347,7 +357,10 @@ class CompilableTest {
         () -> {
           // Given
           var path = stub(Path.class);
-          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(
+              new TypeRef<>() {},
+              withSettings().strictness(Strictness.LENIENT)
+          );
           given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
           given(pathAdder.add(compiler, path)).willCallRealMethod();
 
@@ -403,7 +416,10 @@ class CompilableTest {
         () -> {
           // Given
           var pathLike = stub(PathLike.class);
-          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(
+              new TypeRef<>() {},
+              withSettings().strictness(Strictness.LENIENT)
+          );
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
           given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
@@ -423,7 +439,10 @@ class CompilableTest {
         () -> {
           // Given
           var path = stub(Path.class);
-          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(
+              new TypeRef<>() {},
+              withSettings().strictness(Strictness.LENIENT)
+          );
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
           given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
@@ -443,7 +462,10 @@ class CompilableTest {
         () -> {
           // Given
           var pathLike = stub(PathLike.class);
-          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(
+              new TypeRef<>() {},
+              withSettings().strictness(Strictness.LENIENT)
+          );
           given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
           given(pathLikeAdder.add(compiler, moduleName, pathLike)).willCallRealMethod();
 
@@ -460,7 +482,10 @@ class CompilableTest {
         () -> {
           // Given
           var path = stub(Path.class);
-          Compilable<?, ?> compiler = mockCast(new TypeRef<>() {}, withSettings().lenient());
+          Compilable<?, ?> compiler = mockCast(
+              new TypeRef<>() {},
+              withSettings().strictness(Strictness.LENIENT)
+          );
           given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
           given(pathAdder.add(compiler, moduleName, path)).willCallRealMethod();
 
