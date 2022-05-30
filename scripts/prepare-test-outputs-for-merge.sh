@@ -19,12 +19,13 @@
 ### that the test applies to, and to rename the jacoco.xml files to match the Java version in use.
 ###
 
-set -e
+set -o errexit
+set -o pipefail
 
 CI_JAVA_VERSION=${1?Pass the Java version as the first argument to this script!}
 CI_OS=${2?Pass the OS name as the second argument to this script!}
 
-if ! command -v xsltproc > /dev/null 2>&1; then
+if ! command -v xsltproc >/dev/null 2>&1; then
   if [ -z ${CI+_} ]; then
     echo -e "\e[1;31mERROR\e[0m: xsltproc is not found -- make sure it is installed first."
     exit 2
@@ -37,7 +38,7 @@ fi
 
 echo -e "\e[1;35mUpdating Surefire reports...\e[0m"
 surefire_prefix_xslt=$(mktemp --suffix=.xslt)
-sed 's/^  //g' > "${surefire_prefix_xslt}" <<'EOF'
+sed 's/^  //g' >"${surefire_prefix_xslt}" <<'EOF'
   <?xml version="1.0" encoding="UTF-8"?>
   <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <!--
@@ -76,7 +77,7 @@ for surefire_report in $(find-all-surefire-reports); do
   echo -e "\e[1;34mAdding Java version to test case names in ${surefire_report}...\e[0m"
   new_surefire_report=${surefire_report/.xml/-java-${CI_JAVA_VERSION}-${CI_OS}.xml}
   xsltproc --stringparam prefix "[Java-${CI_JAVA_VERSION}-${CI_OS}]" \
-      "${surefire_prefix_xslt}" "${surefire_report}" > "${new_surefire_report}"
+    "${surefire_prefix_xslt}" "${surefire_report}" >"${new_surefire_report}"
   echo -e "\e[1;34mReplacing ${surefire_report} with ${new_surefire_report}\e[0m"
   rm "${surefire_report}"
 done
