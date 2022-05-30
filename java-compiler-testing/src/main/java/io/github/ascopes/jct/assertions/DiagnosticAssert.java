@@ -50,7 +50,7 @@ public final class DiagnosticAssert
    */
   public DiagnosticAssert(TraceDiagnostic<? extends JavaFileObject> value) {
     super(value, DiagnosticAssert.class);
-    setCustomRepresentation(DiagnosticRepresentation.getInstance());
+    withRepresentation(DiagnosticRepresentation.getInstance());
   }
 
   /**

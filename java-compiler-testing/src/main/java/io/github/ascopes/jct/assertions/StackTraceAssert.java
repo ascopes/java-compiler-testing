@@ -39,7 +39,7 @@ public final class StackTraceAssert
    */
   public StackTraceAssert(List<? extends StackTraceElement> actual) {
     super(actual, StackTraceAssert.class);
-    setCustomRepresentation(StackTraceRepresentation.getInstance());
+    withRepresentation(StackTraceRepresentation.getInstance());
   }
 
   @Override

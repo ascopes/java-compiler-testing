@@ -39,6 +39,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest]
         java-version: [ 11, 12, 13, 14, 15, 16, 17, 18 ]
@@ -73,7 +74,7 @@ jobs:
       - name: Annotate test reports
         if: always()
         run: >-
-          .github/scripts/prepare-test-outputs-for-merge.sh 
+          scripts/prepare-test-outputs-for-merge.sh 
           ${{ matrix.java-version }} 
           ${{ matrix.os }}
 
