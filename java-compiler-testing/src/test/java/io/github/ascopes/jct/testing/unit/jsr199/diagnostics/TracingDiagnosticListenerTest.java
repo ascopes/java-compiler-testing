@@ -53,6 +53,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.quality.Strictness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -388,7 +389,7 @@ class TracingDiagnosticListenerTest {
   static Diagnostic<JavaFileObject> someDiagnostic(Kind kind, String message) {
     var diagnostic = stubCast(
         new TypeRef<Diagnostic<JavaFileObject>>() {},
-        withSettings().lenient()
+        withSettings().strictness(Strictness.LENIENT)
     );
     when(diagnostic.getKind()).thenReturn(kind);
     when(diagnostic.getMessage(any())).thenReturn(message);

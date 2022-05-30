@@ -50,6 +50,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.quality.Strictness;
 
 /**
  * {@link SimpleCompilationFactory} tests.
@@ -64,19 +65,19 @@ class SimpleCompilationFactoryTest {
 
   SimpleCompilationFactory<StubbedCompiler> compilationFactory;
 
-  @Mock(lenient = true, answer = Answers.RETURNS_DEEP_STUBS)
+  @Mock(strictness = Strictness.LENIENT, answer = Answers.RETURNS_DEEP_STUBS)
   StubbedCompiler compiler;
 
-  @Mock(lenient = true, answer = Answers.RETURNS_SMART_NULLS)
+  @Mock(strictness = Strictness.LENIENT, answer = Answers.RETURNS_SMART_NULLS)
   JavaCompiler jsr199Compiler;
 
-  @Mock(lenient = true, answer = Answers.RETURNS_SELF)
+  @Mock(strictness = Strictness.LENIENT, answer = Answers.RETURNS_SELF)
   FlagBuilder flagBuilder;
 
-  @Mock(lenient = true, answer = Answers.RETURNS_SMART_NULLS)
+  @Mock(strictness = Strictness.LENIENT, answer = Answers.RETURNS_SMART_NULLS)
   CompilationTask compilationTask;
 
-  @Mock(lenient = true, answer = Answers.RETURNS_DEEP_STUBS)
+  @Mock(strictness = Strictness.LENIENT, answer = Answers.RETURNS_DEEP_STUBS)
   SimpleFileManagerTemplate fileManagerTemplate;
 
   Boolean expectedCompilationResult;
