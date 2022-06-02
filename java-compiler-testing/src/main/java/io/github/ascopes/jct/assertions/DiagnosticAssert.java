@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.OptionalLong;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
@@ -28,8 +29,6 @@ import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.InstantAssert;
 import org.assertj.core.api.LongAssert;
-import org.assertj.core.api.ObjectAssert;
-import org.assertj.core.api.OptionalAssert;
 import org.assertj.core.api.OptionalLongAssert;
 import org.assertj.core.api.StringAssert;
 
@@ -48,6 +47,7 @@ public final class DiagnosticAssert
    *
    * @param value the value to assert on.
    */
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   public DiagnosticAssert(TraceDiagnostic<? extends JavaFileObject> value) {
     super(value, DiagnosticAssert.class);
     withRepresentation(DiagnosticRepresentation.getInstance());
@@ -78,7 +78,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the position of the diagnostic.
    */
-  public OptionalLongAssert position() {
+  public OptionalAssert<LongAssert, Long> position() {
     return assertPosition(actual.getPosition(), "position");
   }
 
@@ -89,7 +89,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the start position of the diagnostic.
    */
-  public OptionalLongAssert startPosition() {
+  public OptionalAssert<LongAssert, Long> startPosition() {
     return assertPosition(actual.getPosition(), "startPosition");
   }
 
@@ -100,7 +100,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the end position of the diagnostic.
    */
-  public OptionalLongAssert endPosition() {
+  public OptionalAssert<LongAssert, Long> endPosition() {
     return assertPosition(actual.getEndPosition(), "endPosition");
   }
 
@@ -111,7 +111,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the line number of the diagnostic.
    */
-  public OptionalLongAssert lineNumber() {
+  public OptionalAssert<LongAssert, Long> lineNumber() {
     return assertPosition(actual.getLineNumber(), "lineNumber");
   }
 
@@ -122,7 +122,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the column number of the diagnostic.
    */
-  public OptionalLongAssert columnNumber() {
+  public OptionalAssert<LongAssert, Long> columnNumber() {
     return assertPosition(actual.getColumnNumber(), "columnNumber");
   }
 
@@ -179,9 +179,8 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the optional thread name.
    */
-  public OptionalAssert<String> threadName() {
-    // TODO(ascopes): should I be initializing this in this way?
-    return new OptionalAssert<>(actual.getThreadName()) {};
+  public OptionalAssert<StringAssert, String> threadName() {
+    return new OptionalAssert<>(actual.getThreadName(), StringAssert::new);
   }
 
   /**
@@ -193,12 +192,10 @@ public final class DiagnosticAssert
     return new StackTraceAssert(actual.getStackTrace());
   }
 
-  private OptionalLongAssert assertPosition(long position, String name) {
-    // TODO(ascopes): should I be initializing this in this way?
-    return new OptionalLongAssert(
-        position == Diagnostic.NOPOS ? OptionalLong.empty() : OptionalLong.of(position)
-    ) {}.describedAs("%s of %d", name, position);
-
-
+  private OptionalAssert<LongAssert, Long> assertPosition(long position, String name) {
+    return new OptionalAssert<>(
+        Optional.of(position).filter(value -> value != Diagnostic.NOPOS),
+        LongAssert::new
+    ).describedAs("%s of %d", name, position);
   }
 }

@@ -16,12 +16,12 @@
 
 package io.github.ascopes.jct.assertions;
 
-import java.util.OptionalInt;
+import java.util.Optional;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.BooleanAssert;
-import org.assertj.core.api.OptionalIntAssert;
+import org.assertj.core.api.IntegerAssert;
 import org.assertj.core.api.StringAssert;
 
 /**
@@ -59,11 +59,14 @@ public class StackTraceElementAssert
    *
    * @return the assertions for the line number.
    */
-  public OptionalIntAssert lineNumber() {
+  public OptionalAssert<IntegerAssert, Integer> lineNumber() {
     // Null for irrelevant values is less surprising than a negative value.
-    return new OptionalIntAssert(
-        actual.getLineNumber() < 0 ? OptionalInt.empty() : OptionalInt.of(actual.getLineNumber())
-    ) {}.describedAs("line number %s", actual.getLineNumber());
+    return new OptionalAssert<>(
+        Optional
+            .of(actual.getLineNumber())
+            .filter(value -> value > 0),
+        IntegerAssert::new
+    ).describedAs("line number %s", actual.getLineNumber());
   }
 
   /**
