@@ -43,7 +43,7 @@
   </scm>
 
   <properties>
-    <assertj.version>3.22.0</assertj.version>
+    <assertj.version>3.23.1</assertj.version>
     <jimfs.version>1.2</jimfs.version>
 
     <!-- Log verbosity -->

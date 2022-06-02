@@ -92,7 +92,7 @@ public interface StaticClassTestTemplate {
         test(
             "{name}'s constructor should raise an UnsupportedOperationException",
             () -> assertThatCode(() -> getSingleConstructor().newInstance())
-                .getCause()
+                .cause()
                 .isInstanceOf(UnsupportedOperationException.class)
                 .hasMessage("static-only class")
         )

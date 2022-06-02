@@ -75,7 +75,7 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
       throw originalEx;
     })).isInstanceOf(UncheckedIOException.class)
         .hasMessage("%s: %s", originalEx.getClass().getName(), originalEx.getMessage())
-        .getCause()
+        .cause()
         .isSameAs(originalEx)
         .extracting(Throwable::getStackTrace, array(StackTraceElement[].class))
         .isEqualTo(stackTrace);
@@ -141,7 +141,7 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
       }
     })).isInstanceOf(UncheckedIOException.class)
         .hasMessage("%s: %s", originalEx.getClass().getName(), originalEx.getMessage())
-        .getCause()
+        .cause()
         .isSameAs(originalEx)
         .extracting(Throwable::getStackTrace, array(StackTraceElement[].class))
         .isEqualTo(stackTrace);
@@ -185,7 +185,7 @@ class IoExceptionUtilsTest implements StaticClassTestTemplate {
 
     assertThat(newEx)
         .hasMessage("%s: %s", originalEx.getClass().getName(), originalEx.getMessage())
-        .getCause()
+        .cause()
         .isSameAs(originalEx)
         .extracting(Throwable::getStackTrace, array(StackTraceElement[].class))
         .isEqualTo(stackTrace);
