@@ -18,10 +18,10 @@ package io.github.ascopes.jct.assertions;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.assertions.repr.DiagnosticRepresentation;
 import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.OptionalLong;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
@@ -29,7 +29,6 @@ import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.InstantAssert;
 import org.assertj.core.api.LongAssert;
-import org.assertj.core.api.OptionalLongAssert;
 import org.assertj.core.api.StringAssert;
 
 /**

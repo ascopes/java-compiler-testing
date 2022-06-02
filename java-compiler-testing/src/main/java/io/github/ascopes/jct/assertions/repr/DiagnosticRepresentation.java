@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.ascopes.jct.assertions;
+package io.github.ascopes.jct.assertions.repr;
 
 import static javax.tools.Diagnostic.NOPOS;
 
@@ -36,7 +36,7 @@ import org.assertj.core.presentation.Representation;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.INTERNAL)
 public final class DiagnosticRepresentation implements Representation {
 
   private static final DiagnosticRepresentation INSTANCE

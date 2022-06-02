@@ -21,8 +21,8 @@ module io.github.ascopes.jct {
   requires transitive java.compiler;
   requires java.management;
 
-  requires ecj;
-  requires jimfs;
+  requires ecj;    // not a module, currently.
+  requires jimfs;  // not a module, currently.
   requires me.xdrop.fuzzywuzzy;
   requires static org.apiguardian.api;
   requires static org.junit.jupiter.params;
@@ -43,11 +43,13 @@ module io.github.ascopes.jct {
   // Junit annotation support.
   opens io.github.ascopes.jct.junit;
 
-  // Testing exports only.
-  exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
+  ////////////////////
+  /// TESTING ONLY ///
+  ////////////////////
 
-  // Open the module for testing only.
+  exports io.github.ascopes.jct.assertions.repr to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.assertions.repr to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers.ecj to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
@@ -55,5 +57,6 @@ module io.github.ascopes.jct {
   opens io.github.ascopes.jct.jsr199.containers to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.jsr199.diagnostics to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.paths to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
 }

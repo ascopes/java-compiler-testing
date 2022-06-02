@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.ascopes.jct.assertions;
+package io.github.ascopes.jct.assertions.repr;
 
 import static java.util.stream.Collectors.joining;
 
@@ -31,7 +31,7 @@ import org.assertj.core.presentation.Representation;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.INTERNAL)
 public final class DiagnosticListRepresentation implements Representation {
 
   private static final DiagnosticListRepresentation INSTANCE

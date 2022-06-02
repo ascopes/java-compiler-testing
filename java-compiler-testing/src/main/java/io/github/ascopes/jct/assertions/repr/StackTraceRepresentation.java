@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.ascopes.jct.assertions;
+package io.github.ascopes.jct.assertions.repr;
 
 import java.util.List;
 import org.apiguardian.api.API;
@@ -27,7 +27,7 @@ import org.assertj.core.presentation.Representation;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.INTERNAL)
 public final class StackTraceRepresentation implements Representation {
 
   private static final StackTraceRepresentation INSTANCE
