@@ -30,8 +30,8 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public interface OutputOrientedContainerGroup
-    extends PackageOrientedContainerGroup, ModuleOrientedContainerGroup {
+public interface OutputContainerGroup
+    extends PackageContainerGroup, ModuleContainerGroup {
 
   /**
    * Get the output-oriented location.

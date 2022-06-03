@@ -17,33 +17,32 @@
 package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.jsr199.PathFileObject;
-import io.github.ascopes.jct.jsr199.containers.PackageOrientedContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.ModuleContainerGroup;
 import java.nio.file.Path;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.IterableAssert;
-import org.assertj.core.api.ObjectAssert;
 import org.assertj.core.api.PathAssert;
 
 /**
- * Base methods to provide for a {@link PackageOrientedContainerGroup} assertion type.
+ * Base methods to provide for a {@link ModuleContainerGroup} assertion type.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class PackageOrientedContainerGroupAssert
-    extends AbstractAssert<PackageOrientedContainerGroupAssert, PackageOrientedContainerGroup> {
+public class ModuleContainerGroupAssert
+    extends AbstractAssert<ModuleContainerGroupAssert, ModuleContainerGroup> {
 
   /**
    * Initialize this assertion object.
    *
    * @param actual the container group to assert upon.
    */
-  public PackageOrientedContainerGroupAssert(PackageOrientedContainerGroup actual) {
-    super(actual, PackageOrientedContainerGroupAssert.class);
+  public ModuleContainerGroupAssert(ModuleContainerGroup actual) {
+    super(actual, ModuleContainerGroupAssert.class);
   }
 
   /**
@@ -65,6 +64,16 @@ public class PackageOrientedContainerGroupAssert
   }
 
   /**
+   * Perform an assertion on a module.
+   *
+   * @param moduleName the module name to get.
+   * @return the package-oriented assertions to perform.
+   */
+  public PackageContainerGroupAssert module(String moduleName) {
+    return new PackageContainerGroupAssert(actual.getOrCreateModule(moduleName));
+  }
+
+  /**
    * Perform assertions on the services that exist for the given service type that are discovered
    * from this container.
    *
@@ -81,12 +90,16 @@ public class PackageOrientedContainerGroupAssert
    *
    * <p>If the file does not exist, an empty optional is returned.
    *
-   * @param path the path to get the file for.
+   * @param moduleName the name of the module the file is in.
+   * @param path       the path to get the file for.
    * @return the assertions to perform.
    */
-  public OptionalAssert<PathAssert, Path> file(String path) {
+  public OptionalAssert<PathAssert, Path> file(String moduleName, String path) {
     // TODO(ascopes): add in fuzzy comparison on results in error message
-    return new OptionalAssert<>(actual.findFile(path).orElse(null), PathAssert::new);
+    return new OptionalAssert<>(
+        actual.getOrCreateModule(moduleName).findFile(path).orElse(null),
+        PathAssert::new
+    );
   }
 
   /**
@@ -94,16 +107,20 @@ public class PackageOrientedContainerGroupAssert
    *
    * <p>If no file is found, an empty optional is returned.
    *
+   * @param moduleName   the name of the module the file is in.
    * @param packageName  the package name that the file should reside within.
    * @param relativeName the relative name of the file in the package.
    * @return the assertions to perform.
    */
   public OptionalAssert<PathFileObjectAssert, PathFileObject> fileForInput(
+      String moduleName,
       String packageName,
       String relativeName
   ) {
     return new OptionalAssert<>(
-        actual.getFileForInput(packageName, relativeName).orElse(null),
+        actual.getOrCreateModule(moduleName)
+            .getFileForInput(packageName, relativeName)
+            .orElse(null),
         PathFileObjectAssert::new
     );
   }
@@ -113,16 +130,20 @@ public class PackageOrientedContainerGroupAssert
    *
    * <p>If no file is found, an empty optional is returned.
    *
+   * @param moduleName   the name of the module the file is in.
    * @param packageName  the package name that the file should reside within.
    * @param relativeName the relative name of the file in the package.
    * @return the assertions to perform.
    */
   public OptionalAssert<PathFileObjectAssert, PathFileObject> fileForOutput(
+      String moduleName,
       String packageName,
       String relativeName
   ) {
     return new OptionalAssert<>(
-        actual.getFileForOutput(packageName, relativeName).orElse(null),
+        actual.getOrCreateModule(moduleName)
+            .getFileForOutput(packageName, relativeName)
+            .orElse(null),
         PathFileObjectAssert::new
     );
   }
@@ -132,16 +153,20 @@ public class PackageOrientedContainerGroupAssert
    *
    * <p>If no file is found, an empty optional is returned.
    *
-   * @param className the fully qualified binary name of the class to use.
-   * @param kind      the kind of file.
+   * @param moduleName the name of the module the file is in.
+   * @param className  the fully qualified binary name of the class to use.
+   * @param kind       the kind of file.
    * @return the assertions to perform.
    */
   public OptionalAssert<PathFileObjectAssert, PathFileObject> javaFileForInput(
+      String moduleName,
       String className,
       Kind kind
   ) {
     return new OptionalAssert<>(
-        actual.getJavaFileForInput(className, kind).orElse(null),
+        actual.getOrCreateModule(moduleName)
+            .getJavaFileForInput(className, kind)
+            .orElse(null),
         PathFileObjectAssert::new
     );
   }
@@ -151,30 +176,37 @@ public class PackageOrientedContainerGroupAssert
    *
    * <p>If no file is found, an empty optional is returned.
    *
-   * @param className the fully qualified binary name of the class to use.
-   * @param kind      the kind of file.
+   * @param moduleName the name of the module the file is in.
+   * @param className  the fully qualified binary name of the class to use.
+   * @param kind       the kind of file.
    * @return the assertions to perform.
    */
   public OptionalAssert<PathFileObjectAssert, PathFileObject> javaFileForOutput(
+      String moduleName,
       String className,
       Kind kind
   ) {
     return new OptionalAssert<>(
-        actual.getJavaFileForOutput(className, kind).orElse(null),
+        actual.getOrCreateModule(moduleName)
+            .getJavaFileForOutput(className, kind)
+            .orElse(null),
         PathFileObjectAssert::new
     );
   }
 
   /**
-   * Assert that this container is empty.
+   * Assert that this container is empty for the given module.
    *
+   * @param moduleName the module name to check for.
    * @return this assertion object for further call chaining.
    */
-  public PackageOrientedContainerGroupAssert isEmpty() {
-    if (!actual.isEmpty()) {
+  public ModuleContainerGroupAssert isEmpty(String moduleName) {
+    var module = actual.getOrCreateModule(moduleName);
+
+    if (!module.isEmpty()) {
       throw failure(
           "Expected container group for location %s to be empty but it was not",
-          actual.getLocation().getName()
+          module.getLocation().getName()
       );
     }
 
@@ -184,13 +216,17 @@ public class PackageOrientedContainerGroupAssert
   /**
    * Assert that this container is not empty.
    *
+   * @param moduleName the module name to check for.
    * @return this assertion object for further call chaining.
    */
-  public PackageOrientedContainerGroupAssert isNotEmpty() {
-    if (actual.isEmpty()) {
+  public ModuleContainerGroupAssert isNotEmpty(String moduleName) {
+
+    var module = actual.getOrCreateModule(moduleName);
+
+    if (module.isEmpty()) {
       throw failure(
           "Expected container group for location %s to not be empty but it was",
-          actual.getLocation().getName()
+          module.getLocation().getName()
       );
     }
 

@@ -34,7 +34,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimplePackageOrientedContainerGroup extends AbstractPackageOrientedContainerGroup {
+public class SimplePackageContainerGroup extends AbstractPackageContainerGroup {
 
   private final Location location;
 
@@ -45,7 +45,7 @@ public class SimplePackageOrientedContainerGroup extends AbstractPackageOriented
    * @param release the release version to use for handling {@code Multi-Release} JARs in this
    *                location.
    */
-  public SimplePackageOrientedContainerGroup(Location location, String release) {
+  public SimplePackageContainerGroup(Location location, String release) {
     super(release);
 
     this.location = requireNonNull(location, "location");

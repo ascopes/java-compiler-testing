@@ -19,12 +19,12 @@ package io.github.ascopes.jct.jsr199;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.jsr199.containers.ContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.ModuleOrientedContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.OutputOrientedContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.PackageOrientedContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.SimpleModuleOrientedContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.SimpleOutputOrientedContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.SimplePackageOrientedContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.ModuleContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.OutputContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.PackageContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.SimpleModuleContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.SimpleOutputContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.SimplePackageContainerGroup;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.paths.SubPath;
 import io.github.ascopes.jct.utils.Nullable;
@@ -58,9 +58,9 @@ import org.apiguardian.api.API.Status;
 public class SimpleFileManager implements FileManager {
 
   private final String release;
-  private final Map<Location, PackageOrientedContainerGroup> packages;
-  private final Map<Location, ModuleOrientedContainerGroup> modules;
-  private final Map<Location, OutputOrientedContainerGroup> outputs;
+  private final Map<Location, PackageContainerGroup> packages;
+  private final Map<Location, ModuleContainerGroup> modules;
+  private final Map<Location, OutputContainerGroup> outputs;
 
   /**
    * Initialize this file manager.
@@ -175,7 +175,7 @@ public class SimpleFileManager implements FileManager {
 
       Optional
           .ofNullable(modules.get(from))
-          .map(ModuleOrientedContainerGroup::getModules)
+          .map(ModuleContainerGroup::getModules)
           .ifPresent(fromModules -> fromModules
               .forEach((module, containers) -> containers
                   .getPackages()
@@ -194,17 +194,17 @@ public class SimpleFileManager implements FileManager {
   }
 
   @Override
-  public Optional<PackageOrientedContainerGroup> getPackageContainerGroup(Location location) {
+  public Optional<PackageContainerGroup> getPackageContainerGroup(Location location) {
     return Optional.ofNullable(packages.get(location));
   }
 
   @Override
-  public Optional<ModuleOrientedContainerGroup> getModuleContainerGroup(Location location) {
+  public Optional<ModuleContainerGroup> getModuleContainerGroup(Location location) {
     return Optional.ofNullable(modules.get(location));
   }
 
   @Override
-  public Optional<OutputOrientedContainerGroup> getOutputContainerGroup(Location location) {
+  public Optional<OutputContainerGroup> getOutputContainerGroup(Location location) {
     return Optional.ofNullable(outputs.get(location));
   }
 
@@ -389,7 +389,7 @@ public class SimpleFileManager implements FileManager {
     requireOutputOrModuleOrientedLocation(location);
 
     return getModuleOrientedOrOutputGroup(location)
-        .map(ModuleOrientedContainerGroup::getLocationsForModules)
+        .map(ModuleContainerGroup::getLocationsForModules)
         .orElseGet(List::of);
   }
 
@@ -422,7 +422,7 @@ public class SimpleFileManager implements FileManager {
         .or(() -> Optional.ofNullable(outputs.get(location)));
   }
 
-  private Optional<ModuleOrientedContainerGroup> getModuleOrientedOrOutputGroup(Location location) {
+  private Optional<ModuleContainerGroup> getModuleOrientedOrOutputGroup(Location location) {
     if (location instanceof ModuleLocation) {
       throw new IllegalArgumentException(
           "Cannot get a module-oriented group from a ModuleLocation"
@@ -434,7 +434,7 @@ public class SimpleFileManager implements FileManager {
         .or(() -> Optional.ofNullable(outputs.get(location)));
   }
 
-  private Optional<PackageOrientedContainerGroup> getPackageOrientedOrOutputGroup(
+  private Optional<PackageContainerGroup> getPackageOrientedOrOutputGroup(
       Location location
   ) {
     if (location instanceof ModuleLocation) {
@@ -450,7 +450,7 @@ public class SimpleFileManager implements FileManager {
         .or(() -> Optional.ofNullable(outputs.get(location)));
   }
 
-  private PackageOrientedContainerGroup getOrCreatePackage(Location location) {
+  private PackageContainerGroup getOrCreatePackage(Location location) {
     if (location instanceof ModuleLocation) {
       throw new IllegalArgumentException("Cannot get a package for a module like this");
     }
@@ -458,23 +458,23 @@ public class SimpleFileManager implements FileManager {
     return packages
         .computeIfAbsent(
             location,
-            unused -> new SimplePackageOrientedContainerGroup(location, release)
+            unused -> new SimplePackageContainerGroup(location, release)
         );
   }
 
-  private ModuleOrientedContainerGroup getOrCreateModule(Location location) {
+  private ModuleContainerGroup getOrCreateModule(Location location) {
     return modules
         .computeIfAbsent(
             location,
-            unused -> new SimpleModuleOrientedContainerGroup(location, release)
+            unused -> new SimpleModuleContainerGroup(location, release)
         );
   }
 
-  private OutputOrientedContainerGroup getOrCreateOutput(Location location) {
+  private OutputContainerGroup getOrCreateOutput(Location location) {
     return outputs
         .computeIfAbsent(
             location,
-            unused -> new SimpleOutputOrientedContainerGroup(location, release)
+            unused -> new SimpleOutputContainerGroup(location, release)
         );
   }
 

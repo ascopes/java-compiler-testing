@@ -37,7 +37,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public interface PackageOrientedContainerGroup extends ContainerGroup {
+public interface PackageContainerGroup extends ContainerGroup {
 
   /**
    * Add a container to this group.

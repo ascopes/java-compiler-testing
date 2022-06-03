@@ -47,8 +47,8 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public abstract class AbstractPackageOrientedContainerGroup
-    implements PackageOrientedContainerGroup {
+public abstract class AbstractPackageContainerGroup
+    implements PackageContainerGroup {
 
   private static final Set<String> ARCHIVE_EXTENSIONS = Set.of(
       ".zip",
@@ -65,7 +65,7 @@ public abstract class AbstractPackageOrientedContainerGroup
    *
    * @param release the release to use for multi-release JARs.
    */
-  protected AbstractPackageOrientedContainerGroup(String release) {
+  protected AbstractPackageContainerGroup(String release) {
     this.release = requireNonNull(release, "release");
 
     containers = new ArrayList<>();

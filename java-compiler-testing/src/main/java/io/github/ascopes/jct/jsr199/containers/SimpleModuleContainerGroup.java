@@ -39,16 +39,16 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Simple implementation of a {@link ModuleOrientedContainerGroup}.
+ * Simple implementation of a {@link ModuleContainerGroup}.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContainerGroup {
+public class SimpleModuleContainerGroup implements ModuleContainerGroup {
 
   private final Location location;
-  private final Map<ModuleLocation, SimpleModuleOrientedModuleContainerGroup> modules;
+  private final Map<ModuleLocation, SimpleModuleModuleContainerGroup> modules;
   private final String release;
   private final Lazy<ContainerClassLoader> classLoaderLazy;
 
@@ -60,7 +60,7 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
    * @throws UnsupportedOperationException if the {@code location} is not module-oriented, or is
    *                                       output-oriented.
    */
-  public SimpleModuleOrientedContainerGroup(Location location, String release) {
+  public SimpleModuleContainerGroup(Location location, String release) {
     this.location = requireNonNull(location, "location");
     this.release = requireNonNull(release, "release");
 
@@ -139,7 +139,7 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
   }
 
   @Override
-  public Map<ModuleLocation, ? extends PackageOrientedContainerGroup> getModules() {
+  public Map<ModuleLocation, ? extends PackageContainerGroup> getModules() {
     return Map.copyOf(modules);
   }
 
@@ -155,7 +155,7 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
     var finders = modules
         .values()
         .stream()
-        .map(SimpleModuleOrientedModuleContainerGroup::getPackages)
+        .map(SimpleModuleModuleContainerGroup::getPackages)
         .flatMap(List::stream)
         .map(Container::getModuleFinder)
         .toArray(ModuleFinder[]::new);
@@ -173,11 +173,11 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
   }
 
   @Override
-  public PackageOrientedContainerGroup getOrCreateModule(String moduleName) {
+  public PackageContainerGroup getOrCreateModule(String moduleName) {
     return modules
         .computeIfAbsent(
             new ModuleLocation(location, moduleName),
-            SimpleModuleOrientedModuleContainerGroup::new
+            SimpleModuleModuleContainerGroup::new
         );
   }
 
@@ -195,15 +195,15 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
 
   /**
    * Wrapper around a location that lacks the constraints that
-   * {@link SimplePackageOrientedContainerGroup} imposes.
+   * {@link SimplePackageContainerGroup} imposes.
    */
-  private class SimpleModuleOrientedModuleContainerGroup
-      extends AbstractPackageOrientedContainerGroup {
+  private class SimpleModuleModuleContainerGroup
+      extends AbstractPackageContainerGroup {
 
     private final Location location;
 
-    private SimpleModuleOrientedModuleContainerGroup(Location location) {
-      super(SimpleModuleOrientedContainerGroup.this.release);
+    private SimpleModuleModuleContainerGroup(Location location) {
+      super(SimpleModuleContainerGroup.this.release);
       this.location = requireNonNull(location, "location");
     }
 

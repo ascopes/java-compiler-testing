@@ -17,7 +17,7 @@
 package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.jsr199.PathFileObject;
-import io.github.ascopes.jct.jsr199.containers.OutputOrientedContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.OutputContainerGroup;
 import java.nio.file.Path;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
@@ -27,22 +27,22 @@ import org.assertj.core.api.IterableAssert;
 import org.assertj.core.api.PathAssert;
 
 /**
- * Base methods to provide for a {@link OutputOrientedContainerGroup} assertion type.
+ * Base methods to provide for a {@link OutputContainerGroup} assertion type.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class OutputOrientedContainerGroupAssert
-    extends AbstractAssert<OutputOrientedContainerGroupAssert, OutputOrientedContainerGroup> {
+public class OutputContainerGroupAssert
+    extends AbstractAssert<OutputContainerGroupAssert, OutputContainerGroup> {
 
   /**
    * Initialize this assertion object.
    *
    * @param actual the container group to assert upon.
    */
-  public OutputOrientedContainerGroupAssert(OutputOrientedContainerGroup actual) {
-    super(actual, OutputOrientedContainerGroupAssert.class);
+  public OutputContainerGroupAssert(OutputContainerGroup actual) {
+    super(actual, OutputContainerGroupAssert.class);
   }
 
   /**
@@ -69,8 +69,8 @@ public class OutputOrientedContainerGroupAssert
    * @param moduleName the module name to get.
    * @return the package-oriented assertions to perform.
    */
-  public PackageOrientedContainerGroupAssert module(String moduleName) {
-    return new PackageOrientedContainerGroupAssert(actual.getOrCreateModule(moduleName));
+  public PackageContainerGroupAssert module(String moduleName) {
+    return new PackageContainerGroupAssert(actual.getOrCreateModule(moduleName));
   }
 
   /**
@@ -288,7 +288,7 @@ public class OutputOrientedContainerGroupAssert
    *
    * @return this assertion object for further call chaining.
    */
-  public OutputOrientedContainerGroupAssert isEmpty() {
+  public OutputContainerGroupAssert isEmpty() {
     if (!actual.isEmpty()) {
       throw failure(
           "Expected container group for location %s to be empty but it was not",
@@ -305,7 +305,7 @@ public class OutputOrientedContainerGroupAssert
    * @param moduleName the module name to check for.
    * @return this assertion object for further call chaining.
    */
-  public OutputOrientedContainerGroupAssert isEmpty(String moduleName) {
+  public OutputContainerGroupAssert isEmpty(String moduleName) {
     var module = actual.getOrCreateModule(moduleName);
 
     if (!module.isEmpty()) {
@@ -323,7 +323,7 @@ public class OutputOrientedContainerGroupAssert
    *
    * @return this assertion object for further call chaining.
    */
-  public OutputOrientedContainerGroupAssert isNotEmpty() {
+  public OutputContainerGroupAssert isNotEmpty() {
     if (actual.isEmpty()) {
       throw failure(
           "Expected container group for location %s to not be empty but it was",
@@ -340,7 +340,7 @@ public class OutputOrientedContainerGroupAssert
    * @param moduleName the module name to check for.
    * @return this assertion object for further call chaining.
    */
-  public OutputOrientedContainerGroupAssert isNotEmpty(String moduleName) {
+  public OutputContainerGroupAssert isNotEmpty(String moduleName) {
     var module = actual.getOrCreateModule(moduleName);
 
     if (module.isEmpty()) {

@@ -35,7 +35,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public interface ModuleOrientedContainerGroup extends ContainerGroup {
+public interface ModuleContainerGroup extends ContainerGroup {
 
   /**
    * Add a container to this group.
@@ -54,13 +54,13 @@ public interface ModuleOrientedContainerGroup extends ContainerGroup {
   void addModule(String module, PathLike path);
 
   /**
-   * Get the {@link PackageOrientedContainerGroup} for a given module name, creating it if it does
+   * Get the {@link PackageContainerGroup} for a given module name, creating it if it does
    * not yet exist.
    *
    * @param moduleName the module name to look up.
    * @return the container group.
    */
-  PackageOrientedContainerGroup getOrCreateModule(String moduleName);
+  PackageContainerGroup getOrCreateModule(String moduleName);
 
   /**
    * Get the module-oriented location.
@@ -82,7 +82,7 @@ public interface ModuleOrientedContainerGroup extends ContainerGroup {
    *
    * @return the container groups.
    */
-  Map<ModuleLocation, ? extends PackageOrientedContainerGroup> getModules();
+  Map<ModuleLocation, ? extends PackageContainerGroup> getModules();
 
   /**
    * Determine if this group contains a given module.

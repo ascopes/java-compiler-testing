@@ -48,12 +48,12 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimpleOutputOrientedContainerGroup
-    extends AbstractPackageOrientedContainerGroup
-    implements OutputOrientedContainerGroup {
+public class SimpleOutputContainerGroup
+    extends AbstractPackageContainerGroup
+    implements OutputContainerGroup {
 
   private final Location location;
-  private final Map<ModuleLocation, SimpleOutputOrientedModuleContainerGroup> modules;
+  private final Map<ModuleLocation, SimpleOutputModuleContainerGroup> modules;
 
   /**
    * Initialize this container group.
@@ -61,7 +61,7 @@ public class SimpleOutputOrientedContainerGroup
    * @param location the location of the group.
    * @param release  the release version.
    */
-  public SimpleOutputOrientedContainerGroup(Location location, String release) {
+  public SimpleOutputContainerGroup(Location location, String release) {
     super(release);
     this.location = requireNonNull(location, "location");
     modules = new HashMap<>();
@@ -163,14 +163,14 @@ public class SimpleOutputOrientedContainerGroup
   }
 
   @Override
-  public PackageOrientedContainerGroup getOrCreateModule(String moduleName) {
+  public PackageContainerGroup getOrCreateModule(String moduleName) {
     return modules.computeIfAbsent(
         new ModuleLocation(location, moduleName),
         moduleLocation -> {
           // For output locations, we only need the first root. We then just put a subdirectory
           // in there, as it reduces the complexity of this tenfold and means we don't have to
           // worry about creating more in-memory locations on the fly.
-          var group = new SimpleOutputOrientedModuleContainerGroup(moduleLocation);
+          var group = new SimpleOutputModuleContainerGroup(moduleLocation);
           var path = new SubPath(getPackages().iterator().next().getPath(), moduleName);
           IoExceptionUtils.uncheckedIo(() -> Files.createDirectories(path.getPath()));
           group.addPackage(path);
@@ -189,7 +189,7 @@ public class SimpleOutputOrientedContainerGroup
   }
 
   @Override
-  public Map<ModuleLocation, ? extends PackageOrientedContainerGroup> getModules() {
+  public Map<ModuleLocation, ? extends PackageContainerGroup> getModules() {
     return null;
   }
 
@@ -213,15 +213,15 @@ public class SimpleOutputOrientedContainerGroup
 
   /**
    * Wrapper around a location that lacks the constraints that
-   * {@link SimplePackageOrientedContainerGroup} imposes.
+   * {@link SimplePackageContainerGroup} imposes.
    */
-  private class SimpleOutputOrientedModuleContainerGroup
-      extends AbstractPackageOrientedContainerGroup {
+  private class SimpleOutputModuleContainerGroup
+      extends AbstractPackageContainerGroup {
 
     private final Location location;
 
-    private SimpleOutputOrientedModuleContainerGroup(Location location) {
-      super(SimpleOutputOrientedContainerGroup.this.release);
+    private SimpleOutputModuleContainerGroup(Location location) {
+      super(SimpleOutputContainerGroup.this.release);
       this.location = requireNonNull(location, "location");
     }
 

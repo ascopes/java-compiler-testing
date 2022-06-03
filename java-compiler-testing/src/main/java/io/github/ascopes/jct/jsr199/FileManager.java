@@ -16,9 +16,9 @@
 
 package io.github.ascopes.jct.jsr199;
 
-import io.github.ascopes.jct.jsr199.containers.ModuleOrientedContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.OutputOrientedContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.PackageOrientedContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.ModuleContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.OutputContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.PackageContainerGroup;
 import io.github.ascopes.jct.paths.PathLike;
 import java.util.Optional;
 import javax.tools.JavaFileManager;
@@ -69,7 +69,7 @@ public interface FileManager extends JavaFileManager {
    * @param location the package oriented location.
    * @return the container group, or an empty optional if one does not exist.
    */
-  Optional<PackageOrientedContainerGroup> getPackageContainerGroup(Location location);
+  Optional<PackageContainerGroup> getPackageContainerGroup(Location location);
 
   /**
    * Get the container group for the given module-oriented location.
@@ -77,7 +77,7 @@ public interface FileManager extends JavaFileManager {
    * @param location the module oriented location.
    * @return the container group, or an empty optional if one does not exist.
    */
-  Optional<ModuleOrientedContainerGroup> getModuleContainerGroup(Location location);
+  Optional<ModuleContainerGroup> getModuleContainerGroup(Location location);
 
   /**
    * Get the container group for the given output-oriented location.
@@ -85,5 +85,5 @@ public interface FileManager extends JavaFileManager {
    * @param location the output oriented location.
    * @return the container group, or an empty optional if one does not exist.
    */
-  Optional<OutputOrientedContainerGroup> getOutputContainerGroup(Location location);
+  Optional<OutputContainerGroup> getOutputContainerGroup(Location location);
 }

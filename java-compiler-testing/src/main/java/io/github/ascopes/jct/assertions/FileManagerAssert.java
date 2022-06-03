@@ -17,6 +17,10 @@
 package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.jsr199.FileManager;
+import io.github.ascopes.jct.jsr199.containers.ModuleContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.OutputContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.PackageContainerGroup;
+import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
@@ -37,5 +41,56 @@ public final class FileManagerAssert extends AbstractAssert<FileManagerAssert, F
    */
   public FileManagerAssert(FileManager fileManager) {
     super(fileManager, FileManagerAssert.class);
+  }
+
+  /**
+   * Perform assertions on the given package group, if it has been configured.
+   *
+   * <p>If not configured, this will return an empty optional.
+   *
+   * @param location the location to configure.
+   * @return the assertions to perform.
+   */
+  public OptionalAssert<PackageContainerGroupAssert, PackageContainerGroup> packageGroup(
+      Location location
+  ) {
+    return new OptionalAssert<>(
+        actual.getPackageContainerGroup(location).orElse(null),
+        PackageContainerGroupAssert::new
+    );
+  }
+
+  /**
+   * Perform assertions on the given module group, if it has been configured.
+   *
+   * <p>If not configured, this will return an empty optional.
+   *
+   * @param location the location to configure.
+   * @return the assertions to perform.
+   */
+  public OptionalAssert<ModuleContainerGroupAssert, ModuleContainerGroup> moduleGroup(
+      Location location
+  ) {
+    return new OptionalAssert<>(
+        actual.getModuleContainerGroup(location).orElse(null),
+        ModuleContainerGroupAssert::new
+    );
+  }
+
+  /**
+   * Perform assertions on the given output group, if it has been configured.
+   *
+   * <p>If not configured, this will return an empty optional.
+   *
+   * @param location the location to configure.
+   * @return the assertions to perform.
+   */
+  public OptionalAssert<OutputContainerGroupAssert, OutputContainerGroup> outputGroup(
+      Location location
+  ) {
+    return new OptionalAssert<>(
+        actual.getOutputContainerGroup(location).orElse(null),
+        OutputContainerGroupAssert::new
+    );
   }
 }
