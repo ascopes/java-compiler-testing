@@ -58,9 +58,9 @@ public class StackTraceElementAssert
    *
    * @return the assertions for the line number.
    */
-  public OptionalAssert<IntegerAssert, Integer> lineNumber() {
+  public MaybeAssert<IntegerAssert, Integer> lineNumber() {
     // Null for irrelevant values is less surprising than a negative value.
-    return new OptionalAssert<>(
+    return new MaybeAssert<>(
         actual.getLineNumber() > 0
             ? actual.getLineNumber()
             : null,

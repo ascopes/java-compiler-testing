@@ -63,11 +63,10 @@ class ServiceProcessorTest {
         .compile();
 
     assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings();
-    // TODO(ascopes): fix this to work with the file manager rewrite.
-    //.classOutput()
-    //.file("META-INF/services/com.example.InsultProvider")
-    //.exists()
-    //.hasContent("com.example.MeanInsultProviderImpl");
+        .isSuccessfulWithoutWarnings()
+        .files()
+        .classOutput().exists()
+        .file("META-INF/services/com.example.InsultProvider").exists()
+        .hasContent("com.example.MeanInsultProviderImpl");
   }
 }

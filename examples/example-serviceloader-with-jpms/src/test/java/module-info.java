@@ -15,6 +15,7 @@
  */
 
 open module io.github.ascopes.jct.examples.serviceloader.testing {
+  requires org.assertj.core;
   requires transitive io.github.ascopes.jct;
   requires io.github.ascopes.jct.examples.serviceloaderjpms;
   requires transitive org.junit.jupiter;

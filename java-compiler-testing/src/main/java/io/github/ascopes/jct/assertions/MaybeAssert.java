@@ -37,8 +37,8 @@ import org.assertj.core.api.AssertFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class OptionalAssert<I extends AbstractAssert<I, A>, A>
-    extends AbstractAssert<OptionalAssert<I, A>, Optional<A>> {
+public class MaybeAssert<I extends AbstractAssert<I, A>, A>
+    extends AbstractAssert<MaybeAssert<I, A>, Optional<A>> {
 
   private final AssertFactory<A, I> assertFactory;
 
@@ -48,8 +48,8 @@ public class OptionalAssert<I extends AbstractAssert<I, A>, A>
    * @param actual the actual nullable value to assert on.
    * @param assertFactory the assertion factory to use on the value.
    */
-  public OptionalAssert(@Nullable A actual, AssertFactory<A, I> assertFactory) {
-    super(Optional.ofNullable(actual), OptionalAssert.class);
+  public MaybeAssert(@Nullable A actual, AssertFactory<A, I> assertFactory) {
+    super(Optional.ofNullable(actual), MaybeAssert.class);
     this.assertFactory = assertFactory;
   }
 
@@ -58,7 +58,7 @@ public class OptionalAssert<I extends AbstractAssert<I, A>, A>
    *
    * @return the assertions on the value.
    */
-  public I isPresent() {
+  public I exists() {
     if (actual.isEmpty()) {
       throw failure("Expected a value to be present but it was not");
     }
@@ -68,7 +68,7 @@ public class OptionalAssert<I extends AbstractAssert<I, A>, A>
   /**
    * Assert that a value is not present.
    */
-  public void isEmpty() {
+  public void doesNotExist() {
     if (actual.isPresent()) {
       throw failure("Expected no value to be present but got %s", actual);
     }

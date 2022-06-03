@@ -129,6 +129,15 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
     return new DiagnosticListAssert(actual.getDiagnostics());
   }
 
+  /**
+   * Get assertions for the file manager.
+   *
+   * @return assertions for the file manager.
+   */
+  public FileManagerAssert files() {
+    return new FileManagerAssert(actual.getFileManager());
+  }
+
   private void failWithDiagnostics(
       List<? extends TraceDiagnostic<?>> diagnostics,
       String message,

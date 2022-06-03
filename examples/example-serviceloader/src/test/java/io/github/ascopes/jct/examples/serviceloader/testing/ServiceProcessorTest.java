@@ -19,12 +19,10 @@ package io.github.ascopes.jct.examples.serviceloader.testing;
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 import static io.github.ascopes.jct.paths.RamPath.createPath;
 
-import io.github.ascopes.jct.assertions.JctAssertions;
 import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.examples.serviceloader.ServiceProcessor;
 import io.github.ascopes.jct.junit.EcjCompilers;
 import io.github.ascopes.jct.junit.JavacCompilers;
-import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -65,12 +63,10 @@ class ServiceProcessorTest {
         .compile();
 
     assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings();
-
-    // TODO(ascopes): fix this to work with the file manager rewrite.
-    //.classOutput()
-    //.file("META-INF/services/com.example.InsultProvider")
-    //.exists()
-    //.hasContent("com.example.MeanInsultProviderImpl");
+        .isSuccessfulWithoutWarnings()
+        .files()
+        .classOutput().exists()
+        .file("META-INF/services/com.example.InsultProvider").exists()
+        .hasContent("com.example.MeanInsultProviderImpl");
   }
 }

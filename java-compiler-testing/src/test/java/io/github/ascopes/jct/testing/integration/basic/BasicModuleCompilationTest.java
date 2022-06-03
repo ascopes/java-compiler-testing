@@ -61,5 +61,15 @@ class BasicModuleCompilationTest {
 
     assertThatCompilation(compilation)
         .isSuccessfulWithoutWarnings();
+
+    assertThatCompilation(compilation)
+        .files()
+        .classOutput().exists()
+        .file("com/example/HelloWorld.class").exists().isNotEmptyFile();
+
+    assertThatCompilation(compilation)
+        .files()
+        .classOutput().exists()
+        .file("module-info.class").exists().isNotEmptyFile();
   }
 }

@@ -63,18 +63,15 @@ class BasicMultiModuleCompilationTest {
     assertThatCompilation(compilation)
         .isSuccessfulWithoutWarnings();
 
-    // TODO(ascopes): fix this to work with the file manager rewrite.
-    //CompilationAssert.assertThatCompilation(compilation)
-    //    .classOutput()
-    //    .file("hello.world/com/example/HelloWorld.class")
-    //    .exists()
-    //    .isNotEmptyFile();
-    //
-    //CompilationAssert.assertThatCompilation(compilation)
-    //    .classOutput()
-    //    .file("hello.world/module-info.class")
-    //    .exists()
-    //    .isNotEmptyFile();
+    assertThatCompilation(compilation)
+        .files()
+        .classOutput().exists()
+        .file("hello.world", "com/example/HelloWorld.class").exists().isNotEmptyFile();
+
+    assertThatCompilation(compilation)
+        .files()
+        .classOutput().exists()
+        .file("hello.world", "module-info.class").exists().isNotEmptyFile();
   }
 
   // We skip ECJ as it does not support handling modules correctly on a non-default file system.
@@ -125,29 +122,24 @@ class BasicMultiModuleCompilationTest {
     assertThatCompilation(compilation)
         .isSuccessfulWithoutWarnings();
 
-    // TODO(ascopes): fix this to work with the file manager rewrite.
-    //CompilationAssert.assertThatCompilation(compilation)
-    //    .classOutput()
-    //    .file("hello.world/com/example/HelloWorld.class")
-    //    .exists()
-    //    .isNotEmptyFile();
-    //
-    //CompilationAssert.assertThatCompilation(compilation)
-    //    .classOutput()
-    //    .file("hello.world/module-info.class")
-    //    .exists()
-    //    .isNotEmptyFile();
-    //
-    //CompilationAssert.assertThatCompilation(compilation)
-    //    .classOutput()
-    //    .file("greeter/com/example/greeter/Greeter.class")
-    //    .exists()
-    //    .isNotEmptyFile();
-    //
-    //CompilationAssert.assertThatCompilation(compilation)
-    //    .classOutput()
-    //    .file("greeter/module-info.class")
-    //    .exists()
-    //    .isNotEmptyFile();
+    assertThatCompilation(compilation)
+        .files()
+        .classOutput().exists()
+        .file("hello.world", "com/example/HelloWorld.class").exists().isNotEmptyFile();
+
+    assertThatCompilation(compilation)
+        .files()
+        .classOutput().exists()
+        .file("hello.world", "module-info.class").exists().isNotEmptyFile();
+
+    assertThatCompilation(compilation)
+        .files()
+        .classOutput().exists()
+        .file("greeter", "com/example/greeter/Greeter.class").exists().isNotEmptyFile();
+
+    assertThatCompilation(compilation)
+        .files()
+        .classOutput().exists()
+        .file("greeter", "module-info.class").exists().isNotEmptyFile();
   }
 }

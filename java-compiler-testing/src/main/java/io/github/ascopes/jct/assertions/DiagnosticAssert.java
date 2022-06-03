@@ -21,7 +21,6 @@ import static java.util.Objects.requireNonNull;
 import io.github.ascopes.jct.assertions.repr.DiagnosticRepresentation;
 import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
 import java.util.Locale;
-import java.util.Optional;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
@@ -77,7 +76,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the position of the diagnostic.
    */
-  public OptionalAssert<LongAssert, Long> position() {
+  public MaybeAssert<LongAssert, Long> position() {
     return assertPosition(actual.getPosition(), "position");
   }
 
@@ -88,7 +87,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the start position of the diagnostic.
    */
-  public OptionalAssert<LongAssert, Long> startPosition() {
+  public MaybeAssert<LongAssert, Long> startPosition() {
     return assertPosition(actual.getPosition(), "startPosition");
   }
 
@@ -99,7 +98,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the end position of the diagnostic.
    */
-  public OptionalAssert<LongAssert, Long> endPosition() {
+  public MaybeAssert<LongAssert, Long> endPosition() {
     return assertPosition(actual.getEndPosition(), "endPosition");
   }
 
@@ -110,7 +109,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the line number of the diagnostic.
    */
-  public OptionalAssert<LongAssert, Long> lineNumber() {
+  public MaybeAssert<LongAssert, Long> lineNumber() {
     return assertPosition(actual.getLineNumber(), "lineNumber");
   }
 
@@ -121,7 +120,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the column number of the diagnostic.
    */
-  public OptionalAssert<LongAssert, Long> columnNumber() {
+  public MaybeAssert<LongAssert, Long> columnNumber() {
     return assertPosition(actual.getColumnNumber(), "columnNumber");
   }
 
@@ -178,8 +177,8 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the optional thread name.
    */
-  public OptionalAssert<StringAssert, String> threadName() {
-    return new OptionalAssert<>(actual.getThreadName().orElse(null), StringAssert::new);
+  public MaybeAssert<StringAssert, String> threadName() {
+    return new MaybeAssert<>(actual.getThreadName().orElse(null), StringAssert::new);
   }
 
   /**
@@ -191,8 +190,8 @@ public final class DiagnosticAssert
     return new StackTraceAssert(actual.getStackTrace());
   }
 
-  private OptionalAssert<LongAssert, Long> assertPosition(long position, String name) {
-    return new OptionalAssert<>(
+  private MaybeAssert<LongAssert, Long> assertPosition(long position, String name) {
+    return new MaybeAssert<>(
         position == Diagnostic.NOPOS ? null : position,
         LongAssert::new
     ).describedAs("%s of %d", name, position);

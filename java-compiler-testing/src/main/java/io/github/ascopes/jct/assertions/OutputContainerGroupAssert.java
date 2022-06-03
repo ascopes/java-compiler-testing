@@ -93,9 +93,9 @@ public class OutputContainerGroupAssert
    * @param path the path to get the file for.
    * @return the assertions to perform.
    */
-  public OptionalAssert<PathAssert, Path> file(String path) {
+  public MaybeAssert<PathAssert, Path> file(String path) {
     // TODO(ascopes): add in fuzzy comparison on results in error message
-    return new OptionalAssert<>(actual.findFile(path).orElse(null), PathAssert::new);
+    return new MaybeAssert<>(actual.findFile(path).orElse(null), PathAssert::new);
   }
 
   /**
@@ -107,9 +107,9 @@ public class OutputContainerGroupAssert
    * @param path       the path to get the file for.
    * @return the assertions to perform.
    */
-  public OptionalAssert<PathAssert, Path> file(String moduleName, String path) {
+  public MaybeAssert<PathAssert, Path> file(String moduleName, String path) {
     // TODO(ascopes): add in fuzzy comparison on results in error message
-    return new OptionalAssert<>(
+    return new MaybeAssert<>(
         actual.getOrCreateModule(moduleName).findFile(path).orElse(null),
         PathAssert::new
     );
@@ -124,11 +124,11 @@ public class OutputContainerGroupAssert
    * @param relativeName the relative name of the file in the package.
    * @return the assertions to perform.
    */
-  public OptionalAssert<PathFileObjectAssert, PathFileObject> fileForInput(
+  public MaybeAssert<PathFileObjectAssert, PathFileObject> fileForInput(
       String packageName,
       String relativeName
   ) {
-    return new OptionalAssert<>(
+    return new MaybeAssert<>(
         actual.getFileForInput(packageName, relativeName).orElse(null),
         PathFileObjectAssert::new
     );
@@ -144,12 +144,12 @@ public class OutputContainerGroupAssert
    * @param relativeName the relative name of the file in the package.
    * @return the assertions to perform.
    */
-  public OptionalAssert<PathFileObjectAssert, PathFileObject> fileForInput(
+  public MaybeAssert<PathFileObjectAssert, PathFileObject> fileForInput(
       String moduleName,
       String packageName,
       String relativeName
   ) {
-    return new OptionalAssert<>(
+    return new MaybeAssert<>(
         actual.getOrCreateModule(moduleName)
             .getFileForInput(packageName, relativeName)
             .orElse(null),
@@ -166,11 +166,11 @@ public class OutputContainerGroupAssert
    * @param relativeName the relative name of the file in the package.
    * @return the assertions to perform.
    */
-  public OptionalAssert<PathFileObjectAssert, PathFileObject> fileForOutput(
+  public MaybeAssert<PathFileObjectAssert, PathFileObject> fileForOutput(
       String packageName,
       String relativeName
   ) {
-    return new OptionalAssert<>(
+    return new MaybeAssert<>(
         actual.getFileForOutput(packageName, relativeName).orElse(null),
         PathFileObjectAssert::new
     );
@@ -186,12 +186,12 @@ public class OutputContainerGroupAssert
    * @param relativeName the relative name of the file in the package.
    * @return the assertions to perform.
    */
-  public OptionalAssert<PathFileObjectAssert, PathFileObject> fileForOutput(
+  public MaybeAssert<PathFileObjectAssert, PathFileObject> fileForOutput(
       String moduleName,
       String packageName,
       String relativeName
   ) {
-    return new OptionalAssert<>(
+    return new MaybeAssert<>(
         actual.getOrCreateModule(moduleName)
             .getFileForOutput(packageName, relativeName)
             .orElse(null),
@@ -208,11 +208,11 @@ public class OutputContainerGroupAssert
    * @param kind      the kind of file.
    * @return the assertions to perform.
    */
-  public OptionalAssert<PathFileObjectAssert, PathFileObject> javaFileForInput(
+  public MaybeAssert<PathFileObjectAssert, PathFileObject> javaFileForInput(
       String className,
       Kind kind
   ) {
-    return new OptionalAssert<>(
+    return new MaybeAssert<>(
         actual.getJavaFileForInput(className, kind).orElse(null),
         PathFileObjectAssert::new
     );
@@ -228,12 +228,12 @@ public class OutputContainerGroupAssert
    * @param kind       the kind of file.
    * @return the assertions to perform.
    */
-  public OptionalAssert<PathFileObjectAssert, PathFileObject> javaFileForInput(
+  public MaybeAssert<PathFileObjectAssert, PathFileObject> javaFileForInput(
       String moduleName,
       String className,
       Kind kind
   ) {
-    return new OptionalAssert<>(
+    return new MaybeAssert<>(
         actual.getOrCreateModule(moduleName)
             .getJavaFileForInput(className, kind)
             .orElse(null),
@@ -250,11 +250,11 @@ public class OutputContainerGroupAssert
    * @param kind      the kind of file.
    * @return the assertions to perform.
    */
-  public OptionalAssert<PathFileObjectAssert, PathFileObject> javaFileForOutput(
+  public MaybeAssert<PathFileObjectAssert, PathFileObject> javaFileForOutput(
       String className,
       Kind kind
   ) {
-    return new OptionalAssert<>(
+    return new MaybeAssert<>(
         actual.getJavaFileForOutput(className, kind).orElse(null),
         PathFileObjectAssert::new
     );
@@ -270,12 +270,12 @@ public class OutputContainerGroupAssert
    * @param kind       the kind of file.
    * @return the assertions to perform.
    */
-  public OptionalAssert<PathFileObjectAssert, PathFileObject> javaFileForOutput(
+  public MaybeAssert<PathFileObjectAssert, PathFileObject> javaFileForOutput(
       String moduleName,
       String className,
       Kind kind
   ) {
-    return new OptionalAssert<>(
+    return new MaybeAssert<>(
         actual.getOrCreateModule(moduleName)
             .getJavaFileForOutput(className, kind)
             .orElse(null),
