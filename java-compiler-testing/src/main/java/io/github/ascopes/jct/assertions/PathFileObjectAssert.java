@@ -16,26 +16,45 @@
 
 package io.github.ascopes.jct.assertions;
 
-import javax.tools.FileObject;
+import io.github.ascopes.jct.jsr199.PathFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.assertj.core.api.PathAssert;
 
 /**
- * Assertions for {@link FileObject file objects}.
+ * Assertions for {@link PathFileObject Path file objects}.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class FileObjectAssert
-    extends AbstractFileObjectAssert<FileObjectAssert, FileObject> {
+public final class PathFileObjectAssert
+    extends AbstractJavaFileObjectAssert<PathFileObjectAssert, PathFileObject> {
 
   /**
    * Create a new instance of this assertion object.
    *
-   * @param actual the file object to assert upon.
+   * @param actual the path file object to assert upon.
    */
-  public FileObjectAssert(FileObject actual) {
-    super(actual, FileObjectAssert.class);
+  public PathFileObjectAssert(PathFileObject actual) {
+    super(actual, PathFileObjectAssert.class);
+  }
+
+  /**
+   * Perform an assertion on the file object's full path.
+   *
+   * @return the assertions for the path.
+   */
+  public PathAssert relativePath() {
+    return new PathAssert(actual.getRelativePath());
+  }
+
+  /**
+   * Perform an assertion on the file object's full path.
+   *
+   * @return the assertions for the path.
+   */
+  public PathAssert fullPath() {
+    return new PathAssert(actual.getFullPath());
   }
 }

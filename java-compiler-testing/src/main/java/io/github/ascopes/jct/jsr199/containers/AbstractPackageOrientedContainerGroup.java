@@ -188,14 +188,14 @@ public abstract class AbstractPackageOrientedContainerGroup
   }
 
   @Override
-  public <S> Optional<ServiceLoader<S>> getServiceLoader(Class<S> service) {
+  public <S> ServiceLoader<S> getServiceLoader(Class<S> service) {
     var location = getLocation();
 
     if (location instanceof ModuleLocation) {
       throw new UnsupportedOperationException("Cannot load services from specific modules");
     }
 
-    return Optional.of(ServiceLoader.load(service, classLoaderLazy.access()));
+    return ServiceLoader.load(service, classLoaderLazy.access());
   }
 
   @Override

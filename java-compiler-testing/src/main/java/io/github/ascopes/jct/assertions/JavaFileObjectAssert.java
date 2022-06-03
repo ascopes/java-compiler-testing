@@ -28,7 +28,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class JavaFileObjectAssert
-    extends AbstractFileObjectAssert<JavaFileObjectAssert, JavaFileObject> {
+    extends AbstractJavaFileObjectAssert<JavaFileObjectAssert, JavaFileObject> {
 
   /**
    * Create a new instance of this assertion object.
@@ -37,14 +37,5 @@ public final class JavaFileObjectAssert
    */
   public JavaFileObjectAssert(JavaFileObject actual) {
     super(actual, JavaFileObjectAssert.class);
-  }
-
-  /**
-   * Perform an assertion on the file object kind.
-   *
-   * @return the assertions for the kind.
-   */
-  public JavaFileObjectKindAssert kind() {
-    return new JavaFileObjectKindAssert(actual.getKind());
   }
 }

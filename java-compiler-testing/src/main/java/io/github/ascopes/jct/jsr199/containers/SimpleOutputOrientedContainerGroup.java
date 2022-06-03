@@ -86,13 +86,13 @@ public class SimpleOutputOrientedContainerGroup
   @Override
   @SuppressWarnings("resource")
   public void addModule(String module, Container container) {
-    forModule(module).addPackage(container);
+    getOrCreateModule(module).addPackage(container);
   }
 
   @Override
   @SuppressWarnings("resource")
   public void addModule(String module, PathLike path) {
-    forModule(module).addPackage(path);
+    getOrCreateModule(module).addPackage(path);
   }
 
   @Override
@@ -112,7 +112,7 @@ public class SimpleOutputOrientedContainerGroup
   public Optional<Path> findFile(String path) {
     return ModulePrefix
         .tryExtract(path)
-        .flatMap(prefix -> forModule(prefix.getModuleName())
+        .flatMap(prefix -> getOrCreateModule(prefix.getModuleName())
             .findFile(prefix.getRest()))
         .or(() -> super.findFile(path));
   }
@@ -126,7 +126,7 @@ public class SimpleOutputOrientedContainerGroup
     // TODO(ascopes): can we have modules conceptually in this method call?
     return ModulePrefix
         .tryExtract(packageName)
-        .flatMap(prefix -> forModule(prefix.getModuleName())
+        .flatMap(prefix -> getOrCreateModule(prefix.getModuleName())
             .getFileForInput(prefix.getModuleName(), relativeName))
         .or(() -> super.getFileForInput(packageName, relativeName));
   }
@@ -137,7 +137,7 @@ public class SimpleOutputOrientedContainerGroup
     // TODO(ascopes): can we have modules conceptually in this method call?
     return ModulePrefix
         .tryExtract(packageName)
-        .flatMap(prefix -> forModule(prefix.getModuleName())
+        .flatMap(prefix -> getOrCreateModule(prefix.getModuleName())
             .getFileForOutput(prefix.getRest(), relativeName))
         .or(() -> super.getFileForOutput(packageName, relativeName));
   }
@@ -147,7 +147,7 @@ public class SimpleOutputOrientedContainerGroup
   public Optional<PathFileObject> getJavaFileForInput(String className, Kind kind) {
     return ModulePrefix
         .tryExtract(className)
-        .flatMap(prefix -> forModule(prefix.getModuleName())
+        .flatMap(prefix -> getOrCreateModule(prefix.getModuleName())
             .getJavaFileForInput(prefix.getRest(), kind))
         .or(() -> super.getJavaFileForInput(className, kind));
   }
@@ -157,13 +157,13 @@ public class SimpleOutputOrientedContainerGroup
   public Optional<PathFileObject> getJavaFileForOutput(String className, Kind kind) {
     return ModulePrefix
         .tryExtract(className)
-        .flatMap(prefix -> forModule(prefix.getModuleName())
+        .flatMap(prefix -> getOrCreateModule(prefix.getModuleName())
             .getJavaFileForOutput(prefix.getRest(), kind))
         .or(() -> super.getJavaFileForOutput(className, kind));
   }
 
   @Override
-  public PackageOrientedContainerGroup forModule(String moduleName) {
+  public PackageOrientedContainerGroup getOrCreateModule(String moduleName) {
     return modules.computeIfAbsent(
         new ModuleLocation(location, moduleName),
         moduleLocation -> {

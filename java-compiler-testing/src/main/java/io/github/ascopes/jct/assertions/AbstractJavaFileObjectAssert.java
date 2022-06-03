@@ -24,6 +24,7 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import javax.tools.FileObject;
+import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
@@ -33,13 +34,13 @@ import org.assertj.core.api.StringAssert;
 import org.assertj.core.api.UriAssert;
 
 /**
- * Abstract assertions for {@link FileObject file objects}.
+ * Abstract assertions for {@link JavaFileObject Java file objects}.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public abstract class AbstractFileObjectAssert<S extends AbstractFileObjectAssert<S, A>, A extends FileObject>
+public abstract class AbstractJavaFileObjectAssert<S extends AbstractJavaFileObjectAssert<S, A>, A extends JavaFileObject>
     extends AbstractAssert<S, A> {
 
   /**
@@ -48,7 +49,7 @@ public abstract class AbstractFileObjectAssert<S extends AbstractFileObjectAsser
    * @param actual   the actual value to assert on.
    * @param selfType the type of the assertion implementation.
    */
-  protected AbstractFileObjectAssert(A actual, Class<?> selfType) {
+  protected AbstractJavaFileObjectAssert(A actual, Class<?> selfType) {
     super(actual, selfType);
   }
 
@@ -121,6 +122,15 @@ public abstract class AbstractFileObjectAssert<S extends AbstractFileObjectAsser
   public InstantAssert lastModified() {
     var instant = Instant.ofEpochMilli(actual.getLastModified());
     return new InstantAssert(instant);
+  }
+
+  /**
+   * Perform an assertion on the file object kind.
+   *
+   * @return the assertions for the kind.
+   */
+  public JavaFileObjectKindAssert kind() {
+    return new JavaFileObjectKindAssert(actual.getKind());
   }
 
   private byte[] rawContent() {

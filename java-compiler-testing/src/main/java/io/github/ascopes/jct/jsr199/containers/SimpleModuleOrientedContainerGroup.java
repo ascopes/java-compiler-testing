@@ -87,13 +87,13 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
   @Override
   @SuppressWarnings("resource")
   public void addModule(String module, Container container) {
-    forModule(module).addPackage(container);
+    getOrCreateModule(module).addPackage(container);
   }
 
   @Override
   @SuppressWarnings("resource")
   public void addModule(String module, PathLike path) {
-    forModule(module).addPackage(path);
+    getOrCreateModule(module).addPackage(path);
   }
 
   @Override
@@ -149,7 +149,7 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
   }
 
   @Override
-  public <S> Optional<ServiceLoader<S>> getServiceLoader(Class<S> service) {
+  public <S> ServiceLoader<S> getServiceLoader(Class<S> service) {
     getClass().getModule().addUses(service);
 
     var finders = modules
@@ -169,11 +169,11 @@ public class SimpleModuleOrientedContainerGroup implements ModuleOrientedContain
     var layer = bootLayer
         .defineModulesWithOneLoader(config, ClassLoader.getSystemClassLoader());
 
-    return Optional.of(ServiceLoader.load(layer, service));
+    return ServiceLoader.load(layer, service);
   }
 
   @Override
-  public PackageOrientedContainerGroup forModule(String moduleName) {
+  public PackageOrientedContainerGroup getOrCreateModule(String moduleName) {
     return modules
         .computeIfAbsent(
             new ModuleLocation(location, moduleName),

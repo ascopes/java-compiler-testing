@@ -18,7 +18,6 @@ package io.github.ascopes.jct.jsr199.containers;
 
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import java.io.Closeable;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
@@ -68,5 +67,5 @@ public interface ContainerGroup extends Closeable {
    * @throws UnsupportedOperationException if the container group does not provide this
    *                                       functionality.
    */
-  <S> Optional<ServiceLoader<S>> getServiceLoader(Class<S> service);
+  <S> ServiceLoader<S> getServiceLoader(Class<S> service);
 }

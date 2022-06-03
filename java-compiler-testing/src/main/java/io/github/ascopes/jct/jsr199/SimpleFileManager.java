@@ -106,7 +106,7 @@ public class SimpleFileManager implements FileManager {
           .map(ModuleReference::descriptor)
           .map(ModuleDescriptor::name)
           .forEach(module -> moduleGroup
-              .forModule(module)
+              .getOrCreateModule(module)
               .addPackage(new SubPath(path, module)));
 
     } else {
@@ -123,11 +123,11 @@ public class SimpleFileManager implements FileManager {
 
       if (location.isOutputLocation()) {
         getOrCreateOutput(moduleLocation.getParent())
-            .forModule(moduleLocation.getModuleName());
+            .getOrCreateModule(moduleLocation.getModuleName());
 
       } else {
         getOrCreateModule(moduleLocation.getParent())
-            .forModule(moduleLocation.getModuleName());
+            .getOrCreateModule(moduleLocation.getModuleName());
       }
     } else if (location.isOutputLocation()) {
       getOrCreateOutput(location);
@@ -362,15 +362,16 @@ public class SimpleFileManager implements FileManager {
   }
 
   @Override
+  @SuppressWarnings("resource")
   public <S> ServiceLoader<S> getServiceLoader(
       Location location,
       Class<S> service
   ) {
     return getGroup(location)
-        .flatMap(group -> group.getServiceLoader(service))
         .orElseThrow(() -> new NoSuchElementException(
-            "No service for " + service.getName() + " exists"
-        ));
+            "No container grou for location " + location.getName() + " exists"
+        ))
+        .getServiceLoader(service);
   }
 
   @Nullable
@@ -412,7 +413,7 @@ public class SimpleFileManager implements FileManager {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
       return getModuleOrientedOrOutputGroup(moduleLocation.getParent())
-          .map(group -> group.forModule(moduleLocation.getModuleName()));
+          .map(group -> group.getOrCreateModule(moduleLocation.getModuleName()));
     }
 
     return Optional
@@ -441,7 +442,7 @@ public class SimpleFileManager implements FileManager {
       return Optional
           .ofNullable(modules.get(moduleLocation.getParent()))
           .or(() -> Optional.ofNullable(outputs.get(moduleLocation.getParent())))
-          .map(group -> group.forModule(moduleLocation.getModuleName()));
+          .map(group -> group.getOrCreateModule(moduleLocation.getModuleName()));
     }
 
     return Optional

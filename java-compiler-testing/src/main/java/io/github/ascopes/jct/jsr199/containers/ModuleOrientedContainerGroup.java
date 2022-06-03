@@ -60,7 +60,7 @@ public interface ModuleOrientedContainerGroup extends ContainerGroup {
    * @param moduleName the module name to look up.
    * @return the container group.
    */
-  PackageOrientedContainerGroup forModule(String moduleName);
+  PackageOrientedContainerGroup getOrCreateModule(String moduleName);
 
   /**
    * Get the module-oriented location.
