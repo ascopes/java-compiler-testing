@@ -17,7 +17,7 @@
 package ${PACKAGE_NAME};
  
 import org.apiguardian.api.API;
-import org.apiguardian.api.Status;
+import org.apiguardian.api.API.Status;
  
 /**
  * TODO(${USER}): update the documentation for this interface.
