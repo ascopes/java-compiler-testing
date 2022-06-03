@@ -53,16 +53,15 @@ public class OptionalAssert<I extends AbstractAssert<I, A>, A>
   }
 
   /**
-   * Assert that a value is present.
+   * Get the assertions for the value, asserting that it is present first.
    *
-   * @return this assertion object.
+   * @return the assertions on the value.
    */
-  public OptionalAssert<I, A> isPresent() {
+  public I isPresent() {
     if (actual.isEmpty()) {
       throw failure("Expected a value to be present but it was not");
     }
-
-    return this;
+    return assertFactory.createAssert(actual.get());
   }
 
   /**
@@ -72,16 +71,5 @@ public class OptionalAssert<I extends AbstractAssert<I, A>, A>
     if (actual.isPresent()) {
       throw failure("Expected no value to be present but got %s", actual);
     }
-  }
-
-  /**
-   * Get the assertions for the value, asserting that it is present first.
-   *
-   * @return the assertions on the value.
-   */
-  @SuppressWarnings("OptionalGetWithoutIsPresent")
-  public I get() {
-    isPresent();
-    return assertFactory.createAssert(actual.get());
   }
 }
