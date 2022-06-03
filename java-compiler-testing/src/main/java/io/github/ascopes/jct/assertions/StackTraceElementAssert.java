@@ -16,7 +16,6 @@
 
 package io.github.ascopes.jct.assertions;
 
-import java.util.Optional;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
@@ -62,9 +61,9 @@ public class StackTraceElementAssert
   public OptionalAssert<IntegerAssert, Integer> lineNumber() {
     // Null for irrelevant values is less surprising than a negative value.
     return new OptionalAssert<>(
-        Optional
-            .of(actual.getLineNumber())
-            .filter(value -> value > 0),
+        actual.getLineNumber() > 0
+            ? actual.getLineNumber()
+            : null,
         IntegerAssert::new
     ).describedAs("line number %s", actual.getLineNumber());
   }

@@ -199,12 +199,12 @@ public class SimpleFileManager implements FileManager {
   }
 
   @Override
-  public Optional<ModuleOrientedContainerGroup> getModuleContainer(Location location) {
+  public Optional<ModuleOrientedContainerGroup> getModuleContainerGroup(Location location) {
     return Optional.ofNullable(modules.get(location));
   }
 
   @Override
-  public Optional<OutputOrientedContainerGroup> getOutputContainers(Location location) {
+  public Optional<OutputOrientedContainerGroup> getOutputContainerGroup(Location location) {
     return Optional.ofNullable(outputs.get(location));
   }
 

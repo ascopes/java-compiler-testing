@@ -26,7 +26,7 @@ import org.assertj.core.api.AbstractAssert;
  * @author Ashley Scopes
  * @since 0.0.1
  * @deprecated See
- * <a href="https://github.com/assertj/assertj-core/issues/2639">assertj-core GH-2639</a>.
+ *     <a href="https://github.com/assertj/assertj-core/issues/2639">assertj-core GH-2639</a>.
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 @Deprecated(forRemoval = true, since = "0.0.1")

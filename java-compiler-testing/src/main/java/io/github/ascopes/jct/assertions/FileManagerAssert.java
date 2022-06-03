@@ -16,14 +16,7 @@
 
 package io.github.ascopes.jct.assertions;
 
-import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
-
 import io.github.ascopes.jct.jsr199.FileManager;
-import java.util.Optional;
-import java.util.Set;
-import javax.tools.JavaFileManager.Location;
-import javax.tools.JavaFileObject;
-import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
@@ -45,39 +38,4 @@ public final class FileManagerAssert extends AbstractAssert<FileManagerAssert, F
   public FileManagerAssert(FileManager fileManager) {
     super(fileManager, FileManagerAssert.class);
   }
-
-  /**
-   * Perform assertions on the classloader for a given location.
-   *
-   * @param location the location to assert upon.
-   * @return the assertions for the classloader.
-   */
-  public OptionalAssert<ClassLoaderAssert, ClassLoader> classLoader(Location location) {
-    return new OptionalAssert<>(
-        Optional.ofNullable(actual.getClassLoader(location)),
-        ClassLoaderAssert::new
-    );
-  }
-
-  /**
-   * Perform assertions on a given listing of {@link JavaFileObject Java file objects}.
-   *
-   * @param location    the location to fetch.
-   * @param packageName the package to list in.
-   * @param kinds       the kinds of file to list.
-   * @param recurse     whether to recurse into subdirectories or not.
-   * @return the assertions for the results.
-   */
-  public JavaFileObjectListAssert listing(
-      Location location,
-      String packageName,
-      Set<Kind> kinds,
-      boolean recurse
-  ) {
-    return uncheckedIo(() -> {
-      var results = actual.list(location, packageName, kinds, recurse);
-      return new JavaFileObjectListAssert(results);
-    });
-  }
-
 }

@@ -179,7 +179,7 @@ public final class DiagnosticAssert
    * @return the assertions for the optional thread name.
    */
   public OptionalAssert<StringAssert, String> threadName() {
-    return new OptionalAssert<>(actual.getThreadName(), StringAssert::new);
+    return new OptionalAssert<>(actual.getThreadName().orElse(null), StringAssert::new);
   }
 
   /**
@@ -193,7 +193,7 @@ public final class DiagnosticAssert
 
   private OptionalAssert<LongAssert, Long> assertPosition(long position, String name) {
     return new OptionalAssert<>(
-        Optional.of(position).filter(value -> value != Diagnostic.NOPOS),
+        position == Diagnostic.NOPOS ? null : position,
         LongAssert::new
     ).describedAs("%s of %d", name, position);
   }

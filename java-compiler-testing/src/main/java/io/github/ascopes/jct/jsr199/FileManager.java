@@ -77,7 +77,7 @@ public interface FileManager extends JavaFileManager {
    * @param location the module oriented location.
    * @return the container group, or an empty optional if one does not exist.
    */
-  Optional<ModuleOrientedContainerGroup> getModuleContainer(Location location);
+  Optional<ModuleOrientedContainerGroup> getModuleContainerGroup(Location location);
 
   /**
    * Get the container group for the given output-oriented location.
@@ -85,5 +85,5 @@ public interface FileManager extends JavaFileManager {
    * @param location the output oriented location.
    * @return the container group, or an empty optional if one does not exist.
    */
-  Optional<OutputOrientedContainerGroup> getOutputContainers(Location location);
+  Optional<OutputOrientedContainerGroup> getOutputContainerGroup(Location location);
 }

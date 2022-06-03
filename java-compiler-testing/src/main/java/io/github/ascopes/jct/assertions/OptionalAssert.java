@@ -16,6 +16,7 @@
 
 package io.github.ascopes.jct.assertions;
 
+import io.github.ascopes.jct.utils.Nullable;
 import java.util.Optional;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -25,6 +26,10 @@ import org.assertj.core.api.AssertFactory;
 
 /**
  * An assertion on an optionally present value.
+ *
+ * <p>Unlike {@link org.assertj.core.api.OptionalAssert}, this implementation has stronger
+ * semantics and is designed to be used as the proxy to an optionally present result rather than
+ * the target value to perform assertions on.
  *
  * @param <I> the inner assertion type to use.
  * @param <A> the inner value to assert on.
@@ -40,15 +45,11 @@ public class OptionalAssert<I extends AbstractAssert<I, A>, A>
   /**
    * Initialize these assertions.
    *
-   * @param actual the actual optional value to assert on.
+   * @param actual the actual nullable value to assert on.
    * @param assertFactory the assertion factory to use on the value.
    */
-  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-  public OptionalAssert(
-      Optional<A> actual,
-      AssertFactory<A, I> assertFactory
-  ) {
-    super(actual, OptionalAssert.class);
+  public OptionalAssert(@Nullable A actual, AssertFactory<A, I> assertFactory) {
+    super(Optional.ofNullable(actual), OptionalAssert.class);
     this.assertFactory = assertFactory;
   }
 
