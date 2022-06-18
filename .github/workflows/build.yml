@@ -41,7 +41,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        os: 
+          - windows-latest
+          - ubuntu-latest
+          # TODO: get working on MacOS
+          #- macos-latest
         java-version: [ 11, 12, 13, 14, 15, 16, 17, 18 ]
         include:
           - os: windows-latest
