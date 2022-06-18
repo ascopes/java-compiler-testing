@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, macos-latest, ubuntu-latest]
         java-version: [ 11, 12, 13, 14, 15, 16, 17, 18 ]
         include:
           - os: windows-latest
@@ -52,6 +52,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          # Needed to keep actions working correctly.
+          fetch-depth: 2
 
       - name: Initialize JDK
         uses: actions/setup-java@v3
@@ -68,32 +71,25 @@ jobs:
           --no-transfer-progress
           '-Dcheckstyle.skip=true'
           '-Dstyle.color=always'
-          '-Dmaven.artifact.threads=100'
+          '-Dmaven.artifact.threads=50'
           clean package
 
-      - name: Annotate test reports
+      - name: Annotate test reports with build environment info
         if: always()
         run: >-
           scripts/prepare-test-outputs-for-merge.sh 
           ${{ matrix.java-version }} 
           ${{ matrix.os }}
 
-      - name: Archive Surefire reports
-        uses: actions/upload-artifact@v2
+      - name: Archive Surefire and Jacoco reports
+        uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: tests-java-${{ matrix.java-version }}-${{ matrix.os }}
+          name: reports-java-${{ matrix.java-version }}-${{ matrix.os }}
           path: |
             **/target/surefire-reports/*.xml
             **/target/surefire-reports/*.txt
-          retention-days: 5
-
-      - name: Archive Jacoco reports
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: coverage-java-${{ matrix.java-version }}-${{ matrix.os }}
-          path: "**/target/site/jacoco/jacoco*.xml"
+            **/target/site/jacoco/jacoco*.xml
           retention-days: 5
 
   report-test-results:
@@ -105,13 +101,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          # Seems we need this set to 2 for codecov to work correctly.
+          # Needed to keep actions working correctly.
           fetch-depth: 2
 
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
           path: 'artifacts/'
+          
+      - name: Publish to codecov
+        continue-on-error: true
+        if: always()
+        run: bash <(curl -s https://codecov.io/bash)
 
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v1
@@ -119,11 +120,6 @@ jobs:
         continue-on-error: true
         with:
           files: "artifacts/**/TEST-*.xml"
-
-      - name: Publish code coverage
-        continue-on-error: true
-        if: always()
-        run: bash <(curl -s https://codecov.io/bash)
 
   checkstyle:
     name: Run Checkstyle
