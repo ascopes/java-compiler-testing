@@ -1,6 +1,6 @@
 name: Build
 on:
-  pull_request:
+  pull_request_target:
     branches: [ main ]
     types: [ opened, synchronize ]
   push:
@@ -52,6 +52,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          # Needed to stop some actions failing to read the commit SHA.
+          fetch-depth: 2
 
       - name: Initialize JDK
         uses: actions/setup-java@v3
@@ -78,8 +81,22 @@ jobs:
           ${{ matrix.java-version }} 
           ${{ matrix.os }}
 
+      - name: Publish unit test results to pull requests
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          check_name: JUnit - Java ${{ matrix.java-version }} - ${{ matrix.os }}
+          report_paths: "**/TEST-*.xml"
+          summary: JUnit results for Java ${{ matrix.java-version }} (${{ matrix.os }})
+          update_check: true
+
+      - name: Publish code coverage
+        continue-on-error: true
+        if: always()
+        run: bash <(curl -s https://codecov.io/bash)
+
       - name: Archive Surefire reports
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: tests-java-${{ matrix.java-version }}-${{ matrix.os }}
@@ -89,41 +106,12 @@ jobs:
           retention-days: 5
 
       - name: Archive Jacoco reports
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: coverage-java-${{ matrix.java-version }}-${{ matrix.os }}
           path: "**/target/site/jacoco/jacoco*.xml"
           retention-days: 5
-
-  report-test-results:
-    name: Report results
-    needs: [ test ]
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          # Seems we need this set to 2 for codecov to work correctly.
-          fetch-depth: 2
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          path: 'artifacts/'
-
-      - name: Publish unit test results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        if: always()
-        continue-on-error: true
-        with:
-          files: "artifacts/**/TEST-*.xml"
-
-      - name: Publish code coverage
-        continue-on-error: true
-        if: always()
-        run: bash <(curl -s https://codecov.io/bash)
 
   checkstyle:
     name: Run Checkstyle
