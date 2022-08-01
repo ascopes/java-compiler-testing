@@ -322,7 +322,7 @@
               <!-- Force the usage of checkstyle v10 rather than v8.28 -->
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>10.3.1</version>
+              <version>10.3.2</version>
             </dependency>
           </dependencies>
         </plugin>
