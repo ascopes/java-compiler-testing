@@ -64,7 +64,7 @@ while getopts ":c:v:h" opt; do
   esac
 done
 
-if [ -z ${first_version:+undef} ]; then
+if [ -z ${first_version+undef} ]; then
   echo "ERROR: Missing parameter '-v <version-range>'"
   usage "${0}"
   exit 1
