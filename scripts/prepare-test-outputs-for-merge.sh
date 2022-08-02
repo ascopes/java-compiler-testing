@@ -14,6 +14,7 @@
 ### See the License for the specific language governing permissions and
 ### limitations under the License.
 ###
+
 ###
 ### Script to run in CI to prefix any Surefire report and test case names with the Java version
 ### that the test applies to, and to rename the jacoco.xml files to match the Java version in use.
@@ -22,10 +23,14 @@
 set -o errexit
 set -o pipefail
 
-CI_JAVA_VERSION=${1?Pass the Java version as the first argument to this script!}
-CI_OS=${2?Pass the OS name as the second argument to this script!}
+ci_java_version=${1?Pass the Java version as the first argument to this script!}
+ci_os=${2?Pass the OS name as the second argument to this script!}
 
+# If we don't have xsltproc installed, try to resolve it first.
 if ! command -v xsltproc >/dev/null 2>&1; then
+  # If we are not running in CI, then the user needs to install this dependency
+  # manually. If we are in CI, assume we are running on ubuntu-latest
+  # on a GitHub Actions runner and just install xsltproc.
   if [ -z ${CI+_} ]; then
     echo -e "\e[1;31mERROR\e[0m: xsltproc is not found -- make sure it is installed first."
     exit 2
@@ -75,8 +80,8 @@ function find-all-jacoco-reports() {
 
 for surefire_report in $(find-all-surefire-reports); do
   echo -e "\e[1;34mAdding Java version to test case names in ${surefire_report}...\e[0m"
-  new_surefire_report=${surefire_report/.xml/-java-${CI_JAVA_VERSION}-${CI_OS}.xml}
-  xsltproc --stringparam prefix "[Java-${CI_JAVA_VERSION}-${CI_OS}]" \
+  new_surefire_report=${surefire_report/.xml/-java-${ci_java_version}-${ci_os}.xml}
+  xsltproc --stringparam prefix "[Java-${ci_java_version}-${ci_os}]" \
     "${surefire_prefix_xslt}" "${surefire_report}" >"${new_surefire_report}"
   echo -e "\e[1;34mReplacing ${surefire_report} with ${new_surefire_report}\e[0m"
   rm "${surefire_report}"
@@ -86,7 +91,7 @@ rm "${surefire_prefix_xslt}"
 
 echo -e "\e[1;35mUpdating Jacoco reports...\e[0m"
 for jacoco_report in $(find-all-jacoco-reports); do
-  new_jacoco_report="${jacoco_report/.xml/-java-${CI_JAVA_VERSION}-${CI_OS}.xml}"
+  new_jacoco_report="${jacoco_report/.xml/-java-${ci_java_version}-${ci_os}.xml}"
   echo -e "\e[1;34mRenaming ${jacoco_report} to ${new_jacoco_report}\e[0m"
   mv "${jacoco_report}" "${new_jacoco_report}"
 done
