@@ -54,7 +54,7 @@ public class DiagnosticListAssert
       List<? extends TraceDiagnostic<? extends JavaFileObject>> traceDiagnostics
   ) {
     super(traceDiagnostics, DiagnosticListAssert.class);
-    withRepresentation(DiagnosticListRepresentation.getInstance());
+    info.useRepresentation(DiagnosticListRepresentation.getInstance());
   }
 
   /**

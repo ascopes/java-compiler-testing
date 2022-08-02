@@ -37,10 +37,9 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
    *
    * @param value the value to assert on.
    */
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   public LocationAssert(Location value) {
     super(value, LocationAssert.class);
-    withRepresentation(LocationRepresentation.getInstance());
+    info.useRepresentation(LocationRepresentation.getInstance());
   }
 
   /**

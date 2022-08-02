@@ -45,10 +45,9 @@ public final class DiagnosticAssert
    *
    * @param value the value to assert on.
    */
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   public DiagnosticAssert(TraceDiagnostic<? extends JavaFileObject> value) {
     super(value, DiagnosticAssert.class);
-    withRepresentation(DiagnosticRepresentation.getInstance());
+    info.useRepresentation(DiagnosticRepresentation.getInstance());
   }
 
   /**
@@ -185,7 +184,12 @@ public final class DiagnosticAssert
    * Get assertions for the stack trace of the location the diagnostic was reported to.
    *
    * @return the assertions for the stack trace.
+   * @deprecated I have put up a pull request for AssertJ to support this functionality in AssertJ
+   *     Core. Once this is merged, this return type will be changed to use the AssertJ
+   *     implementation.
    */
+  @Deprecated(forRemoval = true)
+  @SuppressWarnings("removal")
   public StackTraceAssert stackTrace() {
     return new StackTraceAssert(actual.getStackTrace());
   }

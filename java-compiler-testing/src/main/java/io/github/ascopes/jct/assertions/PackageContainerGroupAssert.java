@@ -49,7 +49,12 @@ public class PackageContainerGroupAssert
    * Perform assertions on the class loader.
    *
    * @return the class loader assertions to perform.
+   * @deprecated I have put up a pull request for AssertJ to support this functionality in AssertJ
+   *     Core. Once this is merged, this return type will be changed to use the AssertJ
+   *     implementation.
    */
+  @Deprecated(forRemoval = true)
+  @SuppressWarnings("removal")
   public ClassLoaderAssert classLoader() {
     return new ClassLoaderAssert(actual.getClassLoader());
   }

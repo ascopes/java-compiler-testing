@@ -28,8 +28,12 @@ import org.assertj.core.api.AbstractListAssert;
  *
  * @author Ashley Scopes
  * @since 0.0.1
+ * @deprecated I have put up a pull request for AssertJ to support this functionality in AssertJ
+ *     Core. Once this is merged, this class will be removed from this API.
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@Deprecated(forRemoval = true)
+@SuppressWarnings("removal")
 public final class StackTraceAssert
     extends AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
 
@@ -40,10 +44,11 @@ public final class StackTraceAssert
    */
   public StackTraceAssert(List<? extends StackTraceElement> actual) {
     super(actual, StackTraceAssert.class);
-    withRepresentation(StackTraceRepresentation.getInstance());
+    info.useRepresentation(StackTraceRepresentation.getInstance());
   }
 
   @Override
+  @SuppressWarnings("removal")
   protected StackTraceElementAssert toAssert(StackTraceElement value, String description) {
     return new StackTraceElementAssert(value).describedAs(description);
   }
