@@ -19,6 +19,7 @@ package io.github.ascopes.jct.compilers.javac;
 import io.github.ascopes.jct.compilers.FlagBuilder;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apiguardian.api.API;
@@ -119,7 +120,7 @@ public final class JavacFlagBuilder implements FlagBuilder {
   public List<String> build() {
     return Stream
         .of(craftedFlags.build(), annotationProcessorOptions.build(), otherOptions.build())
-        .reduce(Stream.empty(), Stream::concat)
+        .flatMap(Function.identity())
         .collect(Collectors.toList());
   }
 
