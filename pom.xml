@@ -43,8 +43,32 @@
   </scm>
 
   <properties>
+
+    <!-- Dependencies -->
+    <apiguardian.version>1.1.2</apiguardian.version>
     <assertj.version>3.23.1</assertj.version>
+    <awaitility.version>4.2.0</awaitility.version>
+    <ecj.version>3.30.0</ecj.version>
+    <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jimfs.version>1.2</jimfs.version>
+    <junit.version>5.9.0</junit.version>
+    <logback.version>1.2.11</logback.version>
+    <lombok.version>1.18.24</lombok.version>
+    <mockito.version>4.6.1</mockito.version>
+    <reflections.version>0.10.2</reflections.version>
+    <slf4j.version>1.7.36</slf4j.version>
+
+    <!-- Plugins -->
+    <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
+    <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
+    <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+    <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
+    <maven-javadoc-plugin.version>3.4.0</maven-javadoc-plugin.version>
+    <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+
+    <!-- Plugin dependencies -->
+    <checkstyle.version>10.3.2</checkstyle.version>
+    <maven-surefire-junit5-tree-reporter.version>1.1.0</maven-surefire-junit5-tree-reporter.version>
 
     <!-- Log verbosity -->
     <hide-test-logs-in-console>true</hide-test-logs-in-console>
@@ -71,7 +95,7 @@
         <!-- Logging implementation -->
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.2.11</version>
+        <version>${logback.version}</version>
       </dependency>
 
       <dependency>
@@ -85,14 +109,14 @@
         <!-- Levenshtein Distance algorithm for matching similar strings -->
         <groupId>me.xdrop</groupId>
         <artifactId>fuzzywuzzy</artifactId>
-        <version>1.4.0</version>
+        <version>${fuzzywuzzy.version}</version>
       </dependency>
 
       <dependency>
         <!-- API versioning annotations -->
         <groupId>org.apiguardian</groupId>
         <artifactId>apiguardian-api</artifactId>
-        <version>1.1.2</version>
+        <version>${apiguardian.version}</version>
       </dependency>
 
       <dependency>
@@ -106,21 +130,21 @@
         <!-- Awaitable assertions -->
         <groupId>org.awaitility</groupId>
         <artifactId>awaitility</artifactId>
-        <version>4.2.0</version>
+        <version>${awaitility.version}</version>
       </dependency>
 
       <dependency>
         <!-- Eclipse Compiler for Java  -->
         <groupId>org.eclipse.jdt</groupId>
         <artifactId>ecj</artifactId>
-        <version>3.30.0</version>
+        <version>${ecj.version}</version>
       </dependency>
 
       <dependency>
         <!-- Unit testing -->
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.9.0</version>
+        <version>${junit.version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -129,7 +153,7 @@
         <!-- Mocking -->
         <groupId>org.mockito</groupId>
         <artifactId>mockito-bom</artifactId>
-        <version>4.6.1</version>
+        <version>${mockito.version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -141,21 +165,21 @@
         -->
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
-        <version>1.18.24</version>
+        <version>${lombok.version}</version>
       </dependency>
 
       <dependency>
         <!-- Common reflection facilities -->
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
-        <version>0.10.2</version>
+        <version>${reflections.version}</version>
       </dependency>
 
       <dependency>
         <!-- Logging interface -->
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.7.36</version>
+        <version>${slf4j.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -167,7 +191,7 @@
           <!-- Coverage tracing -->
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.8</version>
+          <version>${jacoco-maven-plugin.version}</version>
 
           <executions>
             <execution>
@@ -189,103 +213,10 @@
         </plugin>
 
         <plugin>
-          <!-- Java compiler config -->
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.10.1</version>
-
-          <configuration>
-            <failOnWarning>true</failOnWarning>
-            <showDeprecation>true</showDeprecation>
-            <release>${java-release.version}</release>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.4.0</version>
-
-          <configuration>
-            <additionalOptions>
-              <option>--override-methods=detail</option>
-              <option>-version</option>
-            </additionalOptions>
-            <source>${java-release.version}</source>
-            <links>
-              <link>https://javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}</link>
-              <link>https://javadoc.io/doc/org.assertj/assertj-core/${assertj.version}</link>
-            </links>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.2.2</version>
-
-          <configuration>
-            <archive>
-              <index>true</index>
-              <manifest>
-                <addBuildEnvironmentEntries>true</addBuildEnvironmentEntries>
-                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                <addExtensions>true</addExtensions>
-              </manifest>
-              <manifestEntries>
-                <Sealed>true</Sealed>
-              </manifestEntries>
-            </archive>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <!-- Unit testing config -->
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M7</version>
-
-          <configuration>
-            <!--
-              This block is needed to show @DisplayName and @ParameterizedTest
-              in reports with the provided names.
-            -->
-            <statelessTestsetReporter
-              implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
-              <disable>false</disable>
-              <version>3.0</version>
-              <usePhrasedFileName>false</usePhrasedFileName>
-              <usePhrasedTestSuiteClassName>true</usePhrasedTestSuiteClassName>
-              <usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>
-              <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
-            </statelessTestsetReporter>
-            <consoleOutputReporter>
-              <disable>${hide-test-logs-in-console}</disable>
-            </consoleOutputReporter>
-            <statelessTestsetInfoReporter
-              implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
-              <disable>false</disable>
-              <usePhrasedFileName>false</usePhrasedFileName>
-              <usePhrasedClassNameInRunning>true</usePhrasedClassNameInRunning>
-              <usePhrasedClassNameInTestCaseSummary>true</usePhrasedClassNameInTestCaseSummary>
-            </statelessTestsetInfoReporter>
-          </configuration>
-
-          <dependencies>
-            <dependency>
-              <groupId>me.fabriciorby</groupId>
-              <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-              <version>1.1.0</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-
-        <plugin>
           <!-- Checking style of code matches the Google code style -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.1.2</version>
+          <version>${maven-checkstyle-plugin.version}</version>
 
           <executions>
             <execution>
@@ -322,7 +253,100 @@
               <!-- Force the usage of checkstyle v10 rather than v8.28 -->
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>10.3.2</version>
+              <version>${checkstyle.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
+        <plugin>
+          <!-- Java compiler config -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+
+          <configuration>
+            <failOnWarning>true</failOnWarning>
+            <showDeprecation>true</showDeprecation>
+            <release>${java-release.version}</release>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven-jar-plugin.version}</version>
+
+          <configuration>
+            <archive>
+              <index>true</index>
+              <manifest>
+                <addBuildEnvironmentEntries>true</addBuildEnvironmentEntries>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                <addExtensions>true</addExtensions>
+              </manifest>
+              <manifestEntries>
+                <Sealed>true</Sealed>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven-javadoc-plugin.version}</version>
+
+          <configuration>
+            <additionalOptions>
+              <option>--override-methods=detail</option>
+              <option>-version</option>
+            </additionalOptions>
+            <source>${java-release.version}</source>
+            <links>
+              <link>https://javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}</link>
+              <link>https://javadoc.io/doc/org.assertj/assertj-core/${assertj.version}</link>
+            </links>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <!-- Unit testing config -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+
+          <configuration>
+            <!--
+              This block is needed to show @DisplayName and @ParameterizedTest
+              in reports with the provided names.
+            -->
+            <statelessTestsetReporter
+              implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
+              <disable>false</disable>
+              <version>3.0</version>
+              <usePhrasedFileName>false</usePhrasedFileName>
+              <usePhrasedTestSuiteClassName>true</usePhrasedTestSuiteClassName>
+              <usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>
+              <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
+            </statelessTestsetReporter>
+            <consoleOutputReporter>
+              <disable>${hide-test-logs-in-console}</disable>
+            </consoleOutputReporter>
+            <statelessTestsetInfoReporter
+              implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+              <disable>false</disable>
+              <usePhrasedFileName>false</usePhrasedFileName>
+              <usePhrasedClassNameInRunning>true</usePhrasedClassNameInRunning>
+              <usePhrasedClassNameInTestCaseSummary>true</usePhrasedClassNameInTestCaseSummary>
+            </statelessTestsetInfoReporter>
+          </configuration>
+
+          <dependencies>
+            <dependency>
+              <groupId>me.fabriciorby</groupId>
+              <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+              <version>${maven-surefire-junit5-tree-reporter.version}</version>
             </dependency>
           </dependencies>
         </plugin>
