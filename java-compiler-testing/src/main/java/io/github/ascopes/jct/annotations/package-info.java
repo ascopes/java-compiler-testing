@@ -15,12 +15,6 @@
  */
 
 /**
- * Tools for writing tests involving the Java compiler.
+ * JSR-305 annotations to assist in IDE integrations and Kotlin compiler support.
  */
-
-@NonNullApi
-@NonNullImpl
-package io.github.ascopes.jct;
-
-import io.github.ascopes.jct.annotations.NonNullApi;
-import io.github.ascopes.jct.annotations.NonNullImpl;
+package io.github.ascopes.jct.annotations;

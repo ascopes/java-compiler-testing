@@ -18,9 +18,9 @@ package io.github.ascopes.jct.jsr199.containers;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.utils.EnumerationAdapter;
 import io.github.ascopes.jct.utils.ModulePrefix;
-import io.github.ascopes.jct.utils.Nullable;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;

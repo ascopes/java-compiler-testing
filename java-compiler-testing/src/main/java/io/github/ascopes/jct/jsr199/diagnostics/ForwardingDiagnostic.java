@@ -18,7 +18,7 @@ package io.github.ascopes.jct.jsr199.diagnostics;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.utils.Nullable;
+import io.github.ascopes.jct.annotations.Nullable;
 import java.util.Locale;
 import javax.tools.Diagnostic;
 import org.apiguardian.api.API;

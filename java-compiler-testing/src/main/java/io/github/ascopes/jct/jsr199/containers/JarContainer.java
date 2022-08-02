@@ -18,13 +18,13 @@ package io.github.ascopes.jct.jsr199.containers;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.NioPath;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.IoExceptionUtils;
 import io.github.ascopes.jct.utils.Lazy;
-import io.github.ascopes.jct.utils.Nullable;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;

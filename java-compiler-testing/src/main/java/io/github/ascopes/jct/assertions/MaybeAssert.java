@@ -16,7 +16,7 @@
 
 package io.github.ascopes.jct.assertions;
 
-import io.github.ascopes.jct.utils.Nullable;
+import io.github.ascopes.jct.annotations.Nullable;
 import java.util.Optional;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;

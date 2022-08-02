@@ -51,6 +51,7 @@
     <ecj.version>3.30.0</ecj.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jimfs.version>1.2</jimfs.version>
+    <jsr305.version>3.0.2</jsr305.version>
     <junit.version>5.9.0</junit.version>
     <logback.version>1.2.11</logback.version>
     <lombok.version>1.18.24</lombok.version>
@@ -96,6 +97,12 @@
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
         <version>${logback.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>jsr305</artifactId>
+        <version>${jsr305.version}</version>
       </dependency>
 
       <dependency>

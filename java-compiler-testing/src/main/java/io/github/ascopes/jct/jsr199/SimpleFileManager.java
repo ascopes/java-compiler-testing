@@ -18,6 +18,7 @@ package io.github.ascopes.jct.jsr199;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.jsr199.containers.ContainerGroup;
 import io.github.ascopes.jct.jsr199.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.jsr199.containers.OutputContainerGroup;
@@ -27,7 +28,6 @@ import io.github.ascopes.jct.jsr199.containers.SimpleOutputContainerGroup;
 import io.github.ascopes.jct.jsr199.containers.SimplePackageContainerGroup;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.paths.SubPath;
-import io.github.ascopes.jct.utils.Nullable;
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;

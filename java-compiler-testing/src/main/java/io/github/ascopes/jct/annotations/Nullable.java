@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.ascopes.jct.utils;
+package io.github.ascopes.jct.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -33,6 +33,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 @Documented
+@Nullable
 @Retention(RetentionPolicy.RUNTIME)
 @Target({
     ElementType.ANNOTATION_TYPE,

@@ -18,11 +18,13 @@
  * Java compiler testing facilities.
  */
 module io.github.ascopes.jct {
-  requires transitive java.compiler;
+  requires java.base;
+  requires java.compiler;
   requires java.management;
 
-  requires ecj;    // not a module, currently.
-  requires jimfs;  // not a module, currently.
+  requires ecj;
+  requires jimfs;
+  requires static jsr305;
   requires me.xdrop.fuzzywuzzy;
   requires static org.apiguardian.api;
   requires static org.junit.jupiter.params;
@@ -59,4 +61,6 @@ module io.github.ascopes.jct {
   opens io.github.ascopes.jct.paths to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.annotations to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.annotations to io.github.ascopes.jct.testing;
 }

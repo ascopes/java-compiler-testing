@@ -18,6 +18,7 @@ package io.github.ascopes.jct.jsr199.diagnostics;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +41,7 @@ public class TraceDiagnostic<S extends JavaFileObject> extends ForwardingDiagnos
 
   private final Instant timestamp;
   private final long threadId;
-  private final String threadName;
+  private final @Nullable String threadName;
   private final List<StackTraceElement> stackTrace;
 
   /**
@@ -55,14 +56,13 @@ public class TraceDiagnostic<S extends JavaFileObject> extends ForwardingDiagnos
   public TraceDiagnostic(
       Instant timestamp,
       long threadId,
-      String threadName,
+      @Nullable String threadName,
       List<StackTraceElement> stackTrace,
       Diagnostic<? extends S> original
   ) {
     super(original);
     this.timestamp = requireNonNull(timestamp);
     this.threadId = threadId;
-    // Nullable.
     this.threadName = threadName;
     this.stackTrace = requireNonNull(stackTrace);
   }
