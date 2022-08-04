@@ -136,9 +136,9 @@ class FileUtilsTest {
       "idk/jdk/shared, java.util.ArrayList, OTHER, idk/jdk/shared/java/util/ArrayList",
       "/, foo.bar.Baz, CLASS, /foo/bar/Baz.class",
       "'', foo.bar.Baz, CLASS, foo/bar/Baz.class",
-      "/com/example/me, SomeClassInTheUnnamedPackage, SOURCE, /com/example/me/SomeClassInTheUnnamedPackage.java",
-      "com/example/me, SomeClassInTheUnnamedPackage, SOURCE, com/example/me/SomeClassInTheUnnamedPackage.java",
-      "./com/example/me, SomeClassInTheUnnamedPackage, SOURCE, com/example/me/SomeClassInTheUnnamedPackage.java",
+      "/com/example/me, ClassInUnnamedPackage, SOURCE, /com/example/me/ClassInUnnamedPackage.java",
+      "com/example/me, UnnamedPackage, SOURCE, com/example/me/UnnamedPackage.java",
+      "./com/example/me, Foo, SOURCE, com/example/me/Foo.java",
       "/, SomeClassInTheUnnamedPackage, SOURCE, /SomeClassInTheUnnamedPackage.java",
       "'', SomeClassInTheUnnamedPackage, SOURCE, SomeClassInTheUnnamedPackage.java"
   })
@@ -239,10 +239,10 @@ class FileUtilsTest {
       "/foo/bar, '', ../cats/cat.txt, /foo/cats/cat.txt",
       "foo/bar, net.qux.eggs.spam, dog.gif, foo/bar/net/qux/eggs/spam/dog.gif",
       "./foo/bar, com.google.something, capybara.kek, foo/bar/com/google/something/capybara.kek",
-      "../foo/bar, com.google.something, capybara.meow, ../foo/bar/com/google/something/capybara.meow",
+      "../foo/bar, com.something, capybara.meow, ../foo/bar/com/something/capybara.meow",
 
       // Absolute resources (we ignore the path and the directory).
-      "/do/ray/me, foo.bar.baz, /this/is/an/absolute/resource.png, /this/is/an/absolute/resource.png",
+      "/do/ray/me, foo.bar.baz, /this/is/absolute/resource.png, /this/is/absolute/resource.png",
   })
   @ParameterizedTest(name = "resourceNameToPath(\"{0}\", \"{1}\", \"{2}\") should return \"{3}\"")
   void resourceNameToPathShouldReturnTheExpectedOutput(
@@ -347,9 +347,10 @@ class FileUtilsTest {
       "OTHER, /foo/bar.potato",
   })
   @ParameterizedTest(
-      name = "fileWithAnyKind([{0}])'s predicate should return false for a non-existing path \"{1}\""
+      name = "fileWithAnyKind([{0}])'s predicate should return false for non-existing path \"{1}\""
   )
-  void fileWithAnyKindShouldFailIfThePathDoesNotExist(Kind kind, String pathName) throws IOException {
+  void fileWithAnyKindShouldFailIfThePathDoesNotExist(Kind kind, String pathName)
+      throws IOException {
     try (var fs = Jimfs.newFileSystem()) {
       // Given
       var path = fs.getPath(pathName);
@@ -372,7 +373,8 @@ class FileUtilsTest {
   @ParameterizedTest(
       name = "fileWithAnyKind([{0}])'s predicate should return false for a directory at \"{1}\""
   )
-  void fileWithAnyKindShouldFailIfThePathIsDirectory(Kind kind, String pathName) throws IOException {
+  void fileWithAnyKindShouldFailIfThePathIsDirectory(Kind kind, String pathName)
+      throws IOException {
     try (var fs = Jimfs.newFileSystem()) {
       // Given
       var dir = fs.getPath(pathName);
