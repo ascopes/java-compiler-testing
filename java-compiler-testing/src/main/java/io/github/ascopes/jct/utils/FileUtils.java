@@ -16,12 +16,18 @@
 
 package io.github.ascopes.jct.utils;
 
+import static java.util.stream.Collectors.toUnmodifiableList;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -34,6 +40,21 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class FileUtils {
+
+  private static final Comparator<Kind> KIND_ORDER = Comparator
+      .comparing((Kind kind) -> kind.extension.length())
+      .reversed()
+      .thenComparing((Kind kind) -> kind.extension);
+
+  // Exclude any "empty" extensions. At the time of writing, this will just exclude Kind.EMPTY,
+  // but doing this will prevent future API changes from breaking any assumptions we make. In
+  // addition to this, sort by the longest extension names first. This will prevent future
+  // changes that may add subsets of existing kinds from creating unexpected results.
+  private static final List<Kind> KINDS = Stream
+      .of(Kind.values())
+      .filter(kind -> !kind.extension.isEmpty())
+      .sorted(KIND_ORDER)
+      .collect(toUnmodifiableList());
 
   private static final StringSlicer PACKAGE_SLICER = new StringSlicer(".");
   private static final StringSlicer RESOURCE_SPLITTER = new StringSlicer("/");
@@ -143,23 +164,30 @@ public final class FileUtils {
    * @return the expected path.
    */
   public static Path resourceNameToPath(Path directory, String packageName, String relativeName) {
-    // If we have a relative name that starts with a `/`, then we assume that it is relative
-    // to the root package, so we ignore the given package name.
     if (relativeName.startsWith("/")) {
-      var parts = RESOURCE_SPLITTER
-          .splitToStream(relativeName)
-          .dropWhile(String::isEmpty)
+      // If we have a relative name that starts with a `/`, then we assume that it is relative
+      // to the root package, so we ignore the given package name. We only then use the
+      // directory to determine the file system to work off of.
+
+      // Prepend the root part, as this gets dropped otherwise.
+      var parts = Stream
+          .concat(
+              Stream.of("/"),
+              RESOURCE_SPLITTER
+                  .splitToStream(relativeName)
+                  .dropWhile(String::isEmpty)
+          )
           .toArray(String[]::new);
 
       return resolve(directory, parts);
-    } else {
-      var baseDir = resolve(directory, PACKAGE_SLICER.splitToArray(packageName));
-      return relativeResourceNameToPath(baseDir, relativeName);
     }
+
+    var baseDir = resolve(directory, PACKAGE_SLICER.splitToArray(packageName));
+    return relativeResourceNameToPath(baseDir, relativeName);
   }
 
   /**
-   * Convert a relative classpath resource path to a NIO path.
+   * Convert a relative class path resource path to a NIO path.
    *
    * @param directory    the directory the resource sits within.
    * @param relativeName the relative path of the resource within the directory.
@@ -177,19 +205,15 @@ public final class FileUtils {
    * @return the kind of file. If not known, this will return {@link Kind#OTHER}.
    */
   public static Kind pathToKind(Path path) {
-    var fileName = path.getFileName().toString();
-
-    for (var kind : Kind.values()) {
-      if (Kind.OTHER.equals(kind)) {
-        continue;
-      }
-
-      if (fileName.endsWith(kind.extension)) {
-        return kind;
-      }
-    }
-
-    return Kind.OTHER;
+    // path.getFileName() will be null if the path is the root path. Shouldn't ever
+    // result in this being called ideally, but this prevents unexpected NullPointerExceptions
+    // elsewhere.
+    var fileName = Objects.toString(path.getFileName(), "");
+    return KINDS
+        .stream()
+        .filter(kind -> fileName.endsWith(kind.extension))
+        .findFirst()
+        .orElse(Kind.OTHER);
   }
 
   /**
@@ -197,15 +221,21 @@ public final class FileUtils {
    * file kinds.
    *
    * <p><strong>Note:</strong> this expects the file to exist for the predicate to return
-   * {@code true}. Any non-existant files will always return {@code false}, even if their name
+   * {@code true}. Any non-existent files will always return {@code false}, even if their name
    * matches one of the provided kinds.
    *
    * @param kinds the set of kinds of file to allow.
    * @return the predicate.
    */
   public static Predicate<? super Path> fileWithAnyKind(Set<? extends Kind> kinds) {
-    return path -> Files.isRegularFile(path) && kinds.stream()
+    var kindOptions = kinds
+        .stream()
+        .sorted(KIND_ORDER)
         .map(kind -> kind.extension)
+        .collect(toUnmodifiableList());
+
+    return path -> Files.isRegularFile(path) && kindOptions
+        .stream()
         .anyMatch(path.toString()::endsWith);
   }
 
