@@ -41,14 +41,22 @@ public abstract class TypeRef<T> {
       );
     }
 
-    var parameterizedType = ((ParameterizedType) selfType).getActualTypeArguments()[0];
+    var typeArgument = ((ParameterizedType) selfType).getActualTypeArguments()[0];
 
-    type = parameterizedType instanceof Class<?>
-        ? (Class<T>) parameterizedType
-        : (Class<T>) ((ParameterizedType) parameterizedType).getRawType();
+    if (typeArgument instanceof ParameterizedType) {
+      var parameterizedType = (ParameterizedType) typeArgument;
+      var rawType = parameterizedType.getRawType();
+      type = (Class<T>) rawType;
+    } else if (typeArgument instanceof Class<?>) {
+      type = (Class<T>) typeArgument;
+    } else {
+      // Don't dereference typeArgument, it may be null or some JDK-specific type we don't
+      // understand.
+      throw new IllegalArgumentException("Cannot reify non-concrete type");
+    }
   }
 
-  public Class<T> getType() {
+  public Class<T> getRawType() {
     return type;
   }
 }

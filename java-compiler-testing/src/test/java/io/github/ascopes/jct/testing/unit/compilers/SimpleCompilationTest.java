@@ -136,7 +136,7 @@ class SimpleCompilationTest {
 
     // Then
     assertThat(compilation.getDiagnostics())
-        .asInstanceOf(iterable(diagnosticType.getType()))
+        .asInstanceOf(iterable(diagnosticType.getRawType()))
         .containsExactlyElementsOf(diagnostics);
   }
 

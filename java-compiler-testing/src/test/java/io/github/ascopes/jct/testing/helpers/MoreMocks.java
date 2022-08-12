@@ -55,7 +55,7 @@ public final class MoreMocks {
    * @return the mock.
    */
   public static <T> T mockCast(TypeRef<T> typeRef, MockSettings settings) {
-    return mock(typeRef.getType(), settings);
+    return mock(typeRef.getRawType(), settings);
   }
 
   /**
@@ -101,7 +101,7 @@ public final class MoreMocks {
    * @return the stub.
    */
   public static <T> T stubCast(TypeRef<T> typeRef, MockSettings settings) {
-    return stub(typeRef.getType(), settings);
+    return stub(typeRef.getRawType(), settings);
   }
 
   /**
