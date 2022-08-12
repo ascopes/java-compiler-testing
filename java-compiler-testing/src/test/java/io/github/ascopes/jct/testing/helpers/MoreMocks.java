@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.Objects;
-import org.mockito.ArgumentMatcher;
+import java.util.regex.Pattern;
 import org.mockito.MockSettings;
 
 /**
@@ -112,12 +112,18 @@ public final class MoreMocks {
    * @return the matcher.
    */
   public static <T> T hasToString(String repr) {
-    var matchesCriteria = new ArgumentMatcher<T>() {
-      @Override
-      public boolean matches(T t) {
-        return Objects.toString(t).equals(repr);
-      }
-    };
-    return argThat(matchesCriteria);
+    return argThat(input -> Objects.toString(input).equals(repr));
+  }
+
+  /**
+   * Argument matcher that checks a {@link CharSequence}-assignable argument matches a given
+   * regular expression.
+   *
+   * @param pattern the regex to match.
+   * @param <T>  argument matcher type.
+   * @return the matcher.
+   */
+  public static <T extends CharSequence> T stringLike(String pattern) {
+    return argThat(input -> Pattern.matches(pattern, input));
   }
 }

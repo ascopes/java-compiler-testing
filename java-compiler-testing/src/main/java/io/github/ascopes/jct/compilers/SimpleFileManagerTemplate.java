@@ -16,6 +16,7 @@
 
 package io.github.ascopes.jct.compilers;
 
+import io.github.ascopes.jct.jsr199.FileManager;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
 import io.github.ascopes.jct.jsr199.SimpleFileManager;
 import io.github.ascopes.jct.paths.NioPath;
@@ -154,7 +155,7 @@ public class SimpleFileManagerTemplate {
    * @param release the release version to use.
    * @return the file manager.
    */
-  public SimpleFileManager createFileManager(String release) {
+  public FileManager createFileManager(String release) {
     var manager = new SimpleFileManager(release);
     locations.forEach((location, paths) -> {
       for (var path : paths) {

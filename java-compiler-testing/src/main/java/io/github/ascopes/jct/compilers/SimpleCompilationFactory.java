@@ -324,7 +324,7 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
 
     } catch (Exception ex) {
       LOGGER.warn(
-          "Compiler {} threw an exception: {}: {}",
+          "Compiler {} threw an xception: {}: {}",
           name,
           ex.getClass().getName(),
           ex.getMessage()
