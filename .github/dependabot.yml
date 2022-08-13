@@ -1,5 +1,15 @@
 version: 2
 updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "ascopes"
+    labels:
+      - "enhancement"
+      - "housekeeping"
+
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
