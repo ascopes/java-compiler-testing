@@ -55,7 +55,7 @@
     <junit.version>5.9.0</junit.version>
     <logback.version>1.2.11</logback.version>
     <lombok.version>1.18.24</lombok.version>
-    <mockito.version>4.6.1</mockito.version>
+    <mockito.version>4.7.0</mockito.version>
     <reflections.version>0.10.2</reflections.version>
     <slf4j.version>1.7.36</slf4j.version>
 
