@@ -391,7 +391,7 @@ class FileUtilsTest {
   @DisplayName("fileWithAnyKind should produce a predicate with the expected behaviour")
   @MethodSource("fileWithAnyKindExistingFileTestCases")
   @ParameterizedTest(
-      name = "fileWithAnyKind({0})'s predicate should return {2} for existing path \"{1}\""
+      name = "fileWithAnyKind({0}) predicate should return {2} for existing path \"{1}\""
   )
   void fileWithAnyKindShouldProducePredicateWithTheExpectedBehaviour(
       Set<? extends Kind> kinds,
