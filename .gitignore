@@ -5,9 +5,7 @@ target/
 
 # IntelliJ junk
 *.iml
-.idea/*
-# Allow providing file templates for simplicity.
-!.idea/fileTemplates
+.idea
 
 # VSCode
 .vscode/
