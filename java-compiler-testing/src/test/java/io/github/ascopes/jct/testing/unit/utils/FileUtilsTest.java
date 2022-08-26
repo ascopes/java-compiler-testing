@@ -32,12 +32,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.BDDMockito.given;
 
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
+import com.google.common.jimfs.PathType;
 import io.github.ascopes.jct.utils.FileUtils;
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 import javax.tools.JavaFileObject.Kind;
 import org.junit.jupiter.api.DisplayName;
@@ -81,7 +86,7 @@ class FileUtilsTest {
   @ParameterizedTest(name = "pathToBinaryName(\"{0}\") should return \"{1}\"")
   void pathToBinaryNameConvertsRelativePathsAsExpected(String input, String expected)
       throws IOException {
-    try (var fs = Jimfs.newFileSystem()) {
+    try (var fs = newFileSystem()) {
       // Given
       var path = fs.getPath(input);
 
@@ -149,7 +154,7 @@ class FileUtilsTest {
       Kind kind,
       String expected
   ) throws IOException {
-    try (var fs = Jimfs.newFileSystem()) {
+    try (var fs = newFileSystem()) {
       // Given
       var directoryPath = fs.getPath(directory);
       var expectedPath = fs.getPath(expected);
@@ -180,7 +185,7 @@ class FileUtilsTest {
       String packageName,
       String expected
   ) throws IOException {
-    try (var fs = Jimfs.newFileSystem()) {
+    try (var fs = newFileSystem()) {
       // Given
       var directoryPath = fs.getPath(directory);
       var expectedPath = fs.getPath(expected);
@@ -212,7 +217,7 @@ class FileUtilsTest {
       Kind kind,
       String expected
   ) throws IOException {
-    try (var fs = Jimfs.newFileSystem()) {
+    try (var fs = newFileSystem()) {
       // Given
       var packageDirectoryPath = fs.getPath(packageDirectory);
       var expectedPath = fs.getPath(expected);
@@ -251,7 +256,7 @@ class FileUtilsTest {
       String relativeName,
       String expected
   ) throws IOException {
-    try (var fs = Jimfs.newFileSystem()) {
+    try (var fs = newFileSystem()) {
       // Given
       var directoryPath = fs.getPath(directory);
       var expectedPath = fs.getPath(expected);
@@ -281,7 +286,7 @@ class FileUtilsTest {
       String relativeName,
       String expected
   ) throws IOException {
-    try (var fs = Jimfs.newFileSystem()) {
+    try (var fs = newFileSystem()) {
       // Given
       var directoryPath = fs.getPath(directory);
       var expectedPath = fs.getPath(expected);
@@ -327,7 +332,7 @@ class FileUtilsTest {
   })
   @ParameterizedTest(name = "pathToKind(\"{0}\") should return Kind.{1}")
   void pathToKindReturnsTheExpectedOutput(String pathName, Kind expectedKind) throws IOException {
-    try (var fs = Jimfs.newFileSystem()) {
+    try (var fs = newFileSystem()) {
       // Given
       var path = fs.getPath(pathName);
 
@@ -351,7 +356,7 @@ class FileUtilsTest {
   )
   void fileWithAnyKindShouldFailIfThePathDoesNotExist(Kind kind, String pathName)
       throws IOException {
-    try (var fs = Jimfs.newFileSystem()) {
+    try (var fs = newFileSystem()) {
       // Given
       var path = fs.getPath(pathName);
       assertThat(path).doesNotExist();
@@ -375,7 +380,7 @@ class FileUtilsTest {
   )
   void fileWithAnyKindShouldFailIfThePathIsDirectory(Kind kind, String pathName)
       throws IOException {
-    try (var fs = Jimfs.newFileSystem()) {
+    try (var fs = newFileSystem()) {
       // Given
       var dir = fs.getPath(pathName);
       makeParentDirs(dir);
@@ -398,7 +403,7 @@ class FileUtilsTest {
       String pathName,
       boolean isMatch
   ) throws IOException {
-    try (var fs = Jimfs.newFileSystem()) {
+    try (var fs = newFileSystem()) {
       // Given
       var path = fs.getPath(pathName);
       makeParentDirs(path);
@@ -453,5 +458,20 @@ class FileUtilsTest {
     if (parent != null) {
       Files.createDirectories(parent);
     }
+  }
+
+  static FileSystem newFileSystem() {
+    // Default to UNIX to keep behaviour consistent.
+    var name = UUID.randomUUID().toString();
+    var config = Configuration
+        .builder(PathType.unix())
+        .setSupportedFeatures(Feature.LINKS, Feature.SYMBOLIC_LINKS, Feature.FILE_CHANNEL)
+        .setAttributeViews("basic", "posix")
+        .setRoots("/")
+        .setWorkingDirectory("/")
+        .setPathEqualityUsesCanonicalForm(true)
+        .build();
+
+    return Jimfs.newFileSystem(name, config);
   }
 }
