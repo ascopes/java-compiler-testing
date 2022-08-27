@@ -47,7 +47,7 @@
           <configuration>
             <!--
             Do not complain if we do not have any sources in `src/main` to compile. Some
-            examples just don't use them, and this avoid a spurious warning during builds.
+            examples just don't use them, and this avoids a spurious warning during builds.
             -->
             <skipIfEmpty>true</skipIfEmpty>
           </configuration>

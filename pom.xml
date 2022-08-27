@@ -52,7 +52,6 @@
     <jimfs.version>1.2</jimfs.version>
     <jsr305.version>3.0.2</jsr305.version>
     <junit.version>5.9.0</junit.version>
-    <logback.version>1.2.11</logback.version>
     <lombok.version>1.18.24</lombok.version>
     <mockito.version>4.7.0</mockito.version>
     <reflections.version>0.10.2</reflections.version>
@@ -77,9 +76,15 @@
       This argument is pulled in by Surefire, and JaCoCo will amend it to ensure the
       coverage agent is installed into the forked JVM running the tests. See
       https://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html for info.
-      We also disable code sharing to prevent some other warnings during test runs.
+
+      We also disable code sharing to prevent some other warnings during test runs, and
+      force the SLF4J simple logger defaults to use in tests here.
     -->
-    <argLine>-Xshare:off</argLine>
+    <argLine>
+      -Dorg.slf4j.simpleLogger.log=INFO
+      -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=DEBUG
+      -Xshare:off
+    </argLine>
     <java-release.version>11</java-release.version>
 
     <!-- Project flags -->
@@ -91,13 +96,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <!-- Logging implementation -->
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${logback.version}</version>
-      </dependency>
-
       <dependency>
         <groupId>com.google.code.findbugs</groupId>
         <artifactId>jsr305</artifactId>
@@ -178,6 +176,13 @@
         <!-- Logging interface -->
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+
+      <dependency>
+        <!-- Logging implementation for tests -->
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
         <version>${slf4j.version}</version>
       </dependency>
     </dependencies>
