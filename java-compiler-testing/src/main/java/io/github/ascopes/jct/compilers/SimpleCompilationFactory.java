@@ -278,15 +278,13 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
 
     task.setLocale(compiler.getLocale());
 
-    if (LOGGER.isInfoEnabled()) {
-      LOGGER.info(
-          "Starting compilation of {} file{} with compiler {} using flags {}",
-          compilationUnits.size(),
-          compilationUnits.size() == 1 ? "" : "s",
-          name,
-          StringUtils.quotedIterable(flags)
-      );
-    }
+    LOGGER
+        .atInfo()
+        .addArgument(compilationUnits::size)
+        .addArgument(() -> compilationUnits.size() == 1 ? "" : "s")
+        .addArgument(name)
+        .addArgument(() -> StringUtils.quotedIterable(flags))
+        .log("Starting compilation of {} file{} with compiler {} using flags {}");
 
     return task;
   }
