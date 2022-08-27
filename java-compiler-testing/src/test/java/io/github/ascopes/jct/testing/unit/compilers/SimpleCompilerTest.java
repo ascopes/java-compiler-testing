@@ -29,6 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
 import io.github.ascopes.jct.compilers.AnnotationProcessorDiscovery;
+import io.github.ascopes.jct.compilers.CompilerAlreadyUsedException;
 import io.github.ascopes.jct.compilers.CompilerConfigurer;
 import io.github.ascopes.jct.compilers.FlagBuilder;
 import io.github.ascopes.jct.compilers.LoggingMode;
@@ -187,6 +188,29 @@ class SimpleCompilerTest {
 
     // Then
     assertThat(actualName).isEqualTo(expectedName);
+  }
+
+  @DisplayName("compile should fail if the compiler was already called")
+  @Test
+  void compileShouldFailIfTheCompilerWasAlreadyCalled() {
+    // Given
+    try (var compilationFactory = mockConstruction(SimpleCompilationFactory.class)) {
+      var jsr199Compiler = stub(JavaCompiler.class);
+      var flagBuilder = stub(FlagBuilder.class);
+      var fileManagerTemplate = stub(SimpleFileManagerTemplate.class);
+      var compiler = new StubbedCompiler("foobar", fileManagerTemplate, jsr199Compiler,
+          flagBuilder);
+
+      compiler.compile();
+
+      assertThat(compilationFactory.constructed())
+          .withFailMessage("Nothing was compiled on the first pass")
+          .hasSize(1);
+
+      // Then
+      assertThatThrownBy(compiler::compile)
+          .isInstanceOf(CompilerAlreadyUsedException.class);
+    }
   }
 
   @SuppressWarnings("unchecked")

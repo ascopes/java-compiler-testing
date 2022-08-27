@@ -31,6 +31,7 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,9 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
     implements Compilable<A, SimpleCompilation> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompiler.class);
+
+  private volatile boolean alreadyCompiled;
+
   private final String name;
   private final JavaCompiler jsr199Compiler;
   private final FlagBuilder flagBuilder;
@@ -99,6 +103,8 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
       JavaCompiler jsr199Compiler,
       FlagBuilder flagBuilder
   ) {
+    alreadyCompiled = false;
+
     this.name = requireNonNull(name, "name");
     this.fileManagerTemplate = requireNonNull(fileManagerTemplate, "fileManagerTemplate");
     this.jsr199Compiler = requireNonNull(jsr199Compiler, "jsr199Compiler");
@@ -158,6 +164,12 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
 
   @Override
   public SimpleCompilation compile() {
+    if (alreadyCompiled) {
+      throw new CompilerAlreadyUsedException();
+    }
+
+    alreadyCompiled = true;
+
     // We delegate to a different method here to allow easier testing of additional behaviour
     // internally, such as the ECJ global lock that we apply to prevent bugs. Without this, we'd
     // have to mock dozens of additional moving parts. It is difficult to stub super methods
