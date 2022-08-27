@@ -274,10 +274,7 @@
           <configuration>
             <!-- <failOnWarning>true</failOnWarning> -->
             <showDeprecation>true</showDeprecation>
-            <source>${java-release.version}</source>
-            <target>${java-release.version}</target>
-            <testSource>${java-release.version}</testSource>
-            <testTarget>${java-release.version}</testTarget>
+            <release>${java-release.version}</release>
           </configuration>
         </plugin>
 
