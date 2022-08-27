@@ -81,4 +81,11 @@ public class AsyncResourceCloser implements Runnable {
       }
     }));
   }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("closeables", closeables)
+        .toString();
+  }
 }

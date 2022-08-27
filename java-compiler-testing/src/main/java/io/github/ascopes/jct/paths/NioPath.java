@@ -18,7 +18,7 @@ package io.github.ascopes.jct.paths;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.utils.StringUtils;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -75,6 +75,8 @@ public final class NioPath implements PathLike {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + "{path=" + StringUtils.quoted(uri) + "}";
+    return new ToStringBuilder(this)
+        .attribute("uri", uri)
+        .toString();
   }
 }

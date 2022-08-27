@@ -84,13 +84,11 @@ public class SimpleOutputContainerGroup
   }
 
   @Override
-  @SuppressWarnings("resource")
   public void addModule(String module, Container container) {
     getOrCreateModule(module).addPackage(container);
   }
 
   @Override
-  @SuppressWarnings("resource")
   public void addModule(String module, PathLike path) {
     getOrCreateModule(module).addPackage(path);
   }
@@ -108,7 +106,6 @@ public class SimpleOutputContainerGroup
   }
 
   @Override
-  @SuppressWarnings("resource")
   public Optional<Path> findFile(String path) {
     return ModulePrefix
         .tryExtract(path)
@@ -118,7 +115,6 @@ public class SimpleOutputContainerGroup
   }
 
   @Override
-  @SuppressWarnings("resource")
   public Optional<PathFileObject> getFileForInput(
       String packageName,
       String relativeName
@@ -132,7 +128,6 @@ public class SimpleOutputContainerGroup
   }
 
   @Override
-  @SuppressWarnings("resource")
   public Optional<PathFileObject> getFileForOutput(String packageName, String relativeName) {
     // TODO(ascopes): can we have modules conceptually in this method call?
     return ModulePrefix
@@ -143,7 +138,6 @@ public class SimpleOutputContainerGroup
   }
 
   @Override
-  @SuppressWarnings("resource")
   public Optional<PathFileObject> getJavaFileForInput(String className, Kind kind) {
     return ModulePrefix
         .tryExtract(className)
@@ -153,7 +147,6 @@ public class SimpleOutputContainerGroup
   }
 
   @Override
-  @SuppressWarnings("resource")
   public Optional<PathFileObject> getJavaFileForOutput(String className, Kind kind) {
     return ModulePrefix
         .tryExtract(className)
@@ -212,8 +205,8 @@ public class SimpleOutputContainerGroup
   }
 
   /**
-   * Wrapper around a location that lacks the constraints that
-   * {@link SimplePackageContainerGroup} imposes.
+   * Wrapper around a location that lacks the constraints that {@link SimplePackageContainerGroup}
+   * imposes.
    */
   private class SimpleOutputModuleContainerGroup
       extends AbstractPackageContainerGroup {

@@ -43,7 +43,8 @@ import org.assertj.core.api.AbstractListAssert;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class DiagnosticListAssert
-    extends AbstractListAssert<DiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, DiagnosticAssert> {
+    extends
+    AbstractListAssert<DiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, DiagnosticAssert> {
 
   /**
    * Initialize this assertion.

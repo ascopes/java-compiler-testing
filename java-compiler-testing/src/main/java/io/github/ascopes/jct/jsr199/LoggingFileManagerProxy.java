@@ -16,6 +16,7 @@
 
 package io.github.ascopes.jct.jsr199;
 
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -101,10 +102,10 @@ public class LoggingFileManagerProxy implements InvocationHandler {
 
   @Override
   public String toString() {
-    return "TracingJavaFileManagerProxy{"
-        + "inner=" + inner + ", "
-        + "stackTraces=" + stackTraces
-        + "}";
+    return new ToStringBuilder(this)
+        .attribute("inner", inner)
+        .attribute("stackTraces", stackTraces)
+        .toString();
   }
 
   /**

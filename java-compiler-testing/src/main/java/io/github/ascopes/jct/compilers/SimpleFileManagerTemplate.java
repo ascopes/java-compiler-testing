@@ -22,6 +22,7 @@ import io.github.ascopes.jct.jsr199.SimpleFileManager;
 import io.github.ascopes.jct.paths.NioPath;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.StringUtils;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
@@ -57,6 +58,13 @@ public class SimpleFileManagerTemplate {
    */
   public SimpleFileManagerTemplate() {
     locations = new HashMap<>();
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("locations", locations)
+        .toString();
   }
 
   /**

@@ -21,6 +21,7 @@ import static java.util.Objects.requireNonNull;
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.utils.EnumerationAdapter;
 import io.github.ascopes.jct.utils.ModulePrefix;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -93,6 +94,13 @@ public class ContainerClassLoader extends ClassLoader {
     this.location = requireNonNull(location, "location");
     this.packageContainers = requireNonNull(packageContainers, "packageContainers");
     this.moduleContainers = requireNonNull(moduleContainers, "moduleContainers");
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("location", location)
+        .toString();
   }
 
   @Override

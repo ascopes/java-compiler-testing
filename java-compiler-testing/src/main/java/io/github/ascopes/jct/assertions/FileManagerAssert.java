@@ -98,8 +98,8 @@ public final class FileManagerAssert extends AbstractAssert<FileManagerAssert, F
   /**
    * Get assertions on the path containing class outputs, if it exists.
    *
-   * @return the assertions to perform on the class outputs, or an empty optional if no group
-   *     exists for that location.
+   * @return the assertions to perform on the class outputs, or an empty optional if no group exists
+   *     for that location.
    */
   public MaybeAssert<OutputContainerGroupAssert, OutputContainerGroup> classOutput() {
     return outputGroup(StandardLocation.CLASS_OUTPUT);
@@ -128,8 +128,8 @@ public final class FileManagerAssert extends AbstractAssert<FileManagerAssert, F
   /**
    * Get assertions on the path containing the class path, if it exists.
    *
-   * @return the assertions to perform on the class path, or an empty optional if no group
-   *     exists for that location.
+   * @return the assertions to perform on the class path, or an empty optional if no group exists
+   *     for that location.
    */
   public MaybeAssert<PackageContainerGroupAssert, PackageContainerGroup> classPath() {
     return packageGroup(StandardLocation.CLASS_PATH);
@@ -138,8 +138,8 @@ public final class FileManagerAssert extends AbstractAssert<FileManagerAssert, F
   /**
    * Get assertions on the path containing the source path, if it exists.
    *
-   * @return the assertions to perform on the source path, or an empty optional if no group
-   *     exists for that location.
+   * @return the assertions to perform on the source path, or an empty optional if no group exists
+   *     for that location.
    */
   public MaybeAssert<PackageContainerGroupAssert, PackageContainerGroup> sourcePath() {
     return packageGroup(StandardLocation.SOURCE_PATH);
@@ -148,8 +148,8 @@ public final class FileManagerAssert extends AbstractAssert<FileManagerAssert, F
   /**
    * Get assertions on the path containing the module path, if it exists.
    *
-   * @return the assertions to perform on the module path, or an empty optional if no group
-   *     exists for that location.
+   * @return the assertions to perform on the module path, or an empty optional if no group exists
+   *     for that location.
    */
   public MaybeAssert<ModuleContainerGroupAssert, ModuleContainerGroup> modulePath() {
     return moduleGroup(StandardLocation.MODULE_PATH);

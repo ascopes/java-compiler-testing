@@ -17,6 +17,7 @@
 package io.github.ascopes.jct.compilers.ecj;
 
 import io.github.ascopes.jct.compilers.FlagBuilder;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -60,6 +61,15 @@ public final class EcjFlagBuilder implements FlagBuilder {
     craftedFlags = Stream.builder();
     annotationProcessorOptions = Stream.builder();
     otherOptions = Stream.builder();
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("craftedFlags", craftedFlags)
+        .attribute("annotationProcessorOptions", annotationProcessorOptions)
+        .attribute("otherOptions", otherOptions)
+        .toString();
   }
 
   @Override

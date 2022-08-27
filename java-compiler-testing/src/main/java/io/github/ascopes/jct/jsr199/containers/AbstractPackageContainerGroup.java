@@ -22,6 +22,7 @@ import io.github.ascopes.jct.jsr199.ModuleLocation;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.Lazy;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -57,8 +58,8 @@ public abstract class AbstractPackageContainerGroup
   );
 
   protected final String release;
-  private final List<Container> containers;
-  private final Lazy<ClassLoader> classLoaderLazy;
+  protected final List<Container> containers;
+  protected final Lazy<ClassLoader> classLoaderLazy;
 
   /**
    * Initialize this container group.
@@ -70,6 +71,13 @@ public abstract class AbstractPackageContainerGroup
 
     containers = new ArrayList<>();
     classLoaderLazy = new Lazy<>(this::createClassLoader);
+  }
+
+  @Override
+  public final String toString() {
+    return new ToStringBuilder(this)
+        .attribute("location", getLocation())
+        .toString();
   }
 
   @Override

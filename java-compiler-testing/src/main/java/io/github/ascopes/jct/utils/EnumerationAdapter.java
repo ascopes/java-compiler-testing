@@ -54,4 +54,11 @@ public class EnumerationAdapter<T> implements Enumeration<T> {
   public T nextElement() {
     return iterator.next();
   }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("iterator", iterator)
+        .toString();
+  }
 }

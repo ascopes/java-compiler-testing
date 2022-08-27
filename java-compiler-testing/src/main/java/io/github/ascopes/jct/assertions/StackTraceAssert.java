@@ -35,7 +35,8 @@ import org.assertj.core.api.AbstractListAssert;
 @Deprecated(forRemoval = true)
 @SuppressWarnings("removal")
 public final class StackTraceAssert
-    extends AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
+    extends
+    AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
 
   /**
    * Initialize a new assertions object.

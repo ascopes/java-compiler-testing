@@ -33,6 +33,7 @@ import org.junit.jupiter.params.provider.ValueSource;
  */
 @DisplayName("ModulePrefix tests")
 class ModulePrefixTest {
+
   @DisplayName("tryExtract throws an IllegalArgumentException for names leading with a '/'")
   @ValueSource(strings = {
       "/",

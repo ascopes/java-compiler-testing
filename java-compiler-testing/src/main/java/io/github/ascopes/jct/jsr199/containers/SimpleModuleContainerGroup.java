@@ -85,13 +85,11 @@ public class SimpleModuleContainerGroup implements ModuleContainerGroup {
   }
 
   @Override
-  @SuppressWarnings("resource")
   public void addModule(String module, Container container) {
     getOrCreateModule(module).addPackage(container);
   }
 
   @Override
-  @SuppressWarnings("resource")
   public void addModule(String module, PathLike path) {
     getOrCreateModule(module).addPackage(path);
   }
@@ -194,8 +192,8 @@ public class SimpleModuleContainerGroup implements ModuleContainerGroup {
   }
 
   /**
-   * Wrapper around a location that lacks the constraints that
-   * {@link SimplePackageContainerGroup} imposes.
+   * Wrapper around a location that lacks the constraints that {@link SimplePackageContainerGroup}
+   * imposes.
    */
   private class SimpleModuleModuleContainerGroup
       extends AbstractPackageContainerGroup {

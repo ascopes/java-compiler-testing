@@ -24,6 +24,7 @@ import io.github.ascopes.jct.paths.NioPath;
 import io.github.ascopes.jct.paths.RamPath;
 import io.github.ascopes.jct.utils.SpecialLocations;
 import io.github.ascopes.jct.utils.StringUtils;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -56,6 +57,11 @@ import org.slf4j.LoggerFactory;
 public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompilationFactory.class);
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this).toString();
+  }
 
   /**
    * Run the compilation for the given compiler and return the compilation result.

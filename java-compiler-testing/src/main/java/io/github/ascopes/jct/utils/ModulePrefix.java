@@ -41,6 +41,15 @@ public final class ModulePrefix {
     this.rest = requireNonNull(rest, "rest");
   }
 
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("original", original)
+        .attribute("moduleName", moduleName)
+        .attribute("rest", rest)
+        .toString();
+  }
+
   /**
    * Get the original input string.
    *

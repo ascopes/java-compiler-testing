@@ -72,8 +72,9 @@ public @interface EcjCompilers {
    * @since 0.0.1
    */
   @API(since = "0.0.1", status = Status.INTERNAL)
-  final class EcjCompilersProvider extends AbstractCompilersProvider implements
-      AnnotationConsumer<EcjCompilers> {
+  final class EcjCompilersProvider
+      extends AbstractCompilersProvider
+      implements AnnotationConsumer<EcjCompilers> {
 
     EcjCompilersProvider() {
       super(

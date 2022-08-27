@@ -175,14 +175,14 @@ class LazyTest {
     var actual = lazy.toString();
 
     // Then
-    then(actual).isEqualTo("Lazy{data=<uninitialized>}");
+    then(actual).isEqualTo("Lazy{data=null, initialized=false}");
   }
 
   static Stream<Arguments> toStringInitializedCases() {
     return Stream.of(
-        Arguments.of(null, "Lazy{data=null}"),
-        Arguments.of(new Something(), "Lazy{data=Something{}}"),
-        Arguments.of("Hello, World!", "Lazy{data=\"Hello, World!\"}")
+        Arguments.of(null, "Lazy{data=null, initialized=true}"),
+        Arguments.of(new Something(), "Lazy{data=Something{}, initialized=true}"),
+        Arguments.of("Hello, World!", "Lazy{data=\"Hello, World!\", initialized=true}")
     );
   }
 

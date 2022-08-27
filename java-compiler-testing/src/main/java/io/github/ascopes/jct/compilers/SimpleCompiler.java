@@ -479,7 +479,7 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public String toString() {
+  public final String toString() {
     return name;
   }
 

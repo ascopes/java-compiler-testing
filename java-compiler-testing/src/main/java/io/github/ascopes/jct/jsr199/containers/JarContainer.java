@@ -25,7 +25,7 @@ import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.IoExceptionUtils;
 import io.github.ascopes.jct.utils.Lazy;
-import io.github.ascopes.jct.utils.StringUtils;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.net.URL;
@@ -253,7 +253,10 @@ public final class JarContainer implements Container {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + "{uri=" + StringUtils.quoted(jarPath.getUri()) + "}";
+    return new ToStringBuilder(this)
+        .attribute("uri", jarPath.getUri())
+        .attribute("location", location)
+        .toString();
   }
 
   /**

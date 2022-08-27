@@ -19,7 +19,7 @@ package io.github.ascopes.jct.jsr199;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.utils.FileUtils;
-import io.github.ascopes.jct.utils.StringUtils;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -132,6 +132,15 @@ public class PathFileObject implements JavaFileObject {
     return location;
   }
 
+  /**
+   * Get the root path that the package containing this file is nested within.
+   *
+   * @return the root path.
+   */
+  public Path getRoot() {
+    return root;
+  }
+
   @Override
   public String getName() {
     return name;
@@ -193,7 +202,9 @@ public class PathFileObject implements JavaFileObject {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + "{uri=" + StringUtils.quoted(uri) + "}";
+    return new ToStringBuilder(this)
+        .attribute("uri", uri)
+        .toString();
   }
 
   private InputStream openUnbufferedInputStream() throws IOException {

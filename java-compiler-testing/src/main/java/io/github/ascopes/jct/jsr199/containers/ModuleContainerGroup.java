@@ -54,8 +54,8 @@ public interface ModuleContainerGroup extends ContainerGroup {
   void addModule(String module, PathLike path);
 
   /**
-   * Get the {@link PackageContainerGroup} for a given module name, creating it if it does
-   * not yet exist.
+   * Get the {@link PackageContainerGroup} for a given module name, creating it if it does not yet
+   * exist.
    *
    * @param moduleName the module name to look up.
    * @return the container group.

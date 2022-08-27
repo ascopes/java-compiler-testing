@@ -73,9 +73,9 @@ public class StringSlicer {
 
   @Override
   public String toString() {
-    return "StringSlicer{"
-        + "delimiter=" + StringUtils.quoted(delimiter)
-        + "}";
+    return new ToStringBuilder(this)
+        .attribute("delimiter", delimiter)
+        .toString();
   }
 
   private ArrayList<String> splitToArrayList(String text) {

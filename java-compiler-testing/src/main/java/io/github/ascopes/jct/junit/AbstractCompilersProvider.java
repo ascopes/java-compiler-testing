@@ -17,6 +17,7 @@
 package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.compilers.Compilable;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -65,6 +66,18 @@ abstract class AbstractCompilersProvider implements ArgumentsProvider {
         .rangeClosed(minVersion, maxVersion)
         .mapToObj(compilerSupplier)
         .map(Arguments::of);
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("compilerSupplier", compilerSupplier)
+        .attribute("minCompilerVersionWithoutModules", minCompilerVersionWithoutModules)
+        .attribute("minCompilerVersionWithModules", minCompilerVersionWithModules)
+        .attribute("maxCompilerVersion", maxCompilerVersion)
+        .attribute("minVersion", minVersion)
+        .attribute("maxVersion", maxVersion)
+        .toString();
   }
 
   final void configure(int min, int max, boolean modules) {

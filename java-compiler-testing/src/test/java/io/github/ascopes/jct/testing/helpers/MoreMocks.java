@@ -116,11 +116,11 @@ public final class MoreMocks {
   }
 
   /**
-   * Argument matcher that checks a {@link CharSequence}-assignable argument matches a given
-   * regular expression.
+   * Argument matcher that checks a {@link CharSequence}-assignable argument matches a given regular
+   * expression.
    *
    * @param pattern the regex to match.
-   * @param <T>  argument matcher type.
+   * @param <T>     argument matcher type.
    * @return the matcher.
    */
   public static <T extends CharSequence> T stringLike(String pattern) {

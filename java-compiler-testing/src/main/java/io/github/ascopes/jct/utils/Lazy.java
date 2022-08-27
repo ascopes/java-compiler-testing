@@ -53,6 +53,14 @@ public class Lazy<T> {
     data = null;
   }
 
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("data", data)
+        .attribute("initialized", initialized)
+        .toString();
+  }
+
   /**
    * Get the value, initializing it first if it does not yet exist.
    *
@@ -103,21 +111,6 @@ public class Lazy<T> {
         }
       }
     }
-  }
-
-  @Override
-  public String toString() {
-    var builder = new StringBuilder("Lazy{data=");
-
-    if (data instanceof String) {
-      builder.append(StringUtils.quoted(data));
-    } else if (initialized) {
-      builder.append(data);
-    } else {
-      builder.append("<uninitialized>");
-    }
-
-    return builder.append("}").toString();
   }
 
   /**

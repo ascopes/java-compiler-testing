@@ -24,7 +24,7 @@ import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
 import io.github.ascopes.jct.utils.AsyncResourceCloser;
-import io.github.ascopes.jct.utils.StringUtils;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -542,10 +542,10 @@ public final class RamPath implements PathLike {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + "{"
-        + "name=" + StringUtils.quoted(name) + ", "
-        + "path=" + StringUtils.quoted(uri)
-        + "}";
+    return new ToStringBuilder(this)
+        .attribute("name", name)
+        .attribute("uri", uri)
+        .toString();
   }
 
   private Path makeRelativeToHere(Path relativePath) {

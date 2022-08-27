@@ -22,6 +22,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.jsr199.FileManager;
 import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.List;
 import java.util.Set;
 import javax.tools.JavaFileObject;
@@ -52,6 +53,15 @@ public final class SimpleCompilation implements Compilation {
     compilationUnits = nonNullUnmodifiableSet(builder.compilationUnits, "compilationUnits");
     diagnostics = nonNullUnmodifiableList(builder.diagnostics, "diagnostics");
     fileManager = requireNonNull(builder.fileManager, "fileManager");
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("success", success)
+        .attribute("failOnWarnings", failOnWarnings)
+        .attribute("fileManager", fileManager)
+        .toString();
   }
 
   @Override

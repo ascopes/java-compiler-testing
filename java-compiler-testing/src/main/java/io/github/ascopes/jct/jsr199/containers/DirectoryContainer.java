@@ -21,7 +21,7 @@ import static java.util.Objects.requireNonNull;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.FileUtils;
-import io.github.ascopes.jct.utils.StringUtils;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.net.URL;
@@ -195,6 +195,9 @@ public class DirectoryContainer implements Container {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + "{uri=" + StringUtils.quoted(root.getUri()) + "}";
+    return new ToStringBuilder(this)
+        .attribute("uri", root.getUri())
+        .attribute("location", location)
+        .toString();
   }
 }

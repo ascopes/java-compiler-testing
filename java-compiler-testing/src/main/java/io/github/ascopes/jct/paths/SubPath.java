@@ -19,7 +19,7 @@ package io.github.ascopes.jct.paths;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.utils.IterableUtils;
-import io.github.ascopes.jct.utils.StringUtils;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -60,6 +60,15 @@ public final class SubPath implements PathLike {
     uri = root.toUri();
   }
 
+  /**
+   * Get the parent path that this path was derived from.
+   *
+   * @return the parent path.
+   */
+  public PathLike getParent() {
+    return parent;
+  }
+
   @Override
   public Path getPath() {
     return root;
@@ -88,6 +97,8 @@ public final class SubPath implements PathLike {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + "{path=" + StringUtils.quoted(uri) + "}";
+    return new ToStringBuilder(this)
+        .attribute("uri", uri)
+        .toString();
   }
 }

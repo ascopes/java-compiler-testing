@@ -28,6 +28,7 @@ import io.github.ascopes.jct.jsr199.containers.SimpleOutputContainerGroup;
 import io.github.ascopes.jct.jsr199.containers.SimplePackageContainerGroup;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.paths.SubPath;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
@@ -116,7 +117,6 @@ public class SimpleFileManager implements FileManager {
   }
 
   @Override
-  @SuppressWarnings("resource")
   public void ensureEmptyLocationExists(Location location) {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
@@ -407,6 +407,13 @@ public class SimpleFileManager implements FileManager {
   @Override
   public int isSupportedOption(String option) {
     return 0;
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("release", release)
+        .toString();
   }
 
   private Optional<ContainerGroup> getGroup(Location location) {

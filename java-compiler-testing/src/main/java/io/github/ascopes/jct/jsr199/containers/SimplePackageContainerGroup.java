@@ -42,8 +42,8 @@ public class SimplePackageContainerGroup extends AbstractPackageContainerGroup {
    * Initialize this group.
    *
    * @param location the location of the group.
-   * @param release the release version to use for handling {@code Multi-Release} JARs in this
-   *                location.
+   * @param release  the release version to use for handling {@code Multi-Release} JARs in this
+   *                 location.
    */
   public SimplePackageContainerGroup(Location location, String release) {
     super(release);

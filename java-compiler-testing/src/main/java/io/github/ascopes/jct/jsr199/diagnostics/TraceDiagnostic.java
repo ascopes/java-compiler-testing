@@ -19,8 +19,10 @@ package io.github.ascopes.jct.jsr199.diagnostics;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
@@ -101,5 +103,19 @@ public class TraceDiagnostic<S extends JavaFileObject> extends ForwardingDiagnos
    */
   public List<StackTraceElement> getStackTrace() {
     return stackTrace;
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("timestamp", timestamp)
+        .attribute("threadId", threadId)
+        .attribute("threadName", threadName)
+        .attribute("kind", getKind())
+        .attribute("code", getCode())
+        .attribute("column", getColumnNumber())
+        .attribute("line", getLineNumber())
+        .attribute("message", getMessage(Locale.ROOT))
+        .toString();
   }
 }

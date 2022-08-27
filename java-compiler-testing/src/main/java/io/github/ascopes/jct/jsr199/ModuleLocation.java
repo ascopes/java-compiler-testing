@@ -16,7 +16,7 @@
 
 package io.github.ascopes.jct.jsr199;
 
-import io.github.ascopes.jct.utils.StringUtils;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.Objects;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
@@ -113,8 +113,9 @@ public class ModuleLocation implements Location {
 
   @Override
   public String toString() {
-    return "ModuleLocation{"
-        + "name=" + StringUtils.quoted(name)
-        + "}";
+    return new ToStringBuilder(this)
+        .attribute("parent", parent)
+        .attribute("moduleName", moduleName)
+        .toString();
   }
 }

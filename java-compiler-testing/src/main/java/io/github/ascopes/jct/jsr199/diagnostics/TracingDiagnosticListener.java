@@ -18,6 +18,7 @@ package io.github.ascopes.jct.jsr199.diagnostics;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
@@ -142,5 +143,14 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
         logger.info("{}{}", formattedMessage, formattedStackTrace);
         break;
     }
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("logger", logger.getName())
+        .attribute("stackTraces", stackTraces)
+        .attribute("logging", logging)
+        .toString();
   }
 }

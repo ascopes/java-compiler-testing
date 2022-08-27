@@ -21,7 +21,6 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -34,7 +33,6 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class StringUtils {
 
-  private static final Set<String> ES_ENDINGS = Set.of("s", "z", "ch", "sh", "x");
   private static final BigDecimal THOUSAND = BigDecimal.valueOf(1000);
   private static final List<String> TIME_UNITS = List.of("ns", "µs", "ms", "s");
   private static final DecimalFormat TIME_FORMAT = new DecimalFormat("0.##");
