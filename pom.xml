@@ -272,7 +272,7 @@
           <version>${maven-compiler-plugin.version}</version>
 
           <configuration>
-            <!-- <failOnWarning>true</failOnWarning> -->
+            <failOnWarning>true</failOnWarning>
             <showDeprecation>true</showDeprecation>
             <release>${java-release.version}</release>
           </configuration>
