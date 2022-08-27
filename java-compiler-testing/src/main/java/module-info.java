@@ -25,7 +25,6 @@ module io.github.ascopes.jct {
   requires ecj;
   requires jimfs;
   requires static jsr305;
-  requires me.xdrop.fuzzywuzzy;
   requires static org.apiguardian.api;
   requires static org.junit.jupiter.params;
   requires org.assertj.core;

@@ -153,8 +153,6 @@ class ExampleTest {
   inspecting the results.
 - Integration with AssertJ for fluent assertions on compilation
   results.
-- Fuzzy matching of similar path names when asserting files exist
-  to provide helpful assertion errors.
 - Ability to have multiple source roots, just like when using
   `javac` normally.
 - Diagnostic reporting includes stacktraces, so you can find out

@@ -33,11 +33,6 @@
     </dependency>
 
     <dependency>
-      <groupId>me.xdrop</groupId>
-      <artifactId>fuzzywuzzy</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.apiguardian</groupId>
       <artifactId>apiguardian-api</artifactId>
     </dependency>

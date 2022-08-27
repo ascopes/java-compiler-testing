@@ -49,7 +49,6 @@
     <assertj.version>3.23.1</assertj.version>
     <awaitility.version>4.2.0</awaitility.version>
     <ecj.version>3.30.0</ecj.version>
-    <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jimfs.version>1.2</jimfs.version>
     <jsr305.version>3.0.2</jsr305.version>
     <junit.version>5.9.0</junit.version>
@@ -110,13 +109,6 @@
         <groupId>com.google.jimfs</groupId>
         <artifactId>jimfs</artifactId>
         <version>${jimfs.version}</version>
-      </dependency>
-
-      <dependency>
-        <!-- Levenshtein Distance algorithm for matching similar strings -->
-        <groupId>me.xdrop</groupId>
-        <artifactId>fuzzywuzzy</artifactId>
-        <version>${fuzzywuzzy.version}</version>
       </dependency>
 
       <dependency>
