@@ -120,7 +120,15 @@ jobs:
       - name: Publish to codecov
         continue-on-error: true
         if: always()
-        run: bash <(curl -s https://codecov.io/bash)
+        run: |-
+          curl --fail https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import # One-time step
+          curl --fail -Os https://uploader.codecov.io/latest/linux/codecov
+          curl --fail -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
+          curl --fail -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig
+          gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
+          shasum -a 256 -c codecov.SHA256SUM
+          chmod -v +x codecov
+          ./codecov 
 
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v2
