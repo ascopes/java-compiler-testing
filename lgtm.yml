@@ -3,4 +3,4 @@ extraction:
     index:
       java_version: 11
       maven:
-        version: 3.8.5
+        version: 3.8.6
