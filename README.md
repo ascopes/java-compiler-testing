@@ -2,8 +2,6 @@
 [![Code Coverage](https://codecov.io/gh/ascopes/jct/branch/main/graph/badge.svg?token=VT74BP2742)](https://codecov.io/gh/ascopes/jct)
 [![Releases](https://img.shields.io/github/downloads/ascopes/jct/total)](https://github.com/ascopes/jct/releases)
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.ascopes.jct/jct)](https://search.maven.org/artifact/com.github.ascopes.jct/jct)
-[![LGTM Issues](https://img.shields.io/lgtm/alerts/github/ascopes/jct)](https://lgtm.com/projects/g/ascopes/jct)
-[![LGTM Quality](https://img.shields.io/lgtm/grade/java/github/ascopes/jct)](https://lgtm.com/projects/g/ascopes/jct)
 [![Issues](https://img.shields.io/github/issues-raw/ascopes/jct)](https://github.com/ascopes/jct/issues)
 [![Closed Issues](https://img.shields.io/github/issues-closed-raw/ascopes/jct)](https://github.com/ascopes/jct/issues?q=is%3Aissue+is%3Aclosed)
 [![License](https://img.shields.io/github/license/ascopes/jct)](https://github.com/ascopes/jct/blob/main/LICENSE.txt)
