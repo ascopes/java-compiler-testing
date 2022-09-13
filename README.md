@@ -50,9 +50,12 @@ class ExampleTest {
                         import lombok.NonNull;
 
                         @Data
-                        public class HelloWorld {
+                        public class Message {
+                            private String content;
+
                             public static void main(String[] args) {
-                                System.out.println("Hello, World!");
+                                Message message = new Message("Hello, World!");
+                                System.out.println(message);
                             }
                         }
                         """
