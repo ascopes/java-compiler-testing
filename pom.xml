@@ -235,7 +235,6 @@
                   ${maven.multiModuleProjectDirectory}/.mvn/checkstyle/checkstyle.xml
                 </configLocation>
                 <consoleOutput>true</consoleOutput>
-                <encoding>UTF-8</encoding>
                 <failsOnError>true</failsOnError>
                 <!--suppress UnresolvedMavenProperty -->
                 <headerLocation>
