@@ -46,7 +46,7 @@ jobs:
           - ubuntu-latest
           # TODO: get working on MacOS
           #- macos-latest
-        java-version: [ 11, 12, 13, 14, 15, 16, 17, 18 ]
+        java-version: [ 11, 12, 13, 14, 15, 16, 17, 18, 19 ]
         include:
           - os: windows-latest
             build-script: './mvnw.cmd'
@@ -148,7 +148,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '18'
 
       - name: Run Checkstyle
         run: >-
@@ -174,10 +174,10 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          # We have to use 17 for now, as assertj causes JDK 14 and older to prevent linking
+          # We have to use >= 15 for now, as assertj causes JDK 14 and older to prevent linking
           # documentation correctly. I have opened an issue on GitHub with AssertJ to discuss
           # this being generated correctly: https://github.com/assertj/assertj-core/issues/2573.
-          java-version: '17'
+          java-version: '18'
 
       - name: Generate JavaDoc documentation
         run: >-
