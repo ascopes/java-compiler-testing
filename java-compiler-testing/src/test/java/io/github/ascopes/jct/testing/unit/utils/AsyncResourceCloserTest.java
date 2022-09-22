@@ -26,7 +26,7 @@ import static org.awaitility.Awaitility.await;
 import io.github.ascopes.jct.testing.helpers.ConcurrentRuns;
 import io.github.ascopes.jct.testing.helpers.MoreMocks;
 import io.github.ascopes.jct.utils.AsyncResourceCloser;
-import java.util.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
