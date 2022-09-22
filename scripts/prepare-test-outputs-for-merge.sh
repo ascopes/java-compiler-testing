@@ -43,7 +43,7 @@ fi
 
 echo -e "\e[1;35mUpdating Surefire reports...\e[0m"
 surefire_prefix_xslt_dir="$(mktemp -d)"
-trap "rm -Rf '${surefire_prefix_xslt_dir}'" EXIT SIGINT SIGTERM SIGQUIT
+trap 'rm -Rf "${surefire_prefix_xslt_dir}"' EXIT SIGINT SIGTERM SIGQUIT
 surefire_prefix_xslt="${surefire_prefix_xslt_dir}/surefire.xslt"
 
 sed 's/^  //g' >"${surefire_prefix_xslt}" <<'EOF'
