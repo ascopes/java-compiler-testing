@@ -75,12 +75,13 @@ class AsyncResourceCloserTest {
 
     // When
     closer.run();
+    System.gc();
 
     // Then
-    await()
+    await("wait for resource to close")
         .atMost(ofSeconds(10))
-        .pollInterval(ofMillis(1))
-        .untilAsserted(() -> assertThat(resource.closed)
+        .pollInterval(ofMillis(10))
+        .untilAsserted(() -> assertThat(resource.closed.get())
             .withFailMessage("resource was not closed")
             .isTrue());
   }
@@ -101,13 +102,14 @@ class AsyncResourceCloserTest {
 
     // When
     closer.run();
+    System.gc();
 
     // Then
-    await()
+    await("wait for resource to close")
         .atMost(ofSeconds(10))
-        .pollInterval(ofMillis(1))
+        .pollInterval(ofMillis(10))
         .untilAsserted(() -> assertThat(resources)
-            .allSatisfy((name, resource) -> assertThat(resource.closed)
+            .allSatisfy((name, resource) -> assertThat(resource.closed.get())
                 .withFailMessage("resource %s was not closed", name)
                 .isTrue()));
   }
@@ -133,28 +135,29 @@ class AsyncResourceCloserTest {
 
     // When
     closer.run();
+    System.gc();
 
     // Then
-    await()
+    await("Wait for resource to close")
         .atMost(ofSeconds(10))
-        .pollInterval(ofMillis(1))
+        .pollInterval(ofMillis(10))
         .untilAsserted(() -> assertThat(resources)
-            .allSatisfy((name, resource) -> assertThat(resource.closed)
+            .allSatisfy((name, resource) -> assertThat(resource.closed.get())
                 .withFailMessage("resource %s was not closed", name)
                 .isTrue()));
   }
 
   static class CloseableResource implements AutoCloseable {
 
-    private volatile boolean closed;
+    private final AtomicBoolean closed;
 
     CloseableResource() {
-      closed = false;
+      closed = new AtomicBoolean(false);
     }
 
     @Override
     public void close() {
-      closed = true;
+      closed.set(true);
     }
   }
 
