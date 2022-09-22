@@ -44,13 +44,15 @@ jobs:
         os: 
           - windows-latest
           - ubuntu-latest
-          # TODO: get working on MacOS
-          #- macos-latest
+          # Sanity check, should be the same as Ubuntu (POSIX file system)
+          - macos-latest
         java-version: [ 11, 12, 13, 14, 15, 16, 17, 18, 19 ]
         include:
           - os: windows-latest
             build-script: './mvnw.cmd'
           - os: ubuntu-latest
+            build-script: './mvnw'
+          - os: macos-latest
             build-script: './mvnw'
 
     steps:

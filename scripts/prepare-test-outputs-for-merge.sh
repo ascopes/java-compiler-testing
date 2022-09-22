@@ -42,7 +42,10 @@ if ! command -v xsltproc >/dev/null 2>&1; then
 fi
 
 echo -e "\e[1;35mUpdating Surefire reports...\e[0m"
-surefire_prefix_xslt=$(mktemp --suffix=.xslt)
+surefire_prefix_xslt_dir="$(mktemp -d)"
+trap 'rm -Rf "${surefire_prefix_xslt_dir}"' EXIT SIGINT SIGTERM SIGQUIT
+surefire_prefix_xslt="${surefire_prefix_xslt_dir}/surefire.xslt"
+
 sed 's/^  //g' >"${surefire_prefix_xslt}" <<'EOF'
   <?xml version="1.0" encoding="UTF-8"?>
   <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -86,8 +89,6 @@ for surefire_report in $(find-all-surefire-reports); do
   echo -e "\e[1;34mReplacing ${surefire_report} with ${new_surefire_report}\e[0m"
   rm "${surefire_report}"
 done
-
-rm "${surefire_prefix_xslt}"
 
 echo -e "\e[1;35mUpdating Jacoco reports...\e[0m"
 for jacoco_report in $(find-all-jacoco-reports); do
