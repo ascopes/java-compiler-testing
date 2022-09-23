@@ -63,8 +63,10 @@ if ! command -v xsltproc > /dev/null 2>&1; then
   else
     warn "xsltproc is not installed, so I will install it now..."
     sudo apt-get install xsltproc -qy
-    success "Installed xsltproc successfully"
+    success "Installed xsltproc successfully at $(command -v xsltproc)"
   fi
+else
+  success "Found $(command -v xsltproc)"
 fi
 
 stage "Generating Surefire XSLT script..."
