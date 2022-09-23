@@ -50,6 +50,8 @@ function success() {
   log 32 SUCCESS "${@}"
 }
 
+stage "Looking for xsltproc binary..."
+
 # If we don't have xsltproc installed, try to resolve it first.
 if ! command -v xsltproc > /dev/null 2>&1; then
   # If we are not running in CI, then the user needs to install this dependency
@@ -92,6 +94,8 @@ sed 's/^  //g' > "${surefire_prefix_xslt}" <<'EOF'
     </xsl:template>
   </xsl:stylesheet>
 EOF
+
+info "Generated XSLT script at ${surefire_prefix_xslt}"
 
 function find-all-surefire-reports() {
   info "Discovering Surefire test reports"
