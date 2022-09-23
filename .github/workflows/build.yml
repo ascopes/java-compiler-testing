@@ -55,9 +55,6 @@ jobs:
           - os: macos-latest
             build-script: './mvnw'
 
-    concurrency: 
-      group: ${{ matrix.os }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -75,12 +72,12 @@ jobs:
         run: >-
           ${{ matrix.build-script }} 
           -B 
+          -T4C
           -U
-          -T8C
           --no-transfer-progress
           '-Dcheckstyle.skip=true'
           '-Dstyle.color=always'
-          '-Dmaven.artifact.threads=50'
+          '-Dmaven.artifact.threads=10'
           clean package
 
       - name: Annotate test reports with build environment info
@@ -159,12 +156,12 @@ jobs:
         run: >-
           ./mvnw 
           -B 
-          -U 
-          -T8C
+          -T4C
+          -U
           --no-transfer-progress
           -DskipTests=true
           -Dstyle.color=always
-          -Dmaven.artifact.threads=100
+          -Dmaven.artifact.threads=10
           clean package
 
   javadoc:
@@ -188,13 +185,13 @@ jobs:
         run: >-
           ./mvnw 
           -B 
-          -U 
-          -T8C
+          -T4C
+          -U
           --no-transfer-progress
           -Dmaven.test.skip=true
           -Dcheckstyle.skip=true
           -Dstyle.color=always
-          -Dmaven.artifact.threads=100
+          -Dmaven.artifact.threads=10
           clean compile javadoc:jar
 
       - name: Archive JavaDoc artifacts
