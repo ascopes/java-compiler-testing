@@ -23,30 +23,56 @@
 set -o errexit
 set -o pipefail
 
-ci_java_version=${1?Pass the Java version as the first argument to this script!}
-ci_os=${2?Pass the OS name as the second argument to this script!}
+ci_java_version="${1?Pass the Java version as the first argument to this script!}"
+ci_os="${2?Pass the OS name as the second argument to this script!}"
+
+function log() {
+  printf "\033[1;${1}m%s:\033[0;${1}m %s\033[0m\n" "${2}" "${3}" >&2
+}
+
+function err() {
+  log 31 ERROR "${@}"
+}
+
+function warn() {
+  log 33 WARNING "${@}"
+}
+
+function info() {
+  log 34 INFO "${@}"
+}
+
+function stage() {
+  log 35 STAGE "${@}"
+}
+
+function success() {
+  log 32 SUCCESS "${@}"
+}
+
+stage "Looking for xsltproc binary..."
 
 # If we don't have xsltproc installed, try to resolve it first.
-if ! command -v xsltproc >/dev/null 2>&1; then
+if ! command -v xsltproc > /dev/null 2>&1; then
   # If we are not running in CI, then the user needs to install this dependency
   # manually. If we are in CI, assume we are running on ubuntu-latest
   # on a GitHub Actions runner and just install xsltproc.
   if [ -z ${CI+_} ]; then
-    echo -e "\e[1;31mERROR\e[0m: xsltproc is not found -- make sure it is installed first."
+    err "xsltproc is not found -- make sure it is installed first."
     exit 2
   else
-    echo -e "\e[1;33mWARN\e[0m: xsltproc is not installed, so I will install it now..."
+    warn "xsltproc is not installed, so I will install it now..."
     sudo apt-get install xsltproc -qy
-    echo -e "\e[1;32m...done!\e[0m"
+    success "Installed xsltproc successfully"
   fi
 fi
 
-echo -e "\e[1;35mUpdating Surefire reports...\e[0m"
+stage "Generating Surefire XSLT script..."
 surefire_prefix_xslt_dir="$(mktemp -d)"
 trap 'rm -Rf "${surefire_prefix_xslt_dir}"' EXIT SIGINT SIGTERM SIGQUIT
 surefire_prefix_xslt="${surefire_prefix_xslt_dir}/surefire.xslt"
 
-sed 's/^  //g' >"${surefire_prefix_xslt}" <<'EOF'
+sed 's/^  //g' > "${surefire_prefix_xslt}" <<'EOF'
   <?xml version="1.0" encoding="UTF-8"?>
   <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <!--
@@ -69,11 +95,15 @@ sed 's/^  //g' >"${surefire_prefix_xslt}" <<'EOF'
   </xsl:stylesheet>
 EOF
 
+info "Generated XSLT script at ${surefire_prefix_xslt}"
+
 function find-all-surefire-reports() {
+  info "Discovering Surefire test reports"
   find . -wholename '**/target/surefire-reports/TEST-*Test.xml' -print0 | xargs -0
 }
 
 function find-all-jacoco-reports() {
+  info "Discovering JaCoCo coverage reports"
   # For now, we only want the one jacoco file for the main module, if it exists.
   local desired_jacoco_file="java-compiler-testing/target/site/jacoco/jacoco.xml"
   if [ -f "${desired_jacoco_file}" ]; then
@@ -81,20 +111,21 @@ function find-all-jacoco-reports() {
   fi
 }
 
+stage "Updating Surefire reports..."
 for surefire_report in $(find-all-surefire-reports); do
-  echo -e "\e[1;34mAdding Java version to test case names in ${surefire_report}...\e[0m"
+  info "Adding Java version to test case names in ${surefire_report}..."
   new_surefire_report=${surefire_report/.xml/-java-${ci_java_version}-${ci_os}.xml}
   xsltproc --stringparam prefix "[Java-${ci_java_version}-${ci_os}]" \
     "${surefire_prefix_xslt}" "${surefire_report}" >"${new_surefire_report}"
-  echo -e "\e[1;34mReplacing ${surefire_report} with ${new_surefire_report}\e[0m"
+  info "Replacing ${surefire_report} with ${new_surefire_report}"
   rm "${surefire_report}"
 done
 
-echo -e "\e[1;35mUpdating Jacoco reports...\e[0m"
+stage "Updating JaCoCo reports..."
 for jacoco_report in $(find-all-jacoco-reports); do
   new_jacoco_report="${jacoco_report/.xml/-java-${ci_java_version}-${ci_os}.xml}"
-  echo -e "\e[1;34mRenaming ${jacoco_report} to ${new_jacoco_report}\e[0m"
+  info "Renaming ${jacoco_report} to ${new_jacoco_report}"
   mv "${jacoco_report}" "${new_jacoco_report}"
 done
 
-echo -e "\e[1;32mDone!\e[0m"
+success "Processing completed. Goodbye!"
