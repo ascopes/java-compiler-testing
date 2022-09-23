@@ -55,7 +55,8 @@ jobs:
           - os: macos-latest
             build-script: './mvnw'
 
-    concurrency: ${{ matrix.java-version }}
+    concurrency: 
+      group: ${{ matrix.os }}
 
     steps:
       - name: Checkout repository
