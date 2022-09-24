@@ -21,27 +21,30 @@
 set -o errexit
 set -o pipefail
 
+function log() {
+  printf "\e[1;${1}m%s: \e[0;${1}m%s\e[0m\n" "${2}" "${3}" >&2
+}
+
 default_command="./mvnw clean package"
 
 if ! command -v docker; then
-  echo "ERROR: docker is not installed on this system. Please ensure it is on your "
-  echo "  \$PATH, and then try again."
+  log 31 ERROR "docker is not installed on this system. Please ensure it is on your \$PATH, and then try again."
   exit 2
 fi
 
 function usage() {
-  echo "USAGE: ${1} [-c <command>] [-h] -v <version-range>"
-  echo "    -c   <command>         The command to run. If unspecified, this will default to"
-  echo "                           ${default_command}"
-  echo "    -h                     Show this message and exit."
-  echo "    -v   <version-range>   Set the version range to build with."
-  echo
-  echo "  Version ranges can be a single digit (e.g. 17 for JDK 17), or a closed range, delimited"
-  echo "  with a hyphen \`-' character (e.g. 11-17 for JDK 11, 12, 13, ..., 16, and 17)."
-  echo
-  echo "Additional options can also be passed to Maven using the \$MAVEN_OPTS environment variable."
-  echo "The \$M2_HOME environment variable will be used to mount the local Maven repository. If this"
-  echo "is not defined, then ~/.m2 will be used on the host."
+  echo "USAGE: ${1} [-c <command>] [-h] -v <version-range>" >&2
+  echo "    -c   <command>         The command to run. If unspecified, this will default to" >&2
+  echo "                           ${default_command}" >&2
+  echo "    -h                     Show this message and exit." >&2
+  echo "    -v   <version-range>   Set the version range to build with." >&2
+  echo >&2
+  echo "  Version ranges can be a single digit (e.g. 17 for JDK 17), or a closed range, delimited" >&2
+  echo "  with a hyphen \`-' character (e.g. 11-17 for JDK 11, 12, 13, ..., 16, and 17)." >&2
+  echo >&2
+  echo "Additional options can also be passed to Maven using the \$MAVEN_OPTS environment variable." >&2
+  echo "The \$M2_HOME environment variable will be used to mount the local Maven repository. If this" >&2
+  echo "is not defined, then ~/.m2 will be used on the host." >&2
 }
 
 command="${default_command}"
@@ -57,7 +60,7 @@ while getopts ":c:v:h" opt; do
     ;;
   v)
     if ! echo "${OPTARG}" | grep -qE "^[0-9]+(-[0-9]+)?$"; then
-      echo "ERROR: Invalid range syntax for version."
+      log 31 ERROR "Invalid range syntax for version."
       usage "${0}"
       exit 1
     else
@@ -69,7 +72,7 @@ while getopts ":c:v:h" opt; do
 done
 
 if [ -z ${first_version+undef} ]; then
-  echo "ERROR: Missing parameter '-v <version-range>'"
+  log 31 ERROR "Missing parameter '-v <version-range>'"
   usage "${0}"
   exit 1
 fi
@@ -79,7 +82,9 @@ if [ -z ${M2_HOME+undef} ]; then
   mkdir -v "${M2_HOME}" 2>/dev/null || true
 fi 
 
-workspace_dir="$(realpath $(dirname ${BASH_SOURCE[0]:-$0})/..)"
+log 32 INFO "Will mount M2_HOME as ${M2_HOME}"
+
+workspace_dir="$(realpath "$(dirname "${BASH_SOURCE[0]:-$0}")"/..)"
 container_workspace_dir="/src"
 m2_container_dir=/m2
 
@@ -88,7 +93,7 @@ mkdir -v target 2>/dev/null || true
 docker_flags=()
 maven_opts=()
 
-if [ -t 1 ]; then
+if [ -t 0 ] || [ -t 1 ]; then
   docker_flags+=("-t")
   maven_opts+=("-Dstyle.color=always")
 else
@@ -101,14 +106,14 @@ for version in $(seq "${first_version}" "${last_version}"); do
   image="public.ecr.aws/docker/library/openjdk:${version}"
 
   if [ -z "$(docker image ls "${image}" --quiet)" ]; then
-    echo -e "\e[1;33mPulling \e[3;34m${image}\e[0;1;33m, as it was not found on this system.\e[0m"
+    log 32 INFO "Pulling ${image} as it was not found on this system."
     docker pull "${image}"
   fi
 
-  echo -en "\e[0;1;33mRunning command \e[3;35m${command}\e[0;1;33m in "
-  echo -e "\e[3;34m${image}\e[0;1;33m container...\e[0m"
+  log 32 INFO "Running command ${command} in ${image} container..."
 
   docker run \
+    -e JAVA_TOOL_OPTIONS \
     -e "MAVEN_OPTS=${MAVEN_OPTS} ${maven_opts[@]}" \
     -e "M2_HOME=${m2_container_dir}" \
     --init \
@@ -123,6 +128,6 @@ for version in $(seq "${first_version}" "${last_version}"); do
     ${command} \
     2>&1 |
     while read -r line; do
-      printf "\e[1;33m[JDK %2d]\e[0m %s\n" "${version}" "${line}"
+      log 33 "JDK ${version}" "${line}"
     done
 done
