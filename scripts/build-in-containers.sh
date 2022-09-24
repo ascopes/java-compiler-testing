@@ -25,7 +25,7 @@ function log() {
   printf "\e[1;${1}m%s: \e[0;${1}m%s\e[0m\n" "${2}" "${3}" >&2
 }
 
-default_command="./mvnw clean package"
+default_command="./mvnw clean package -B"
 
 if ! command -v docker; then
   log 31 ERROR "docker is not installed on this system. Please ensure it is on your \$PATH, and then try again."
@@ -96,8 +96,6 @@ maven_opts=()
 if [ -t 0 ] || [ -t 1 ]; then
   docker_flags+=("-t")
   maven_opts+=("-Dstyle.color=always")
-else
-  maven_opts+=("-B")
 fi
 
 for version in $(seq "${first_version}" "${last_version}"); do
