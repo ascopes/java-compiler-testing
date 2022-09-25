@@ -89,6 +89,9 @@
 
     <!-- Project flags -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- https://issues.apache.org/jira/browse/MNG-7038 -->
+    <!--suppress UnresolvedMavenProperty -->
+    <parent-pom-directory>${maven.multiModuleProjectDirectory}</parent-pom-directory>
 
     <project.organization.url>https://github.com/ascopes</project.organization.url>
     <project.scm-url>${project.organization.url}/jct</project.scm-url>
@@ -231,20 +234,17 @@
               </goals>
               <configuration>
                 <configLocation>
-                  <!--suppress UnresolvedMavenProperty -->
-                  ${maven.multiModuleProjectDirectory}/.mvn/checkstyle/checkstyle.xml
+                  ${parent-pom-directory}/.mvn/checkstyle/checkstyle.xml
                 </configLocation>
                 <consoleOutput>true</consoleOutput>
                 <failsOnError>true</failsOnError>
-                <!--suppress UnresolvedMavenProperty -->
                 <headerLocation>
-                  ${maven.multiModuleProjectDirectory}/.mvn/checkstyle/license-header.txt
+                  ${parent-pom-directory}/.mvn/checkstyle/license-header.txt
                 </headerLocation>
                 <includeResources>true</includeResources>
                 <sourceDirectories>${project.basedir}/src</sourceDirectories>
                 <suppressionsLocation>
-                  <!--suppress UnresolvedMavenProperty -->
-                  ${maven.multiModuleProjectDirectory}/.mvn/checkstyle/suppressions.xml
+                  ${parent-pom-directory}/.mvn/checkstyle/suppressions.xml
                 </suppressionsLocation>
                 <violationSeverity>info</violationSeverity>
               </configuration>
