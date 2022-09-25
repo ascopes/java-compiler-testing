@@ -20,7 +20,6 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.compilers.Compilable;
-import io.github.ascopes.jct.compilers.LoggingMode;
 import io.github.ascopes.jct.junit.JavacCompilers;
 import io.github.ascopes.jct.paths.RamPath;
 import javax.tools.StandardLocation;
@@ -31,7 +30,7 @@ import org.junit.jupiter.params.ParameterizedTest;
  * Example integration test that makes use of the Lombok annotation processor.
  *
  * <p>This proves the ability to interoperate between Lombok which modifies internal
- * details of the compiler implementation and the JCT facility.
+ * details of the compiler implementation and the java-compiler-testing facility.
  *
  * @author Ashley Scopes
  */
@@ -60,8 +59,6 @@ class LombokIntegrationTest {
 
     var compilation = compiler
         .addSourcePath(sources)
-        //.fileManagerLogging(LoggingMode.ENABLED)
-        //.diagnosticLogging(LoggingMode.STACKTRACES)
         .compile();
 
     assertThatCompilation(compilation)

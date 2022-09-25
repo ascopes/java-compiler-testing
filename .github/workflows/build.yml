@@ -203,12 +203,3 @@ jobs:
           path: "**/target/apidocs/io.github.ascopes.jct"
           retention-days: 5
 
-  container-script-test:
-    name: Sanity test build-in-containers.sh
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Sanity test script
-        run: ./scripts/build-in-containers.sh -v 11 -c "./mvnw --version"

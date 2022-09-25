@@ -1,11 +1,11 @@
-[![Build](https://github.com/ascopes/jct/actions/workflows/build.yml/badge.svg?branch=main&event=push)](https://github.com/ascopes/jct/actions/workflows/build.yml)
-[![Code Coverage](https://codecov.io/gh/ascopes/jct/branch/main/graph/badge.svg?token=VT74BP2742)](https://codecov.io/gh/ascopes/jct)
-[![Releases](https://img.shields.io/github/downloads/ascopes/jct/total)](https://github.com/ascopes/jct/releases)
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.ascopes.jct/jct)](https://search.maven.org/artifact/com.github.ascopes.jct/jct)
-[![Issues](https://img.shields.io/github/issues-raw/ascopes/jct)](https://github.com/ascopes/jct/issues)
-[![Closed Issues](https://img.shields.io/github/issues-closed-raw/ascopes/jct)](https://github.com/ascopes/jct/issues?q=is%3Aissue+is%3Aclosed)
-[![License](https://img.shields.io/github/license/ascopes/jct)](https://github.com/ascopes/jct/blob/main/LICENSE.txt)
-![Activity](https://img.shields.io/github/commit-activity/y/ascopes/jct)
+[![Build](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml/badge.svg?branch=main&event=push)](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml)
+[![Code Coverage](https://codecov.io/gh/ascopes/java-compiler-testing/branch/main/graph/badge.svg?token=VT74BP2742)](https://codecov.io/gh/ascopes/java-compiler-testing)
+[![Releases](https://img.shields.io/github/downloads/ascopes/java-compiler-testing/total)](https://github.com/ascopes/java-compiler-testing/releases)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.ascopes.java-compiler-testing/java-compiler-testing)](https://search.maven.org/artifact/com.github.ascopes.java-compiler-testing/java-compiler-testing)
+[![Issues](https://img.shields.io/github/issues-raw/ascopes/java-compiler-testing)](https://github.com/ascopes/java-compiler-testing/issues)
+[![Closed Issues](https://img.shields.io/github/issues-closed-raw/ascopes/java-compiler-testing)](https://github.com/ascopes/java-compiler-testing/issues?q=is%3Aissue+is%3Aclosed)
+[![License](https://img.shields.io/github/license/ascopes/java-compiler-testing)](https://github.com/ascopes/java-compiler-testing/blob/main/LICENSE.txt)
+![Activity](https://img.shields.io/github/commit-activity/y/ascopes/java-compiler-testing)
 
 # java-compiler-testing
 
