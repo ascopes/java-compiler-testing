@@ -41,6 +41,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
+imoort java.util.Stream;
 import java.util.stream.Collectors;
 import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
@@ -119,15 +120,13 @@ public class SimpleFileManager implements FileManager {
   public void ensureEmptyLocationExists(Location location) {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
+      var parentLocation = moduleLocation.getParent();
 
-      if (location.isOutputLocation()) {
-        getOrCreateOutput(moduleLocation.getParent())
-            .getOrCreateModule(moduleLocation.getModuleName());
+      var container = moduleLocation.isOutputLocation()
+          ? getOrCreateOutput(parentLocation)
+          : getOrCreateModule(parentLocation);
 
-      } else {
-        getOrCreateModule(moduleLocation.getParent())
-            .getOrCreateModule(moduleLocation.getModuleName());
-      }
+      container.getOrCreateModule(moduleLocation.getName());
     } else if (location.isOutputLocation()) {
       getOrCreateOutput(location);
     } else if (location.isModuleOrientedLocation()) {
@@ -139,21 +138,18 @@ public class SimpleFileManager implements FileManager {
 
   @Override
   public void copyContainers(Location from, Location to) {
-    if (from.isOutputLocation()) {
-      if (!to.isOutputLocation()) {
-        throw new IllegalArgumentException(
-            "Expected " + from.getName() + " and " + to.getName() + " to both be output locations"
-        );
-      }
+    if (from.isOutputLocation() && !to.isOutputLocation()) {
+      throw new IllegalArgumentException(
+          "Expected " + from.getName() + " and " + to.getName() + " to both be "
+              + "output locations"
+      );
     }
 
-    if (from.isModuleOrientedLocation()) {
-      if (!to.isModuleOrientedLocation()) {
-        throw new IllegalArgumentException(
-            "Expected " + from.getName() + " and " + to.getName() + " to both be "
-                + "module-oriented locations"
-        );
-      }
+    if (from.isModuleOrientedLocation() && !to.isModuleOrientedLocation()) {
+      throw new IllegalArgumentException(
+          "Expected " + from.getName() + " and " + to.getName() + " to both be "
+              + "module-oriented locations"
+      );
     }
 
     if (from.isOutputLocation()) {
@@ -165,8 +161,7 @@ public class SimpleFileManager implements FileManager {
             fromOutputs.getPackages().forEach(toOutputs::addPackage);
             fromOutputs.getModules().forEach((module, containers) -> containers
                 .getPackages()
-                .forEach(container -> toOutputs.addModule(module.getModuleName(), container))
-            );
+                .forEach(container -> toOutputs.addModule(module.getModuleName(), container)));
           });
 
     } else if (from.isModuleOrientedLocation()) {
@@ -178,16 +173,16 @@ public class SimpleFileManager implements FileManager {
           .ifPresent(fromModules -> fromModules
               .forEach((module, containers) -> containers
                   .getPackages()
-                  .forEach(container -> toModules.addModule(module.getModuleName(), container))
-              )
-          );
+                  .forEach(container -> toModules.addModule(module.getModuleName(), container))));
 
     } else {
       var toPackages = getOrCreatePackage(to);
 
       Optional
           .ofNullable(packages.get(from))
-          .ifPresent(fromPackages -> fromPackages.getPackages().forEach(toPackages::addPackage));
+          .ifPresent(fromPackages -> fromPackages
+              .getPackages()
+              .forEach(toPackages::addPackage));
     }
 
   }
@@ -250,7 +245,6 @@ public class SimpleFileManager implements FileManager {
     return getPackageOrientedOrOutputGroup(location)
         .flatMap(group -> group.inferBinaryName(pathFileObject))
         .orElse(null);
-
   }
 
   @Override
@@ -260,6 +254,7 @@ public class SimpleFileManager implements FileManager {
 
   @Override
   public boolean handleOption(String current, Iterator<String> remaining) {
+    // We do not consume commandline options.
     return false;
   }
 
@@ -272,9 +267,9 @@ public class SimpleFileManager implements FileManager {
           .orElse(false);
     }
 
-    return packages.containsKey(location)
-        || modules.containsKey(location)
-        || outputs.containsKey(location);
+    return Stream
+        .of(package, modules, outputs)
+        .anyMatch(map -> map.containsKey(location));
   }
 
   @Nullable
@@ -368,7 +363,7 @@ public class SimpleFileManager implements FileManager {
   ) {
     return getGroup(location)
         .orElseThrow(() -> new NoSuchElementException(
-            "No container grou for location " + location.getName() + " exists"
+            "No container group for location " + location.getName() + " exists"
         ))
         .getServiceLoader(service);
   }
@@ -405,6 +400,7 @@ public class SimpleFileManager implements FileManager {
 
   @Override
   public int isSupportedOption(String option) {
+    // We do not consume commandline options.
     return 0;
   }
 
