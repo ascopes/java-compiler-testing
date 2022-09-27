@@ -116,7 +116,7 @@ public class LoggingFileManagerProxy implements InvocationHandler {
 
       if (method.getReturnType().equals(void.class)) {
         LOGGER.info(
-            "<<< [thread={}, depth={}] {}({}) returned,
+            "<<< [thread={}, depth={}] {}({}) returned",
             threadId,
             depth,
             returnType,
