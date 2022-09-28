@@ -41,15 +41,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: 
-          - windows-latest
-          - ubuntu-latest
-          # Sanity check, should be the same as Ubuntu (POSIX file system)
-          - macos-latest
+        os: [ 'ubuntu-latest' ]
         java-version: [ 11, 12, 13, 14, 15, 16, 17, 18, 19 ]
+        build-script: [ './mvnw' ]
         include:
-          - os: ubuntu-latest
-            build-script: './mvnw'
           - os: windows-latest
             build-script: './mvnw.cmd'
             java-version: '11'
