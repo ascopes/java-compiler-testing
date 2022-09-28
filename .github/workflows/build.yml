@@ -29,7 +29,7 @@ jobs:
 
       - name: Build project
         run: >-
-          ./mvnw clean package
+          ./mvnw
           -B
           -T8C
           -U
@@ -40,6 +40,7 @@ jobs:
           -DskipTests
           -Dstyle.color=always
           -Dmaven.artifact.threads=10
+          clean package
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
