@@ -170,8 +170,7 @@ jobs:
           -DskipTests=true
           -Dstyle.color=always
           -Dmaven.artifact.threads=10
-          checkstyle:check
-          license:check
+          verify
 
   javadoc:
     name: Generate JavaDocs
