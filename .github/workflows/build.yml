@@ -27,9 +27,20 @@ jobs:
         with:
           languages: java
 
-      # This can be replaced with a manual build if this begins to fail for any reason.
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+      - name: Build project
+        run: >-
+          ./mvnw
+          -B
+          -T8C
+          -U
+          --no-transfer-progress
+          -Dmaven.test.skip=true
+          -Dcheckstyle.skip=true
+          -Dlicense.skip=true
+          -DskipTests
+          -Dstyle.color=always
+          -Dmaven.artifact.threads=10
+          clean package
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
@@ -41,19 +52,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: 
-          - windows-latest
-          - ubuntu-latest
-          # Sanity check, should be the same as Ubuntu (POSIX file system)
-          - macos-latest
+        os: [ 'ubuntu-latest' ]
         java-version: [ 11, 12, 13, 14, 15, 16, 17, 18, 19 ]
+        build-script: [ './mvnw' ]
         include:
           - os: windows-latest
             build-script: './mvnw.cmd'
-          - os: ubuntu-latest
-            build-script: './mvnw'
+            java-version: '11'
           - os: macos-latest
             build-script: './mvnw'
+            java-version: '11'
 
     steps:
       - name: Checkout repository
@@ -151,7 +159,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '18'
+          java-version: '19'
 
       - name: Run checks
         run: >-
@@ -163,7 +171,7 @@ jobs:
           -DskipTests=true
           -Dstyle.color=always
           -Dmaven.artifact.threads=10
-          clean validate
+          verify
 
   javadoc:
     name: Generate JavaDocs
@@ -180,7 +188,7 @@ jobs:
           # We have to use >= 15 for now, as assertj causes JDK 14 and older to prevent linking
           # documentation correctly. I have opened an issue on GitHub with AssertJ to discuss
           # this being generated correctly: https://github.com/assertj/assertj-core/issues/2573.
-          java-version: '18'
+          java-version: '19'
 
       - name: Generate JavaDoc documentation
         run: >-
