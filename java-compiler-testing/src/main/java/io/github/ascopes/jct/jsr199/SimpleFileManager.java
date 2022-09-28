@@ -368,7 +368,7 @@ public class SimpleFileManager implements FileManager {
   ) {
     return getGroup(location)
         .orElseThrow(() -> new NoSuchElementException(
-            "No container grou for location " + location.getName() + " exists"
+            "No container group for location " + location.getName() + " exists"
         ))
         .getServiceLoader(service);
   }
@@ -458,7 +458,7 @@ public class SimpleFileManager implements FileManager {
 
   private PackageContainerGroup getOrCreatePackage(Location location) {
     if (location instanceof ModuleLocation) {
-      throw new IllegalArgumentException("Cannot get a package for a module like this");
+      throw new IllegalArgumentException("Cannot get a package for a module location");
     }
 
     return packages
