@@ -27,9 +27,19 @@ jobs:
         with:
           languages: java
 
-      # This can be replaced with a manual build if this begins to fail for any reason.
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+      - name: Build project
+        run: >-
+          ./mvnw clean package
+          -B
+          -T8C
+          -U
+          --no-transfer-progress
+          -Dmaven.test.skip=true
+          -Dcheckstyle.skip=true
+          -Dlicense.skip=true
+          -DskipTests
+          -Dstyle.color=always
+          -Dmaven.artifact.threads=10
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
@@ -160,7 +170,8 @@ jobs:
           -DskipTests=true
           -Dstyle.color=always
           -Dmaven.artifact.threads=10
-          clean validate
+          checkstyle:check
+          license:check
 
   javadoc:
     name: Generate JavaDocs
