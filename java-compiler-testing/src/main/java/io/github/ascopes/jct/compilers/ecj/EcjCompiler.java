@@ -75,12 +75,12 @@ public class EcjCompiler extends SimpleCompiler<EcjCompiler> {
   }
 
   /**
-   * Get the maximum version of ECJ that is supported.
+   * Get the maximum Java language version that ECJ supports.
    */
   public static int getMaxVersion() {
-    var version = (ClassFileConstants.getLatestJDKLevel() >> (Short.BYTES * 8))
-        - ClassFileConstants.MAJOR_VERSION_0;
-
+    var jdkLevel = ClassFileConstants.getLatestJDKLevel();
+    var zero = ClassFileConstants.MAJOR_VERSION_0;
+    var version = (jdkLevel >> 16) - zero;
     return (int) version;
   }
 }
