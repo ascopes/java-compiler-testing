@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.processing.Processor;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager.Location;
@@ -41,9 +42,11 @@ import org.slf4j.LoggerFactory;
  * <p>Implementations should extend this class and override anything they require.
  * In most cases, you should not need to override anything other than the constructor.
  *
- * <p>Each instance of this class should be considered to be single-use. Mutation
- * does <strong>not</strong> produce a new instance, meaning that this class is not immutable by
+ * <p>Each instance of this class should be considered to be single-use. Mutation does 
+ * <strong>not</strong> produce a new instance, meaning that this class is not immutable by
  * design.
+ *
+ * <p>This class is <strong>not</strong> thread-safe.
  *
  * <p>If you wish to create a common set of configuration settings for instances of
  * this class, you should consider writing a custom {@link CompilerConfigurer} object to apply the
@@ -60,7 +63,11 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompiler.class);
 
-  private volatile boolean alreadyCompiled;
+  // Use atomics for this to ensure no race conditions
+  // if the user makes a mistake during parallel test runs.
+  // We do not enforce thread safety but this one will prevent
+  // flaky tests at zero cost, so we make an exception for this.
+  private final AtomicBoolean alreadyCompiled;
 
   private final String name;
   private final JavaCompiler jsr199Compiler;
@@ -102,7 +109,7 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
       JavaCompiler jsr199Compiler,
       FlagBuilder flagBuilder
   ) {
-    alreadyCompiled = false;
+    alreadyCompiled = new AtomicBoolean(false);
 
     this.name = requireNonNull(name, "name");
     this.fileManagerTemplate = requireNonNull(fileManagerTemplate, "fileManagerTemplate");
@@ -163,11 +170,9 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
 
   @Override
   public SimpleCompilation compile() {
-    if (alreadyCompiled) {
+    if (alreadyCompiled.getAndSet(true)) {
       throw new CompilerAlreadyUsedException();
     }
-
-    alreadyCompiled = true;
 
     // We delegate to a different method here to allow easier testing of additional behaviour
     // internally, such as the ECJ global lock that we apply to prevent bugs. Without this, we'd
@@ -499,9 +504,11 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
    *
    * @return this implementation of {@link SimpleCompiler}, cast to {@link A}.
    */
-  @SuppressWarnings("unchecked")
   protected final A myself() {
-    return (A) this;
+    @SuppressWarnings("unchecked")
+    A me = (A) this;
+    
+    return me;
   }
 
   /**
@@ -510,8 +517,9 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
    * @return the compilation result.
    */
   protected SimpleCompilation doCompile() {
-    return new SimpleCompilationFactory<A>().compile(
-        myself(),
+    var factory = new SimpleCompilationFactory<A>();
+    return factory.compile(
+        myself(), 
         fileManagerTemplate,
         jsr199Compiler,
         flagBuilder
