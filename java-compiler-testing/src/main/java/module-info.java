@@ -21,14 +21,14 @@ module io.github.ascopes.jct {
   requires java.compiler;
   requires java.management;
 
-  requires ecj;
-  requires jimfs;
-  requires static jsr305;
-  requires static org.apiguardian.api;
-  requires static org.junit.jupiter.params;
-  requires org.assertj.core;
-  requires org.reflections;
-  requires org.slf4j;
+  requires /* automatic */ ecj;
+  requires /* automatic */ jimfs;
+  requires /* automatic */ static jsr305;
+  requires static transitive org.apiguardian.api;
+  requires static transitive org.junit.jupiter.params;
+  requires /* automatic */ org.assertj.core;
+  requires /* automatic */ org.reflections;
+  requires /* automatic */ org.slf4j;
 
   exports io.github.ascopes.jct.assertions;
   exports io.github.ascopes.jct.compilers;
