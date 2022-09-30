@@ -17,6 +17,7 @@ package io.github.ascopes.jct.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -36,9 +37,13 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 @Documented
+@Inherited
 @Nonnull
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PACKAGE)
+@Target({
+    ElementType.PACKAGE,
+    ElementType.TYPE,
+})
 @TypeQualifierDefault({
     ElementType.FIELD,
     ElementType.TYPE_USE,
