@@ -15,6 +15,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>example-immutables</module>
     <module>example-lombok</module>
     <module>example-serviceloader</module>
     <module>example-serviceloader-with-jpms</module>

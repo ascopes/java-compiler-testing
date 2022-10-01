@@ -83,20 +83,33 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
       var writer = buildWriter(compiler);
 
       try (var fileManager = buildFileManager(compiler, template)) {
-        var compilationUnits = findCompilationUnits(fileManager);
-        LOGGER.debug("Found {} compilation units {}", compilationUnits.size(), compilationUnits);
+        var previousCompilationUnits = new LinkedHashSet<JavaFileObject>();
 
-        var task = buildCompilationTask(
-            compiler,
-            jsr199Compiler,
-            writer,
-            applyLoggingToFileManager(compiler, fileManager),
-            diagnosticListener,
-            flags,
-            compilationUnits
-        );
+        boolean result = true;
 
-        var result = runCompilationTask(compiler, task);
+        loop:
+        while (result) {
+          var nextResult = performCompilerPass(
+              compiler,
+              jsr199Compiler,
+              writer,
+              flags,
+              fileManager,
+              diagnosticListener,
+              previousCompilationUnits
+          );
+
+          switch (nextResult) {
+            case SUCCESS:
+              result = true;
+              break;
+            case FAILURE:
+              result = false;
+              break;
+            case SKIPPED:
+              break loop;
+          }
+        }
 
         var outputLines = writer.toString().lines().collect(Collectors.toList());
 
@@ -104,7 +117,7 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
             .failOnWarnings(compiler.isFailOnWarnings())
             .success(result)
             .outputLines(outputLines)
-            .compilationUnits(Set.copyOf(compilationUnits))
+            .compilationUnits(Set.copyOf(previousCompilationUnits))
             .diagnostics(diagnosticListener.getDiagnostics())
             .fileManager(fileManager)
             .build();
@@ -112,6 +125,51 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
     } catch (IOException ex) {
       throw new CompilerException("Failed to compile due to an IOException: " + ex, ex);
     }
+  }
+
+  /**
+   * Run compilation once, after discovering any new sources to compile.
+   *
+   * @param compiler                 the compiler object..
+   * @param jsr199Compiler           the JSR-199 compiler.
+   * @param writer                   the output log writer.
+   * @param flags                    the flags to pass to the compiler.
+   * @param fileManager              the file manager to use.
+   * @param diagnosticListener       the diagnostic listener to use.
+   * @param previousCompilationUnits any previous compilation units. This will be updated after each
+   *                                 call.
+   * @return the outcome of the compilation.
+   * @throws IOException if an {@link IOException} occurs during processing.
+   */
+  protected CompilationResult performCompilerPass(
+      A compiler,
+      JavaCompiler jsr199Compiler,
+      TeeWriter writer,
+      List<String> flags,
+      FileManager fileManager,
+      TracingDiagnosticListener<JavaFileObject> diagnosticListener,
+      Set<JavaFileObject> previousCompilationUnits
+  ) throws IOException {
+    var compilationUnits = findCompilationUnits(fileManager, previousCompilationUnits);
+    LOGGER.debug("Found {} compilation units {}", compilationUnits.size(), compilationUnits);
+
+    if (compilationUnits.isEmpty()) {
+      return CompilationResult.SKIPPED;
+    }
+
+    var task = buildCompilationTask(
+        compiler,
+        jsr199Compiler,
+        writer,
+        applyLoggingToFileManager(compiler, fileManager),
+        diagnosticListener,
+        flags,
+        compilationUnits
+    );
+
+    return runCompilationTask(compiler, task)
+        ? CompilationResult.SUCCESS
+        : CompilationResult.FAILURE;
   }
 
   /**
@@ -164,6 +222,7 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
 
     var fileManager = template.createFileManager(release);
     ensureClassOutputPathExists(fileManager);
+    ensureSourceOutputPathExists(fileManager);
     registerClassPath(compiler, fileManager);
     registerPlatformClassPath(compiler, fileManager);
     registerSystemModulePath(compiler, fileManager);
@@ -177,14 +236,20 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
    * <p>The default implementation will consider both {@link StandardLocation#SOURCE_PATH}
    * <em>and</em> {@link StandardLocation#MODULE_SOURCE_PATH} locations.
    *
-   * @param fileManager the file manager to get the compilation units for.
+   * @param fileManager              the file manager to get the compilation units for.
+   * @param previousCompilationUnits the compilation units that were already compiled. This enables
+   *                                 tracking which sources change in the file manager root during
+   *                                 compilation to enable recompilation of generated sources
+   *                                 automatically.
    * @return the list of compilation units.
    * @throws IOException if an IO error occurs discovering any compilation units.
    */
   protected List<? extends JavaFileObject> findCompilationUnits(
-      JavaFileManager fileManager
+      JavaFileManager fileManager,
+      Set<JavaFileObject> previousCompilationUnits
   ) throws IOException {
     var locations = new LinkedHashSet<Location>();
+    locations.add(StandardLocation.SOURCE_OUTPUT);
     locations.add(StandardLocation.SOURCE_PATH);
 
     fileManager
@@ -196,10 +261,14 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
     for (var location : locations) {
       var items = fileManager.list(location, "", Set.of(Kind.SOURCE), true);
       for (var fileObject : items) {
-        objects.add(fileObject);
+
+        if (!previousCompilationUnits.contains(fileObject)) {
+          objects.add(fileObject);
+        }
       }
     }
 
+    previousCompilationUnits.addAll(objects);
     return objects;
   }
 
@@ -327,7 +396,7 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
 
     } catch (Exception ex) {
       LOGGER.warn(
-          "Compiler {} threw an xception: {}: {}",
+          "Compiler {} threw an exception: {}: {}",
           name,
           ex.getClass().getName(),
           ex.getMessage()
@@ -345,7 +414,25 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
       var classOutput = RamPath.createPath("classes-" + UUID.randomUUID(), true);
       fileManager.addPath(StandardLocation.CLASS_OUTPUT, classOutput);
     } else {
-      LOGGER.trace("At least one output path is present, so no in-memory path will be created");
+      LOGGER.trace(
+          "At least one class output path is present, so no in-memory path will be created"
+      );
+    }
+  }
+
+  private void ensureSourceOutputPathExists(FileManager fileManager) {
+    // Needed for annotation processors that generate new source files to work properly.
+
+    if (!fileManager.hasLocation(StandardLocation.SOURCE_OUTPUT)) {
+      LOGGER.debug(
+          "No source output location was specified, so an in-memory path is being created"
+      );
+      var sourceOutput = RamPath.createPath("sources-" + UUID.randomUUID(), true);
+      fileManager.addPath(StandardLocation.SOURCE_OUTPUT, sourceOutput);
+    } else {
+      LOGGER.trace(
+          "At least one source output path is present, so no in-memory path will be created"
+      );
     }
   }
 
@@ -447,5 +534,14 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
       // Set the processor list explicitly to instruct the compiler to not perform discovery.
       task.setProcessors(List.of());
     }
+  }
+
+  /**
+   * Outcome of a compilation pass.
+   */
+  protected enum CompilationResult {
+    SUCCESS,
+    FAILURE,
+    SKIPPED
   }
 }

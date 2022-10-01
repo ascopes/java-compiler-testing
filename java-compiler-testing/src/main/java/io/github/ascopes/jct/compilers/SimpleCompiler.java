@@ -31,7 +31,6 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * <p>Implementations should extend this class and override anything they require.
  * In most cases, you should not need to override anything other than the constructor.
  *
- * <p>Each instance of this class should be considered to be single-use. Mutation does 
+ * <p>Each instance of this class should be considered to be single-use. Mutation does
  * <strong>not</strong> produce a new instance, meaning that this class is not immutable by
  * design.
  *
@@ -507,7 +506,7 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
   protected final A myself() {
     @SuppressWarnings("unchecked")
     A me = (A) this;
-    
+
     return me;
   }
 
@@ -519,7 +518,7 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
   protected SimpleCompilation doCompile() {
     var factory = new SimpleCompilationFactory<A>();
     return factory.compile(
-        myself(), 
+        myself(),
         fileManagerTemplate,
         jsr199Compiler,
         flagBuilder

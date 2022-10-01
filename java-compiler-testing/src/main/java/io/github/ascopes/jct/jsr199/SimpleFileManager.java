@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
 import java.lang.module.ModuleReference;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -198,13 +199,28 @@ public class SimpleFileManager implements FileManager {
   }
 
   @Override
+  public Collection<PackageContainerGroup> getPackageContainerGroups() {
+    return packages.values();
+  }
+
+  @Override
   public Optional<ModuleContainerGroup> getModuleContainerGroup(Location location) {
     return Optional.ofNullable(modules.get(location));
   }
 
   @Override
+  public Collection<ModuleContainerGroup> getModuleContainerGroups() {
+    return modules.values();
+  }
+
+  @Override
   public Optional<OutputContainerGroup> getOutputContainerGroup(Location location) {
     return Optional.ofNullable(outputs.get(location));
+  }
+
+  @Override
+  public Collection<OutputContainerGroup> getOutputContainerGroups() {
+    return outputs.values();
   }
 
   @Nullable
@@ -254,7 +270,12 @@ public class SimpleFileManager implements FileManager {
   }
 
   @Override
-  public boolean isSameFile(FileObject a, FileObject b) {
+  public boolean isSameFile(@Nullable FileObject a, @Nullable FileObject b) {
+    // Some annotation processors provide null values here for some reason.
+    if (a == null || b == null) {
+      return false;
+    }
+
     return Objects.equals(a.toUri(), b.toUri());
   }
 

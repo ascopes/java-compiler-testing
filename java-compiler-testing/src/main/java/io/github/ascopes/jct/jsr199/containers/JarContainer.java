@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.jsr199.containers;
 
+import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
@@ -22,7 +23,6 @@ import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.NioPath;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.FileUtils;
-import io.github.ascopes.jct.utils.IoExceptionUtils;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public final class JarContainer implements Container {
     this.location = requireNonNull(location, "location");
     this.jarPath = requireNonNull(jarPath, "jarPath");
     this.release = requireNonNull(release, "release");
-    holder = new Lazy<>(() -> IoExceptionUtils.uncheckedIo(PackageFileSystemHolder::new));
+    holder = new Lazy<>(() -> uncheckedIo(PackageFileSystemHolder::new));
   }
 
   @Override

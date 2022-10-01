@@ -183,6 +183,4 @@ public interface Container extends Closeable {
       Set<? extends Kind> kinds,
       boolean recurse
   ) throws IOException;
-
-
 }

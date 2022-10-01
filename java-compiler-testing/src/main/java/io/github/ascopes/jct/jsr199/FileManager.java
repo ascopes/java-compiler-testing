@@ -19,6 +19,7 @@ import io.github.ascopes.jct.jsr199.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.jsr199.containers.OutputContainerGroup;
 import io.github.ascopes.jct.jsr199.containers.PackageContainerGroup;
 import io.github.ascopes.jct.paths.PathLike;
+import java.util.Collection;
 import java.util.Optional;
 import javax.tools.JavaFileManager;
 import org.apiguardian.api.API;
@@ -71,6 +72,14 @@ public interface FileManager extends JavaFileManager {
   Optional<PackageContainerGroup> getPackageContainerGroup(Location location);
 
   /**
+   * Get a collection of all package container groups in this file manager.
+   *
+   * @return the package container groups.
+   */
+  Collection<PackageContainerGroup> getPackageContainerGroups();
+
+
+  /**
    * Get the container group for the given module-oriented location.
    *
    * @param location the module oriented location.
@@ -79,10 +88,24 @@ public interface FileManager extends JavaFileManager {
   Optional<ModuleContainerGroup> getModuleContainerGroup(Location location);
 
   /**
+   * Get a collection of all module container groups in this file manager.
+   *
+   * @return the module container groups.
+   */
+  Collection<ModuleContainerGroup> getModuleContainerGroups();
+
+  /**
    * Get the container group for the given output-oriented location.
    *
    * @param location the output oriented location.
    * @return the container group, or an empty optional if one does not exist.
    */
   Optional<OutputContainerGroup> getOutputContainerGroup(Location location);
+
+  /**
+   * Get a collection of all output container groups in this file manager.
+   *
+   * @return the output container groups.
+   */
+  Collection<OutputContainerGroup> getOutputContainerGroups();
 }

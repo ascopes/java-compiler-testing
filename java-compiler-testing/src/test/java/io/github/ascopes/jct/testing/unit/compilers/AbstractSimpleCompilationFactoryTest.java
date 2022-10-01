@@ -23,6 +23,7 @@ import io.github.ascopes.jct.compilers.FlagBuilder;
 import io.github.ascopes.jct.compilers.SimpleCompilation;
 import io.github.ascopes.jct.compilers.SimpleCompilationFactory;
 import io.github.ascopes.jct.compilers.SimpleFileManagerTemplate;
+import io.github.ascopes.jct.jsr199.FileManager;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +58,9 @@ abstract class AbstractSimpleCompilationFactoryTest {
   @Mock(strictness = Strictness.LENIENT, answer = Answers.RETURNS_DEEP_STUBS)
   SimpleFileManagerTemplate fileManagerTemplate;
 
+  @Mock(strictness = Strictness.LENIENT, answer = Answers.RETURNS_DEEP_STUBS)
+  FileManager fileManager;
+
   Boolean expectedCompilationResult;
 
   @BeforeEach
@@ -70,6 +74,8 @@ abstract class AbstractSimpleCompilationFactoryTest {
         .willAnswer(Answers.RETURNS_MOCKS);
     given(compilationTask.call())
         .willAnswer(ctx -> expectedCompilationResult);
+    given(fileManagerTemplate.createFileManager(any()))
+        .willReturn(fileManager);
   }
 
   final SimpleCompilation execute() {

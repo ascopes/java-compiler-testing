@@ -41,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
+import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
@@ -92,6 +93,11 @@ public class PathFileObject implements JavaFileObject {
       LOGGER.warn("Ignoring error deleting {}", uri, ex);
       return false;
     }
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    return other instanceof FileObject && uri.equals(((FileObject) other).toUri());
   }
 
   @Override
@@ -167,6 +173,11 @@ public class PathFileObject implements JavaFileObject {
    */
   public Path getRelativePath() {
     return relativePath;
+  }
+
+  @Override
+  public int hashCode() {
+    return uri.hashCode();
   }
 
   @Override

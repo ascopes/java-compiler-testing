@@ -52,7 +52,6 @@
     <jimfs.version>1.2</jimfs.version>
     <jsr305.version>3.0.2</jsr305.version>
     <junit.version>5.9.1</junit.version>
-    <lombok.version>1.18.24</lombok.version>
     <mockito.version>4.8.0</mockito.version>
     <reflections.version>0.10.2</reflections.version>
     <slf4j.version>2.0.2</slf4j.version>
@@ -156,16 +155,6 @@
         <version>${mockito.version}</version>
         <scope>import</scope>
         <type>pom</type>
-      </dependency>
-
-      <dependency>
-        <!--
-          Used within one of the example modules to prove compatibility with third-party
-          annotation processors.
-        -->
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>${lombok.version}</version>
       </dependency>
 
       <dependency>

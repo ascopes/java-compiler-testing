@@ -15,14 +15,17 @@
  */
 package io.github.ascopes.jct.testing.unit.compilers;
 
+import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.clearInvocations;
 
 import io.github.ascopes.jct.compilers.SimpleCompilationFactory;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +33,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -150,9 +154,11 @@ class SimpleCompilationFactoryBuildFlagsTest extends AbstractSimpleCompilationFa
 
   @DisplayName("built flags are passed to the compilation task")
   @Test
-  void builtFlagsArePassedToTheCompilationTask() {
+  void builtFlagsArePassedToTheCompilationTask() throws IOException {
     var flags = someListOfOptions();
     given(flagBuilder.build()).willReturn(flags);
+    given(fileManager.list(any(), any(), any(), anyBoolean()))
+        .willReturn(List.of(stub(JavaFileObject.class)));
     execute();
     then(jsr199Compiler).should().getTask(any(), any(), any(), eq(flags), any(), any());
   }
