@@ -318,7 +318,7 @@ public final class RamPath implements PathLike {
           if (inputStream == null) {
             // This shouldn't ever happen I don't think, but better safe than sorry with providing
             // a semi-meaningful error message if it can happen.
-            throw new IOException("Failed to find resource " + resource + " somehow!");
+            throw new FileNotFoundException("Failed to find resource " + resource + " somehow!");
           }
 
           // +1 to discard the period.
