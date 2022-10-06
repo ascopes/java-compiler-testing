@@ -610,7 +610,7 @@ public final class RamPath implements PathLike {
   }
 
   private static InputStream maybeBuffer(InputStream input, String scheme) {
-    if (input instanceof BufferedInputStream) {
+    if (input instanceof BufferedInputStream || input instanceof ByteArrayInputStream) {
       return input;
     }
 
