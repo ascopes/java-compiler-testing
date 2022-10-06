@@ -74,6 +74,7 @@ public final class RamPath implements PathLike {
   private static final Logger LOGGER = LoggerFactory.getLogger(RamPath.class);
   private static final Cleaner CLEANER = Cleaner.create();
 
+  private final ClassLoader loader;
   private final Path path;
   private final URI uri;
   private final String name;
@@ -86,6 +87,7 @@ public final class RamPath implements PathLike {
    */
   @SuppressWarnings("ThisEscapedInObjectConstruction")
   private RamPath(String name, boolean closeOnGarbageCollection) {
+    loader = getClass().getClassLoader();
     this.name = requireNonNull(name);
 
     var config = Configuration
@@ -155,14 +157,16 @@ public final class RamPath implements PathLike {
   /**
    * Create a file with the given lines of text.
    *
+   * <p>These lines will be separated with a {@code LINE FEED} character.
+   *
    * @param filePath the path to the file.
    * @param lines    the lines of text to store.
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs
    */
   public RamPath createFile(Path filePath, String... lines) {
-    return createFile(filePath, String.join("\n", lines)
-        .getBytes(DEFAULT_CHARSET));
+    var content = String.join("\n", lines).getBytes(DEFAULT_CHARSET);
+    return createFile(filePath, content);
   }
 
   /**
@@ -179,6 +183,8 @@ public final class RamPath implements PathLike {
 
   /**
    * Create a file with the given lines of text.
+   *
+   * <p>These lines will be separated with a {@code LINE FEED} character.
    *
    * @param fileName the path to the file.
    * @param lines    the lines of text to store.
@@ -198,7 +204,7 @@ public final class RamPath implements PathLike {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public RamPath copyFromClassPath(String resource, Path targetPath) {
-    return copyFromClassPath(getClass().getClassLoader(), resource, targetPath);
+    return copyFromClassPath(loader, resource, targetPath);
   }
 
   /**
@@ -210,7 +216,7 @@ public final class RamPath implements PathLike {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public RamPath copyFromClassPath(String resource, String targetPath) {
-    return copyFromClassPath(getClass().getClassLoader(), resource, targetPath);
+    return copyFromClassPath(loader, resource, targetPath);
   }
 
   /**
@@ -268,7 +274,7 @@ public final class RamPath implements PathLike {
       String packageName,
       Path targetPath
   ) {
-    return copyTreeFromClassPath(getClass().getClassLoader(), packageName, targetPath);
+    return copyTreeFromClassPath(loader, packageName, targetPath);
   }
 
   /**
@@ -284,7 +290,7 @@ public final class RamPath implements PathLike {
       String packageName,
       String targetPath
   ) {
-    return copyTreeFromClassPath(getClass().getClassLoader(), packageName, targetPath);
+    return copyTreeFromClassPath(loader, packageName, targetPath);
   }
 
   /**
@@ -440,6 +446,7 @@ public final class RamPath implements PathLike {
       };
       Files.createDirectories(path.getParent());
 
+      // TODO(ascopes): should this be a buffered output?
       try (var output = Files.newOutputStream(path, options)) {
         bufferedInput.transferTo(output);
       }
@@ -458,12 +465,15 @@ public final class RamPath implements PathLike {
   public RamPath copyTreeFrom(Path tree, Path targetPath) {
     return uncheckedIo(() -> {
       var relativeTargetPath = makeRelativeToHere(targetPath);
+
       Files.walkFileTree(tree, new SimpleFileVisitor<>() {
+
         @Override
         public FileVisitResult preVisitDirectory(
             Path dir,
             BasicFileAttributes attrs
         ) throws IOException {
+
           var targetChildDirectory = relativeTargetPath.resolve(tree.relativize(dir).toString());
           // Ignore if the directory already exists (will occur for the root).
           Files.createDirectories(targetChildDirectory);
@@ -475,6 +485,7 @@ public final class RamPath implements PathLike {
             Path file,
             BasicFileAttributes attrs
         ) throws IOException {
+
           var targetFile = relativeTargetPath.resolve(tree.relativize(file).toString());
           Files.copy(file, targetFile);
           return FileVisitResult.CONTINUE;
