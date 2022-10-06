@@ -64,6 +64,12 @@ import org.slf4j.LoggerFactory;
  * <p>These file systems are integrated into the {@link FileSystem} API, and can be configured to
  * automatically destroy themselves once this RamPath handle is garbage collected.
  *
+ * <p>In addition, these paths follow POSIX file system semantics, meaning that files are handled
+ * with case-sensitive names, and use forward slashes to separate paths.
+ *
+ * <p>While this will create a global {@link FileSystem}, it is recommended that you only interact
+ * with the file system via this class to prevent potentially confusing behaviour elsewhere.
+ *
  * @author Ashley Scopes
  * @since 0.0.1
  */
