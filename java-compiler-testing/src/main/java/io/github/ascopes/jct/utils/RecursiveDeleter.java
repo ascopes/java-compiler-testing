@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public class RecursiveDeleter extends SimpleFileVisitor<Path> {
+public final class RecursiveDeleter extends SimpleFileVisitor<Path> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RecursiveDeleter.class);
   private static final RecursiveDeleter INSTANCE = new RecursiveDeleter();
@@ -45,12 +45,14 @@ public class RecursiveDeleter extends SimpleFileVisitor<Path> {
   @Override
   public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
     Files.delete(file);
+    LOGGER.trace("Deleted file {}", file);
     return super.visitFile(file, attrs);
   }
 
   @Override
   public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
     Files.delete(dir);
+    LOGGER.trace("Deleted directory {}", dir);
     return super.postVisitDirectory(dir, exc);
   }
 
