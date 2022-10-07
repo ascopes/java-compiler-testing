@@ -17,6 +17,7 @@ package io.github.ascopes.jct.jsr199;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
@@ -32,6 +33,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
@@ -59,6 +61,7 @@ import org.slf4j.LoggerFactory;
 public class PathFileObject implements JavaFileObject {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PathFileObject.class);
+  private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
   private static final long NOT_MODIFIED = 0L;
 
   private final Location location;
@@ -100,6 +103,7 @@ public class PathFileObject implements JavaFileObject {
     return other instanceof FileObject && uri.equals(((FileObject) other).toUri());
   }
 
+  @Nullable
   @Override
   public Modifier getAccessLevel() {
     // Null implies that the access level is unknown.
@@ -123,7 +127,7 @@ public class PathFileObject implements JavaFileObject {
     try {
       return Files.getLastModifiedTime(relativePath).toMillis();
     } catch (IOException ex) {
-      LOGGER.warn("Ignoring error reading last modified time for {}", uri, ex);
+      LOGGER.debug("Ignoring error reading last modified time for {}", uri, ex);
       return NOT_MODIFIED;
     }
   }
@@ -151,6 +155,7 @@ public class PathFileObject implements JavaFileObject {
     return name;
   }
 
+  @Nullable
   @Override
   public NestingKind getNestingKind() {
     // Null implies that the nesting kind is unknown.
@@ -240,14 +245,14 @@ public class PathFileObject implements JavaFileObject {
         ? CodingErrorAction.IGNORE
         : CodingErrorAction.REPORT;
 
-    return StandardCharsets.UTF_8
+    return DEFAULT_CHARSET
         .newDecoder()
         .onUnmappableCharacter(action)
         .onMalformedInput(action);
   }
 
   private CharsetEncoder encoder() {
-    return StandardCharsets.UTF_8
+    return DEFAULT_CHARSET
         .newEncoder()
         .onUnmappableCharacter(CodingErrorAction.REPORT)
         .onMalformedInput(CodingErrorAction.REPORT);
