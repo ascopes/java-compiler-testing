@@ -39,7 +39,7 @@ public final class SpecialLocations {
   private static final Logger LOGGER = LoggerFactory.getLogger(SpecialLocations.class);
   private static final String NO_PATH = "";
   private static final URI JAVA_RUNTIME_URI = URI.create("jrt:/");
-  private static final String JDK_MODULE_PROPERTY "jdk.module.path";
+  private static final String JDK_MODULE_PROPERTY = "jdk.module.path";
   private static final StringSlicer SEPARATOR = new StringSlicer(
       System.getProperty("path.separator", File.pathSeparator)
   );
