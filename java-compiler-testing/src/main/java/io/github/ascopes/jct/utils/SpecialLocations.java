@@ -37,6 +37,9 @@ import org.slf4j.LoggerFactory;
 public final class SpecialLocations {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SpecialLocations.class);
+  private static final String NO_PATH = "";
+  private static final URI JAVA_RUNTIME_URI = URI.create("jrt:/");
+  private static final String JDK_MODULE_PROPERTY "jdk.module.path";
   private static final StringSlicer SEPARATOR = new StringSlicer(
       System.getProperty("path.separator", File.pathSeparator)
   );
@@ -60,8 +63,7 @@ public final class SpecialLocations {
   public static List<Path> javaRuntimeLocations() {
     // Had to do a load of digging around the OpenJDK compiler implementation to work this out, and
     // I don't know if this will work on all JDK installations yet.
-    var uri = URI.create("jrt:/");
-    return List.of(Path.of(uri).toAbsolutePath());
+    return List.of(Path.of(JAVA_RUNTIME_URI).toAbsolutePath());
   }
 
   /**
@@ -89,7 +91,7 @@ public final class SpecialLocations {
    * @return a list across the paths.
    */
   public static List<Path> currentModulePathLocations() {
-    return createPaths(System.getProperty("jdk.module.path", ""));
+    return createPaths(System.getProperty(JDK_MODULE_PROPERTY, NO_PATH));
   }
 
   /**
@@ -112,7 +114,7 @@ public final class SpecialLocations {
       return createPaths(mxBean.getBootClassPath());
     }
 
-    LOGGER.debug("Platform (boot) classpath is not supported on this JVM, so will be ignored");
+    LOGGER.trace("Platform (boot) classpath is not supported on this JVM, so will be ignored");
     return List.of();
   }
 
@@ -124,7 +126,17 @@ public final class SpecialLocations {
         // paths that don't actually exist to the class path, and Java will just ignore this
         // normally. It will cause random failures during builds, however, if directories such as
         // src/main/java do not exist.
-        .filter(Files::exists)
+        .filter(SpecialLocations::exists)
+        .distinct()
         .collect(Collectors.toList());
+  }
+
+  private static boolean exists(Path path) {
+    if (Files.exists(path)) {
+      return true;
+    }
+
+    LOGGER.trace("Environment-provided path {} does not exist, so will be skipped", path);
+    return false;
   }
 }
