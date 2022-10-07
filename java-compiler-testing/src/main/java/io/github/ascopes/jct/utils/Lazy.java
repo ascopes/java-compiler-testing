@@ -26,7 +26,11 @@ import org.apiguardian.api.API.Status;
  * <p>The initializer can be cleared to force future accesses to re-initialize it again
  * if needed.
  *
- * <p>This is thread-safe.
+ * <p>Note that closable resources must be closed manually. See
+ * {@link Lazy#ifInitialized} for a mechanism to support this.
+ *
+ * <p>This descriptor is thread-safe. No guarantees are made about the thread-safety of the
+ * internally stored data, nor the initializer supplier.
  *
  * @param <T> the type of lazy value to return when accessed.
  * @author Ashley Scopes
@@ -46,7 +50,7 @@ public class Lazy<T> {
    * @param initializer the initializer to call.
    */
   public Lazy(Supplier<T> initializer) {
-    this.initializer = Objects.requireNonNull(initializer);
+    this.initializer = Objects.requireNonNull(initializer, "initializer must not be null");
     lock = new Object();
     initialized = false;
     data = null;
@@ -54,10 +58,14 @@ public class Lazy<T> {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this)
-        .attribute("data", data)
-        .attribute("initialized", initialized)
-        .toString();
+    // Synchronize to prevent a race condition between reading
+    // the data and reading the "initialized" flag.
+    synchronized (lock) {
+      return new ToStringBuilder(this)
+          .attribute("data", data)
+          .attribute("initialized", initialized)
+          .toString();
+    }
   }
 
   /**
@@ -82,6 +90,9 @@ public class Lazy<T> {
    * Clear any existing value, if there is one.
    *
    * <p>Future accesses will re-initialize the value from the initializer.
+   *
+   * <p>Use {@link #ifInitialized} to handle closing resources on the wrapped object
+   * before making this call, if this behaviour is required.
    */
   public void destroy() {
     if (initialized) {
@@ -100,9 +111,12 @@ public class Lazy<T> {
    *
    * @param consumer the consumer to consume the value if it is initialized.
    * @param <E>      the exception type that the consumer can throw.
+   * @return this lazy object for further call chaining.
    * @throws E the exception type that the consumer can throw.
    */
-  public <E extends Throwable> void ifInitialized(ThrowingConsumer<T, E> consumer) throws E {
+  public <E extends Throwable> Lazy<T> ifInitialized(
+      ThrowingConsumer<? super T, ? extends E> consumer
+  ) throws E {
     if (initialized) {
       synchronized (lock) {
         if (initialized) {
@@ -110,6 +124,8 @@ public class Lazy<T> {
         }
       }
     }
+
+    return this;
   }
 
   /**
@@ -125,7 +141,7 @@ public class Lazy<T> {
   public interface ThrowingConsumer<T, E extends Throwable> {
 
     /**
-     * Consume a value.
+     * Consume a non-null value.
      *
      * @param arg the value to consume.
      * @throws E the exception that may be thrown if something goes wrong in the consumer.
