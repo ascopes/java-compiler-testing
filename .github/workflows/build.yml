@@ -127,7 +127,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           path: 'artifacts/'
-          
+
       - name: Publish to codecov
         continue-on-error: true
         if: always()
