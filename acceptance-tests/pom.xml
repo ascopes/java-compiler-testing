@@ -17,6 +17,7 @@
   <modules>
     <module>acceptance-tests-immutables</module>
     <module>acceptance-tests-lombok</module>
+    <module>acceptance-tests-mapstruct</module>
     <module>acceptance-tests-serviceloader</module>
     <module>acceptance-tests-serviceloader-jpms</module>
   </modules>
