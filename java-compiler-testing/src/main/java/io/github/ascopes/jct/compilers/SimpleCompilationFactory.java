@@ -101,12 +101,12 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
 
           switch (nextResult) {
             case SUCCESS:
-              result = true;
               break;
             case FAILURE:
               result = false;
               break;
             case SKIPPED:
+              LOGGER.info("Nothing else to compile. Finishing up...");
               break loop;
           }
         }
