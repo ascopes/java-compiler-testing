@@ -184,7 +184,7 @@ Diagnostics:
   symbol:   class Generated
   location: package javax.annotation
   
-  at io.github.ascopes.jct.examples.immutables.ImmutablesIntegrationTest.immutablesValueProducesTheExpectedClass(ImmutablesIntegrationTest.java:66)
+  at io.github.ascopes.jct.acceptancetests.immutables.ImmutablesIntegrationTest.immutablesValueProducesTheExpectedClass(ImmutablesIntegrationTest.java:66)
   at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
   at java.base/java.lang.reflect.Method.invoke(Method.java:577)
   ...
