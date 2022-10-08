@@ -13,7 +13,7 @@ The ECJ implementation instead sometimes passes around files with slashes instea
 (e.g. `foo/bar/Baz`), which has to then have custom handling to enforce consistent behaviour.
 
 
-## ECJ attempts to read generated sources from the root filesystem
+## ECJ inconsistently attempts to bypass the JavaFileManager implementation for reading generated sources reading modules
 
 The `org.eclipse.jdt.internal.compiler.parser.Parser` class has a method with signature
 `parse(ICompilationUnit, CompilationResult, int, int)` which attempts to invoke the following code
@@ -57,14 +57,7 @@ ECJ.
 Interestingly this limitation doesn't appear to exist for other resource types, and ECJ will
 correctly write the generated sources using the `JavaFileManager` API first.
 
-## Multi-module projects do not compile correctly
-
-Observed this issue when invoking both ECJ from this framework, and
-when trying to compile a multi-module example project from IntelliJ
-with the ECJ compiler enabled.
-
-For some reason, the packages do not resolve correctly when in a
-nested module directory, such as:
+This limitation also impacts handling of modules in tests.
 
 ```java
 module com.example {
@@ -72,7 +65,7 @@ module com.example {
 }
 ```
 
-The following error gets reported:
+Using modules on a non-default file system will produce the following error:
 
 ```
 ERROR in module-info.java (at line 3)
@@ -80,6 +73,15 @@ exports com.example;
         ^^^^^^^^^^^
 The package com.example does not exist or is empty
 ```
+
+This is caused by the very same class as mentioned above. This time, however, it is attempting
+to open a full URI from the root file system. Using a debugger on ECJ, we can see the following
+exception being thrown internally:
+
+```
+java.io.FileNotFoundException:jimfs:/6d62dfb5-d88a-49fa-a159-d32f18733e1a/com.example/module-info.java (No such file or directory)
+```
+
 
 ## ECJ requires a `StandardLocation.CLASS_PATH` even if it is not used
 
