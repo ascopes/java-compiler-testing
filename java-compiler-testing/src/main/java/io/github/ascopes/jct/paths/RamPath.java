@@ -77,7 +77,6 @@ public final class RamPath implements PathLike {
   private static final Logger LOGGER = LoggerFactory.getLogger(RamPath.class);
   private static final Cleaner CLEANER = Cleaner.create();
 
-  private final ClassLoader loader;
   private final Path path;
   private final URI uri;
   private final String name;
@@ -90,7 +89,6 @@ public final class RamPath implements PathLike {
    */
   @SuppressWarnings("ThisEscapedInObjectConstruction")
   private RamPath(String name, boolean closeOnGarbageCollection) {
-    loader = getClass().getClassLoader();
     this.name = requireNonNull(name);
 
     var config = Configuration
@@ -207,7 +205,7 @@ public final class RamPath implements PathLike {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public RamPath copyFromClassPath(String resource, Path targetPath) {
-    return copyFromClassPath(loader, resource, targetPath);
+    return copyFromClassPath(currentCallerClassLoader(), resource, targetPath);
   }
 
   /**
@@ -219,7 +217,7 @@ public final class RamPath implements PathLike {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public RamPath copyFromClassPath(String resource, String targetPath) {
-    return copyFromClassPath(loader, resource, targetPath);
+    return copyFromClassPath(currentCallerClassLoader(), resource, targetPath);
   }
 
   /**
@@ -468,8 +466,15 @@ public final class RamPath implements PathLike {
 
   private Path makeRelativeToHere(Path relativePath) {
     if (relativePath.isAbsolute() && !relativePath.startsWith(path)) {
-      throw new IllegalArgumentException(
-          "Cannot use absolute paths for the target path (" + relativePath + ")");
+      var fixedPath = relativePath.getRoot().relativize(relativePath);
+
+      LOGGER.warn(
+          "Treating {} as relative path {} (hint: consider removing the leading forward-slash)",
+          relativePath,
+          fixedPath
+      );
+
+      relativePath = fixedPath;
     }
 
     // ToString is needed as JIMFS will fail on trying to make a relative path from a different
@@ -530,5 +535,9 @@ public final class RamPath implements PathLike {
         LOGGER.trace("Decided to wrap input {} in a buffer", input);
         return new BufferedInputStream(input);
     }
+  }
+
+  private static ClassLoader currentCallerClassLoader() {
+    return Thread.currentThread().getContextClassLoader();
   }
 }
