@@ -56,4 +56,12 @@ class JavacCompilerTest {
     assertThat(new JavacCompiler(MoreMocks.stub(JavaCompiler.class)).getFlagBuilder())
         .isInstanceOf(JavacFlagBuilder.class);
   }
+
+  @DisplayName("compilers have the -implicit:class flag set")
+  @Test
+  void compilersHaveTheImplicitClassFlagSet() {
+    var compiler = new JavacCompiler(MoreMocks.stub(JavaCompiler.class));
+    assertThat(compiler.getCompilerOptions())
+        .contains("-implicit:class");
+  }
 }

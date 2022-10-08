@@ -57,12 +57,7 @@ public class JavacCompiler extends SimpleCompiler<JavacCompiler> {
    * @param name the name to give the compiler.
    */
   public JavacCompiler(String name) {
-    super(
-        name,
-        new SimpleFileManagerTemplate(),
-        ToolProvider.getSystemJavaCompiler(),
-        new JavacFlagBuilder()
-    );
+    this(name, ToolProvider.getSystemJavaCompiler());
   }
 
   /**
@@ -73,6 +68,7 @@ public class JavacCompiler extends SimpleCompiler<JavacCompiler> {
    */
   public JavacCompiler(String name, JavaCompiler jsr199Compiler) {
     super(name, new SimpleFileManagerTemplate(), jsr199Compiler, new JavacFlagBuilder());
+    addCompilerOptions("-implicit:class");
   }
 
   @Override
