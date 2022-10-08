@@ -15,6 +15,8 @@
  */
 package io.github.ascopes.jct.utils;
 
+import static java.util.function.Predicate.not;
+
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.net.URI;
@@ -121,6 +123,7 @@ public final class SpecialLocations {
   private static List<Path> createPaths(String raw) {
     return SEPARATOR
         .splitToStream(raw)
+        .filter(not(String::isBlank))
         .map(Path::of)
         // We have to check this, annoyingly, because some tools like Maven (Surefire) will report
         // paths that don't actually exist to the class path, and Java will just ignore this

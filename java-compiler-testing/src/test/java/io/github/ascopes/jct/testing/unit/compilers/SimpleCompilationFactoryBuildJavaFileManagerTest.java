@@ -42,8 +42,8 @@ import org.junit.jupiter.api.Test;
  * @author Ashley Scopes
  */
 @DisplayName("SimpleCompilationFactory buildJavaFileManager tests")
-class SimpleCompilationFactoryBuildJavaFileManagerTest extends
-    AbstractSimpleCompilationFactoryTest {
+class SimpleCompilationFactoryBuildJavaFileManagerTest
+    extends AbstractSimpleCompilationFactoryTest {
 
   @DisplayName("The default release should be set if no release or target is provided")
   @Test

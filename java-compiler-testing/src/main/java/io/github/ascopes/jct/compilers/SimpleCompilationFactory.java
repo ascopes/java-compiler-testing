@@ -410,8 +410,12 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
     // it will just abort if it is not present. This means we cannot take advantage of the
     // PathLocationRepository creating the roots as we try to access them for this specific case.
     if (!fileManager.hasLocation(StandardLocation.CLASS_OUTPUT)) {
-      LOGGER.debug("No class output location was specified, so an in-memory path is being created");
       var classOutput = RamPath.createPath("classes-" + UUID.randomUUID(), true);
+
+      LOGGER.debug(
+          "No class output location was specified, so an in-memory path {} was created",
+          classOutput.getUri()
+      );
       fileManager.addPath(StandardLocation.CLASS_OUTPUT, classOutput);
     } else {
       LOGGER.trace(
@@ -424,10 +428,12 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
     // Needed for annotation processors that generate new source files to work properly.
 
     if (!fileManager.hasLocation(StandardLocation.SOURCE_OUTPUT)) {
-      LOGGER.debug(
-          "No source output location was specified, so an in-memory path is being created"
-      );
       var sourceOutput = RamPath.createPath("sources-" + UUID.randomUUID(), true);
+
+      LOGGER.debug(
+          "No source output location was specified, so an in-memory path {} was created",
+          sourceOutput.getUri()
+      );
       fileManager.addPath(StandardLocation.SOURCE_OUTPUT, sourceOutput);
     } else {
       LOGGER.trace(
@@ -444,28 +450,32 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
 
     var currentClassPath = SpecialLocations.currentClassPathLocations();
 
-    LOGGER.debug("Adding current classpath to compiler: {}", currentClassPath);
-    for (var classPath : currentClassPath) {
-      fileManager.addPath(StandardLocation.CLASS_PATH, new NioPath(classPath));
+    if (!currentClassPath.isEmpty()) {
+      LOGGER.debug("Adding current classpath to compiler: {}", currentClassPath);
+      for (var classPath : currentClassPath) {
+        fileManager.addPath(StandardLocation.CLASS_PATH, new NioPath(classPath));
+      }
     }
 
     var currentModulePath = SpecialLocations.currentModulePathLocations();
 
-    LOGGER.debug(
-        "Adding current module path to compiler class path and module path: {}",
-        currentModulePath
-    );
+    if (!currentModulePath.isEmpty()) {
+      LOGGER.debug(
+          "Adding current module path to compiler class path and module path: {}",
+          currentModulePath
+      );
 
-    // For some reason, the JDK module path has to also be added to the classpath for it
-    // to be recognised. Failing to do this prevents the classes and test-classes directories
-    // being added to the classpath with the other dependencies. This would otherwise result in
-    // all dependencies being loaded, but not the code the user is actually trying to test.
-    //
-    // Weird, but it is what it is, I guess.
-    for (var modulePath : currentModulePath) {
-      var modulePathLike = new NioPath(modulePath);
-      fileManager.addPath(StandardLocation.CLASS_PATH, modulePathLike);
-      fileManager.addPath(StandardLocation.MODULE_PATH, modulePathLike);
+      // For some reason, the JDK module path has to also be added to the classpath for it
+      // to be recognised. Failing to do this prevents the classes and test-classes directories
+      // being added to the classpath with the other dependencies. This would otherwise result in
+      // all dependencies being loaded, but not the code the user is actually trying to test.
+      //
+      // Weird, but it is what it is, I guess.
+      for (var modulePath : currentModulePath) {
+        var modulePathLike = new NioPath(modulePath);
+        fileManager.addPath(StandardLocation.CLASS_PATH, modulePathLike);
+        fileManager.addPath(StandardLocation.MODULE_PATH, modulePathLike);
+      }
     }
   }
 
