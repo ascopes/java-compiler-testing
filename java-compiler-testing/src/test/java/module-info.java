@@ -15,7 +15,6 @@
  */
 open module io.github.ascopes.jct.testing {
   requires awaitility;
-  requires ecj;
   requires io.github.ascopes.jct;
   requires java.compiler;
   requires java.management;

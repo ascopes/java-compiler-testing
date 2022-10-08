@@ -21,7 +21,6 @@ module io.github.ascopes.jct {
   requires java.compiler;
   requires java.management;
 
-  requires /* automatic */ ecj;
   requires /* automatic */ jimfs;
   requires /* automatic */ static jsr305;
   requires static transitive org.apiguardian.api;
@@ -31,7 +30,6 @@ module io.github.ascopes.jct {
 
   exports io.github.ascopes.jct.assertions;
   exports io.github.ascopes.jct.compilers;
-  exports io.github.ascopes.jct.compilers.ecj;
   exports io.github.ascopes.jct.compilers.javac;
   exports io.github.ascopes.jct.junit;
   exports io.github.ascopes.jct.jsr199;
@@ -50,7 +48,6 @@ module io.github.ascopes.jct {
   opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.assertions.repr to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.compilers.ecj to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.jsr199 to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.jsr199.containers to io.github.ascopes.jct.testing;

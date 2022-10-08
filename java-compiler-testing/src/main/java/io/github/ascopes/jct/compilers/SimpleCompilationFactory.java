@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
@@ -444,7 +443,6 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
   }
 
   private void registerClassPath(A compiler, FileManager fileManager) {
-    // ECJ requires that we always create this, otherwise it refuses to run.
     if (!compiler.isInheritClassPath()) {
       return;
     }

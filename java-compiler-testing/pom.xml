@@ -37,11 +37,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.jdt</groupId>
-      <artifactId>ecj</artifactId>
-    </dependency>
-
-    <dependency>
       <!-- Used to provide convenience annotations -->
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>

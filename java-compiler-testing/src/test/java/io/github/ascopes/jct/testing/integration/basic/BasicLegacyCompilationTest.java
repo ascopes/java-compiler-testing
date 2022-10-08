@@ -19,7 +19,6 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import static io.github.ascopes.jct.paths.RamPath.createPath;
 
 import io.github.ascopes.jct.compilers.Compilable;
-import io.github.ascopes.jct.junit.EcjCompilers;
 import io.github.ascopes.jct.junit.JavacCompilers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,7 +32,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 class BasicLegacyCompilationTest {
 
   @DisplayName("I can compile a 'Hello, World!' program")
-  @EcjCompilers
   @JavacCompilers
   @ParameterizedTest(name = "targeting {0}")
   void helloWorldJavac(Compilable<?, ?> compiler) {

@@ -31,7 +31,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 @DisplayName("Basic module compilation integration tests")
 class BasicModuleCompilationTest {
 
-  // We skip ECJ as it does not support handling modules correctly on a non-default file system.
   @DisplayName("I can compile a 'Hello, World!' module program")
   @JavacCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")

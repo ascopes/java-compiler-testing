@@ -30,7 +30,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 class MapStructIntegrationTest {
 
   @DisplayName("MapStruct generates expected mapping code")
-  //@EcjCompilers - ECJ does not play nicely with generating sources on non-default file systems.
   @JavacCompilers
   @ParameterizedTest(name = "for {0}")
   void mapStructGeneratesExpectedMappingCode(Compilable<?, ?> compiler)

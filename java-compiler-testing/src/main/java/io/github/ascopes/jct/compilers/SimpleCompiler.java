@@ -173,11 +173,14 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
       throw new CompilerAlreadyUsedException();
     }
 
-    // We delegate to a different method here to allow easier testing of additional behaviour
-    // internally, such as the ECJ global lock that we apply to prevent bugs. Without this, we'd
-    // have to mock dozens of additional moving parts. It is difficult to stub super methods
-    // if we go down that route.
-    return doCompile();
+    var factory = new SimpleCompilationFactory<A>();
+
+    return factory.compile(
+        myself(),
+        fileManagerTemplate,
+        jsr199Compiler,
+        flagBuilder
+    );
   }
 
   @Override
@@ -508,20 +511,5 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
     A me = (A) this;
 
     return me;
-  }
-
-  /**
-   * Perform the compilation.
-   *
-   * @return the compilation result.
-   */
-  protected SimpleCompilation doCompile() {
-    var factory = new SimpleCompilationFactory<A>();
-    return factory.compile(
-        myself(),
-        fileManagerTemplate,
-        jsr199Compiler,
-        flagBuilder
-    );
   }
 }

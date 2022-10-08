@@ -32,7 +32,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 @DisplayName("Basic multi-module compilation integration tests")
 class BasicMultiModuleCompilationTest {
 
-  // We skip ECJ as it does not support handling modules correctly on a non-default file system.
   @DisplayName("I can compile a single module using multi-module layout")
   @JavacCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")
@@ -73,7 +72,6 @@ class BasicMultiModuleCompilationTest {
         .file("hello.world", "module-info.class").exists().isNotEmptyFile();
   }
 
-  // We skip ECJ as it does not support handling modules correctly on a non-default file system.
   @DisplayName("I can compile multiple modules using multi-module layout")
   @JavacCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")

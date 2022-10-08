@@ -48,7 +48,6 @@
     <apiguardian.version>1.1.2</apiguardian.version>
     <assertj.version>3.23.1</assertj.version>
     <awaitility.version>4.2.0</awaitility.version>
-    <ecj.version>3.31.0</ecj.version>
     <jimfs.version>1.2</jimfs.version>
     <jsr305.version>3.0.2</jsr305.version>
     <junit.version>5.9.1</junit.version>
@@ -129,13 +128,6 @@
         <groupId>org.awaitility</groupId>
         <artifactId>awaitility</artifactId>
         <version>${awaitility.version}</version>
-      </dependency>
-
-      <dependency>
-        <!-- Eclipse Compiler for Java  -->
-        <groupId>org.eclipse.jdt</groupId>
-        <artifactId>ecj</artifactId>
-        <version>${ecj.version}</version>
       </dependency>
 
       <dependency>

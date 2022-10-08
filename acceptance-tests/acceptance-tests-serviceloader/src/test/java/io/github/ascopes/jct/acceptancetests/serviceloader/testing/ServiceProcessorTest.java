@@ -20,7 +20,6 @@ import static io.github.ascopes.jct.paths.RamPath.createPath;
 
 import io.github.ascopes.jct.acceptancetests.serviceloader.ServiceProcessor;
 import io.github.ascopes.jct.compilers.Compilable;
-import io.github.ascopes.jct.junit.EcjCompilers;
 import io.github.ascopes.jct.junit.JavacCompilers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,7 +28,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 class ServiceProcessorTest {
 
   @DisplayName("Expected files get created when the processor is run")
-  @EcjCompilers
   @JavacCompilers
   @ParameterizedTest(name = "for {0}")
   void expectedFilesGetCreated(Compilable<?, ?> compiler) {

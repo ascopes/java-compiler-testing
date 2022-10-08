@@ -10,7 +10,7 @@
 # java-compiler-testing
 
 Facility for running compilation tests and annotation processing tests
-for `javac` and `ecj`.
+for `javac` and other compliant compilers.
 
 I developed this after several months of pulling out my hair trying to
 find easy ways to integration test annotation processors for Java. While
@@ -27,16 +27,12 @@ are always welcome!
 
 ## Examples
 
-The following is an example of using this library with JUnit Jupiter to run both javac and ECJ
-across a single package:
-
 ```java
 
 @DisplayName("Example tests")
 class ExampleTest {
 
     @DisplayName("I can compile a Hello World application")
-    @EcjCompilers
     @JavacCompilers
     @ParameterizedTest(name = "using {0}")
     void canCompileHelloWorld(Compilable<?, ?> compiler) {
@@ -146,7 +142,7 @@ class ExampleTest {
 - Supports Java 9 JPMS modules as intended.
 - Ability to customise a large assortment of configuration parameters
   to enable you to test exactly what you need to test.
-- Provides support for `javac` and `ecj` out of the box, with the
+- Provides support for `javac` out of the box, with the
   ability to support other JSR-199 implementations if desired --
   just make use of one of the compiler classes, or make your own!
 - Implements a fully functional JSR-199 Path JavaFileManager.
@@ -189,3 +185,16 @@ Diagnostics:
   at java.base/java.lang.reflect.Method.invoke(Method.java:577)
   ...
 ```
+
+## ECJ support
+
+While this module initially supported ECJ, there were a number of problems relating to bugs
+and incorrect behaviour within ECJ's implementation. This prevented any form of module
+support or generated source support within this library, since ECJ would not use the
+standard JavaFileManager API consistently (often falling back to using FileInputStream objects
+directly). In addition, many edge cases exist where binary names and paths are not handled
+consistently either (such as using forward-slashes to delimit binary names).
+
+To keep this library simpler and more consistent, as of
+[!92](https://github.com/ascopes/java-compiler-testing/issues/92),
+this support has been officially removed due to the overwhelming work it was creating.
