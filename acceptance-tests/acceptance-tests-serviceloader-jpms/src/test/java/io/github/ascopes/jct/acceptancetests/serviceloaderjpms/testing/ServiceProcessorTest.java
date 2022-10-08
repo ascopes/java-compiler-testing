@@ -29,7 +29,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 class ServiceProcessorTest {
 
   @DisplayName("Expected files get created when the processor is run")
-  @EcjCompilers(modules = true, minVersion = 11)  // jrt isn't found on 9 and 10 for some reason.
+  @EcjCompilers(modules = true)
   @JavacCompilers(modules = true)
   @ParameterizedTest(name = "for {0}")
   void expectedFilesGetCreated(Compilable<?, ?> compiler) {
