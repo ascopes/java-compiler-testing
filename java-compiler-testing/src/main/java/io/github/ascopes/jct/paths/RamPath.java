@@ -48,9 +48,6 @@ import java.util.Locale;
 import java.util.Objects;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -265,101 +262,6 @@ public final class RamPath implements PathLike {
       String targetPath
   ) {
     return copyFromClassPath(loader, resource, path.resolve(targetPath));
-  }
-
-  /**
-   * Copy a tree of resources from the classpath into this in-memory path at the target location.
-   *
-   * @param packageName the name of the classpath package to copy files from.
-   * @param targetPath  the path to store the resources within this location, relative to the
-   *                    provided package name.
-   * @return this object for further call chaining.
-   * @throws UncheckedIOException if an IO error occurs.
-   */
-  public RamPath copyTreeFromClassPath(
-      String packageName,
-      Path targetPath
-  ) {
-    return copyTreeFromClassPath(loader, packageName, targetPath);
-  }
-
-  /**
-   * Copy a tree of resources from the classpath into this in-memory path at the target location.
-   *
-   * @param packageName the name of the classpath package to copy files from.
-   * @param targetPath  the path to store the resources within this location, relative to the
-   *                    provided package name.
-   * @return this object for further call chaining.
-   * @throws UncheckedIOException if an IO error occurs.
-   */
-  public RamPath copyTreeFromClassPath(
-      String packageName,
-      String targetPath
-  ) {
-    return copyTreeFromClassPath(loader, packageName, targetPath);
-  }
-
-  /**
-   * Copy a tree of resources from the classpath into this in-memory path at the target location.
-   *
-   * @param loader      the class loader to use.
-   * @param packageName the name of the classpath package to copy files from.
-   * @param targetPath  the path to store the resources within this location, relative to the
-   *                    provided package name.
-   * @return this object for further call chaining.
-   * @throws UncheckedIOException if an IO error occurs.
-   */
-  public RamPath copyTreeFromClassPath(
-      ClassLoader loader,
-      String packageName,
-      Path targetPath
-  ) {
-    return uncheckedIo(() -> {
-      var relativeTargetPath = makeRelativeToHere(targetPath);
-      var directory = Files.createDirectories(relativeTargetPath);
-
-      var config = new ConfigurationBuilder()
-          .addClassLoaders(loader)
-          .forPackages(packageName);
-
-      // TODO(ascopes): can I remove this library, or at least make it optional?
-      var resources = new Reflections(config).getAll(Scanners.Resources);
-
-      for (var resource : resources) {
-        try (var inputStream = loader.getResourceAsStream(resource)) {
-          if (inputStream == null) {
-            // This shouldn't ever happen I don't think, but better safe than sorry with providing
-            // a semi-meaningful error message if it can happen.
-            throw new FileNotFoundException("Failed to find resource " + resource + " somehow!");
-          }
-
-          // +1 to discard the period.
-          var resourcePath = directory.resolve(resource.substring(packageName.length() + 1));
-          Files.createDirectories(resourcePath.getParent());
-          copyFrom(inputStream, resourcePath);
-        }
-      }
-
-      return this;
-    });
-  }
-
-  /**
-   * Copy a tree of resources from the classpath into this in-memory path at the target location.
-   *
-   * @param loader      the classloader to use.
-   * @param packageName the name of the classpath package to copy files from.
-   * @param targetPath  the path to store the resources within this location, relative to the
-   *                    provided package name.
-   * @return this object for further call chaining.
-   * @throws UncheckedIOException if an IO error occurs.
-   */
-  public RamPath copyTreeFromClassPath(
-      ClassLoader loader,
-      String packageName,
-      String targetPath
-  ) {
-    return copyTreeFromClassPath(loader, packageName, path.resolve(targetPath));
   }
 
   /**

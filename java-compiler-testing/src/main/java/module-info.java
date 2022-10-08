@@ -27,7 +27,6 @@ module io.github.ascopes.jct {
   requires static transitive org.apiguardian.api;
   requires static transitive org.junit.jupiter.params;
   requires /* automatic */ org.assertj.core;
-  requires /* automatic */ org.reflections;
   requires /* automatic */ org.slf4j;
 
   exports io.github.ascopes.jct.assertions;
