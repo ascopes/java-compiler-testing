@@ -410,7 +410,7 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
     // it will just abort if it is not present. This means we cannot take advantage of the
     // PathLocationRepository creating the roots as we try to access them for this specific case.
     if (!fileManager.hasLocation(StandardLocation.CLASS_OUTPUT)) {
-      var classOutput = RamPath.createPath("classes-" + UUID.randomUUID(), true);
+      var classOutput = RamPath.createPath("classes", true);
 
       LOGGER.debug(
           "No class output location was specified, so an in-memory path {} was created",
@@ -428,7 +428,8 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
     // Needed for annotation processors that generate new source files to work properly.
 
     if (!fileManager.hasLocation(StandardLocation.SOURCE_OUTPUT)) {
-      var sourceOutput = RamPath.createPath("sources-" + UUID.randomUUID(), true);
+      var sourceOutput = RamPath
+          .createPath("generated-sources", true);
 
       LOGGER.debug(
           "No source output location was specified, so an in-memory path {} was created",

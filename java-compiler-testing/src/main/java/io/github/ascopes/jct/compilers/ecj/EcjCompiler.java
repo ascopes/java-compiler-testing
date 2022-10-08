@@ -56,7 +56,7 @@ public class EcjCompiler extends SimpleCompiler<EcjCompiler> {
    * @param name the name to give the compiler.
    */
   public EcjCompiler(String name) {
-    super(name, new SimpleFileManagerTemplate(), new EclipseCompiler(), new EcjFlagBuilder());
+    this(name, new EclipseCompiler());
   }
 
   /**

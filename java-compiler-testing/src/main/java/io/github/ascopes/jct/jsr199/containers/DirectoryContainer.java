@@ -37,6 +37,8 @@ import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A container that wraps a known directory of files.
@@ -46,6 +48,8 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class DirectoryContainer implements Container {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(DirectoryContainer.class);
 
   private final Location location;
   private final PathLike root;
@@ -109,6 +113,13 @@ public class DirectoryContainer implements Container {
       String packageName,
       String relativeName
   ) {
+    LOGGER.trace(
+        "Output file - this={} packageName={}, relativeName={})",
+        this,
+        packageName,
+        relativeName
+    );
+
     return Optional
         .of(FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName))
         .map(path -> new PathFileObject(location, root.getPath(), path));
@@ -130,6 +141,8 @@ public class DirectoryContainer implements Container {
       String className,
       Kind kind
   ) {
+    LOGGER.trace("Output Java file - this={} className={}, kind={})", this, className, kind);
+
     return Optional
         .of(FileUtils.binaryNameToPath(root.getPath(), className, kind))
         .map(path -> new PathFileObject(location, root.getPath(), path));

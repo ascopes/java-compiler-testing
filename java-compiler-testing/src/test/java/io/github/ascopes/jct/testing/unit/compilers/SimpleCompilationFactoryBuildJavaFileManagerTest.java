@@ -120,6 +120,8 @@ class SimpleCompilationFactoryBuildJavaFileManagerTest
     var fileManager = mock(FileManager.class);
     given(fileManagerTemplate.createFileManager(any()))
         .willReturn(fileManager);
+    given(fileManager.hasLocation(any()))
+        .willReturn(true);
     given(fileManager.hasLocation(StandardLocation.CLASS_OUTPUT))
         .willReturn(true);
 
@@ -143,6 +145,8 @@ class SimpleCompilationFactoryBuildJavaFileManagerTest
       var fileManager = mock(FileManager.class);
       given(fileManagerTemplate.createFileManager(any()))
           .willReturn(fileManager);
+      given(fileManager.hasLocation(any()))
+          .willReturn(true);
       given(fileManager.hasLocation(StandardLocation.CLASS_OUTPUT))
           .willReturn(false);
 
@@ -151,10 +155,59 @@ class SimpleCompilationFactoryBuildJavaFileManagerTest
 
       // Then
       ramPathMock.verify(() -> RamPath.createPath(
-          stringLike("^classes-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"),
+          stringLike("^classes$"),
           eq(true)
       ));
       then(fileManager).should().addPath(StandardLocation.CLASS_OUTPUT, ramPath);
+    }
+  }
+
+  @DisplayName("SOURCE_OUTPUT is not added if already registered")
+  @Test
+  void sourceOutputIsNotAddedIfAlreadyRegistered() {
+    // Given
+    var fileManager = mock(FileManager.class);
+    given(fileManagerTemplate.createFileManager(any()))
+        .willReturn(fileManager);
+    given(fileManager.hasLocation(any()))
+        .willReturn(true);
+    given(fileManager.hasLocation(StandardLocation.SOURCE_OUTPUT))
+        .willReturn(true);
+
+    // When
+    execute();
+
+    // Then
+    then(fileManager).should(never()).addPath(eq(StandardLocation.SOURCE_OUTPUT), any());
+  }
+
+  @DisplayName("SOURCE_OUTPUT is added if not registered")
+  @Test
+  void sourceOutputIsAddedIfNotRegistered() {
+    // Given
+    try (var ramPathMock = mockStatic(RamPath.class)) {
+      var ramPath = stub(RamPath.class);
+      ramPathMock
+          .when(() -> RamPath.createPath(any(), anyBoolean()))
+          .thenReturn(ramPath);
+
+      var fileManager = mock(FileManager.class);
+      given(fileManagerTemplate.createFileManager(any()))
+          .willReturn(fileManager);
+      given(fileManager.hasLocation(any()))
+          .willReturn(true);
+      given(fileManager.hasLocation(StandardLocation.SOURCE_OUTPUT))
+          .willReturn(false);
+
+      // When
+      execute();
+
+      // Then
+      ramPathMock.verify(() -> RamPath.createPath(
+          stringLike("^generated-sources$"),
+          eq(true)
+      ));
+      then(fileManager).should().addPath(StandardLocation.SOURCE_OUTPUT, ramPath);
     }
   }
 }

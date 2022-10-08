@@ -238,6 +238,8 @@ public class SimpleFileManager implements FileManager {
       Set<Kind> kinds,
       boolean recurse
   ) throws IOException {
+    packageName = normalizeFqn(packageName);
+
     var maybeGroup = getPackageOrientedOrOutputGroup(location);
 
     if (maybeGroup.isEmpty()) {
@@ -306,7 +308,7 @@ public class SimpleFileManager implements FileManager {
       Kind kind
   ) {
     return getPackageOrientedOrOutputGroup(location)
-        .flatMap(group -> group.getJavaFileForInput(className, kind))
+        .flatMap(group -> group.getJavaFileForInput(normalizeFqn(className), kind))
         .orElse(null);
   }
 
@@ -319,7 +321,7 @@ public class SimpleFileManager implements FileManager {
       FileObject sibling
   ) {
     return getPackageOrientedOrOutputGroup(location)
-        .flatMap(group -> group.getJavaFileForOutput(className, kind))
+        .flatMap(group -> group.getJavaFileForOutput(normalizeFqn(className), kind))
         .orElse(null);
   }
 
@@ -519,5 +521,14 @@ public class SimpleFileManager implements FileManager {
           "Location " + location.getName() + " must be package-oriented"
       );
     }
+  }
+
+  private String normalizeFqn(String packageName) {
+    // ECJ sometimes passes us package names that have forward slashes instead of periods
+    // separating them (e.g. org/mapstruct rather than org.mapstruct). The assumption is that
+    // we should never actually get a forward slash in here, so lets just replace it. This
+    // prevents ECJ confusing us by making us think we have a module due to the presence
+    // of a forward slash.
+    return packageName.replace('/', '.');
   }
 }
