@@ -218,7 +218,7 @@ public class DiagnosticListAssert
     return filteringBy(kind(kind, moreKinds))
         .withFailMessage(() -> {
           var allKindsString = IterableUtils
-              .asList(kind, moreKinds)
+              .combineOneOrMore(kind, moreKinds)
               .stream()
               .map(next -> next.name().toLowerCase(Locale.ROOT).replace('_', ' '))
               .collect(Collectors.collectingAndThen(
@@ -271,7 +271,7 @@ public class DiagnosticListAssert
   private Predicate<TraceDiagnostic<? extends JavaFileObject>> kind(Kind kind, Kind... moreKinds) {
     return diagnostic -> {
       var actualKind = diagnostic.getKind();
-      return actualKind.equals(kind) || Arrays.asList(moreKinds).contains(actualKind);
+      return actualKind.equals(kind) || Arrays.combineOneOrMore(moreKinds).contains(actualKind);
     };
   }
 }

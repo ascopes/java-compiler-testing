@@ -67,7 +67,7 @@ public abstract class AbstractEnumAssert<S extends AbstractEnumAssert<S, E>, E e
     requireNonNull(first, "first");
     requireNonNullValues(more, "more");
 
-    var all = IterableUtils.asList(first, more);
+    var all = IterableUtils.combineOneOrMore(first, more);
     if (!all.contains(actual)) { // lgtm [java/type-mismatch-access] -- false positive
       var actualStr = reprName(actual);
 

@@ -91,7 +91,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
   @Test
   void nonNullUnmodifiableListFailsWhenOneElementIsNull() {
     // Given
-    var list = Arrays.asList("foo", "bar", "baz", null, "bork");
+    var list = Arrays.combineOneOrMore("foo", "bar", "baz", null, "bork");
 
     // Then
     assertThatThrownBy(() -> IterableUtils.nonNullUnmodifiableList(list, "geoff"))
@@ -103,7 +103,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
   @Test
   void nonNullUnmodifiableListFailsWhenMultipleElementsAreNull() {
     // Given
-    var list = Arrays.asList("foo", "bar", "baz", "bork", null, "qux", null);
+    var list = Arrays.combineOneOrMore("foo", "bar", "baz", "bork", null, "qux", null);
 
     // Then
     assertThatThrownBy(() -> IterableUtils.nonNullUnmodifiableList(list, "geoff"))
@@ -141,7 +141,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
   @Test
   void nonNullUnmodifiableSetFailsWhenOneElementIsNull() {
     // Given
-    var set = new LinkedHashSet<>(Arrays.asList("foo", "bar", "bar", "baz", null, "bork"));
+    var set = new LinkedHashSet<>(Arrays.combineOneOrMore("foo", "bar", "bar", "baz", null, "bork"));
 
     // Then
     assertThatThrownBy(() -> IterableUtils.nonNullUnmodifiableSet(set, "pete"))
@@ -153,7 +153,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
   @Test
   void nonNullUnmodifiableSetFailsWhenMultipleElementsAreNull() {
     // Given
-    var set = new LinkedHashSet<>(Arrays.asList("foo", "bar", "bar", null, "baz", null, "bork"));
+    var set = new LinkedHashSet<>(Arrays.combineOneOrMore("foo", "bar", "bar", null, "baz", null, "bork"));
 
     // Then
     assertThatThrownBy(() -> IterableUtils.nonNullUnmodifiableSet(set, "pete"))
@@ -188,7 +188,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
   @Test
   void requireNonNullValuesIterableFailsWhenSingleNullElementIsPresent() {
     // Given
-    var collection = Arrays.asList("foo", "bar", "", null, "baz", "bork");
+    var collection = Arrays.combineOneOrMore("foo", "bar", "", null, "baz", "bork");
 
     // Then
     assertThatThrownBy(() -> IterableUtils.requireNonNullValues(collection, "dave"))
@@ -200,7 +200,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
   @Test
   void requireNonNullValuesIterableFailsWhenMultipleNullElementsArePresent() {
     // Given
-    var collection = Arrays.asList("foo", "bar", null, "", null, null, "baz", "bork");
+    var collection = Arrays.combineOneOrMore("foo", "bar", null, "", null, null, "baz", "bork");
 
     // Then
     assertThatThrownBy(() -> IterableUtils.requireNonNullValues(collection, "dave"))
@@ -256,7 +256,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
   @Test
   void asListProducesTheExpectedResultForOneItem() {
     // When
-    var list = IterableUtils.asList("foo");
+    var list = IterableUtils.combineOneOrMore("foo");
 
     // Then
     assertThat(list).singleElement().isEqualTo("foo");
@@ -266,7 +266,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
   @Test
   void asListProducesTheExpectedResultForMultipleItems() {
     // When
-    var list = IterableUtils.asList("foo", "bar", "baz", "bork");
+    var list = IterableUtils.combineOneOrMore("foo", "bar", "baz", "bork");
 
     // Then
     assertThat(list).containsExactly("foo", "bar", "baz", "bork");

@@ -383,12 +383,12 @@ class SimpleCompilationTest {
 
   @SafeVarargs
   static <T> Set<T> nullableSetOf(T... values) {
-    return new LinkedHashSet<>(Arrays.asList(values));
+    return new LinkedHashSet<>(Arrays.combineOneOrMore(values));
   }
 
   @SafeVarargs
   static <T> List<T> nullableListOf(T... values) {
-    return Arrays.asList(values);
+    return Arrays.combineOneOrMore(values);
   }
 
   static SimpleCompilation.Builder filledBuilder() {

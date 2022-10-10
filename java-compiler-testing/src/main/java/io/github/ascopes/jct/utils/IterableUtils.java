@@ -56,7 +56,7 @@ public final class IterableUtils {
   public static <T> List<T> combineOneOrMore(T first, T... rest) {
     var list = new ArrayList<T>();
     list.add(first);
-    list.addAll(Arrays.asList(rest));
+    list.addAll(Arrays.combineOneOrMore(rest));
     return list;
   }
 

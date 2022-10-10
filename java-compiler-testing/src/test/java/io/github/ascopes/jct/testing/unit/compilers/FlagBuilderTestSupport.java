@@ -120,7 +120,7 @@ public abstract class FlagBuilderTestSupport<T extends FlagBuilder> {
   ) {
     var cases = Stream.<DynamicTest>builder();
     for (var end = 0; end < values.length + 1; ++end) {
-      var args = Arrays.asList(values).subList(0, end);
+      var args = Arrays.combineOneOrMore(values).subList(0, end);
       var expected = args
           .stream()
           .map(toString)
@@ -150,7 +150,7 @@ public abstract class FlagBuilderTestSupport<T extends FlagBuilder> {
   ) {
     var cases = Stream.<DynamicTest>builder();
     for (var end = 0; end < values.length + 1; ++end) {
-      var args = Arrays.asList(values).subList(0, end);
+      var args = Arrays.combineOneOrMore(values).subList(0, end);
 
       var caseName = String.format("%s should be set when provided", args);
 
