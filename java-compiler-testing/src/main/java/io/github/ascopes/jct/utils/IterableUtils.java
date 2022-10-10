@@ -170,11 +170,5 @@ public final class IterableUtils {
    * @param <T>   the type of the items.
    * @return the list of all items in the given order.
    */
-  @SafeVarargs
-  public static <T> List<T> asList(T first, T... more) {
-    var list = new ArrayList<T>();
-    list.add(first);
-    list.addAll(Arrays.asList(more));
-    return list;
-  }
+   
 }
