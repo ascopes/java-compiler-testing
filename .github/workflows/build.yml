@@ -173,6 +173,7 @@ jobs:
           -Dmaven.artifact.threads=10
           -Dmaven.main.skip
           -Dmaven.jar.skip
+          -Dmaven.resources.skip
           -Dmaven.test.skip
           verify
 
