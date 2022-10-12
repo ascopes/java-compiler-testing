@@ -85,7 +85,7 @@ public class AsyncResourceCloser implements Runnable {
         .toString();
   }
 
-  private Runnable closer(Map.Entry<String, AutoCloseable> entry) {
+  private Runnable closer(Map.Entry<String, ? extends AutoCloseable> entry) {
     var name = entry.getKey();
     var closeable = entry.getValue();
 
