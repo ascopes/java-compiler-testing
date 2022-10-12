@@ -46,7 +46,7 @@ jobs:
         uses: github/codeql-action/analyze@v2
 
   test:
-    name: Build (Java ${{ matrix.java-version }} | ${{ matrix.os }})
+    name: JDK ${{ matrix.java-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -149,7 +149,7 @@ jobs:
           junit_files: "artifacts/**/TEST-*.xml"
 
   checkstyle:
-    name: Check code style and license headers
+    name: Code style and licenses
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -174,7 +174,7 @@ jobs:
           verify
 
   javadoc:
-    name: Generate JavaDocs
+    name: Code documentation
     runs-on: ubuntu-latest
 
     steps:
