@@ -171,6 +171,9 @@ jobs:
           -DskipTests=true
           -Dstyle.color=always
           -Dmaven.artifact.threads=10
+          -Dmaven.main.skip
+          -Dmaven.jar.skip
+          -Dmaven.test.skip
           verify
 
   javadoc:
