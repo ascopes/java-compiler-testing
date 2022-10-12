@@ -71,14 +71,11 @@ public class AsyncResourceCloser implements Runnable {
    */
   @Override
   public void run() {
-    closeables.forEach((name, closeable) -> CompletableFuture.runAsync(() -> {
-      try {
-        closeable.close();
-        LOGGER.trace("Closed resource {} ({})", name, closeable);
-      } catch (Throwable ex) {
-        LOGGER.warn("Failed to close resource {} ({})", name, closeable, ex);
-      }
-    }));
+    closeables
+        .entrySet()
+        .stream()
+        .map(this::closer)
+        .forEach(CompletableFuture::runAsync);
   }
 
   @Override
@@ -86,5 +83,19 @@ public class AsyncResourceCloser implements Runnable {
     return new ToStringBuilder(this)
         .attribute("closeables", closeables)
         .toString();
+  }
+
+  private Runnable closer(Map.Entry<String, AutoCloseable> entry) {
+    var name = entry.getKey();
+    var closeable = entry.getValue();
+
+    return () -> {
+      try {
+        closeable.close();
+        LOGGER.trace("Closed resource {} ({})", name, closeable);
+      } catch (Throwable ex) {
+        LOGGER.warn("Failed to close resource {} ({})", name, closeable, ex);
+      }
+    };
   }
 }
