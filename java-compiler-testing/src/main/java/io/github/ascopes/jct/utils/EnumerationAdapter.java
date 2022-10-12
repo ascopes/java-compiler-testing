@@ -41,7 +41,7 @@ public class EnumerationAdapter<T> implements Enumeration<T> {
    * @param iterator the iterator to use.
    */
   public EnumerationAdapter(Iterator<T> iterator) {
-    this.iterator = Objects.requireNonNull(iterator);
+    this.iterator = Objects.requireNonNull(iterator, "iterator");
   }
 
   @Override
