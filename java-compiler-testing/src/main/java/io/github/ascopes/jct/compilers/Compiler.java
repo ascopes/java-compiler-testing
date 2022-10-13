@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Common functionality for a compiler that can be overridden and that produces a
- * {@link SimpleCompilation} as the compilation result.
+ * {@link CompilationImpl} as the compilation result.
  *
  * <p>Implementations should extend this class and override anything they require.
  * In most cases, you should not need to override anything other than the constructor.
@@ -57,10 +57,10 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
-    implements Compilable<A, SimpleCompilation> {
+public abstract class Compiler<A extends Compiler<A>>
+    implements Compilable<A, CompilationImpl> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompiler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(Compiler.class);
 
   // Use atomics for this to ensure no race conditions
   // if the user makes a mistake during parallel test runs.
@@ -71,7 +71,7 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
   private final String name;
   private final JavaCompiler jsr199Compiler;
   private final FlagBuilder flagBuilder;
-  private final SimpleFileManagerTemplate fileManagerTemplate;
+  private final FileManagerBuilder fileManagerTemplate;
   private final List<Processor> annotationProcessors;
   private final List<String> annotationProcessorOptions;
   private final List<String> compilerOptions;
@@ -102,9 +102,9 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
    * @param jsr199Compiler      the JSR-199 compiler implementation to use.
    * @param flagBuilder         the flag builder to use.
    */
-  protected SimpleCompiler(
+  protected Compiler(
       String name,
-      SimpleFileManagerTemplate fileManagerTemplate,
+      FileManagerBuilder fileManagerTemplate,
       JavaCompiler jsr199Compiler,
       FlagBuilder flagBuilder
   ) {
@@ -168,12 +168,12 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   @Override
-  public SimpleCompilation compile() {
+  public CompilationImpl compile() {
     if (alreadyCompiled.getAndSet(true)) {
       throw new CompilerAlreadyUsedException();
     }
 
-    var factory = new SimpleCompilationFactory<A>();
+    var factory = new CompilationFactory<A>();
 
     return factory.compile(
         myself(),
@@ -502,9 +502,9 @@ public abstract class SimpleCompiler<A extends SimpleCompiler<A>>
   }
 
   /**
-   * Get this implementation of {@link SimpleCompiler}, cast to the type parameter {@link A}.
+   * Get this implementation of {@link Compiler}, cast to the type parameter {@link A}.
    *
-   * @return this implementation of {@link SimpleCompiler}, cast to {@link A}.
+   * @return this implementation of {@link Compiler}, cast to {@link A}.
    */
   protected final A myself() {
     @SuppressWarnings("unchecked")

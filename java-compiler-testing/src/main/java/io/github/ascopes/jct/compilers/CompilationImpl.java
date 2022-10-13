@@ -36,7 +36,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class SimpleCompilation implements Compilation {
+public final class CompilationImpl implements Compilation {
 
   private final boolean success;
   private final boolean failOnWarnings;
@@ -45,7 +45,7 @@ public final class SimpleCompilation implements Compilation {
   private final List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
   private final FileManager fileManager;
 
-  private SimpleCompilation(Builder builder) {
+  private CompilationImpl(Builder builder) {
     success = requireNonNull(builder.success, "success");
     failOnWarnings = requireNonNull(builder.failOnWarnings, "failOnWarnings");
     outputLines = nonNullUnmodifiableList(builder.outputLines, "outputLines");
@@ -103,7 +103,7 @@ public final class SimpleCompilation implements Compilation {
   }
 
   /**
-   * Builder type for a {@link SimpleCompilation} to simplify initialization.
+   * Builder type for a {@link CompilationImpl} to simplify initialization.
    *
    * @author Ashley Scopes
    * @since 0.0.1
@@ -191,12 +191,12 @@ public final class SimpleCompilation implements Compilation {
     }
 
     /**
-     * Build this builder and output the created {@link SimpleCompilation}.
+     * Build this builder and output the created {@link CompilationImpl}.
      *
      * @return the built object.
      */
-    public SimpleCompilation build() {
-      return new SimpleCompilation(this);
+    public CompilationImpl build() {
+      return new CompilationImpl(this);
     }
   }
 }

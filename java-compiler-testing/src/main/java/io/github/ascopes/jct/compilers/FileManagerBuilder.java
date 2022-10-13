@@ -16,8 +16,8 @@
 package io.github.ascopes.jct.compilers;
 
 import io.github.ascopes.jct.jsr199.FileManager;
+import io.github.ascopes.jct.jsr199.FileManagerImpl;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
-import io.github.ascopes.jct.jsr199.SimpleFileManager;
 import io.github.ascopes.jct.paths.NioPath;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.StringUtils;
@@ -48,14 +48,14 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimpleFileManagerTemplate {
+public class FileManagerBuilder {
 
   private final Map<Location, LinkedHashSet<PathLike>> locations;
 
   /**
    * Initialize this workspace.
    */
-  public SimpleFileManagerTemplate() {
+  public FileManagerBuilder() {
     locations = new HashMap<>();
   }
 
@@ -135,8 +135,8 @@ public class SimpleFileManagerTemplate {
     if (location instanceof ModuleLocation) {
       throw new IllegalArgumentException(
           "Cannot use a " + ModuleLocation.class.getName() + " with a custom module name. "
-              + "Use SimpleFileManagerTemplate#addPath(Location, PathLike) "
-              + "or SimpleFileManagerTemplate#addPath(Location, Path) instead."
+              + "Use FileManagerBuilder#addPath(Location, PathLike) "
+              + "or FileManagerBuilder#addPath(Location, Path) instead."
       );
     }
 
@@ -163,7 +163,7 @@ public class SimpleFileManagerTemplate {
    * @return the file manager.
    */
   public FileManager createFileManager(String release) {
-    var manager = new SimpleFileManager(release);
+    var manager = new FileManagerImpl(release);
     locations.forEach((location, paths) -> {
       for (var path : paths) {
         manager.addPath(location, path);

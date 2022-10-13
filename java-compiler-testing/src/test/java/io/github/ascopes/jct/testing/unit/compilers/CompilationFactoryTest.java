@@ -19,10 +19,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import io.github.ascopes.jct.compilers.Compilable;
+import io.github.ascopes.jct.compilers.CompilationFactory;
+import io.github.ascopes.jct.compilers.CompilationImpl;
+import io.github.ascopes.jct.compilers.FileManagerBuilder;
 import io.github.ascopes.jct.compilers.FlagBuilder;
-import io.github.ascopes.jct.compilers.SimpleCompilation;
-import io.github.ascopes.jct.compilers.SimpleCompilationFactory;
-import io.github.ascopes.jct.compilers.SimpleFileManagerTemplate;
 import io.github.ascopes.jct.jsr199.FileManager;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
@@ -34,14 +34,14 @@ import org.mockito.Mock.Strictness;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Abstract test base for {@link SimpleCompilationFactory} tests.
+ * Abstract test base for {@link CompilationFactory} tests.
  *
  * @author Ashley Scopes
  */
 @ExtendWith(MockitoExtension.class)
-abstract class AbstractSimpleCompilationFactoryTest {
+abstract class CompilationFactoryTest {
 
-  SimpleCompilationFactory<StubbedCompiler> compilationFactory;
+  CompilationFactory<StubbedCompiler> compilationFactory;
 
   @Mock(strictness = Strictness.LENIENT, answer = Answers.RETURNS_DEEP_STUBS)
   StubbedCompiler compiler;
@@ -56,7 +56,7 @@ abstract class AbstractSimpleCompilationFactoryTest {
   CompilationTask compilationTask;
 
   @Mock(strictness = Strictness.LENIENT, answer = Answers.RETURNS_DEEP_STUBS)
-  SimpleFileManagerTemplate fileManagerTemplate;
+  FileManagerBuilder fileManagerTemplate;
 
   @Mock(strictness = Strictness.LENIENT, answer = Answers.RETURNS_DEEP_STUBS)
   FileManager fileManager;
@@ -65,7 +65,7 @@ abstract class AbstractSimpleCompilationFactoryTest {
 
   @BeforeEach
   void setUp() {
-    compilationFactory = new SimpleCompilationFactory<>();
+    compilationFactory = new CompilationFactory<>();
     expectedCompilationResult = true;
 
     given(jsr199Compiler.getTask(any(), any(), any(), any(), any(), any()))
@@ -78,11 +78,11 @@ abstract class AbstractSimpleCompilationFactoryTest {
         .willReturn(fileManager);
   }
 
-  final SimpleCompilation execute() {
+  final CompilationImpl execute() {
     return compilationFactory.compile(compiler, fileManagerTemplate, jsr199Compiler, flagBuilder);
   }
 
   abstract static class StubbedCompiler
-      implements Compilable<StubbedCompiler, SimpleCompilation> {
+      implements Compilable<StubbedCompiler, CompilationImpl> {
   }
 }

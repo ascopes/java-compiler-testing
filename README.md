@@ -161,7 +161,7 @@ class ExampleTest {
 [main] ERROR io.github.ascopes.jct.jsr199.diagnostics.TracingDiagnosticListener - cannot find symbol
   symbol:   class Generated
   location: package javax.annotation
-[main] INFO io.github.ascopes.jct.compilers.SimpleCompilationFactory - Compilation with compiler Javac 9 failed after ~332.3ms
+[main] INFO io.github.ascopes.jct.compilers.CompilationFactory - Compilation with compiler Javac 9 failed after ~332.3ms
 
 java.lang.AssertionError: Expected a successful compilation, but it failed.
 

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 
-import io.github.ascopes.jct.compilers.SimpleCompilationFactory;
+import io.github.ascopes.jct.compilers.CompilationFactory;
 import io.github.ascopes.jct.jsr199.FileManager;
 import io.github.ascopes.jct.paths.RamPath;
 import java.util.Optional;
@@ -37,13 +37,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@code buildJavaFileManager} in {@link SimpleCompilationFactory}.
+ * Tests for {@code buildJavaFileManager} in {@link CompilationFactory}.
  *
  * @author Ashley Scopes
  */
-@DisplayName("SimpleCompilationFactory buildJavaFileManager tests")
-class SimpleCompilationFactoryBuildJavaFileManagerTest
-    extends AbstractSimpleCompilationFactoryTest {
+@DisplayName("CompilationFactory buildJavaFileManager tests")
+class CompilationFactoryBuildJavaFileManagerTest
+    extends CompilationFactoryTest {
 
   @DisplayName("The default release should be set if no release or target is provided")
   @Test

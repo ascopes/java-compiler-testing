@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.iterable;
 
-import io.github.ascopes.jct.compilers.SimpleCompilation;
+import io.github.ascopes.jct.compilers.CompilationImpl;
 import io.github.ascopes.jct.jsr199.FileManager;
 import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.testing.helpers.MoreMocks;
@@ -43,12 +43,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 /**
- * {@link SimpleCompilation} tests.
+ * {@link CompilationImpl} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("SimpleCompilation tests")
-class SimpleCompilationTest {
+@DisplayName("CompilationImpl tests")
+class CompilationImplTest {
 
   static Random RANDOM = new Random();
 
@@ -153,7 +153,7 @@ class SimpleCompilationTest {
   }
 
 
-  @DisplayName("SimpleCompilation.Builder tests")
+  @DisplayName("CompilationImpl.Builder tests")
   @Nested
   class BuilderTest {
 
@@ -161,7 +161,7 @@ class SimpleCompilationTest {
     @Test
     void buildingWithoutSuccessSetRaisesNullPointerException() {
       // Given
-      var builder = SimpleCompilation
+      var builder = CompilationImpl
           .builder()
           .fileManager(stub(FileManager.class))
           .outputLines(List.of())
@@ -179,7 +179,7 @@ class SimpleCompilationTest {
     @Test
     void buildingWithoutFailOnWarningsSetRaisesNullPointerException() {
       // Given
-      var builder = SimpleCompilation
+      var builder = CompilationImpl
           .builder()
           .fileManager(stub(FileManager.class))
           .outputLines(List.of())
@@ -209,7 +209,7 @@ class SimpleCompilationTest {
     @Test
     void buildingWithoutCompilationUnitsRaisesNullPointerException() {
       // Given
-      var builder = SimpleCompilation
+      var builder = CompilationImpl
           .builder()
           .fileManager(stub(FileManager.class))
           .outputLines(List.of())
@@ -227,7 +227,7 @@ class SimpleCompilationTest {
     @Test
     void buildingWithNullCompilationUnitsRaisesNullPointerException() {
       // Given
-      var builder = SimpleCompilation
+      var builder = CompilationImpl
           .builder()
           .fileManager(stub(FileManager.class))
           .outputLines(List.of())
@@ -264,7 +264,7 @@ class SimpleCompilationTest {
     @Test
     void buildingWithoutDiagnosticsRaisesNullPointerException() {
       // Given
-      var builder = SimpleCompilation
+      var builder = CompilationImpl
           .builder()
           .fileManager(stub(FileManager.class))
           .outputLines(List.of())
@@ -282,7 +282,7 @@ class SimpleCompilationTest {
     @Test
     void buildingWithNullDiagnosticsRaisesNullPointerException() {
       // Given
-      var builder = SimpleCompilation
+      var builder = CompilationImpl
           .builder()
           .fileManager(MoreMocks.stub(FileManager.class))
           .outputLines(List.of())
@@ -317,7 +317,7 @@ class SimpleCompilationTest {
     @Test
     void buildingWithoutFileManagerRaisesNullPointerException() {
       // Given
-      var builder = SimpleCompilation
+      var builder = CompilationImpl
           .builder()
           .diagnostics(List.of())
           .compilationUnits(Set.of())
@@ -347,7 +347,7 @@ class SimpleCompilationTest {
     @Test
     void buildingWithoutOutputLinesRaisesNullPointerException() {
       // Given
-      var builder = SimpleCompilation
+      var builder = CompilationImpl
           .builder()
           .fileManager(MoreMocks.stub(FileManager.class))
           .diagnostics(List.of())
@@ -365,7 +365,7 @@ class SimpleCompilationTest {
     @Test
     void buildingWithNullOutputLinesRaisesNullPointerException() {
       // Given
-      var builder = SimpleCompilation
+      var builder = CompilationImpl
           .builder()
           .fileManager(MoreMocks.stub(FileManager.class))
           .outputLines(List.of())
@@ -391,8 +391,8 @@ class SimpleCompilationTest {
     return Arrays.asList(values);
   }
 
-  static SimpleCompilation.Builder filledBuilder() {
-    return SimpleCompilation
+  static CompilationImpl.Builder filledBuilder() {
+    return CompilationImpl
         .builder()
         .compilationUnits(Set.of())
         .diagnostics(List.of())

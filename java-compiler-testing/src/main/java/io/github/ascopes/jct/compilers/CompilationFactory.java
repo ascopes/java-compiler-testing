@@ -52,9 +52,9 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>> {
+public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCompilationFactory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CompilationFactory.class);
 
   @Override
   public String toString() {
@@ -70,9 +70,9 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
    * @param flagBuilder    the flag builder to use.
    * @return the compilation result.
    */
-  public SimpleCompilation compile(
+  public CompilationImpl compile(
       A compiler,
-      SimpleFileManagerTemplate template,
+      FileManagerBuilder template,
       JavaCompiler jsr199Compiler,
       FlagBuilder flagBuilder
   ) {
@@ -112,7 +112,7 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
 
         var outputLines = writer.toString().lines().collect(Collectors.toList());
 
-        return SimpleCompilation.builder()
+        return CompilationImpl.builder()
             .failOnWarnings(compiler.isFailOnWarnings())
             .success(result)
             .outputLines(outputLines)
@@ -209,12 +209,12 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
    *
    * <p>LoggingMode will be applied to this via
    * {@link #applyLoggingToFileManager(Compilable, FileManager)}, which will be handled by
-   * {@link #compile(Compilable, SimpleFileManagerTemplate, JavaCompiler, FlagBuilder)}.
+   * {@link #compile(Compilable, FileManagerBuilder, JavaCompiler, FlagBuilder)}.
    *
    * @param compiler the compiler to use.
    * @return the file manager to use.
    */
-  protected FileManager buildFileManager(A compiler, SimpleFileManagerTemplate template) {
+  protected FileManager buildFileManager(A compiler, FileManagerBuilder template) {
     var release = compiler.getRelease()
         .or(compiler::getTarget)
         .orElseGet(compiler::getDefaultRelease);
@@ -273,7 +273,7 @@ public class SimpleCompilationFactory<A extends Compilable<A, SimpleCompilation>
 
   /**
    * Apply the logging level to the file manager provided by
-   * {@link #buildFileManager(Compilable, SimpleFileManagerTemplate)}.
+   * {@link #buildFileManager(Compilable, FileManagerBuilder)}.
    *
    * <p>The default implementation will wrap the given {@link JavaFileManager} in a
    * {@link LoggingFileManagerProxy} if the {@link Compilable#getFileManagerLoggingMode()} field is

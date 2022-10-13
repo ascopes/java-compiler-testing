@@ -56,7 +56,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimpleFileManager implements FileManager {
+public class FileManagerImpl implements FileManager {
 
   private final String release;
   private final Map<Location, PackageContainerGroup> packages;
@@ -68,7 +68,7 @@ public class SimpleFileManager implements FileManager {
    *
    * @param release the release to use for multi-release JARs internally.
    */
-  public SimpleFileManager(String release) {
+  public FileManagerImpl(String release) {
     this.release = requireNonNull(release, "release");
     packages = new HashMap<>();
     modules = new HashMap<>();

@@ -28,15 +28,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
 import io.github.ascopes.jct.compilers.AnnotationProcessorDiscovery;
+import io.github.ascopes.jct.compilers.CompilationFactory;
+import io.github.ascopes.jct.compilers.Compiler;
 import io.github.ascopes.jct.compilers.CompilerAlreadyUsedException;
 import io.github.ascopes.jct.compilers.CompilerConfigurer;
+import io.github.ascopes.jct.compilers.FileManagerBuilder;
 import io.github.ascopes.jct.compilers.FlagBuilder;
 import io.github.ascopes.jct.compilers.LoggingMode;
-import io.github.ascopes.jct.compilers.SimpleCompilationFactory;
-import io.github.ascopes.jct.compilers.SimpleCompiler;
-import io.github.ascopes.jct.compilers.SimpleFileManagerTemplate;
 import io.github.ascopes.jct.testing.helpers.TypeRef;
-import io.github.ascopes.jct.testing.unit.compilers.SimpleCompilerTest.AttrTestPack.NullTests;
+import io.github.ascopes.jct.testing.unit.compilers.CompilerTest.AttrTestPack.NullTests;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,12 +64,12 @@ import org.mockito.Answers;
 import org.mockito.Mockito;
 
 /**
- * {@link SimpleCompiler} tests.
+ * {@link Compiler} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("SimpleCompiler tests")
-class SimpleCompilerTest {
+@DisplayName("Compiler tests")
+class CompilerTest {
 
   @DisplayName("name cannot be null")
   @Test
@@ -78,7 +78,7 @@ class SimpleCompilerTest {
     assertThatThrownBy(
         () -> new StubbedCompiler(
             null,
-            stub(SimpleFileManagerTemplate.class),
+            stub(FileManagerBuilder.class),
             stub(JavaCompiler.class),
             stub(FlagBuilder.class)
         )
@@ -108,7 +108,7 @@ class SimpleCompilerTest {
     assertThatThrownBy(
         () -> new StubbedCompiler(
             "foobar",
-            stub(SimpleFileManagerTemplate.class),
+            stub(FileManagerBuilder.class),
             null,
             stub(FlagBuilder.class)
         )
@@ -124,7 +124,7 @@ class SimpleCompilerTest {
     assertThatThrownBy(
         () -> new StubbedCompiler(
             "foobar",
-            stub(SimpleFileManagerTemplate.class),
+            stub(FileManagerBuilder.class),
             stub(JavaCompiler.class),
             null
         )
@@ -139,7 +139,7 @@ class SimpleCompilerTest {
     var expectedFlagBuilder = stub(FlagBuilder.class);
     var compiler = new StubbedCompiler(
         "foo",
-        stub(SimpleFileManagerTemplate.class),
+        stub(FileManagerBuilder.class),
         stub(JavaCompiler.class),
         expectedFlagBuilder
     );
@@ -158,7 +158,7 @@ class SimpleCompilerTest {
     var expectedCompiler = stub(JavaCompiler.class);
     var compiler = new StubbedCompiler(
         "foo",
-        stub(SimpleFileManagerTemplate.class),
+        stub(FileManagerBuilder.class),
         expectedCompiler,
         stub(FlagBuilder.class)
     );
@@ -177,7 +177,7 @@ class SimpleCompilerTest {
     var expectedName = "Roy Rodgers McFreely with ID " + UUID.randomUUID();
     var compiler = new StubbedCompiler(
         expectedName,
-        stub(SimpleFileManagerTemplate.class),
+        stub(FileManagerBuilder.class),
         stub(JavaCompiler.class),
         stub(FlagBuilder.class)
     );
@@ -193,10 +193,10 @@ class SimpleCompilerTest {
   @Test
   void compileShouldFailIfTheCompilerWasAlreadyCalled() {
     // Given
-    try (var compilationFactory = mockConstruction(SimpleCompilationFactory.class)) {
+    try (var compilationFactory = mockConstruction(CompilationFactory.class)) {
       var jsr199Compiler = stub(JavaCompiler.class);
       var flagBuilder = stub(FlagBuilder.class);
-      var fileManagerTemplate = stub(SimpleFileManagerTemplate.class);
+      var fileManagerTemplate = stub(FileManagerBuilder.class);
       var compiler = new StubbedCompiler("foobar", fileManagerTemplate, jsr199Compiler,
           flagBuilder);
 
@@ -217,10 +217,10 @@ class SimpleCompilerTest {
   @Test
   void compileCallsPerformEntireCompilation() {
     // Given
-    try (var compilationFactory = mockConstruction(SimpleCompilationFactory.class)) {
+    try (var compilationFactory = mockConstruction(CompilationFactory.class)) {
       var jsr199Compiler = stub(JavaCompiler.class);
       var flagBuilder = stub(FlagBuilder.class);
-      var fileManagerTemplate = stub(SimpleFileManagerTemplate.class);
+      var fileManagerTemplate = stub(FileManagerBuilder.class);
       var compiler = new StubbedCompiler("foobar", fileManagerTemplate, jsr199Compiler,
           flagBuilder);
 
@@ -230,7 +230,7 @@ class SimpleCompilerTest {
       // Then
       assertThat(compilationFactory.constructed())
           .singleElement()
-          .extracting(factory -> (SimpleCompilationFactory<StubbedCompiler>) factory)
+          .extracting(factory -> (CompilationFactory<StubbedCompiler>) factory)
           .satisfies(
               factory -> verify(factory).compile(compiler, fileManagerTemplate, jsr199Compiler,
                   flagBuilder));
@@ -259,7 +259,7 @@ class SimpleCompilerTest {
   void addPathsDelegatesToFileRepository() {
     // Given
     var constructor = Mockito.mockConstruction(
-        SimpleFileManagerTemplate.class,
+        FileManagerBuilder.class,
         withSettings().defaultAnswer(Answers.RETURNS_DEEP_STUBS)
     );
 
@@ -289,7 +289,7 @@ class SimpleCompilerTest {
   void addRamPathsDelegatesToFileRepository() {
     // Given
     var constructor = Mockito.mockConstruction(
-        SimpleFileManagerTemplate.class,
+        FileManagerBuilder.class,
         withSettings().defaultAnswer(Answers.RETURNS_DEEP_STUBS)
     );
 
@@ -622,7 +622,7 @@ class SimpleCompilerTest {
     var expectedName = UUID.randomUUID().toString();
     var compiler = new StubbedCompiler(
         expectedName,
-        stub(SimpleFileManagerTemplate.class),
+        stub(FileManagerBuilder.class),
         stub(JavaCompiler.class),
         stub(FlagBuilder.class)
     );
@@ -1059,12 +1059,12 @@ class SimpleCompilerTest {
     }
   }
 
-  static class StubbedCompiler extends SimpleCompiler<StubbedCompiler> {
+  static class StubbedCompiler extends Compiler<StubbedCompiler> {
 
     StubbedCompiler() {
       this(
           "stubbed",
-          stub(SimpleFileManagerTemplate.class),
+          stub(FileManagerBuilder.class),
           stubCast(new TypeRef<>() {}),
           stubCast(new TypeRef<>() {})
       );
@@ -1072,7 +1072,7 @@ class SimpleCompilerTest {
 
     StubbedCompiler(
         String name,
-        SimpleFileManagerTemplate template,
+        FileManagerBuilder template,
         JavaCompiler jsr199Compiler,
         FlagBuilder flagBuilder
     ) {

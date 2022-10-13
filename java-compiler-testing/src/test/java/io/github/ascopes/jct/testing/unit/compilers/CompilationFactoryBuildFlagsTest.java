@@ -24,7 +24,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.clearInvocations;
 
-import io.github.ascopes.jct.compilers.SimpleCompilationFactory;
+import io.github.ascopes.jct.compilers.CompilationFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,12 +41,12 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 /**
- * Tests for {@code buildFlags} in {@link SimpleCompilationFactory}.
+ * Tests for {@code buildFlags} in {@link CompilationFactory}.
  *
  * @author Ashley Scopes
  */
-@DisplayName("SimpleCompilationFactory buildFlags tests")
-class SimpleCompilationFactoryBuildFlagsTest extends AbstractSimpleCompilationFactoryTest {
+@DisplayName("CompilationFactory buildFlags tests")
+class CompilationFactoryBuildFlagsTest extends CompilationFactoryTest {
 
   private static final Random RANDOM = new Random();
 

@@ -15,8 +15,8 @@
  */
 package io.github.ascopes.jct.compilers.javac;
 
-import io.github.ascopes.jct.compilers.SimpleCompiler;
-import io.github.ascopes.jct.compilers.SimpleFileManagerTemplate;
+import io.github.ascopes.jct.compilers.Compiler;
+import io.github.ascopes.jct.compilers.FileManagerBuilder;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -30,7 +30,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class JavacCompiler extends SimpleCompiler<JavacCompiler> {
+public class JavacCompiler extends Compiler<JavacCompiler> {
 
   private static final String NAME = "JDK Compiler";
 
@@ -67,7 +67,7 @@ public class JavacCompiler extends SimpleCompiler<JavacCompiler> {
    * @param jsr199Compiler the JSR-199 compiler backend to use.
    */
   public JavacCompiler(String name, JavaCompiler jsr199Compiler) {
-    super(name, new SimpleFileManagerTemplate(), jsr199Compiler, new JavacFlagBuilder());
+    super(name, new FileManagerBuilder(), jsr199Compiler, new JavacFlagBuilder());
     addCompilerOptions("-implicit:class");
   }
 
