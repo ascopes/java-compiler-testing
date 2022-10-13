@@ -218,7 +218,7 @@ public class DiagnosticListAssert
     return filteringBy(kind(kind, moreKinds))
         .withFailMessage(() -> {
           var allKindsString = IterableUtils
-              .asList(kind, moreKinds)
+              .combineOneOrMore(kind, moreKinds)
               .stream()
               .map(next -> next.name().toLowerCase(Locale.ROOT).replace('_', ' '))
               .collect(Collectors.collectingAndThen(
