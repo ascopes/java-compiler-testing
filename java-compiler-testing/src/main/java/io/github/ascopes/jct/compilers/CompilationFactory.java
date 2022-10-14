@@ -102,9 +102,11 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
             case SUCCESS:
               result = true;
               break;
+
             case FAILURE:
               result = false;
               break;
+
             case SKIPPED:
             default:
               LOGGER.info("Nothing else to compile. Finishing up...");
@@ -542,10 +544,15 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
     if (compiler.getAnnotationProcessors().size() > 0) {
       LOGGER.debug("Annotation processor discovery is disabled (processors explicitly provided)");
       task.setProcessors(compiler.getAnnotationProcessors());
+
     } else if (compiler.getAnnotationProcessorDiscovery()
         == AnnotationProcessorDiscovery.DISABLED) {
+      LOGGER.trace("Annotation processor discovery is disabled (explicitly disabled)");
       // Set the processor list explicitly to instruct the compiler to not perform discovery.
       task.setProcessors(List.of());
+
+    } else {
+      LOGGER.trace("Annotation processor discovery will be performed");
     }
   }
 
