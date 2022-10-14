@@ -295,6 +295,7 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
         return LoggingFileManagerProxy.wrap(fileManager, true);
       case ENABLED:
         return LoggingFileManagerProxy.wrap(fileManager, false);
+      case DISABLED:
       default:
         return fileManager;
     }
@@ -410,7 +411,11 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
     // We have to manually create this one as javac will not attempt to access it lazily. Instead,
     // it will just abort if it is not present. This means we cannot take advantage of the
     // PathLocationRepository creating the roots as we try to access them for this specific case.
-    if (!fileManager.hasLocation(StandardLocation.CLASS_OUTPUT)) {
+    if (fileManager.hasLocation(StandardLocation.CLASS_OUTPUT)) {
+      LOGGER.trace(
+          "At least one class output path is present, so no in-memory path will be created"
+      );
+    } else {
       var classOutput = RamPath.createPath("classes", true);
 
       LOGGER.debug(
@@ -418,17 +423,17 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
           classOutput.getUri()
       );
       fileManager.addPath(StandardLocation.CLASS_OUTPUT, classOutput);
-    } else {
-      LOGGER.trace(
-          "At least one class output path is present, so no in-memory path will be created"
-      );
     }
   }
 
   private void ensureSourceOutputPathExists(FileManager fileManager) {
     // Needed for annotation processors that generate new source files to work properly.
 
-    if (!fileManager.hasLocation(StandardLocation.SOURCE_OUTPUT)) {
+    if (fileManager.hasLocation(StandardLocation.SOURCE_OUTPUT)) {
+      LOGGER.trace(
+          "At least one source output path is present, so no in-memory path will be created"
+      );
+    } else {
       var sourceOutput = RamPath
           .createPath("generated-sources", true);
 
@@ -437,10 +442,6 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
           sourceOutput.getUri()
       );
       fileManager.addPath(StandardLocation.SOURCE_OUTPUT, sourceOutput);
-    } else {
-      LOGGER.trace(
-          "At least one source output path is present, so no in-memory path will be created"
-      );
     }
   }
 
@@ -529,6 +530,7 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
         break;
       }
 
+      case DISABLED:
       default:
         // There is nothing to do to the file manager to configure annotation processing at this
         // time.
@@ -553,6 +555,6 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
   protected enum CompilationResult {
     SUCCESS,
     FAILURE,
-    SKIPPED
+    SKIPPED,
   }
 }
