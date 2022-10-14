@@ -106,6 +106,7 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
               result = false;
               break;
             case SKIPPED:
+            default:
               LOGGER.info("Nothing else to compile. Finishing up...");
               break loop;
           }
