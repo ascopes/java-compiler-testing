@@ -84,10 +84,10 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
       try (var fileManager = buildFileManager(compiler, template)) {
         var previousCompilationUnits = new LinkedHashSet<JavaFileObject>();
 
-        boolean result = true;
+        boolean result;
 
         loop:
-        while (result) {
+        do {
           var nextResult = performCompilerPass(
               compiler,
               jsr199Compiler,
@@ -100,6 +100,7 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
 
           switch (nextResult) {
             case SUCCESS:
+              result = true;
               break;
             case FAILURE:
               result = false;
@@ -108,7 +109,7 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
               LOGGER.info("Nothing else to compile. Finishing up...");
               break loop;
           }
-        }
+        } while (result);
 
         var outputLines = writer.toString().lines().collect(Collectors.toList());
 
