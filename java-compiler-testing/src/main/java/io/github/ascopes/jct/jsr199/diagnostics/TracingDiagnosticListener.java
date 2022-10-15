@@ -31,6 +31,7 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 /**
  * A diagnostics listener that wraps all diagnostics in additional invocation information, and then
@@ -109,39 +110,19 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
     var threadName = thisThread.getName();
     var stackTrace = List.of(thisThread.getStackTrace());
     var wrapped = new TraceDiagnostic<S>(now, threadId, threadName, stackTrace, diagnostic);
+
     diagnostics.add(wrapped);
 
     if (!logging) {
       return;
     }
 
-    var formattedMessage = wrapped.getMessage(Locale.ROOT);
-    var formattedStackTrace = !stackTraces ? "" : new Object() {
-      @Override
-      public String toString() {
-        // Evaluate this here; SLF4J will then only generate these large strings if the log level
-        // is enabled.
-        return stackTrace
-            .stream()
-            .map(frame -> "\n\t" + frame)
-            .collect(Collectors.joining());
-      }
-    };
-
-    switch (diagnostic.getKind()) {
-      case ERROR:
-        logger.error("{}{}", formattedMessage, formattedStackTrace);
-        break;
-
-      case WARNING:
-      case MANDATORY_WARNING:
-        logger.warn("{}{}", formattedMessage, formattedStackTrace);
-        break;
-
-      default:
-        logger.info("{}{}", formattedMessage, formattedStackTrace);
-        break;
-    }
+    logger
+        .atLevel(diagnosticToLevel(diagnostic))
+        .setMessage("{}{}")
+        .addArgument(messageGetter(wrapped))
+        .addArgument(stackTraceFormatter(stackTrace))
+        .log();
   }
 
   @Override
@@ -151,5 +132,32 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
         .attribute("stackTraces", stackTraces)
         .attribute("logging", logging)
         .toString();
+  }
+
+  private Level diagnosticToLevel(Diagnostic<?> diagnostic) {
+    switch (diagnostic.getKind()) {
+      case ERROR:
+        return Level.ERROR;
+      case WARNING:
+      case MANDATORY_WARNING:
+        return Level.WARN;
+      default:
+        return Level.INFO;
+    }
+  }
+
+  private Supplier<String> messageGetter(Diagnostic<?> diagnostic) {
+    return () -> diagnostic.getMessage(Locale.ROOT);
+  }
+
+  private Supplier<String> stackTraceFormatter(List<StackTraceElement> stackTrace) {
+    if (!stackTraces) {
+      return () -> "";
+    }
+
+    return () -> stackTrace
+        .stream()
+        .map(frame -> "\n\t" + frame)
+        .collect(Collectors.joining());
   }
 }

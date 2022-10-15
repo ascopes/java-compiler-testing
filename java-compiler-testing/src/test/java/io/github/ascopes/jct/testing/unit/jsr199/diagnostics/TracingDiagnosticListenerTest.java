@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.testing.unit.jsr199.diagnostics;
 
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.hasToString;
 import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
 import static io.github.ascopes.jct.testing.helpers.MoreMocks.stubCast;
 import static java.util.Locale.ROOT;
@@ -23,17 +22,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static org.assertj.core.api.InstanceOfAssertFactories.optional;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.jsr199.diagnostics.TracingDiagnosticListener;
+import io.github.ascopes.jct.testing.helpers.Slf4jLoggerFake;
 import io.github.ascopes.jct.testing.helpers.TypeRef;
 import java.time.Instant;
 import java.util.Arrays;
@@ -55,6 +52,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.quality.Strictness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 /**
  * {@link TracingDiagnosticListener} tests.
@@ -240,7 +238,7 @@ class TracingDiagnosticListenerTest {
   @ParameterizedTest(name = "for kind = {0}")
   void errorsShouldBeLoggedAsErrorsWhenStackTracesAreDisabled(Kind kind) {
     // Given
-    var logger = mock(Logger.class);
+    var logger = new Slf4jLoggerFake();
     var listener = new AccessibleImpl<>(logger, true, false);
 
     // When
@@ -248,8 +246,12 @@ class TracingDiagnosticListenerTest {
     listener.report(originalDiagnostic);
 
     // Then
-    verify(logger).error("{}{}", "ERROR logging tests", "");
-    verifyNoMoreInteractions(logger);
+    logger.assertThatEntryLogged(
+        Level.ERROR,
+        null,
+        "{}{}",
+        "ERROR logging tests", ""
+    );
   }
 
   @DisplayName("Errors should be logged as errors when stacktraces are enabled")
@@ -257,7 +259,7 @@ class TracingDiagnosticListenerTest {
   @ParameterizedTest(name = "for kind = {0}")
   void errorsShouldBeLoggedAsErrorsWhenStackTracesAreEnabled(Kind kind) {
     // Given
-    var logger = mock(Logger.class);
+    var logger = new Slf4jLoggerFake();
 
     var thread = stub(Thread.class);
     var stackTrace = someStackTrace();
@@ -274,9 +276,13 @@ class TracingDiagnosticListenerTest {
     listener.report(originalDiagnostic);
 
     // Then
-    verify(logger)
-        .error(eq("{}{}"), eq("ERROR logging tests"), hasToString(expectedTraceString));
-    verifyNoMoreInteractions(logger);
+    logger.assertThatEntryLogged(
+        Level.ERROR,
+        null,
+        "{}{}",
+        "ERROR logging tests",
+        expectedTraceString
+    );
   }
 
   @DisplayName("Warnings should be logged as warnings when stacktraces are disabled")
@@ -284,7 +290,7 @@ class TracingDiagnosticListenerTest {
   @ParameterizedTest(name = "for kind = {0}")
   void warningsShouldBeLoggedAsWarningsWhenStackTracesAreDisabled(Kind kind) {
     // Given
-    var logger = mock(Logger.class);
+    var logger = new Slf4jLoggerFake();
     var listener = new AccessibleImpl<>(logger, true, false);
 
     // When
@@ -292,8 +298,12 @@ class TracingDiagnosticListenerTest {
     listener.report(originalDiagnostic);
 
     // Then
-    verify(logger).warn("{}{}", "WARNING logging tests", "");
-    verifyNoMoreInteractions(logger);
+    logger.assertThatEntryLogged(
+        Level.WARN,
+        null,
+        "{}{}",
+        "WARNING logging tests", ""
+    );
   }
 
   @DisplayName("Warnings should be logged as warnings when stacktraces are enabled")
@@ -301,8 +311,7 @@ class TracingDiagnosticListenerTest {
   @ParameterizedTest(name = "for kind = {0}")
   void warningsShouldBeLoggedAsWarningsWhenStackTracesAreEnabled(Kind kind) {
     // Given
-    var logger = mock(Logger.class);
-
+    var logger = new Slf4jLoggerFake();
     var thread = stub(Thread.class);
     var stackTrace = someStackTrace();
     when(thread.getStackTrace()).thenReturn(stackTrace);
@@ -318,9 +327,13 @@ class TracingDiagnosticListenerTest {
     listener.report(originalDiagnostic);
 
     // Then
-    verify(logger)
-        .warn(eq("{}{}"), eq("WARNING logging tests"), hasToString(expectedTraceString));
-    verifyNoMoreInteractions(logger);
+    logger.assertThatEntryLogged(
+        Level.WARN,
+        null,
+        "{}{}",
+        "WARNING logging tests",
+        expectedTraceString
+    );
   }
 
   @DisplayName("Info should be logged as info when stacktraces are disabled")
@@ -328,7 +341,7 @@ class TracingDiagnosticListenerTest {
   @ParameterizedTest(name = "for kind = {0}")
   void infoShouldBeLoggedAsInfoWhenStackTracesAreDisabled(Kind kind) {
     // Given
-    var logger = mock(Logger.class);
+    var logger = new Slf4jLoggerFake();
     var listener = new AccessibleImpl<>(logger, true, false);
 
     // When
@@ -336,8 +349,12 @@ class TracingDiagnosticListenerTest {
     listener.report(originalDiagnostic);
 
     // Then
-    verify(logger).info("{}{}", "INFO logging tests", "");
-    verifyNoMoreInteractions(logger);
+    logger.assertThatEntryLogged(
+        Level.INFO,
+        null,
+        "{}{}",
+        "INFO logging tests", ""
+    );
   }
 
   @DisplayName("Info should be logged as info when stacktraces are enabled")
@@ -345,7 +362,7 @@ class TracingDiagnosticListenerTest {
   @ParameterizedTest(name = "for kind = {0}")
   void infoShouldBeLoggedAsInfoWhenStackTracesAreEnabled(Kind kind) {
     // Given
-    var logger = mock(Logger.class);
+    var logger = new Slf4jLoggerFake();
 
     var thread = stub(Thread.class);
     var stackTrace = someStackTrace();
@@ -362,9 +379,13 @@ class TracingDiagnosticListenerTest {
     listener.report(originalDiagnostic);
 
     // Then
-    verify(logger)
-        .info(eq("{}{}"), eq("INFO logging tests"), hasToString(expectedTraceString));
-    verifyNoMoreInteractions(logger);
+    logger.assertThatEntryLogged(
+        Level.INFO,
+        null,
+        "{}{}",
+        "INFO logging tests",
+        expectedTraceString
+    );
   }
 
   static Stream<Arguments> loggingArgs() {
