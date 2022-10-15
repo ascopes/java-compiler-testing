@@ -15,7 +15,10 @@
  */
 package io.github.ascopes.jct.utils;
 
+import io.github.ascopes.jct.annotations.WillClose;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -41,7 +44,7 @@ public class AsyncResourceCloser implements Runnable {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AsyncResourceCloser.class);
 
-  private final Map<String, ? extends AutoCloseable> closeables;
+  private final Map<?, @WillClose ? extends AutoCloseable> closeables;
 
   /**
    * Create a resource closer for a single closeable.
@@ -49,7 +52,7 @@ public class AsyncResourceCloser implements Runnable {
    * @param name      a descriptive name for the resource.
    * @param closeable the closeable to close.
    */
-  public AsyncResourceCloser(String name, AutoCloseable closeable) {
+  public AsyncResourceCloser(String name, @WillClose AutoCloseable closeable) {
     this(Map.of(name, closeable));
   }
 
@@ -58,7 +61,7 @@ public class AsyncResourceCloser implements Runnable {
    *
    * @param closeables the closeables to close, with each human-readable name as the key.
    */
-  public AsyncResourceCloser(Map<String, ? extends AutoCloseable> closeables) {
+  public AsyncResourceCloser(Map<?, @WillClose ? extends AutoCloseable> closeables) {
     this.closeables = closeables;
   }
 
@@ -85,8 +88,8 @@ public class AsyncResourceCloser implements Runnable {
         .toString();
   }
 
-  private Runnable closer(Map.Entry<String, ? extends AutoCloseable> entry) {
-    var name = entry.getKey();
+  private Runnable closer(Entry<?, ? extends AutoCloseable> entry) {
+    var name = Objects.toString(entry.getKey());
     var closeable = entry.getValue();
 
     return () -> {

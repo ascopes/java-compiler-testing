@@ -22,6 +22,7 @@ import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.StringUtils;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.util.ArrayList;
@@ -44,10 +45,10 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimpleModuleContainerGroup implements ModuleContainerGroup {
+public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
 
   private final Location location;
-  private final Map<ModuleLocation, SimpleModuleModuleContainerGroup> modules;
+  private final Map<ModuleLocation, ModulePackageContainerGroupImpl> modules;
   private final String release;
   private final Lazy<ContainerClassLoader> classLoaderLazy;
 
@@ -59,7 +60,7 @@ public class SimpleModuleContainerGroup implements ModuleContainerGroup {
    * @throws UnsupportedOperationException if the {@code location} is not module-oriented, or is
    *                                       output-oriented.
    */
-  public SimpleModuleContainerGroup(Location location, String release) {
+  public ModuleContainerGroupImpl(Location location, String release) {
     this.location = requireNonNull(location, "location");
     this.release = requireNonNull(release, "release");
 
@@ -152,7 +153,7 @@ public class SimpleModuleContainerGroup implements ModuleContainerGroup {
     var finders = modules
         .values()
         .stream()
-        .map(SimpleModuleModuleContainerGroup::getPackages)
+        .map(ModulePackageContainerGroupImpl::getPackages)
         .flatMap(List::stream)
         .map(Container::getModuleFinder)
         .toArray(ModuleFinder[]::new);
@@ -174,8 +175,16 @@ public class SimpleModuleContainerGroup implements ModuleContainerGroup {
     return modules
         .computeIfAbsent(
             new ModuleLocation(location, moduleName),
-            SimpleModuleModuleContainerGroup::new
+            ModulePackageContainerGroupImpl::new
         );
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("location", location)
+        .attribute("moduleCount", modules.size())
+        .toString();
   }
 
   private ContainerClassLoader createClassLoader() {
@@ -191,16 +200,16 @@ public class SimpleModuleContainerGroup implements ModuleContainerGroup {
   }
 
   /**
-   * Wrapper around a location that lacks the constraints that {@link SimplePackageContainerGroup}
+   * Wrapper around a location that lacks the constraints that {@link PackageContainerGroupImpl}
    * imposes.
    */
-  private class SimpleModuleModuleContainerGroup
+  private class ModulePackageContainerGroupImpl
       extends AbstractPackageContainerGroup {
 
     private final Location location;
 
-    private SimpleModuleModuleContainerGroup(Location location) {
-      super(SimpleModuleContainerGroup.this.release);
+    private ModulePackageContainerGroupImpl(Location location) {
+      super(ModuleContainerGroupImpl.this.release);
       this.location = requireNonNull(location, "location");
     }
 

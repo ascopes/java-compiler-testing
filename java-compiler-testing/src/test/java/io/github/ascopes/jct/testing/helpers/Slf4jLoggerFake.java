@@ -46,10 +46,10 @@ public final class Slf4jLoggerFake extends AbstractLogger {
   /**
    * Assert that a log entry wit the given contents is logged once.
    *
-   * @param level the logger level.
-   * @param ex any exception, or {@code null} if no throwable is provided.
+   * @param level   the logger level.
+   * @param ex      any exception, or {@code null} if no throwable is provided.
    * @param message the logger format message string.
-   * @param args any arguments interpolated into the message.
+   * @param args    any arguments interpolated into the message.
    */
   public void assertThatEntryLogged(
       Level level,

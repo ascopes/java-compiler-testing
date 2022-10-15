@@ -33,7 +33,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimplePackageContainerGroup extends AbstractPackageContainerGroup {
+public class PackageContainerGroupImpl extends AbstractPackageContainerGroup {
 
   private final Location location;
 
@@ -44,7 +44,7 @@ public class SimplePackageContainerGroup extends AbstractPackageContainerGroup {
    * @param release  the release version to use for handling {@code Multi-Release} JARs in this
    *                 location.
    */
-  public SimplePackageContainerGroup(Location location, String release) {
+  public PackageContainerGroupImpl(Location location, String release) {
     super(release);
 
     this.location = requireNonNull(location, "location");

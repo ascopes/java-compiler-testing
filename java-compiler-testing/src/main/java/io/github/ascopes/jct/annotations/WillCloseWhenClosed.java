@@ -20,7 +20,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import javax.annotation.WillCloseWhenClosed;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -34,7 +33,12 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.INTERNAL)
 @Documented
 @Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.PARAMETER)
-@WillCloseWhenClosed
-public @interface WillBeClosed {
+@Target({
+    ElementType.FIELD,
+    ElementType.PARAMETER,
+    ElementType.TYPE_PARAMETER,
+    ElementType.TYPE_USE,
+})
+@javax.annotation.WillCloseWhenClosed
+public @interface WillCloseWhenClosed {
 }

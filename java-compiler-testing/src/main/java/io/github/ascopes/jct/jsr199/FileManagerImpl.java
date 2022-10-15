@@ -18,22 +18,24 @@ package io.github.ascopes.jct.jsr199;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
+import io.github.ascopes.jct.annotations.WillClose;
 import io.github.ascopes.jct.jsr199.containers.ContainerGroup;
 import io.github.ascopes.jct.jsr199.containers.ModuleContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.ModuleContainerGroupImpl;
 import io.github.ascopes.jct.jsr199.containers.OutputContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.OutputContainerGroupImpl;
 import io.github.ascopes.jct.jsr199.containers.PackageContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.SimpleModuleContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.SimpleOutputContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.SimplePackageContainerGroup;
+import io.github.ascopes.jct.jsr199.containers.PackageContainerGroupImpl;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.paths.SubPath;
+import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
 import java.lang.module.ModuleReference;
+import java.lang.ref.Cleaner;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +44,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
@@ -58,21 +61,28 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class FileManagerImpl implements FileManager {
 
+  private static final Cleaner CLEANER = Cleaner.create();
+
   private final String release;
-  private final Map<Location, PackageContainerGroup> packages;
-  private final Map<Location, ModuleContainerGroup> modules;
-  private final Map<Location, OutputContainerGroup> outputs;
+  private final Map<Location, @WillClose PackageContainerGroup> packages;
+  private final Map<Location, @WillClose ModuleContainerGroup> modules;
+  private final Map<Location, @WillClose OutputContainerGroup> outputs;
 
   /**
    * Initialize this file manager.
    *
    * @param release the release to use for multi-release JARs internally.
    */
+  @SuppressWarnings("ThisEscapedInObjectConstruction")
   public FileManagerImpl(String release) {
     this.release = requireNonNull(release, "release");
-    packages = new HashMap<>();
-    modules = new HashMap<>();
-    outputs = new HashMap<>();
+    packages = new ConcurrentHashMap<>();
+    modules = new ConcurrentHashMap<>();
+    outputs = new ConcurrentHashMap<>();
+
+    CLEANER.register(this, new AsyncResourceCloser(packages));
+    CLEANER.register(this, new AsyncResourceCloser(modules));
+    CLEANER.register(this, new AsyncResourceCloser(outputs));
   }
 
   /**
@@ -347,7 +357,9 @@ public class FileManagerImpl implements FileManager {
 
   @Override
   public void close() throws IOException {
-    // TODO: close on GC rather than anywhere else.
+    // We explicitly close all resources on garbage collection rather than here. This prevents
+    // the compiler implementation making our resources unavailable while we are still using them
+    // to assert further outcomes in tests.
   }
 
   @Override
@@ -477,7 +489,7 @@ public class FileManagerImpl implements FileManager {
     return packages
         .computeIfAbsent(
             location,
-            unused -> new SimplePackageContainerGroup(location, release)
+            unused -> new PackageContainerGroupImpl(location, release)
         );
   }
 
@@ -485,7 +497,7 @@ public class FileManagerImpl implements FileManager {
     return modules
         .computeIfAbsent(
             location,
-            unused -> new SimpleModuleContainerGroup(location, release)
+            unused -> new ModuleContainerGroupImpl(location, release)
         );
   }
 
@@ -493,7 +505,7 @@ public class FileManagerImpl implements FileManager {
     return outputs
         .computeIfAbsent(
             location,
-            unused -> new SimpleOutputContainerGroup(location, release)
+            unused -> new OutputContainerGroupImpl(location, release)
         );
   }
 

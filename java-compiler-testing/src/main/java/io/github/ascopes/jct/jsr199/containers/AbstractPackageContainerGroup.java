@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.CallerMustClose;
+import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
@@ -60,7 +61,7 @@ public abstract class AbstractPackageContainerGroup
   );
 
   protected final String release;
-  protected final List<Container> containers;
+  protected final List<@WillCloseWhenClosed Container> containers;
   protected final Lazy<ClassLoader> classLoaderLazy;
 
   /**
@@ -79,6 +80,7 @@ public abstract class AbstractPackageContainerGroup
   public final String toString() {
     return new ToStringBuilder(this)
         .attribute("location", getLocation())
+        .attribute("containerCount", containers.size())
         .toString();
   }
 

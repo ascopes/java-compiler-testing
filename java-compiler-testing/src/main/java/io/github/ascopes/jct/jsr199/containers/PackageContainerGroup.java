@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.jsr199.containers;
 
 import io.github.ascopes.jct.annotations.CallerMustClose;
+import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
 import java.io.UncheckedIOException;
@@ -44,7 +45,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * @param container the container to add.
    */
-  void addPackage(Container container);
+  void addPackage(@WillCloseWhenClosed Container container);
 
   /**
    * Add a path to this group.

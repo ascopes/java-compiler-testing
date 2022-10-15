@@ -47,7 +47,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class SimpleOutputContainerGroup
+public class OutputContainerGroupImpl
     extends AbstractPackageContainerGroup
     implements OutputContainerGroup {
 
@@ -60,7 +60,7 @@ public class SimpleOutputContainerGroup
    * @param location the location of the group.
    * @param release  the release version.
    */
-  public SimpleOutputContainerGroup(Location location, String release) {
+  public OutputContainerGroupImpl(Location location, String release) {
     super(release);
     this.location = requireNonNull(location, "location");
     modules = new HashMap<>();
@@ -204,7 +204,7 @@ public class SimpleOutputContainerGroup
   }
 
   /**
-   * Wrapper around a location that lacks the constraints that {@link SimplePackageContainerGroup}
+   * Wrapper around a location that lacks the constraints that {@link PackageContainerGroupImpl}
    * imposes.
    */
   private class SimpleOutputModuleContainerGroup
@@ -213,7 +213,7 @@ public class SimpleOutputContainerGroup
     private final Location location;
 
     private SimpleOutputModuleContainerGroup(Location location) {
-      super(SimpleOutputContainerGroup.this.release);
+      super(OutputContainerGroupImpl.this.release);
       this.location = requireNonNull(location, "location");
     }
 
