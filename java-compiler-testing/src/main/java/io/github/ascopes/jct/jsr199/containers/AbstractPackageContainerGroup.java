@@ -15,8 +15,10 @@
  */
 package io.github.ascopes.jct.jsr199.containers;
 
+import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.CallerMustClose;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
@@ -25,13 +27,14 @@ import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -218,22 +221,27 @@ public abstract class AbstractPackageContainerGroup
     return containers.isEmpty();
   }
 
+  @CallerMustClose
   @Override
-  public Collection<? extends PathFileObject> list(
+  public Stream<? extends PathFileObject> listFileObjects(
       String packageName,
       Set<? extends Kind> kinds,
       boolean recurse
-  ) throws IOException {
-    var items = new ArrayList<PathFileObject>();
-
-    for (var container : containers) {
-      items.addAll(container.list(packageName, kinds, recurse));
-    }
-
-    return items;
+  ) {
+    return containers
+        .stream()
+        .flatMap(listFileObjectsInContainer(packageName, kinds, recurse));
   }
 
   protected ContainerClassLoader createClassLoader() {
     return new ContainerClassLoader(getLocation(), getPackages());
+  }
+
+  private Function<Container, Stream<? extends PathFileObject>> listFileObjectsInContainer(
+      String packageName,
+      Set<? extends Kind> kinds,
+      boolean recurse
+  ) {
+    return container -> uncheckedIo(() -> container.listFileObjects(packageName, kinds, recurse));
   }
 }

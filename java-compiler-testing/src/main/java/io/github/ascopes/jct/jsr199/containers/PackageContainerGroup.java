@@ -15,13 +15,14 @@
  */
 package io.github.ascopes.jct.jsr199.containers;
 
+import io.github.ascopes.jct.annotations.CallerMustClose;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
-import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
@@ -157,16 +158,19 @@ public interface PackageContainerGroup extends ContainerGroup {
   /**
    * List all the file objects that match the given criteria in this group.
    *
+   * <p>The returned stream must be explicitly closed to prevent resource leaks.
+   *
    * @param packageName the package name to look in.
    * @param kinds       the kinds of file to look for.
    * @param recurse     {@code true} to recurse subpackages, {@code false} to only consider the
    *                    given package.
-   * @return an iterable of resultant file objects.
-   * @throws IOException if the file lookup fails due to an IO exception.
+   * @return a stream of resultant file objects.
+   * @throws UncheckedIOException if the file lookup fails due to an IO exception.
    */
-  Collection<? extends PathFileObject> list(
+  @CallerMustClose
+  Stream<? extends PathFileObject> listFileObjects(
       String packageName,
       Set<? extends Kind> kinds,
       boolean recurse
-  ) throws IOException;
+  );
 }

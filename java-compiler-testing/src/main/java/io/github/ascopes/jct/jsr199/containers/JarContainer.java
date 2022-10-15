@@ -18,6 +18,7 @@ package io.github.ascopes.jct.jsr199.containers;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.CallerMustClose;
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.NioPath;
@@ -34,10 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.ProviderNotFoundException;
 import java.nio.file.spi.FileSystemProvider;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -222,8 +220,10 @@ public final class JarContainer implements Container {
     return Optional.empty();
   }
 
+  @CallerMustClose
   @Override
-  public Collection<? extends PathFileObject> list(
+  @SuppressWarnings("resource")
+  public Stream<? extends PathFileObject> listFileObjects(
       String packageName,
       Set<? extends Kind> kinds,
       boolean recurse
@@ -231,23 +231,16 @@ public final class JarContainer implements Container {
     var packageDir = holder.access().getPackages().get(packageName);
 
     if (packageDir == null) {
-      return List.of();
+      return Stream.empty();
     }
 
     var maxDepth = recurse ? Integer.MAX_VALUE : 1;
-
-    var items = new ArrayList<PathFileObject>();
-
     var packagePath = packageDir.getPath();
 
-    try (var walker = Files.walk(packagePath, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
-      walker
-          .filter(FileUtils.fileWithAnyKind(kinds))
-          .map(path -> new PathFileObject(location, path.getRoot(), path))
-          .forEach(items::add);
-    }
-
-    return items;
+    return Files
+        .walk(packagePath, maxDepth, FileVisitOption.FOLLOW_LINKS)
+        .filter(FileUtils.fileWithAnyKind(kinds))
+        .map(path -> new PathFileObject(location, path.getRoot(), path));
   }
 
   @Override

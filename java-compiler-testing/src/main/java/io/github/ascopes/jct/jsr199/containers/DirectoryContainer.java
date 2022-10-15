@@ -17,6 +17,7 @@ package io.github.ascopes.jct.jsr199.containers;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.CallerMustClose;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.FileUtils;
@@ -28,11 +29,9 @@ import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
@@ -185,8 +184,10 @@ public class DirectoryContainer implements Container {
         : Optional.empty();
   }
 
+  @CallerMustClose
   @Override
-  public Collection<? extends PathFileObject> list(
+  @SuppressWarnings("resource")
+  public Stream<? extends PathFileObject> listFileObjects(
       String packageName,
       Set<? extends Kind> kinds,
       boolean recurse
@@ -195,13 +196,14 @@ public class DirectoryContainer implements Container {
 
     var basePath = FileUtils.packageNameToPath(root.getPath(), packageName);
 
-    try (var walker = Files.walk(basePath, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
-      return walker
+    try {
+      return Files
+          .walk(basePath, maxDepth, FileVisitOption.FOLLOW_LINKS)
           .filter(FileUtils.fileWithAnyKind(kinds))
-          .map(path -> new PathFileObject(location, root.getPath(), path))
-          .collect(Collectors.toUnmodifiableList());
+          .map(path -> new PathFileObject(location, root.getPath(), path));
+
     } catch (NoSuchFileException ex) {
-      return List.of();
+      return Stream.empty();
     }
   }
 

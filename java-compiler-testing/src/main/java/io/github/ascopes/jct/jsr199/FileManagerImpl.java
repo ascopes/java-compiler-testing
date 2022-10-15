@@ -238,20 +238,12 @@ public class FileManagerImpl implements FileManager {
       Set<Kind> kinds,
       boolean recurse
   ) throws IOException {
-    var maybeGroup = getPackageOrientedOrOutputGroup(location);
 
-    if (maybeGroup.isEmpty()) {
-      return List.of();
-    }
-
-    // Coerce the generic type to help the compiler a bit.
-    // TODO(ascopes): avoid doing this by finding a workaround.
-    return maybeGroup
-        .get()
-        .list(packageName, kinds, recurse)
+    try (var stream = getPackageOrientedOrOutputGroup(location)
         .stream()
-        .map(JavaFileObject.class::cast)
-        .collect(Collectors.toUnmodifiableList());
+        .flatMap(group -> group.listFileObjects(packageName, kinds, recurse))) {
+      return stream.collect(Collectors.toUnmodifiableList());
+    }
   }
 
   @Nullable
