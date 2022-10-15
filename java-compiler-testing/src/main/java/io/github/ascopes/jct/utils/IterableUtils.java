@@ -159,22 +159,4 @@ public final class IterableUtils {
 
     return array;
   }
-
-  /**
-   * Create a list from a sequence of items, just like {@link Arrays#asList(Object[])}. This
-   * implementation provides a shortcut for methods enforcing at least one variadic argument in the
-   * signature.
-   *
-   * @param first the first item.
-   * @param more  the rest of the items.
-   * @param <T>   the type of the items.
-   * @return the list of all items in the given order.
-   */
-  @SafeVarargs
-  public static <T> List<T> asList(T first, T... more) {
-    var list = new ArrayList<T>();
-    list.add(first);
-    list.addAll(Arrays.asList(more));
-    return list;
-  }
 }
