@@ -17,8 +17,11 @@ package io.github.ascopes.jct.testing.unit.jsr199.diagnostics;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 
 import io.github.ascopes.jct.jsr199.diagnostics.TeeWriter;
 import io.github.ascopes.jct.testing.helpers.MoreMocks;
@@ -63,6 +66,26 @@ class TeeWriterTest {
         .isInstanceOf(NullPointerException.class);
   }
 
+  @DisplayName("write() fails if the writer is closed")
+  @Test
+  void writeFailsIfWriterIsClosed() throws IOException {
+    // Given
+    var writer = new StringWriter();
+    var tee = new TeeWriter(writer);
+    var text = UUID.randomUUID().toString();
+    tee.close();
+
+    // Then
+    assertThatThrownBy(() -> tee.write(text))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage("TeeWriter is closed");
+
+    assertThat(writer)
+        .asString()
+        .withFailMessage("Expected no content to be written")
+        .isEmpty();
+  }
+
   @DisplayName("write() delegates to the writer")
   @Test
   void writeDelegatesToTheWriter() throws IOException {
@@ -76,6 +99,23 @@ class TeeWriterTest {
 
     // Then
     assertThat(writer).hasToString(text);
+  }
+
+  @DisplayName("flush() fails if the writer is closed")
+  @Test
+  void flushFailsIfTheWriterIsClosed() throws IOException {
+    // Given
+    var writer = mock(Writer.class);
+    var tee = new TeeWriter(writer);
+    tee.close();
+    clearInvocations(writer);
+
+    // Then
+    assertThatThrownBy(tee::flush)
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage("TeeWriter is closed");
+
+    then(writer).shouldHaveNoInteractions();
   }
 
   @DisplayName("flush() delegates to the writer")
@@ -105,8 +145,23 @@ class TeeWriterTest {
     }
 
     // Then
+    then(writer).should().flush();
     then(writer).should().close();
     then(writer).shouldHaveNoMoreInteractions();
+  }
+
+  @DisplayName("close() is idempotent")
+  @Test
+  void closeIsIdempotent() throws IOException {
+    var writer = mock(Writer.class);
+    var tee = new TeeWriter(writer);
+
+    for (var i = 0; i < 10; ++i) {
+      tee.close();
+    }
+
+    then(writer).should(times(1)).flush();
+    then(writer).should(times(1)).close();
   }
 
   @DisplayName("toString() should return the buffer content")

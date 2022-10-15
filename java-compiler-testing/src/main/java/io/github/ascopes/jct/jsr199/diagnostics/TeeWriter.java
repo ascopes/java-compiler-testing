@@ -36,9 +36,11 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class TeeWriter extends Writer {
 
-  private final Writer writer;
-  private final StringBuffer buffer;
+  private final Object lock;
   private volatile boolean closed;
+
+  private final Writer writer;
+  private final StringBuilder builder;
 
   /**
    * Initialize this writer by wrapping an output stream in an internally-held writer.
@@ -61,34 +63,46 @@ public class TeeWriter extends Writer {
    * @param writer the writer to delegate to.
    */
   public TeeWriter(Writer writer) {
-    this.writer = requireNonNull(writer, "writer");
-    buffer = new StringBuffer();
+    lock = new Object();
     closed = false;
 
-    buffer.ensureCapacity(512);
+    this.writer = requireNonNull(writer, "writer");
+    builder = new StringBuilder();
+    builder.ensureCapacity(512);
   }
 
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
-    ensureOpen();
+    synchronized (lock) {
+      ensureOpen();
 
-    writer.write(cbuf, off, len);
-    // Only append to the buffer once we know that the writing
-    // operation has completed.
-    buffer.append(cbuf, off, len);
+      writer.write(cbuf, off, len);
+      // Only append to the buffer once we know that the writing
+      // operation has completed.
+      builder.append(cbuf, off, len);
+    }
   }
 
   @Override
   public void flush() throws IOException {
-    ensureOpen();
-    writer.flush();
+    synchronized (lock) {
+      ensureOpen();
+      writer.flush();
+    }
   }
 
   @Override
   public void close() throws IOException {
-    closed = true;
-    writer.close();
-    buffer.trimToSize();
+    // release to set and acquire to check ensures in-order operations to prevent
+    // a very minute chance of a race condition.
+    synchronized (lock) {
+      if (!closed) {
+        closed = true;
+        builder.trimToSize();
+        writer.flush();
+        writer.close();
+      }
+    }
   }
 
   /**
@@ -98,7 +112,9 @@ public class TeeWriter extends Writer {
    */
   @Override
   public String toString() {
-    return buffer.toString();
+    synchronized (lock) {
+      return builder.toString();
+    }
   }
 
   private void ensureOpen() {
