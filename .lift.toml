@@ -1,3 +1,4 @@
 build = "mvn"
-jdkVersion = "19"
+# Use JDK 11 to help Sonatype Lift start the default plugins correctly.
+jdkVersion = "11"
 summaryComments = true
