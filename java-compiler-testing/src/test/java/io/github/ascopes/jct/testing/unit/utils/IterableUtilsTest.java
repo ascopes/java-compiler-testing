@@ -15,6 +15,10 @@
  */
 package io.github.ascopes.jct.testing.unit.utils;
 
+import static io.github.ascopes.jct.utils.IterableUtils.combineOneOrMore;
+import static io.github.ascopes.jct.utils.IterableUtils.nonNullUnmodifiableList;
+import static io.github.ascopes.jct.utils.IterableUtils.nonNullUnmodifiableSet;
+import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,16 +52,16 @@ class IterableUtilsTest implements StaticClassTestTemplate {
     var baz = new Object();
     var bork = new Object();
 
-    assertThat(IterableUtils.combineOneOrMore(foo))
+    assertThat(combineOneOrMore(foo))
         .isEqualTo(List.of(foo));
 
-    assertThat(IterableUtils.combineOneOrMore(foo, bar))
+    assertThat(combineOneOrMore(foo, bar))
         .isEqualTo(List.of(foo, bar));
 
-    assertThat(IterableUtils.combineOneOrMore(foo, bar, baz))
+    assertThat(combineOneOrMore(foo, bar, baz))
         .isEqualTo(List.of(foo, bar, baz));
 
-    assertThat(IterableUtils.combineOneOrMore(foo, bar, baz, bork))
+    assertThat(combineOneOrMore(foo, bar, baz, bork))
         .isEqualTo(List.of(foo, bar, baz, bork));
   }
 
@@ -68,7 +72,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
     var collection = List.of("foo", "bar", "", "baz", "bork");
 
     // When
-    var result = IterableUtils.nonNullUnmodifiableList(collection, "geoff");
+    var result = nonNullUnmodifiableList(collection, "geoff");
 
     // Then
     assertThat(result)
@@ -82,7 +86,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
   @Test
   void nonNullUnmodifiableListFailsWhenTheListIsNull() {
     // Then
-    assertThatThrownBy(() -> IterableUtils.nonNullUnmodifiableList(null, "geoff"))
+    assertThatThrownBy(() -> nonNullUnmodifiableList(null, "geoff"))
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("geoff");
   }
@@ -94,7 +98,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
     var list = Arrays.asList("foo", "bar", "baz", null, "bork");
 
     // Then
-    assertThatThrownBy(() -> IterableUtils.nonNullUnmodifiableList(list, "geoff"))
+    assertThatThrownBy(() -> nonNullUnmodifiableList(list, "geoff"))
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("geoff[3]");
   }
@@ -106,7 +110,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
     var list = Arrays.asList("foo", "bar", "baz", "bork", null, "qux", null);
 
     // Then
-    assertThatThrownBy(() -> IterableUtils.nonNullUnmodifiableList(list, "geoff"))
+    assertThatThrownBy(() -> nonNullUnmodifiableList(list, "geoff"))
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("geoff[4], geoff[6]");
   }
@@ -118,7 +122,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
     var collection = Set.of("foo", "bar", "", "baz", "bork");
 
     // When
-    var result = IterableUtils.nonNullUnmodifiableSet(collection, "pete");
+    var result = nonNullUnmodifiableSet(collection, "pete");
 
     // Then
     assertThat(result)
@@ -132,7 +136,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
   @Test
   void nonNullUnmodifiableSetFailsWhenTheSetIsNull() {
     // Then
-    assertThatThrownBy(() -> IterableUtils.nonNullUnmodifiableSet(null, "pete"))
+    assertThatThrownBy(() -> nonNullUnmodifiableSet(null, "pete"))
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("pete");
   }
@@ -144,7 +148,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
     var set = new LinkedHashSet<>(Arrays.asList("foo", "bar", "bar", "baz", null, "bork"));
 
     // Then
-    assertThatThrownBy(() -> IterableUtils.nonNullUnmodifiableSet(set, "pete"))
+    assertThatThrownBy(() -> nonNullUnmodifiableSet(set, "pete"))
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("pete[3]");
   }
@@ -156,7 +160,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
     var set = new LinkedHashSet<>(Arrays.asList("foo", "bar", "bar", null, "baz", null, "bork"));
 
     // Then
-    assertThatThrownBy(() -> IterableUtils.nonNullUnmodifiableSet(set, "pete"))
+    assertThatThrownBy(() -> nonNullUnmodifiableSet(set, "pete"))
         .isExactlyInstanceOf(NullPointerException.class)
         // Duplicates get removed, duplicate nulls get removed, set is left in insertion order
         // as ["foo", "bar", null, "baz", "bork"]
@@ -172,14 +176,14 @@ class IterableUtilsTest implements StaticClassTestTemplate {
 
     // Then
     assertThatNoException()
-        .isThrownBy(() -> IterableUtils.requireNonNullValues(collection, "dave"));
+        .isThrownBy(() -> requireNonNullValues(collection, "dave"));
   }
 
   @DisplayName("requireNonNullValues(Iterable<?>) fails when the collection is null")
   @Test
   void requireNonNullValuesIterableFailsWhenCollectionIsNull() {
     // Then
-    assertThatThrownBy(() -> IterableUtils.requireNonNullValues((Iterable<?>) null, "dave"))
+    assertThatThrownBy(() -> requireNonNullValues((Iterable<?>) null, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("dave");
   }
@@ -191,7 +195,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
     var collection = Arrays.asList("foo", "bar", "", null, "baz", "bork");
 
     // Then
-    assertThatThrownBy(() -> IterableUtils.requireNonNullValues(collection, "dave"))
+    assertThatThrownBy(() -> requireNonNullValues(collection, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("dave[3]");
   }
@@ -203,7 +207,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
     var collection = Arrays.asList("foo", "bar", null, "", null, null, "baz", "bork");
 
     // Then
-    assertThatThrownBy(() -> IterableUtils.requireNonNullValues(collection, "dave"))
+    assertThatThrownBy(() -> requireNonNullValues(collection, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("dave[2], dave[4], dave[5]");
   }
@@ -216,14 +220,14 @@ class IterableUtilsTest implements StaticClassTestTemplate {
 
     // Then
     assertThatNoException()
-        .isThrownBy(() -> IterableUtils.requireNonNullValues(array, "dave"));
+        .isThrownBy(() -> requireNonNullValues(array, "dave"));
   }
 
   @DisplayName("requireNonNullValues(T[]) fails when the collection is null")
   @Test
   void requireNonNullValuesArrayFailsWhenCollectionIsNull() {
     // Then
-    assertThatThrownBy(() -> IterableUtils.requireNonNullValues((String[]) null, "dave"))
+    assertThatThrownBy(() -> requireNonNullValues((String[]) null, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("dave");
   }
@@ -235,7 +239,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
     var array = new String[]{"foo", "bar", "", null, "baz", "bork"};
 
     // Then
-    assertThatThrownBy(() -> IterableUtils.requireNonNullValues(array, "dave"))
+    assertThatThrownBy(() -> requireNonNullValues(array, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("dave[3]");
   }
@@ -247,7 +251,7 @@ class IterableUtilsTest implements StaticClassTestTemplate {
     var array = new String[]{"foo", "bar", null, "", null, null, "baz", "bork"};
 
     // Then
-    assertThatThrownBy(() -> IterableUtils.requireNonNullValues(array, "dave"))
+    assertThatThrownBy(() -> requireNonNullValues(array, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
         .hasMessage("dave[2], dave[4], dave[5]");
   }
