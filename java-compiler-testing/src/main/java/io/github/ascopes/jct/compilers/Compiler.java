@@ -18,6 +18,7 @@ package io.github.ascopes.jct.compilers;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.paths.PathLike;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -83,9 +84,9 @@ public abstract class Compiler<A extends Compiler<A>>
   private Charset logCharset;
   private boolean verbose;
   private boolean previewFeatures;
-  private String release;
-  private String source;
-  private String target;
+  private @Nullable String release;
+  private @Nullable String source;
+  private @Nullable String target;
   private boolean inheritClassPath;
   private boolean inheritModulePath;
   private boolean inheritPlatformClassPath;
@@ -116,7 +117,6 @@ public abstract class Compiler<A extends Compiler<A>>
     this.flagBuilder = requireNonNull(flagBuilder, "flagBuilder");
 
     annotationProcessors = new ArrayList<>();
-
     annotationProcessorOptions = new ArrayList<>();
     compilerOptions = new ArrayList<>();
     runtimeOptions = new ArrayList<>();
@@ -127,9 +127,11 @@ public abstract class Compiler<A extends Compiler<A>>
     locale = Compilable.DEFAULT_LOCALE;
     logCharset = Compilable.DEFAULT_LOG_CHARSET;
     previewFeatures = Compilable.DEFAULT_PREVIEW_FEATURES;
+
     release = null;
     source = null;
     target = null;
+
     verbose = Compilable.DEFAULT_VERBOSE;
     inheritClassPath = Compilable.DEFAULT_INHERIT_CLASS_PATH;
     inheritModulePath = Compilable.DEFAULT_INHERIT_MODULE_PATH;
@@ -187,23 +189,35 @@ public abstract class Compiler<A extends Compiler<A>>
   public final <T extends Exception> A configure(
       CompilerConfigurer<? super A, T> configurer
   ) throws T {
+    requireNonNull(configurer, "configurer");
+
     LOGGER.debug("configure({})", configurer);
     var me = myself();
     configurer.configure(me);
+
     return me;
   }
 
   @Override
   public A addPath(Location location, PathLike pathLike) {
+    requireNonNull(location, "location");
+    requireNonNull(pathLike, "pathLike");
+
     LOGGER.trace("{}.paths += {}", location.getName(), pathLike.getPath());
     fileManagerTemplate.addPath(location, pathLike);
+
     return myself();
   }
 
   @Override
   public A addPath(Location location, String moduleName, PathLike pathLike) {
+    requireNonNull(location, "location");
+    requireNonNull(moduleName, "moduleName");
+    requireNonNull(pathLike, "pathLike");
+
     LOGGER.trace("{}[{}].paths += {}", location.getName(), moduleName, pathLike.getPath());
     fileManagerTemplate.addPath(location, moduleName, pathLike);
+
     return myself();
   }
 
@@ -216,6 +230,7 @@ public abstract class Compiler<A extends Compiler<A>>
   public A verbose(boolean enabled) {
     LOGGER.trace("verbose {} -> {}", verbose, enabled);
     verbose = enabled;
+
     return myself();
   }
 
@@ -228,6 +243,7 @@ public abstract class Compiler<A extends Compiler<A>>
   public A previewFeatures(boolean enabled) {
     LOGGER.trace("previewFeatures {} -> {}", previewFeatures, enabled);
     previewFeatures = enabled;
+
     return myself();
   }
 
@@ -240,6 +256,7 @@ public abstract class Compiler<A extends Compiler<A>>
   public A showWarnings(boolean enabled) {
     LOGGER.trace("showWarnings {} -> {}", showWarnings, enabled);
     showWarnings = enabled;
+
     return myself();
   }
 
@@ -252,6 +269,7 @@ public abstract class Compiler<A extends Compiler<A>>
   public A showDeprecationWarnings(boolean enabled) {
     LOGGER.trace("showDeprecationWarnings {} -> {}", showDeprecationWarnings, enabled);
     showDeprecationWarnings = enabled;
+
     return myself();
   }
 
@@ -264,6 +282,7 @@ public abstract class Compiler<A extends Compiler<A>>
   public A failOnWarnings(boolean enabled) {
     LOGGER.trace("failOnWarnings {} -> {}", failOnWarnings, enabled);
     failOnWarnings = enabled;
+
     return myself();
   }
 
@@ -275,8 +294,10 @@ public abstract class Compiler<A extends Compiler<A>>
   @Override
   public A addAnnotationProcessorOptions(Iterable<String> annotationProcessorOptions) {
     requireNonNullValues(annotationProcessorOptions, "annotationProcessorOptions");
+
     LOGGER.trace("annotationProcessorOptions += {}", annotationProcessorOptions);
     annotationProcessorOptions.forEach(this.annotationProcessorOptions::add);
+
     return myself();
   }
 
@@ -288,8 +309,10 @@ public abstract class Compiler<A extends Compiler<A>>
   @Override
   public A addAnnotationProcessors(Iterable<? extends Processor> annotationProcessors) {
     requireNonNullValues(annotationProcessors, "annotationProcessors");
+
     LOGGER.trace("annotationProcessors += {}", annotationProcessors);
     annotationProcessors.forEach(this.annotationProcessors::add);
+
     return myself();
   }
 
@@ -301,8 +324,10 @@ public abstract class Compiler<A extends Compiler<A>>
   @Override
   public A addCompilerOptions(Iterable<String> compilerOptions) {
     requireNonNullValues(compilerOptions, "compilerOptions");
+
     LOGGER.trace("compilerOptions += {}", compilerOptions);
     compilerOptions.forEach(this.compilerOptions::add);
+
     return myself();
   }
 
@@ -314,8 +339,10 @@ public abstract class Compiler<A extends Compiler<A>>
   @Override
   public A addRuntimeOptions(Iterable<String> runtimeOptions) {
     requireNonNullValues(runtimeOptions, "runtimeOptions");
+
     LOGGER.trace("runtimeOptions += {}", runtimeOptions);
     runtimeOptions.forEach(this.runtimeOptions::add);
+
     return myself();
   }
 
@@ -325,13 +352,18 @@ public abstract class Compiler<A extends Compiler<A>>
   }
 
   @Override
-  public A release(String release) {
+  public A release(@Nullable String release) {
     LOGGER.trace("release {} -> {}", this.release, release);
     this.release = release;
-    LOGGER.trace("source {} -> null", source);
-    source = null;
-    LOGGER.trace("target {} -> null", target);
-    target = null;
+
+    if (release != null) {
+      LOGGER.trace("source {} -> null", source);
+      source = null;
+
+      LOGGER.trace("target {} -> null", target);
+      target = null;
+    }
+
     return myself();
   }
 
@@ -341,11 +373,15 @@ public abstract class Compiler<A extends Compiler<A>>
   }
 
   @Override
-  public A source(String source) {
+  public A source(@Nullable String source) {
     LOGGER.trace("source {} -> {}", target, source);
     this.source = source;
-    LOGGER.trace("release {} -> null", release);
-    release = null;
+
+    if (source != null) {
+      LOGGER.trace("release {} -> null", release);
+      release = null;
+    }
+
     return myself();
   }
 
@@ -355,11 +391,15 @@ public abstract class Compiler<A extends Compiler<A>>
   }
 
   @Override
-  public A target(String target) {
+  public A target(@Nullable String target) {
     LOGGER.trace("target {} -> {}", this.target, target);
     this.target = target;
-    LOGGER.trace("release {} -> null", release);
-    release = null;
+
+    if (target != null) {
+      LOGGER.trace("release {} -> null", release);
+      release = null;
+    }
+
     return myself();
   }
 
@@ -372,6 +412,7 @@ public abstract class Compiler<A extends Compiler<A>>
   public A inheritClassPath(boolean inheritClassPath) {
     LOGGER.trace("inheritClassPath {} -> {}", this.inheritClassPath, inheritClassPath);
     this.inheritClassPath = inheritClassPath;
+
     return myself();
   }
 
@@ -384,6 +425,7 @@ public abstract class Compiler<A extends Compiler<A>>
   public A inheritModulePath(boolean inheritModulePath) {
     LOGGER.trace("inheritModulePath {} -> {}", this.inheritModulePath, inheritModulePath);
     this.inheritModulePath = inheritModulePath;
+
     return myself();
   }
 
@@ -400,6 +442,7 @@ public abstract class Compiler<A extends Compiler<A>>
         inheritPlatformClassPath
     );
     this.inheritPlatformClassPath = inheritPlatformClassPath;
+
     return myself();
   }
 
@@ -416,6 +459,7 @@ public abstract class Compiler<A extends Compiler<A>>
         inheritSystemModulePath
     );
     this.inheritSystemModulePath = inheritSystemModulePath;
+
     return myself();
   }
 
@@ -427,8 +471,10 @@ public abstract class Compiler<A extends Compiler<A>>
   @Override
   public A locale(Locale locale) {
     requireNonNull(locale, "locale");
+
     LOGGER.trace("locale {} -> {}", this.locale, locale);
     this.locale = locale;
+
     return myself();
   }
 
@@ -440,8 +486,10 @@ public abstract class Compiler<A extends Compiler<A>>
   @Override
   public A logCharset(Charset logCharset) {
     requireNonNull(logCharset, "logCharset");
+
     LOGGER.trace("logCharset {} -> {}", this.logCharset, logCharset);
     this.logCharset = logCharset;
+
     return myself();
   }
 
@@ -453,12 +501,14 @@ public abstract class Compiler<A extends Compiler<A>>
   @Override
   public A fileManagerLoggingMode(LoggingMode fileManagerLoggingMode) {
     requireNonNull(fileManagerLoggingMode, "fileManagerLoggingMode");
+
     LOGGER.trace(
         "fileManagerLoggingMode {} -> {}",
         this.fileManagerLoggingMode,
         fileManagerLoggingMode
     );
     this.fileManagerLoggingMode = fileManagerLoggingMode;
+
     return myself();
   }
 
@@ -470,12 +520,14 @@ public abstract class Compiler<A extends Compiler<A>>
   @Override
   public A diagnosticLoggingMode(LoggingMode diagnosticLoggingMode) {
     requireNonNull(diagnosticLoggingMode, "diagnosticLoggingMode");
+
     LOGGER.trace(
         "diagnosticLoggingMode {} -> {}",
         this.diagnosticLoggingMode,
         diagnosticLoggingMode
     );
     this.diagnosticLoggingMode = diagnosticLoggingMode;
+
     return myself();
   }
 
@@ -487,12 +539,14 @@ public abstract class Compiler<A extends Compiler<A>>
   @Override
   public A annotationProcessorDiscovery(AnnotationProcessorDiscovery annotationProcessorDiscovery) {
     requireNonNull(annotationProcessorDiscovery, "annotationProcessorDiscovery");
+
     LOGGER.trace(
         "annotationProcessorDiscovery {} -> {}",
         this.annotationProcessorDiscovery,
         annotationProcessorDiscovery
     );
     this.annotationProcessorDiscovery = annotationProcessorDiscovery;
+
     return myself();
   }
 
@@ -508,7 +562,7 @@ public abstract class Compiler<A extends Compiler<A>>
    */
   protected final A myself() {
     @SuppressWarnings("unchecked")
-    A me = (A) this;
+    var me = (A) this;
 
     return me;
   }
