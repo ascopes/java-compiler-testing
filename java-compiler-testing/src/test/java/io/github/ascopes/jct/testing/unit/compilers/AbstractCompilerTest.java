@@ -29,14 +29,14 @@ import static org.mockito.Mockito.withSettings;
 
 import io.github.ascopes.jct.compilers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.compilers.CompilationFactory;
-import io.github.ascopes.jct.compilers.Compiler;
+import io.github.ascopes.jct.compilers.AbstractCompiler;
 import io.github.ascopes.jct.compilers.CompilerAlreadyUsedException;
 import io.github.ascopes.jct.compilers.CompilerConfigurer;
 import io.github.ascopes.jct.compilers.FileManagerBuilder;
 import io.github.ascopes.jct.compilers.FlagBuilder;
 import io.github.ascopes.jct.compilers.LoggingMode;
 import io.github.ascopes.jct.testing.helpers.TypeRef;
-import io.github.ascopes.jct.testing.unit.compilers.CompilerTest.AttrTestPack.NullTests;
+import io.github.ascopes.jct.testing.unit.compilers.AbstractCompilerTest.AttrTestPack.NullTests;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,12 +64,12 @@ import org.mockito.Answers;
 import org.mockito.Mockito;
 
 /**
- * {@link Compiler} tests.
+ * {@link AbstractCompiler} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("Compiler tests")
-class CompilerTest {
+@DisplayName("AbstractCompiler tests")
+class AbstractCompilerTest {
 
   @DisplayName("name cannot be null")
   @Test
@@ -283,34 +283,6 @@ class CompilerTest {
     }
   }
 
-  @Disabled("fix me")
-  @DisplayName("addRamPaths should pass the parameters to the file repository")
-  @Test
-  void addRamPathsDelegatesToFileRepository() {
-    // Given
-    var constructor = Mockito.mockConstruction(
-        FileManagerBuilder.class,
-        withSettings().defaultAnswer(Answers.RETURNS_DEEP_STUBS)
-    );
-
-    try (constructor) {
-      //var compiler = new StubbedCompiler();
-      //var location = stub(Location.class);
-      //var paths = stubCast(new TypeRef<Collection<? extends RamPath>>() {});
-
-      // When
-      //compiler.addRamPaths(location, paths);
-
-      // Then
-      //assertThat(constructor.constructed())
-      //    .singleElement()
-      //    .satisfies(
-      //        repo -> verify(repo).getOrCreateManager(location),
-      //        repo -> verify(repo.getOrCreateManager(location)).addRamPaths(paths)
-      //    );
-    }
-  }
-
   @DisplayName("isVerbose and verbose tests")
   @TestFactory
   AttrTestPack<?> verboseWorksCorrectly() {
@@ -435,11 +407,15 @@ class CompilerTest {
               compiler.release(release);
 
               // Then
-              assertThat(compiler.getSource()).isNotPresent();
+              if (release == null) {
+                assertThat(compiler.getSource()).isPresent().hasValue("10");
+              } else {
+                assertThat(compiler.getSource()).isNotPresent();
+              }
             }
         ),
         (compiler, release) -> dynamicTest(
-            "setting a release clears the target version",
+            "setting a release clears the target version if non-null",
             () -> {
               // Given
               compiler.target("10");
@@ -448,7 +424,11 @@ class CompilerTest {
               compiler.release(release);
 
               // Then
-              assertThat(compiler.getTarget()).isNotPresent();
+              if (release == null) {
+                assertThat(compiler.getTarget()).isPresent().hasValue("10");
+              } else {
+                assertThat(compiler.getTarget()).isNotPresent();
+              }
             }
         )
     );
@@ -471,7 +451,11 @@ class CompilerTest {
               compiler.source(source);
 
               // Then
-              assertThat(compiler.getRelease()).isNotPresent();
+              if (source == null) {
+                assertThat(compiler.getRelease()).isPresent().hasValue("10");
+              } else {
+                assertThat(compiler.getRelease()).isNotPresent();
+              }
             }
         )
     );
@@ -494,7 +478,11 @@ class CompilerTest {
               compiler.target(target);
 
               // Then
-              assertThat(compiler.getRelease()).isNotPresent();
+              if (target == null) {
+                assertThat(compiler.getRelease()).isPresent().hasValue("10");
+              } else {
+                assertThat(compiler.getRelease()).isNotPresent();
+              }
             }
         )
     );
@@ -1059,7 +1047,7 @@ class CompilerTest {
     }
   }
 
-  static class StubbedCompiler extends Compiler<StubbedCompiler> {
+  static class StubbedCompiler extends AbstractCompiler<StubbedCompiler> {
 
     StubbedCompiler() {
       this(

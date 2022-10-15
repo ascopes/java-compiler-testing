@@ -58,10 +58,10 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public abstract class Compiler<A extends Compiler<A>>
+public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
     implements Compilable<A, CompilationImpl> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(Compiler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCompiler.class);
 
   // Use atomics for this to ensure no race conditions
   // if the user makes a mistake during parallel test runs.
@@ -103,7 +103,7 @@ public abstract class Compiler<A extends Compiler<A>>
    * @param jsr199Compiler      the JSR-199 compiler implementation to use.
    * @param flagBuilder         the flag builder to use.
    */
-  protected Compiler(
+  protected AbstractCompiler(
       String name,
       FileManagerBuilder fileManagerTemplate,
       JavaCompiler jsr199Compiler,
@@ -556,9 +556,9 @@ public abstract class Compiler<A extends Compiler<A>>
   }
 
   /**
-   * Get this implementation of {@link Compiler}, cast to the type parameter {@link A}.
+   * Get this implementation of {@link AbstractCompiler}, cast to the type parameter {@link A}.
    *
-   * @return this implementation of {@link Compiler}, cast to {@link A}.
+   * @return this implementation of {@link AbstractCompiler}, cast to {@link A}.
    */
   protected final A myself() {
     @SuppressWarnings("unchecked")

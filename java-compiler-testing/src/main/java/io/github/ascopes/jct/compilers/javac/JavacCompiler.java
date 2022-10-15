@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.compilers.javac;
 
-import io.github.ascopes.jct.compilers.Compiler;
+import io.github.ascopes.jct.compilers.AbstractCompiler;
 import io.github.ascopes.jct.compilers.FileManagerBuilder;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
@@ -30,7 +30,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class JavacCompiler extends Compiler<JavacCompiler> {
+public class JavacCompiler extends AbstractCompiler<JavacCompiler> {
 
   private static final String NAME = "JDK Compiler";
 
