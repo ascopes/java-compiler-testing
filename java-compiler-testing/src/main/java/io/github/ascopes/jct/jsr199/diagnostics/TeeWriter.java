@@ -38,6 +38,7 @@ public class TeeWriter extends Writer {
 
   private final Writer writer;
   private final StringBuffer buffer;
+  private volatile boolean closed;
 
   /**
    * Initialize this writer by wrapping an output stream in an internally-held writer.
@@ -49,8 +50,8 @@ public class TeeWriter extends Writer {
    */
   public TeeWriter(Charset charset, OutputStream outputStream) {
     this(new OutputStreamWriter(
-        requireNonNull(outputStream),
-        charset
+        requireNonNull(outputStream, "outputStream"),
+        requireNonNull(charset, "charset")
     ));
   }
 
@@ -60,33 +61,34 @@ public class TeeWriter extends Writer {
    * @param writer the writer to delegate to.
    */
   public TeeWriter(Writer writer) {
-    this.writer = requireNonNull(writer);
+    this.writer = requireNonNull(writer, "writer");
     buffer = new StringBuffer();
+    closed = false;
+
+    buffer.ensureCapacity(512);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
+    ensureOpen();
+
     writer.write(cbuf, off, len);
+    // Only append to the buffer once we know that the writing
+    // operation has completed.
     buffer.append(cbuf, off, len);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public void flush() throws IOException {
+    ensureOpen();
     writer.flush();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public void close() throws IOException {
+    closed = true;
     writer.close();
+    buffer.trimToSize();
   }
 
   /**
@@ -97,5 +99,11 @@ public class TeeWriter extends Writer {
   @Override
   public String toString() {
     return buffer.toString();
+  }
+
+  private void ensureOpen() {
+    if (closed) {
+      throw new IllegalStateException("TeeWriter is closed");
+    }
   }
 }
