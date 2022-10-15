@@ -45,7 +45,7 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
 
   private final ConcurrentLinkedQueue<TraceDiagnostic<S>> diagnostics;
   private final Logger logger;
-  private final Supplier<? extends Thread> currentThreadSupplier;
+  private final Supplier<? extends Thread> threadGetter;
   private final boolean logging;
   private final boolean stackTraces;
 
@@ -71,21 +71,21 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
   /**
    * Only visible for testing.
    *
-   * @param logger                the logger to use.
-   * @param currentThreadSupplier the supplier of the current thread.
-   * @param logging               whether to enable logging.
-   * @param stackTraces           whether to enable stack traces in the logging.
+   * @param logger       the logger to use.
+   * @param threadGetter the supplier of the current thread.
+   * @param logging      whether to enable logging.
+   * @param stackTraces  whether to enable stack traces in the logging.
    */
   @API(since = "0.0.1", status = Status.INTERNAL)
   protected TracingDiagnosticListener(
       Logger logger,
-      Supplier<? extends Thread> currentThreadSupplier,
+      Supplier<? extends Thread> threadGetter,
       boolean logging,
       boolean stackTraces
   ) {
     diagnostics = new ConcurrentLinkedQueue<>();
-    this.logger = requireNonNull(logger);
-    this.currentThreadSupplier = requireNonNull(currentThreadSupplier);
+    this.logger = requireNonNull(logger, "logger");
+    this.threadGetter = requireNonNull(threadGetter, "threadGetter");
     this.logging = logging;
     this.stackTraces = stackTraces;
   }
@@ -104,7 +104,7 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
     requireNonNull(diagnostic);
 
     var now = Instant.now();
-    var thisThread = currentThreadSupplier.get();
+    var thisThread = threadGetter.get();
     var threadId = thisThread.getId();
     var threadName = thisThread.getName();
     var stackTrace = List.of(thisThread.getStackTrace());

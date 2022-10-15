@@ -62,10 +62,10 @@ public class TraceDiagnostic<S extends JavaFileObject> extends ForwardingDiagnos
       Diagnostic<? extends S> original
   ) {
     super(original);
-    this.timestamp = requireNonNull(timestamp);
+    this.timestamp = requireNonNull(timestamp, "timestamp");
     this.threadId = threadId;
     this.threadName = threadName;
-    this.stackTrace = requireNonNull(stackTrace);
+    this.stackTrace = requireNonNull(stackTrace, "stackTrace");
   }
 
   /**
