@@ -27,9 +27,9 @@ import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
+import io.github.ascopes.jct.compilers.AbstractCompiler;
 import io.github.ascopes.jct.compilers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.compilers.CompilationFactory;
-import io.github.ascopes.jct.compilers.AbstractCompiler;
 import io.github.ascopes.jct.compilers.CompilerAlreadyUsedException;
 import io.github.ascopes.jct.compilers.CompilerConfigurer;
 import io.github.ascopes.jct.compilers.FileManagerBuilder;
