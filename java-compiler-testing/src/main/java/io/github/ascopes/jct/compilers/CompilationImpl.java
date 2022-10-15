@@ -19,9 +19,13 @@ import static io.github.ascopes.jct.utils.IterableUtils.nonNullUnmodifiableList;
 import static io.github.ascopes.jct.utils.IterableUtils.nonNullUnmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.WillClose;
+import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.jsr199.FileManager;
 import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import io.github.ascopes.jct.utils.ToStringBuilder;
+import java.lang.ref.Cleaner;
 import java.util.List;
 import java.util.Set;
 import javax.tools.JavaFileObject;
@@ -38,13 +42,16 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class CompilationImpl implements Compilation {
 
+  private static final Cleaner CLEANER = Cleaner.create();
+
   private final boolean success;
   private final boolean failOnWarnings;
   private final List<String> outputLines;
   private final Set<? extends JavaFileObject> compilationUnits;
   private final List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
-  private final FileManager fileManager;
+  private final @WillClose FileManager fileManager;
 
+  @SuppressWarnings("ThisEscapedInObjectConstruction")
   private CompilationImpl(Builder builder) {
     success = requireNonNull(builder.success, "success");
     failOnWarnings = requireNonNull(builder.failOnWarnings, "failOnWarnings");
@@ -52,6 +59,9 @@ public final class CompilationImpl implements Compilation {
     compilationUnits = nonNullUnmodifiableSet(builder.compilationUnits, "compilationUnits");
     diagnostics = nonNullUnmodifiableList(builder.diagnostics, "diagnostics");
     fileManager = requireNonNull(builder.fileManager, "fileManager");
+
+    // Ensure the File Manager gets closed on garbage collection.
+    CLEANER.register(this, new AsyncResourceCloser("File Manager", fileManager));
   }
 
   @Override
@@ -105,6 +115,8 @@ public final class CompilationImpl implements Compilation {
   /**
    * Builder type for a {@link CompilationImpl} to simplify initialization.
    *
+   * <p>This builder object <strong>must not</strong> be built more than once.
+   *
    * @author Ashley Scopes
    * @since 0.0.1
    */
@@ -116,7 +128,7 @@ public final class CompilationImpl implements Compilation {
     private List<String> outputLines;
     private Set<? extends JavaFileObject> compilationUnits;
     private List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
-    private FileManager fileManager;
+    private @WillNotClose FileManager fileManager;
 
     private Builder() {
       // Only initialized in this file.
@@ -185,7 +197,7 @@ public final class CompilationImpl implements Compilation {
      * @param fileManager the file manager.
      * @return this builder.
      */
-    public Builder fileManager(FileManager fileManager) {
+    public Builder fileManager(@WillClose FileManager fileManager) {
       this.fileManager = requireNonNull(fileManager, "fileManager");
       return this;
     }

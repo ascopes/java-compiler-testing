@@ -18,8 +18,8 @@ package io.github.ascopes.jct.jsr199.containers;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.annotations.CallerMustClose;
 import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
+import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
@@ -223,7 +223,7 @@ public abstract class AbstractPackageContainerGroup
     return containers.isEmpty();
   }
 
-  @CallerMustClose
+  @WillNotClose
   @Override
   public Stream<? extends PathFileObject> listFileObjects(
       String packageName,

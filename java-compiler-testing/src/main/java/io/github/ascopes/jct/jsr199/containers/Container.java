@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.jsr199.containers;
 
-import io.github.ascopes.jct.annotations.CallerMustClose;
+import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
 import java.io.Closeable;
@@ -35,6 +35,9 @@ import org.apiguardian.api.API.Status;
 
 /**
  * Container that wraps a file path source of some description.
+ *
+ * <p>Closing this resource will close any internally held resources that were opened internally.
+ * Already-opened resources passed to the implementation will not be closed.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -182,7 +185,7 @@ public interface Container extends Closeable {
    *                    given package.
    * @return the stream of results.
    */
-  @CallerMustClose
+  @WillNotClose
   Stream<? extends PathFileObject> listFileObjects(
       String packageName,
       Set<? extends Kind> kinds,

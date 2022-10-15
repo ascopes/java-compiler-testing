@@ -15,6 +15,8 @@
  */
 package io.github.ascopes.jct.jsr199;
 
+import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
+import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -46,11 +48,11 @@ public class LoggingFileManagerProxy implements InvocationHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFileManagerProxy.class);
 
-  private final FileManager inner;
+  private final @WillNotClose FileManager inner;
   private final boolean stackTraces;
   private final ThreadLocal<Integer> stackDepth;
 
-  private LoggingFileManagerProxy(FileManager inner, boolean stackTraces) {
+  private LoggingFileManagerProxy(@WillNotClose FileManager inner, boolean stackTraces) {
     this.inner = inner;
     this.stackTraces = stackTraces;
     stackDepth = ThreadLocal.withInitial(() -> 0);
@@ -116,7 +118,7 @@ public class LoggingFileManagerProxy implements InvocationHandler {
 
       if (method.getReturnType().equals(void.class)) {
         LOGGER.info(
-            "<<< [thread={}, depth={}] {}({}) returned",
+            "<<< [thread={}, depth={}] {}({}) returned {}",
             threadId,
             depth,
             returnType,
@@ -185,7 +187,8 @@ public class LoggingFileManagerProxy implements InvocationHandler {
    *                    omit them.
    * @return the proxy {@link FileManager} to use.
    */
-  public static FileManager wrap(FileManager manager, boolean stackTraces) {
+  @WillNotClose
+  public static FileManager wrap(@WillCloseWhenClosed FileManager manager, boolean stackTraces) {
     return (FileManager) Proxy.newProxyInstance(
         FileManager.class.getClassLoader(),
         new Class<?>[]{FileManager.class},

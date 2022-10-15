@@ -18,8 +18,9 @@ package io.github.ascopes.jct.jsr199.containers;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.annotations.CallerMustClose;
 import io.github.ascopes.jct.annotations.Nullable;
+import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
+import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.NioPath;
 import io.github.ascopes.jct.paths.PathLike;
@@ -65,7 +66,7 @@ public final class JarContainer implements Container {
   private final Location location;
   private final PathLike jarPath;
   private final String release;
-  private final Lazy<PackageFileSystemHolder> holder;
+  private final Lazy<@WillCloseWhenClosed PackageFileSystemHolder> holder;
 
   /**
    * Initialize this JAR container.
@@ -74,7 +75,7 @@ public final class JarContainer implements Container {
    * @param jarPath  the path to the JAR to open.
    * @param release  the release version to use for {@code Multi-Release} JARs.
    */
-  public JarContainer(Location location, PathLike jarPath, String release) {
+  public JarContainer(Location location, @WillNotClose PathLike jarPath, String release) {
     this.location = requireNonNull(location, "location");
     this.jarPath = requireNonNull(jarPath, "jarPath");
     this.release = requireNonNull(release, "release");
@@ -129,8 +130,10 @@ public final class JarContainer implements Container {
   }
 
   @Override
-  public Optional<PathFileObject> getFileForInput(String packageName,
-      String relativeName) {
+  public Optional<PathFileObject> getFileForInput(
+      String packageName,
+      String relativeName
+  ) {
     return Optional
         .ofNullable(holder.access().getPackage(packageName))
         .map(PathLike::getPath)
@@ -140,8 +143,10 @@ public final class JarContainer implements Container {
   }
 
   @Override
-  public Optional<PathFileObject> getFileForOutput(String packageName,
-      String relativeName) {
+  public Optional<PathFileObject> getFileForOutput(
+      String packageName,
+      String relativeName
+  ) {
     // This JAR is read-only.
     return Optional.empty();
   }
@@ -220,7 +225,7 @@ public final class JarContainer implements Container {
     return Optional.empty();
   }
 
-  @CallerMustClose
+  @WillNotClose
   @Override
   @SuppressWarnings("resource")
   public Stream<? extends PathFileObject> listFileObjects(
@@ -257,7 +262,7 @@ public final class JarContainer implements Container {
   private class PackageFileSystemHolder {
 
     private final Map<String, PathLike> packages;
-    private final FileSystem fileSystem;
+    private final @WillCloseWhenClosed FileSystem fileSystem;
 
     private PackageFileSystemHolder() throws IOException {
       // It turns out that we can open more than one ZIP file system pointing to the

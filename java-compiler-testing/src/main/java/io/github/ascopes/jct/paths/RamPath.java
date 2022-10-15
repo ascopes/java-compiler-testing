@@ -89,7 +89,7 @@ public final class RamPath implements PathLike {
    */
   @SuppressWarnings("ThisEscapedInObjectConstruction")
   private RamPath(String name, boolean closeOnGarbageCollection) {
-    this.name = requireNonNull(name);
+    this.name = requireNonNull(name, "name");
 
     var config = Configuration
         .builder(PathType.unix())

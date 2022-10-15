@@ -17,6 +17,8 @@ package io.github.ascopes.jct.jsr199.containers;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
+import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
@@ -52,7 +54,7 @@ public class OutputContainerGroupImpl
     implements OutputContainerGroup {
 
   private final Location location;
-  private final Map<ModuleLocation, SimpleOutputModuleContainerGroup> modules;
+  private final Map<ModuleLocation, @WillCloseWhenClosed SimpleOutputModuleContainerGroup> modules;
 
   /**
    * Initialize this container group.
@@ -83,12 +85,12 @@ public class OutputContainerGroupImpl
   }
 
   @Override
-  public void addModule(String module, Container container) {
+  public void addModule(String module, @WillCloseWhenClosed Container container) {
     getOrCreateModule(module).addPackage(container);
   }
 
   @Override
-  public void addModule(String module, PathLike path) {
+  public void addModule(String module, @WillNotClose PathLike path) {
     getOrCreateModule(module).addPackage(path);
   }
 

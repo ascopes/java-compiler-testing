@@ -15,6 +15,8 @@
  */
 package io.github.ascopes.jct.jsr199.containers;
 
+import io.github.ascopes.jct.annotations.WillClose;
+import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
 import io.github.ascopes.jct.paths.PathLike;
 import java.util.List;
@@ -39,10 +41,12 @@ public interface ModuleContainerGroup extends ContainerGroup {
   /**
    * Add a container to this group.
    *
+   * <p>The provided container will be closed when this container group is closed.
+   *
    * @param module    the module that the container is for.
    * @param container the container to add.
    */
-  void addModule(String module, Container container);
+  void addModule(String module, @WillClose Container container);
 
   /**
    * Add a path to this group for a module.
@@ -50,7 +54,7 @@ public interface ModuleContainerGroup extends ContainerGroup {
    * @param module the name of the module that this is for.
    * @param path   the path to add.
    */
-  void addModule(String module, PathLike path);
+  void addModule(String module, @WillNotClose PathLike path);
 
   /**
    * Get the {@link PackageContainerGroup} for a given module name, creating it if it does not yet

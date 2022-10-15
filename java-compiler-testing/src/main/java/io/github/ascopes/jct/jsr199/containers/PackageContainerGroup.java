@@ -15,8 +15,8 @@
  */
 package io.github.ascopes.jct.jsr199.containers;
 
-import io.github.ascopes.jct.annotations.CallerMustClose;
 import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
+import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
 import java.io.UncheckedIOException;
@@ -43,6 +43,8 @@ public interface PackageContainerGroup extends ContainerGroup {
   /**
    * Add a container to this group.
    *
+   * <p>The provided container will be closed when this group is closed.
+   *
    * @param container the container to add.
    */
   void addPackage(@WillCloseWhenClosed Container container);
@@ -53,9 +55,16 @@ public interface PackageContainerGroup extends ContainerGroup {
    * <p>Note that this will destroy the {@link #getClassLoader() classloader} if one is already
    * allocated.
    *
+   * <p>If the path points to some form of archive (such as a JAR), then this may open that archive
+   * in a new resource internally. If this occurs, then the resource will always be freed by this
+   * class by calling {@link #close()}.
+   *
+   * <p>Any other closable resources passed to this function will not be closed by this
+   * implementation. You must handle the lifecycle of those objects yourself.
+   *
    * @param path the path to add.
    */
-  void addPackage(PathLike path);
+  void addPackage(@WillNotClose PathLike path);
 
   /**
    * Find the first occurrence of a given path to a file.
@@ -168,7 +177,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    * @return a stream of resultant file objects.
    * @throws UncheckedIOException if the file lookup fails due to an IO exception.
    */
-  @CallerMustClose
+  @WillNotClose
   Stream<? extends PathFileObject> listFileObjects(
       String packageName,
       Set<? extends Kind> kinds,

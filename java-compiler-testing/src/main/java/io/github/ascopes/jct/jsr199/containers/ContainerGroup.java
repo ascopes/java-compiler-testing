@@ -25,6 +25,9 @@ import org.apiguardian.api.API.Status;
 /**
  * Base container group interface.
  *
+ * <p>Closing an implementation of this interface will free up any internal resources that have
+ * been opened. Resources passed to the implementation in an already-open state will not be closed.
+ *
  * @author Ashley Scopes
  * @since 0.0.1
  */

@@ -17,6 +17,8 @@ package io.github.ascopes.jct.jsr199.containers;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
+import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
@@ -48,7 +50,7 @@ import org.apiguardian.api.API.Status;
 public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
 
   private final Location location;
-  private final Map<ModuleLocation, ModulePackageContainerGroupImpl> modules;
+  private final Map<ModuleLocation, @WillCloseWhenClosed ModulePackageContainerGroupImpl> modules;
   private final String release;
   private final Lazy<ContainerClassLoader> classLoaderLazy;
 
@@ -85,12 +87,12 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   }
 
   @Override
-  public void addModule(String module, Container container) {
+  public void addModule(String module, @WillCloseWhenClosed Container container) {
     getOrCreateModule(module).addPackage(container);
   }
 
   @Override
-  public void addModule(String module, PathLike path) {
+  public void addModule(String module, @WillNotClose PathLike path) {
     getOrCreateModule(module).addPackage(path);
   }
 

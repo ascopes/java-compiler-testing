@@ -17,6 +17,7 @@ package io.github.ascopes.jct.jsr199.diagnostics;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -39,7 +40,7 @@ public class TeeWriter extends Writer {
   private final Object lock;
   private volatile boolean closed;
 
-  private final Writer writer;
+  private final @WillCloseWhenClosed Writer writer;
   private final StringBuilder builder;
 
   /**
@@ -50,7 +51,7 @@ public class TeeWriter extends Writer {
    * @param charset      the charset to write with.
    * @param outputStream the output stream to delegate to.
    */
-  public TeeWriter(Charset charset, OutputStream outputStream) {
+  public TeeWriter(Charset charset, @WillCloseWhenClosed OutputStream outputStream) {
     this(new OutputStreamWriter(
         requireNonNull(outputStream, "outputStream"),
         requireNonNull(charset, "charset")
@@ -62,7 +63,7 @@ public class TeeWriter extends Writer {
    *
    * @param writer the writer to delegate to.
    */
-  public TeeWriter(Writer writer) {
+  public TeeWriter(@WillCloseWhenClosed Writer writer) {
     lock = new Object();
     closed = false;
 

@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.utils;
 
+import io.github.ascopes.jct.annotations.WillNotClose;
 import java.util.Objects;
 import java.util.function.Supplier;
 import org.apiguardian.api.API;
@@ -37,9 +38,9 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public class Lazy<T> {
+public class Lazy<@WillNotClose T> {
 
-  private final Supplier<T> initializer;
+  private final Supplier<@WillNotClose T> initializer;
   private final Object lock;
   private volatile boolean initialized;
   private volatile T data;

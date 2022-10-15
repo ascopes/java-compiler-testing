@@ -17,7 +17,7 @@ package io.github.ascopes.jct.jsr199.containers;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.annotations.CallerMustClose;
+import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.jsr199.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.FileUtils;
@@ -51,7 +51,7 @@ public class DirectoryContainer implements Container {
   private static final Logger LOGGER = LoggerFactory.getLogger(DirectoryContainer.class);
 
   private final Location location;
-  private final PathLike root;
+  private final @WillNotClose PathLike root;
   private final String name;
 
   /**
@@ -60,7 +60,7 @@ public class DirectoryContainer implements Container {
    * @param location the location.
    * @param root     the root directory to hold.
    */
-  public DirectoryContainer(Location location, PathLike root) {
+  public DirectoryContainer(Location location, @WillNotClose PathLike root) {
     this.location = requireNonNull(location, "location");
     this.root = requireNonNull(root, "root");
     name = root.toString();
@@ -69,6 +69,8 @@ public class DirectoryContainer implements Container {
   @Override
   public void close() throws IOException {
     // Do nothing for this implementation. We have nothing to close.
+    // This also has the side effect of not closing RamPaths early, as we treat those as
+    // DirectoryContainer types.
   }
 
   @Override
@@ -184,7 +186,7 @@ public class DirectoryContainer implements Container {
         : Optional.empty();
   }
 
-  @CallerMustClose
+  @WillNotClose
   @Override
   @SuppressWarnings("resource")
   public Stream<? extends PathFileObject> listFileObjects(
