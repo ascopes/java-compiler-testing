@@ -56,7 +56,8 @@ import org.apiguardian.api.API.Status;
  * occurring.
  *
  * <p>The JAR will be opened lazily when needed, and then kept open until {@link #close() closed}
- * explicitly.
+ * explicitly. If something goes wrong in this lazy-loading process, then methods may throw an
+ * undocumented {@link java.io.UncheckedIOException}.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -80,6 +81,9 @@ public final class JarContainerImpl implements Container {
     this.location = requireNonNull(location, "location");
     this.jarPath = requireNonNull(jarPath, "jarPath");
     this.release = requireNonNull(release, "release");
+
+    // This will throw if, for example, the file doesn't exist or if the system encounters an IO
+    // error of some description. Both of these cases should be unexpected, however.
     holder = new Lazy<>(() -> uncheckedIo(PackageFileSystemHolder::new));
   }
 
@@ -271,7 +275,7 @@ public final class JarContainerImpl implements Container {
   /**
    * Wrapper around a set of packages and a file system that can be opened lazily.
    */
-  private class PackageFileSystemHolder {
+  private final class PackageFileSystemHolder {
 
     private final Map<String, PathLike> packages;
     private final @WillCloseWhenClosed FileSystem fileSystem;
