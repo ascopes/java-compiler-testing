@@ -29,7 +29,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 
 import io.github.ascopes.jct.compilers.CompilationFactory;
-import io.github.ascopes.jct.jsr199.FileManager;
+import io.github.ascopes.jct.filemanagers.FileManager;
 import io.github.ascopes.jct.paths.RamPath;
 import java.util.Optional;
 import javax.tools.StandardLocation;

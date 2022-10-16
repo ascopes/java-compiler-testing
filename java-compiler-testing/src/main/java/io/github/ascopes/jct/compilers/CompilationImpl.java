@@ -21,8 +21,8 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.WillClose;
 import io.github.ascopes.jct.annotations.WillNotClose;
-import io.github.ascopes.jct.jsr199.FileManager;
-import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.filemanagers.FileManager;
 import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.lang.ref.Cleaner;

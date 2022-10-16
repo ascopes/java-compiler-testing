@@ -21,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.iterable;
 
 import io.github.ascopes.jct.compilers.CompilationImpl;
-import io.github.ascopes.jct.jsr199.FileManager;
-import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.filemanagers.FileManager;
 import io.github.ascopes.jct.testing.helpers.MoreMocks;
 import io.github.ascopes.jct.testing.helpers.TypeRef;
 import java.util.Arrays;

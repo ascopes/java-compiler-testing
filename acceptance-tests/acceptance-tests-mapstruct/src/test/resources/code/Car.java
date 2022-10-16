@@ -19,6 +19,7 @@ package io.github.ascopes.jct.acceptancetests.mapstruct;
  * Basic POJO representing a car.
  */
 public class Car {
+
   private String make;
   private int numberOfSeats;
   private CarType type;

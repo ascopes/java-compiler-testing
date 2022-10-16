@@ -17,7 +17,7 @@ package io.github.ascopes.jct.testing.unit.compilers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.ascopes.jct.compilers.CompilerException;
+import io.github.ascopes.jct.ex.CompilerException;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

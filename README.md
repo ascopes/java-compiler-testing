@@ -158,7 +158,7 @@ class ExampleTest {
 - Helpful error messages to assist in annotation processor development
 
 ```
-[main] ERROR io.github.ascopes.jct.jsr199.diagnostics.TracingDiagnosticListener - cannot find symbol
+[main] ERROR io.github.ascopes.jct.diagnostics.TracingDiagnosticListener - cannot find symbol
   symbol:   class Generated
   location: package javax.annotation
 [main] INFO io.github.ascopes.jct.compilers.CompilationFactory - Compilation with compiler Javac 9 failed after ~332.3ms

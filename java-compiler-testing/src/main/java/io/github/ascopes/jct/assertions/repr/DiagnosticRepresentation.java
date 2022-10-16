@@ -17,7 +17,7 @@ package io.github.ascopes.jct.assertions.repr;
 
 import static javax.tools.Diagnostic.NOPOS;
 
-import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.utils.IoExceptionUtils;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.io.IOException;

@@ -15,9 +15,9 @@
  */
 package io.github.ascopes.jct.compilers;
 
-import io.github.ascopes.jct.jsr199.FileManager;
-import io.github.ascopes.jct.jsr199.FileManagerImpl;
-import io.github.ascopes.jct.jsr199.ModuleLocation;
+import io.github.ascopes.jct.filemanagers.FileManager;
+import io.github.ascopes.jct.filemanagers.FileManagerImpl;
+import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.paths.NioPath;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.StringUtils;

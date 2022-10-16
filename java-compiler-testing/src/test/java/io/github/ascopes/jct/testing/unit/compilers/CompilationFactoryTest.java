@@ -23,7 +23,7 @@ import io.github.ascopes.jct.compilers.CompilationFactory;
 import io.github.ascopes.jct.compilers.CompilationImpl;
 import io.github.ascopes.jct.compilers.FileManagerBuilder;
 import io.github.ascopes.jct.compilers.FlagBuilder;
-import io.github.ascopes.jct.jsr199.FileManager;
+import io.github.ascopes.jct.filemanagers.FileManager;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
 import org.junit.jupiter.api.BeforeEach;

@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
+import io.github.ascopes.jct.ex.CompilerAlreadyUsedException;
 import io.github.ascopes.jct.paths.PathLike;
 import java.nio.charset.Charset;
 import java.util.ArrayList;

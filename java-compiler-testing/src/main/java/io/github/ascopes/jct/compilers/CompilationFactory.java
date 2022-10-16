@@ -15,10 +15,11 @@
  */
 package io.github.ascopes.jct.compilers;
 
-import io.github.ascopes.jct.jsr199.FileManager;
-import io.github.ascopes.jct.jsr199.LoggingFileManagerProxy;
-import io.github.ascopes.jct.jsr199.diagnostics.TeeWriter;
-import io.github.ascopes.jct.jsr199.diagnostics.TracingDiagnosticListener;
+import io.github.ascopes.jct.diagnostics.TeeWriter;
+import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
+import io.github.ascopes.jct.ex.CompilerException;
+import io.github.ascopes.jct.filemanagers.FileManager;
+import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
 import io.github.ascopes.jct.paths.NioPath;
 import io.github.ascopes.jct.paths.RamPath;
 import io.github.ascopes.jct.utils.SpecialLocations;

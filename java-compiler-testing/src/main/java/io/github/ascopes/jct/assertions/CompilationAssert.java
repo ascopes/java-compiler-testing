@@ -17,7 +17,7 @@ package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.assertions.repr.DiagnosticListRepresentation;
 import io.github.ascopes.jct.compilers.Compilation;
-import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;

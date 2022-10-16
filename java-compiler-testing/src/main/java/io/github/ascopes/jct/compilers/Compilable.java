@@ -15,6 +15,8 @@
  */
 package io.github.ascopes.jct.compilers;
 
+import io.github.ascopes.jct.ex.CompilerAlreadyUsedException;
+import io.github.ascopes.jct.ex.CompilerException;
 import io.github.ascopes.jct.paths.NioPath;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.IterableUtils;

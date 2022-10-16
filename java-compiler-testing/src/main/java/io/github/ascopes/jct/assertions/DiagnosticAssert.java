@@ -18,7 +18,7 @@ package io.github.ascopes.jct.assertions;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.assertions.repr.DiagnosticRepresentation;
-import io.github.ascopes.jct.jsr199.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.Locale;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;

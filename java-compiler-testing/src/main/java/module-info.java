@@ -29,12 +29,13 @@ module io.github.ascopes.jct {
   requires /* automatic */ org.slf4j;
 
   exports io.github.ascopes.jct.assertions;
+  exports io.github.ascopes.jct.containers;
   exports io.github.ascopes.jct.compilers;
   exports io.github.ascopes.jct.compilers.javac;
+  exports io.github.ascopes.jct.diagnostics;
+  exports io.github.ascopes.jct.ex;
+  exports io.github.ascopes.jct.filemanagers;
   exports io.github.ascopes.jct.junit;
-  exports io.github.ascopes.jct.jsr199;
-  exports io.github.ascopes.jct.jsr199.containers;
-  exports io.github.ascopes.jct.jsr199.diagnostics;
   exports io.github.ascopes.jct.paths;
 
   // Junit annotation support.
@@ -44,19 +45,19 @@ module io.github.ascopes.jct {
   /// TESTING ONLY ///
   ////////////////////
 
-  exports io.github.ascopes.jct.assertions.repr to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.annotations to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.assertions.repr to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.jsr199 to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.jsr199.containers to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.jsr199.diagnostics to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.containers to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.diagnostics to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.ex to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.filemanagers to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.paths to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
+
   exports io.github.ascopes.jct.annotations to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.annotations to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.jsr199.groups;
-  opens io.github.ascopes.jct.jsr199.groups to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
 }
