@@ -15,15 +15,15 @@
  */
 package io.github.ascopes.jct.containers;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
 import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
-import java.io.UncheckedIOException;
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Optional;
+import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Stream;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
@@ -70,9 +70,10 @@ public interface PackageContainerGroup extends ContainerGroup {
    * Find the first occurrence of a given path to a file.
    *
    * @param path the path to the file to find.
-   * @return the first occurrence of the path in this group, or an empty optional if not found.
+   * @return the first occurrence of the path in this group, or null if not found.
    */
-  Optional<Path> findFile(String path);
+  @Nullable
+  Path findFile(String path);
 
   /**
    * Get a {@link FileObject} that can have content read from it.
@@ -81,12 +82,10 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * @param packageName  the package name of the file to read.
    * @param relativeName the relative name of the file to read.
-   * @return the file object, or an empty optional if the file is not found.
+   * @return the file object, or null if the file is not found.
    */
-  Optional<PathFileObject> getFileForInput(
-      String packageName,
-      String relativeName
-  );
+  @Nullable
+  PathFileObject getFileForInput(String packageName, String relativeName);
 
   /**
    * Get a {@link FileObject} that can have content written to it for the given file.
@@ -96,13 +95,11 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * @param packageName  the name of the package the file is in.
    * @param relativeName the relative name of the file within the package.
-   * @return the {@link FileObject} to write to, or an empty optional if this group has no paths
-   *     that can be written to.
+   * @return the {@link FileObject} to write to, or null if this group has no paths that can be
+   *     written to.
    */
-  Optional<PathFileObject> getFileForOutput(
-      String packageName,
-      String relativeName
-  );
+  @Nullable
+  PathFileObject getFileForOutput(String packageName, String relativeName);
 
   /**
    * Get a {@link JavaFileObject} that can have content written to it for the given file.
@@ -112,13 +109,11 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * @param className the binary name of the class to read.
    * @param kind      the kind of file to read.
-   * @return the {@link JavaFileObject} to write to, or an empty optional if this group has no paths
-   *     that can be written to.
+   * @return the {@link JavaFileObject} to write to, or null if this group has no paths that can be
+   *     written to.
    */
-  Optional<PathFileObject> getJavaFileForInput(
-      String className,
-      Kind kind
-  );
+  @Nullable
+  PathFileObject getJavaFileForInput(String className, Kind kind);
 
   /**
    * Get a {@link JavaFileObject} that can have content written to it for the given class.
@@ -128,13 +123,11 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * @param className the name of the class.
    * @param kind      the kind of the class file.
-   * @return the {@link JavaFileObject} to write to, or an empty optional if this group has no paths
-   *     that can be written to.
+   * @return the {@link JavaFileObject} to write to, or null if this group has no paths that can be
+   *     written to.
    */
-  Optional<PathFileObject> getJavaFileForOutput(
-      String className,
-      Kind kind
-  );
+  @Nullable
+  PathFileObject getJavaFileForOutput(String className, Kind kind);
 
   /**
    * Get the package-oriented location that this group of paths is for.
@@ -154,9 +147,10 @@ public interface PackageContainerGroup extends ContainerGroup {
    * Try to infer the binary name of a given file object.
    *
    * @param fileObject the file object to infer the binary name for.
-   * @return the binary name if known, or an empty optional otherwise.
+   * @return the binary name if known, or null otherwise.
    */
-  Optional<String> inferBinaryName(PathFileObject fileObject);
+  @Nullable
+  String inferBinaryName(PathFileObject fileObject);
 
   /**
    * Determine if this group has no paths registered.
@@ -168,19 +162,17 @@ public interface PackageContainerGroup extends ContainerGroup {
   /**
    * List all the file objects that match the given criteria in this group.
    *
-   * <p>The returned stream must be explicitly closed to prevent resource leaks.
-   *
    * @param packageName the package name to look in.
    * @param kinds       the kinds of file to look for.
    * @param recurse     {@code true} to recurse subpackages, {@code false} to only consider the
    *                    given package.
-   * @return a stream of resultant file objects.
-   * @throws UncheckedIOException if the file lookup fails due to an IO exception.
+   * @param collection  the collection to fill.
+   * @throws IOException if the file lookup fails due to an IO exception.
    */
-  @WillNotClose
-  Stream<? extends PathFileObject> listFileObjects(
+  void listFileObjects(
       String packageName,
       Set<? extends Kind> kinds,
-      boolean recurse
-  );
+      boolean recurse,
+      Collection<JavaFileObject> collection
+  ) throws IOException;
 }

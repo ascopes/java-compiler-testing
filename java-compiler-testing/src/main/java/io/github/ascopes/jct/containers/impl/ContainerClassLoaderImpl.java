@@ -21,7 +21,6 @@ import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.ex.ClassLoadingFailedException;
 import io.github.ascopes.jct.ex.ClassMissingException;
-import io.github.ascopes.jct.utils.EnumerationAdapter;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.net.URL;
@@ -106,10 +105,9 @@ public class ContainerClassLoaderImpl extends ClassLoader {
 
   @Override
   protected Class<?> findClass(String name) throws ClassNotFoundException {
-    var maybeModule = ModuleHandle.tryExtract(name);
+    var module = ModuleHandle.tryExtract(name);
 
-    if (maybeModule.isPresent()) {
-      var module = maybeModule.get();
+    if (module != null) {
       var moduleContainers = this.moduleContainers.get(module.getModuleName());
 
       if (moduleContainers != null) {
@@ -157,41 +155,48 @@ public class ContainerClassLoaderImpl extends ClassLoader {
 
     var resources = new ArrayList<URL>();
 
-    var maybeModule = ModuleHandle.tryExtract(resourcePath);
-    if (maybeModule.isPresent()) {
-      var module = maybeModule.get();
+    var module = ModuleHandle.tryExtract(resourcePath);
+    if (module != null) {
       var moduleContainers = this.moduleContainers.get(module.getModuleName());
 
       if (moduleContainers != null) {
         var trimmedResourcePath = module.getRest();
 
         for (var container : moduleContainers) {
-          container.getResource(trimmedResourcePath).ifPresent(resource -> {
-            LOGGER.trace(
-                "Found resource '{}' in module container {} for module {} within {}",
-                resource,
-                container,
-                module.getModuleName(),
-                location.getName()
-            );
+          var resource = container.getResource(trimmedResourcePath);
 
-            resources.add(resource);
-          });
+          if (resource == null) {
+            continue;
+          }
+
+          LOGGER.trace(
+              "Found resource '{}' in module container {} for module {} within {}",
+              resource,
+              container,
+              module.getModuleName(),
+              location.getName()
+          );
+
+          resources.add(resource);
         }
       }
     }
 
     for (var container : packageContainers) {
-      container.getResource(resourcePath).ifPresent(resource -> {
-        LOGGER.trace(
-            "Found resource '{}' in package container {} within {}",
-            resource,
-            container,
-            location.getName()
-        );
+      var resource = container.getResource(resourcePath);
 
-        resources.add(resource);
-      });
+      if (resource == null) {
+        continue;
+      }
+
+      LOGGER.trace(
+          "Found resource '{}' in package container {} within {}",
+          resource,
+          container,
+          location.getName()
+      );
+
+      resources.add(resource);
     }
 
     return new EnumerationAdapter<>(resources.iterator());
@@ -204,14 +209,15 @@ public class ContainerClassLoaderImpl extends ClassLoader {
   ) throws ClassLoadingFailedException {
     try {
       for (var container : containers) {
-        var clazz = container
-            .getClassBinary(binaryName)
-            .map(data -> defineClass(null, data, 0, data.length));
-
-        if (clazz.isPresent()) {
-          LOGGER.trace("Found class {} in {} for {}", binaryName, container, location.getName());
-          return clazz.get();
+        var data = container.getClassBinary(binaryName);
+        if (data == null) {
+          continue;
         }
+
+        var clazz = defineClass(null, data, 0, data.length);
+
+        LOGGER.trace("Found class {} in {} for {}", binaryName, container, location.getName());
+        return clazz;
       }
 
       LOGGER.trace("Class {} not found in {}", binaryName, location.getName());

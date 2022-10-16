@@ -101,7 +101,7 @@ public class ModuleContainerGroupAssert
   public MaybeAssert<PathAssert, Path> file(String moduleName, String path) {
     // TODO(ascopes): add in fuzzy comparison on results in error message
     return new MaybeAssert<>(
-        actual.getOrCreateModule(moduleName).findFile(path).orElse(null),
+        actual.getOrCreateModule(moduleName).findFile(path),
         PathAssert::new
     );
   }
@@ -122,9 +122,7 @@ public class ModuleContainerGroupAssert
       String relativeName
   ) {
     return new MaybeAssert<>(
-        actual.getOrCreateModule(moduleName)
-            .getFileForInput(packageName, relativeName)
-            .orElse(null),
+        actual.getOrCreateModule(moduleName).getFileForInput(packageName, relativeName),
         PathFileObjectAssert::new
     );
   }
@@ -145,9 +143,7 @@ public class ModuleContainerGroupAssert
       String relativeName
   ) {
     return new MaybeAssert<>(
-        actual.getOrCreateModule(moduleName)
-            .getFileForOutput(packageName, relativeName)
-            .orElse(null),
+        actual.getOrCreateModule(moduleName).getFileForOutput(packageName, relativeName),
         PathFileObjectAssert::new
     );
   }
@@ -168,9 +164,7 @@ public class ModuleContainerGroupAssert
       Kind kind
   ) {
     return new MaybeAssert<>(
-        actual.getOrCreateModule(moduleName)
-            .getJavaFileForInput(className, kind)
-            .orElse(null),
+        actual.getOrCreateModule(moduleName).getJavaFileForInput(className, kind),
         PathFileObjectAssert::new
     );
   }
@@ -191,9 +185,7 @@ public class ModuleContainerGroupAssert
       Kind kind
   ) {
     return new MaybeAssert<>(
-        actual.getOrCreateModule(moduleName)
-            .getJavaFileForOutput(className, kind)
-            .orElse(null),
+        actual.getOrCreateModule(moduleName).getJavaFileForOutput(className, kind),
         PathFileObjectAssert::new
     );
   }

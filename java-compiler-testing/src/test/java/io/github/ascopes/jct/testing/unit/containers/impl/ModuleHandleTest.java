@@ -55,13 +55,13 @@ class ModuleHandleTest {
       "HelloWorld",
       "org.example.HelloWorld"
   })
-  @ParameterizedTest(name = "tryExtract returns empty for \"{0}\"")
-  void tryExtractReturnsEmptyIfNoModuleHandleIsFound(String original) {
+  @ParameterizedTest(name = "tryExtract returns null for \"{0}\"")
+  void tryExtractReturnsNullIfNoModuleHandleIsFound(String original) {
     // When
     var prefix = ModuleHandle.tryExtract(original);
 
     // Then
-    assertThat(prefix).isEmpty();
+    assertThat(prefix).isNull();
   }
 
   @DisplayName("tryExtract stores the original input in the result")
@@ -75,8 +75,7 @@ class ModuleHandleTest {
 
     // Then
     assertThat(prefix)
-        .isPresent()
-        .get()
+        .isNotNull()
         .extracting(ModuleHandle::getOriginal)
         .describedAs("ModuleHandle#getOriginal")
         .asString()
@@ -96,8 +95,7 @@ class ModuleHandleTest {
   void tryExtractExtractsTheModuleName(String original, String expected) {
     // Then
     assertThat(ModuleHandle.tryExtract(original))
-        .isPresent()
-        .get()
+        .isNotNull()
         .extracting(ModuleHandle::getModuleName)
         .describedAs("ModuleHandle#getModuleName")
         .asString()
@@ -117,8 +115,7 @@ class ModuleHandleTest {
   void tryExtractExtractsTheRest(String original, String expected) {
     // Then
     assertThat(ModuleHandle.tryExtract(original))
-        .isPresent()
-        .get()
+        .isNotNull()
         .extracting(ModuleHandle::getRest)
         .describedAs("ModuleHandle#getRest")
         .asString()

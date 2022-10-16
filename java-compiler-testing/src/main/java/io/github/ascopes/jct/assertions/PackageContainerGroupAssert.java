@@ -89,7 +89,7 @@ public class PackageContainerGroupAssert
    */
   public MaybeAssert<PathAssert, Path> file(String path) {
     // TODO(ascopes): add in fuzzy comparison on results in error message
-    return new MaybeAssert<>(actual.findFile(path).orElse(null), PathAssert::new);
+    return new MaybeAssert<>(actual.findFile(path), PathAssert::new);
   }
 
   /**
@@ -106,7 +106,7 @@ public class PackageContainerGroupAssert
       String relativeName
   ) {
     return new MaybeAssert<>(
-        actual.getFileForInput(packageName, relativeName).orElse(null),
+        actual.getFileForInput(packageName, relativeName),
         PathFileObjectAssert::new
     );
   }
@@ -125,7 +125,7 @@ public class PackageContainerGroupAssert
       String relativeName
   ) {
     return new MaybeAssert<>(
-        actual.getFileForOutput(packageName, relativeName).orElse(null),
+        actual.getFileForOutput(packageName, relativeName),
         PathFileObjectAssert::new
     );
   }
@@ -144,7 +144,7 @@ public class PackageContainerGroupAssert
       Kind kind
   ) {
     return new MaybeAssert<>(
-        actual.getJavaFileForInput(className, kind).orElse(null),
+        actual.getJavaFileForInput(className, kind),
         PathFileObjectAssert::new
     );
   }
@@ -163,7 +163,7 @@ public class PackageContainerGroupAssert
       Kind kind
   ) {
     return new MaybeAssert<>(
-        actual.getJavaFileForOutput(className, kind).orElse(null),
+        actual.getJavaFileForOutput(className, kind),
         PathFileObjectAssert::new
     );
   }

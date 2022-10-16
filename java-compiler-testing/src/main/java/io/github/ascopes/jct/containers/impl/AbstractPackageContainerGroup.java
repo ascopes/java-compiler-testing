@@ -15,11 +15,10 @@
  */
 package io.github.ascopes.jct.containers.impl;
 
-import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
-import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
@@ -30,15 +29,14 @@ import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Stream;
 import javax.tools.JavaFileManager.Location;
+import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -144,11 +142,16 @@ public abstract class AbstractPackageContainerGroup
   }
 
   @Override
-  public Optional<Path> findFile(String path) {
-    return containers
-        .stream()
-        .flatMap(container -> container.findFile(path).stream())
-        .findFirst();
+  @Nullable
+  public Path findFile(String path) {
+    for (var container : containers) {
+      var result = container.findFile(path);
+      if (result != null) {
+        return result;
+      }
+    }
+
+    return null;
   }
 
   @Override
@@ -157,47 +160,55 @@ public abstract class AbstractPackageContainerGroup
   }
 
   @Override
-  public Optional<PathFileObject> getFileForInput(
-      String packageName,
-      String relativeName
-  ) {
-    return containers
-        .stream()
-        .flatMap(container -> container.getFileForInput(packageName, relativeName).stream())
-        .findFirst();
+  @Nullable
+  public PathFileObject getFileForInput(String packageName, String relativeName) {
+    for (var container : containers) {
+      var file = container.getFileForInput(packageName, relativeName);
+      if (file != null) {
+        return file;
+      }
+    }
+
+    return null;
   }
 
   @Override
-  public Optional<PathFileObject> getFileForOutput(
-      String packageName,
-      String relativeName
-  ) {
-    return containers
-        .stream()
-        .flatMap(container -> container.getFileForOutput(packageName, relativeName).stream())
-        .findFirst();
+  @Nullable
+  public PathFileObject getFileForOutput(String packageName, String relativeName) {
+    for (var container : containers) {
+      var file = container.getFileForOutput(packageName, relativeName);
+      if (file != null) {
+        return file;
+      }
+    }
+
+    return null;
   }
 
   @Override
-  public Optional<PathFileObject> getJavaFileForInput(
-      String className,
-      Kind kind
-  ) {
-    return containers
-        .stream()
-        .flatMap(container -> container.getJavaFileForInput(className, kind).stream())
-        .findFirst();
+  @Nullable
+  public PathFileObject getJavaFileForInput(String className, Kind kind) {
+    for (var container : containers) {
+      var file = container.getJavaFileForInput(className, kind);
+      if (file != null) {
+        return file;
+      }
+    }
+
+    return null;
   }
 
   @Override
-  public Optional<PathFileObject> getJavaFileForOutput(
-      String className,
-      Kind kind
-  ) {
-    return containers
-        .stream()
-        .flatMap(container -> container.getJavaFileForOutput(className, kind).stream())
-        .findFirst();
+  @Nullable
+  public PathFileObject getJavaFileForOutput(String className, Kind kind) {
+    for (var container : containers) {
+      var file = container.getJavaFileForOutput(className, kind);
+      if (file != null) {
+        return file;
+      }
+    }
+
+    return null;
   }
 
   @Override
@@ -220,11 +231,16 @@ public abstract class AbstractPackageContainerGroup
   }
 
   @Override
-  public Optional<String> inferBinaryName(PathFileObject fileObject) {
-    return containers
-        .stream()
-        .flatMap(container -> container.inferBinaryName(fileObject).stream())
-        .findFirst();
+  @Nullable
+  public String inferBinaryName(PathFileObject fileObject) {
+    for (var container : containers) {
+      var name = container.inferBinaryName(fileObject);
+      if (name != null) {
+        return name;
+      }
+    }
+
+    return null;
   }
 
   @Override
@@ -232,27 +248,20 @@ public abstract class AbstractPackageContainerGroup
     return containers.isEmpty();
   }
 
-  @WillNotClose
   @Override
-  public Stream<? extends PathFileObject> listFileObjects(
+  public void listFileObjects(
       String packageName,
       Set<? extends Kind> kinds,
-      boolean recurse
-  ) {
-    return containers
-        .stream()
-        .flatMap(listFileObjectsInContainer(packageName, kinds, recurse));
+      boolean recurse,
+      Collection<JavaFileObject> collection
+  ) throws IOException {
+    for (var container : containers) {
+      container.listFileObjects(packageName, kinds, recurse, collection);
+    }
   }
 
   protected ContainerClassLoaderImpl createClassLoader() {
     return new ContainerClassLoaderImpl(getLocation(), getPackages());
   }
 
-  private Function<Container, Stream<? extends PathFileObject>> listFileObjectsInContainer(
-      String packageName,
-      Set<? extends Kind> kinds,
-      boolean recurse
-  ) {
-    return container -> uncheckedIo(() -> container.listFileObjects(packageName, kinds, recurse));
-  }
 }

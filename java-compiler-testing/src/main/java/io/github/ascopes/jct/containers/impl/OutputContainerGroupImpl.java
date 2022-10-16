@@ -17,6 +17,7 @@ package io.github.ascopes.jct.containers.impl;
 
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
 import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.containers.Container;
@@ -106,51 +107,103 @@ public class OutputContainerGroupImpl
   }
 
   @Override
-  public Optional<Path> findFile(String path) {
-    return ModuleHandle
-        .tryExtract(path)
-        .flatMap(prefix -> getOrCreateModule(prefix.getModuleName())
-            .findFile(prefix.getRest()))
-        .or(() -> super.findFile(path));
+  @Nullable
+  public Path findFile(String path) {
+    var moduleHandle = ModuleHandle.tryExtract(path);
+
+    if (moduleHandle != null) {
+      var module = getOrCreateModule(moduleHandle.getModuleName());
+
+      if (module != null) {
+        var result = module.findFile(moduleHandle.getRest());
+
+        if (result != null) {
+          return result;
+        }
+      }
+    }
+
+    return super.findFile(path);
   }
 
   @Override
-  public Optional<PathFileObject> getFileForInput(
-      String packageName,
-      String relativeName
-  ) {
-    return ModuleHandle
-        .tryExtract(packageName)
-        .flatMap(prefix -> getOrCreateModule(prefix.getModuleName())
-            .getFileForInput(prefix.getModuleName(), relativeName))
-        .or(() -> super.getFileForInput(packageName, relativeName));
+  @Nullable
+  public PathFileObject getFileForInput(String packageName, String relativeName) {
+    var moduleHandle = ModuleHandle.tryExtract(packageName);
+
+    if (moduleHandle != null) {
+      var module = getOrCreateModule(moduleHandle.getModuleName());
+
+      if (module != null) {
+        var file = module.getFileForInput(moduleHandle.getRest(), relativeName);
+
+        if (file != null) {
+          return file;
+        }
+      }
+    }
+
+    return super.getFileForInput(packageName, relativeName);
   }
 
   @Override
-  public Optional<PathFileObject> getFileForOutput(String packageName, String relativeName) {
-    return ModuleHandle
-        .tryExtract(packageName)
-        .flatMap(prefix -> getOrCreateModule(prefix.getModuleName())
-            .getFileForOutput(prefix.getRest(), relativeName))
-        .or(() -> super.getFileForOutput(packageName, relativeName));
+  @Nullable
+  public PathFileObject getFileForOutput(String packageName, String relativeName) {
+    var moduleHandle = ModuleHandle.tryExtract(packageName);
+
+    if (moduleHandle != null) {
+      var module = getOrCreateModule(moduleHandle.getModuleName());
+
+      if (module != null) {
+        var file = module.getFileForOutput(moduleHandle.getRest(), relativeName);
+
+        if (file != null) {
+          return file;
+        }
+      }
+    }
+
+    return super.getFileForOutput(packageName, relativeName);
   }
 
   @Override
-  public Optional<PathFileObject> getJavaFileForInput(String className, Kind kind) {
-    return ModuleHandle
-        .tryExtract(className)
-        .flatMap(prefix -> getOrCreateModule(prefix.getModuleName())
-            .getJavaFileForInput(prefix.getRest(), kind))
-        .or(() -> super.getJavaFileForInput(className, kind));
+  @Nullable
+  public PathFileObject getJavaFileForInput(String className, Kind kind) {
+    var moduleHandle = ModuleHandle.tryExtract(className);
+
+    if (moduleHandle != null) {
+      var module = getOrCreateModule(moduleHandle.getModuleName());
+
+      if (module != null) {
+        var file = module.getJavaFileForInput(moduleHandle.getRest(), kind);
+
+        if (file != null) {
+          return file;
+        }
+      }
+    }
+
+    return super.getJavaFileForInput(className, kind);
   }
 
   @Override
-  public Optional<PathFileObject> getJavaFileForOutput(String className, Kind kind) {
-    return ModuleHandle
-        .tryExtract(className)
-        .flatMap(prefix -> getOrCreateModule(prefix.getModuleName())
-            .getJavaFileForOutput(prefix.getRest(), kind))
-        .or(() -> super.getJavaFileForOutput(className, kind));
+  @Nullable
+  public PathFileObject getJavaFileForOutput(String className, Kind kind) {
+    var moduleHandle = ModuleHandle.tryExtract(className);
+
+    if (moduleHandle != null) {
+      var module = getOrCreateModule(moduleHandle.getModuleName());
+
+      if (module != null) {
+        var file = module.getJavaFileForOutput(moduleHandle.getRest(), kind);
+
+        if (file != null) {
+          return file;
+        }
+      }
+    }
+
+    return super.getJavaFileForOutput(className, kind);
   }
 
   @Override

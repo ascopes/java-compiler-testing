@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.utils;
+package io.github.ascopes.jct.containers.impl;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 
+import io.github.ascopes.jct.utils.StringSlicer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
@@ -74,12 +74,14 @@ public final class FileUtils {
       throw new IllegalArgumentException("Path cannot be absolute (got " + path + ")");
     }
 
-    return IntStream
-        .range(0, path.getNameCount())
-        .mapToObj(path::getName)
-        .map(Path::toString)
-        .map(FileUtils::stripFileExtension)
-        .collect(Collectors.joining("."));
+    var count = path.getNameCount();
+    var names = new String[count];
+
+    for (var i = 0; i < count; ++i) {
+      names[i] = FileUtils.stripFileExtension(path.getName(i).toString());
+    }
+
+    return String.join(".", names);
   }
 
   /**
@@ -163,26 +165,26 @@ public final class FileUtils {
    * @return the expected path.
    */
   public static Path resourceNameToPath(Path directory, String packageName, String relativeName) {
-    if (relativeName.startsWith("/")) {
-      // If we have a relative name that starts with a `/`, then we assume that it is relative
-      // to the root package, so we ignore the given package name. We only then use the
-      // directory to determine the file system to work off of.
-
-      // Prepend the root part, as this gets dropped otherwise.
-      var parts = Stream
-          .concat(
-              Stream.of("/"),
-              RESOURCE_SPLITTER
-                  .splitToStream(relativeName)
-                  .dropWhile(String::isEmpty)
-          )
-          .toArray(String[]::new);
-
-      return resolve(directory, parts);
+    if (!relativeName.startsWith("/")) {
+      var baseDir = resolve(directory, PACKAGE_SLICER.splitToArray(packageName));
+      return relativeResourceNameToPath(baseDir, relativeName);
     }
 
-    var baseDir = resolve(directory, PACKAGE_SLICER.splitToArray(packageName));
-    return relativeResourceNameToPath(baseDir, relativeName);
+    // If we have a relative name that starts with a `/`, then we assume that it is relative
+    // to the root package, so we ignore the given package name. We only then use the
+    // directory to determine the file system to work off of.
+
+    // Prepend the root part, as this gets dropped otherwise.
+    var parts = new ArrayList<String>();
+    parts.add("/");
+
+    for (var part : RESOURCE_SPLITTER.splitToArray(relativeName)) {
+      if (!part.isEmpty()) {
+        parts.add(part);
+      }
+    }
+
+    return resolve(directory, parts);
   }
 
   /**
@@ -208,11 +210,14 @@ public final class FileUtils {
     // result in this being called ideally, but this prevents unexpected NullPointerExceptions
     // elsewhere.
     var fileName = Objects.toString(path.getFileName(), "");
-    return KINDS
-        .stream()
-        .filter(kind -> fileName.endsWith(kind.extension))
-        .findFirst()
-        .orElse(Kind.OTHER);
+
+    for (var kind : KINDS) {
+      if (fileName.endsWith(kind.extension)) {
+        return kind;
+      }
+    }
+
+    return Kind.OTHER;
   }
 
   /**
@@ -227,18 +232,17 @@ public final class FileUtils {
    * @return the predicate.
    */
   public static Predicate<? super Path> fileWithAnyKind(Set<? extends Kind> kinds) {
-    var kindOptions = kinds
-        .stream()
-        .sorted(KIND_ORDER)
-        .map(kind -> kind.extension)
-        .collect(toUnmodifiableList());
-
-    return path -> Files.isRegularFile(path) && kindOptions
-        .stream()
-        .anyMatch(path.toString()::endsWith);
+    return path -> Files.isRegularFile(path) && kinds.contains(pathToKind(path));
   }
 
   private static Path resolve(Path root, String... parts) {
+    for (var part : parts) {
+      root = root.resolve(part);
+    }
+    return root.normalize();
+  }
+
+  private static Path resolve(Path root, Iterable<String> parts) {
     for (var part : parts) {
       root = root.resolve(part);
     }

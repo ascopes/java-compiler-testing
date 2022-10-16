@@ -31,21 +31,18 @@ import io.github.ascopes.jct.paths.SubPath;
 import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
-import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
-import java.lang.module.ModuleReference;
 import java.lang.ref.Cleaner;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -102,6 +99,7 @@ public class FileManagerImpl implements FileManager {
         getOrCreateModule(moduleLocation.getParent())
             .addModule(moduleLocation.getModuleName(), path);
       }
+
     } else if (location.isOutputLocation()) {
       getOrCreateOutput(location)
           .addPackage(path);
@@ -110,15 +108,11 @@ public class FileManagerImpl implements FileManager {
       // Attempt to find modules.
       var moduleGroup = getOrCreateModule(location);
 
-      ModuleFinder
-          .of(path.getPath())
-          .findAll()
-          .stream()
-          .map(ModuleReference::descriptor)
-          .map(ModuleDescriptor::name)
-          .forEach(module -> moduleGroup
-              .getOrCreateModule(module)
-              .addPackage(new SubPath(path, module)));
+      for (var ref : ModuleFinder.of(path.getPath()).findAll()) {
+        var module = ref.descriptor().name();
+        moduleGroup.getOrCreateModule(module)
+            .addPackage(new SubPath(path, module));
+      }
 
     } else {
       getOrCreatePackage(location)
@@ -169,43 +163,39 @@ public class FileManagerImpl implements FileManager {
 
     if (from.isOutputLocation()) {
       var toOutputs = getOrCreateOutput(to);
+      var fromOutput = outputs.get(from);
 
-      Optional
-          .ofNullable(outputs.get(from))
-          .ifPresent(fromOutputs -> {
-            fromOutputs.getPackages().forEach(toOutputs::addPackage);
-            fromOutputs.getModules().forEach((module, containers) -> containers
-                .getPackages()
-                .forEach(container -> toOutputs.addModule(module.getModuleName(), container))
-            );
-          });
+      if (fromOutput != null) {
+        fromOutput.getPackages().forEach(toOutputs::addPackage);
+        fromOutput.getModules().forEach((module, containers) -> containers
+            .getPackages()
+            .forEach(container -> toOutputs.addModule(module.getModuleName(), container)));
+      }
 
     } else if (from.isModuleOrientedLocation()) {
       var toModules = getOrCreateModule(to);
+      var fromModule = modules.get(from);
 
-      Optional
-          .ofNullable(modules.get(from))
-          .map(ModuleContainerGroup::getModules)
-          .ifPresent(fromModules -> fromModules
-              .forEach((module, containers) -> containers
-                  .getPackages()
-                  .forEach(container -> toModules.addModule(module.getModuleName(), container))
-              )
-          );
+      if (fromModule != null) {
+        fromModule.getModules().forEach((moduleLocation, containers) -> containers
+            .getPackages()
+            .forEach(container -> toModules.addModule(moduleLocation.getModuleName(), container)));
+      }
 
     } else {
       var toPackages = getOrCreatePackage(to);
+      var fromPackage = packages.get(from);
 
-      Optional
-          .ofNullable(packages.get(from))
-          .ifPresent(fromPackages -> fromPackages.getPackages().forEach(toPackages::addPackage));
+      if (fromPackage != null) {
+        fromPackage.getPackages().forEach(toPackages::addPackage);
+      }
     }
-
   }
 
   @Override
-  public Optional<PackageContainerGroup> getPackageContainerGroup(Location location) {
-    return Optional.ofNullable(packages.get(location));
+  @Nullable
+  public PackageContainerGroup getPackageContainerGroup(Location location) {
+    return packages.get(location);
   }
 
   @Override
@@ -214,8 +204,9 @@ public class FileManagerImpl implements FileManager {
   }
 
   @Override
-  public Optional<ModuleContainerGroup> getModuleContainerGroup(Location location) {
-    return Optional.ofNullable(modules.get(location));
+  @Nullable
+  public ModuleContainerGroup getModuleContainerGroup(Location location) {
+    return modules.get(location);
   }
 
   @Override
@@ -224,8 +215,9 @@ public class FileManagerImpl implements FileManager {
   }
 
   @Override
-  public Optional<OutputContainerGroup> getOutputContainerGroup(Location location) {
-    return Optional.ofNullable(outputs.get(location));
+  @Nullable
+  public OutputContainerGroup getOutputContainerGroup(Location location) {
+    return outputs.get(location);
   }
 
   @Override
@@ -236,9 +228,11 @@ public class FileManagerImpl implements FileManager {
   @Nullable
   @Override
   public ClassLoader getClassLoader(Location location) {
-    return getPackageOrientedOrOutputGroup(location)
-        .map(ContainerGroup::getClassLoader)
-        .orElse(null);
+    var group = getExistingPackageOrientedOrOutputGroup(location);
+
+    return group == null
+        ? null
+        : group.getClassLoader();
   }
 
   @Override
@@ -248,12 +242,15 @@ public class FileManagerImpl implements FileManager {
       Set<Kind> kinds,
       boolean recurse
   ) throws IOException {
+    var group = getExistingPackageOrientedOrOutputGroup(location);
 
-    try (var stream = getPackageOrientedOrOutputGroup(location)
-        .stream()
-        .flatMap(group -> group.listFileObjects(packageName, kinds, recurse))) {
-      return stream.collect(Collectors.toUnmodifiableList());
+    if (group == null) {
+      return List.of();
     }
+
+    var files = new ArrayList<JavaFileObject>();
+    group.listFileObjects(packageName, kinds, recurse, files);
+    return files;
   }
 
   @Nullable
@@ -265,10 +262,11 @@ public class FileManagerImpl implements FileManager {
 
     var pathFileObject = (PathFileObject) file;
 
-    return getPackageOrientedOrOutputGroup(location)
-        .flatMap(group -> group.inferBinaryName(pathFileObject))
-        .orElse(null);
+    var group = getExistingPackageOrientedOrOutputGroup(location);
 
+    return group == null
+        ? null
+        : group.inferBinaryName(pathFileObject);
   }
 
   @Override
@@ -290,9 +288,9 @@ public class FileManagerImpl implements FileManager {
   public boolean hasLocation(Location location) {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
-      return getModuleOrientedOrOutputGroup(moduleLocation.getParent())
-          .map(group -> group.hasLocation(moduleLocation))
-          .orElse(false);
+      var group = getExistingModuleOrientedOrOutputGroup(moduleLocation.getParent());
+
+      return group != null && group.hasLocation(moduleLocation);
     }
 
     return packages.containsKey(location)
@@ -307,9 +305,11 @@ public class FileManagerImpl implements FileManager {
       String className,
       Kind kind
   ) {
-    return getPackageOrientedOrOutputGroup(location)
-        .flatMap(group -> group.getJavaFileForInput(className, kind))
-        .orElse(null);
+    var group = getExistingPackageOrientedOrOutputGroup(location);
+
+    return group == null
+        ? null
+        : group.getJavaFileForInput(className, kind);
   }
 
   @Nullable
@@ -320,9 +320,11 @@ public class FileManagerImpl implements FileManager {
       Kind kind,
       FileObject sibling
   ) {
-    return getPackageOrientedOrOutputGroup(location)
-        .flatMap(group -> group.getJavaFileForOutput(className, kind))
-        .orElse(null);
+    var group = getExistingPackageOrientedOrOutputGroup(location);
+
+    return group == null
+        ? null
+        : group.getJavaFileForOutput(className, kind);
   }
 
   @Nullable
@@ -332,9 +334,11 @@ public class FileManagerImpl implements FileManager {
       String packageName,
       String relativeName
   ) {
-    return getPackageOrientedOrOutputGroup(location)
-        .flatMap(group -> group.getFileForInput(packageName, relativeName))
-        .orElse(null);
+    var group = getExistingPackageOrientedOrOutputGroup(location);
+
+    return group == null
+        ? null
+        : group.getFileForInput(packageName, relativeName);
   }
 
   @Nullable
@@ -345,9 +349,11 @@ public class FileManagerImpl implements FileManager {
       String relativeName,
       FileObject sibling
   ) {
-    return getPackageOrientedOrOutputGroup(location)
-        .flatMap(group -> group.getFileForOutput(packageName, relativeName))
-        .orElse(null);
+    var group = getExistingPackageOrientedOrOutputGroup(location);
+
+    return group == null
+        ? null
+        : group.getFileForOutput(packageName, relativeName);
   }
 
   @Override
@@ -386,16 +392,16 @@ public class FileManagerImpl implements FileManager {
   }
 
   @Override
-  @SuppressWarnings("resource")
-  public <S> ServiceLoader<S> getServiceLoader(
-      Location location,
-      Class<S> service
-  ) {
-    return getGroup(location)
-        .orElseThrow(() -> new NoSuchElementException(
-            "No container group for location " + location.getName() + " exists"
-        ))
-        .getServiceLoader(service);
+  public <S> ServiceLoader<S> getServiceLoader(Location location, Class<S> service) {
+    var group = getExistingGroup(location);
+
+    if (group == null) {
+      throw new NoSuchElementException(
+          "No container group for location " + location.getName() + " exists"
+      );
+    }
+
+    return group.getServiceLoader(service);
   }
 
   @Nullable
@@ -412,9 +418,13 @@ public class FileManagerImpl implements FileManager {
   public Iterable<Set<Location>> listLocationsForModules(Location location) {
     requireOutputOrModuleOrientedLocation(location);
 
-    return getModuleOrientedOrOutputGroup(location)
-        .map(ModuleContainerGroup::getLocationsForModules)
-        .orElseGet(List::of);
+    var group = getExistingModuleOrientedOrOutputGroup(location);
+
+    if (group == null) {
+      return List.of();
+    }
+
+    return group.getLocationsForModules();
   }
 
   @Override
@@ -423,9 +433,9 @@ public class FileManagerImpl implements FileManager {
       return false;
     }
 
-    return getGroup(location)
-        .map(group -> group.contains((PathFileObject) fo))
-        .orElse(false);
+    var group = getExistingGroup(location);
+
+    return group != null && group.contains((PathFileObject) fo);
   }
 
   @Override
@@ -440,45 +450,57 @@ public class FileManagerImpl implements FileManager {
         .toString();
   }
 
-  private Optional<ContainerGroup> getGroup(Location location) {
-    if (location instanceof ModuleLocation) {
-      var moduleLocation = (ModuleLocation) location;
-      return getModuleOrientedOrOutputGroup(moduleLocation.getParent())
-          .map(group -> group.getOrCreateModule(moduleLocation.getModuleName()));
-    }
+  @Nullable
+  private ContainerGroup getExistingGroup(Location location) {
+    var group = getExistingPackageOrientedOrOutputGroup(location);
 
-    return Optional
-        .<ContainerGroup>ofNullable(packages.get(location))
-        .or(() -> Optional.ofNullable(modules.get(location)))
-        .or(() -> Optional.ofNullable(outputs.get(location)));
+    return group == null
+        ? getExistingModuleOrientedOrOutputGroup(location)
+        : group;
   }
 
-  private Optional<ModuleContainerGroup> getModuleOrientedOrOutputGroup(Location location) {
+  @Nullable
+  private ModuleContainerGroup getExistingModuleOrientedOrOutputGroup(Location location) {
     if (location instanceof ModuleLocation) {
       throw new IllegalArgumentException(
           "Cannot get a module-oriented group from a ModuleLocation"
       );
     }
 
-    return Optional
-        .ofNullable(modules.get(location))
-        .or(() -> Optional.ofNullable(outputs.get(location)));
-  }
+    var group = modules.get(location);
 
-  private Optional<PackageContainerGroup> getPackageOrientedOrOutputGroup(
-      Location location
-  ) {
-    if (location instanceof ModuleLocation) {
-      var moduleLocation = (ModuleLocation) location;
-      return Optional
-          .ofNullable(modules.get(moduleLocation.getParent()))
-          .or(() -> Optional.ofNullable(outputs.get(moduleLocation.getParent())))
-          .map(group -> group.getOrCreateModule(moduleLocation.getModuleName()));
+    if (group == null) {
+      group = outputs.get(location);
     }
 
-    return Optional
-        .ofNullable(packages.get(location))
-        .or(() -> Optional.ofNullable(outputs.get(location)));
+    return group;
+  }
+
+  @Nullable
+  private PackageContainerGroup getExistingPackageOrientedOrOutputGroup(Location location) {
+    if (location instanceof ModuleLocation) {
+      var moduleLocation = (ModuleLocation) location;
+
+      var module = modules.get(moduleLocation.getParent());
+
+      if (module == null) {
+        module = outputs.get(moduleLocation.getParent());
+      }
+
+      if (module == null) {
+        return null;
+      }
+
+      return module.getOrCreateModule(moduleLocation.getModuleName());
+    }
+
+    var group = packages.get(location);
+
+    if (group == null) {
+      group = outputs.get(location);
+    }
+
+    return group;
   }
 
   private PackageContainerGroup getOrCreatePackage(Location location) {

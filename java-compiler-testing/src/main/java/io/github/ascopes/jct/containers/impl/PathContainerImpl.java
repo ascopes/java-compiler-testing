@@ -17,11 +17,11 @@ package io.github.ascopes.jct.containers.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.paths.PathLike;
-import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
@@ -30,10 +30,10 @@ import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.Optional;
+import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Stream;
 import javax.tools.JavaFileManager.Location;
+import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -81,73 +81,59 @@ public class PathContainerImpl implements Container {
   }
 
   @Override
-  public Optional<Path> findFile(String path) {
+  @Nullable
+  public Path findFile(String path) {
     if (path.startsWith("/")) {
       throw new IllegalArgumentException("Absolute paths are not supported (got '" + path + "')");
     }
 
-    return Optional
-        .of(FileUtils.relativeResourceNameToPath(root.getPath(), path))
-        .filter(Files::isRegularFile);
+    var realPath = FileUtils.relativeResourceNameToPath(root.getPath(), path);
+
+    return Files.isRegularFile(realPath)
+        ? realPath
+        : null;
   }
 
   @Override
-  public Optional<byte[]> getClassBinary(String binaryName) throws IOException {
+  @Nullable
+  public byte[] getClassBinary(String binaryName) throws IOException {
     var path = FileUtils.binaryNameToPath(root.getPath(), binaryName, Kind.CLASS);
     return Files.isRegularFile(path)
-        ? Optional.of(Files.readAllBytes(path))
-        : Optional.empty();
+        ? Files.readAllBytes(path)
+        : null;
   }
 
   @Override
-  public Optional<PathFileObject> getFileForInput(
-      String packageName,
-      String relativeName
-  ) {
-    return Optional
-        .of(FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName))
-        .filter(Files::isRegularFile)
-        .map(path -> new PathFileObject(location, root.getPath(), path));
+  @Nullable
+  public PathFileObject getFileForInput(String packageName, String relativeName) {
+    var path = FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName);
+
+    return Files.isRegularFile(path)
+        ? new PathFileObject(location, root.getPath(), path)
+        : null;
   }
 
   @Override
-  public Optional<PathFileObject> getFileForOutput(
-      String packageName,
-      String relativeName
-  ) {
-    LOGGER.trace(
-        "Output file - this={} packageName={}, relativeName={})",
-        this,
-        packageName,
-        relativeName
-    );
-
-    return Optional
-        .of(FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName))
-        .map(path -> new PathFileObject(location, root.getPath(), path));
+  @Nullable
+  public PathFileObject getFileForOutput(String packageName, String relativeName) {
+    var path = FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName);
+    return new PathFileObject(location, root.getPath(), path);
   }
 
   @Override
-  public Optional<PathFileObject> getJavaFileForInput(
-      String binaryName,
-      Kind kind
-  ) {
-    return Optional
-        .of(FileUtils.binaryNameToPath(root.getPath(), binaryName, kind))
-        .filter(Files::isRegularFile)
-        .map(path -> new PathFileObject(location, root.getPath(), path));
+  @Nullable
+  public PathFileObject getJavaFileForInput(String binaryName, Kind kind) {
+    var path = FileUtils.binaryNameToPath(root.getPath(), binaryName, kind);
+    return Files.isRegularFile(path)
+        ? new PathFileObject(location, root.getPath(), path)
+        : null;
   }
 
   @Override
-  public Optional<PathFileObject> getJavaFileForOutput(
-      String className,
-      Kind kind
-  ) {
-    LOGGER.trace("Output Java file - this={} className={}, kind={})", this, className, kind);
-
-    return Optional
-        .of(FileUtils.binaryNameToPath(root.getPath(), className, kind))
-        .map(path -> new PathFileObject(location, root.getPath(), path));
+  @Nullable
+  public PathFileObject getJavaFileForOutput(String className, Kind kind) {
+    var path = FileUtils.binaryNameToPath(root.getPath(), className, kind);
+    return new PathFileObject(location, root.getPath(), path);
   }
 
   @Override
@@ -171,42 +157,41 @@ public class PathContainerImpl implements Container {
   }
 
   @Override
-  public Optional<URL> getResource(String resourcePath) throws IOException {
+  @Nullable
+  public URL getResource(String resourcePath) throws IOException {
     var path = FileUtils.relativeResourceNameToPath(root.getPath(), resourcePath);
     // Getting a URL of a directory within a JAR breaks the JAR file system implementation
     // completely.
     return Files.isRegularFile(path)
-        ? Optional.of(path.toUri().toURL())
-        : Optional.empty();
+        ? path.toUri().toURL()
+        : null;
   }
 
   @Override
-  public Optional<String> inferBinaryName(PathFileObject javaFileObject) {
+  @Nullable
+  public String inferBinaryName(PathFileObject javaFileObject) {
     return javaFileObject.getFullPath().startsWith(root.getPath())
-        ? Optional.of(FileUtils.pathToBinaryName(javaFileObject.getRelativePath()))
-        : Optional.empty();
+        ? FileUtils.pathToBinaryName(javaFileObject.getRelativePath())
+        : null;
   }
 
-  @WillNotClose
   @Override
-  @SuppressWarnings("resource")
-  public Stream<? extends PathFileObject> listFileObjects(
+  public void listFileObjects(
       String packageName,
       Set<? extends Kind> kinds,
-      boolean recurse
+      boolean recurse,
+      Collection<JavaFileObject> collection
   ) throws IOException {
     var maxDepth = recurse ? Integer.MAX_VALUE : 1;
-
     var basePath = FileUtils.packageNameToPath(root.getPath(), packageName);
 
-    try {
-      return Files
-          .walk(basePath, maxDepth, FileVisitOption.FOLLOW_LINKS)
+    try (var walker = Files.walk(basePath, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
+      walker
           .filter(FileUtils.fileWithAnyKind(kinds))
-          .map(path -> new PathFileObject(location, root.getPath(), path));
-
+          .map(path -> new PathFileObject(location, root.getPath(), path))
+          .forEach(collection::add);
     } catch (NoSuchFileException ex) {
-      return Stream.empty();
+      LOGGER.trace("Directory {} does not exist so is being ignored", root.getPath());
     }
   }
 

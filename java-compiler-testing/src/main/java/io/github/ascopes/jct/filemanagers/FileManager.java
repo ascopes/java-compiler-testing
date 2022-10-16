@@ -15,12 +15,12 @@
  */
 package io.github.ascopes.jct.filemanagers;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.paths.PathLike;
 import java.util.Collection;
-import java.util.Optional;
 import javax.tools.JavaFileManager;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -67,9 +67,10 @@ public interface FileManager extends JavaFileManager {
    * Get the container group for the given package-oriented location.
    *
    * @param location the package oriented location.
-   * @return the container group, or an empty optional if one does not exist.
+   * @return the container group, or null if one does not exist.
    */
-  Optional<PackageContainerGroup> getPackageContainerGroup(Location location);
+  @Nullable
+  PackageContainerGroup getPackageContainerGroup(Location location);
 
   /**
    * Get a collection of all package container impl in this file manager.
@@ -78,14 +79,14 @@ public interface FileManager extends JavaFileManager {
    */
   Collection<PackageContainerGroup> getPackageContainerGroups();
 
-
   /**
    * Get the container group for the given module-oriented location.
    *
    * @param location the module oriented location.
-   * @return the container group, or an empty optional if one does not exist.
+   * @return the container group, or null if one does not exist.
    */
-  Optional<ModuleContainerGroup> getModuleContainerGroup(Location location);
+  @Nullable
+  ModuleContainerGroup getModuleContainerGroup(Location location);
 
   /**
    * Get a collection of all module container impl in this file manager.
@@ -98,9 +99,10 @@ public interface FileManager extends JavaFileManager {
    * Get the container group for the given output-oriented location.
    *
    * @param location the output oriented location.
-   * @return the container group, or an empty optional if one does not exist.
+   * @return the container group, or null if one does not exist.
    */
-  Optional<OutputContainerGroup> getOutputContainerGroup(Location location);
+  @Nullable
+  OutputContainerGroup getOutputContainerGroup(Location location);
 
   /**
    * Get a collection of all output container impl in this file manager.

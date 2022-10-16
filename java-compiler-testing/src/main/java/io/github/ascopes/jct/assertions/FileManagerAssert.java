@@ -55,7 +55,7 @@ public final class FileManagerAssert extends AbstractAssert<FileManagerAssert, F
       Location location
   ) {
     return new MaybeAssert<>(
-        actual.getPackageContainerGroup(location).orElse(null),
+        actual.getPackageContainerGroup(location),
         PackageContainerGroupAssert::new
     );
   }
@@ -72,7 +72,7 @@ public final class FileManagerAssert extends AbstractAssert<FileManagerAssert, F
       Location location
   ) {
     return new MaybeAssert<>(
-        actual.getModuleContainerGroup(location).orElse(null),
+        actual.getModuleContainerGroup(location),
         ModuleContainerGroupAssert::new
     );
   }
@@ -89,7 +89,7 @@ public final class FileManagerAssert extends AbstractAssert<FileManagerAssert, F
       Location location
   ) {
     return new MaybeAssert<>(
-        actual.getOutputContainerGroup(location).orElse(null),
+        actual.getOutputContainerGroup(location),
         OutputContainerGroupAssert::new
     );
   }

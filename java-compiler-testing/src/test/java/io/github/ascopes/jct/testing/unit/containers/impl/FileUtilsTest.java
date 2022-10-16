@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.testing.unit.utils;
+package io.github.ascopes.jct.testing.unit.containers.impl;
 
+import static io.github.ascopes.jct.containers.impl.FileUtils.binaryNameToPackageName;
+import static io.github.ascopes.jct.containers.impl.FileUtils.binaryNameToPath;
+import static io.github.ascopes.jct.containers.impl.FileUtils.binaryNameToSimpleClassName;
+import static io.github.ascopes.jct.containers.impl.FileUtils.fileWithAnyKind;
+import static io.github.ascopes.jct.containers.impl.FileUtils.packageNameToPath;
+import static io.github.ascopes.jct.containers.impl.FileUtils.pathToBinaryName;
+import static io.github.ascopes.jct.containers.impl.FileUtils.pathToKind;
+import static io.github.ascopes.jct.containers.impl.FileUtils.relativeResourceNameToPath;
+import static io.github.ascopes.jct.containers.impl.FileUtils.resourceNameToPath;
+import static io.github.ascopes.jct.containers.impl.FileUtils.simpleClassNameToPath;
 import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
-import static io.github.ascopes.jct.utils.FileUtils.binaryNameToPackageName;
-import static io.github.ascopes.jct.utils.FileUtils.binaryNameToPath;
-import static io.github.ascopes.jct.utils.FileUtils.binaryNameToSimpleClassName;
-import static io.github.ascopes.jct.utils.FileUtils.fileWithAnyKind;
-import static io.github.ascopes.jct.utils.FileUtils.packageNameToPath;
-import static io.github.ascopes.jct.utils.FileUtils.pathToBinaryName;
-import static io.github.ascopes.jct.utils.FileUtils.pathToKind;
-import static io.github.ascopes.jct.utils.FileUtils.relativeResourceNameToPath;
-import static io.github.ascopes.jct.utils.FileUtils.resourceNameToPath;
-import static io.github.ascopes.jct.utils.FileUtils.simpleClassNameToPath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -35,7 +35,7 @@ import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
-import io.github.ascopes.jct.utils.FileUtils;
+import io.github.ascopes.jct.containers.impl.FileUtils;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;

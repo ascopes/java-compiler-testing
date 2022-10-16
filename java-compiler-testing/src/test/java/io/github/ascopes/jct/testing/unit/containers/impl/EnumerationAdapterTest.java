@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.testing.unit.utils;
+package io.github.ascopes.jct.testing.unit.containers.impl;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenCode;
@@ -21,9 +21,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import io.github.ascopes.jct.containers.impl.EnumerationAdapter;
 import io.github.ascopes.jct.testing.helpers.MoreMocks;
 import io.github.ascopes.jct.testing.helpers.TypeRef;
-import io.github.ascopes.jct.utils.EnumerationAdapter;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.DisplayName;

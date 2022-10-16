@@ -25,7 +25,6 @@ import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.paths.NioPath;
 import io.github.ascopes.jct.paths.PathLike;
-import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
@@ -37,13 +36,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.ProviderNotFoundException;
 import java.nio.file.spi.FileSystemProvider;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.tools.JavaFileManager.Location;
+import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -98,7 +98,7 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
-  public Optional<Path> findFile(String path) {
+  public Path findFile(String path) {
     if (path.startsWith("/")) {
       throw new IllegalArgumentException("Absolute paths are not supported (got '" + path + "')");
     }
@@ -106,70 +106,79 @@ public final class JarContainerImpl implements Container {
     for (var root : holder.access().getRootDirectories()) {
       var fullPath = FileUtils.relativeResourceNameToPath(root, path);
       if (Files.isRegularFile(fullPath)) {
-        return Optional.of(fullPath);
+        return fullPath;
       }
     }
 
-    return Optional.empty();
+    return null;
   }
 
   @Override
-  public Optional<byte[]> getClassBinary(String binaryName) throws IOException {
+  public byte[] getClassBinary(String binaryName) throws IOException {
     var packageName = FileUtils.binaryNameToPackageName(binaryName);
     var packageDir = holder.access().getPackage(packageName);
 
     if (packageDir == null) {
-      return Optional.empty();
+      return null;
     }
 
     var className = FileUtils.binaryNameToSimpleClassName(binaryName);
     var classPath = FileUtils.simpleClassNameToPath(packageDir.getPath(), className, Kind.CLASS);
 
     return Files.isRegularFile(classPath)
-        ? Optional.of(Files.readAllBytes(classPath))
-        : Optional.empty();
+        ? Files.readAllBytes(classPath)
+        : null;
   }
 
   @Override
-  public Optional<PathFileObject> getFileForInput(
-      String packageName,
-      String relativeName
-  ) {
-    return Optional
-        .ofNullable(holder.access().getPackage(packageName))
-        .map(PathLike::getPath)
-        .map(packageDir -> FileUtils.relativeResourceNameToPath(packageDir, relativeName))
-        .filter(Files::isRegularFile)
-        .map(path -> new PathFileObject(location, path.getRoot(), path));
+  @Nullable
+  public PathFileObject getFileForInput(String packageName, String relativeName) {
+    var packageObj = holder.access().getPackage(packageName);
+
+    if (packageObj == null) {
+      return null;
+    }
+
+    var file = FileUtils.relativeResourceNameToPath(packageObj.getPath(), relativeName);
+
+    if (!Files.isRegularFile(file)) {
+      return null;
+    }
+
+    return new PathFileObject(location, file.getRoot(), file);
   }
 
   @Override
-  public Optional<PathFileObject> getFileForOutput(
-      String packageName,
-      String relativeName
-  ) {
-    // This JAR is read-only.
-    return Optional.empty();
+  @Nullable
+  public PathFileObject getFileForOutput(String packageName, String relativeName) {
+    throw new UnsupportedOperationException("Cannot handle output files in JARs");
   }
 
   @Override
-  public Optional<PathFileObject> getJavaFileForInput(String binaryName, Kind kind) {
+  @Nullable
+  public PathFileObject getJavaFileForInput(String binaryName, Kind kind) {
     var packageName = FileUtils.binaryNameToPackageName(binaryName);
     var className = FileUtils.binaryNameToSimpleClassName(binaryName);
 
-    return Optional
-        .ofNullable(holder.access().getPackage(packageName))
-        .map(PathLike::getPath)
-        .map(packageDir -> FileUtils.simpleClassNameToPath(packageDir, className, kind))
-        .filter(Files::isRegularFile)
-        .map(path -> new PathFileObject(location, path.getRoot(), path));
+    var packageObj = holder.access().getPackage(packageName);
+
+    if (packageObj == null) {
+      return null;
+    }
+
+    var file = FileUtils.simpleClassNameToPath(packageObj.getPath(), className, kind);
+
+    if (!Files.isRegularFile(file)) {
+      return null;
+    }
+
+    return new PathFileObject(location, file.getRoot(), file);
   }
 
   @Override
-  public Optional<PathFileObject> getJavaFileForOutput(String className,
-      Kind kind) {
-    // This JAR is read-only.
-    return Optional.empty();
+  @Nullable
+  public PathFileObject getJavaFileForOutput(String className, Kind kind) {
+    throw new UnsupportedOperationException("Cannot handle output source files in JARs");
   }
 
   @Override
@@ -197,20 +206,21 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
-  public Optional<URL> getResource(String resourcePath) throws IOException {
-    // TODO(ascopes): could we index these resources ahead-of-time in the lazy initializer?
+  @Nullable
+  public URL getResource(String resourcePath) throws IOException {
     for (var root : holder.access().getRootDirectories()) {
       var path = FileUtils.relativeResourceNameToPath(root, resourcePath);
       if (Files.isRegularFile(path)) {
-        return Optional.of(path.toUri().toURL());
+        return path.toUri().toURL();
       }
     }
 
-    return Optional.empty();
+    return null;
   }
 
   @Override
-  public Optional<String> inferBinaryName(PathFileObject javaFileObject) {
+  @Nullable
+  public String inferBinaryName(PathFileObject javaFileObject) {
     // For some reason, converting a zip entry to a URI gives us a scheme of `jar://file://`, but
     // we cannot then parse the URI back to a path without removing the `file://` bit first. Since
     // we assume we always have instances of PathJavaFileObject here, let's just cast to that and
@@ -219,34 +229,35 @@ public final class JarContainerImpl implements Container {
 
     for (var root : holder.access().getRootDirectories()) {
       if (fullPath.startsWith(root)) {
-        return Optional.of(FileUtils.pathToBinaryName(javaFileObject.getRelativePath()));
+        return FileUtils.pathToBinaryName(javaFileObject.getRelativePath());
       }
     }
 
-    return Optional.empty();
+    return null;
   }
 
-  @WillNotClose
   @Override
-  @SuppressWarnings("resource")
-  public Stream<? extends PathFileObject> listFileObjects(
+  public void listFileObjects(
       String packageName,
       Set<? extends Kind> kinds,
-      boolean recurse
+      boolean recurse,
+      Collection<JavaFileObject> collection
   ) throws IOException {
     var packageDir = holder.access().getPackages().get(packageName);
 
     if (packageDir == null) {
-      return Stream.empty();
+      return;
     }
 
     var maxDepth = recurse ? Integer.MAX_VALUE : 1;
     var packagePath = packageDir.getPath();
 
-    return Files
-        .walk(packagePath, maxDepth, FileVisitOption.FOLLOW_LINKS)
-        .filter(FileUtils.fileWithAnyKind(kinds))
-        .map(path -> new PathFileObject(location, path.getRoot(), path));
+    try (var walker = Files.walk(packagePath, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
+      walker
+          .filter(FileUtils.fileWithAnyKind(kinds))
+          .map(path -> new PathFileObject(location, path.getRoot(), path))
+          .forEach(collection::add);
+    }
   }
 
   @Override

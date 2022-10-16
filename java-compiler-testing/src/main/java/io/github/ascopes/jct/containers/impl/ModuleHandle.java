@@ -17,8 +17,8 @@ package io.github.ascopes.jct.containers.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.utils.ToStringBuilder;
-import java.util.Optional;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -81,10 +81,11 @@ public final class ModuleHandle {
    * Try and extract a module name from the given string.
    *
    * @param original the string to operate on.
-   * @return the extracted prefix, or an empty module if no module was found.
+   * @return the extracted prefix, or nullif no module was found.
    * @throws IllegalArgumentException if the input string starts with a forward slash.
    */
-  public static Optional<ModuleHandle> tryExtract(String original) {
+  @Nullable
+  public static ModuleHandle tryExtract(String original) {
     if (original.startsWith("/")) {
       throw new IllegalArgumentException(
           "Absolute paths are not supported (got '" + original + "')");
@@ -94,11 +95,11 @@ public final class ModuleHandle {
     var firstSlash = original.indexOf('/');
 
     if (firstSlash == -1) {
-      return Optional.empty();
+      return null;
     }
 
     var moduleName = original.substring(0, firstSlash);
     var restOfPath = original.substring(firstSlash + 1);
-    return Optional.of(new ModuleHandle(original, moduleName, restOfPath));
+    return new ModuleHandle(original, moduleName, restOfPath);
   }
 }

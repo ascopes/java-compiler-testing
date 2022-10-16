@@ -18,7 +18,7 @@ package io.github.ascopes.jct.filemanagers;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
-import io.github.ascopes.jct.utils.FileUtils;
+import io.github.ascopes.jct.containers.impl.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
