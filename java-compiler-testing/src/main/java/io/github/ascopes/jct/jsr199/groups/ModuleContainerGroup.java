@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.jsr199.containers;
+package io.github.ascopes.jct.jsr199.groups;
 
 import io.github.ascopes.jct.annotations.WillClose;
 import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
+import io.github.ascopes.jct.jsr199.containers.Container;
 import io.github.ascopes.jct.paths.PathLike;
 import java.util.List;
 import java.util.Map;

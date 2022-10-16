@@ -15,9 +15,9 @@
  */
 package io.github.ascopes.jct.jsr199;
 
-import io.github.ascopes.jct.jsr199.containers.ModuleContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.OutputContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.PackageContainerGroup;
+import io.github.ascopes.jct.jsr199.groups.ModuleContainerGroup;
+import io.github.ascopes.jct.jsr199.groups.OutputContainerGroup;
+import io.github.ascopes.jct.jsr199.groups.PackageContainerGroup;
 import io.github.ascopes.jct.paths.PathLike;
 import java.util.Collection;
 import java.util.Optional;

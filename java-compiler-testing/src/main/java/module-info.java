@@ -57,4 +57,6 @@ module io.github.ascopes.jct {
   opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.annotations to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.annotations to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.jsr199.groups;
+  opens io.github.ascopes.jct.jsr199.groups to io.github.ascopes.jct.testing;
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.jsr199.containers;
+package io.github.ascopes.jct.jsr199.groups;
 
 import static java.util.Objects.requireNonNull;
 
@@ -21,6 +21,8 @@ import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
 import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.jsr199.ModuleLocation;
 import io.github.ascopes.jct.jsr199.PathFileObject;
+import io.github.ascopes.jct.jsr199.containers.Container;
+import io.github.ascopes.jct.jsr199.containers.ContainerClassLoader;
 import io.github.ascopes.jct.paths.PathLike;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.StringUtils;

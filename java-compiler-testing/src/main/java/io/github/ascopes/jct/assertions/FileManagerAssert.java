@@ -16,9 +16,9 @@
 package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.jsr199.FileManager;
-import io.github.ascopes.jct.jsr199.containers.ModuleContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.OutputContainerGroup;
-import io.github.ascopes.jct.jsr199.containers.PackageContainerGroup;
+import io.github.ascopes.jct.jsr199.groups.ModuleContainerGroup;
+import io.github.ascopes.jct.jsr199.groups.OutputContainerGroup;
+import io.github.ascopes.jct.jsr199.groups.PackageContainerGroup;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;

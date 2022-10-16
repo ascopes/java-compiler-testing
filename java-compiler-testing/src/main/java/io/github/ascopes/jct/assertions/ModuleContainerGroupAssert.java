@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.jsr199.PathFileObject;
-import io.github.ascopes.jct.jsr199.containers.ModuleContainerGroup;
+import io.github.ascopes.jct.jsr199.groups.ModuleContainerGroup;
 import java.nio.file.Path;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;

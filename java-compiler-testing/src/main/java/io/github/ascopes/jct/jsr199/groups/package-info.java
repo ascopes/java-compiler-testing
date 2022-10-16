@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 /**
- * Implementations of containers, which provide a means of representing a given path-like descriptor
- * in a consistent interface.
+ * Implementations of container groups, which map
+ * {@link javax.tools.JavaFileManager.Location locations} to zero-or-more
+ * {@link io.github.ascopes.jct.jsr199.containers.Container container} objects using an interface
+ * that {@link io.github.ascopes.jct.jsr199.FileManager file manager} implementations can easily
+ * integrate with.
  */
-package io.github.ascopes.jct.jsr199.containers;
+package io.github.ascopes.jct.jsr199.groups;
