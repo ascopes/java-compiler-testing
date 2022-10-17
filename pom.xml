@@ -51,7 +51,7 @@
     <jimfs.version>1.2</jimfs.version>
     <jsr305.version>3.0.2</jsr305.version>
     <junit.version>5.9.1</junit.version>
-    <mockito.version>4.8.0</mockito.version>
+    <mockito.version>4.8.1</mockito.version>
     <slf4j.version>2.0.3</slf4j.version>
 
     <!-- Plugins -->
