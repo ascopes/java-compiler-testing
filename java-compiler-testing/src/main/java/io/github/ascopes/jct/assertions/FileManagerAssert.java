@@ -44,6 +44,34 @@ public final class FileManagerAssert extends AbstractAssert<FileManagerAssert, F
   }
 
   /**
+   * Assert that the file manager is closed.
+   *
+   * @return this assertion object to perform further assertions upon, if desired.
+   * @throws AssertionError if the file manager is unexpectedly open.
+   */
+  public FileManagerAssert isClosed() {
+    if (!actual.isClosed()) {
+      throw failure("Expected file manager to be closed but it was open");
+    }
+
+    return myself;
+  }
+
+  /**
+   * Assert that the file manager is open.
+   *
+   * @return this assertion object to perform further assertions upon, if desired.
+   * @throws AssertionError if the file manager is unexpectedly closed.
+   */
+  public FileManagerAssert isOpen() {
+    if (actual.isClosed()) {
+      throw failure("Expected file manager to be open but it was closed");
+    }
+
+    return myself;
+  }
+
+  /**
    * Perform assertions on the given package group, if it has been configured.
    *
    * <p>If not configured, this will return an empty optional.

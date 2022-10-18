@@ -56,10 +56,12 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class FileManagerImpl implements FileManager {
+public final class FileManagerImpl implements FileManager {
+  private static final int UNSUPPORTED_ARGUMENT = -1;
 
   private static final Cleaner CLEANER = Cleaner.create();
 
+  private volatile boolean closed;
   private final String release;
   private final Map<Location, @WillClose PackageContainerGroup> packages;
   private final Map<Location, @WillClose ModuleContainerGroup> modules;
@@ -72,6 +74,7 @@ public class FileManagerImpl implements FileManager {
    */
   @SuppressWarnings("ThisEscapedInObjectConstruction")
   public FileManagerImpl(String release) {
+    closed = false;
     this.release = requireNonNull(release, "release");
     packages = new ConcurrentHashMap<>();
     modules = new ConcurrentHashMap<>();
@@ -82,13 +85,10 @@ public class FileManagerImpl implements FileManager {
     CLEANER.register(this, new AsyncResourceCloser(outputs));
   }
 
-  /**
-   * Add a path to the given location.
-   *
-   * @param location the location to use for the path.
-   * @param path     the path to add.
-   */
+  @Override
   public void addPath(Location location, PathLike path) {
+    requireFileManagerToBeOpen();
+
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
 
@@ -121,29 +121,29 @@ public class FileManagerImpl implements FileManager {
   }
 
   @Override
-  public void ensureEmptyLocationExists(Location location) {
-    if (location instanceof ModuleLocation) {
-      var moduleLocation = (ModuleLocation) location;
-
-      if (location.isOutputLocation()) {
-        getOrCreateOutput(moduleLocation.getParent())
-            .getOrCreateModule(moduleLocation.getModuleName());
-
-      } else {
-        getOrCreateModule(moduleLocation.getParent())
-            .getOrCreateModule(moduleLocation.getModuleName());
-      }
-    } else if (location.isOutputLocation()) {
-      getOrCreateOutput(location);
-    } else if (location.isModuleOrientedLocation()) {
-      getOrCreateModule(location);
-    } else {
-      getOrCreatePackage(location);
-    }
+  public void close(@WillClose FileManagerImpl this) throws IOException {
+    // We explicitly close all resources on garbage collection rather than here. This prevents
+    // the compiler implementation making our resources unavailable while we are still using them
+    // to assert further outcomes in tests.
+    closed = true;
   }
 
   @Override
+  public boolean contains(Location location, FileObject fo) throws IOException {
+    if (!(fo instanceof PathFileObject)) {
+      return false;
+    }
+
+    var group = getExistingGroup(location);
+
+    return group != null && group.contains((PathFileObject) fo);
+  }
+
+
+  @Override
   public void copyContainers(Location from, Location to) {
+    requireFileManagerToBeOpen();
+
     if (from.isOutputLocation()) {
       if (!to.isOutputLocation()) {
         throw new IllegalArgumentException(
@@ -193,6 +193,36 @@ public class FileManagerImpl implements FileManager {
   }
 
   @Override
+  public void ensureEmptyLocationExists(Location location) {
+    requireFileManagerToBeOpen();
+
+    if (location instanceof ModuleLocation) {
+      var moduleLocation = (ModuleLocation) location;
+
+      if (location.isOutputLocation()) {
+        getOrCreateOutput(moduleLocation.getParent())
+            .getOrCreateModule(moduleLocation.getModuleName());
+
+      } else {
+        getOrCreateModule(moduleLocation.getParent())
+            .getOrCreateModule(moduleLocation.getModuleName());
+      }
+    } else if (location.isOutputLocation()) {
+      getOrCreateOutput(location);
+    } else if (location.isModuleOrientedLocation()) {
+      getOrCreateModule(location);
+    } else {
+      getOrCreatePackage(location);
+    }
+  }
+
+  @Override
+  public void flush() {
+    requireFileManagerToBeOpen();
+    // Don't do anything else for now.
+  }
+
+  @Override
   @Nullable
   public PackageContainerGroup getPackageContainerGroup(Location location) {
     return packages.get(location);
@@ -228,74 +258,15 @@ public class FileManagerImpl implements FileManager {
   @Nullable
   @Override
   public ClassLoader getClassLoader(Location location) {
+    // While we would normally enforce that we cannot get a classloader for a closed
+    // file manager, we explicitly do not check for this as this is useful behaviour to have
+    // retrospectively when performing assertions and tests on the resulting file manager state.
+
     var group = getExistingPackageOrientedOrOutputGroup(location);
 
     return group == null
         ? null
         : group.getClassLoader();
-  }
-
-  @Override
-  public Iterable<JavaFileObject> list(
-      Location location,
-      String packageName,
-      Set<Kind> kinds,
-      boolean recurse
-  ) throws IOException {
-    var group = getExistingPackageOrientedOrOutputGroup(location);
-
-    if (group == null) {
-      return List.of();
-    }
-
-    var files = new ArrayList<JavaFileObject>();
-    group.listFileObjects(packageName, kinds, recurse, files);
-    return files;
-  }
-
-  @Nullable
-  @Override
-  public String inferBinaryName(Location location, JavaFileObject file) {
-    if (!(file instanceof PathFileObject)) {
-      return null;
-    }
-
-    var pathFileObject = (PathFileObject) file;
-
-    var group = getExistingPackageOrientedOrOutputGroup(location);
-
-    return group == null
-        ? null
-        : group.inferBinaryName(pathFileObject);
-  }
-
-  @Override
-  public boolean isSameFile(@Nullable FileObject a, @Nullable FileObject b) {
-    // Some annotation processors provide null values here for some reason.
-    if (a == null || b == null) {
-      return false;
-    }
-
-    return Objects.equals(a.toUri(), b.toUri());
-  }
-
-  @Override
-  public boolean handleOption(String current, Iterator<String> remaining) {
-    return false;
-  }
-
-  @Override
-  public boolean hasLocation(Location location) {
-    if (location instanceof ModuleLocation) {
-      var moduleLocation = (ModuleLocation) location;
-      var group = getExistingModuleOrientedOrOutputGroup(moduleLocation.getParent());
-
-      return group != null && group.hasLocation(moduleLocation);
-    }
-
-    return packages.containsKey(location)
-        || modules.containsKey(location)
-        || outputs.containsKey(location);
   }
 
   @Nullable
@@ -305,6 +276,8 @@ public class FileManagerImpl implements FileManager {
       String className,
       Kind kind
   ) {
+    requireFileManagerToBeOpen();
+
     var group = getExistingPackageOrientedOrOutputGroup(location);
 
     return group == null
@@ -320,6 +293,8 @@ public class FileManagerImpl implements FileManager {
       Kind kind,
       FileObject sibling
   ) {
+    requireFileManagerToBeOpen();
+
     var group = getExistingPackageOrientedOrOutputGroup(location);
 
     return group == null
@@ -334,6 +309,8 @@ public class FileManagerImpl implements FileManager {
       String packageName,
       String relativeName
   ) {
+    requireFileManagerToBeOpen();
+
     var group = getExistingPackageOrientedOrOutputGroup(location);
 
     return group == null
@@ -349,6 +326,8 @@ public class FileManagerImpl implements FileManager {
       String relativeName,
       FileObject sibling
   ) {
+    requireFileManagerToBeOpen();
+
     var group = getExistingPackageOrientedOrOutputGroup(location);
 
     return group == null
@@ -357,24 +336,16 @@ public class FileManagerImpl implements FileManager {
   }
 
   @Override
-  public void flush() {
-    // Do nothing.
-  }
-
-  @Override
-  public void close() throws IOException {
-    // We explicitly close all resources on garbage collection rather than here. This prevents
-    // the compiler implementation making our resources unavailable while we are still using them
-    // to assert further outcomes in tests.
-  }
-
-  @Override
   public Location getLocationForModule(Location location, String moduleName) {
+    // This checks that the input location is module/output oriented within the constructor,
+    // so we don't need to do it here as well.
     return new ModuleLocation(location, moduleName);
   }
 
   @Override
   public Location getLocationForModule(Location location, JavaFileObject fo) {
+    requireOutputOrModuleOrientedLocation(location);
+
     if (fo instanceof PathFileObject) {
       var pathFileObject = (PathFileObject) fo;
       var moduleLocation = pathFileObject.getLocation();
@@ -404,14 +375,98 @@ public class FileManagerImpl implements FileManager {
     return group.getServiceLoader(service);
   }
 
+  @Override
+  public boolean handleOption(String current, Iterator<String> remaining) {
+    requireFileManagerToBeOpen();
+
+    // We do not consume anything from the command line arguments in this implementation.
+    return false;
+  }
+
+  @Override
+  public boolean hasLocation(Location location) {
+
+    if (location instanceof ModuleLocation) {
+      var moduleLocation = (ModuleLocation) location;
+      var group = getExistingModuleOrientedOrOutputGroup(moduleLocation.getParent());
+
+      return group != null && group.hasLocation(moduleLocation);
+    }
+
+    return packages.containsKey(location)
+        || modules.containsKey(location)
+        || outputs.containsKey(location);
+  }
+
+  @Nullable
+  @Override
+  public String inferBinaryName(Location location, JavaFileObject file) {
+    requireFileManagerToBeOpen();
+
+    if (!(file instanceof PathFileObject)) {
+      return null;
+    }
+
+    var pathFileObject = (PathFileObject) file;
+
+    var group = getExistingPackageOrientedOrOutputGroup(location);
+
+    return group == null
+        ? null
+        : group.inferBinaryName(pathFileObject);
+  }
+
   @Nullable
   @Override
   public String inferModuleName(Location location) {
+    requireFileManagerToBeOpen();
     requirePackageOrientedLocation(location);
 
     return location instanceof ModuleLocation
         ? ((ModuleLocation) location).getModuleName()
         : null;
+  }
+
+  @Override
+  public boolean isClosed() {
+    return closed;
+  }
+
+  @Override
+  public boolean isSameFile(@Nullable FileObject a, @Nullable FileObject b) {
+    requireFileManagerToBeOpen();
+
+    // Some annotation processors provide null values here for some reason.
+    if (a == null || b == null) {
+      return false;
+    }
+
+    return Objects.equals(a.toUri(), b.toUri());
+  }
+
+  @Override
+  public int isSupportedOption(String option) {
+    return UNSUPPORTED_ARGUMENT;
+  }
+
+  @Override
+  public Iterable<JavaFileObject> list(
+      Location location,
+      String packageName,
+      Set<Kind> kinds,
+      boolean recurse
+  ) throws IOException {
+    requireFileManagerToBeOpen();
+
+    var group = getExistingPackageOrientedOrOutputGroup(location);
+
+    if (group == null) {
+      return List.of();
+    }
+
+    var files = new ArrayList<JavaFileObject>();
+    group.listFileObjects(packageName, kinds, recurse, files);
+    return files;
   }
 
   @Override
@@ -425,22 +480,6 @@ public class FileManagerImpl implements FileManager {
     }
 
     return group.getLocationsForModules();
-  }
-
-  @Override
-  public boolean contains(Location location, FileObject fo) throws IOException {
-    if (!(fo instanceof PathFileObject)) {
-      return false;
-    }
-
-    var group = getExistingGroup(location);
-
-    return group != null && group.contains((PathFileObject) fo);
-  }
-
-  @Override
-  public int isSupportedOption(String option) {
-    return 0;
   }
 
   @Override
@@ -544,6 +583,12 @@ public class FileManagerImpl implements FileManager {
       throw new IllegalArgumentException(
           "Location " + location.getName() + " must be package-oriented"
       );
+    }
+  }
+
+  private void requireFileManagerToBeOpen() {
+    if (closed) {
+      throw new IllegalStateException("Cannot perform this operation on a closed file manager");
     }
   }
 }

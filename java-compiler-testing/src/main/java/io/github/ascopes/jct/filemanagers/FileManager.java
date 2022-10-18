@@ -38,10 +38,22 @@ public interface FileManager extends JavaFileManager {
   /**
    * Add a path to a given location.
    *
+   * <p>If the file manager is closed, this will raise an exception.
+   *
    * @param location the location to use.
    * @param path     the path to add.
+   * @throws IllegalStateException if the file manager is {@link #isClosed() closed}.
    */
   void addPath(Location location, PathLike path);
+
+  /**
+   * Copy all containers from the first location to the second location.
+   *
+   * @param from the first location.
+   * @param to   the second location.
+   * @throws IllegalStateException if the file manager is {@link #isClosed() closed}.
+   */
+  void copyContainers(Location from, Location to);
 
   /**
    * Register an empty container for the given location to indicate to the compiler that the feature
@@ -52,19 +64,14 @@ public interface FileManager extends JavaFileManager {
    * <p>If the location already exists, then do not do anything.
    *
    * @param location the location to apply an empty container for.
+   * @throws IllegalStateException if the file manager is {@link #isClosed() closed}.
    */
   void ensureEmptyLocationExists(Location location);
 
   /**
-   * Copy all containers from the first location to the second location.
-   *
-   * @param from the first location.
-   * @param to   the second location.
-   */
-  void copyContainers(Location from, Location to);
-
-  /**
    * Get the container group for the given package-oriented location.
+   *
+   * <p>This can safely be called on a closed file manager.
    *
    * @param location the package oriented location.
    * @return the container group, or null if one does not exist.
@@ -75,12 +82,16 @@ public interface FileManager extends JavaFileManager {
   /**
    * Get a collection of all package container impl in this file manager.
    *
+   * <p>This can safely be called on a closed file manager.
+   *
    * @return the package container impl.
    */
   Collection<PackageContainerGroup> getPackageContainerGroups();
 
   /**
    * Get the container group for the given module-oriented location.
+   *
+   * <p>This can safely be called on a closed file manager.
    *
    * @param location the module oriented location.
    * @return the container group, or null if one does not exist.
@@ -91,12 +102,16 @@ public interface FileManager extends JavaFileManager {
   /**
    * Get a collection of all module container impl in this file manager.
    *
+   * <p>This can safely be called on a closed file manager.
+   *
    * @return the module container impl.
    */
   Collection<ModuleContainerGroup> getModuleContainerGroups();
 
   /**
    * Get the container group for the given output-oriented location.
+   *
+   * <p>This can safely be called on a closed file manager.
    *
    * @param location the output oriented location.
    * @return the container group, or null if one does not exist.
@@ -107,7 +122,18 @@ public interface FileManager extends JavaFileManager {
   /**
    * Get a collection of all output container impl in this file manager.
    *
+   * <p>This can safely be called on a closed file manager.
+   *
    * @return the output container impl.
    */
   Collection<OutputContainerGroup> getOutputContainerGroups();
+
+  /**
+   * Determine if the {@link #close()} method has been called on this file manager or not.
+   *
+   * <p>This can safely be called on a closed file manager.
+   *
+   * @return {@code false} if the file manager is open, or {@code true} if it is closed.
+   */
+  boolean isClosed();
 }
