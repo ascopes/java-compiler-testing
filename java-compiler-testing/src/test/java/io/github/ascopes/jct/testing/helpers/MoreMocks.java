@@ -19,7 +19,6 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
-import java.util.Objects;
 import java.util.regex.Pattern;
 import org.mockito.MockSettings;
 
@@ -101,17 +100,6 @@ public final class MoreMocks {
    */
   public static <T> T stubCast(TypeRef<T> typeRef, MockSettings settings) {
     return stub(typeRef.getRawType(), settings);
-  }
-
-  /**
-   * Argument matcher that checks the toString of the argument matches a value.
-   *
-   * @param repr value to match.
-   * @param <T>  argument matcher type.
-   * @return the matcher.
-   */
-  public static <T> T hasToString(String repr) {
-    return argThat(input -> Objects.toString(input).equals(repr));
   }
 
   /**
