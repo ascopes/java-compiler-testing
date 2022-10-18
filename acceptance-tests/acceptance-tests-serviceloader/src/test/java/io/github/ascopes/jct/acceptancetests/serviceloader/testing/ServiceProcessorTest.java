@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.acceptancetests.serviceloader.testing;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static io.github.ascopes.jct.paths.RamPath.createPath;
+import static io.github.ascopes.jct.pathwrappers.TemporaryFileSystem.named;
 
 import io.github.ascopes.jct.acceptancetests.serviceloader.ServiceProcessor;
 import io.github.ascopes.jct.compilers.Compilable;
@@ -31,7 +31,7 @@ class ServiceProcessorTest {
   @JavacCompilers
   @ParameterizedTest(name = "for {0}")
   void expectedFilesGetCreated(Compilable<?, ?> compiler) {
-    var sources = createPath("sources")
+    var sources = named("sources")
         .createFile(
             "com/example/InsultProvider.java",
             "package com.example;",

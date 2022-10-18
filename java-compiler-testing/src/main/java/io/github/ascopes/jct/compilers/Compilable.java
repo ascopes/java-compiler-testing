@@ -17,8 +17,8 @@ package io.github.ascopes.jct.compilers;
 
 import io.github.ascopes.jct.ex.CompilerAlreadyUsedException;
 import io.github.ascopes.jct.ex.CompilerException;
-import io.github.ascopes.jct.paths.NioPath;
-import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
@@ -152,7 +152,7 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    *                                  {@link Location#isModuleOrientedLocation() module-oriented} or
    *                                  an {@link Location#isOutputLocation()} output location}.
    */
-  C addPath(Location location, PathLike pathLike);
+  C addPath(Location location, PathWrapper pathLike);
 
   /**
    * Add a {@link Path NIO Path} object to a given location.
@@ -176,7 +176,7 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
    */
   default C addPath(Location location, Path path) {
-    return addPath(location, new NioPath(path));
+    return addPath(location, new BasicPathWrapperImpl(path));
   }
 
   /**
@@ -200,7 +200,7 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    * @throws IllegalArgumentException if the location is not
    *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
    */
-  C addPath(Location location, String moduleName, PathLike pathLike);
+  C addPath(Location location, String moduleName, PathWrapper pathLike);
 
   /**
    * Add a {@link Path NIO Path} object within a module to a given location.
@@ -224,7 +224,7 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
    */
   default C addPath(Location location, String moduleName, Path path) {
-    return addPath(location, moduleName, new NioPath(path));
+    return addPath(location, moduleName, new BasicPathWrapperImpl(path));
   }
 
   /**
@@ -240,12 +240,12 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    * </ul>
    *
    * <p><strong>Note:</strong> to add modules, consider using
-   * {@link #addModulePath(String, PathLike)} instead.</p>
+   * {@link #addModulePath(String, PathWrapper)} instead.</p>
    *
    * @param pathLike the path-like object to add.
    * @return this compiler object for further call chaining.
    */
-  default C addClassPath(PathLike pathLike) {
+  default C addClassPath(PathWrapper pathLike) {
     return addPath(StandardLocation.CLASS_PATH, pathLike);
   }
 
@@ -284,13 +284,13 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    * </ul>
    *
    * <p><strong>Note:</strong> to add regular packages, consider using
-   * {@link #addClassPath(PathLike)} instead.</p>
+   * {@link #addClassPath(PathWrapper)} instead.</p>
    *
    * @param moduleName the name of the module.
    * @param pathLike   the path-like object to add.
    * @return this compiler object for further call chaining.
    */
-  default C addModulePath(String moduleName, PathLike pathLike) {
+  default C addModulePath(String moduleName, PathWrapper pathLike) {
     return addPath(StandardLocation.MODULE_PATH, moduleName, pathLike);
   }
 
@@ -332,13 +332,13 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    * </ul>
    *
    * <p><strong>Note:</strong> to add modules, consider using
-   * {@link #addModuleSourcePath(String, PathLike)} instead. You will not be able to mix this
+   * {@link #addModuleSourcePath(String, PathWrapper)} instead. You will not be able to mix this
    * method and that method together.</p>
    *
    * @param pathLike the path-like object to add.
    * @return this compiler object for further call chaining.
    */
-  default C addSourcePath(PathLike pathLike) {
+  default C addSourcePath(PathWrapper pathLike) {
     return addPath(StandardLocation.SOURCE_PATH, pathLike);
   }
 
@@ -357,7 +357,7 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    * </ul>
    *
    * <p><strong>Note:</strong> to add modules, consider using
-   * {@link #addModuleSourcePath(String, PathLike)} instead. You will not be able to mix this
+   * {@link #addModuleSourcePath(String, PathWrapper)} instead. You will not be able to mix this
    * method and that method together.</p>
    *
    * @param path the path to add.
@@ -382,14 +382,14 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    * </ul>
    *
    * <p><strong>Note:</strong> to add non-modules, consider using
-   * {@link #addSourcePath(PathLike)} instead. You will not be able to mix this
+   * {@link #addSourcePath(PathWrapper)} instead. You will not be able to mix this
    * method and that method together.</p>
    *
    * @param moduleName the name of the module to add.
    * @param pathLike   the path-like object to add.
    * @return this compiler object for further call chaining.
    */
-  default C addModuleSourcePath(String moduleName, PathLike pathLike) {
+  default C addModuleSourcePath(String moduleName, PathWrapper pathLike) {
     return addPath(StandardLocation.MODULE_SOURCE_PATH, moduleName, pathLike);
   }
 
@@ -436,7 +436,7 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    * @param pathLike the path-like object to add.
    * @return this compiler object for further call chaining.
    */
-  default C addAnnotationProcessorPath(PathLike pathLike) {
+  default C addAnnotationProcessorPath(PathWrapper pathLike) {
     return addPath(StandardLocation.ANNOTATION_PROCESSOR_PATH, pathLike);
   }
 
@@ -479,7 +479,7 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    * @param pathLike   the path-like object to add.
    * @return this compiler object for further call chaining.
    */
-  default C addAnnotationProcessorModulePath(String moduleName, PathLike pathLike) {
+  default C addAnnotationProcessorModulePath(String moduleName, PathWrapper pathLike) {
     return addPath(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, moduleName, pathLike);
   }
 

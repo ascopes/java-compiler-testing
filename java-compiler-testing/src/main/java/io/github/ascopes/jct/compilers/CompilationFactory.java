@@ -20,8 +20,8 @@ import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import io.github.ascopes.jct.ex.CompilerException;
 import io.github.ascopes.jct.filemanagers.FileManager;
 import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
-import io.github.ascopes.jct.paths.NioPath;
-import io.github.ascopes.jct.paths.RamPath;
+import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
+import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem;
 import io.github.ascopes.jct.utils.SpecialLocations;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
@@ -420,7 +420,7 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
           "At least one class output path is present, so no in-memory path will be created"
       );
     } else {
-      var classOutput = RamPath.createPath("classes", true);
+      var classOutput = TemporaryFileSystem.named("classes", true);
 
       LOGGER.debug(
           "No class output location was specified, so an in-memory path {} was created",
@@ -438,8 +438,8 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
           "At least one source output path is present, so no in-memory path will be created"
       );
     } else {
-      var sourceOutput = RamPath
-          .createPath("generated-sources", true);
+      var sourceOutput = TemporaryFileSystem
+          .named("generated-sources", true);
 
       LOGGER.debug(
           "No source output location was specified, so an in-memory path {} was created",
@@ -459,7 +459,7 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
     if (!currentClassPath.isEmpty()) {
       LOGGER.debug("Adding current classpath to compiler: {}", currentClassPath);
       for (var classPath : currentClassPath) {
-        fileManager.addPath(StandardLocation.CLASS_PATH, new NioPath(classPath));
+        fileManager.addPath(StandardLocation.CLASS_PATH, new BasicPathWrapperImpl(classPath));
       }
     }
 
@@ -478,7 +478,7 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
       //
       // Weird, but it is what it is, I guess.
       for (var modulePath : currentModulePath) {
-        var modulePathLike = new NioPath(modulePath);
+        var modulePathLike = new BasicPathWrapperImpl(modulePath);
         fileManager.addPath(StandardLocation.CLASS_PATH, modulePathLike);
         fileManager.addPath(StandardLocation.MODULE_PATH, modulePathLike);
       }
@@ -496,7 +496,8 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
       LOGGER.debug("Adding current platform classpath to compiler: {}", currentPlatformClassPath);
 
       for (var classPath : currentPlatformClassPath) {
-        fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH, new NioPath(classPath));
+        fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH,
+            new BasicPathWrapperImpl(classPath));
       }
     }
   }
@@ -510,7 +511,7 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
     LOGGER.trace("Adding JRT locations to compiler: {}", jrtLocations);
 
     for (var jrtLocation : jrtLocations) {
-      fileManager.addPath(StandardLocation.SYSTEM_MODULES, new NioPath(jrtLocation));
+      fileManager.addPath(StandardLocation.SYSTEM_MODULES, new BasicPathWrapperImpl(jrtLocation));
     }
   }
 

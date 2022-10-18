@@ -30,7 +30,7 @@ import static org.mockito.Mockito.never;
 
 import io.github.ascopes.jct.compilers.CompilationFactory;
 import io.github.ascopes.jct.filemanagers.FileManager;
-import io.github.ascopes.jct.paths.RamPath;
+import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem;
 import java.util.Optional;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
@@ -136,10 +136,10 @@ class CompilationFactoryBuildJavaFileManagerTest
   @Test
   void classOutputIsAddedIfNotRegistered() {
     // Given
-    try (var ramPathMock = mockStatic(RamPath.class)) {
-      var ramPath = stub(RamPath.class);
+    try (var ramPathMock = mockStatic(TemporaryFileSystem.class)) {
+      var ramPath = stub(TemporaryFileSystem.class);
       ramPathMock
-          .when(() -> RamPath.createPath(any(), anyBoolean()))
+          .when(() -> TemporaryFileSystem.named(any(), anyBoolean()))
           .thenReturn(ramPath);
 
       var fileManager = mock(FileManager.class);
@@ -154,7 +154,7 @@ class CompilationFactoryBuildJavaFileManagerTest
       execute();
 
       // Then
-      ramPathMock.verify(() -> RamPath.createPath(
+      ramPathMock.verify(() -> TemporaryFileSystem.named(
           stringLike("^classes$"),
           eq(true)
       ));
@@ -185,10 +185,10 @@ class CompilationFactoryBuildJavaFileManagerTest
   @Test
   void sourceOutputIsAddedIfNotRegistered() {
     // Given
-    try (var ramPathMock = mockStatic(RamPath.class)) {
-      var ramPath = stub(RamPath.class);
+    try (var ramPathMock = mockStatic(TemporaryFileSystem.class)) {
+      var ramPath = stub(TemporaryFileSystem.class);
       ramPathMock
-          .when(() -> RamPath.createPath(any(), anyBoolean()))
+          .when(() -> TemporaryFileSystem.named(any(), anyBoolean()))
           .thenReturn(ramPath);
 
       var fileManager = mock(FileManager.class);
@@ -203,7 +203,7 @@ class CompilationFactoryBuildJavaFileManagerTest
       execute();
 
       // Then
-      ramPathMock.verify(() -> RamPath.createPath(
+      ramPathMock.verify(() -> TemporaryFileSystem.named(
           stringLike("^generated-sources$"),
           eq(true)
       ));

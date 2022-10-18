@@ -18,8 +18,8 @@ package io.github.ascopes.jct.compilers;
 import io.github.ascopes.jct.filemanagers.FileManager;
 import io.github.ascopes.jct.filemanagers.FileManagerImpl;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
-import io.github.ascopes.jct.paths.NioPath;
-import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.nio.file.Path;
@@ -50,7 +50,7 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public class FileManagerBuilder {
 
-  private final Map<Location, LinkedHashSet<PathLike>> locations;
+  private final Map<Location, LinkedHashSet<PathWrapper>> locations;
 
   /**
    * Initialize this workspace.
@@ -74,7 +74,7 @@ public class FileManagerBuilder {
    * @throws IllegalArgumentException if the location is module-oriented or output oriented.
    */
   public void addPath(Location location, Path path) {
-    addPath(location, new NioPath(path));
+    addPath(location, new BasicPathWrapperImpl(path));
   }
 
   /**
@@ -92,7 +92,7 @@ public class FileManagerBuilder {
    *                                  JVM.
    */
   public void addPath(Location location, String module, Path path) {
-    addPath(location, module, new NioPath(path));
+    addPath(location, module, new BasicPathWrapperImpl(path));
   }
 
   /**
@@ -102,7 +102,7 @@ public class FileManagerBuilder {
    * @param path     the path to associate with the location.
    * @throws IllegalArgumentException if the location is module-oriented or output oriented.
    */
-  public void addPath(Location location, PathLike path) {
+  public void addPath(Location location, PathWrapper path) {
     if (location.isOutputLocation()) {
       throw new IllegalArgumentException("Can not add paths to an output oriented location.");
     }
@@ -131,7 +131,7 @@ public class FileManagerBuilder {
    *                                  defined by the Java Language Specification for the current
    *                                  JVM.
    */
-  public void addPath(Location location, String module, PathLike path) {
+  public void addPath(Location location, String module, PathWrapper path) {
     if (location instanceof ModuleLocation) {
       throw new IllegalArgumentException(
           "Cannot use a " + ModuleLocation.class.getName() + " with a custom module name. "
@@ -180,7 +180,7 @@ public class FileManagerBuilder {
    * @return the paths.
    * @throws IllegalArgumentException if the location is module-oriented.
    */
-  public List<? extends PathLike> getPaths(Location location) {
+  public List<? extends PathWrapper> getPaths(Location location) {
     if (location.isModuleOrientedLocation()) {
       throw new IllegalArgumentException("Cannot get paths from a module-oriented location");
     }

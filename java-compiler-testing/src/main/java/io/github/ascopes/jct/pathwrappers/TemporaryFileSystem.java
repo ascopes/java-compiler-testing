@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.paths;
+package io.github.ascopes.jct.pathwrappers;
 
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
@@ -22,6 +22,7 @@ import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
@@ -71,10 +72,10 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class RamPath implements PathLike {
+public final class TemporaryFileSystem implements PathWrapper {
 
   private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-  private static final Logger LOGGER = LoggerFactory.getLogger(RamPath.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TemporaryFileSystem.class);
   private static final Cleaner CLEANER = Cleaner.create();
 
   private final Path path;
@@ -88,7 +89,7 @@ public final class RamPath implements PathLike {
    * @param closeOnGarbageCollection {@code true} to delegate
    */
   @SuppressWarnings("ThisEscapedInObjectConstruction")
-  private RamPath(String name, boolean closeOnGarbageCollection) {
+  private TemporaryFileSystem(String name, boolean closeOnGarbageCollection) {
     this.name = requireNonNull(name, "name");
 
     var config = Configuration
@@ -112,6 +113,17 @@ public final class RamPath implements PathLike {
     }
 
     LOGGER.trace("Initialized new in-memory directory {}", path);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return {@code null} in all cases. This implementation cannot have a parent path.
+   */
+  @Nullable
+  @Override
+  public PathWrapper getParent() {
+    return null;
   }
 
   @Override
@@ -150,7 +162,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs
    */
-  public RamPath createFile(Path filePath, byte[] content) {
+  public TemporaryFileSystem createFile(Path filePath, byte[] content) {
     var inputStream = new ByteArrayInputStream(content);
     return copyFrom(inputStream, filePath);
   }
@@ -165,7 +177,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs
    */
-  public RamPath createFile(Path filePath, String... lines) {
+  public TemporaryFileSystem createFile(Path filePath, String... lines) {
     var content = String.join("\n", lines).getBytes(DEFAULT_CHARSET);
     return createFile(filePath, content);
   }
@@ -178,7 +190,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs
    */
-  public RamPath createFile(String fileName, byte[] content) {
+  public TemporaryFileSystem createFile(String fileName, byte[] content) {
     return createFile(path.resolve(fileName), content);
   }
 
@@ -192,7 +204,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs
    */
-  public RamPath createFile(String fileName, String... lines) {
+  public TemporaryFileSystem createFile(String fileName, String... lines) {
     return createFile(path.resolve(fileName), lines);
   }
 
@@ -204,7 +216,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public RamPath copyFromClassPath(String resource, Path targetPath) {
+  public TemporaryFileSystem copyFromClassPath(String resource, Path targetPath) {
     return copyFromClassPath(currentCallerClassLoader(), resource, targetPath);
   }
 
@@ -216,7 +228,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public RamPath copyFromClassPath(String resource, String targetPath) {
+  public TemporaryFileSystem copyFromClassPath(String resource, String targetPath) {
     return copyFromClassPath(currentCallerClassLoader(), resource, targetPath);
   }
 
@@ -229,7 +241,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public RamPath copyFromClassPath(
+  public TemporaryFileSystem copyFromClassPath(
       ClassLoader loader,
       String resource,
       Path targetPath
@@ -254,7 +266,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public RamPath copyFromClassPath(
+  public TemporaryFileSystem copyFromClassPath(
       ClassLoader loader,
       String resource,
       String targetPath
@@ -270,7 +282,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public RamPath copyFrom(Path existingFile, Path targetPath) {
+  public TemporaryFileSystem copyFrom(Path existingFile, Path targetPath) {
     return uncheckedIo(() -> {
       try (var input = Files.newInputStream(existingFile)) {
         return copyFrom(input, targetPath);
@@ -286,7 +298,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public RamPath copyFrom(Path existingFile, String targetPath) {
+  public TemporaryFileSystem copyFrom(Path existingFile, String targetPath) {
     return copyFrom(existingFile, path.resolve(targetPath));
   }
 
@@ -298,7 +310,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public RamPath copyFrom(URL url, Path targetPath) {
+  public TemporaryFileSystem copyFrom(URL url, Path targetPath) {
     return uncheckedIo(() -> {
       try (var input = url.openStream()) {
         return copyFrom(input, targetPath);
@@ -314,7 +326,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public RamPath copyFrom(URL url, String targetPath) {
+  public TemporaryFileSystem copyFrom(URL url, String targetPath) {
     return uncheckedIo(() -> {
       try (var input = url.openStream()) {
         return copyFrom(input, targetPath);
@@ -330,7 +342,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public RamPath copyFrom(InputStream input, String targetPath) {
+  public TemporaryFileSystem copyFrom(InputStream input, String targetPath) {
     return copyFrom(input, path.resolve(targetPath));
   }
 
@@ -342,7 +354,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public RamPath copyFrom(InputStream input, Path targetPath) {
+  public TemporaryFileSystem copyFrom(InputStream input, Path targetPath) {
     return uncheckedIo(() -> {
       var bufferedInput = maybeBuffer(input, targetPath.toUri().getScheme());
       var path = makeRelativeToHere(targetPath);
@@ -368,7 +380,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public RamPath copyTreeFrom(Path tree, Path targetPath) {
+  public TemporaryFileSystem copyTreeFrom(Path tree, Path targetPath) {
     return uncheckedIo(() -> {
       var relativeTargetPath = makeRelativeToHere(targetPath);
 
@@ -410,7 +422,7 @@ public final class RamPath implements PathLike {
    * @return this object for further call chaining.
    * @throws UncheckedIOException if an IO error occurs.
    */
-  public RamPath copyTreeFrom(Path tree, String targetPath) {
+  public TemporaryFileSystem copyTreeFrom(Path tree, String targetPath) {
     return copyTreeFrom(tree, path.resolve(targetPath));
   }
 
@@ -441,11 +453,11 @@ public final class RamPath implements PathLike {
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof RamPath)) {
+    if (!(other instanceof TemporaryFileSystem)) {
       return false;
     }
 
-    var that = (RamPath) other;
+    var that = (TemporaryFileSystem) other;
 
     return name.equals(that.name)
         && uri.equals(that.uri);
@@ -492,10 +504,10 @@ public final class RamPath implements PathLike {
    *
    * @param name a symbolic name to give the path. This must be a valid POSIX directory name.
    * @return the in-memory path.
-   * @see #createPath(String, boolean)
+   * @see #named(String, boolean)
    */
-  public static RamPath createPath(String name) {
-    return createPath(name, true);
+  public static TemporaryFileSystem named(String name) {
+    return named(name, true);
   }
 
   /**
@@ -510,10 +522,10 @@ public final class RamPath implements PathLike {
    *                                 manually using the {@link #close()} method on the returned
    *                                 object. Failing to do so will lead to resources being leaked.
    * @return the in-memory path.
-   * @see #createPath(String, boolean)
+   * @see #named(String)
    */
-  public static RamPath createPath(String name, boolean closeOnGarbageCollection) {
-    return new RamPath(name, closeOnGarbageCollection);
+  public static TemporaryFileSystem named(String name, boolean closeOnGarbageCollection) {
+    return new TemporaryFileSystem(name, closeOnGarbageCollection);
   }
 
   private static InputStream maybeBuffer(InputStream input, String scheme) {

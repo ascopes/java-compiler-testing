@@ -19,7 +19,7 @@ import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
 import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -64,7 +64,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * @param path the path to add.
    */
-  void addPackage(@WillNotClose PathLike path);
+  void addPackage(@WillNotClose PathWrapper path);
 
   /**
    * Find the first occurrence of a given path to a file.

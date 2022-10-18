@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.testing.integration.basic;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static io.github.ascopes.jct.paths.RamPath.createPath;
+import static io.github.ascopes.jct.pathwrappers.TemporaryFileSystem.named;
 
 import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.junit.JavacCompilers;
@@ -36,7 +36,7 @@ class BasicMultiModuleCompilationTest {
   @JavacCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")
   void singleModuleInMultiModuleLayout(Compilable<?, ?> compiler) {
-    var source = createPath("hello.world")
+    var source = named("hello.world")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",
@@ -76,7 +76,7 @@ class BasicMultiModuleCompilationTest {
   @JavacCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")
   void multipleModulesInMultiModuleLayout(Compilable<?, ?> compiler) {
-    var helloWorld = createPath("hello.world")
+    var helloWorld = named("hello.world")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",
@@ -94,7 +94,7 @@ class BasicMultiModuleCompilationTest {
             "  exports com.example;",
             "}"
         );
-    var greeter = createPath("greeter")
+    var greeter = named("greeter")
         .createFile(
             "com/example/greeter/Greeter.java",
             "package com.example.greeter;",

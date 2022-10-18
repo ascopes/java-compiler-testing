@@ -19,15 +19,15 @@ import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
-import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import java.util.Collection;
 import javax.tools.JavaFileManager;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Extension around a {@link JavaFileManager} that allows adding of {@link PathLike} objects to the
- * manager.
+ * Extension around a {@link JavaFileManager} that allows adding of {@link PathWrapper} objects to
+ * the manager.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -44,7 +44,7 @@ public interface FileManager extends JavaFileManager {
    * @param path     the path to add.
    * @throws IllegalStateException if the file manager is {@link #isClosed() closed}.
    */
-  void addPath(Location location, PathLike path);
+  void addPath(Location location, PathWrapper path);
 
   /**
    * Copy all containers from the first location to the second location.

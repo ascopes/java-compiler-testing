@@ -16,4 +16,4 @@
 /**
  * Facilities for handling paths.
  */
-package io.github.ascopes.jct.paths;
+package io.github.ascopes.jct.pathwrappers;

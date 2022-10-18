@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.testing.integration.basic;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static io.github.ascopes.jct.paths.RamPath.createPath;
+import static io.github.ascopes.jct.pathwrappers.TemporaryFileSystem.named;
 
 import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.junit.JavacCompilers;
@@ -35,7 +35,7 @@ class BasicLegacyCompilationTest {
   @JavacCompilers
   @ParameterizedTest(name = "targeting {0}")
   void helloWorldJavac(Compilable<?, ?> compiler) {
-    var sources = createPath("sources")
+    var sources = named("sources")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",

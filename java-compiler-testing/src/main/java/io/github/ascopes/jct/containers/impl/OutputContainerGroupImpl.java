@@ -25,8 +25,8 @@ import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.paths.PathLike;
-import io.github.ascopes.jct.paths.SubPath;
+import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -90,7 +90,7 @@ public class OutputContainerGroupImpl
   }
 
   @Override
-  public void addModule(String module, @WillNotClose PathLike path) {
+  public void addModule(String module, @WillNotClose PathWrapper path) {
     getOrCreateModule(module).addPackage(path);
   }
 
@@ -250,10 +250,12 @@ public class OutputContainerGroupImpl
     // in there, as it reduces the complexity of this tenfold and means we don't have to
     // worry about creating more in-memory locations on the fly.
     var group = new OutputPackageContainerGroupImpl(moduleLocation, release);
-    var path = getPackages().iterator().next().getPath();
-    var subPath = new SubPath(path, moduleLocation.getModuleName());
-    uncheckedIo(() -> Files.createDirectories(path.getPath()));
-    group.addPackage(subPath);
+    var pathWrapper = new BasicPathWrapperImpl(
+        getPackages().iterator().next().getPathWrapper(),
+        moduleLocation.getModuleName()
+    );
+    uncheckedIo(() -> Files.createDirectories(pathWrapper.getPath()));
+    group.addPackage(pathWrapper);
     return group;
   }
 

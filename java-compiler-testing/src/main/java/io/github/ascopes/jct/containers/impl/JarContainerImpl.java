@@ -23,8 +23,8 @@ import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
 import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.paths.NioPath;
-import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
@@ -66,7 +66,7 @@ import org.apiguardian.api.API.Status;
 public final class JarContainerImpl implements Container {
 
   private final Location location;
-  private final PathLike jarPath;
+  private final PathWrapper jarPath;
   private final String release;
   private final Lazy<@WillCloseWhenClosed PackageFileSystemHolder> holder;
 
@@ -77,7 +77,7 @@ public final class JarContainerImpl implements Container {
    * @param jarPath  the path to the JAR to open.
    * @param release  the release version to use for {@code Multi-Release} JARs.
    */
-  public JarContainerImpl(Location location, @WillNotClose PathLike jarPath, String release) {
+  public JarContainerImpl(Location location, @WillNotClose PathWrapper jarPath, String release) {
     this.location = requireNonNull(location, "location");
     this.jarPath = requireNonNull(jarPath, "jarPath");
     this.release = requireNonNull(release, "release");
@@ -205,7 +205,7 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
-  public PathLike getPath() {
+  public PathWrapper getPathWrapper() {
     return jarPath;
   }
 
@@ -277,7 +277,7 @@ public final class JarContainerImpl implements Container {
    */
   private final class PackageFileSystemHolder {
 
-    private final Map<String, PathLike> packages;
+    private final Map<String, PathWrapper> packages;
     private final @WillCloseWhenClosed FileSystem fileSystem;
 
     private PackageFileSystemHolder() throws IOException {
@@ -316,7 +316,7 @@ public final class JarContainerImpl implements Container {
               .map(root::relativize)
               .forEach(path -> packages.put(
                   FileUtils.pathToBinaryName(path),
-                  new NioPath(root.resolve(path))
+                  new BasicPathWrapperImpl(root.resolve(path))
               ));
         }
       }
@@ -327,12 +327,12 @@ public final class JarContainerImpl implements Container {
       fileSystem.close();
     }
 
-    private Map<String, PathLike> getPackages() {
+    private Map<String, PathWrapper> getPackages() {
       return packages;
     }
 
     @Nullable
-    private PathLike getPackage(String name) {
+    private PathWrapper getPackage(String name) {
       return packages.get(name);
     }
 

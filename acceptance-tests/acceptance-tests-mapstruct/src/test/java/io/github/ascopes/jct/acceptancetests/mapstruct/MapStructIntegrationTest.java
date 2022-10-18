@@ -20,7 +20,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.junit.JavacCompilers;
-import io.github.ascopes.jct.paths.RamPath;
+import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem;
 import java.nio.file.Path;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
@@ -35,8 +35,8 @@ class MapStructIntegrationTest {
   void mapStructGeneratesExpectedMappingCode(Compilable<?, ?> compiler)
       throws ReflectiveOperationException {
     // Given
-    var sources = RamPath
-        .createPath("sources")
+    var sources = TemporaryFileSystem
+        .named("sources")
         .copyTreeFrom(
             Path.of("src", "test", "resources", "code"),
             "io/github/ascopes/jct/acceptancetests/mapstruct"

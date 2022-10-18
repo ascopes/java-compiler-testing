@@ -18,7 +18,7 @@ package io.github.ascopes.jct.containers;
 import io.github.ascopes.jct.annotations.WillClose;
 import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
-import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,7 +54,7 @@ public interface ModuleContainerGroup extends ContainerGroup {
    * @param module the name of the module that this is for.
    * @param path   the path to add.
    */
-  void addModule(String module, @WillNotClose PathLike path);
+  void addModule(String module, @WillNotClose PathWrapper path);
 
   /**
    * Get the {@link PackageContainerGroup} for a given module name, creating it if it does not yet

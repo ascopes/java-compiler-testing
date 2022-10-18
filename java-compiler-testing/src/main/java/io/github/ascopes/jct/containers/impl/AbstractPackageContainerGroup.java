@@ -23,7 +23,7 @@ import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
@@ -94,7 +94,7 @@ public abstract class AbstractPackageContainerGroup
   }
 
   @Override
-  public void addPackage(PathLike path) {
+  public void addPackage(PathWrapper path) {
     var actualPath = path.getPath();
 
     var archive = ARCHIVE_EXTENSIONS

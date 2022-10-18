@@ -21,7 +21,7 @@ import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
@@ -52,7 +52,7 @@ public class PathContainerImpl implements Container {
   private static final Logger LOGGER = LoggerFactory.getLogger(PathContainerImpl.class);
 
   private final Location location;
-  private final @WillNotClose PathLike root;
+  private final @WillNotClose PathWrapper root;
   private final String name;
 
   /**
@@ -61,7 +61,7 @@ public class PathContainerImpl implements Container {
    * @param location the location.
    * @param root     the root directory to hold.
    */
-  public PathContainerImpl(Location location, @WillNotClose PathLike root) {
+  public PathContainerImpl(Location location, @WillNotClose PathWrapper root) {
     this.location = requireNonNull(location, "location");
     this.root = requireNonNull(root, "root");
     name = root.toString();
@@ -152,7 +152,7 @@ public class PathContainerImpl implements Container {
   }
 
   @Override
-  public PathLike getPath() {
+  public PathWrapper getPathWrapper() {
     return root;
   }
 

@@ -20,7 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.ex.CompilerAlreadyUsedException;
-import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -200,7 +200,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   }
 
   @Override
-  public A addPath(Location location, PathLike pathLike) {
+  public A addPath(Location location, PathWrapper pathLike) {
     requireNonNull(location, "location");
     requireNonNull(pathLike, "pathLike");
 
@@ -211,7 +211,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   }
 
   @Override
-  public A addPath(Location location, String moduleName, PathLike pathLike) {
+  public A addPath(Location location, String moduleName, PathWrapper pathLike) {
     requireNonNull(location, "location");
     requireNonNull(moduleName, "moduleName");
     requireNonNull(pathLike, "pathLike");

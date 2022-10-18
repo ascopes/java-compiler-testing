@@ -36,7 +36,8 @@ class ExampleTest {
     @JavacCompilers
     @ParameterizedTest(name = "using {0}")
     void canCompileHelloWorld(Compilable<?, ?> compiler) {
-        var sources = createPath("src")
+        var sources = TemporaryFileSystem
+                .create("src")
                 .createFile(
                         "org/example/Message.java",
                         """
@@ -82,7 +83,8 @@ class ExampleTest {
     @ParameterizedTest(name = "using {0}")
     void canCompileModuleUsingLombok(Compilable<?, ?> compiler) {
         // Given
-        var sources = createPath("hello.world")
+        var sources = TemporaryFileSystem
+                .create("hello.world")
                 .createFile(
                         "org/example/Message.java",
                         """

@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.testing.integration.basic;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static io.github.ascopes.jct.paths.RamPath.createPath;
+import static io.github.ascopes.jct.pathwrappers.TemporaryFileSystem.named;
 
 import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.junit.JavacCompilers;
@@ -35,7 +35,7 @@ class BasicModuleCompilationTest {
   @JavacCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")
   void helloWorld(Compilable<?, ?> compiler) {
-    var sources = createPath("hello.world")
+    var sources = named("hello.world")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",

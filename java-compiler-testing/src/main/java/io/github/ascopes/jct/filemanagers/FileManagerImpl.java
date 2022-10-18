@@ -26,8 +26,8 @@ import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.containers.impl.ModuleContainerGroupImpl;
 import io.github.ascopes.jct.containers.impl.OutputContainerGroupImpl;
 import io.github.ascopes.jct.containers.impl.PackageContainerGroupImpl;
-import io.github.ascopes.jct.paths.PathLike;
-import io.github.ascopes.jct.paths.SubPath;
+import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
@@ -57,6 +57,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class FileManagerImpl implements FileManager {
+
   private static final int UNSUPPORTED_ARGUMENT = -1;
 
   private static final Cleaner CLEANER = Cleaner.create();
@@ -86,7 +87,7 @@ public final class FileManagerImpl implements FileManager {
   }
 
   @Override
-  public void addPath(Location location, PathLike path) {
+  public void addPath(Location location, PathWrapper pathWrapper) {
     requireFileManagerToBeOpen();
 
     if (location instanceof ModuleLocation) {
@@ -94,29 +95,29 @@ public final class FileManagerImpl implements FileManager {
 
       if (location.isOutputLocation()) {
         getOrCreateOutput(moduleLocation.getParent())
-            .addModule(moduleLocation.getModuleName(), path);
+            .addModule(moduleLocation.getModuleName(), pathWrapper);
       } else {
         getOrCreateModule(moduleLocation.getParent())
-            .addModule(moduleLocation.getModuleName(), path);
+            .addModule(moduleLocation.getModuleName(), pathWrapper);
       }
 
     } else if (location.isOutputLocation()) {
       getOrCreateOutput(location)
-          .addPackage(path);
+          .addPackage(pathWrapper);
 
     } else if (location.isModuleOrientedLocation()) {
       // Attempt to find modules.
       var moduleGroup = getOrCreateModule(location);
 
-      for (var ref : ModuleFinder.of(path.getPath()).findAll()) {
+      for (var ref : ModuleFinder.of(pathWrapper.getPath()).findAll()) {
         var module = ref.descriptor().name();
         moduleGroup.getOrCreateModule(module)
-            .addPackage(new SubPath(path, module));
+            .addPackage(new BasicPathWrapperImpl(pathWrapper, module));
       }
 
     } else {
       getOrCreatePackage(location)
-          .addPackage(path);
+          .addPackage(pathWrapper);
     }
   }
 

@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.junit.JavacCompilers;
-import io.github.ascopes.jct.paths.RamPath;
+import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,8 +42,8 @@ class ImmutablesIntegrationTest {
   void immutablesValueProducesTheExpectedClass(Compilable<?, ?> compiler)
       throws ReflectiveOperationException {
     // Given
-    var sources = RamPath
-        .createPath("sources")
+    var sources = TemporaryFileSystem
+        .named("sources")
         .createFile(
             "io/github/ascopes/jct/acceptancetests/immutables/dataclass/Animal.java",
             "package io.github.ascopes.jct.acceptancetests.immutables.dataclass;",

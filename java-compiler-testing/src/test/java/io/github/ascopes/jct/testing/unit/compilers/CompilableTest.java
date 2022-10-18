@@ -29,7 +29,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.withSettings;
 
 import io.github.ascopes.jct.compilers.Compilable;
-import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.testing.helpers.TypeRef;
 import java.nio.file.Path;
 import java.util.stream.Stream;
@@ -259,7 +259,7 @@ class CompilableTest {
 
   static Stream<DynamicTest> addPackagePathTestsFor(
       String name,
-      AddPackagePathAliasMethod<PathLike> pathLikeAdder,
+      AddPackagePathAliasMethod<PathWrapper> pathLikeAdder,
       AddPackagePathAliasMethod<Path> pathAdder,
       Location location
   ) {
@@ -289,12 +289,12 @@ class CompilableTest {
         name + "(PathLike) should return the compiler",
         () -> {
           // Given
-          var pathLike = stub(PathLike.class);
+          var pathLike = stub(PathWrapper.class);
           Compilable<?, ?> compiler = mockCast(
               new TypeRef<>() {},
               withSettings().strictness(Strictness.LENIENT)
           );
-          given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
+          given(compiler.addPath(any(), any(PathWrapper.class))).will(ctx -> compiler);
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
           given(compiler.addPath(any(), any(), any(Path.class))).will(ctx -> compiler);
@@ -335,12 +335,12 @@ class CompilableTest {
         name + "(PathLike) should delegate to addPath(" + locName + ", PathLike)",
         () -> {
           // Given
-          var pathLike = stub(PathLike.class);
+          var pathLike = stub(PathWrapper.class);
           Compilable<?, ?> compiler = mockCast(
               new TypeRef<>() {},
               withSettings().strictness(Strictness.LENIENT)
           );
-          given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
+          given(compiler.addPath(any(), any(PathWrapper.class))).will(ctx -> compiler);
           given(pathLikeAdder.add(compiler, pathLike)).willCallRealMethod();
 
           // When
@@ -383,7 +383,7 @@ class CompilableTest {
 
   static Stream<DynamicTest> addModulePathTestsFor(
       String name,
-      AddModulePathAliasMethod<PathLike> pathLikeAdder,
+      AddModulePathAliasMethod<PathWrapper> pathLikeAdder,
       AddModulePathAliasMethod<Path> pathAdder,
       Location location
   ) {
@@ -414,15 +414,15 @@ class CompilableTest {
         name + "(String, PathLike) should return the compiler",
         () -> {
           // Given
-          var pathLike = stub(PathLike.class);
+          var pathLike = stub(PathWrapper.class);
           Compilable<?, ?> compiler = mockCast(
               new TypeRef<>() {},
               withSettings().strictness(Strictness.LENIENT)
           );
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
-          given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
-          given(compiler.addPath(any(), any(), any(PathLike.class))).will(ctx -> compiler);
+          given(compiler.addPath(any(), any(PathWrapper.class))).will(ctx -> compiler);
+          given(compiler.addPath(any(), any(), any(PathWrapper.class))).will(ctx -> compiler);
           given(pathLikeAdder.add(compiler, moduleName, pathLike)).willCallRealMethod();
 
           // When
@@ -460,12 +460,12 @@ class CompilableTest {
         name + "(String, PathLike) should delegate to addPath(" + locName + ", String, PathLike)",
         () -> {
           // Given
-          var pathLike = stub(PathLike.class);
+          var pathLike = stub(PathWrapper.class);
           Compilable<?, ?> compiler = mockCast(
               new TypeRef<>() {},
               withSettings().strictness(Strictness.LENIENT)
           );
-          given(compiler.addPath(any(), any(PathLike.class))).will(ctx -> compiler);
+          given(compiler.addPath(any(), any(PathWrapper.class))).will(ctx -> compiler);
           given(pathLikeAdder.add(compiler, moduleName, pathLike)).willCallRealMethod();
 
           // When

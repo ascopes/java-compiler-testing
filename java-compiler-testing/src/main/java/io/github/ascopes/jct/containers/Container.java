@@ -17,7 +17,7 @@ package io.github.ascopes.jct.containers;
 
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.paths.PathLike;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
@@ -141,11 +141,11 @@ public interface Container extends Closeable {
   String getName();
 
   /**
-   * Get the path of the container.
+   * Get the path wrapper of the container.
    *
-   * @return the path.
+   * @return the path wrapper.
    */
-  PathLike getPath();
+  PathWrapper getPathWrapper();
 
   /**
    * Get a classpath resource for the given resource path if it exists.
