@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.ServiceLoader;
@@ -103,7 +102,7 @@ public abstract class AbstractPackageContainerGroup
 
     var container = archive
         ? new JarContainerImpl(getLocation(), path, release)
-        : new PathContainerImpl(getLocation(), path);
+        : new PathWrappingContainerImpl(getLocation(), path);
 
     addPackage(container);
   }
@@ -217,8 +216,8 @@ public abstract class AbstractPackageContainerGroup
   }
 
   @Override
-  public final List<? extends Container> getPackages() {
-    return Collections.unmodifiableList(containers);
+  public final List<Container> getPackages() {
+    return List.copyOf(containers);
   }
 
   @Override
@@ -260,8 +259,8 @@ public abstract class AbstractPackageContainerGroup
     }
   }
 
-  protected ContainerClassLoaderImpl createClassLoader() {
-    return new ContainerClassLoaderImpl(getLocation(), getPackages());
+  protected ContainerGroupClassLoaderImpl createClassLoader() {
+    return new ContainerGroupClassLoaderImpl(getLocation(), getPackages());
   }
 
 }

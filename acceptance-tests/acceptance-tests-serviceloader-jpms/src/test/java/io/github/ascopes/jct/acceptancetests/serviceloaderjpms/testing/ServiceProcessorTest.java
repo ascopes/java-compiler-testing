@@ -61,9 +61,8 @@ class ServiceProcessorTest {
 
     assertThatCompilation(compilation)
         .isSuccessfulWithoutWarnings()
-        .files()
-        .classOutput().exists()
-        .file("META-INF/services/com.example.InsultProvider").exists()
+        .classOutput().packages()
+        .withFile("META-INF/services/com.example.InsultProvider")
         .hasContent("com.example.MeanInsultProviderImpl");
   }
 }

@@ -27,11 +27,8 @@ import org.assertj.core.api.AbstractAssert;
  *
  * @author Ashley Scopes
  * @since 0.0.1
- * @deprecated I have put up a pull request for AssertJ to support this functionality in AssertJ
- *     Core. Once this is merged, this class will be removed from this API.
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-@Deprecated(forRemoval = true)
 public final class ClassLoaderAssert extends AbstractAssert<ClassLoaderAssert, ClassLoader> {
 
   /**

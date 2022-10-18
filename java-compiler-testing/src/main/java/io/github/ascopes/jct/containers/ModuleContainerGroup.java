@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.containers;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillClose;
 import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
@@ -57,6 +58,15 @@ public interface ModuleContainerGroup extends ContainerGroup {
   void addModule(String module, @WillNotClose PathWrapper path);
 
   /**
+   * Find the package container group for the given module.
+   *
+   * @param module the module name.
+   * @return the container group, or {@code null} if no module was found by that name.
+   */
+  @Nullable
+  PackageContainerGroup findModule(String module);
+
+  /**
    * Get the {@link PackageContainerGroup} for a given module name, creating it if it does not yet
    * exist.
    *
@@ -85,7 +95,7 @@ public interface ModuleContainerGroup extends ContainerGroup {
    *
    * @return the container impl.
    */
-  Map<ModuleLocation, ? extends PackageContainerGroup> getModules();
+  Map<ModuleLocation, PackageContainerGroup> getModules();
 
   /**
    * Determine if this group contains a given module.

@@ -32,6 +32,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -47,9 +48,9 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public class PathContainerImpl implements Container {
+public class PathWrappingContainerImpl implements Container {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(PathContainerImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(PathWrappingContainerImpl.class);
 
   private final Location location;
   private final @WillNotClose PathWrapper root;
@@ -61,7 +62,7 @@ public class PathContainerImpl implements Container {
    * @param location the location.
    * @param root     the root directory to hold.
    */
-  public PathContainerImpl(Location location, @WillNotClose PathWrapper root) {
+  public PathWrappingContainerImpl(Location location, @WillNotClose PathWrapper root) {
     this.location = requireNonNull(location, "location");
     this.root = requireNonNull(root, "root");
     name = root.toString();
@@ -70,8 +71,8 @@ public class PathContainerImpl implements Container {
   @Override
   public void close() throws IOException {
     // Do nothing for this implementation. We have nothing to close.
-    // This also has the side effect of not closing RamPaths early, as we treat those as
-    // DirectoryContainer types.
+    // This also has the side effect of **not** closing TemporaryFileSystems early, as we use this
+    // class with those objects as well.
   }
 
   @Override
@@ -173,6 +174,13 @@ public class PathContainerImpl implements Container {
     return javaFileObject.getFullPath().startsWith(root.getPath())
         ? FileUtils.pathToBinaryName(javaFileObject.getRelativePath())
         : null;
+  }
+
+  @Override
+  public Collection<Path> listAllFiles() throws IOException {
+    try (var walker = Files.walk(root.getPath(), FileVisitOption.FOLLOW_LINKS)) {
+      return walker.collect(Collectors.toList());
+    }
   }
 
   @Override

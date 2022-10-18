@@ -63,15 +63,6 @@ class LombokIntegrationTest {
     assertThatCompilation(compilation)
         .isSuccessful();
 
-    // Github Issue #9 sanity check - Improve annotation processor discovery mechanism
-    // TODO(ascopes): fix this to work with the file manager rewrite.
-    //CompilationAssert.assertThatCompilation(compilation)
-    //    .location(StandardLocation.ANNOTATION_PROCESSOR_PATH)
-    //    .containsAll(compilation
-    //        .getFileManager()
-    //        .getExpectedManager(StandardLocation.CLASS_PATH)
-    //        .getRoots());
-
     var animalClass = compilation
         .getFileManager()
         .getClassLoader(StandardLocation.CLASS_OUTPUT)

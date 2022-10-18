@@ -36,6 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.ProviderNotFoundException;
 import java.nio.file.spi.FileSystemProvider;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -241,6 +242,11 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
+  public Collection<Path> listAllFiles() throws IOException {
+    return holder.access().getAllFiles();
+  }
+
+  @Override
   public void listFileObjects(
       String packageName,
       Set<? extends Kind> kinds,
@@ -342,6 +348,19 @@ public final class JarContainerImpl implements Container {
 
     private Stream<? extends Path> getRootDirectoriesStream() {
       return StreamSupport.stream(fileSystem.getRootDirectories().spliterator(), false);
+    }
+
+    private Collection<Path> getAllFiles() throws IOException {
+      var allPaths = new ArrayList<Path>();
+
+      // TODO: think of a faster way of doing this without returning a closeable stream.
+      for (var root : fileSystem.getRootDirectories()) {
+        try (var walker = Files.walk(root)) {
+          walker.forEach(allPaths::add);
+        }
+      }
+
+      return allPaths;
     }
   }
 

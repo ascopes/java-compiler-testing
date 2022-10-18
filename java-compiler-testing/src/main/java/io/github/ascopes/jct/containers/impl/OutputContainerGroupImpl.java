@@ -29,7 +29,6 @@ import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,23 +106,19 @@ public class OutputContainerGroupImpl
   }
 
   @Override
-  @Nullable
-  public Path findFile(String path) {
-    var moduleHandle = ModuleHandle.tryExtract(path);
-
-    if (moduleHandle != null) {
-      var module = getOrCreateModule(moduleHandle.getModuleName());
-
-      if (module != null) {
-        var result = module.findFile(moduleHandle.getRest());
-
-        if (result != null) {
-          return result;
-        }
-      }
+  public PackageContainerGroup findModule(String module) {
+    if (module.isEmpty()) {
+      // We are a package container group internally.
+      return this;
     }
 
-    return super.findFile(path);
+    return modules
+        .keySet()
+        .stream()
+        .filter(location -> location.getModuleName().equals(module))
+        .findFirst()
+        .map(modules::get)
+        .orElse(null);
   }
 
   @Override
@@ -207,11 +202,6 @@ public class OutputContainerGroupImpl
   }
 
   @Override
-  public PackageContainerGroup getOrCreateModule(String moduleName) {
-    return modules.computeIfAbsent(new ModuleLocation(location, moduleName), this::newPackageGroup);
-  }
-
-  @Override
   public Location getLocation() {
     return location;
   }
@@ -222,8 +212,13 @@ public class OutputContainerGroupImpl
   }
 
   @Override
-  public Map<ModuleLocation, ? extends PackageContainerGroup> getModules() {
+  public Map<ModuleLocation, PackageContainerGroup> getModules() {
     return null;
+  }
+
+  @Override
+  public PackageContainerGroup getOrCreateModule(String moduleName) {
+    return modules.computeIfAbsent(new ModuleLocation(location, moduleName), this::newPackageGroup);
   }
 
   @Override
@@ -232,7 +227,7 @@ public class OutputContainerGroupImpl
   }
 
   @Override
-  protected ContainerClassLoaderImpl createClassLoader() {
+  protected ContainerGroupClassLoaderImpl createClassLoader() {
     var moduleMapping = modules
         .entrySet()
         .stream()
@@ -241,9 +236,10 @@ public class OutputContainerGroupImpl
             entry -> entry.getValue().getPackages()
         ));
 
-    return new ContainerClassLoaderImpl(location, getPackages(), moduleMapping);
+    return new ContainerGroupClassLoaderImpl(location, getPackages(), moduleMapping);
   }
 
+  @SuppressWarnings("resource")
   @WillNotClose
   private OutputPackageContainerGroupImpl newPackageGroup(ModuleLocation moduleLocation) {
     // For output locations, we only need the first root. We then just put a subdirectory

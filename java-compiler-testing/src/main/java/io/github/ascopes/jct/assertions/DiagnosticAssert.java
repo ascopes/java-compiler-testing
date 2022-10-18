@@ -17,10 +17,9 @@ package io.github.ascopes.jct.assertions;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.assertions.repr.DiagnosticRepresentation;
+import io.github.ascopes.jct.assertions.helpers.DiagnosticRepresentation;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.Locale;
-import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -70,55 +69,55 @@ public final class DiagnosticAssert
   /**
    * Get assertions for the position of the diagnostic.
    *
-   * <p>The value may be empty if no position was provided.
+   * <p>The value may be -1 if no information is available.
    *
    * @return the assertions for the position of the diagnostic.
    */
-  public MaybeAssert<LongAssert, Long> position() {
+  public LongAssert position() {
     return assertPosition(actual.getPosition(), "position");
   }
 
   /**
    * Get assertions for the start position of the diagnostic.
    *
-   * <p>The value may be empty if no position was provided.
+   * <p>The value may be -1 if no information is available.
    *
    * @return the assertions for the start position of the diagnostic.
    */
-  public MaybeAssert<LongAssert, Long> startPosition() {
+  public LongAssert startPosition() {
     return assertPosition(actual.getPosition(), "startPosition");
   }
 
   /**
    * Get assertions for the end position of the diagnostic.
    *
-   * <p>The value may be empty if no position was provided.
+   * <p>The value may be -1 if no information is available.
    *
    * @return the assertions for the end position of the diagnostic.
    */
-  public MaybeAssert<LongAssert, Long> endPosition() {
+  public LongAssert endPosition() {
     return assertPosition(actual.getEndPosition(), "endPosition");
   }
 
   /**
    * Get assertions for the line number of the diagnostic.
    *
-   * <p>The value may be empty if no position was provided.
+   * <p>The value may be -1 if no information is available.
    *
    * @return the assertions for the line number of the diagnostic.
    */
-  public MaybeAssert<LongAssert, Long> lineNumber() {
+  public LongAssert lineNumber() {
     return assertPosition(actual.getLineNumber(), "lineNumber");
   }
 
   /**
    * Get assertions for the column number of the diagnostic.
    *
-   * <p>The value may be empty if no position was provided.
+   * <p>The value may be -1 if no information is available.
    *
    * @return the assertions for the column number of the diagnostic.
    */
-  public MaybeAssert<LongAssert, Long> columnNumber() {
+  public LongAssert columnNumber() {
     return assertPosition(actual.getColumnNumber(), "columnNumber");
   }
 
@@ -173,10 +172,10 @@ public final class DiagnosticAssert
    * Get assertions for the thread name of the thread that reported the diagnostic. This may not be
    * present in some situations.
    *
-   * @return the assertions for the optional thread name.
+   * @return the assertions for the thread name.
    */
-  public MaybeAssert<StringAssert, String> threadName() {
-    return new MaybeAssert<>(actual.getThreadName().orElse(null), StringAssert::new);
+  public StringAssert threadName() {
+    return new StringAssert(actual.getThreadName().orElse(null));
   }
 
   /**
@@ -188,15 +187,11 @@ public final class DiagnosticAssert
    *     implementation.
    */
   @Deprecated(forRemoval = true)
-  @SuppressWarnings("removal")
   public StackTraceAssert stackTrace() {
     return new StackTraceAssert(actual.getStackTrace());
   }
 
-  private MaybeAssert<LongAssert, Long> assertPosition(long position, String name) {
-    return new MaybeAssert<>(
-        position == Diagnostic.NOPOS ? null : position,
-        LongAssert::new
-    ).describedAs("%s of %d", name, position);
+  private LongAssert assertPosition(long position, String name) {
+    return new LongAssert(position).describedAs(name);
   }
 }

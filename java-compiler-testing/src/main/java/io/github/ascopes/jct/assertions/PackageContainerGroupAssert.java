@@ -15,188 +15,111 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
+
+import io.github.ascopes.jct.assertions.helpers.LocationRepresentation;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
-import io.github.ascopes.jct.filemanagers.PathFileObject;
 import java.nio.file.Path;
-import javax.tools.JavaFileObject.Kind;
+import java.util.stream.Collectors;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.assertj.core.api.AbstractAssert;
-import org.assertj.core.api.IterableAssert;
+import org.assertj.core.api.AbstractPathAssert;
 import org.assertj.core.api.PathAssert;
 
 /**
- * Base methods to provide for a {@link PackageContainerGroup} assertion type.
+ * Assertions for package container groups.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class PackageContainerGroupAssert
-    extends AbstractAssert<PackageContainerGroupAssert, PackageContainerGroup> {
+public final class PackageContainerGroupAssert
+    extends AbstractContainerGroupAssert<PackageContainerGroupAssert, PackageContainerGroup> {
 
   /**
-   * Initialize this assertion object.
+   * Initialize the container group assertions.
    *
-   * @param actual the container group to assert upon.
+   * @param containerGroup the container group to assert upon.
    */
-  public PackageContainerGroupAssert(PackageContainerGroup actual) {
-    super(actual, PackageContainerGroupAssert.class);
+  public PackageContainerGroupAssert(PackageContainerGroup containerGroup) {
+    super(containerGroup, PackageContainerGroupAssert.class);
   }
 
   /**
-   * Perform assertions on the class loader.
+   * Assert that the given file does not exist.
    *
-   * @return the class loader assertions to perform.
-   * @deprecated I have put up a pull request for AssertJ to support this functionality in AssertJ
-   *     Core. Once this is merged, this return type will be changed to use the AssertJ
-   *     implementation.
+   * @param path the relative path to look for.
+   * @return this assertion object for further assertions.
+   * @throws AssertionError if the file exists.
    */
-  @Deprecated(forRemoval = true)
-  @SuppressWarnings("removal")
-  public ClassLoaderAssert classLoader() {
-    return new ClassLoaderAssert(actual.getClassLoader());
-  }
+  public PackageContainerGroupAssert withoutFile(String path) {
+    var file = actual.findFile(path);
 
-  /**
-   * Perform an assertion on the location.
-   *
-   * @return the location assertions to perform.
-   */
-  public LocationAssert location() {
-    return new LocationAssert(actual.getLocation());
-  }
-
-  /**
-   * Perform assertions on the services that exist for the given service type that are discovered
-   * from this container.
-   *
-   * @param serviceType the service class type to find services for.
-   * @param <T>         the service type to use.
-   * @return the assertions across the iterable of services discovered.
-   */
-  public <T> IterableAssert<T> serviceLoader(Class<T> serviceType) {
-    return new IterableAssert<>(actual.getServiceLoader(serviceType));
-  }
-
-  /**
-   * Perform assertions on the file at the given path, if it exists.
-   *
-   * <p>If the file does not exist, an empty optional is returned.
-   *
-   * @param path the path to get the file for.
-   * @return the assertions to perform.
-   */
-  public MaybeAssert<PathAssert, Path> file(String path) {
-    // TODO(ascopes): add in fuzzy comparison on results in error message
-    return new MaybeAssert<>(actual.findFile(path), PathAssert::new);
-  }
-
-  /**
-   * Perform an assertion on a file expected to be used for inputs.
-   *
-   * <p>If no file is found, an empty optional is returned.
-   *
-   * @param packageName  the package name that the file should reside within.
-   * @param relativeName the relative name of the file in the package.
-   * @return the assertions to perform.
-   */
-  public MaybeAssert<PathFileObjectAssert, PathFileObject> fileForInput(
-      String packageName,
-      String relativeName
-  ) {
-    return new MaybeAssert<>(
-        actual.getFileForInput(packageName, relativeName),
-        PathFileObjectAssert::new
-    );
-  }
-
-  /**
-   * Perform an assertion on a file expected to be used for outputs.
-   *
-   * <p>If no file is found, an empty optional is returned.
-   *
-   * @param packageName  the package name that the file should reside within.
-   * @param relativeName the relative name of the file in the package.
-   * @return the assertions to perform.
-   */
-  public MaybeAssert<PathFileObjectAssert, PathFileObject> fileForOutput(
-      String packageName,
-      String relativeName
-  ) {
-    return new MaybeAssert<>(
-        actual.getFileForOutput(packageName, relativeName),
-        PathFileObjectAssert::new
-    );
-  }
-
-  /**
-   * Perform an assertion on a Java file expected to be used for inputs.
-   *
-   * <p>If no file is found, an empty optional is returned.
-   *
-   * @param className the fully qualified binary name of the class to use.
-   * @param kind      the kind of file.
-   * @return the assertions to perform.
-   */
-  public MaybeAssert<PathFileObjectAssert, PathFileObject> javaFileForInput(
-      String className,
-      Kind kind
-  ) {
-    return new MaybeAssert<>(
-        actual.getJavaFileForInput(className, kind),
-        PathFileObjectAssert::new
-    );
-  }
-
-  /**
-   * Perform an assertion on a Java file expected to be used for outputs.
-   *
-   * <p>If no file is found, an empty optional is returned.
-   *
-   * @param className the fully qualified binary name of the class to use.
-   * @param kind      the kind of file.
-   * @return the assertions to perform.
-   */
-  public MaybeAssert<PathFileObjectAssert, PathFileObject> javaFileForOutput(
-      String className,
-      Kind kind
-  ) {
-    return new MaybeAssert<>(
-        actual.getJavaFileForOutput(className, kind),
-        PathFileObjectAssert::new
-    );
-  }
-
-  /**
-   * Assert that this container is empty.
-   *
-   * @return this assertion object for further call chaining.
-   */
-  public PackageContainerGroupAssert isEmpty() {
-    if (!actual.isEmpty()) {
-      throw failure(
-          "Expected container group for location %s to be empty but it was not",
-          actual.getLocation().getName()
-      );
+    if (file == null) {
+      return this;
     }
 
-    return this;
+    var locationName = LocationRepresentation.getInstance().toStringOf(actual.getLocation());
+
+    throw failure(
+        "Expected path %s to not exist in %s but it was found at %s",
+        path,
+        locationName,
+        file
+    );
   }
 
   /**
-   * Assert that this container is not empty.
+   * Assert that the given file exists.
    *
-   * @return this assertion object for further call chaining.
+   * @param path the relative path to look for.
+   * @return assertions to perform on the path of the file that exists.
+   * @throws AssertionError if the file does not exist.
    */
-  public PackageContainerGroupAssert isNotEmpty() {
-    if (actual.isEmpty()) {
-      throw failure(
-          "Expected container group for location %s to not be empty but it was",
-          actual.getLocation().getName()
-      );
+  public AbstractPathAssert<?> withFile(String path) {
+    var file = actual.findFile(path);
+
+    if (file != null) {
+      return new PathAssert(file);
     }
 
-    return this;
+    var closestMatches = FuzzySearch
+        .extractSorted(
+            path,
+            actual
+                .getPackages()
+                .stream()
+                .flatMap(container -> uncheckedIo(() -> container
+                    .listAllFiles()
+                    .stream()
+                    .map(container.getPathWrapper().getPath()::relativize)
+                ))
+                .collect(Collectors.toList()),
+            Path::toString,
+            FUZZY_CUTOFF
+        )
+        .stream()
+        .filter(it -> it.getScore() >= FUZZY_MIN_SCORE)
+        .map(BoundExtractedResult::getReferent)
+        .collect(Collectors.toList());
+
+    var locationName = LocationRepresentation.getInstance().toStringOf(actual.getLocation());
+
+    if (closestMatches.isEmpty()) {
+      throw failure("No file in %s files found named %s", locationName, path);
+    } else {
+      throw failure(
+          "No file named \"%s\" found in %s. Did you mean...%s",
+          path,
+          locationName,
+          closestMatches
+              .stream()
+              .map(Path::toString)
+              .map("\n\t - "::concat)
+              .collect(Collectors.joining())
+      );
+    }
   }
 }

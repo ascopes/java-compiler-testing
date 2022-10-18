@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.assertions;
 
-import io.github.ascopes.jct.assertions.repr.DiagnosticListRepresentation;
+import io.github.ascopes.jct.assertions.helpers.DiagnosticListRepresentation;
 import io.github.ascopes.jct.compilers.Compilation;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.List;
@@ -24,6 +24,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.tools.Diagnostic.Kind;
+import javax.tools.JavaFileManager.Location;
+import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
@@ -129,12 +131,139 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
   }
 
   /**
-   * Get assertions for the file manager.
+   * Assert that the file manager is closed.
    *
-   * @return assertions for the file manager.
+   * @return this assertion object to perform further assertions upon, if desired.
+   * @throws AssertionError if the file manager is unexpectedly open.
    */
-  public FileManagerAssert files() {
-    return new FileManagerAssert(actual.getFileManager());
+  public CompilationAssert fileManagerIsClosed() {
+    if (!actual.getFileManager().isClosed()) {
+      throw failure("Expected file manager to be closed but it was open");
+    }
+
+    return myself;
+  }
+
+  /**
+   * Assert that the file manager is open.
+   *
+   * @return this assertion object to perform further assertions upon, if desired.
+   * @throws AssertionError if the file manager is unexpectedly closed.
+   */
+  public CompilationAssert fileManagerIsOpen() {
+    if (actual.getFileManager().isClosed()) {
+      throw failure("Expected file manager to be open but it was closed");
+    }
+
+    return myself;
+  }
+
+  /**
+   * Perform assertions on the given package group, if it has been configured.
+   *
+   * <p>If not configured, this will return an empty optional.
+   *
+   * @param location the location to configure.
+   * @return the assertions to perform.
+   */
+  public PackageContainerGroupAssert packageGroup(Location location) {
+    return new PackageContainerGroupAssert(
+        actual.getFileManager().getPackageContainerGroup(location)
+    );
+  }
+
+  /**
+   * Perform assertions on the given module group, if it has been configured.
+   *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
+   * @param location the location to configure.
+   * @return the assertions to perform.
+   */
+  public ModuleContainerGroupAssert moduleGroup(Location location) {
+    return new ModuleContainerGroupAssert(
+        actual.getFileManager().getModuleContainerGroup(location)
+    );
+  }
+
+  /**
+   * Perform assertions on the given output group, if it has been configured.
+   *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
+   * @param location the location to configure.
+   * @return the assertions to perform.
+   */
+  public OutputContainerGroupAssert outputGroup(Location location) {
+    return new OutputContainerGroupAssert(
+        actual.getFileManager().getOutputContainerGroup(location)
+    );
+  }
+
+  /**
+   * Get assertions on the path containing class outputs, if it exists.
+   *
+   * @return the assertions to perform on the class outputs.
+   */
+  public OutputContainerGroupAssert classOutput() {
+    return outputGroup(StandardLocation.CLASS_OUTPUT);
+  }
+
+  /**
+   * Get assertions on the path containing generated source outputs, if it exists.
+   *
+   * @return the assertions to perform on the source outputs.
+   */
+  public OutputContainerGroupAssert sourceOutput() {
+    return outputGroup(StandardLocation.SOURCE_OUTPUT);
+  }
+
+  /**
+   * Get assertions on the path containing header outputs, if it exists.
+   *
+   * @return the assertions to perform on the header outputs.
+   */
+  public OutputContainerGroupAssert generatedHeaders() {
+    return outputGroup(StandardLocation.NATIVE_HEADER_OUTPUT);
+  }
+
+  /**
+   * Get assertions on the path containing the class path, if it exists.
+   *
+   * @return the assertions to perform on the class path.
+   */
+  public PackageContainerGroupAssert classPath() {
+    return packageGroup(StandardLocation.CLASS_PATH);
+  }
+
+  /**
+   * Get assertions on the path containing the source path, if it exists.
+   *
+   * @return the assertions to perform on the source path, or an empty optional if no group exists
+   *     for that location.
+   */
+  public PackageContainerGroupAssert sourcePath() {
+    return packageGroup(StandardLocation.SOURCE_PATH);
+  }
+
+  /**
+   * Get assertions on the path containing the source path, if it exists.
+   *
+   * @return the assertions to perform on the source path, or an empty optional if no group exists
+   *     for that location.
+   */
+  public ModuleContainerGroupAssert moduleSourcePath() {
+    return moduleGroup(StandardLocation.MODULE_SOURCE_PATH);
+  }
+
+  /**
+   * Get assertions on the path containing the module path, if it exists.
+   *
+   * @return the assertions to perform on the module path, or an empty optional if no group exists
+   *     for that location.
+   */
+  public ModuleContainerGroupAssert modulePath() {
+    return moduleGroup(StandardLocation.MODULE_PATH);
   }
 
   private void failWithDiagnostics(

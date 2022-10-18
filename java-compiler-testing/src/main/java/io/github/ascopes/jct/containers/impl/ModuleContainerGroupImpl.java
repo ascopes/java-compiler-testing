@@ -35,7 +35,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -55,7 +54,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   private final Location location;
   private final Map<ModuleLocation, @WillCloseWhenClosed ModulePackageContainerGroupImpl> modules;
   private final String release;
-  private final Lazy<ContainerClassLoaderImpl> classLoaderLazy;
+  private final Lazy<ContainerGroupClassLoaderImpl> classLoaderLazy;
 
   /**
    * Initialize this container group.
@@ -100,6 +99,21 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   }
 
   @Override
+  public PackageContainerGroup findModule(String module) {
+    if (module.isEmpty()) {
+      throw new IllegalArgumentException("Cannot have module sources with no valid module name");
+    }
+
+    return modules
+        .keySet()
+        .stream()
+        .filter(location -> location.getModuleName().equals(module))
+        .findFirst()
+        .map(modules::get)
+        .orElse(null);
+  }
+
+  @Override
   public void close() throws IOException {
     var exceptions = new ArrayList<IOException>();
     for (var group : modules.values()) {
@@ -118,12 +132,17 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   }
 
   @Override
-  @SuppressWarnings("SuspiciousMethodCalls")
   public boolean contains(PathFileObject fileObject) {
-    return Optional
-        .ofNullable(modules.get(fileObject.getLocation()))
-        .map(module -> module.contains(fileObject))
-        .orElse(false);
+    var location = fileObject.getLocation();
+
+    if (location instanceof ModuleLocation) {
+      var module = modules.get((ModuleLocation) location);
+      if (module != null) {
+        return module.contains(fileObject);
+      }
+    }
+
+    return false;
   }
 
   @Override
@@ -142,7 +161,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   }
 
   @Override
-  public Map<ModuleLocation, ? extends PackageContainerGroup> getModules() {
+  public Map<ModuleLocation, PackageContainerGroup> getModules() {
     return Map.copyOf(modules);
   }
 
@@ -188,7 +207,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
         .toString();
   }
 
-  private ContainerClassLoaderImpl createClassLoader() {
+  private ContainerGroupClassLoaderImpl createClassLoader() {
     var moduleMapping = modules
         .entrySet()
         .stream()
@@ -197,7 +216,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
             entry -> entry.getValue().getPackages()
         ));
 
-    return new ContainerClassLoaderImpl(location, moduleMapping);
+    return new ContainerGroupClassLoaderImpl(location, moduleMapping);
   }
 
   private ModulePackageContainerGroupImpl newPackageGroup(ModuleLocation location) {

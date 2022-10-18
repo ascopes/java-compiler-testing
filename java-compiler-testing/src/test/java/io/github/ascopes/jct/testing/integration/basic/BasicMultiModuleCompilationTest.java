@@ -16,10 +16,10 @@
 package io.github.ascopes.jct.testing.integration.basic;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static io.github.ascopes.jct.pathwrappers.TemporaryFileSystem.named;
 
 import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.junit.JavacCompilers;
+import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,7 +36,7 @@ class BasicMultiModuleCompilationTest {
   @JavacCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")
   void singleModuleInMultiModuleLayout(Compilable<?, ?> compiler) {
-    var source = named("hello.world")
+    var source = TemporaryFileSystem.named("hello.world")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",
@@ -62,21 +62,21 @@ class BasicMultiModuleCompilationTest {
         .isSuccessfulWithoutWarnings();
 
     assertThatCompilation(compilation)
-        .files()
-        .classOutput().exists()
-        .file("hello.world", "com/example/HelloWorld.class").exists().isNotEmptyFile();
+        .classOutput().modules()
+        .withModule("hello.world")
+        .withFile("com/example/HelloWorld.class").isNotEmptyFile();
 
     assertThatCompilation(compilation)
-        .files()
-        .classOutput().exists()
-        .file("hello.world", "module-info.class").exists().isNotEmptyFile();
+        .classOutput().modules()
+        .withModule("hello.world")
+        .withFile("module-info.class").isNotEmptyFile();
   }
 
   @DisplayName("I can compile multiple modules using multi-module layout")
   @JavacCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")
   void multipleModulesInMultiModuleLayout(Compilable<?, ?> compiler) {
-    var helloWorld = named("hello.world")
+    var helloWorld = TemporaryFileSystem.named("hello.world")
         .createFile(
             "com/example/HelloWorld.java",
             "package com.example;",
@@ -94,7 +94,7 @@ class BasicMultiModuleCompilationTest {
             "  exports com.example;",
             "}"
         );
-    var greeter = named("greeter")
+    var greeter = TemporaryFileSystem.named("greeter")
         .createFile(
             "com/example/greeter/Greeter.java",
             "package com.example.greeter;",
@@ -120,23 +120,23 @@ class BasicMultiModuleCompilationTest {
         .isSuccessfulWithoutWarnings();
 
     assertThatCompilation(compilation)
-        .files()
-        .classOutput().exists()
-        .file("hello.world", "com/example/HelloWorld.class").exists().isNotEmptyFile();
+        .classOutput().modules()
+        .withModule("hello.world")
+        .withFile("com/example/HelloWorld.class").isNotEmptyFile();
 
     assertThatCompilation(compilation)
-        .files()
-        .classOutput().exists()
-        .file("hello.world", "module-info.class").exists().isNotEmptyFile();
+        .classOutput().modules()
+        .withModule("hello.world")
+        .withFile("module-info.class").isNotEmptyFile();
 
     assertThatCompilation(compilation)
-        .files()
-        .classOutput().exists()
-        .file("greeter", "com/example/greeter/Greeter.class").exists().isNotEmptyFile();
+        .classOutput().modules()
+        .withModule("greeter")
+        .withFile("com/example/greeter/Greeter.class").isNotEmptyFile();
 
     assertThatCompilation(compilation)
-        .files()
-        .classOutput().exists()
-        .file("greeter", "module-info.class").exists().isNotEmptyFile();
+        .classOutput().modules()
+        .withModule("greeter")
+        .withFile("module-info.class").isNotEmptyFile();
   }
 }

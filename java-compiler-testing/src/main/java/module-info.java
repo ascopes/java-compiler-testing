@@ -22,7 +22,8 @@ module io.github.ascopes.jct {
   requires java.management;
 
   requires /* automatic */ jimfs;
-  requires /* automatic */ static jsr305;
+  requires static jsr305;
+  requires static me.xdrop.fuzzywuzzy;
   requires static transitive org.apiguardian.api;
   requires static transitive org.junit.jupiter.params;
   requires /* automatic */ org.assertj.core;

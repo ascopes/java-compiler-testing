@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.assertions;
 
-import io.github.ascopes.jct.assertions.repr.StackTraceRepresentation;
+import io.github.ascopes.jct.assertions.helpers.StackTraceRepresentation;
 import java.util.ArrayList;
 import java.util.List;
 import org.apiguardian.api.API;
@@ -27,12 +27,8 @@ import org.assertj.core.api.AbstractListAssert;
  *
  * @author Ashley Scopes
  * @since 0.0.1
- * @deprecated I have put up a pull request for AssertJ to support this functionality in AssertJ
- *     Core. Once this is merged, this class will be removed from this API.
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-@Deprecated(forRemoval = true)
-@SuppressWarnings("removal")
 public final class StackTraceAssert
     extends
     AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {

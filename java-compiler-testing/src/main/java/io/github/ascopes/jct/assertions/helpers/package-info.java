@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Representations for various complex objects to use within assertions.
+ * Various internal helper types for assertions.
  */
-package io.github.ascopes.jct.assertions.repr;
+package io.github.ascopes.jct.assertions.helpers;

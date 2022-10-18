@@ -42,15 +42,15 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class ContainerClassLoaderImpl extends ClassLoader {
+public class ContainerGroupClassLoaderImpl extends ClassLoader {
 
   static {
     ClassLoader.registerAsParallelCapable();
   }
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ContainerClassLoaderImpl.class);
-  private static final List<? extends Container> NO_PACKAGES = List.of();
-  private static final Map<String, ? extends List<? extends Container>> NO_MODULES = Map.of();
+  private static final Logger LOGGER = LoggerFactory.getLogger(ContainerGroupClassLoaderImpl.class);
+  private static final List<Container> NO_PACKAGES = List.of();
+  private static final Map<String, ? extends List<Container>> NO_MODULES = Map.of();
 
   private final Location location;
   private final List<? extends Container> packageContainers;
@@ -62,7 +62,8 @@ public class ContainerClassLoaderImpl extends ClassLoader {
    * @param location          the location that the containers are for.
    * @param packageContainers the package containers.
    */
-  public ContainerClassLoaderImpl(Location location, List<? extends Container> packageContainers) {
+  public ContainerGroupClassLoaderImpl(Location location,
+      List<? extends Container> packageContainers) {
     this(location, packageContainers, NO_MODULES);
   }
 
@@ -72,9 +73,9 @@ public class ContainerClassLoaderImpl extends ClassLoader {
    * @param location         the location that the containers are for.
    * @param moduleContainers the module containers.
    */
-  public ContainerClassLoaderImpl(
+  public ContainerGroupClassLoaderImpl(
       Location location,
-      Map<String, ? extends List<? extends Container>> moduleContainers
+      Map<String, ? extends List<Container>> moduleContainers
   ) {
     this(location, NO_PACKAGES, moduleContainers);
   }
@@ -86,10 +87,10 @@ public class ContainerClassLoaderImpl extends ClassLoader {
    * @param packageContainers the package containers.
    * @param moduleContainers  the module containers.
    */
-  public ContainerClassLoaderImpl(
+  public ContainerGroupClassLoaderImpl(
       Location location,
       List<? extends Container> packageContainers,
-      Map<String, ? extends List<? extends Container>> moduleContainers
+      Map<String, ? extends List<Container>> moduleContainers
   ) {
     this.location = requireNonNull(location, "location");
     this.packageContainers = requireNonNull(packageContainers, "packageContainers");

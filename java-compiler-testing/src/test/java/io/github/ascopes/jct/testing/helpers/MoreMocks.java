@@ -113,4 +113,5 @@ public final class MoreMocks {
   public static <T extends CharSequence> T stringLike(String pattern) {
     return argThat(input -> Pattern.matches(pattern, input));
   }
+
 }

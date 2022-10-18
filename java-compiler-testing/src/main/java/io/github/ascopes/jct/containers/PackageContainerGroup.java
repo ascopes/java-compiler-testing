@@ -67,7 +67,9 @@ public interface PackageContainerGroup extends ContainerGroup {
   void addPackage(@WillNotClose PathWrapper path);
 
   /**
-   * Find the first occurrence of a given path to a file.
+   * Find the first occurrence of a given path to a file in packages or modules.
+   *
+   * <p>Modules are treated as subdirectories.
    *
    * @param path the path to the file to find.
    * @return the first occurrence of the path in this group, or null if not found.
@@ -141,7 +143,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * @return the containers.
    */
-  Iterable<? extends Container> getPackages();
+  Collection<Container> getPackages();
 
   /**
    * Try to infer the binary name of a given file object.

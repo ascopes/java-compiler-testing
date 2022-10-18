@@ -54,8 +54,8 @@ class BasicLegacyCompilationTest {
         .isSuccessfulWithoutWarnings();
 
     assertThatCompilation(compilation)
-        .files()
-        .classOutput().exists()
-        .file("com/example/HelloWorld.class").exists().isNotEmptyFile();
+        .classOutput().packages()
+        .withFile("com/example/HelloWorld.class")
+        .isNotEmptyFile();
   }
 }

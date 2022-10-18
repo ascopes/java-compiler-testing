@@ -17,6 +17,7 @@ package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.annotations.Nullable;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
@@ -36,20 +37,31 @@ import org.assertj.core.api.AssertFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class MaybeAssert<I extends AbstractAssert<I, A>, A>
+public final class MaybeAssert<I extends AbstractAssert<I, A>, A>
     extends AbstractAssert<MaybeAssert<I, A>, Optional<A>> {
 
   private final AssertFactory<A, I> assertFactory;
+  private final Supplier<AssertionError> existsAssertionErrorSupplier;
+  private final Supplier<AssertionError> doesNotExistAssertionErrorSupplier;
 
   /**
    * Initialize these assertions.
    *
-   * @param actual        the actual nullable value to assert on.
-   * @param assertFactory the assertion factory to use on the value.
+   * @param actual                       the actual nullable value to assert on.
+   * @param assertFactory                the assertion factory to use on the value.
+   * @param existsAssertionErrorSupplier supplier of error messages when the value unexpectedly
+   *                                     exists.
    */
-  public MaybeAssert(@Nullable A actual, AssertFactory<A, I> assertFactory) {
+  public MaybeAssert(
+      @Nullable A actual,
+      AssertFactory<A, I> assertFactory,
+      Supplier<AssertionError> existsAssertionErrorSupplier,
+      Supplier<AssertionError> doesNotExistAssertionErrorSupplier
+  ) {
     super(Optional.ofNullable(actual), MaybeAssert.class);
     this.assertFactory = assertFactory;
+    this.existsAssertionErrorSupplier = existsAssertionErrorSupplier;
+    this.doesNotExistAssertionErrorSupplier = doesNotExistAssertionErrorSupplier;
   }
 
   /**

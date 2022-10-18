@@ -169,6 +169,14 @@ public interface Container extends Closeable {
   String inferBinaryName(PathFileObject javaFileObject);
 
   /**
+   * List all files within this container.
+   *
+   * @return all files within the container, relative to the container base path.
+   * @throws IOException if the file system failed to be read.
+   */
+  Collection<Path> listAllFiles() throws IOException;
+
+  /**
    * List all the file objects that match the given criteria in this group.
    *
    * @param packageName the package name to look in.
