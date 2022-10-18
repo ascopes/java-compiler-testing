@@ -83,23 +83,24 @@ public class LoggingFileManagerProxy implements InvocationHandler {
         .map(Parameter::getType)
         .map(Class::getSimpleName)
         .collect(Collectors.joining(", "));
+
+    // When no arguments are passed, the args array is
+    // null rather than a zero length array (i.e. Object[0]).
     var argsStr = args == null ? "" : Arrays
         .stream(args)
         .map(Objects::toString)
         .collect(Collectors.joining(", "));
 
-    String extraInfo;
+    var extraInfo = "";
 
     if (stackTraces) {
       // skip top 2 frames to discard the call to
       // .getStackTrace(), and this proxy method call.
-      extraInfo = "\n" + Arrays
+      extraInfo = Arrays
           .stream(thread.getStackTrace())
           .skip(2)
-          .map(frame -> "\tat " + frame)
-          .collect(Collectors.joining("\n"));
-    } else {
-      extraInfo = "";
+          .map(frame -> "\n\tat " + frame)
+          .collect(Collectors.joining(""));
     }
 
     LOGGER.info(
@@ -118,7 +119,7 @@ public class LoggingFileManagerProxy implements InvocationHandler {
 
       if (method.getReturnType().equals(void.class)) {
         LOGGER.info(
-            "<<< [thread={}, depth={}] {}({}) returned {}",
+            "<<< [thread={}, depth={}] {} {}({}) completed",
             threadId,
             depth,
             returnType,
