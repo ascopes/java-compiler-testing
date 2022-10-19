@@ -91,7 +91,7 @@
 
   <profiles>
     <profile>
-      <id>enable-on-compatible-jre-only</id>
+      <id>${project.artifactId}-enable-on-compatible-jre-only</id>
       <activation>
         <jdk>[16, 19]</jdk>
       </activation>
