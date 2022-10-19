@@ -15,6 +15,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>acceptance-tests-checkerframework</module>
     <module>acceptance-tests-immutables</module>
     <module>acceptance-tests-lombok</module>
     <module>acceptance-tests-mapstruct</module>
