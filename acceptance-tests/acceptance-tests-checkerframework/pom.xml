@@ -28,6 +28,10 @@
       --add-opens=jdk.compiler/com.sun.source.util=ALL-UNNAMED
     </argLine>
     <checkerframework.version>3.26.0</checkerframework.version>
+
+    <!-- By default, do not try to run these tests at all as they will flake on most JREs -->
+    <maven.main.skip>true</maven.main.skip>
+    <maven.test.skip>true</maven.test.skip>
   </properties>
 
   <dependencies>
@@ -84,4 +88,17 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>enable-on-compatible-jre-only</id>
+      <activation>
+        <jdk>[16, 19]</jdk>
+      </activation>
+      <properties>
+        <maven.main.skip>false</maven.main.skip>
+        <maven.test.skip>false</maven.test.skip>
+      </properties>
+    </profile>
+  </profiles>
 </project>
