@@ -21,6 +21,7 @@
     <module>acceptance-tests-mapstruct</module>
     <module>acceptance-tests-serviceloader</module>
     <module>acceptance-tests-serviceloader-jpms</module>
+    <module>acceptance-tests-spring-context-indexer</module>
   </modules>
 
   <properties>
