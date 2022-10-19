@@ -41,21 +41,21 @@ class ExampleTest {
                 .createFile(
                         "org/example/Message.java",
                         """
-                        package org.example;
+                                package org.example;
 
-                        import lombok.Data;
-                        import lombok.NonNull;
+                                import lombok.Data;
+                                import lombok.NonNull;
 
-                        @Data
-                        public class Message {
-                            private String content;
+                                @Data
+                                public class Message {
+                                    private String content;
 
-                            public static void main(String[] args) {
-                                Message message = new Message("Hello, World!");
-                                System.out.println(message);
-                            }
-                        }
-                        """
+                                    public static void main(String[] args) {
+                                        Message message = new Message("Hello, World!");
+                                        System.out.println(message);
+                                    }
+                                }
+                                """
                 );
 
         // When
@@ -75,6 +75,7 @@ support, running the Lombok annotation processor over the input. This assumes th
 JAR is already on the classpath for the JUnit test runner.
 
 ```java
+
 @DisplayName("Example tests")
 class ExampleTest {
 
@@ -88,41 +89,41 @@ class ExampleTest {
                 .createFile(
                         "org/example/Message.java",
                         """
-                        package org.example;
+                                package org.example;
 
-                        import lombok.Data;
-                        import lombok.NonNull;
+                                import lombok.Data;
+                                import lombok.NonNull;
 
-                        @Data
-                        public class Message {
-                            @NonNull
-                            private final String content;
-                        }
-                        """
+                                @Data
+                                public class Message {
+                                    @NonNull
+                                    private final String content;
+                                }
+                                """
                 )
                 .createFile(
                         "org/example/Main.java",
                         """
-                        package org.example;
+                                package org.example;
 
-                        public class Main {
-                            public static void main(String[] args) {
-                                for (var arg : args) {
-                                    var message = new Message(arg);
-                                    System.out.println(arg);
+                                public class Main {
+                                    public static void main(String[] args) {
+                                        for (var arg : args) {
+                                            var message = new Message(arg);
+                                            System.out.println(arg);
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        """
+                                """
                 )
                 .createFile(
                         "module-info.java",
                         """
-                        module hello.world {
-                            requires java.base;
-                            requires static lombok;
-                        }
-                        """
+                                module hello.world {
+                                    requires java.base;
+                                    requires static lombok;
+                                }
+                                """
                 );
 
         // When

@@ -49,6 +49,7 @@
     <assertj.version>3.23.1</assertj.version>
     <awaitility.version>4.2.0</awaitility.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
+    <groovy.version>4.0.6</groovy.version>
     <jimfs.version>1.2</jimfs.version>
     <jsr305.version>3.0.2</jsr305.version>
     <junit.version>5.9.1</junit.version>
@@ -56,6 +57,7 @@
     <slf4j.version>2.0.3</slf4j.version>
 
     <!-- Plugins -->
+    <gmaven-plugin.version>2.0.0</gmaven-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <license-maven-plugin.version>4.1</license-maven-plugin.version>
     <maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
@@ -139,6 +141,13 @@
       </dependency>
 
       <dependency>
+        <!-- Groovy standard library -->
+        <groupId>org.apache.groovy</groupId>
+        <artifactId>groovy</artifactId>
+        <version>${groovy.version}</version>
+      </dependency>
+
+      <dependency>
         <!-- Unit testing -->
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
@@ -175,6 +184,24 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <!-- Groovy compiler -->
+          <groupId>org.codehaus.gmavenplus</groupId>
+          <artifactId>gmavenplus-plugin</artifactId>
+          <version>${gmaven-plugin.version}</version>
+
+          <executions>
+            <execution>
+              <goals>
+                <goal>addSources</goal>
+                <goal>addTestSources</goal>
+                <goal>compile</goal>
+                <goal>compileTests</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
         <plugin>
           <!-- Coverage tracing -->
           <groupId>org.jacoco</groupId>
@@ -215,6 +242,7 @@
             </mapping>
             <includes>
               <include>src/**/*.java</include>
+              <include>src/**/*.groovy</include>
             </includes>
             <properties>
               <currentYear>2022</currentYear>

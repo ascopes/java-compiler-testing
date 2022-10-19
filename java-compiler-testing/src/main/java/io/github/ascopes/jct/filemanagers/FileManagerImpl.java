@@ -26,7 +26,6 @@ import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.containers.impl.ModuleContainerGroupImpl;
 import io.github.ascopes.jct.containers.impl.OutputContainerGroupImpl;
 import io.github.ascopes.jct.containers.impl.PackageContainerGroupImpl;
-import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import io.github.ascopes.jct.utils.ToStringBuilder;
@@ -111,8 +110,13 @@ public final class FileManagerImpl implements FileManager {
 
       for (var ref : ModuleFinder.of(pathWrapper.getPath()).findAll()) {
         var module = ref.descriptor().name();
+
+        // Right now, assume the module is not in a nested directory. Not sure if there are
+        // cases where this isn't true, but I spotted some weird errors with paths being appended
+        // to the end of JAR paths if I uncomment the following line.
         moduleGroup.getOrCreateModule(module)
-            .addPackage(new BasicPathWrapperImpl(pathWrapper, module));
+            //.addPackage(new BasicPathWrapperImpl(pathWrapper, module));
+            .addPackage(pathWrapper);
       }
 
     } else {
