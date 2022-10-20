@@ -15,11 +15,6 @@
 
   <properties>
     <spring-boot.version>2.7.4</spring-boot.version>
-
-    <!-- These do not work on most platforms in the expected way. It does work on MacOS and Linux
-         though, so we have profiles to enable these in those situations -->
-    <maven.main.skip>true</maven.main.skip>
-    <maven.test.skip>true</maven.test.skip>
   </properties>
 
   <dependencyManagement>
@@ -86,32 +81,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>${project.artifactId}-enable-on-mac-only</id>
-      <activation>
-        <os>
-          <family>mac</family>
-        </os>
-      </activation>
-      <properties>
-        <maven.main.skip>false</maven.main.skip>
-        <maven.test.skip>false</maven.test.skip>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>${project.artifactId}-enable-on-linux-only</id>
-      <activation>
-        <os>
-          <name>Linux</name>
-        </os>
-      </activation>
-      <properties>
-        <maven.main.skip>false</maven.main.skip>
-        <maven.test.skip>false</maven.test.skip>
-      </properties>
-    </profile>
-  </profiles>
 </project>
