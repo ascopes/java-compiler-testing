@@ -17,9 +17,8 @@ package io.github.ascopes.jct.acceptancetests.springcontextindexer
 
 import io.github.ascopes.jct.compilers.Compilable
 import io.github.ascopes.jct.junit.JavacCompilers
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.params.ParameterizedTest
 import org.springframework.context.index.processor.CandidateComponentsIndexer
 
@@ -27,10 +26,19 @@ import java.nio.file.Path
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
 import static io.github.ascopes.jct.pathwrappers.TemporaryFileSystem.named
+import static org.assertj.core.api.Assumptions.assumeThat
 
 @DisplayName("Spring Context Indexer acceptance tests")
-@EnabledOnOs(value = [OS.LINUX, OS.MAC], disabledReason = "Unexpected behaviour on this OS")
 class SpringContextIndexerTest {
+  @BeforeEach
+  void setUp() {
+    assumeThat(System.getProperty("os.name"))
+        .withFailMessage(
+            "Test is disabled on this OS due to unexpected behaviour in Spring"
+        )
+        .isIn("linux", "mac", "aix", "sunos", "solaris")
+  }
+
   @DisplayName("Spring will index the application context as expected")
   @JavacCompilers
   @ParameterizedTest(name = "for {0}")

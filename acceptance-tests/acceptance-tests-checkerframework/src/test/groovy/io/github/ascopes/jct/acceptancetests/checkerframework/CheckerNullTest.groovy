@@ -19,21 +19,28 @@ import io.github.ascopes.jct.compilers.Compilable
 import io.github.ascopes.jct.junit.JavacCompilers
 import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem
 import org.checkerframework.checker.nullness.NullnessChecker
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.EnabledOnJre
 import org.junit.jupiter.api.condition.JRE
 import org.junit.jupiter.params.ParameterizedTest
 
 import java.nio.file.Path
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
+import static org.assertj.core.api.Assumptions.assumeThat
 
 @DisplayName("Checkerframework Nullness acceptance tests")
-@EnabledOnJre(
-    value = [JRE.JAVA_16, JRE.JAVA_17, JRE.JAVA_18, JRE.JAVA_19, JRE.JAVA_20],
-    disabledReason = "Potential module loading problems on this JRE"
-)
 class CheckerNullTest {
+
+  @BeforeEach
+  void setUp() {
+    assumeThat(JRE.currentVersion())
+        .withFailMessage(
+            "This test is disabled on this JRE due to unexpected behaviour in Checkerframework"
+        )
+        .isIn(JRE.JAVA_16, JRE.JAVA_17, JRE.JAVA_18, JRE.JAVA_19, JRE.JAVA_20)
+  }
+
   @DisplayName("Happy paths work as expected")
   @JavacCompilers
   @ParameterizedTest(name = "for {0}")
