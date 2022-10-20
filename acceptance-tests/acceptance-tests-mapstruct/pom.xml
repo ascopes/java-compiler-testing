@@ -19,25 +19,28 @@
 
   <dependencies>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>java-compiler-testing</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.groovy</groupId>
       <artifactId>groovy</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
       <version>${mapstruct.version}</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct-processor</artifactId>
       <version>${mapstruct.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>java-compiler-testing</artifactId>
       <scope>test</scope>
     </dependency>
 
