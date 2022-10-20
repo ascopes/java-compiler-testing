@@ -132,7 +132,7 @@ jobs:
         continue-on-error: true
         if: always()
         run: |-
-          curl --fail https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import # One-time step
+          curl --fail https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import
           curl --fail -Os https://uploader.codecov.io/latest/linux/codecov
           curl --fail -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
           curl --fail -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig
@@ -209,11 +209,11 @@ jobs:
           clean compile javadoc:jar
 
       - name: Archive JavaDoc artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         continue-on-error: true
         if: success()
         with:
           name: javadocs
-          path: "**/target/apidocs/io.github.ascopes.jct"
+          path: "**/target/apidocs/io.github.ascopes.*"
           retention-days: 5
 
