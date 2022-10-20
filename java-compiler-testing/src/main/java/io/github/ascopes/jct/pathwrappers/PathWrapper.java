@@ -40,6 +40,12 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public interface PathWrapper {
 
+  @Override
+  boolean equals(@Nullable Object other);
+
+  @Override
+  int hashCode();
+
   /**
    * Get the {@link Path Java NIO Path} for this path-like object.
    *

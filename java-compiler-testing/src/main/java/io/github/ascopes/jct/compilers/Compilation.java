@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.compilers;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
-import io.github.ascopes.jct.filemanagers.FileManager;
 import java.util.List;
 import java.util.Set;
 import javax.tools.JavaFileObject;

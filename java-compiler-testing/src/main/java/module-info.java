@@ -35,7 +35,6 @@ module io.github.ascopes.jct {
   exports io.github.ascopes.jct.compilers.javac;
   exports io.github.ascopes.jct.diagnostics;
   exports io.github.ascopes.jct.ex;
-  exports io.github.ascopes.jct.filemanagers;
   exports io.github.ascopes.jct.junit;
   exports io.github.ascopes.jct.pathwrappers;
 
@@ -54,7 +53,6 @@ module io.github.ascopes.jct {
   opens io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.diagnostics to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.ex to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.filemanagers to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.pathwrappers to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
 

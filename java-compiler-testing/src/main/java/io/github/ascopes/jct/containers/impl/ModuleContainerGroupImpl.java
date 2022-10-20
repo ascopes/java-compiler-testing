@@ -19,11 +19,11 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
 import io.github.ascopes.jct.annotations.WillNotClose;
+import io.github.ascopes.jct.compilers.ModuleLocation;
+import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
-import io.github.ascopes.jct.filemanagers.ModuleLocation;
-import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.StringUtils;

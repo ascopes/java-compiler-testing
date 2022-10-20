@@ -33,8 +33,6 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Common functionality for a compiler that can be overridden and that produces a
@@ -62,8 +60,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
     implements Compilable<A, CompilationImpl> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCompiler.class);
-
   // Use atomics for this to ensure no race conditions
   // if the user makes a mistake during parallel test runs.
   // We do not enforce thread safety but this one will prevent
@@ -73,7 +69,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   private final String name;
   private final JavaCompiler jsr199Compiler;
   private final FlagBuilder flagBuilder;
-  private final FileManagerBuilder fileManagerTemplate;
+  private final FileManagerBuilder fileManagerBuilder;
   private final List<Processor> annotationProcessors;
   private final List<String> annotationProcessorOptions;
   private final List<String> compilerOptions;
@@ -88,32 +84,26 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   private @Nullable String release;
   private @Nullable String source;
   private @Nullable String target;
-  private boolean inheritClassPath;
-  private boolean inheritModulePath;
-  private boolean inheritPlatformClassPath;
-  private boolean inheritSystemModulePath;
-  private LoggingMode fileManagerLoggingMode;
   private LoggingMode diagnosticLoggingMode;
-  private AnnotationProcessorDiscovery annotationProcessorDiscovery;
 
   /**
    * Initialize this compiler.
    *
-   * @param name                the friendly name of the compiler.
-   * @param fileManagerTemplate the simple file manager template to use.
-   * @param jsr199Compiler      the JSR-199 compiler implementation to use.
-   * @param flagBuilder         the flag builder to use.
+   * @param name               the friendly name of the compiler.
+   * @param fileManagerBuilder the simple file manager template to use.
+   * @param jsr199Compiler     the JSR-199 compiler implementation to use.
+   * @param flagBuilder        the flag builder to use.
    */
   protected AbstractCompiler(
       String name,
-      FileManagerBuilder fileManagerTemplate,
+      FileManagerBuilder fileManagerBuilder,
       JavaCompiler jsr199Compiler,
       FlagBuilder flagBuilder
   ) {
     alreadyCompiled = new AtomicBoolean(false);
 
     this.name = requireNonNull(name, "name");
-    this.fileManagerTemplate = requireNonNull(fileManagerTemplate, "fileManagerTemplate");
+    this.fileManagerBuilder = requireNonNull(fileManagerBuilder, "fileManagerTemplate");
     this.jsr199Compiler = requireNonNull(jsr199Compiler, "jsr199Compiler");
     this.flagBuilder = requireNonNull(flagBuilder, "flagBuilder");
 
@@ -134,13 +124,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
     target = null;
 
     verbose = Compilable.DEFAULT_VERBOSE;
-    inheritClassPath = Compilable.DEFAULT_INHERIT_CLASS_PATH;
-    inheritModulePath = Compilable.DEFAULT_INHERIT_MODULE_PATH;
-    inheritPlatformClassPath = Compilable.DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
-    inheritSystemModulePath = Compilable.DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
-    fileManagerLoggingMode = Compilable.DEFAULT_FILE_MANAGER_LOGGING_MODE;
     diagnosticLoggingMode = Compilable.DEFAULT_DIAGNOSTIC_LOGGING_MODE;
-    annotationProcessorDiscovery = Compilable.DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
   }
 
   /**
@@ -180,7 +164,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
 
     return factory.compile(
         myself(),
-        fileManagerTemplate,
+        fileManagerBuilder,
         jsr199Compiler,
         flagBuilder
     );
@@ -191,8 +175,6 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
       CompilerConfigurer<? super A, T> configurer
   ) throws T {
     requireNonNull(configurer, "configurer");
-
-    LOGGER.debug("configure({})", configurer);
     var me = myself();
     configurer.configure(me);
 
@@ -203,10 +185,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   public A addPath(Location location, PathWrapper pathLike) {
     requireNonNull(location, "location");
     requireNonNull(pathLike, "pathLike");
-
-    LOGGER.trace("{}.paths += {}", location.getName(), pathLike.getPath());
-    fileManagerTemplate.addPath(location, pathLike);
-
+    fileManagerBuilder.addPath(location, pathLike);
     return myself();
   }
 
@@ -215,10 +194,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
     requireNonNull(location, "location");
     requireNonNull(moduleName, "moduleName");
     requireNonNull(pathLike, "pathLike");
-
-    LOGGER.trace("{}[{}].paths += {}", location.getName(), moduleName, pathLike.getPath());
-    fileManagerTemplate.addPath(location, moduleName, pathLike);
-
+    fileManagerBuilder.addPath(location, moduleName, pathLike);
     return myself();
   }
 
@@ -229,9 +205,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
 
   @Override
   public A verbose(boolean enabled) {
-    LOGGER.trace("verbose {} -> {}", verbose, enabled);
     verbose = enabled;
-
     return myself();
   }
 
@@ -242,9 +216,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
 
   @Override
   public A previewFeatures(boolean enabled) {
-    LOGGER.trace("previewFeatures {} -> {}", previewFeatures, enabled);
     previewFeatures = enabled;
-
     return myself();
   }
 
@@ -255,9 +227,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
 
   @Override
   public A showWarnings(boolean enabled) {
-    LOGGER.trace("showWarnings {} -> {}", showWarnings, enabled);
     showWarnings = enabled;
-
     return myself();
   }
 
@@ -268,9 +238,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
 
   @Override
   public A showDeprecationWarnings(boolean enabled) {
-    LOGGER.trace("showDeprecationWarnings {} -> {}", showDeprecationWarnings, enabled);
     showDeprecationWarnings = enabled;
-
     return myself();
   }
 
@@ -281,9 +249,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
 
   @Override
   public A failOnWarnings(boolean enabled) {
-    LOGGER.trace("failOnWarnings {} -> {}", failOnWarnings, enabled);
     failOnWarnings = enabled;
-
     return myself();
   }
 
@@ -295,10 +261,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   @Override
   public A addAnnotationProcessorOptions(Iterable<String> annotationProcessorOptions) {
     requireNonNullValues(annotationProcessorOptions, "annotationProcessorOptions");
-
-    LOGGER.trace("annotationProcessorOptions += {}", annotationProcessorOptions);
     annotationProcessorOptions.forEach(this.annotationProcessorOptions::add);
-
     return myself();
   }
 
@@ -310,8 +273,6 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   @Override
   public A addAnnotationProcessors(Iterable<? extends Processor> annotationProcessors) {
     requireNonNullValues(annotationProcessors, "annotationProcessors");
-
-    LOGGER.trace("annotationProcessors += {}", annotationProcessors);
     annotationProcessors.forEach(this.annotationProcessors::add);
 
     return myself();
@@ -325,10 +286,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   @Override
   public A addCompilerOptions(Iterable<String> compilerOptions) {
     requireNonNullValues(compilerOptions, "compilerOptions");
-
-    LOGGER.trace("compilerOptions += {}", compilerOptions);
     compilerOptions.forEach(this.compilerOptions::add);
-
     return myself();
   }
 
@@ -340,10 +298,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   @Override
   public A addRuntimeOptions(Iterable<String> runtimeOptions) {
     requireNonNullValues(runtimeOptions, "runtimeOptions");
-
-    LOGGER.trace("runtimeOptions += {}", runtimeOptions);
     runtimeOptions.forEach(this.runtimeOptions::add);
-
     return myself();
   }
 
@@ -354,14 +309,10 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
 
   @Override
   public A release(@Nullable String release) {
-    LOGGER.trace("release {} -> {}", this.release, release);
     this.release = release;
 
     if (release != null) {
-      LOGGER.trace("source {} -> null", source);
       source = null;
-
-      LOGGER.trace("target {} -> null", target);
       target = null;
     }
 
@@ -375,14 +326,10 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
 
   @Override
   public A source(@Nullable String source) {
-    LOGGER.trace("source {} -> {}", target, source);
     this.source = source;
-
     if (source != null) {
-      LOGGER.trace("release {} -> null", release);
       release = null;
     }
-
     return myself();
   }
 
@@ -393,74 +340,54 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
 
   @Override
   public A target(@Nullable String target) {
-    LOGGER.trace("target {} -> {}", this.target, target);
     this.target = target;
-
     if (target != null) {
-      LOGGER.trace("release {} -> null", release);
       release = null;
     }
-
     return myself();
   }
 
   @Override
   public boolean isInheritClassPath() {
-    return inheritClassPath;
+    return fileManagerBuilder.isInheritClassPath();
   }
 
   @Override
   public A inheritClassPath(boolean inheritClassPath) {
-    LOGGER.trace("inheritClassPath {} -> {}", this.inheritClassPath, inheritClassPath);
-    this.inheritClassPath = inheritClassPath;
-
+    fileManagerBuilder.inheritClassPath(inheritClassPath);
     return myself();
   }
 
   @Override
   public boolean isInheritModulePath() {
-    return inheritModulePath;
+    return fileManagerBuilder.isInheritModulePath();
   }
 
   @Override
   public A inheritModulePath(boolean inheritModulePath) {
-    LOGGER.trace("inheritModulePath {} -> {}", this.inheritModulePath, inheritModulePath);
-    this.inheritModulePath = inheritModulePath;
-
+    fileManagerBuilder.inheritModulePath(inheritModulePath);
     return myself();
   }
 
   @Override
   public boolean isInheritPlatformClassPath() {
-    return inheritPlatformClassPath;
+    return fileManagerBuilder.isInheritPlatformClassPath();
   }
 
   @Override
   public A inheritPlatformClassPath(boolean inheritPlatformClassPath) {
-    LOGGER.trace(
-        "inheritPlatformClassPath {} -> {}",
-        this.inheritPlatformClassPath,
-        inheritPlatformClassPath
-    );
-    this.inheritPlatformClassPath = inheritPlatformClassPath;
-
+    fileManagerBuilder.inheritPlatformClassPath(inheritPlatformClassPath);
     return myself();
   }
 
   @Override
   public boolean isInheritSystemModulePath() {
-    return inheritSystemModulePath;
+    return fileManagerBuilder.isInheritSystemModulePath();
   }
 
   @Override
   public A inheritSystemModulePath(boolean inheritSystemModulePath) {
-    LOGGER.trace(
-        "inheritSystemModulePath {} -> {}",
-        this.inheritSystemModulePath,
-        inheritSystemModulePath
-    );
-    this.inheritSystemModulePath = inheritSystemModulePath;
-
+    fileManagerBuilder.inheritSystemModulePath(inheritSystemModulePath);
     return myself();
   }
 
@@ -472,10 +399,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   @Override
   public A locale(Locale locale) {
     requireNonNull(locale, "locale");
-
-    LOGGER.trace("locale {} -> {}", this.locale, locale);
     this.locale = locale;
-
     return myself();
   }
 
@@ -487,29 +411,19 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   @Override
   public A logCharset(Charset logCharset) {
     requireNonNull(logCharset, "logCharset");
-
-    LOGGER.trace("logCharset {} -> {}", this.logCharset, logCharset);
     this.logCharset = logCharset;
-
     return myself();
   }
 
   @Override
   public LoggingMode getFileManagerLoggingMode() {
-    return fileManagerLoggingMode;
+    return fileManagerBuilder.getFileManagerLoggingMode();
   }
 
   @Override
   public A fileManagerLoggingMode(LoggingMode fileManagerLoggingMode) {
     requireNonNull(fileManagerLoggingMode, "fileManagerLoggingMode");
-
-    LOGGER.trace(
-        "fileManagerLoggingMode {} -> {}",
-        this.fileManagerLoggingMode,
-        fileManagerLoggingMode
-    );
-    this.fileManagerLoggingMode = fileManagerLoggingMode;
-
+    fileManagerBuilder.fileManagerLoggingMode(fileManagerLoggingMode);
     return myself();
   }
 
@@ -521,33 +435,19 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   @Override
   public A diagnosticLoggingMode(LoggingMode diagnosticLoggingMode) {
     requireNonNull(diagnosticLoggingMode, "diagnosticLoggingMode");
-
-    LOGGER.trace(
-        "diagnosticLoggingMode {} -> {}",
-        this.diagnosticLoggingMode,
-        diagnosticLoggingMode
-    );
     this.diagnosticLoggingMode = diagnosticLoggingMode;
-
     return myself();
   }
 
   @Override
   public AnnotationProcessorDiscovery getAnnotationProcessorDiscovery() {
-    return annotationProcessorDiscovery;
+    return fileManagerBuilder.getAnnotationProcessorDiscovery();
   }
 
   @Override
   public A annotationProcessorDiscovery(AnnotationProcessorDiscovery annotationProcessorDiscovery) {
     requireNonNull(annotationProcessorDiscovery, "annotationProcessorDiscovery");
-
-    LOGGER.trace(
-        "annotationProcessorDiscovery {} -> {}",
-        this.annotationProcessorDiscovery,
-        annotationProcessorDiscovery
-    );
-    this.annotationProcessorDiscovery = annotationProcessorDiscovery;
-
+    fileManagerBuilder.annotationProcessorDiscovery(annotationProcessorDiscovery);
     return myself();
   }
 

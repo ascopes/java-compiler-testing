@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.containers;
 
 import io.github.ascopes.jct.annotations.Nullable;
-import io.github.ascopes.jct.filemanagers.PathFileObject;
+import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import java.io.Closeable;
 import java.io.IOException;

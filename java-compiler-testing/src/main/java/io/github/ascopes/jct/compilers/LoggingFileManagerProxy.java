@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.filemanagers;
+package io.github.ascopes.jct.compilers;
 
 import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
 import io.github.ascopes.jct.annotations.WillNotClose;

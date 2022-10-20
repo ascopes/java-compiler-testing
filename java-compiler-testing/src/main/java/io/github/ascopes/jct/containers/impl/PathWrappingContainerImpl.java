@@ -19,8 +19,8 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillNotClose;
+import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.containers.Container;
-import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;

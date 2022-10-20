@@ -17,6 +17,7 @@ package io.github.ascopes.jct.acceptancetests.dagger
 
 
 import io.github.ascopes.jct.compilers.Compilable
+import io.github.ascopes.jct.compilers.LoggingMode
 import io.github.ascopes.jct.junit.JavacCompilers
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -65,7 +66,8 @@ class DaggerTest {
         .withFile("org/example/WebServer_Factory.class").isRegularFile()
   }
 
-  @Disabled("Module lookup logic needs working on.")
+  // TODO: fix me
+  @Disabled("Currently module discovery is not working as intended.")
   @DisplayName("Dagger DI runs as expected in the annotation processing phase with modules")
   @JavacCompilers(modules = true)
   @ParameterizedTest(name = "for {0}")
@@ -92,6 +94,8 @@ class DaggerTest {
     // When
     def compilation = compiler
         .addSourcePath(sources)
+        .fileManagerLoggingMode(LoggingMode.ENABLED)
+        .diagnosticLoggingMode(LoggingMode.STACKTRACES)
         .compile()
 
     // Then

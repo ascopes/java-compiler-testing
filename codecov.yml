@@ -4,5 +4,5 @@ codecov:
 coverage:
   precision: 2
   # TODO: adjust this once coverage is better.
-  range: "50...100"
+  range: "10...100"
   round: down

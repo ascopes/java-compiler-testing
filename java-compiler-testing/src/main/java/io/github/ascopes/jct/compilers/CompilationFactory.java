@@ -15,14 +15,11 @@
  */
 package io.github.ascopes.jct.compilers;
 
+import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
+
 import io.github.ascopes.jct.diagnostics.TeeWriter;
 import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import io.github.ascopes.jct.ex.CompilerException;
-import io.github.ascopes.jct.filemanagers.FileManager;
-import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
-import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
-import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem;
-import io.github.ascopes.jct.utils.SpecialLocations;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
@@ -66,14 +63,14 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
    * Run the compilation for the given compiler and return the compilation result.
    *
    * @param compiler       the compiler to run.
-   * @param template       the template to compile files within.
+   * @param builder        the template to compile files within.
    * @param jsr199Compiler the underlying JSR-199 compiler to run via.
    * @param flagBuilder    the flag builder to use.
    * @return the compilation result.
    */
   public CompilationImpl compile(
       A compiler,
-      FileManagerBuilder template,
+      FileManagerBuilder builder,
       JavaCompiler jsr199Compiler,
       FlagBuilder flagBuilder
   ) {
@@ -82,7 +79,7 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
       var diagnosticListener = buildDiagnosticListener(compiler);
       var writer = buildWriter(compiler);
 
-      try (var fileManager = buildFileManager(compiler, template)) {
+      try (var fileManager = buildFileManager(compiler, builder)) {
         var previousCompilationUnits = new LinkedHashSet<JavaFileObject>();
 
         boolean result;
@@ -220,19 +217,12 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
    * @param compiler the compiler to use.
    * @return the file manager to use.
    */
-  protected FileManager buildFileManager(A compiler, FileManagerBuilder template) {
+  protected FileManager buildFileManager(A compiler, FileManagerBuilder builder) {
     var release = compiler.getRelease()
         .or(compiler::getTarget)
         .orElseGet(compiler::getDefaultRelease);
 
-    var fileManager = template.createFileManager(release);
-    ensureClassOutputPathExists(fileManager);
-    ensureSourceOutputPathExists(fileManager);
-    registerClassPath(compiler, fileManager);
-    registerPlatformClassPath(compiler, fileManager);
-    registerSystemModulePath(compiler, fileManager);
-    registerAnnotationProcessorPaths(compiler, fileManager);
-    return fileManager;
+    return uncheckedIo(() -> builder.createFileManager(release));
   }
 
   /**
@@ -408,138 +398,6 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
           ex.getMessage()
       );
       throw new CompilerException("The compiler threw an exception", ex);
-    }
-  }
-
-  private void ensureClassOutputPathExists(FileManager fileManager) {
-    // We have to manually create this one as javac will not attempt to access it lazily. Instead,
-    // it will just abort if it is not present. This means we cannot take advantage of the
-    // PathLocationRepository creating the roots as we try to access them for this specific case.
-    if (fileManager.hasLocation(StandardLocation.CLASS_OUTPUT)) {
-      LOGGER.trace(
-          "At least one class output path is present, so no in-memory path will be created"
-      );
-    } else {
-      var classOutput = TemporaryFileSystem.named("classes", true);
-
-      LOGGER.debug(
-          "No class output location was specified, so an in-memory path {} was created",
-          classOutput.getUri()
-      );
-      fileManager.addPath(StandardLocation.CLASS_OUTPUT, classOutput);
-    }
-  }
-
-  private void ensureSourceOutputPathExists(FileManager fileManager) {
-    // Needed for annotation processors that generate new source files to work properly.
-
-    if (fileManager.hasLocation(StandardLocation.SOURCE_OUTPUT)) {
-      LOGGER.trace(
-          "At least one source output path is present, so no in-memory path will be created"
-      );
-    } else {
-      var sourceOutput = TemporaryFileSystem
-          .named("generated-sources", true);
-
-      LOGGER.debug(
-          "No source output location was specified, so an in-memory path {} was created",
-          sourceOutput.getUri()
-      );
-      fileManager.addPath(StandardLocation.SOURCE_OUTPUT, sourceOutput);
-    }
-  }
-
-  private void registerClassPath(A compiler, FileManager fileManager) {
-    if (!compiler.isInheritClassPath()) {
-      return;
-    }
-
-    var currentClassPath = SpecialLocations.currentClassPathLocations();
-
-    if (!currentClassPath.isEmpty()) {
-      LOGGER.debug("Adding current classpath to compiler: {}", currentClassPath);
-      for (var classPath : currentClassPath) {
-        fileManager.addPath(StandardLocation.CLASS_PATH, new BasicPathWrapperImpl(classPath));
-      }
-    }
-
-    var currentModulePath = SpecialLocations.currentModulePathLocations();
-
-    if (!currentModulePath.isEmpty()) {
-      LOGGER.debug(
-          "Adding current module path to compiler class path and module path: {}",
-          currentModulePath
-      );
-
-      // For some reason, the JDK module path has to also be added to the classpath for it
-      // to be recognised. Failing to do this prevents the classes and test-classes directories
-      // being added to the classpath with the other dependencies. This would otherwise result in
-      // all dependencies being loaded, but not the code the user is actually trying to test.
-      //
-      // Weird, but it is what it is, I guess.
-      for (var modulePath : currentModulePath) {
-        var modulePathLike = new BasicPathWrapperImpl(modulePath);
-        fileManager.addPath(StandardLocation.CLASS_PATH, modulePathLike);
-        fileManager.addPath(StandardLocation.MODULE_PATH, modulePathLike);
-      }
-    }
-  }
-
-  private void registerPlatformClassPath(A compiler, FileManager fileManager) {
-    if (!compiler.isInheritPlatformClassPath()) {
-      return;
-    }
-
-    var currentPlatformClassPath = SpecialLocations.currentPlatformClassPathLocations();
-
-    if (!currentPlatformClassPath.isEmpty()) {
-      LOGGER.debug("Adding current platform classpath to compiler: {}", currentPlatformClassPath);
-
-      for (var classPath : currentPlatformClassPath) {
-        fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH,
-            new BasicPathWrapperImpl(classPath));
-      }
-    }
-  }
-
-  private void registerSystemModulePath(A compiler, FileManager fileManager) {
-    if (!compiler.isInheritSystemModulePath()) {
-      return;
-    }
-
-    var jrtLocations = SpecialLocations.javaRuntimeLocations();
-    LOGGER.trace("Adding JRT locations to compiler: {}", jrtLocations);
-
-    for (var jrtLocation : jrtLocations) {
-      fileManager.addPath(StandardLocation.SYSTEM_MODULES, new BasicPathWrapperImpl(jrtLocation));
-    }
-  }
-
-  private void registerAnnotationProcessorPaths(A compiler, FileManager fileManager) {
-    switch (compiler.getAnnotationProcessorDiscovery()) {
-      case ENABLED:
-        fileManager.ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
-        break;
-
-      case INCLUDE_DEPENDENCIES: {
-        // https://stackoverflow.com/q/53084037
-        // Seems that javac will always use the classpath to implement this behaviour, and never
-        // the module path. Let's keep this simple and mimic this behaviour. If someone complains
-        // about it being problematic in the future, then I am open to change how this works to
-        // keep it sensible.
-        fileManager.copyContainers(
-            StandardLocation.CLASS_PATH,
-            StandardLocation.ANNOTATION_PROCESSOR_PATH
-        );
-
-        break;
-      }
-
-      case DISABLED:
-      default:
-        // There is nothing to do to the file manager to configure annotation processing at this
-        // time.
-        break;
     }
   }
 

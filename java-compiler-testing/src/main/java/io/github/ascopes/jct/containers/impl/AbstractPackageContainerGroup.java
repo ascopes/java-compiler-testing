@@ -19,10 +19,10 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
+import io.github.ascopes.jct.compilers.ModuleLocation;
+import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
-import io.github.ascopes.jct.filemanagers.ModuleLocation;
-import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.ToStringBuilder;
@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ServiceLoader;
@@ -62,7 +63,10 @@ public abstract class AbstractPackageContainerGroup
 
   protected final Location location;
   protected final String release;
-  protected final List<@WillCloseWhenClosed Container> containers;
+
+  // Use a linked hash set here to deduplicate while retaining order. This is an optimisation
+  // since defining the same path more than once does not make sense anyway.
+  protected final LinkedHashSet<@WillCloseWhenClosed Container> containers;
   protected final Lazy<ClassLoader> classLoaderLazy;
 
   /**
@@ -75,7 +79,7 @@ public abstract class AbstractPackageContainerGroup
     this.location = requireNonNull(location, "location");
     this.release = requireNonNull(release, "release");
 
-    containers = new ArrayList<>();
+    containers = new LinkedHashSet<>();
     classLoaderLazy = new Lazy<>(this::createClassLoader);
   }
 
