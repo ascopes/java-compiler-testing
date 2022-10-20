@@ -23,8 +23,8 @@ import io.github.ascopes.jct.annotations.WillClose;
 import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.utils.AsyncResourceCloser;
+import io.github.ascopes.jct.utils.GarbageDisposal;
 import io.github.ascopes.jct.utils.ToStringBuilder;
-import java.lang.ref.Cleaner;
 import java.util.List;
 import java.util.Set;
 import javax.tools.JavaFileObject;
@@ -40,8 +40,6 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class CompilationImpl implements Compilation {
-
-  private static final Cleaner CLEANER = Cleaner.create();
 
   private final boolean success;
   private final boolean failOnWarnings;
@@ -60,7 +58,7 @@ public final class CompilationImpl implements Compilation {
     fileManager = requireNonNull(builder.fileManager, "fileManager");
 
     // Ensure the File Manager gets closed on garbage collection.
-    CLEANER.register(this, new AsyncResourceCloser("File Manager", fileManager));
+    GarbageDisposal.onPhantom(this, new AsyncResourceCloser("File Manager", fileManager));
   }
 
   @Override

@@ -19,12 +19,12 @@ import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem;
 import io.github.ascopes.jct.utils.AsyncResourceCloser;
+import io.github.ascopes.jct.utils.GarbageDisposal;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.SpecialLocations;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
-import java.lang.ref.Cleaner;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -50,8 +50,6 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class FileManagerBuilder {
-
-  private static final Cleaner CLEANER = Cleaner.create();
 
   private final Lazy<List<Path>> jvmClassPath;
   private final Lazy<List<Path>> jvmModulePath;
@@ -345,7 +343,7 @@ public final class FileManagerBuilder {
       var tempFs = TemporaryFileSystem.named("temp", false);
       var fileManagerName = fileManager.toString();
       var closer = new AsyncResourceCloser("tempfs for " + fileManagerName, tempFs::close);
-      CLEANER.register(fileManager, closer);
+      GarbageDisposal.onPhantom(fileManager, closer);
       return tempFs;
     });
   }

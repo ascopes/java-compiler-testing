@@ -28,10 +28,10 @@ import io.github.ascopes.jct.containers.impl.OutputContainerGroupImpl;
 import io.github.ascopes.jct.containers.impl.PackageContainerGroupImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.AsyncResourceCloser;
+import io.github.ascopes.jct.utils.GarbageDisposal;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
-import java.lang.ref.Cleaner;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -59,8 +59,6 @@ public final class FileManagerImpl implements FileManager {
 
   private static final int UNSUPPORTED_ARGUMENT = -1;
 
-  private static final Cleaner CLEANER = Cleaner.create();
-
   private volatile boolean closed;
   private final String release;
   private final Map<Location, @WillClose PackageContainerGroup> packages;
@@ -80,9 +78,9 @@ public final class FileManagerImpl implements FileManager {
     modules = new ConcurrentHashMap<>();
     outputs = new ConcurrentHashMap<>();
 
-    CLEANER.register(this, new AsyncResourceCloser(packages));
-    CLEANER.register(this, new AsyncResourceCloser(modules));
-    CLEANER.register(this, new AsyncResourceCloser(outputs));
+    GarbageDisposal.onPhantom(this, new AsyncResourceCloser(packages));
+    GarbageDisposal.onPhantom(this, new AsyncResourceCloser(modules));
+    GarbageDisposal.onPhantom(this, new AsyncResourceCloser(outputs));
   }
 
   @Override

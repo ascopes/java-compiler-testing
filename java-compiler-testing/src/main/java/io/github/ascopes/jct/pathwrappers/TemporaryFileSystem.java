@@ -24,6 +24,7 @@ import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.utils.AsyncResourceCloser;
+import io.github.ascopes.jct.utils.GarbageDisposal;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -31,7 +32,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.lang.ref.Cleaner;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -76,7 +76,6 @@ public final class TemporaryFileSystem implements PathWrapper {
 
   private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
   private static final Logger LOGGER = LoggerFactory.getLogger(TemporaryFileSystem.class);
-  private static final Cleaner CLEANER = Cleaner.create();
 
   private final Path path;
   private final URI uri;
@@ -109,7 +108,7 @@ public final class TemporaryFileSystem implements PathWrapper {
     uncheckedIo(() -> Files.createDirectories(path));
 
     if (closeOnGarbageCollection) {
-      CLEANER.register(this, new AsyncResourceCloser(name, fileSystem));
+      GarbageDisposal.onPhantom(this, new AsyncResourceCloser(name, fileSystem));
     }
 
     LOGGER.trace("Initialized new in-memory directory {}", path);
