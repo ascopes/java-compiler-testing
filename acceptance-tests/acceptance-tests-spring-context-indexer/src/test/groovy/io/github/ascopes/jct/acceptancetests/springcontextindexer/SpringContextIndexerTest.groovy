@@ -19,6 +19,8 @@ import io.github.ascopes.jct.compilers.Compilable
 import io.github.ascopes.jct.junit.JavacCompilers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 import org.springframework.context.index.processor.CandidateComponentsIndexer
 
@@ -40,6 +42,7 @@ class SpringContextIndexerTest {
   }
 
   @DisplayName("Spring will index the application context as expected")
+  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilers
   @ParameterizedTest(name = "for {0}")
   void springWillIndexTheApplicationContextAsExpected(Compilable compiler) {

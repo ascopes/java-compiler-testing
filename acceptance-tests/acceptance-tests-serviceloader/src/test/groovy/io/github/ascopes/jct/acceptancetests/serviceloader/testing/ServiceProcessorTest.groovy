@@ -19,6 +19,8 @@ import io.github.ascopes.jct.acceptancetests.serviceloader.ServiceProcessor
 import io.github.ascopes.jct.compilers.Compilable
 import io.github.ascopes.jct.junit.JavacCompilers
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 
 import java.nio.file.Path
@@ -30,6 +32,7 @@ import static io.github.ascopes.jct.pathwrappers.TemporaryFileSystem.named
 class ServiceProcessorTest {
 
   @DisplayName("Expected files get created when the processor is run")
+  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilers
   @ParameterizedTest(name = "for {0}")
   void expectedFilesGetCreated(Compilable compiler) {

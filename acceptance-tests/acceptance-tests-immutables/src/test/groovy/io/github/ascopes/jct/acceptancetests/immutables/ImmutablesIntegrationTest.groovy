@@ -19,6 +19,8 @@ import io.github.ascopes.jct.compilers.Compilable
 import io.github.ascopes.jct.junit.JavacCompilers
 import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 
 import javax.tools.StandardLocation
@@ -40,6 +42,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly
 class ImmutablesIntegrationTest {
 
   @DisplayName("Immutables @Value produces the expected class")
+  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilers
   @ParameterizedTest(name = "for {0}")
   void immutablesValueProducesTheExpectedClass(Compilable compiler) {

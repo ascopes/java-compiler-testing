@@ -22,6 +22,8 @@ import org.checkerframework.checker.nullness.NullnessChecker
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.JRE
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 
 import java.nio.file.Path
@@ -42,6 +44,7 @@ class CheckerNullTest {
   }
 
   @DisplayName("Happy paths work as expected")
+  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilers
   @ParameterizedTest(name = "for {0}")
   void happyPathsWorkAsExpected(Compilable compiler) {
@@ -65,6 +68,7 @@ class CheckerNullTest {
   }
 
   @DisplayName("Sad paths fail as expected")
+  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilers
   @ParameterizedTest(name = "for {0}")
   void sadPathsFailAsExpected(Compilable compiler) {
