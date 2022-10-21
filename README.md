@@ -28,45 +28,41 @@ are always welcome!
 ## Examples
 
 ```java
-
 @DisplayName("Example tests")
 class ExampleTest {
 
-    @DisplayName("I can compile a Hello World application")
-    @JavacCompilers
-    @ParameterizedTest(name = "using {0}")
-    void canCompileHelloWorld(Compilable<?, ?> compiler) {
-        var sources = TemporaryFileSystem
-                .create("src")
-                .createFile(
-                        "org/example/Message.java",
-                        """
-                                package org.example;
+  @DisplayName("I can compile a Hello World application")
+  @JavacCompilerTest
+  void canCompileHelloWorld(Compilable<?, ?> compiler) {
+    var sources = newRamFileSystem("src")
+        .createFile("org/example/Message.java").withContents(
+            """
+            package org.example;
 
-                                import lombok.Data;
-                                import lombok.NonNull;
+            import lombok.Data;
+            import lombok.NonNull;
 
-                                @Data
-                                public class Message {
-                                    private String content;
+            @Data
+            public class Message {
+              private String content;
 
-                                    public static void main(String[] args) {
-                                        Message message = new Message("Hello, World!");
-                                        System.out.println(message);
-                                    }
-                                }
-                                """
-                );
+              public static void main(String[] args) {
+                Message message = new Message("Hello, World!");
+                System.out.println(message);
+              }
+            }
+            """
+        );
 
-        // When
-        var compilation = compiler
-                .addSourcePath(sources)
-                .compile();
+    // When
+    var compilation = compiler
+        .addSourcePath(sources)
+        .compile();
 
-        // Then
-        assertThatCompilation(compilation)
-                .isSuccessfulWithoutWarnings();
-    }
+    // Then
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings();
+  }
 }
 ```
 
@@ -79,62 +75,57 @@ JAR is already on the classpath for the JUnit test runner.
 @DisplayName("Example tests")
 class ExampleTest {
 
-    @DisplayName("I can compile a module that is using Lombok")
-    @JavacCompilers(modules = true)
-    @ParameterizedTest(name = "using {0}")
-    void canCompileModuleUsingLombok(Compilable<?, ?> compiler) {
-        // Given
-        var sources = TemporaryFileSystem
-                .create("hello.world")
-                .createFile(
-                        "org/example/Message.java",
-                        """
-                                package org.example;
+  @DisplayName("I can compile a module that is using Lombok")
+  @JavacCompilerTest(modules = true)
+  void canCompileModuleUsingLombok(Compilable<?, ?> compiler) {
+    // Given
+    var sources = newRamFileSystem("hello.world")
+        .createFile("org/example/Message.java").withContents(
+            """
+            package org.example;
 
-                                import lombok.Data;
-                                import lombok.NonNull;
+            import lombok.Data;
+            import lombok.NonNull;
 
-                                @Data
-                                public class Message {
-                                    @NonNull
-                                    private final String content;
-                                }
-                                """
-                )
-                .createFile(
-                        "org/example/Main.java",
-                        """
-                                package org.example;
+            @Data
+            public class Message {
+              @NonNull
+              private final String content;
+            }
+            """
+        )
+        .and().createFile("org/example/Main.java").withContents(
+            """
+            package org.example;
 
-                                public class Main {
-                                    public static void main(String[] args) {
-                                        for (var arg : args) {
-                                            var message = new Message(arg);
-                                            System.out.println(arg);
-                                        }
-                                    }
-                                }
-                                """
-                )
-                .createFile(
-                        "module-info.java",
-                        """
-                                module hello.world {
-                                    requires java.base;
-                                    requires static lombok;
-                                }
-                                """
-                );
+            public class Main {
+              public static void main(String[] args) {
+                for (var arg : args) {
+                  var message = new Message(arg);
+                  System.out.println(arg);
+                }
+              }
+            }
+            """
+        )
+        and().createFile("module-info.java").withContents(
+            """
+            module hello.world {
+              requires java.base;
+              requires static lombok;
+            }
+            """
+        );
 
-        // When
-        var compilation = compiler
-                .addModuleSourcePath("hello.world", sources)
-                .compile();
+    // When
+    var compilation = compiler
+        .addModuleSourcePath("hello.world", sources)
+        .compile();
 
-        // Then
-        assertThatCompilation(compilation)
-                .isSuccessfulWithoutWarnings();
-    }
+    // Then
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings();
+  }
 }
 ```
 
@@ -172,14 +163,14 @@ Diagnostics:
 
  - [ERROR] compiler.err.cant.resolve.location /sources-f1728706-5de5-4b89-9a6a-b51233ce67c8/io/github/ascopes/jct/examples/immutables/dataclass/ImmutableAnimal.java (at line 25, col 18)
 
-     23 | @SuppressWarnings({"all"})
-     24 | @ParametersAreNonnullByDefault
-     25 | @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
-        +  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-     26 | @Immutable
-     27 | @CheckReturnValue
+   23 | @SuppressWarnings({"all"})
+   24 | @ParametersAreNonnullByDefault
+   25 | @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
+    +  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   26 | @Immutable
+   27 | @CheckReturnValue
 
-    cannot find symbol
+  cannot find symbol
   symbol:   class Generated
   location: package javax.annotation
   
