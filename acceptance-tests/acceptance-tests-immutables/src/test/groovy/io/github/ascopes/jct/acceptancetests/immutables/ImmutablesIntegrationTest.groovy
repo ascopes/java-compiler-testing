@@ -16,15 +16,12 @@
 package io.github.ascopes.jct.acceptancetests.immutables
 
 import io.github.ascopes.jct.compilers.Compilable
-import io.github.ascopes.jct.junit.JavacCompilers
-import io.github.ascopes.jct.pathwrappers.RamFileSystem
+import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import org.junit.jupiter.params.ParameterizedTest
 
 import javax.tools.StandardLocation
-import java.nio.file.Path
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
 import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
@@ -44,8 +41,7 @@ class ImmutablesIntegrationTest {
 
   @DisplayName("Immutables @Value produces the expected class")
   @Execution(ExecutionMode.CONCURRENT)
-  @JavacCompilers
-  @ParameterizedTest(name = "for {0}")
+  @JavacCompilerTest
   void immutablesValueProducesTheExpectedClass(Compilable compiler) {
     // Given
     def sources = newRamFileSystem("sources")

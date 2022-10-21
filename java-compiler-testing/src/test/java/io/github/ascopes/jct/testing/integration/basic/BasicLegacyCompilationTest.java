@@ -19,10 +19,8 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem;
 
 import io.github.ascopes.jct.compilers.Compilable;
-import io.github.ascopes.jct.junit.JavacCompilers;
-import io.github.ascopes.jct.pathwrappers.RamFileSystem;
+import io.github.ascopes.jct.junit.JavacCompilerTest;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.params.ParameterizedTest;
 
 /**
  * Basic legacy compilation tests.
@@ -33,8 +31,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 class BasicLegacyCompilationTest {
 
   @DisplayName("I can compile a 'Hello, World!' program")
-  @JavacCompilers
-  @ParameterizedTest(name = "targeting {0}")
+  @JavacCompilerTest
   void helloWorldJavac(Compilable<?, ?> compiler) {
     var sources = newRamFileSystem("sources")
         .createFile("com/example/HelloWorld.java").withContents(

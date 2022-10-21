@@ -19,10 +19,9 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem;
 
 import io.github.ascopes.jct.compilers.Compilable;
-import io.github.ascopes.jct.junit.JavacCompilers;
+import io.github.ascopes.jct.junit.JavacCompilerTest;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.params.ParameterizedTest;
 
 /**
  * Basic multi-module compilation tests.
@@ -33,8 +32,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 class BasicMultiModuleCompilationTest {
 
   @DisplayName("I can compile a single module using multi-module layout")
-  @JavacCompilers(modules = true)
-  @ParameterizedTest(name = "targeting {0}")
+  @JavacCompilerTest(modules = true)
   void singleModuleInMultiModuleLayout(Compilable<?, ?> compiler) {
     var source = newRamFileSystem("hello.world")
         .createFile("com/example/HelloWorld.java").withContents(
@@ -71,8 +69,7 @@ class BasicMultiModuleCompilationTest {
   }
 
   @DisplayName("I can compile multiple modules using multi-module layout")
-  @JavacCompilers(modules = true)
-  @ParameterizedTest(name = "targeting {0}")
+  @JavacCompilerTest(modules = true)
   void multipleModulesInMultiModuleLayout(Compilable<?, ?> compiler) {
     var helloWorld = newRamFileSystem("hello.world")
         .createFile("com/example/HelloWorld.java").withContents(

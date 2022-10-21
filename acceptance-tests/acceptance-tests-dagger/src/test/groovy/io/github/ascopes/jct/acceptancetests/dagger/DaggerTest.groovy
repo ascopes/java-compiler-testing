@@ -17,10 +17,9 @@ package io.github.ascopes.jct.acceptancetests.dagger
 
 import io.github.ascopes.jct.compilers.Compilable
 import io.github.ascopes.jct.compilers.LoggingMode
-import io.github.ascopes.jct.junit.JavacCompilers
+import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.params.ParameterizedTest
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
 import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
@@ -28,8 +27,7 @@ import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
 @DisplayName("Dagger acceptance tests")
 class DaggerTest {
   @DisplayName("Dagger DI runs as expected in the annotation processing phase")
-  @JavacCompilers
-  @ParameterizedTest(name = "for {0}")
+  @JavacCompilerTest
   void daggerDiRunsAsExpectedInTheAnnotationProcessingPhase(Compilable compiler) {
     // Given
     def sources = newRamFileSystem("sources")
@@ -64,8 +62,7 @@ class DaggerTest {
   // TODO: fix me
   @Disabled("Currently module discovery is not working as intended.")
   @DisplayName("Dagger DI runs as expected in the annotation processing phase with modules")
-  @JavacCompilers(modules = true)
-  @ParameterizedTest(name = "for {0}")
+  @JavacCompilerTest(modules = true)
   void daggerDiRunsAsExpectedInTheAnnotationProcessingPhaseWithModules(Compilable compiler) {
     // Given
     def sources = newRamFileSystem("sources")

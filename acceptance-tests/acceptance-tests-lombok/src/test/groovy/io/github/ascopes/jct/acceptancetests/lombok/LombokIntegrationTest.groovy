@@ -16,11 +16,10 @@
 package io.github.ascopes.jct.acceptancetests.lombok
 
 import io.github.ascopes.jct.compilers.Compilable
-import io.github.ascopes.jct.junit.JavacCompilers
+import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import org.junit.jupiter.params.ParameterizedTest
 
 import javax.tools.StandardLocation
 
@@ -42,8 +41,7 @@ class LombokIntegrationTest {
 
   @DisplayName("Lombok @Data compiles the expected data class")
   @Execution(ExecutionMode.CONCURRENT)
-  @JavacCompilers
-  @ParameterizedTest(name = "for {0}")
+  @JavacCompilerTest
   void lombokDataCompilesTheExpectedDataClass(Compilable compiler) {
     // Given
     def sources = newRamFileSystem("sources")

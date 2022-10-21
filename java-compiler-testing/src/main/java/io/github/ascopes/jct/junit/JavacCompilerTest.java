@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.compilers.javac.JavacCompiler;
-import io.github.ascopes.jct.junit.JavacCompilers.JavacCompilersProvider;
+import io.github.ascopes.jct.junit.JavacCompilerTest.JavacCompilersProvider;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -25,6 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.support.AnnotationConsumer;
 
@@ -40,9 +41,10 @@ import org.junit.jupiter.params.support.AnnotationConsumer;
 @ArgumentsSource(JavacCompilersProvider.class)
 @Documented
 @Inherited
+@ParameterizedTest(name = "for compiler \"{0}\"")
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
-public @interface JavacCompilers {
+public @interface JavacCompilerTest {
 
   /**
    * Minimum version to use (inclusive).
@@ -65,7 +67,7 @@ public @interface JavacCompilers {
   boolean modules() default false;
 
   /**
-   * Argument provider for the {@link JavacCompilers} annotation.
+   * Argument provider for the {@link JavacCompilerTest} annotation.
    *
    * @author Ashley Scopes
    * @since 0.0.1
@@ -73,7 +75,7 @@ public @interface JavacCompilers {
   @API(since = "0.0.1", status = Status.INTERNAL)
   final class JavacCompilersProvider
       extends AbstractCompilersProvider
-      implements AnnotationConsumer<JavacCompilers> {
+      implements AnnotationConsumer<JavacCompilerTest> {
 
     JavacCompilersProvider() {
       super(
@@ -85,7 +87,7 @@ public @interface JavacCompilers {
     }
 
     @Override
-    public void accept(JavacCompilers javacCompilers) {
+    public void accept(JavacCompilerTest javacCompilers) {
       configure(
           javacCompilers.minVersion(),
           javacCompilers.maxVersion(),

@@ -16,14 +16,13 @@
 package io.github.ascopes.jct.acceptancetests.checkerframework
 
 import io.github.ascopes.jct.compilers.Compilable
-import io.github.ascopes.jct.junit.JavacCompilers
+import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.checkerframework.checker.nullness.NullnessChecker
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.JRE
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import org.junit.jupiter.params.ParameterizedTest
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
 import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
@@ -43,8 +42,7 @@ class CheckerNullTest {
 
   @DisplayName("Happy paths work as expected")
   @Execution(ExecutionMode.CONCURRENT)
-  @JavacCompilers
-  @ParameterizedTest(name = "for {0}")
+  @JavacCompilerTest
   void happyPathsWorkAsExpected(Compilable compiler) {
     // Given
     def sources = newRamFileSystem("sources")
@@ -64,8 +62,7 @@ class CheckerNullTest {
 
   @DisplayName("Sad paths fail as expected")
   @Execution(ExecutionMode.CONCURRENT)
-  @JavacCompilers
-  @ParameterizedTest(name = "for {0}")
+  @JavacCompilerTest
   void sadPathsFailAsExpected(Compilable compiler) {
     // Given
     def sources = newRamFileSystem("sources")
