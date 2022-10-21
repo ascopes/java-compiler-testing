@@ -240,10 +240,6 @@ public final class RamFileSystem implements PathWrapper {
         .toString();
   }
 
-  private Path asPath(String first, String... rest) {
-    return path.getFileSystem().getPath(first, rest);
-  }
-
   private Path makeRelativeToHere(Path relativePath) {
     if (relativePath.isAbsolute() && !relativePath.startsWith(path)) {
       var fixedPath = relativePath.getRoot().relativize(relativePath);
@@ -336,7 +332,7 @@ public final class RamFileSystem implements PathWrapper {
     private final Path targetPath;
 
     private FileBuilder(String first, String... rest) {
-      this(asPath(first, rest));
+      this(path.resolve(first).resolve(String.join("/", rest)));
     }
 
     private FileBuilder(Path targetPath) {
@@ -487,7 +483,7 @@ public final class RamFileSystem implements PathWrapper {
     private final Path targetPath;
 
     private DirectoryBuilder(String first, String... rest) {
-      this(asPath(first, rest));
+      this(path.resolve(first).resolve(String.join("/", rest)));
     }
 
     private DirectoryBuilder(Path targetPath) {
