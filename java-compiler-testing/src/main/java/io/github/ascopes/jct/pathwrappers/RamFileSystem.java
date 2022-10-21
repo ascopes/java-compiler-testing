@@ -240,6 +240,10 @@ public final class RamFileSystem implements PathWrapper {
         .toString();
   }
 
+  private Path asPath(String first, String... rest) {
+    return path.getFileSystem().getPath(first, rest);
+  }
+
   private Path makeRelativeToHere(Path relativePath) {
     if (relativePath.isAbsolute() && !relativePath.startsWith(path)) {
       var fixedPath = relativePath.getRoot().relativize(relativePath);
@@ -332,7 +336,7 @@ public final class RamFileSystem implements PathWrapper {
     private final Path targetPath;
 
     private FileBuilder(String first, String... rest) {
-      this(Path.of(first, rest));
+      this(asPath(first, rest));
     }
 
     private FileBuilder(Path targetPath) {
@@ -483,7 +487,7 @@ public final class RamFileSystem implements PathWrapper {
     private final Path targetPath;
 
     private DirectoryBuilder(String first, String... rest) {
-      this(Path.of(first, rest));
+      this(asPath(first, rest));
     }
 
     private DirectoryBuilder(Path targetPath) {
@@ -493,11 +497,14 @@ public final class RamFileSystem implements PathWrapper {
     /**
      * Copy the contents of the directory at the given path recursively into this directory.
      *
+     * <p>This uses the default file system.
+     *
      * @param first the first path fragment of the directory to copy from.
      * @param rest  any additional path fragements to copy from.
      * @return the file system for further configuration.
      */
     public RamFileSystem copiedFromDirectory(String first, String... rest) {
+      // Path.of is fine here as it is for the default file system.
       return copiedFromDirectory(Path.of(first, rest));
     }
 
