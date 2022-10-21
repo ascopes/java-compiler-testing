@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.acceptancetests.immutables.dataclass;
+package org.example;
 
 import java.lang.annotation.Inherited;
 import org.immutables.value.Value;

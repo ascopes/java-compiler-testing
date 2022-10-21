@@ -32,7 +32,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 @Documented
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.RUNTIME)
 @Target({
     ElementType.FIELD,
     ElementType.PARAMETER,

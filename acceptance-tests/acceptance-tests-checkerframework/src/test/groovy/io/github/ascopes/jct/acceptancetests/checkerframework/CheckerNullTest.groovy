@@ -17,7 +17,6 @@ package io.github.ascopes.jct.acceptancetests.checkerframework
 
 import io.github.ascopes.jct.compilers.Compilable
 import io.github.ascopes.jct.junit.JavacCompilers
-import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem
 import org.checkerframework.checker.nullness.NullnessChecker
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -26,9 +25,8 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 
-import java.nio.file.Path
-
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
+import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
 import static org.assertj.core.api.Assumptions.assumeThat
 
 @DisplayName("Checkerframework Nullness acceptance tests")
@@ -49,12 +47,9 @@ class CheckerNullTest {
   @ParameterizedTest(name = "for {0}")
   void happyPathsWorkAsExpected(Compilable compiler) {
     // Given
-    def sources = TemporaryFileSystem
-        .named("sources")
-        .copyTreeFrom(
-            Path.of("src", "test", "resources", "code", "nullness", "happy"),
-            "org/example"
-        )
+    def sources = newRamFileSystem("sources")
+        .createDirectory("org", "example")
+        .copiedFromDirectory("src", "test", "resources", "code", "nullness", "happy")
 
     // When
     def compilation = compiler
@@ -73,12 +68,9 @@ class CheckerNullTest {
   @ParameterizedTest(name = "for {0}")
   void sadPathsFailAsExpected(Compilable compiler) {
     // Given
-    def sources = TemporaryFileSystem
-        .named("sources")
-        .copyTreeFrom(
-            Path.of("src", "test", "resources", "code", "nullness", "sad"),
-            "org/example"
-        )
+    def sources = newRamFileSystem("sources")
+        .createDirectory("org", "example")
+        .copiedFromDirectory("src", "test", "resources", "code", "nullness", "sad")
 
     // When
     def compilation = compiler

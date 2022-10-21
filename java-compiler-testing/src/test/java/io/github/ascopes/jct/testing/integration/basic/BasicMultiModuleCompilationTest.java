@@ -16,10 +16,10 @@
 package io.github.ascopes.jct.testing.integration.basic;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
+import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem;
 
 import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.junit.JavacCompilers;
-import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,9 +36,8 @@ class BasicMultiModuleCompilationTest {
   @JavacCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")
   void singleModuleInMultiModuleLayout(Compilable<?, ?> compiler) {
-    var source = TemporaryFileSystem.named("hello.world")
-        .createFile(
-            "com/example/HelloWorld.java",
+    var source = newRamFileSystem("hello.world")
+        .createFile("com/example/HelloWorld.java").withContents(
             "package com.example;",
             "public class HelloWorld {",
             "  public static void main(String[] args) {",
@@ -46,8 +45,7 @@ class BasicMultiModuleCompilationTest {
             "  }",
             "}"
         )
-        .createFile(
-            "module-info.java",
+        .and().createFile("module-info.java").withContents(
             "module hello.world {",
             "  exports com.example;",
             "}"
@@ -76,9 +74,8 @@ class BasicMultiModuleCompilationTest {
   @JavacCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")
   void multipleModulesInMultiModuleLayout(Compilable<?, ?> compiler) {
-    var helloWorld = TemporaryFileSystem.named("hello.world")
-        .createFile(
-            "com/example/HelloWorld.java",
+    var helloWorld = newRamFileSystem("hello.world")
+        .createFile("com/example/HelloWorld.java").withContents(
             "package com.example;",
             "import com.example.greeter.Greeter;",
             "public class HelloWorld {",
@@ -87,16 +84,14 @@ class BasicMultiModuleCompilationTest {
             "  }",
             "}"
         )
-        .createFile(
-            "module-info.java",
+        .and().createFile("module-info.java").withContents(
             "module hello.world {",
             "  requires greeter;",
             "  exports com.example;",
             "}"
         );
-    var greeter = TemporaryFileSystem.named("greeter")
-        .createFile(
-            "com/example/greeter/Greeter.java",
+    var greeter = newRamFileSystem("greeter")
+        .createFile("com/example/greeter/Greeter.java").withContents(
             "package com.example.greeter;",
             "public class Greeter {",
             "  public static String greet(String name) {",
@@ -104,8 +99,7 @@ class BasicMultiModuleCompilationTest {
             "  }",
             "}"
         )
-        .createFile(
-            "module-info.java",
+        .and().createFile("module-info.java").withContents(
             "module greeter {",
             "  exports com.example.greeter;",
             "}"

@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.acceptancetests.dagger
 
-
 import io.github.ascopes.jct.compilers.Compilable
 import io.github.ascopes.jct.compilers.LoggingMode
 import io.github.ascopes.jct.junit.JavacCompilers
@@ -23,10 +22,8 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.params.ParameterizedTest
 
-import java.nio.file.Path
-
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.TemporaryFileSystem.named
+import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
 
 @DisplayName("Dagger acceptance tests")
 class DaggerTest {
@@ -35,11 +32,9 @@ class DaggerTest {
   @ParameterizedTest(name = "for {0}")
   void daggerDiRunsAsExpectedInTheAnnotationProcessingPhase(Compilable compiler) {
     // Given
-    def sources = named("sources")
-        .copyTreeFrom(
-            Path.of("src", "test", "resources", "code"),
-            "org/example"
-        )
+    def sources = newRamFileSystem("sources")
+        .createDirectory("org", "example")
+        .copiedFromDirectory("src", "test", "resources", "code")
 
     // When
     def compilation = compiler
@@ -73,13 +68,11 @@ class DaggerTest {
   @ParameterizedTest(name = "for {0}")
   void daggerDiRunsAsExpectedInTheAnnotationProcessingPhaseWithModules(Compilable compiler) {
     // Given
-    def sources = named("sources")
-        .copyTreeFrom(
-            Path.of("src", "test", "resources", "code"),
-            "org/example"
-        )
-        .createFile(
-            "module-info.java",
+    def sources = newRamFileSystem("sources")
+        .createDirectory("org", "example")
+        .copiedFromDirectory("src", "test", "resources", "code")
+        .and()
+        .createFile("module-info.java").withContents(
             """
             |module org.example {
             |  requires dagger;

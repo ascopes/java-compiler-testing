@@ -15,19 +15,17 @@
  */
 package io.github.ascopes.jct.acceptancetests.mapstruct
 
-
 import io.github.ascopes.jct.compilers.Compilable
 import io.github.ascopes.jct.junit.JavacCompilers
-import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 
 import javax.tools.StandardLocation
-import java.nio.file.Path
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
+import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
 import static org.assertj.core.api.SoftAssertions.assertSoftly
 
 @DisplayName("MapStruct integration tests")
@@ -40,12 +38,9 @@ class MapStructIntegrationTest {
   @ParameterizedTest(name = "for {0}")
   void mapStructGeneratesExpectedMappingCode(Compilable compiler) {
     // Given
-    def sources = TemporaryFileSystem
-        .named("sources")
-        .copyTreeFrom(
-            Path.of("src", "test", "resources", "code"),
-            "io/github/ascopes/jct/acceptancetests/mapstruct"
-        )
+    def sources = newRamFileSystem("sources")
+        .createDirectory("org", "example")
+        .copiedFromDirectory("src", "test", "resources", "code")
 
     // When
     def compilation = compiler
@@ -53,10 +48,11 @@ class MapStructIntegrationTest {
         .compile()
 
     // Then
-    assertThatCompilation(compilation).isSuccessfulWithoutWarnings()
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings()
 
     def classLoader = compilation.getFileManager().getClassLoader(StandardLocation.CLASS_OUTPUT)
-    def packageName = "io.github.ascopes.jct.acceptancetests.mapstruct"
+    def packageName = "org.example"
 
     def carTypeClass = classLoader.loadClass("${packageName}.CarType")
     def carClass = classLoader.loadClass("${packageName}.Car")

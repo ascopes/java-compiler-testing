@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.testing.integration.basic;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static io.github.ascopes.jct.pathwrappers.TemporaryFileSystem.named;
+import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem;
 
 import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.junit.JavacCompilers;
@@ -35,9 +35,8 @@ class BasicModuleCompilationTest {
   @JavacCompilers(modules = true)
   @ParameterizedTest(name = "targeting {0}")
   void helloWorld(Compilable<?, ?> compiler) {
-    var sources = named("hello.world")
-        .createFile(
-            "com/example/HelloWorld.java",
+    var sources = newRamFileSystem("hello.world")
+        .createFile("com/example/HelloWorld.java").withContents(
             "package com.example;",
             "public class HelloWorld {",
             "  public static void main(String[] args) {",
@@ -45,8 +44,7 @@ class BasicModuleCompilationTest {
             "  }",
             "}"
         )
-        .createFile(
-            "module-info.java",
+        .and().createFile("module-info.java").withContents(
             "module hello.world {",
             "  requires java.base;",
             "  exports com.example;",

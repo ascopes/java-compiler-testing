@@ -29,9 +29,9 @@ import org.apiguardian.api.API.Status;
  * we can also use this to enforce that other references related to the internal path are kept alive
  * for as long as the path-like object itself is kept alive.
  *
- * <p>This becomes very useful for {@link TemporaryFileSystem}, which keeps a RAM-based
+ * <p>This becomes very useful for {@link RamFileSystem}, which keeps a RAM-based
  * {@link FileSystem} alive until it is garbage collected, or the
- * {@link TemporaryFileSystem#close()} operation is called. The mechanism enables cleaning up of
+ * {@link RamFileSystem#close()} operation is called. The mechanism enables cleaning up of
  * resources implicitly without resource-tidying logic polluting the user's test cases.
  *
  * @author Ashley Scopes

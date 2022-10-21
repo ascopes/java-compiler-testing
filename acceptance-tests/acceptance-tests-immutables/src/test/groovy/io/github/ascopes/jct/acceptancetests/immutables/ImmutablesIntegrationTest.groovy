@@ -17,7 +17,7 @@ package io.github.ascopes.jct.acceptancetests.immutables
 
 import io.github.ascopes.jct.compilers.Compilable
 import io.github.ascopes.jct.junit.JavacCompilers
-import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem
+import io.github.ascopes.jct.pathwrappers.RamFileSystem
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -27,6 +27,7 @@ import javax.tools.StandardLocation
 import java.nio.file.Path
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
+import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
 import static org.assertj.core.api.SoftAssertions.assertSoftly
 
 /**
@@ -47,12 +48,9 @@ class ImmutablesIntegrationTest {
   @ParameterizedTest(name = "for {0}")
   void immutablesValueProducesTheExpectedClass(Compilable compiler) {
     // Given
-    def sources = TemporaryFileSystem
-        .named("sources")
-        .copyTreeFrom(
-            Path.of("src", "test", "resources", "code"),
-            "io/github/ascopes/jct/acceptancetests/immutables/dataclass"
-        )
+    def sources = newRamFileSystem("sources")
+        .createDirectory("org", "example")
+        .copiedFromDirectory("src", "test", "resources", "code")
 
     def compilation = compiler
         .addSourcePath(sources)
@@ -64,7 +62,7 @@ class ImmutablesIntegrationTest {
     def animalClass = compilation
         .getFileManager()
         .getClassLoader(StandardLocation.CLASS_OUTPUT)
-        .loadClass("io.github.ascopes.jct.acceptancetests.immutables.dataclass.ImmutableAnimal")
+        .loadClass("org.example.ImmutableAnimal")
 
     def animal = animalClass
         .builder()

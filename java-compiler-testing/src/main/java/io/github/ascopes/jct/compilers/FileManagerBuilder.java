@@ -17,7 +17,7 @@ package io.github.ascopes.jct.compilers;
 
 import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
-import io.github.ascopes.jct.pathwrappers.TemporaryFileSystem;
+import io.github.ascopes.jct.pathwrappers.RamFileSystem;
 import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import io.github.ascopes.jct.utils.GarbageDisposal;
 import io.github.ascopes.jct.utils.Lazy;
@@ -338,9 +338,9 @@ public final class FileManagerBuilder {
     return fileManager;
   }
 
-  private Lazy<TemporaryFileSystem> newFallbackFs(FileManagerImpl fileManager) {
+  private Lazy<RamFileSystem> newFallbackFs(FileManagerImpl fileManager) {
     return new Lazy<>(() -> {
-      var tempFs = TemporaryFileSystem.named("temp", false);
+      var tempFs = RamFileSystem.newRamFileSystem("temp", false);
       var fileManagerName = fileManager.toString();
       var closer = new AsyncResourceCloser("tempfs for " + fileManagerName, tempFs::close);
       GarbageDisposal.onPhantom(fileManager, closer);
@@ -350,7 +350,7 @@ public final class FileManagerBuilder {
 
   private void createLocationIfNotPresent(
       FileManagerImpl fileManager,
-      Lazy<TemporaryFileSystem> fallbackFs,
+      Lazy<RamFileSystem> fallbackFs,
       Location location
   ) throws IOException {
     if (!fileManager.hasLocation(location)) {

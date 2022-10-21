@@ -24,20 +24,16 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Marker indicating the return value of a method must be closed explicitly.
+ * A hint for IDEs like IntelliJ that will produce a warning if the user does not use the return
+ * value of the annotated method.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 @Documented
+@javax.annotation.CheckReturnValue
 @Retention(RetentionPolicy.RUNTIME)
-@Target({
-    ElementType.FIELD,
-    ElementType.PARAMETER,
-    ElementType.TYPE_PARAMETER,
-    ElementType.TYPE_USE,
-})
-@javax.annotation.WillNotClose
-public @interface WillNotClose {
+@Target(ElementType.METHOD)
+public @interface CheckReturnValue {
 }

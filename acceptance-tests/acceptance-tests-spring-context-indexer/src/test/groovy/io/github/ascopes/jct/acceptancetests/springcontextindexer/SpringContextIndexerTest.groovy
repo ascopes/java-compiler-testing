@@ -24,10 +24,8 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 import org.springframework.context.index.processor.CandidateComponentsIndexer
 
-import java.nio.file.Path
-
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.TemporaryFileSystem.named
+import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
 import static org.assertj.core.api.Assumptions.assumeThat
 
 @DisplayName("Spring Context Indexer acceptance tests")
@@ -47,11 +45,9 @@ class SpringContextIndexerTest {
   @ParameterizedTest(name = "for {0}")
   void springWillIndexTheApplicationContextAsExpected(Compilable compiler) {
     // Given
-    def sources = named("sources")
-        .copyTreeFrom(
-            Path.of("src", "test", "resources", "code"),
-            "org/example"
-        )
+    def sources = newRamFileSystem("sources")
+        .createDirectory("org", "example")
+        .copiedFromDirectory("src", "test", "resources", "code")
 
     // When
     def compilation = compiler

@@ -30,7 +30,7 @@ import org.apiguardian.api.API.Status;
  * {@link PathWrapper} API.
  *
  * <p>This is not designed to be used by users. The API will handle wrapping paths internally for
- * you. You may be interested in using {@link TemporaryFileSystem}, however.
+ * you. You may be interested in using {@link RamFileSystem}, however.
  *
  * @author Ashley Scopes
  * @since 0.0.1

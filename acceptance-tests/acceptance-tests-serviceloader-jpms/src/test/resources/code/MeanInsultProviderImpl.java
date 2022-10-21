@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example;
+package org.example;
 
 import io.github.ascopes.jct.acceptancetests.serviceloaderjpms.Service;
 

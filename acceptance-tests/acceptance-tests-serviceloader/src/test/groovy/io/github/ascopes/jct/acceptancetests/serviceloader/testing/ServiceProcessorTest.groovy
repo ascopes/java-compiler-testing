@@ -23,10 +23,8 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 
-import java.nio.file.Path
-
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.TemporaryFileSystem.named
+import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
 
 @DisplayName("ServiceProcessor tests (no JPMS)")
 class ServiceProcessorTest {
@@ -36,11 +34,9 @@ class ServiceProcessorTest {
   @JavacCompilers
   @ParameterizedTest(name = "for {0}")
   void expectedFilesGetCreated(Compilable compiler) {
-    def sources = named("sources")
-        .copyTreeFrom(
-            Path.of("src", "test", "resources", "code"),
-            "org/example"
-        )
+    def sources = newRamFileSystem("sources")
+        .createDirectory("org", "example")
+        .copiedFromDirectory("src", "test", "resources", "code")
 
     def compilation = compiler
         .addAnnotationProcessors(new ServiceProcessor())
@@ -50,7 +46,7 @@ class ServiceProcessorTest {
     assertThatCompilation(compilation)
         .isSuccessfulWithoutWarnings()
         .classOutput().packages()
-        .withFile("META-INF/services/com.example.InsultProvider")
-        .hasContent("com.example.MeanInsultProviderImpl")
+        .withFile("META-INF/services/org.example.InsultProvider")
+        .hasContent("org.example.MeanInsultProviderImpl")
   }
 }

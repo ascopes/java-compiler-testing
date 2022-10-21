@@ -16,10 +16,11 @@
 package io.github.ascopes.jct.testing.integration.basic;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static io.github.ascopes.jct.pathwrappers.TemporaryFileSystem.named;
+import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem;
 
 import io.github.ascopes.jct.compilers.Compilable;
 import io.github.ascopes.jct.junit.JavacCompilers;
+import io.github.ascopes.jct.pathwrappers.RamFileSystem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -35,9 +36,8 @@ class BasicLegacyCompilationTest {
   @JavacCompilers
   @ParameterizedTest(name = "targeting {0}")
   void helloWorldJavac(Compilable<?, ?> compiler) {
-    var sources = named("sources")
-        .createFile(
-            "com/example/HelloWorld.java",
+    var sources = newRamFileSystem("sources")
+        .createFile("com/example/HelloWorld.java").withContents(
             "package com.example;",
             "public class HelloWorld {",
             "  public static void main(String[] args) {",
