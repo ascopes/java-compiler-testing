@@ -17,7 +17,6 @@ package io.github.ascopes.jct.acceptancetests.springcontextindexer
 
 import io.github.ascopes.jct.compilers.Compilable
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -25,19 +24,11 @@ import org.springframework.context.index.processor.CandidateComponentsIndexer
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
 import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
-import static org.assertj.core.api.Assumptions.assumeThat
 
 @DisplayName("Spring Context Indexer acceptance tests")
 class SpringContextIndexerTest {
-  @BeforeEach
-  void setUp() {
-    assumeThat(System.getProperty("os.name").toLowerCase(Locale.ROOT))
-        .withFailMessage(
-            "Test is disabled on this OS due to unexpected behaviour in Spring"
-        )
-        .isIn("linux", "mac", "aix", "sunos", "solaris")
-  }
 
+  // TODO(ascopes): use JPMS modules when we move to Spring Framework v6.0.0
   @DisplayName("Spring will index the application context as expected")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
