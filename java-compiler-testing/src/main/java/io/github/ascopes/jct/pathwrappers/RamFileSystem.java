@@ -215,6 +215,16 @@ public final class RamFileSystem implements PathWrapper {
     return new DirectoryBuilder(path);
   }
 
+  /**
+   * Add contents to the root directory in this RAM file system.
+   *
+   * @return the directory builder.
+   */
+  @CheckReturnValue
+  public DirectoryBuilder rootDirectory() {
+    return new DirectoryBuilder(path);
+  }
+
   @Override
   public boolean equals(Object other) {
     if (!(other instanceof RamFileSystem)) {
@@ -499,9 +509,9 @@ public final class RamFileSystem implements PathWrapper {
      * @param rest  any additional path fragements to copy from.
      * @return the file system for further configuration.
      */
-    public RamFileSystem copiedFromDirectory(String first, String... rest) {
+    public RamFileSystem copyContentsFrom(String first, String... rest) {
       // Path.of is fine here as it is for the default file system.
-      return copiedFromDirectory(Path.of(first, rest));
+      return copyContentsFrom(Path.of(first, rest));
     }
 
     /**
@@ -510,27 +520,29 @@ public final class RamFileSystem implements PathWrapper {
      * @param dir the directory to copy the contents from.
      * @return the file system for further configuration.
      */
-    public RamFileSystem copiedFromDirectory(File dir) {
-      return copiedFromDirectory(dir.toPath());
+    public RamFileSystem copyContentsFrom(File dir) {
+      return copyContentsFrom(dir.toPath());
     }
 
     /**
      * Copy the contents of the directory at the given path recursively into this directory.
      *
-     * @param dir the directory to copy the contents from.
+     * @param rootDir the directory to copy the contents from.
      * @return the file system for further configuration.
      */
-    public RamFileSystem copiedFromDirectory(Path dir) {
+    public RamFileSystem copyContentsFrom(Path rootDir) {
       uncheckedIo(() -> {
-        Files.walkFileTree(dir, new SimpleFileVisitor<>() {
+        Files.walkFileTree(rootDir, new SimpleFileVisitor<>() {
 
           @Override
           public FileVisitResult preVisitDirectory(
               Path dir,
               BasicFileAttributes attrs
           ) throws IOException {
+            var targetChildDirectory = targetPath.resolve(rootDir.relativize(dir).toString());
 
-            var targetChildDirectory = targetPath.resolve(dir.relativize(dir).toString());
+            LOGGER.trace("making directory {} (existing {})", targetChildDirectory, dir);
+
             // Ignore if the directory already exists (will occur for the root).
             Files.createDirectories(targetChildDirectory);
             return FileVisitResult.CONTINUE;
@@ -541,8 +553,10 @@ public final class RamFileSystem implements PathWrapper {
               Path file,
               BasicFileAttributes attrs
           ) throws IOException {
+            var targetFile = targetPath.resolve(rootDir.relativize(file).toString());
 
-            var targetFile = targetPath.resolve(dir.relativize(file).toString());
+            LOGGER.trace("copying {} to {}", file, targetFile);
+
             Files.copy(file, targetFile);
             return FileVisitResult.CONTINUE;
           }
