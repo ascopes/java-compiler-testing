@@ -49,6 +49,7 @@ import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.StringJoiner;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -76,6 +77,8 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class RamFileSystem implements PathWrapper {
 
+  private static final String SEPARATOR = "/";
+
   private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
   private static final Logger LOGGER = LoggerFactory.getLogger(RamFileSystem.class);
 
@@ -97,8 +100,8 @@ public final class RamFileSystem implements PathWrapper {
         .builder(PathType.unix())
         .setSupportedFeatures(Feature.LINKS, Feature.SYMBOLIC_LINKS, Feature.FILE_CHANNEL)
         .setAttributeViews("basic", "posix")
-        .setRoots("/")
-        .setWorkingDirectory("/")
+        .setRoots(SEPARATOR)
+        .setWorkingDirectory(SEPARATOR)
         .setPathEqualityUsesCanonicalForm(true)
         .build();
 
@@ -330,6 +333,23 @@ public final class RamFileSystem implements PathWrapper {
     return Thread.currentThread().getContextClassLoader();
   }
 
+  private static String collapsePath(String first, String... rest) {
+    var joiner = new StringJoiner(SEPARATOR);
+    joiner.add(first);
+    for (var part : rest) {
+      joiner.add(part);
+    }
+    return joiner.toString();
+  }
+
+  private static String collapsePath(Path path) {
+    var joiner = new StringJoiner(SEPARATOR);
+    for (var part : path) {
+      joiner.add(part.toString());
+    }
+    return joiner.toString();
+  }
+
   /**
    * Chainable builder for creating individual files.
    *
@@ -342,7 +362,7 @@ public final class RamFileSystem implements PathWrapper {
     private final Path targetPath;
 
     private FileBuilder(String first, String... rest) {
-      this(path.resolve(first).resolve(String.join("/", rest)));
+      this(path.resolve(collapsePath(first, rest)));
     }
 
     private FileBuilder(Path targetPath) {
@@ -490,10 +510,11 @@ public final class RamFileSystem implements PathWrapper {
    */
   @API(since = "0.0.1", status = Status.EXPERIMENTAL)
   public final class DirectoryBuilder {
+
     private final Path targetPath;
 
     private DirectoryBuilder(String first, String... rest) {
-      this(path.resolve(first).resolve(String.join("/", rest)));
+      this(path.resolve(collapsePath(first, rest)));
     }
 
     private DirectoryBuilder(Path targetPath) {
@@ -539,7 +560,8 @@ public final class RamFileSystem implements PathWrapper {
               Path dir,
               BasicFileAttributes attrs
           ) throws IOException {
-            var targetChildDirectory = targetPath.resolve(rootDir.relativize(dir).toString());
+            // Fix windows-style separators if needed.
+            var targetChildDirectory = targetPath.resolve(collapsePath(rootDir.relativize(dir)));
 
             LOGGER.trace("making directory {} (existing {})", targetChildDirectory, dir);
 
@@ -553,7 +575,8 @@ public final class RamFileSystem implements PathWrapper {
               Path file,
               BasicFileAttributes attrs
           ) throws IOException {
-            var targetFile = targetPath.resolve(rootDir.relativize(file).toString());
+            // Fix windows-style separators if needed.
+            var targetFile = targetPath.resolve(collapsePath(rootDir.relativize(file)));
 
             LOGGER.trace("copying {} to {}", file, targetFile);
 
