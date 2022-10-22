@@ -22,6 +22,7 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
 import javax.tools.StandardLocation
+import java.nio.file.Path
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
 import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
@@ -45,12 +46,56 @@ class LombokIntegrationTest {
   void lombokDataCompilesTheExpectedDataClass(Compilable compiler) {
     // Given
     def sources = newRamFileSystem("sources")
-        .createDirectory("org", "example")
-        .copiedFromDirectory("src", "test", "resources", "code")
+        .rootDirectory()
+        .copyContentsFrom("src", "test", "resources", "code", "flat")
 
     // When
     def compilation = compiler
         .addSourcePath(sources)
+        .compile()
+
+    // Then
+    assertThatCompilation(compilation)
+        .isSuccessful()
+
+    def animalClass = compilation
+        .getFileManager()
+        .getClassLoader(StandardLocation.CLASS_OUTPUT)
+        .loadClass("org.example.Animal")
+
+    def animal = animalClass
+        .getDeclaredConstructor(String.class, int.class, int.class)
+        .newInstance("Cat", 4, 5)
+
+    assertSoftly { softly ->
+      softly.assertThatObject(animal.name).isEqualTo("Cat")
+      softly.assertThatObject(animal.legCount).isEqualTo(4)
+      softly.assertThatObject(animal.age).isEqualTo(5)
+    }
+  }
+
+  @DisplayName("Lombok @Data compiles the expected data class with module support")
+  @Execution(ExecutionMode.CONCURRENT)
+  @JavacCompilerTest(modules = true)
+  void lombokDataCompilesTheExpectedDataClassWithModuleSupport(Compilable compiler) {
+    // Given
+    def sources = newRamFileSystem("sources")
+        .rootDirectory()
+        .copyContentsFrom("src", "test", "resources", "code", "jpms")
+
+    // When
+    def compilation = compiler
+        .addSourcePath(sources)
+        .addClassPath(Path.of(
+            System.getenv("HOME"),
+            ".m2",
+            "repository",
+            "org",
+            "projectlombok",
+            "lombok",
+            "1.18.24",
+            "lombok-1.18.24.jar"
+        ))
         .compile()
 
     // Then

@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assumptions.assumeThat
 class SpringContextIndexerTest {
   @BeforeEach
   void setUp() {
-    assumeThat(System.getProperty("os.name"))
+    assumeThat(System.getProperty("os.name").toLowerCase(Locale.ROOT))
         .withFailMessage(
             "Test is disabled on this OS due to unexpected behaviour in Spring"
         )
@@ -45,7 +45,7 @@ class SpringContextIndexerTest {
     // Given
     def sources = newRamFileSystem("sources")
         .createDirectory("org", "example")
-        .copiedFromDirectory("src", "test", "resources", "code")
+        .copyContentsFrom("src", "test", "resources", "code")
 
     // When
     def compilation = compiler

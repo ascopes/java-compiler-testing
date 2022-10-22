@@ -47,7 +47,7 @@ class CheckerNullTest {
     // Given
     def sources = newRamFileSystem("sources")
         .createDirectory("org", "example")
-        .copiedFromDirectory("src", "test", "resources", "code", "nullness", "happy")
+        .copyContentsFrom("src", "test", "resources", "code", "nullness", "happy")
 
     // When
     def compilation = compiler
@@ -67,7 +67,7 @@ class CheckerNullTest {
     // Given
     def sources = newRamFileSystem("sources")
         .createDirectory("org", "example")
-        .copiedFromDirectory("src", "test", "resources", "code", "nullness", "sad")
+        .copyContentsFrom("src", "test", "resources", "code", "nullness", "sad")
 
     // When
     def compilation = compiler

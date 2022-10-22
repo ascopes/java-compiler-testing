@@ -348,6 +348,17 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   }
 
   @Override
+  public boolean isFixJvmModulePathMismatch() {
+    return fileManagerBuilder.isFixJvmModulePathMismatch();
+  }
+
+  @Override
+  public A fixJvmModulePathMismatch(boolean fixJvmModulePathMismatch) {
+    fileManagerBuilder.setFixJvmModulePathMismatch(fixJvmModulePathMismatch);
+    return myself();
+  }
+
+  @Override
   public boolean isInheritClassPath() {
     return fileManagerBuilder.isInheritClassPath();
   }

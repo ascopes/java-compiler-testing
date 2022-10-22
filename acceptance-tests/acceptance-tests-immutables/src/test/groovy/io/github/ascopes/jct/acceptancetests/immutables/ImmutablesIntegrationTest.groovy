@@ -45,8 +45,43 @@ class ImmutablesIntegrationTest {
   void immutablesValueProducesTheExpectedClass(Compilable compiler) {
     // Given
     def sources = newRamFileSystem("sources")
-        .createDirectory("org", "example")
-        .copiedFromDirectory("src", "test", "resources", "code")
+        .rootDirectory()
+        .copyContentsFrom("src", "test", "resources", "code", "flat")
+
+    def compilation = compiler
+        .addSourcePath(sources)
+        .compile()
+
+    assertThatCompilation(compilation)
+        .isSuccessful()
+
+    def animalClass = compilation
+        .getFileManager()
+        .getClassLoader(StandardLocation.CLASS_OUTPUT)
+        .loadClass("org.example.ImmutableAnimal")
+
+    def animal = animalClass
+        .builder()
+        .name("Cat")
+        .legCount(4)
+        .age(5)
+        .build()
+
+    assertSoftly { softly ->
+      softly.assertThatObject(animal.name).isEqualTo("Cat")
+      softly.assertThatObject(animal.legCount).isEqualTo(4)
+      softly.assertThatObject(animal.age).isEqualTo(5)
+    }
+  }
+
+  @DisplayName("Immutables @Value produces the expected class for modules")
+  @Execution(ExecutionMode.CONCURRENT)
+  @JavacCompilerTest(modules = true)
+  void immutablesValueProducesTheExpectedClassForModules(Compilable compiler) {
+    // Given
+    def sources = newRamFileSystem("sources")
+        .rootDirectory()
+        .copyContentsFrom("src", "test", "resources", "code", "jpms")
 
     def compilation = compiler
         .addSourcePath(sources)

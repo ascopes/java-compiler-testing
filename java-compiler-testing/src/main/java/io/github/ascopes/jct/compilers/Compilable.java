@@ -79,6 +79,11 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
   boolean DEFAULT_FAIL_ON_WARNINGS = false;
 
   /**
+   * Default setting for fixing modules being placed on the classpath by mistake ({@code true}).
+   */
+  boolean DEFAULT_FIX_JVM_MODULEPATH_MISMATCH = true;
+
+  /**
    * Default setting for inclusion of the current class path ({@code true}).
    */
   boolean DEFAULT_INHERIT_CLASS_PATH = true;
@@ -928,6 +933,38 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
   default C target(SourceVersion target) {
     return target(Integer.toString(target.ordinal()));
   }
+
+  /**
+   * Get whether we will attempt to fix modules appearing on the classpath, or non-modules appearing
+   * on the module path.
+   *
+   * <p>This enables correct classpath and module path detection when the test pack is a module but
+   * the code being compiled in the test is not, and vice versa. We need this because many build
+   * systems decide whether to populate the {@code --module-path} flat or the {@code --classpath}
+   * with JPMS-enabled dependencies based on whether the project under compilation is a JPMS module
+   * itself.
+   *
+   * <p>This only applies if {@link #isInheritModulePath()} or {@link #isInheritClassPath()} is
+   * enabled, and only applies to the current JVM classpath and module path.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
+   *
+   * @return {@code true} if enabled, or {@code false} if disabled.
+   */
+  boolean isFixJvmModulePathMismatch();
+
+  /**
+   * Get whether we will attempt to fix modules appearing on the classpath, or non-modules appearing
+   * on the module path.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
+   *
+   * @param fixJvmModulePathMismatch whether to enable the mismatch fixing or not.
+   * @return this compiler object for further call chaining.
+   */
+  C fixJvmModulePathMismatch(boolean fixJvmModulePathMismatch);
 
   /**
    * Get whether the class path is inherited from the caller JVM or not.

@@ -16,9 +16,7 @@
 package io.github.ascopes.jct.acceptancetests.dagger
 
 import io.github.ascopes.jct.compilers.Compilable
-import io.github.ascopes.jct.compilers.LoggingMode
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
@@ -32,7 +30,7 @@ class DaggerTest {
     // Given
     def sources = newRamFileSystem("sources")
         .createDirectory("org", "example")
-        .copiedFromDirectory("src", "test", "resources", "code")
+        .copyContentsFrom("src", "test", "resources", "code")
 
     // When
     def compilation = compiler
@@ -45,59 +43,6 @@ class DaggerTest {
     assertThatCompilation(compilation)
         .sourceOutput().packages()
         .withFile("org/example/WebServer_Factory.java").isRegularFile()
-
-    assertThatCompilation(compilation)
-        .classOutput().packages()
-        .withFile("org/example/WebServer.class").isRegularFile()
-
-    assertThatCompilation(compilation)
-        .classOutput().packages()
-        .withFile("org/example/WebServerConfiguration.class").isRegularFile()
-
-    assertThatCompilation(compilation)
-        .classOutput().packages()
-        .withFile("org/example/WebServer_Factory.class").isRegularFile()
-  }
-
-  // TODO: fix me
-  @Disabled("Currently module discovery is not working as intended.")
-  @DisplayName("Dagger DI runs as expected in the annotation processing phase with modules")
-  @JavacCompilerTest(modules = true)
-  void daggerDiRunsAsExpectedInTheAnnotationProcessingPhaseWithModules(Compilable compiler) {
-    // Given
-    def sources = newRamFileSystem("sources")
-        .createDirectory("org", "example")
-        .copiedFromDirectory("src", "test", "resources", "code")
-        .and()
-        .createFile("module-info.java").withContents(
-            """
-            |module org.example {
-            |  requires dagger;
-            |  requires java.annotation;
-            |  requires java.base;
-            |  exports org.example;
-            |  opens org.example to dagger;
-            |}
-            """.stripMargin()
-        )
-
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .fileManagerLoggingMode(LoggingMode.ENABLED)
-        .diagnosticLoggingMode(LoggingMode.STACKTRACES)
-        .compile()
-
-    // Then
-    assertThatCompilation(compilation).isSuccessfulWithoutWarnings()
-
-    assertThatCompilation(compilation)
-        .sourceOutput().packages()
-        .withFile("org/example/WebServer_Factory.java").isRegularFile()
-
-    assertThatCompilation(compilation)
-        .classOutput().packages()
-        .withFile("module-info.class").isRegularFile()
 
     assertThatCompilation(compilation)
         .classOutput().packages()

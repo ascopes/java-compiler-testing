@@ -34,7 +34,7 @@ class ServiceProcessorTest {
   void expectedFilesGetCreated(Compilable compiler) {
     def sources = newRamFileSystem("sources")
         .createDirectory("org", "example")
-        .copiedFromDirectory("src", "test", "resources", "code")
+        .copyContentsFrom("src", "test", "resources", "code")
 
     def compilation = compiler
         .addAnnotationProcessors(new ServiceProcessor())

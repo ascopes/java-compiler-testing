@@ -25,6 +25,8 @@ import io.github.ascopes.jct.utils.SpecialLocations;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
+import java.lang.module.FindException;
+import java.lang.module.ModuleFinder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -36,6 +38,8 @@ import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -51,6 +55,8 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class FileManagerBuilder {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(FileManagerBuilder.class);
+
   private final Lazy<List<Path>> jvmClassPath;
   private final Lazy<List<Path>> jvmModulePath;
   private final Lazy<List<Path>> jvmPlatformPath;
@@ -58,6 +64,7 @@ public final class FileManagerBuilder {
 
   private final Map<Location, LinkedHashSet<PathWrapper>> locations;
 
+  private boolean fixJvmModulePathMismatch;
   private boolean inheritClassPath;
   private boolean inheritModulePath;
   private boolean inheritPlatformClassPath;
@@ -78,6 +85,7 @@ public final class FileManagerBuilder {
 
     locations = new HashMap<>();
 
+    fixJvmModulePathMismatch = Compilable.DEFAULT_FIX_JVM_MODULEPATH_MISMATCH;
     inheritClassPath = Compilable.DEFAULT_INHERIT_CLASS_PATH;
     inheritModulePath = Compilable.DEFAULT_INHERIT_MODULE_PATH;
     inheritPlatformClassPath = Compilable.DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
@@ -152,6 +160,41 @@ public final class FileManagerBuilder {
     }
 
     addPath(new ModuleLocation(location, module), path);
+  }
+
+  /**
+   * Get whether we will attempt to fix modules appearing on the classpath, or non-modules appearing
+   * on the module path.
+   *
+   * <p>This enables correct classpath and module path detection when the test pack is a module but
+   * the code being compiled in the test is not, and vice versa. We need this because many build
+   * systems decide whether to populate the {@code --module-path} flat or the {@code --classpath}
+   * with JPMS-enabled dependencies based on whether the project under compilation is a JPMS module
+   * itself.
+   *
+   * <p>This only applies if {@link #isInheritModulePath()} or {@link #isInheritClassPath()} is
+   * enabled, and only applies to the current JVM classpath and module path.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link Compilable#DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
+   *
+   * @return {@code true} if enabled, or {@code false} if disabled.
+   */
+  public boolean isFixJvmModulePathMismatch() {
+    return fixJvmModulePathMismatch;
+  }
+
+  /**
+   * Get whether we will attempt to fix modules appearing on the classpath, or non-modules appearing
+   * on the module path.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link Compilable#DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
+   *
+   * @param fixJvmModulePathMismatch whether to enable the mismatch fixing or not.
+   */
+  public void setFixJvmModulePathMismatch(boolean fixJvmModulePathMismatch) {
+    this.fixJvmModulePathMismatch = fixJvmModulePathMismatch;
   }
 
   /**
@@ -355,26 +398,24 @@ public final class FileManagerBuilder {
   ) throws IOException {
     if (!fileManager.hasLocation(location)) {
       var dir = fallbackFs.access().getPath().resolve(location.getName());
-      fileManager.addPath(location, new BasicPathWrapperImpl(Files.createDirectories(dir)));
+      fileManager.addPath(location, wrap(Files.createDirectories(dir)));
     }
   }
 
   private void configureClassPath(FileManagerImpl fileManager) {
     if (inheritClassPath) {
       for (var path : jvmClassPath.access()) {
-        fileManager.addPath(StandardLocation.CLASS_PATH, new BasicPathWrapperImpl(path));
-      }
+        var wrapper = wrap(path);
+        fileManager.addPath(StandardLocation.CLASS_PATH, wrapper);
 
-      // For some reason, the JDK module path has to also be added to the classpath for it
-      // to be recognised with some test runners. Failing to do this prevents the classes and
-      // test-classes directories being added to the classpath with the other dependencies.
-      // This would otherwise result in all dependencies being loaded, but not the code the
-      // user is actually trying to test.
-      // TODO(ascopes): I feel like this is a bodge and misunderstanding of how the loading
-      //   mechanism actually works. I want to revisit this and ideally avoid weird hacks
-      //   like this where possible.
-      for (var path : jvmModulePath.access()) {
-        fileManager.addPath(StandardLocation.CLASS_PATH, new BasicPathWrapperImpl(path));
+        // IntelliJ appears to place modules on the classpath if we are not building the base
+        // project with JPMS. This is a problem because it means we cannot compile a module
+        // within a test pack not using JPMS, since the modules will be on the classpath rather
+        // than the module path. Fix this by adding classpath components with modules inside into
+        // the module path as well.
+        if (fixJvmModulePathMismatch && containsModules(path)) {
+          fileManager.addPath(StandardLocation.MODULE_PATH, wrapper);
+        }
       }
     }
   }
@@ -382,7 +423,13 @@ public final class FileManagerBuilder {
   private void configureModulePath(FileManagerImpl fileManager) {
     if (inheritModulePath) {
       for (var path : jvmModulePath.access()) {
-        fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH, new BasicPathWrapperImpl(path));
+        var wrapper = wrap(path);
+
+        // Since we do not know if the code being compiled will use modules or not just yet,
+        // make sure any modules are on the class path as well so that they remain accessible
+        // in unnamed modules.
+        fileManager.addPath(StandardLocation.CLASS_PATH, wrapper);
+        fileManager.addPath(StandardLocation.MODULE_PATH, wrapper);
       }
     }
   }
@@ -390,7 +437,7 @@ public final class FileManagerBuilder {
   private void configurePlatformClassPath(FileManagerImpl fileManager) {
     if (inheritPlatformClassPath) {
       for (var path : jvmPlatformPath.access()) {
-        fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH, new BasicPathWrapperImpl(path));
+        fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH, wrap(path));
       }
     }
   }
@@ -398,7 +445,7 @@ public final class FileManagerBuilder {
   private void configureJvmSystemModules(FileManagerImpl fileManager) {
     if (inheritSystemModulePath) {
       for (var path : jvmSystemModules.access()) {
-        fileManager.addPath(StandardLocation.SYSTEM_MODULES, new BasicPathWrapperImpl(path));
+        fileManager.addPath(StandardLocation.SYSTEM_MODULES, wrap(path));
       }
     }
   }
@@ -428,6 +475,20 @@ public final class FileManagerBuilder {
         // There is nothing to do to the file manager to configure annotation processing at this
         // time.
         break;
+    }
+  }
+
+  private PathWrapper wrap(Path path) {
+    return new BasicPathWrapperImpl(path);
+  }
+
+  private boolean containsModules(Path path) {
+    try {
+      return !ModuleFinder.of(path).findAll().isEmpty();
+    } catch (FindException ex) {
+      // Ignore, this just means that an invalid file name was found.
+      LOGGER.trace("Ignoring exception finding modules in {}", path, ex);
+      return false;
     }
   }
 }

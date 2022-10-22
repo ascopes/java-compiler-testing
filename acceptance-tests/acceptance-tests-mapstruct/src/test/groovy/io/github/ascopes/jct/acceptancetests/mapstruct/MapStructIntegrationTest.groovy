@@ -37,8 +37,49 @@ class MapStructIntegrationTest {
   void mapStructGeneratesExpectedMappingCode(Compilable compiler) {
     // Given
     def sources = newRamFileSystem("sources")
-        .createDirectory("org", "example")
-        .copiedFromDirectory("src", "test", "resources", "code")
+        .rootDirectory()
+        .copyContentsFrom("src", "test", "resources", "code", "flat")
+
+    // When
+    def compilation = compiler
+        .addSourcePath(sources)
+        .compile()
+
+    // Then
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings()
+
+    def classLoader = compilation.getFileManager().getClassLoader(StandardLocation.CLASS_OUTPUT)
+    def packageName = "org.example"
+
+    def carTypeClass = classLoader.loadClass("${packageName}.CarType")
+    def carClass = classLoader.loadClass("${packageName}.Car")
+    def carMapperClass = classLoader.loadClass("${packageName}.CarMapper")
+
+    def car = carClass.getConstructor().newInstance()
+
+    car.make = "VW Polo"
+    car.type = carTypeClass.HATCHBACK
+    car.numberOfSeats = 5
+
+    def carMapper = carMapperClass.INSTANCE
+    def carDto = carMapper.carToCarDto(car)
+
+    assertSoftly { softly ->
+      softly.assertThatObject(carDto.make).isEqualTo("VW Polo")
+      softly.assertThatObject(carDto.type).isEqualTo("HATCHBACK")
+      softly.assertThatObject(carDto.seatCount).isEqualTo(5)
+    }
+  }
+
+  @DisplayName("MapStruct generates expected mapping code for modules")
+  @Execution(ExecutionMode.CONCURRENT)
+  @JavacCompilerTest(modules = true)
+  void mapStructGeneratesExpectedMappingCodeForModules(Compilable compiler) {
+    // Given
+    def sources = newRamFileSystem("sources")
+        .rootDirectory()
+        .copyContentsFrom("src", "test", "resources", "code", "jpms")
 
     // When
     def compilation = compiler
