@@ -125,7 +125,7 @@ public class PathFileObject implements JavaFileObject {
   @Override
   public long getLastModified() {
     try {
-      return Files.getLastModifiedTime(relativePath).toMillis();
+      return Files.getLastModifiedTime(fullPath).toMillis();
     } catch (IOException ex) {
       LOGGER.debug("Ignoring error reading last modified time for {}", uri, ex);
       return NOT_MODIFIED;
