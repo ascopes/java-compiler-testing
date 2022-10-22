@@ -18,6 +18,7 @@ package io.github.ascopes.jct.compilers;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
+import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.containers.impl.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
@@ -112,9 +113,11 @@ public class PathFileObject implements JavaFileObject {
 
   @Override
   public String getCharContent(boolean ignoreEncodingErrors) throws IOException {
-    return decoder(ignoreEncodingErrors)
-        .decode(ByteBuffer.wrap(Files.readAllBytes(fullPath)))
-        .toString();
+    try (var input = openInputStream()) {
+      return decoder(ignoreEncodingErrors)
+          .decode(ByteBuffer.wrap(input.readAllBytes()))
+          .toString();
+    }
   }
 
   @Override
@@ -191,21 +194,25 @@ public class PathFileObject implements JavaFileObject {
   }
 
   @Override
+  @WillNotClose
   public BufferedInputStream openInputStream() throws IOException {
     return new BufferedInputStream(openUnbufferedInputStream());
   }
 
   @Override
+  @WillNotClose
   public BufferedOutputStream openOutputStream() throws IOException {
     return new BufferedOutputStream(openUnbufferedOutputStream());
   }
 
   @Override
+  @WillNotClose
   public BufferedReader openReader(boolean ignoreEncodingErrors) throws IOException {
     return new BufferedReader(openUnbufferedReader(ignoreEncodingErrors));
   }
 
   @Override
+  @WillNotClose
   public BufferedWriter openWriter() throws IOException {
     return new BufferedWriter(openUnbufferedWriter());
   }
@@ -222,20 +229,24 @@ public class PathFileObject implements JavaFileObject {
         .toString();
   }
 
+  @WillNotClose
   private InputStream openUnbufferedInputStream() throws IOException {
     return Files.newInputStream(fullPath);
   }
 
+  @WillNotClose
   private OutputStream openUnbufferedOutputStream() throws IOException {
     // Ensure parent directories exist first.
     Files.createDirectories(fullPath.getParent());
     return Files.newOutputStream(fullPath);
   }
 
+  @WillNotClose
   private Reader openUnbufferedReader(boolean ignoreEncodingErrors) throws IOException {
     return new InputStreamReader(openUnbufferedInputStream(), decoder(ignoreEncodingErrors));
   }
 
+  @WillNotClose
   private Writer openUnbufferedWriter() throws IOException {
     return new OutputStreamWriter(openUnbufferedOutputStream(), encoder());
   }
