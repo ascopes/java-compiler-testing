@@ -91,7 +91,7 @@ public class PathFileObject implements JavaFileObject {
   @Override
   public boolean delete() {
     try {
-      return Files.deleteIfExists(relativePath);
+      return Files.deleteIfExists(fullPath);
     } catch (IOException ex) {
       LOGGER.warn("Ignoring error deleting {}", uri, ex);
       return false;
