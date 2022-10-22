@@ -378,7 +378,10 @@ public final class FileManagerBuilder {
     locations.forEach((location, paths) ->
         paths.forEach(path -> fileManager.addPath(location, path)));
 
-    return fileManager;
+    return fileManagerLoggingMode == LoggingMode.DISABLED
+        ? fileManager
+        : LoggingFileManagerProxy.wrap(fileManager,
+            fileManagerLoggingMode == LoggingMode.STACKTRACES);
   }
 
   private Lazy<RamFileSystem> newFallbackFs(FileManagerImpl fileManager) {
