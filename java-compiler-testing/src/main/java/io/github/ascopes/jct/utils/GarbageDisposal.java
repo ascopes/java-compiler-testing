@@ -100,9 +100,7 @@ public final class GarbageDisposal {
       } catch (Exception ex) {
         var thread = Thread.currentThread();
         LOGGER.error(
-            "Failed to close {} ({}) on thread {} [{}]",
-            name,
-            closeable,
+            "Failed to close resource on thread {} [{}]",
             thread.getId(),
             thread.getName(),
             ex
