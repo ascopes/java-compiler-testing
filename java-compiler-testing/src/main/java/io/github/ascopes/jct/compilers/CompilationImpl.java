@@ -22,7 +22,6 @@ import static java.util.Objects.requireNonNull;
 import io.github.ascopes.jct.annotations.WillClose;
 import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
-import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import io.github.ascopes.jct.utils.GarbageDisposal;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.List;
@@ -58,7 +57,7 @@ public final class CompilationImpl implements Compilation {
     fileManager = requireNonNull(builder.fileManager, "fileManager");
 
     // Ensure the File Manager gets closed on garbage collection.
-    GarbageDisposal.onPhantom(this, new AsyncResourceCloser("File Manager", fileManager));
+    GarbageDisposal.onPhantom(this, "file manager", fileManager);
   }
 
   @Override

@@ -16,6 +16,8 @@
 package io.github.ascopes.jct.utils;
 
 import java.lang.ref.Cleaner;
+import java.util.Map;
+import java.util.Objects;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -34,6 +36,20 @@ public final class GarbageDisposal {
   private static final Lazy<Cleaner> CLEANER = new Lazy<>(GarbageDisposal::newCleaner);
 
   /**
+   * Close the given resources when the given reference becomes a phantom reference.
+   *
+   * <p>The hook must not reference the {@code ref} parameter, either directly or via a closure,
+   * otherwise the resource will be leaked.
+   *
+   * @param ref  the reference to watch.
+   * @param hooks the hooks to perform.
+   */
+  public static void onPhantom(Object ref, Map<?, ? extends AutoCloseable> hooks) {
+    hooks.forEach((name, hook) ->
+        CLEANER.access().register(ref, new CloseableDelegate(Objects.toString(name), hook)));
+  }
+
+  /**
    * Perform the given closure hook when the given reference becomes a phantom reference.
    *
    * <p>The hook must not reference the {@code ref} parameter, either directly or via a closure,
@@ -42,8 +58,8 @@ public final class GarbageDisposal {
    * @param ref  the reference to watch.
    * @param hook the hook to perform.
    */
-  public static void onPhantom(Object ref, Runnable hook) {
-    CLEANER.access().register(ref, hook);
+  public static void onPhantom(Object ref, String name, AutoCloseable hook) {
+    CLEANER.access().register(ref, new CloseableDelegate(name, hook));
   }
 
   private static Cleaner newCleaner() {
@@ -52,16 +68,41 @@ public final class GarbageDisposal {
       thread.setDaemon(false);
       thread.setName("java-compiler-testing garbage collector hook for " + runnable);
       thread.setPriority(Thread.MIN_PRIORITY);
-      thread.setUncaughtExceptionHandler(GarbageDisposal::handleUncaughtException);
       return thread;
     });
   }
 
-  private static void handleUncaughtException(Thread thread, Throwable ex) {
-    LOGGER.error("Resource cleaner error on thread {} [{}]", thread.getId(), thread.getName(), ex);
-  }
-
   private GarbageDisposal() {
     throw new UnsupportedOperationException("static-only class");
+  }
+
+  private static final class CloseableDelegate implements Runnable {
+    private final String name;
+    private final AutoCloseable closeable;
+
+    private CloseableDelegate(String name, AutoCloseable closeable) {
+      this.name = name;
+      this.closeable = closeable;
+    }
+
+    @Override
+    public void run() {
+      try {
+        LOGGER.trace("Closing {} ({})", name, closeable);
+        // TODO: should I delegate this to a separate thread since we use a custom thread
+        //   factory now?
+        closeable.close();
+      } catch (Exception ex) {
+        var thread = Thread.currentThread();
+        LOGGER.error(
+            "Failed to close {} ({}) on thread {} [{}]",
+            name,
+            closeable,
+            thread.getId(),
+            thread.getName(),
+            ex
+        );
+      }
+    }
   }
 }

@@ -18,7 +18,6 @@ package io.github.ascopes.jct.compilers;
 import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.pathwrappers.RamFileSystem;
-import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import io.github.ascopes.jct.utils.GarbageDisposal;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.SpecialLocations;
@@ -388,8 +387,7 @@ public final class FileManagerBuilder {
     return new Lazy<>(() -> {
       var tempFs = RamFileSystem.newRamFileSystem("temp", false);
       var fileManagerName = fileManager.toString();
-      var closer = new AsyncResourceCloser("tempfs for " + fileManagerName, tempFs::close);
-      GarbageDisposal.onPhantom(fileManager, closer);
+      GarbageDisposal.onPhantom(fileManager, "tempfs for " + fileManagerName, tempFs::close);
       return tempFs;
     });
   }

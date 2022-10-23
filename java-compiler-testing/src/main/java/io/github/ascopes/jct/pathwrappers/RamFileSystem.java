@@ -25,7 +25,6 @@ import com.google.common.jimfs.PathType;
 import io.github.ascopes.jct.annotations.CheckReturnValue;
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillClose;
-import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import io.github.ascopes.jct.utils.GarbageDisposal;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
@@ -113,7 +112,7 @@ public final class RamFileSystem implements PathWrapper {
     uncheckedIo(() -> Files.createDirectories(path));
 
     if (closeOnGarbageCollection) {
-      GarbageDisposal.onPhantom(this, new AsyncResourceCloser(name, fileSystem));
+      GarbageDisposal.onPhantom(this, name, fileSystem);
     }
 
     LOGGER.trace("Initialized new in-memory directory {}", path);

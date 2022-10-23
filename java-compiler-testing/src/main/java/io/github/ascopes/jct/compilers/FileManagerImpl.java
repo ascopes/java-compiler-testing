@@ -27,7 +27,6 @@ import io.github.ascopes.jct.containers.impl.ModuleContainerGroupImpl;
 import io.github.ascopes.jct.containers.impl.OutputContainerGroupImpl;
 import io.github.ascopes.jct.containers.impl.PackageContainerGroupImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
-import io.github.ascopes.jct.utils.AsyncResourceCloser;
 import io.github.ascopes.jct.utils.GarbageDisposal;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
@@ -78,9 +77,9 @@ public final class FileManagerImpl implements FileManager {
     modules = new ConcurrentHashMap<>();
     outputs = new ConcurrentHashMap<>();
 
-    GarbageDisposal.onPhantom(this, new AsyncResourceCloser(packages));
-    GarbageDisposal.onPhantom(this, new AsyncResourceCloser(modules));
-    GarbageDisposal.onPhantom(this, new AsyncResourceCloser(outputs));
+    GarbageDisposal.onPhantom(this, packages);
+    GarbageDisposal.onPhantom(this, modules);
+    GarbageDisposal.onPhantom(this, outputs);
   }
 
   @Override
