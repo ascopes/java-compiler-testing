@@ -15,20 +15,32 @@
  */
 package io.github.ascopes.jct.testing.unit.diagnostics;
 
+import static io.github.ascopes.jct.testing.helpers.MoreMocks.mockCast;
+import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
+import static io.github.ascopes.jct.testing.helpers.MoreMocks.stubCast;
+import static java.time.Instant.now;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenCode;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.verify;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
-import io.github.ascopes.jct.testing.helpers.MoreMocks;
 import io.github.ascopes.jct.testing.helpers.TypeRef;
-import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
 import javax.tools.Diagnostic;
+import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * {@link TraceDiagnostic} tests.
@@ -38,35 +50,174 @@ import org.junit.jupiter.api.Test;
 @DisplayName("TraceDiagnostic tests")
 class TraceDiagnosticTest {
 
+  @DisplayName("null original diagnostics are rejected")
+  @Test
+  void nullDiagnosticsAreRejected() {
+    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    thenCode(() -> new TraceDiagnostic<>(now(), 123, "foo", stack, null))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("original");
+  }
+
+  @DisplayName("getKind() delegates to the inner diagnostic")
+  @EnumSource(Kind.class)
+  @ParameterizedTest(name = "for kind = {0}")
+  void getKindDelegates(Kind expected) {
+    // Given
+    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
+    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
+    given(original.getKind()).willReturn(expected);
+
+    // Then
+    assertThat(wrapped.getKind()).isSameAs(expected);
+  }
+
+  @DisplayName("getSource() delegates to the inner diagnostic")
+  @Test
+  void getSourceDelegates() {
+    // Given
+    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
+    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
+    var source = stub(JavaFileObject.class);
+    given(original.getSource()).willReturn(source);
+
+    // Then
+    assertThat(wrapped.getSource()).isSameAs(source);
+  }
+
+  @DisplayName("getPosition() delegates to the inner diagnostic")
+  @Test
+  void getPositionDelegates() {
+    // Given
+    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
+    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
+    var position = new Random().nextLong();
+    given(original.getPosition()).willReturn(position);
+
+    // Then
+    assertThat(wrapped.getPosition()).isEqualTo(position);
+  }
+
+  @DisplayName("getStartPosition() delegates to the inner diagnostic")
+  @Test
+  void getStartPositionDelegates() {
+    // Given
+    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
+    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
+    var startPosition = new Random().nextLong();
+    given(original.getStartPosition()).willReturn(startPosition);
+
+    // Then
+    assertThat(wrapped.getStartPosition()).isEqualTo(startPosition);
+  }
+
+  @DisplayName("getEndPosition() delegates to the inner diagnostic")
+  @Test
+  void getEndPositionDelegates() {
+    // Given
+    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
+    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
+    var endPosition = new Random().nextLong();
+    given(original.getEndPosition()).willReturn(endPosition);
+
+    // Then
+    assertThat(wrapped.getEndPosition()).isEqualTo(endPosition);
+  }
+
+  @DisplayName("getLineNumber() delegates to the inner diagnostic")
+  @Test
+  void getLineNumberDelegates() {
+    // Given
+    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
+    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
+    var lineNumber = new Random().nextLong();
+    given(original.getLineNumber()).willReturn(lineNumber);
+
+    // Then
+    assertThat(wrapped.getLineNumber()).isEqualTo(lineNumber);
+  }
+
+  @DisplayName("getColumnNumber() delegates to the inner diagnostic")
+  @Test
+  void getColumnNumberDelegates() {
+    // Given
+    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
+    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
+    var columnNumber = new Random().nextLong();
+    given(original.getColumnNumber()).willReturn(columnNumber);
+
+    // Then
+    assertThat(wrapped.getColumnNumber()).isEqualTo(columnNumber);
+  }
+
+  @DisplayName("getCode() delegates to the inner diagnostic")
+  @NullSource
+  @ValueSource(strings = "you.messed.up.something")
+  @ParameterizedTest(name = "for code = \"{0}\"")
+  void getCodeDelegates(String expected) {
+    // Given
+    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
+    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
+    given(original.getCode()).willReturn(expected);
+
+    // Then
+    assertThat(wrapped.getCode()).isSameAs(expected);
+  }
+
+  @DisplayName("getMessage() delegates to the inner diagnostic")
+  @Test
+  void getMessageDelegates() {
+    // Given
+    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
+    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
+    var message = UUID.randomUUID().toString();
+    given(original.getMessage(any())).willReturn(message);
+
+    // Then
+    assertThat(wrapped.getMessage(Locale.TAIWAN)).isSameAs(message);
+    verify(original).getMessage(Locale.TAIWAN);
+  }
+
   @DisplayName("null timestamps are rejected")
   @Test
   void nullTimestampsAreRejected() {
-    var stack = MoreMocks.stubCast(new TypeRef<List<StackTraceElement>>() {});
-    var diag = MoreMocks.stubCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
+    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var diag = stubCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
     thenCode(() -> new TraceDiagnostic<>(null, 123, "foo", stack, diag))
-        .isInstanceOf(NullPointerException.class);
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("timestamp");
   }
 
   @DisplayName("null stack traces are rejected")
   @Test
   void nullStackTracesAreRejected() {
-    var now = Instant.now();
-    var diag = MoreMocks.stubCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
+    var now = now();
+    var diag = stubCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
     thenCode(() -> new TraceDiagnostic<>(now, 123, "foo", null, diag))
-        .isInstanceOf(NullPointerException.class);
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("stackTrace");
   }
 
   @DisplayName("getTimestamp() returns the timestamp")
   @Test
   void getTimestampReturnsTheTimestamp() {
     // Given
-    var expectedTimestamp = Instant.now();
+    var expectedTimestamp = now();
     var diagnostic = new TraceDiagnostic<>(
         expectedTimestamp,
         123,
         "foo",
-        MoreMocks.stubCast(new TypeRef<>() {}),
-        MoreMocks.stubCast(new TypeRef<>() {})
+        stubCast(new TypeRef<>() {}),
+        stubCast(new TypeRef<>() {})
     );
 
     // When
@@ -82,11 +233,11 @@ class TraceDiagnosticTest {
     // Given
     var expectedThreadId = Thread.currentThread().getId() + new Random().nextInt(100);
     var diagnostic = new TraceDiagnostic<>(
-        Instant.now(),
+        now(),
         expectedThreadId,
         "foo",
-        MoreMocks.stubCast(new TypeRef<>() {}),
-        MoreMocks.stubCast(new TypeRef<>() {})
+        stubCast(new TypeRef<>() {}),
+        stubCast(new TypeRef<>() {})
     );
 
     // When
@@ -102,11 +253,11 @@ class TraceDiagnosticTest {
     // Given
     var expectedThreadName = UUID.randomUUID().toString();
     var diagnostic = new TraceDiagnostic<>(
-        Instant.now(),
+        now(),
         1234,
         expectedThreadName,
-        MoreMocks.stubCast(new TypeRef<>() {}),
-        MoreMocks.stubCast(new TypeRef<>() {})
+        stubCast(new TypeRef<>() {}),
+        stubCast(new TypeRef<>() {})
     );
 
     // When
@@ -121,11 +272,11 @@ class TraceDiagnosticTest {
   void getThreadNameReturnsEmptyWhenTheThreadNameIsNotKnown() {
     // Given
     var diagnostic = new TraceDiagnostic<>(
-        Instant.now(),
+        now(),
         1234,
         null,
-        MoreMocks.stubCast(new TypeRef<>() {}),
-        MoreMocks.stubCast(new TypeRef<>() {})
+        stubCast(new TypeRef<>() {}),
+        stubCast(new TypeRef<>() {})
     );
 
     // When
@@ -139,13 +290,13 @@ class TraceDiagnosticTest {
   @Test
   void getStackTraceReturnsTheStackTrace() {
     // Given
-    var expectedStackTrace = MoreMocks.stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var expectedStackTrace = stubCast(new TypeRef<List<StackTraceElement>>() {});
     var diagnostic = new TraceDiagnostic<>(
-        Instant.now(),
+        now(),
         1234,
         "foo",
         expectedStackTrace,
-        MoreMocks.stubCast(new TypeRef<>() {})
+        stubCast(new TypeRef<>() {})
     );
 
     // When

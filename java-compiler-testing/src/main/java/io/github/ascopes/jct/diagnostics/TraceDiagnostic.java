@@ -38,12 +38,13 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class TraceDiagnostic<S extends JavaFileObject> extends ForwardingDiagnostic<S> {
+public class TraceDiagnostic<S extends JavaFileObject> implements Diagnostic<S> {
 
   private final Instant timestamp;
   private final long threadId;
   private final @Nullable String threadName;
   private final List<StackTraceElement> stackTrace;
+  private final Diagnostic<? extends S> original;
 
   /**
    * Initialize this diagnostic.
@@ -61,11 +62,58 @@ public class TraceDiagnostic<S extends JavaFileObject> extends ForwardingDiagnos
       List<StackTraceElement> stackTrace,
       Diagnostic<? extends S> original
   ) {
-    super(original);
     this.timestamp = requireNonNull(timestamp, "timestamp");
     this.threadId = threadId;
     this.threadName = threadName;
     this.stackTrace = requireNonNull(stackTrace, "stackTrace");
+    this.original = requireNonNull(original, "original");
+  }
+
+  @Override
+  public Kind getKind() {
+    return original.getKind();
+  }
+
+  @Nullable
+  @Override
+  public S getSource() {
+    return original.getSource();
+  }
+
+  @Override
+  public long getPosition() {
+    return original.getPosition();
+  }
+
+  @Override
+  public long getStartPosition() {
+    return original.getStartPosition();
+  }
+
+  @Override
+  public long getEndPosition() {
+    return original.getEndPosition();
+  }
+
+  @Override
+  public long getLineNumber() {
+    return original.getLineNumber();
+  }
+
+  @Override
+  public long getColumnNumber() {
+    return original.getColumnNumber();
+  }
+
+  @Nullable
+  @Override
+  public String getCode() {
+    return original.getCode();
+  }
+
+  @Override
+  public String getMessage(@Nullable Locale locale) {
+    return original.getMessage(locale);
   }
 
   /**
