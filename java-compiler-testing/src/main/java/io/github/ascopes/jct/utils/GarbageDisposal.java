@@ -41,12 +41,11 @@ public final class GarbageDisposal {
    * <p>The hook must not reference the {@code ref} parameter, either directly or via a closure,
    * otherwise the resource will be leaked.
    *
-   * @param ref  the reference to watch.
+   * @param ref   the reference to watch.
    * @param hooks the hooks to perform.
    */
   public static void onPhantom(Object ref, Map<?, ? extends AutoCloseable> hooks) {
-    hooks.forEach((name, hook) ->
-        CLEANER.access().register(ref, new CloseableDelegate(Objects.toString(name), hook)));
+    hooks.forEach((name, hook) -> onPhantom(ref, Objects.toString(name), hook));
   }
 
   /**
@@ -66,7 +65,7 @@ public final class GarbageDisposal {
     return Cleaner.create(runnable -> {
       var thread = new Thread(runnable);
       thread.setDaemon(false);
-      thread.setName("java-compiler-testing garbage collector hook for " + runnable);
+      thread.setName(runnable.toString());
       thread.setPriority(Thread.MIN_PRIORITY);
       return thread;
     });
@@ -77,12 +76,18 @@ public final class GarbageDisposal {
   }
 
   private static final class CloseableDelegate implements Runnable {
+
     private final String name;
     private final AutoCloseable closeable;
 
     private CloseableDelegate(String name, AutoCloseable closeable) {
       this.name = name;
       this.closeable = closeable;
+    }
+
+    @Override
+    public String toString() {
+      return "JCT GC hook for " + name + " (" + closeable + ")";
     }
 
     @Override
