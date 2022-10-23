@@ -36,7 +36,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public abstract class AbstractCompilersProvider implements ArgumentsProvider {
 
-  private final IntFunction<? extends Compilable<?, ?>> compilerSupplier;
+  private final IntFunction<? extends Compilable<?, ?>> compilerFactory;
   private final int minCompilerVersionWithoutModules;
   private final int minCompilerVersionWithModules;
   private final int maxCompilerVersion;
