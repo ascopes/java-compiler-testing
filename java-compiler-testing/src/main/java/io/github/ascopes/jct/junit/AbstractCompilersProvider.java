@@ -27,35 +27,46 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 /**
- * Internal base for defining a compiler-supplying arguments provider for Junit Jupiter
+ * Base for defining a compiler-supplying arguments provider for Junit Jupiter
  * parameterised test support.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
-abstract class AbstractCompilersProvider implements ArgumentsProvider {
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+public abstract class AbstractCompilersProvider implements ArgumentsProvider {
 
-  private final IntFunction<? extends Compilable<?, ?>> compilerSupplier;
+  private final IntFunction<? extends Compilable<?, ?>> compilerFactory;
   private final int minCompilerVersionWithoutModules;
   private final int minCompilerVersionWithModules;
   private final int maxCompilerVersion;
 
-  // Configured values by JUnit.
-  private int minVersion;
-  private int maxVersion;
+  // Configured values by JUnit 5.
+  private volatile int minVersion;
+  private volatile int maxVersion;
 
-  AbstractCompilersProvider(
-      IntFunction<? extends Compilable<?, ?>> compilerSupplier,
+  /**
+   * Initialise this provider.
+   *
+   * @param compilerFactory a function taking a compiler version and returning the
+   *     corresponding compiler.
+   * @param minCompilerVersionWithoutModules the minimum version to allow when we don't
+   *     require module support.
+   * @param minCompilerVersionWithModules the minimum version to allow when we require
+   *     module support.
+   * @param maxCompilerVersion the maximum version of the compiler to support.
+   */
+  protected AbstractCompilersProvider(
+      IntFunction<? extends Compilable<?, ?>> compilerFactory,
       int minCompilerVersionWithoutModules,
       int minCompilerVersionWithModules,
       int maxCompilerVersion
   ) {
-    this.compilerSupplier = compilerSupplier;
+    this.compilerFactory = compilerFactory;
     this.minCompilerVersionWithoutModules = minCompilerVersionWithoutModules;
     this.minCompilerVersionWithModules = minCompilerVersionWithModules;
     this.maxCompilerVersion = maxCompilerVersion;
-    minVersion = Integer.MIN_VALUE;
+    minVersion = 0;
     maxVersion = Integer.MAX_VALUE;
   }
 
@@ -63,14 +74,14 @@ abstract class AbstractCompilersProvider implements ArgumentsProvider {
   public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
     return IntStream
         .rangeClosed(minVersion, maxVersion)
-        .mapToObj(compilerSupplier)
+        .mapToObj(compilerFactory)
         .map(Arguments::of);
   }
 
   @Override
   public String toString() {
     return new ToStringBuilder(this)
-        .attribute("compilerSupplier", compilerSupplier)
+        .attribute("compilerFactory", compilerFactory)
         .attribute("minCompilerVersionWithoutModules", minCompilerVersionWithoutModules)
         .attribute("minCompilerVersionWithModules", minCompilerVersionWithModules)
         .attribute("maxCompilerVersion", maxCompilerVersion)
@@ -79,7 +90,14 @@ abstract class AbstractCompilersProvider implements ArgumentsProvider {
         .toString();
   }
 
-  final void configure(int min, int max, boolean modules) {
+  /**
+   * Configure this provider with parameters from annotations.
+   *
+   * @param min the inclusive minimum compiler version to use.
+   * @param max the inclusive maximum compiler version to use.
+   * @param modules whether the compiler version must support modules.
+   */
+  protected final void configure(int min, int max, boolean modules) {
     min = Math.max(min, modules ? minCompilerVersionWithModules : minCompilerVersionWithoutModules);
     max = Math.min(max, maxCompilerVersion);
 
