@@ -31,7 +31,7 @@ jobs:
         run: >-
           ./mvnw
           -B
-          -T8C
+          -T1
           -U
           --no-transfer-progress
           -Dmaven.test.skip=true
@@ -39,7 +39,6 @@ jobs:
           -Dlicense.skip=true
           -DskipTests
           -Dstyle.color=always
-          -Dmaven.artifact.threads=10
           clean package
 
       - name: Perform CodeQL Analysis
@@ -80,13 +79,12 @@ jobs:
         run: >-
           ${{ matrix.build-script }} 
           -B 
-          -T4C
+          -T1
           -U
           --no-transfer-progress
           '-Dcheckstyle.skip=true'
           '-Dlicense.skip=true'
           '-Dstyle.color=always'
-          '-Dmaven.artifact.threads=10'
           clean package
 
       - name: Annotate test reports with build environment info
@@ -165,12 +163,11 @@ jobs:
         run: >-
           ./mvnw 
           -B 
-          -T4C
+          -T1
           -U
           --no-transfer-progress
           -DskipTests=true
           -Dstyle.color=always
-          -Dmaven.artifact.threads=10
           -Dmaven.main.skip
           -Dmaven.jar.skip
           -Dmaven.resources.skip
@@ -198,14 +195,13 @@ jobs:
         run: >-
           ./mvnw 
           -B 
-          -T4C
+          -T1
           -U
           --no-transfer-progress
           -Dmaven.test.skip=true
           -Dcheckstyle.skip=true
           -Dlicense.skip=true
           -Dstyle.color=always
-          -Dmaven.artifact.threads=10
           clean compile javadoc:jar
 
       - name: Archive JavaDoc artifacts
