@@ -17,17 +17,16 @@
  * Java compiler testing facilities.
  */
 module io.github.ascopes.jct {
-  requires java.base;
   requires java.compiler;
   requires java.management;
 
-  requires /* automatic */ jimfs;
+  requires jimfs;
   requires static jsr305;
   requires me.xdrop.fuzzywuzzy;
   requires static transitive org.apiguardian.api;
+  requires org.assertj.core;
   requires static transitive org.junit.jupiter.params;
-  requires /* automatic */ org.assertj.core;
-  requires /* automatic */ org.slf4j;
+  requires org.slf4j;
 
   exports io.github.ascopes.jct.assertions;
   exports io.github.ascopes.jct.containers;
