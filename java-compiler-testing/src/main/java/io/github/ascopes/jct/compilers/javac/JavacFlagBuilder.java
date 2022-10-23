@@ -18,7 +18,6 @@ package io.github.ascopes.jct.compilers.javac;
 import io.github.ascopes.jct.compilers.FlagBuilder;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -69,42 +68,42 @@ public final class JavacFlagBuilder implements FlagBuilder {
 
   @Override
   public JavacFlagBuilder verbose(boolean enabled) {
-    return flagIfTrue(enabled, VERBOSE);
+    return addFlagIfTrue(enabled, VERBOSE);
   }
 
   @Override
   public JavacFlagBuilder previewFeatures(boolean enabled) {
-    return flagIfTrue(enabled, ENABLE_PREVIEW);
+    return addFlagIfTrue(enabled, ENABLE_PREVIEW);
   }
 
   @Override
   public JavacFlagBuilder showWarnings(boolean enabled) {
-    return flagIfTrue(!enabled, NOWARN);
+    return addFlagIfTrue(!enabled, NOWARN);
   }
 
   @Override
   public JavacFlagBuilder failOnWarnings(boolean enabled) {
-    return flagIfTrue(enabled, WERROR);
+    return addFlagIfTrue(enabled, WERROR);
   }
 
   @Override
   public JavacFlagBuilder showDeprecationWarnings(boolean enabled) {
-    return flagIfTrue(enabled, DEPRECATION);
+    return addFlagIfTrue(enabled, DEPRECATION);
   }
 
   @Override
   public JavacFlagBuilder release(String version) {
-    return versionIfPresent(RELEASE, version);
+    return addVersionIfPresent(RELEASE, version);
   }
 
   @Override
   public JavacFlagBuilder source(String version) {
-    return versionIfPresent(SOURCE, version);
+    return addVersionIfPresent(SOURCE, version);
   }
 
   @Override
   public JavacFlagBuilder target(String version) {
-    return versionIfPresent(TARGET, version);
+    return addVersionIfPresent(TARGET, version);
   }
 
   @Override
@@ -133,20 +132,19 @@ public final class JavacFlagBuilder implements FlagBuilder {
         .collect(Collectors.toList());
   }
 
-  private JavacFlagBuilder flagIfTrue(boolean condition, String... flags) {
+  private JavacFlagBuilder addFlagIfTrue(boolean condition, String flag) {
     if (condition) {
-      for (var flag : flags) {
-        craftedFlags.add(flag);
-      }
+      craftedFlags.add(flag);
     }
 
     return this;
   }
 
-  private JavacFlagBuilder versionIfPresent(String flagPrefix, String nullableVersion) {
-    Optional
-        .ofNullable(nullableVersion)
-        .ifPresent(version -> craftedFlags.add(flagPrefix).add(version));
+  private JavacFlagBuilder addVersionIfPresent(String flagPrefix, String version) {
+    if (version != null) {
+      craftedFlags.add(flagPrefix).add(version);
+    }
+
     return this;
   }
 }
