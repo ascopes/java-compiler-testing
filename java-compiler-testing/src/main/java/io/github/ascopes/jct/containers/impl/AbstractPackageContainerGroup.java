@@ -55,10 +55,13 @@ import org.apiguardian.api.API.Status;
 public abstract class AbstractPackageContainerGroup
     implements PackageContainerGroup {
 
+  // https://docs.oracle.com/cd/E19830-01/819-4712/ablgz/index.html
   private static final Set<String> ARCHIVE_EXTENSIONS = Set.of(
-      ".zip",
+      ".ear",
       ".jar",
-      ".war"
+      ".rar",
+      ".war",
+      ".zip"
   );
 
   protected final Location location;
