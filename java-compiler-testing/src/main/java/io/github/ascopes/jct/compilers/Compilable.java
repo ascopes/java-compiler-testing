@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.compilers;
 
-import io.github.ascopes.jct.ex.CompilerAlreadyUsedException;
 import io.github.ascopes.jct.ex.CompilerException;
 import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
@@ -1176,8 +1175,6 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    * Invoke the compilation and return the compilation result.
    *
    * @return the compilation result.
-   * @throws CompilerAlreadyUsedException if the compiler was already used previously. Compilers are
-   *                                      single-use only.
    * @throws CompilerException            if the compiler threw an unhandled exception. This should
    *                                      not occur for compilation failures generally.
    * @throws IllegalStateException        if no compilation units were found.
