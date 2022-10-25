@@ -40,6 +40,10 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class FileUtils {
 
+  // Sort extensions so that we check the suffix by length first.
+  // This should prevent a shorter extension matching a longer one.
+  // In reality we only have four potential values, so we don't
+  // care that much.
   private static final Comparator<Kind> KIND_ORDER = Comparator
       .comparing((Kind kind) -> kind.extension.length())
       .reversed()
