@@ -19,7 +19,6 @@ import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
-import io.github.ascopes.jct.ex.CompilerAlreadyUsedException;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.processing.Processor;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager.Location;
@@ -40,10 +38,6 @@ import org.apiguardian.api.API.Status;
  *
  * <p>Implementations should extend this class and override anything they require.
  * In most cases, you should not need to override anything other than the constructor.
- *
- * <p>Each instance of this class should be considered to be single-use. Mutation does
- * <strong>not</strong> produce a new instance, meaning that this class is not immutable by
- * design.
  *
  * <p>This class is <strong>not</strong> thread-safe.
  *
@@ -59,12 +53,6 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
     implements Compilable<A, CompilationImpl> {
-
-  // Use atomics for this to ensure no race conditions
-  // if the user makes a mistake during parallel test runs.
-  // We do not enforce thread safety but this one will prevent
-  // flaky tests at zero cost, so we make an exception for this.
-  private final AtomicBoolean alreadyCompiled;
 
   private final String name;
   private final JavaCompiler jsr199Compiler;
@@ -100,8 +88,6 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
       JavaCompiler jsr199Compiler,
       FlagBuilder flagBuilder
   ) {
-    alreadyCompiled = new AtomicBoolean(false);
-
     this.name = requireNonNull(name, "name");
     this.fileManagerBuilder = requireNonNull(fileManagerBuilder, "fileManagerTemplate");
     this.jsr199Compiler = requireNonNull(jsr199Compiler, "jsr199Compiler");
@@ -156,10 +142,6 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
 
   @Override
   public CompilationImpl compile() {
-    if (alreadyCompiled.getAndSet(true)) {
-      throw new CompilerAlreadyUsedException();
-    }
-
     var factory = new CompilationFactory<A>();
 
     return factory.compile(
