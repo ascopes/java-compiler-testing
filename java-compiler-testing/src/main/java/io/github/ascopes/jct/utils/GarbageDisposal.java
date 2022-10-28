@@ -103,11 +103,11 @@ public final class GarbageDisposal {
           LOGGER.trace("Closing {} ({})", name, closeable);
           closeable.close();
         } catch (Exception ex) {
-          var thread = Thread.currentThread();
-            LOGGER.error(
+          var thisThread = Thread.currentThread();
+          LOGGER.error(
               "Failed to close resource on thread {} [{}]",
-              thread.getId(),
-              thread.getName(),
+              thisThread.getId(),
+              thisThread.getName(),
               ex
           );
         }
