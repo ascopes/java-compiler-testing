@@ -62,10 +62,10 @@ public final class GarbageDisposal {
   }
 
   private static Cleaner newCleaner() {
+    // This thread factory has exactly 1 thread created from it.
     return Cleaner.create(runnable -> {
       var thread = new Thread(runnable);
-      thread.setDaemon(false);
-      thread.setName(runnable.toString());
+      thread.setName("JCT GC hook caller");
       thread.setPriority(Thread.MIN_PRIORITY);
       return thread;
     });
@@ -87,25 +87,35 @@ public final class GarbageDisposal {
 
     @Override
     public String toString() {
-      return "JCT GC hook for " + name + " (" + closeable + ")";
+      return "JCT GC hook for " 
+          + name
+          + " at "
+          + Integer.toHexString(System.identityHashCode(closeable))
+          + " (delegate at "
+          + Integer.toHexString(System.identityHashCode(this))
+          + ")";
     }
 
     @Override
     public void run() {
-      try {
-        LOGGER.trace("Closing {} ({})", name, closeable);
-        // TODO: should I delegate this to a separate thread since we use a custom thread
-        //   factory now?
-        closeable.close();
-      } catch (Exception ex) {
-        var thread = Thread.currentThread();
-        LOGGER.error(
-            "Failed to close resource on thread {} [{}]",
-            thread.getId(),
-            thread.getName(),
-            ex
-        );
-      }
+      var thread = new Thread(() -> {
+        try {
+          LOGGER.trace("Closing {} ({})", name, closeable);
+          closeable.close();
+        } catch (Exception ex) {
+          var thisThread = Thread.currentThread();
+          LOGGER.error(
+              "Failed to close resource on thread {} [{}]",
+              thisThread.getId(),
+              thisThread.getName(),
+              ex
+          );
+        }
+      });
+
+      thread.setName(toString());
+      thread.setPriority(Thread.MAX_PRIORITY);
+      thread.start();
     }
   }
 }
