@@ -66,7 +66,7 @@ public class PathFileObject implements JavaFileObject {
   private static final long NOT_MODIFIED = 0L;
 
   private final Location location;
-  private final Path root;
+  private final Path rootPath;
   private final Path relativePath;
   private final Path fullPath;
   private final String name;
@@ -76,14 +76,28 @@ public class PathFileObject implements JavaFileObject {
   /**
    * Initialize this file object.
    *
-   * @param root         the root directory that the path is a package within.
-   * @param relativePath the path to point to.
+   * @param rootPath     the root directory that the path is a package within.
+   * @param relativePath the path to point to, relative to the root.
    */
-  public PathFileObject(Location location, Path root, Path relativePath) {
-    this.location = requireNonNull(location, "location");
-    this.root = requireNonNull(root, "root");
-    this.relativePath = root.relativize(requireNonNull(relativePath, "relativePath"));
-    fullPath = root.resolve(relativePath);
+  public PathFileObject(Location location, Path rootPath, Path relativePath) {
+    requireNonNull(location, "location");
+    requireNonNull(rootPath, "rootPath");
+    requireNonNull(relativePath, "relativePath");
+
+    if (!rootPath.isAbsolute()) {
+      throw new IllegalArgumentException("rootPath must be absolute");
+    }
+
+    this.location = location;
+    this.rootPath = rootPath;
+
+    if (relativePath.isAbsolute()) {
+      this.relativePath = rootPath.relativize(relativePath);
+    } else {
+      this.relativePath = relativePath;
+    }
+
+    fullPath = rootPath.resolve(relativePath);
     name = relativePath.toString();
     uri = fullPath.toUri();
     kind = FileUtils.pathToKind(relativePath);
@@ -150,7 +164,7 @@ public class PathFileObject implements JavaFileObject {
    * @return the root path.
    */
   public Path getRoot() {
-    return root;
+    return rootPath;
   }
 
   @Override
