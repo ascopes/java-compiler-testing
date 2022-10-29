@@ -36,12 +36,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("InfiniteLoopStatement")
 @DisplayName("GarbageDisposal tests")
 @RunTestsInIsolation
+@EnabledOnOs(value = OS.LINUX, disabledReason = "Non-deterministic GCs on other platforms")
 class GarbageDisposalTest implements StaticClassTestTemplate {
 
   static final Logger LOGGER = LoggerFactory.getLogger(GarbageDisposalTest.class);
