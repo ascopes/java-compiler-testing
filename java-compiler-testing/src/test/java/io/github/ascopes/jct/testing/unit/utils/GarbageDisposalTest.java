@@ -87,11 +87,13 @@ class GarbageDisposalTest implements StaticClassTestTemplate {
     AutoCloseable closeable = closedCount::incrementAndGet;
 
     // When
-    GarbageDisposal.onPhantom(new Object(), "foobar baz bork", closeable);
+    do {
+      GarbageDisposal.onPhantom(new Object(), "foobar baz bork", closeable);
+    } while (false);
 
     // Then
     await("the closeable object gets closed during garbage collection")
-        .atMost(120, SECONDS)
+        .atMost(20, SECONDS)
         .pollInterval(100, MILLISECONDS)
         .failFast(System::gc)
         .untilAtomic(closedCount, is(greaterThanOrEqualTo(1)));
@@ -117,11 +119,13 @@ class GarbageDisposalTest implements StaticClassTestTemplate {
     };
 
     // When
-    GarbageDisposal.onPhantom(new Object(), "throwing closeable", closeable);
+    do {
+      GarbageDisposal.onPhantom(new Object(), "throwing closeable", closeable);
+    } while (false);
 
     // Then
     await("the closeable object gets closed during garbage collection")
-        .atMost(120, SECONDS)
+        .atMost(20, SECONDS)
         .pollInterval(100, MILLISECONDS)
         .failFast(System::gc)
         .untilAtomic(closedCount, is(greaterThanOrEqualTo(1)));
@@ -148,11 +152,13 @@ class GarbageDisposalTest implements StaticClassTestTemplate {
     }
 
     // When
-    GarbageDisposal.onPhantom(new Object(), mapping);
+    do {
+      GarbageDisposal.onPhantom(new Object(), mapping);
+    } while (false);
 
     // Then
     await("the closeable objects get closed during garbage collection")
-        .atMost(120, SECONDS)
+        .atMost(20, SECONDS)
         .pollInterval(100, MILLISECONDS)
         .failFast(System::gc)
         .untilAsserted(() -> assertThat(mapping)
@@ -193,11 +199,13 @@ class GarbageDisposalTest implements StaticClassTestTemplate {
     }
 
     // When
-    GarbageDisposal.onPhantom(new Object(), mapping);
+    do {
+      GarbageDisposal.onPhantom(new Object(), mapping);
+    } while (false);
 
     // Then
     await("the closeable objects get closed during garbage collection")
-        .atMost(120, SECONDS)
+        .atMost(20, SECONDS)
         .pollInterval(100, MILLISECONDS)
         .failFast(System::gc)
         .untilAsserted(() -> assertThat(mapping)
