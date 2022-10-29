@@ -21,6 +21,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * This should pass checkerframework.
  */
 public class HappyCase {
+
   public static void main(String[] args) {
     @Nullable String foo = null;
     System.out.println(foo);

@@ -62,6 +62,10 @@ class ExampleTest {
     // Then
     assertThatCompilation(compilation)
         .isSuccessfulWithoutWarnings();
+    assertThatCompilation(compilation)
+        .classOutput().packages()
+        .fileExists("com/example/Message.class")
+        .isNotEmptyFile();
   }
 }
 ```
@@ -125,6 +129,10 @@ class ExampleTest {
     // Then
     assertThatCompilation(compilation)
         .isSuccessfulWithoutWarnings();
+    assertThatCompilation(compilation)
+        .classOutput().packages()
+        .fileExists("com/example/Message.class")
+        .isNotEmptyFile();
   }
 }
 ```
@@ -134,7 +142,7 @@ class ExampleTest {
 - Implements in-memory file management compatible with the NIO Path and
   FileSystem API, enabling tests to run without write access to the host
   system, and without awkward resource-cleanup logic.
-- Ability to run compilation on combinations of real files, class path 
+- Ability to run compilation on combinations of real files, class path
   resources, and in-memory files.
 - Supports Java 9 JPMS modules as intended.
 - Ability to customise a large assortment of configuration parameters

@@ -27,8 +27,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 /**
- * Base for defining a compiler-supplying arguments provider for Junit Jupiter
- * parameterised test support.
+ * Base for defining a compiler-supplying arguments provider for Junit Jupiter parameterised test
+ * support.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -48,13 +48,13 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   /**
    * Initialise this provider.
    *
-   * @param compilerFactory a function taking a compiler version and returning the
-   *     corresponding compiler.
-   * @param minCompilerVersionWithoutModules the minimum version to allow when we don't
-   *     require module support.
-   * @param minCompilerVersionWithModules the minimum version to allow when we require
-   *     module support.
-   * @param maxCompilerVersion the maximum version of the compiler to support.
+   * @param compilerFactory                  a function taking a compiler version and returning the
+   *                                         corresponding compiler.
+   * @param minCompilerVersionWithoutModules the minimum version to allow when we don't require
+   *                                         module support.
+   * @param minCompilerVersionWithModules    the minimum version to allow when we require module
+   *                                         support.
+   * @param maxCompilerVersion               the maximum version of the compiler to support.
    */
   protected AbstractCompilersProvider(
       IntFunction<? extends Compilable<?, ?>> compilerFactory,
@@ -93,8 +93,8 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   /**
    * Configure this provider with parameters from annotations.
    *
-   * @param min the inclusive minimum compiler version to use.
-   * @param max the inclusive maximum compiler version to use.
+   * @param min     the inclusive minimum compiler version to use.
+   * @param max     the inclusive maximum compiler version to use.
    * @param modules whether the compiler version must support modules.
    */
   protected final void configure(int min, int max, boolean modules) {

@@ -54,7 +54,7 @@ public final class PackageContainerGroupAssert
    * @return this assertion object for further assertions.
    * @throws AssertionError if the file exists.
    */
-  public PackageContainerGroupAssert withoutFile(String path) {
+  public PackageContainerGroupAssert fileDoesNotExist(String path) {
     var file = actual.findFile(path);
 
     if (file == null) {
@@ -78,7 +78,7 @@ public final class PackageContainerGroupAssert
    * @return assertions to perform on the path of the file that exists.
    * @throws AssertionError if the file does not exist.
    */
-  public AbstractPathAssert<?> withFile(String path) {
+  public AbstractPathAssert<?> fileExists(String path) {
     var file = actual.findFile(path);
 
     if (file != null) {

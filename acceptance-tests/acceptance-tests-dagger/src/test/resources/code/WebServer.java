@@ -21,6 +21,7 @@ import javax.inject.Inject;
  * Dummy web server stub.
  */
 public class WebServer {
+
   private final WebServerConfiguration config;
 
   /**

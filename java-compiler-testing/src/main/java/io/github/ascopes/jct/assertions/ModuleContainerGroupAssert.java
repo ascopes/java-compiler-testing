@@ -50,7 +50,7 @@ public final class ModuleContainerGroupAssert
    * @return this assertion object for further assertion calls.
    * @throws AssertionError if the module exists.
    */
-  public ModuleContainerGroupAssert withoutModule(String module) {
+  public ModuleContainerGroupAssert moduleDoesNotExist(String module) {
     var moduleGroup = actual.findModule(module);
 
     if (moduleGroup == null) {
@@ -73,7 +73,7 @@ public final class ModuleContainerGroupAssert
    * @return the assertions to perform on the package container group.
    * @throws AssertionError if the module does not exist.
    */
-  public PackageContainerGroupAssert withModule(String module) {
+  public PackageContainerGroupAssert moduleExists(String module) {
     var moduleGroup = actual.findModule(module);
 
     if (moduleGroup != null) {

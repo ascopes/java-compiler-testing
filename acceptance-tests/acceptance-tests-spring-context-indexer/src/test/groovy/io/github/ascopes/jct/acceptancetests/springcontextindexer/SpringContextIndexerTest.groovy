@@ -49,7 +49,7 @@ class SpringContextIndexerTest {
         .isSuccessfulWithoutWarnings()
         .classOutput()
         .packages()
-        .withFile("META-INF/spring.components")
+        .fileExists("META-INF/spring.components")
         .isNotEmptyFile()
   }
 }

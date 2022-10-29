@@ -30,9 +30,9 @@ import org.apiguardian.api.API.Status;
  * for as long as the path-like object itself is kept alive.
  *
  * <p>This becomes very useful for {@link RamFileSystem}, which keeps a RAM-based
- * {@link FileSystem} alive until it is garbage collected, or the
- * {@link RamFileSystem#close()} operation is called. The mechanism enables cleaning up of
- * resources implicitly without resource-tidying logic polluting the user's test cases.
+ * {@link FileSystem} alive until it is garbage collected, or the {@link RamFileSystem#close()}
+ * operation is called. The mechanism enables cleaning up of resources implicitly without
+ * resource-tidying logic polluting the user's test cases.
  *
  * @author Ashley Scopes
  * @since 0.0.1

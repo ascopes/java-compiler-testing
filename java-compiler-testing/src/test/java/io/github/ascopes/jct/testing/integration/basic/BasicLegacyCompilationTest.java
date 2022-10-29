@@ -52,7 +52,7 @@ class BasicLegacyCompilationTest {
 
     assertThatCompilation(compilation)
         .classOutput().packages()
-        .withFile("com/example/HelloWorld.class")
+        .fileExists("com/example/HelloWorld.class")
         .isNotEmptyFile();
   }
 }

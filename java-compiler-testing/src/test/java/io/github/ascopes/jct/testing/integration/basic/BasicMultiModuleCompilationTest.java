@@ -59,13 +59,13 @@ class BasicMultiModuleCompilationTest {
 
     assertThatCompilation(compilation)
         .classOutput().modules()
-        .withModule("hello.world")
-        .withFile("com/example/HelloWorld.class").isNotEmptyFile();
+        .moduleExists("hello.world")
+        .fileExists("com/example/HelloWorld.class").isNotEmptyFile();
 
     assertThatCompilation(compilation)
         .classOutput().modules()
-        .withModule("hello.world")
-        .withFile("module-info.class").isNotEmptyFile();
+        .moduleExists("hello.world")
+        .fileExists("module-info.class").isNotEmptyFile();
   }
 
   @DisplayName("I can compile multiple modules using multi-module layout")
@@ -112,22 +112,22 @@ class BasicMultiModuleCompilationTest {
 
     assertThatCompilation(compilation)
         .classOutput().modules()
-        .withModule("hello.world")
-        .withFile("com/example/HelloWorld.class").isNotEmptyFile();
+        .moduleExists("hello.world")
+        .fileExists("com/example/HelloWorld.class").isNotEmptyFile();
 
     assertThatCompilation(compilation)
         .classOutput().modules()
-        .withModule("hello.world")
-        .withFile("module-info.class").isNotEmptyFile();
+        .moduleExists("hello.world")
+        .fileExists("module-info.class").isNotEmptyFile();
 
     assertThatCompilation(compilation)
         .classOutput().modules()
-        .withModule("greeter")
-        .withFile("com/example/greeter/Greeter.class").isNotEmptyFile();
+        .moduleExists("greeter")
+        .fileExists("com/example/greeter/Greeter.class").isNotEmptyFile();
 
     assertThatCompilation(compilation)
         .classOutput().modules()
-        .withModule("greeter")
-        .withFile("module-info.class").isNotEmptyFile();
+        .moduleExists("greeter")
+        .fileExists("module-info.class").isNotEmptyFile();
   }
 }

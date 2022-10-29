@@ -21,6 +21,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * This should fail checkerframework because it assigns a null value to a non-null holder.
  */
 public class SadCase {
+
   public static void main(String[] args) {
     @NonNull String foo = null;
     System.out.println(foo);

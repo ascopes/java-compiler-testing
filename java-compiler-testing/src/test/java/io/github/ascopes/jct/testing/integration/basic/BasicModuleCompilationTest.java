@@ -59,13 +59,13 @@ class BasicModuleCompilationTest {
     assertThatCompilation(compilation)
         .classOutput()
         .packages()
-        .withFile("com/example/HelloWorld.class")
+        .fileExists("com/example/HelloWorld.class")
         .isNotEmptyFile();
 
     assertThatCompilation(compilation)
         .classOutput()
         .packages()
-        .withFile("module-info.class")
+        .fileExists("module-info.class")
         .isNotEmptyFile();
   }
 }

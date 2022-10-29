@@ -87,7 +87,7 @@ public final class GarbageDisposal {
 
     @Override
     public String toString() {
-      return "JCT GC hook for " 
+      return "JCT GC hook for "
           + name
           + " at "
           + Integer.toHexString(System.identityHashCode(closeable))
