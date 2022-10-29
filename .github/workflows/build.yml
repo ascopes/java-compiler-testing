@@ -57,10 +57,10 @@ jobs:
         include:
           - os: windows-latest
             build-script: './mvnw.cmd'
-            java-version: '11'
+            java-version: '17'
           - os: macos-latest
             build-script: './mvnw'
-            java-version: '11'
+            java-version: '17'
 
     steps:
       - name: Checkout repository
