@@ -56,9 +56,13 @@ class GarbageDisposalTest implements StaticClassTestTemplate {
       LOGGER.info("Starting GC stress thread");
       // Put stress on the garbage collector to run during the tests many times.
       while (true) {
-        var array = new int[1_000_000];
-        Arrays.fill(array, random.nextInt());
-        Arrays.fill(array, array[random.nextInt(array.length)]);
+        var arrays = new int[50][];
+        for (var i = 0; i < arrays.length; ++i) {
+          arrays[i] = new int[1_000_000];
+          Arrays.fill(arrays[i], random.nextInt());
+          Arrays.fill(arrays[i], arrays[i][random.nextInt(arrays[i].length)]);
+        }
+        System.gc();
       }
     });
   }
