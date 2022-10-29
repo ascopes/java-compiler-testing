@@ -86,26 +86,17 @@ public final class GarbageDisposal {
     }
 
     @Override
-    public String toString() {
-      return "JCT GC hook for "
-          + name
-          + " at "
-          + Integer.toHexString(System.identityHashCode(closeable))
-          + " (delegate at "
-          + Integer.toHexString(System.identityHashCode(this))
-          + ")";
-    }
-
-    @Override
     public void run() {
       var thread = new Thread(() -> {
         try {
-          LOGGER.trace("Closing {} ({})", name, closeable);
+          LOGGER.debug("Closing {} ({})", name, closeable);
           closeable.close();
         } catch (Exception ex) {
           var thisThread = Thread.currentThread();
           LOGGER.error(
-              "Failed to close resource on thread {} [{}]",
+              "Failed to close {} ({}) on thread {} [{}]",
+              name,
+              closeable,
               thisThread.getId(),
               thisThread.getName(),
               ex

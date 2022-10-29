@@ -15,17 +15,22 @@
  */
 package io.github.ascopes.jct.testing.unit.utils;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenCode;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.testing.helpers.ConcurrentRuns;
 import io.github.ascopes.jct.testing.helpers.ThreadPool;
 import io.github.ascopes.jct.testing.helpers.ThreadPool.RunTestsInIsolation;
 import io.github.ascopes.jct.utils.Lazy;
+import io.github.ascopes.jct.utils.Lazy.ThrowingConsumer;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -175,6 +180,61 @@ class LazyTest {
 
     // Then
     then(actual).isEqualTo("Lazy{data=null, initialized=false}");
+  }
+
+  @DisplayName("ifInitialized() calls the callable when initialized")
+  @Test
+  void ifInitializedCallsTheCallableWhenInitialized() {
+    // Given
+    var initializer = (Supplier<Object>) mock(Supplier.class);
+    when(initializer.get()).thenReturn(new Object());
+    var lazy = new Lazy<>(initializer);
+    var callback = (ThrowingConsumer<Object, RuntimeException>) mock(ThrowingConsumer.class);
+
+    // When
+    var actual = lazy.access();
+    lazy.ifInitialized(callback);
+
+    // Then
+    verify(callback).consume(actual);
+  }
+
+  @DisplayName("ifInitialized() propagates exceptions when initialized")
+  @Test
+  void ifInitializedPropagatesExceptions() {
+    // Given
+    var initializer = (Supplier<Object>) mock(Supplier.class);
+    when(initializer.get()).thenReturn(new Object());
+    var lazy = new Lazy<>(initializer);
+    var callback = (ThrowingConsumer<Object, RuntimeException>) mock(ThrowingConsumer.class);
+    var ex = new IllegalArgumentException("bang bang");
+    doThrow(ex).when(callback).consume(any());
+
+    // When
+    var actual = lazy.access();
+    assertThatThrownBy(() -> lazy.ifInitialized(callback))
+        .isSameAs(ex);
+
+    // Then
+    verify(callback).consume(actual);
+  }
+
+  @DisplayName("ifInitialized() does not call the callable when not initialized")
+  @Test
+  void ifInitializedDoesNotCallTheCallableWhenNotInitialized() {
+    // Given
+    var initializer = (Supplier<Object>) mock(Supplier.class);
+    when(initializer.get()).thenReturn(new Object());
+    var lazy = new Lazy<>(initializer);
+    var callback = (ThrowingConsumer<Object, RuntimeException>) mock(ThrowingConsumer.class);
+
+    // When
+    lazy.access();
+    lazy.destroy();
+    lazy.ifInitialized(callback);
+
+    // Then
+    verifyNoInteractions(callback);
   }
 
   static Stream<Arguments> toStringInitializedCases() {

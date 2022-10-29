@@ -59,14 +59,19 @@ public class Lazy<@WillNotClose T> {
 
   @Override
   public String toString() {
+    // Declare outside the synchronized block to help IntelliJ with a coverage bug.
+    String repr;
+
     // Synchronize to prevent a race condition between reading
     // the data and reading the "initialized" flag.
     synchronized (lock) {
-      return new ToStringBuilder(this)
+      repr = new ToStringBuilder(this)
           .attribute("data", data)
           .attribute("initialized", initialized)
           .toString();
     }
+
+    return repr;
   }
 
   /**

@@ -56,11 +56,6 @@ public final class RecursiveDeleter extends SimpleFileVisitor<Path> {
     return super.postVisitDirectory(dir, exc);
   }
 
-  @Override
-  public String toString() {
-    return new ToStringBuilder(this).toString();
-  }
-
   /**
    * Delete all files in the given path recursively.
    *
