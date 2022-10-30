@@ -21,7 +21,6 @@ import io.github.ascopes.jct.utils.StringSlicer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -40,15 +39,6 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class FileUtils {
 
-  // Sort extensions so that we check the suffix by length first.
-  // This should prevent a shorter extension matching a longer one.
-  // In reality we only have four potential values, so we don't
-  // care that much.
-  private static final Comparator<Kind> KIND_ORDER = Comparator
-      .comparing((Kind kind) -> kind.extension.length())
-      .reversed()
-      .thenComparing((Kind kind) -> kind.extension);
-
   // Exclude any "empty" extensions. At the time of writing, this will just exclude Kind.EMPTY,
   // but doing this will prevent future API changes from breaking any assumptions we make. In
   // addition to this, sort by the longest extension names first. This will prevent future
@@ -56,7 +46,6 @@ public final class FileUtils {
   private static final List<Kind> KINDS = Stream
       .of(Kind.values())
       .filter(kind -> !kind.extension.isEmpty())
-      .sorted(KIND_ORDER)
       .collect(toUnmodifiableList());
 
   private static final StringSlicer PACKAGE_SLICER = new StringSlicer(".");
