@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.pathwrappers;
+package io.github.ascopes.jct.pathwrappers.impl;
 
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
+import io.github.ascopes.jct.pathwrappers.RamDirectory;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.net.URI;
 import java.nio.file.Path;
@@ -30,7 +32,7 @@ import org.apiguardian.api.API.Status;
  * {@link PathWrapper} API.
  *
  * <p>This is not designed to be used by users. The API will handle wrapping paths internally for
- * you. You may be interested in using {@link RamFileSystem}, however.
+ * you. You may be interested in using {@link RamDirectory}, however.
  *
  * @author Ashley Scopes
  * @since 0.0.1

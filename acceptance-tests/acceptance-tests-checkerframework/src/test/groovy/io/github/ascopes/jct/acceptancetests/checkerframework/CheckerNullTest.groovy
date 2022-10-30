@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.acceptancetests.checkerframework
 
-import io.github.ascopes.jct.compilers.Compilable
+import io.github.ascopes.jct.compilers.Compiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.checkerframework.checker.nullness.NullnessChecker
 import org.junit.jupiter.api.BeforeEach
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
+import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
 import static org.assertj.core.api.Assumptions.assumeThat
 
 @DisplayName("Checkerframework Nullness acceptance tests")
@@ -43,9 +43,9 @@ class CheckerNullTest {
   @DisplayName("Happy paths work as expected")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
-  void happyPathsWorkAsExpected(Compilable compiler) {
+  void happyPathsWorkAsExpected(Compiler compiler) {
     // Given
-    def sources = newRamFileSystem("sources")
+    def sources = newRamDirectory("sources")
         .createDirectory("org", "example")
         .copyContentsFrom("src", "test", "resources", "code", "nullness", "happy")
 
@@ -63,9 +63,9 @@ class CheckerNullTest {
   @DisplayName("Sad paths fail as expected")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
-  void sadPathsFailAsExpected(Compilable compiler) {
+  void sadPathsFailAsExpected(Compiler compiler) {
     // Given
-    def sources = newRamFileSystem("sources")
+    def sources = newRamDirectory("sources")
         .createDirectory("org", "example")
         .copyContentsFrom("src", "test", "resources", "code", "nullness", "sad")
 

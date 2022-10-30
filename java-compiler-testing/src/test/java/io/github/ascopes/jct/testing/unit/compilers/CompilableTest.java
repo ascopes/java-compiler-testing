@@ -28,7 +28,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.withSettings;
 
-import io.github.ascopes.jct.compilers.Compilable;
+import io.github.ascopes.jct.compilers.Compiler;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.testing.helpers.TypeRef;
 import java.nio.file.Path;
@@ -49,7 +49,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.quality.Strictness;
 
 /**
- * {@link Compilable} tests.
+ * {@link Compiler} tests.
  *
  * @author Ashley Scopes
  */
@@ -58,15 +58,15 @@ import org.mockito.quality.Strictness;
 class CompilableTest {
 
   @Mock
-  Compilable<?, ?> compiler;
+  Compiler<?, ?> compiler;
 
   @DisplayName("addClassPath(...) tests")
   @TestFactory
   Stream<DynamicTest> addClassPathTests() {
     return addPackagePathTestsFor(
         "addClassPath",
-        Compilable::addClassPath,
-        Compilable::addClassPath,
+        Compiler::addClassPath,
+        Compiler::addClassPath,
         StandardLocation.CLASS_PATH
     );
   }
@@ -76,8 +76,8 @@ class CompilableTest {
   Stream<DynamicTest> addModulePathTests() {
     return addModulePathTestsFor(
         "addModulePath",
-        Compilable::addModulePath,
-        Compilable::addModulePath,
+        Compiler::addModulePath,
+        Compiler::addModulePath,
         StandardLocation.MODULE_PATH
     );
   }
@@ -87,8 +87,8 @@ class CompilableTest {
   Stream<DynamicTest> addSourcePathTests() {
     return addPackagePathTestsFor(
         "addSourcePath",
-        Compilable::addSourcePath,
-        Compilable::addSourcePath,
+        Compiler::addSourcePath,
+        Compiler::addSourcePath,
         StandardLocation.SOURCE_PATH
     );
   }
@@ -98,8 +98,8 @@ class CompilableTest {
   Stream<DynamicTest> addModuleSourcePathTests() {
     return addModulePathTestsFor(
         "addModuleSourcePath",
-        Compilable::addModuleSourcePath,
-        Compilable::addModuleSourcePath,
+        Compiler::addModuleSourcePath,
+        Compiler::addModuleSourcePath,
         StandardLocation.MODULE_SOURCE_PATH
     );
   }
@@ -290,7 +290,7 @@ class CompilableTest {
         () -> {
           // Given
           var pathLike = stub(PathWrapper.class);
-          Compilable<?, ?> compiler = mockCast(
+          Compiler<?, ?> compiler = mockCast(
               new TypeRef<>() {},
               withSettings().strictness(Strictness.LENIENT)
           );
@@ -313,7 +313,7 @@ class CompilableTest {
         () -> {
           // Given
           var path = stub(Path.class);
-          Compilable<?, ?> compiler = mockCast(
+          Compiler<?, ?> compiler = mockCast(
               new TypeRef<>() {},
               withSettings().strictness(Strictness.LENIENT)
           );
@@ -336,7 +336,7 @@ class CompilableTest {
         () -> {
           // Given
           var pathLike = stub(PathWrapper.class);
-          Compilable<?, ?> compiler = mockCast(
+          Compiler<?, ?> compiler = mockCast(
               new TypeRef<>() {},
               withSettings().strictness(Strictness.LENIENT)
           );
@@ -356,7 +356,7 @@ class CompilableTest {
         () -> {
           // Given
           var path = stub(Path.class);
-          Compilable<?, ?> compiler = mockCast(
+          Compiler<?, ?> compiler = mockCast(
               new TypeRef<>() {},
               withSettings().strictness(Strictness.LENIENT)
           );
@@ -415,7 +415,7 @@ class CompilableTest {
         () -> {
           // Given
           var pathLike = stub(PathWrapper.class);
-          Compilable<?, ?> compiler = mockCast(
+          Compiler<?, ?> compiler = mockCast(
               new TypeRef<>() {},
               withSettings().strictness(Strictness.LENIENT)
           );
@@ -438,7 +438,7 @@ class CompilableTest {
         () -> {
           // Given
           var path = stub(Path.class);
-          Compilable<?, ?> compiler = mockCast(
+          Compiler<?, ?> compiler = mockCast(
               new TypeRef<>() {},
               withSettings().strictness(Strictness.LENIENT)
           );
@@ -461,7 +461,7 @@ class CompilableTest {
         () -> {
           // Given
           var pathLike = stub(PathWrapper.class);
-          Compilable<?, ?> compiler = mockCast(
+          Compiler<?, ?> compiler = mockCast(
               new TypeRef<>() {},
               withSettings().strictness(Strictness.LENIENT)
           );
@@ -481,7 +481,7 @@ class CompilableTest {
         () -> {
           // Given
           var path = stub(Path.class);
-          Compilable<?, ?> compiler = mockCast(
+          Compiler<?, ?> compiler = mockCast(
               new TypeRef<>() {},
               withSettings().strictness(Strictness.LENIENT)
           );
@@ -509,12 +509,12 @@ class CompilableTest {
   @FunctionalInterface
   interface AddPackagePathAliasMethod<P> {
 
-    Compilable<?, ?> add(Compilable<?, ?> compiler, P path);
+    Compiler<?, ?> add(Compiler<?, ?> compiler, P path);
   }
 
   @FunctionalInterface
   interface AddModulePathAliasMethod<P> {
 
-    Compilable<?, ?> add(Compilable<?, ?> compiler, String moduleName, P path);
+    Compiler<?, ?> add(Compiler<?, ?> compiler, String moduleName, P path);
   }
 }

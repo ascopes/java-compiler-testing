@@ -34,7 +34,7 @@ class ExampleTest {
   @DisplayName("I can compile a Hello World application")
   @JavacCompilerTest
   void canCompileHelloWorld(Compilable<?, ?> compiler) {
-    var sources = newRamFileSystem("src")
+    var sources = newRamDirectory("src")
         .createFile("org/example/Message.java").withContents(
             """
             package org.example;
@@ -83,7 +83,7 @@ class ExampleTest {
   @JavacCompilerTest(modules = true)
   void canCompileModuleUsingLombok(Compilable<?, ?> compiler) {
     // Given
-    var sources = newRamFileSystem("hello.world")
+    var sources = newRamDirectory("hello.world")
         .createFile("org/example/Message.java").withContents(
             """
             package org.example;

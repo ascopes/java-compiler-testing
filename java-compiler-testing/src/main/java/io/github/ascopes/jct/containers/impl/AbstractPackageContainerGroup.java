@@ -103,11 +103,13 @@ public abstract class AbstractPackageContainerGroup
   public void addPackage(PathWrapper path) {
     var actualPath = path.getPath();
 
-    var archive = ARCHIVE_EXTENSIONS
+    // Null filename implies the path is the root directory of a file system (
+    // like a JIMFS RAM file system we initialize elsewhere).
+    var isArchive = actualPath.getFileName() != null && ARCHIVE_EXTENSIONS
         .stream()
         .anyMatch(actualPath.getFileName().toString().toLowerCase(Locale.ROOT)::endsWith);
 
-    var container = archive
+    var container = isArchive
         ? new JarContainerImpl(getLocation(), path, release)
         : new PathWrappingContainerImpl(getLocation(), path);
 

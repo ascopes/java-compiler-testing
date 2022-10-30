@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.acceptancetests.lombok
 
-import io.github.ascopes.jct.compilers.Compilable
+import io.github.ascopes.jct.compilers.Compiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
@@ -25,7 +25,7 @@ import javax.tools.StandardLocation
 import java.nio.file.Path
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
+import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
 import static org.assertj.core.api.SoftAssertions.assertSoftly
 
 /**
@@ -43,9 +43,9 @@ class LombokIntegrationTest {
   @DisplayName("Lombok @Data compiles the expected data class")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
-  void lombokDataCompilesTheExpectedDataClass(Compilable compiler) {
+  void lombokDataCompilesTheExpectedDataClass(Compiler compiler) {
     // Given
-    def sources = newRamFileSystem("sources")
+    def sources = newRamDirectory("sources")
         .rootDirectory()
         .copyContentsFrom("src", "test", "resources", "code", "flat")
 
@@ -77,9 +77,9 @@ class LombokIntegrationTest {
   @DisplayName("Lombok @Data compiles the expected data class with module support")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest(modules = true)
-  void lombokDataCompilesTheExpectedDataClassWithModuleSupport(Compilable compiler) {
+  void lombokDataCompilesTheExpectedDataClassWithModuleSupport(Compiler compiler) {
     // Given
-    def sources = newRamFileSystem("sources")
+    def sources = newRamDirectory("sources")
         .rootDirectory()
         .copyContentsFrom("src", "test", "resources", "code", "jpms")
 

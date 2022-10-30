@@ -16,8 +16,10 @@
 package io.github.ascopes.jct.compilers;
 
 import io.github.ascopes.jct.ex.CompilerException;
-import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
+import io.github.ascopes.jct.pathwrappers.RamDirectory;
+import io.github.ascopes.jct.pathwrappers.TestDirectoryFactory;
+import io.github.ascopes.jct.pathwrappers.impl.BasicPathWrapperImpl;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
@@ -45,7 +47,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
+public interface Compiler<C extends Compiler<C, R>, R extends Compilation> {
 
   /**
    * Default setting for deprecation warnings ({@code true}).
@@ -123,6 +125,14 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    * Default charset to use for compiler logs ({@link StandardCharsets#UTF_8}).
    */
   Charset DEFAULT_LOG_CHARSET = StandardCharsets.UTF_8;
+
+  /**
+   * Default setting for creating temporary directories for use during compilation.
+   *
+   * <p>The default is to use a RAM disk, but this can be swapped out with a temporary
+   * directory on the root file system if desired, or a custom implementation can be used.
+   */
+  TestDirectoryFactory DEFAULT_TEST_DIRECTORY_FACTORY = RamDirectory::newRamDirectory;
 
   /**
    * Apply a given configurer to this compiler that can throw a checked exception.
@@ -1170,6 +1180,24 @@ public interface Compilable<C extends Compilable<C, R>, R extends Compilation> {
    * @return this compiler for further call chaining.
    */
   C annotationProcessorDiscovery(AnnotationProcessorDiscovery annotationProcessorDiscovery);
+
+  /**
+   * Get the factory used for creating temporary test directories.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_TEST_DIRECTORY_FACTORY}.
+   *
+   * @return the test directory factory to use.
+   */
+  TestDirectoryFactory getTestDirectoryFactory();
+
+  /**
+   * Set the test directory factory to use.
+   *
+   * @param testDirectoryFactory the factory to use.
+   * @return this compiler for further call chaining.
+   */
+  C testDirectoryFactory(TestDirectoryFactory testDirectoryFactory);
 
   /**
    * Invoke the compilation and return the compilation result.

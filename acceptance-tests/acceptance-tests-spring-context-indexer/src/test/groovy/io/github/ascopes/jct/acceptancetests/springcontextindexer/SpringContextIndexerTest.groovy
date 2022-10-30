@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.acceptancetests.springcontextindexer
 
-import io.github.ascopes.jct.compilers.Compilable
+import io.github.ascopes.jct.compilers.Compiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
@@ -23,7 +23,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import org.springframework.context.index.processor.CandidateComponentsIndexer
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
+import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
 
 @DisplayName("Spring Context Indexer acceptance tests")
 class SpringContextIndexerTest {
@@ -32,9 +32,9 @@ class SpringContextIndexerTest {
   @DisplayName("Spring will index the application context as expected")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
-  void springWillIndexTheApplicationContextAsExpected(Compilable compiler) {
+  void springWillIndexTheApplicationContextAsExpected(Compiler compiler) {
     // Given
-    def sources = newRamFileSystem("sources")
+    def sources = newRamDirectory("sources")
         .createDirectory("org", "example")
         .copyContentsFrom("src", "test", "resources", "code")
 

@@ -15,9 +15,10 @@
  */
 package io.github.ascopes.jct.compilers;
 
-import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
+import io.github.ascopes.jct.pathwrappers.AbstractTestDirectory;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
-import io.github.ascopes.jct.pathwrappers.RamFileSystem;
+import io.github.ascopes.jct.pathwrappers.TestDirectoryFactory;
+import io.github.ascopes.jct.pathwrappers.impl.BasicPathWrapperImpl;
 import io.github.ascopes.jct.utils.GarbageDisposal;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.SpecialLocations;
@@ -70,6 +71,7 @@ public final class FileManagerBuilder {
   private boolean inheritSystemModulePath;
   private LoggingMode fileManagerLoggingMode;
   private AnnotationProcessorDiscovery annotationProcessorDiscovery;
+  private TestDirectoryFactory testDirectoryFactory;
 
   /**
    * Initialize this workspace.
@@ -84,13 +86,14 @@ public final class FileManagerBuilder {
 
     locations = new HashMap<>();
 
-    fixJvmModulePathMismatch = Compilable.DEFAULT_FIX_JVM_MODULEPATH_MISMATCH;
-    inheritClassPath = Compilable.DEFAULT_INHERIT_CLASS_PATH;
-    inheritModulePath = Compilable.DEFAULT_INHERIT_MODULE_PATH;
-    inheritPlatformClassPath = Compilable.DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
-    inheritSystemModulePath = Compilable.DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
-    fileManagerLoggingMode = Compilable.DEFAULT_FILE_MANAGER_LOGGING_MODE;
-    annotationProcessorDiscovery = Compilable.DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
+    fixJvmModulePathMismatch = Compiler.DEFAULT_FIX_JVM_MODULEPATH_MISMATCH;
+    inheritClassPath = Compiler.DEFAULT_INHERIT_CLASS_PATH;
+    inheritModulePath = Compiler.DEFAULT_INHERIT_MODULE_PATH;
+    inheritPlatformClassPath = Compiler.DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
+    inheritSystemModulePath = Compiler.DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
+    fileManagerLoggingMode = Compiler.DEFAULT_FILE_MANAGER_LOGGING_MODE;
+    annotationProcessorDiscovery = Compiler.DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
+    testDirectoryFactory = Compiler.DEFAULT_TEST_DIRECTORY_FACTORY;
   }
 
   @Override
@@ -175,7 +178,7 @@ public final class FileManagerBuilder {
    * enabled, and only applies to the current JVM classpath and module path.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compilable#DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
+   * {@link Compiler#DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
    *
    * @return {@code true} if enabled, or {@code false} if disabled.
    */
@@ -188,7 +191,7 @@ public final class FileManagerBuilder {
    * on the module path.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compilable#DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
+   * {@link Compiler#DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
    *
    * @param fixJvmModulePathMismatch whether to enable the mismatch fixing or not.
    */
@@ -200,7 +203,7 @@ public final class FileManagerBuilder {
    * Get whether the class path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compilable#DEFAULT_INHERIT_CLASS_PATH}.
+   * {@link Compiler#DEFAULT_INHERIT_CLASS_PATH}.
    *
    * @return whether the current class path is being inherited or not.
    */
@@ -212,7 +215,7 @@ public final class FileManagerBuilder {
    * Set whether the class path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compilable#DEFAULT_INHERIT_CLASS_PATH}.
+   * {@link Compiler#DEFAULT_INHERIT_CLASS_PATH}.
    *
    * @param inheritClassPath {@code true} to include it, or {@code false} to exclude it.
    */
@@ -224,7 +227,7 @@ public final class FileManagerBuilder {
    * Get whether the module path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compilable#DEFAULT_INHERIT_MODULE_PATH}.
+   * {@link Compiler#DEFAULT_INHERIT_MODULE_PATH}.
    *
    * @return whether the module path is being inherited or not.
    */
@@ -236,7 +239,7 @@ public final class FileManagerBuilder {
    * Set whether the module path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compilable#DEFAULT_INHERIT_MODULE_PATH}.
+   * {@link Compiler#DEFAULT_INHERIT_MODULE_PATH}.
    *
    * @param inheritModulePath {@code true} to include it, or {@code false} to exclude it.
    */
@@ -253,7 +256,7 @@ public final class FileManagerBuilder {
    * ignored.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compilable#DEFAULT_INHERIT_PLATFORM_CLASS_PATH}.
+   * {@link Compiler#DEFAULT_INHERIT_PLATFORM_CLASS_PATH}.
    *
    * @return whether the platform class path is being inherited or not.
    */
@@ -279,7 +282,7 @@ public final class FileManagerBuilder {
    * Get whether the system module path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compilable#DEFAULT_INHERIT_SYSTEM_MODULE_PATH}.
+   * {@link Compiler#DEFAULT_INHERIT_SYSTEM_MODULE_PATH}.
    *
    * @return whether the system module path is being inherited or not.
    */
@@ -291,7 +294,7 @@ public final class FileManagerBuilder {
    * Set whether the system module path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compilable#DEFAULT_INHERIT_SYSTEM_MODULE_PATH}.
+   * {@link Compiler#DEFAULT_INHERIT_SYSTEM_MODULE_PATH}.
    *
    * @param inheritSystemModulePath {@code true} to include it, or {@code false} to exclude it.
    */
@@ -303,7 +306,7 @@ public final class FileManagerBuilder {
    * Get the current file manager logging mode.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compilable#DEFAULT_FILE_MANAGER_LOGGING_MODE}.
+   * {@link Compiler#DEFAULT_FILE_MANAGER_LOGGING_MODE}.
    *
    * @return the current file manager logging mode.
    */
@@ -315,7 +318,7 @@ public final class FileManagerBuilder {
    * Set how to handle logging calls to underlying file managers.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compilable#DEFAULT_FILE_MANAGER_LOGGING_MODE}.
+   * {@link Compiler#DEFAULT_FILE_MANAGER_LOGGING_MODE}.
    *
    * @param fileManagerLoggingMode the mode to use for file manager logging.
    */
@@ -327,7 +330,7 @@ public final class FileManagerBuilder {
    * Get how to perform annotation processor discovery.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compilable#DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY}.
+   * {@link Compiler#DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY}.
    *
    * @return the annotation processor discovery mode.
    */
@@ -339,13 +342,35 @@ public final class FileManagerBuilder {
    * Set how to perform annotation processor discovery.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compilable#DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY}.
+   * {@link Compiler#DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY}.
    *
    * @param annotationProcessorDiscovery the processor discovery mode to use.
    */
   public void annotationProcessorDiscovery(
-      AnnotationProcessorDiscovery annotationProcessorDiscovery) {
+      AnnotationProcessorDiscovery annotationProcessorDiscovery
+  ) {
     this.annotationProcessorDiscovery = annotationProcessorDiscovery;
+  }
+
+  /**
+   * Get the factory used for creating temporary test directories.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link Compiler#DEFAULT_TEST_DIRECTORY_FACTORY}.
+   *
+   * @return the test directory factory to use.
+   */
+  public TestDirectoryFactory getTestDirectoryFactory() {
+    return testDirectoryFactory;
+  }
+
+  /**
+   * Set the test directory factory to use.
+   *
+   * @param testDirectoryFactory the factory to use.
+   */
+  public void setTestDirectoryFactory(TestDirectoryFactory testDirectoryFactory) {
+    this.testDirectoryFactory = testDirectoryFactory;
   }
 
   /**
@@ -383,18 +408,24 @@ public final class FileManagerBuilder {
             fileManagerLoggingMode == LoggingMode.STACKTRACES);
   }
 
-  private Lazy<RamFileSystem> newFallbackFs(FileManagerImpl fileManager) {
+  private Lazy<AbstractTestDirectory<?>> newFallbackFs(FileManagerImpl fileManager) {
     return new Lazy<>(() -> {
-      var tempFs = RamFileSystem.newRamFileSystem("temp", false);
-      var fileManagerName = fileManager.toString();
-      GarbageDisposal.onPhantom(fileManager, "tempfs for " + fileManagerName, tempFs::close);
+      // Make the generated directory belong to the file manager that uses it rather than just
+      // the reference to the Ram directory itself. This prevents premature closure and also ensures
+      // the generated directory does not outlive the file manager.
+      var tempFs = testDirectoryFactory.create("tmp", false);
+      GarbageDisposal.onPhantom(
+          fileManager,
+          "temporary directory for compiler inputs and outputs (" + tempFs + ")",
+          tempFs::close
+      );
       return tempFs;
     });
   }
 
   private void createLocationIfNotPresent(
       FileManagerImpl fileManager,
-      Lazy<RamFileSystem> fallbackFs,
+      Lazy<AbstractTestDirectory<?>> fallbackFs,
       Location location
   ) throws IOException {
     if (!fileManager.hasLocation(location)) {
