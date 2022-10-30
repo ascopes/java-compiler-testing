@@ -19,7 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory;
 import static io.github.ascopes.jct.pathwrappers.TempDirectory.newTempDirectory;
 
-import io.github.ascopes.jct.compilers.Compiler;
+import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +34,7 @@ class BasicMultiModuleCompilationIntegrationTest {
 
   @DisplayName("I can compile a single module using multi-module layout using a RAM disk")
   @JavacCompilerTest(modules = true)
-  void singleModuleInMultiModuleLayoutRamDisk(Compiler<?, ?> compiler) {
+  void singleModuleInMultiModuleLayoutRamDisk(JctCompiler<?, ?> compiler) {
     var source = newRamDirectory("hello.world")
         .createFile("com/example/HelloWorld.java").withContents(
             "package com.example;",
@@ -71,7 +71,7 @@ class BasicMultiModuleCompilationIntegrationTest {
 
   @DisplayName("I can compile a single module using multi-module layout using a temp directory")
   @JavacCompilerTest(modules = true)
-  void singleModuleInMultiModuleLayoutTempDirectory(Compiler<?, ?> compiler) {
+  void singleModuleInMultiModuleLayoutTempDirectory(JctCompiler<?, ?> compiler) {
     var source = newTempDirectory("hello.world")
         .createFile("com/example/HelloWorld.java").withContents(
             "package com.example;",
@@ -108,7 +108,7 @@ class BasicMultiModuleCompilationIntegrationTest {
 
   @DisplayName("I can compile multiple modules using multi-module layout using a RAM disk")
   @JavacCompilerTest(modules = true)
-  void multipleModulesInMultiModuleLayoutRamDisk(Compiler<?, ?> compiler) {
+  void multipleModulesInMultiModuleLayoutRamDisk(JctCompiler<?, ?> compiler) {
     var helloWorld = newRamDirectory("hello.world")
         .createFile("com/example/HelloWorld.java").withContents(
             "package com.example;",
@@ -171,7 +171,7 @@ class BasicMultiModuleCompilationIntegrationTest {
 
   @DisplayName("I can compile multiple modules using multi-module layout using a temp directory")
   @JavacCompilerTest(modules = true)
-  void multipleModulesInMultiModuleLayoutTempDirectory(Compiler<?, ?> compiler) {
+  void multipleModulesInMultiModuleLayoutTempDirectory(JctCompiler<?, ?> compiler) {
     var helloWorld = newTempDirectory("hello.world")
         .createFile("com/example/HelloWorld.java").withContents(
             "package com.example;",

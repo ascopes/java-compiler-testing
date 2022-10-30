@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.acceptancetests.mapstruct
 
-import io.github.ascopes.jct.compilers.Compiler
+import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
@@ -34,7 +34,7 @@ class MapStructIntegrationTest {
   @DisplayName("MapStruct generates expected mapping code")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
-  void mapStructGeneratesExpectedMappingCode(Compiler compiler) {
+  void mapStructGeneratesExpectedMappingCode(JctCompiler compiler) {
     // Given
     def sources = newRamDirectory("sources")
         .rootDirectory()
@@ -75,7 +75,7 @@ class MapStructIntegrationTest {
   @DisplayName("MapStruct generates expected mapping code for modules")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest(modules = true)
-  void mapStructGeneratesExpectedMappingCodeForModules(Compiler compiler) {
+  void mapStructGeneratesExpectedMappingCodeForModules(JctCompiler compiler) {
     // Given
     def sources = newRamDirectory("sources")
         .rootDirectory()

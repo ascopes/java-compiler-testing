@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.iterable;
 
-import io.github.ascopes.jct.compilers.CompilationImpl;
-import io.github.ascopes.jct.compilers.FileManager;
+import io.github.ascopes.jct.compilers.JctCompilationImpl;
+import io.github.ascopes.jct.compilers.JctFileManager;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.testing.helpers.MoreMocks;
 import io.github.ascopes.jct.testing.helpers.TypeRef;
@@ -43,7 +43,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 /**
- * {@link CompilationImpl} tests.
+ * {@link JctCompilationImpl} tests.
  *
  * @author Ashley Scopes
  */
@@ -143,7 +143,7 @@ class CompilationImplTest {
   @Test
   void getFileManagerReturnsExpectedValue() {
     // Given
-    var fileManager = stub(FileManager.class);
+    var fileManager = stub(JctFileManager.class);
     var compilation = filledBuilder()
         .fileManager(fileManager)
         .build();
@@ -161,9 +161,9 @@ class CompilationImplTest {
     @Test
     void buildingWithoutSuccessSetRaisesNullPointerException() {
       // Given
-      var builder = CompilationImpl
+      var builder = JctCompilationImpl
           .builder()
-          .fileManager(stub(FileManager.class))
+          .fileManager(stub(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .compilationUnits(Set.of())
@@ -179,9 +179,9 @@ class CompilationImplTest {
     @Test
     void buildingWithoutFailOnWarningsSetRaisesNullPointerException() {
       // Given
-      var builder = CompilationImpl
+      var builder = JctCompilationImpl
           .builder()
-          .fileManager(stub(FileManager.class))
+          .fileManager(stub(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .compilationUnits(Set.of())
@@ -209,9 +209,9 @@ class CompilationImplTest {
     @Test
     void buildingWithoutCompilationUnitsRaisesNullPointerException() {
       // Given
-      var builder = CompilationImpl
+      var builder = JctCompilationImpl
           .builder()
-          .fileManager(stub(FileManager.class))
+          .fileManager(stub(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .success(RANDOM.nextBoolean())
@@ -227,9 +227,9 @@ class CompilationImplTest {
     @Test
     void buildingWithNullCompilationUnitsRaisesNullPointerException() {
       // Given
-      var builder = CompilationImpl
+      var builder = JctCompilationImpl
           .builder()
-          .fileManager(stub(FileManager.class))
+          .fileManager(stub(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .success(RANDOM.nextBoolean())
@@ -264,9 +264,9 @@ class CompilationImplTest {
     @Test
     void buildingWithoutDiagnosticsRaisesNullPointerException() {
       // Given
-      var builder = CompilationImpl
+      var builder = JctCompilationImpl
           .builder()
-          .fileManager(stub(FileManager.class))
+          .fileManager(stub(JctFileManager.class))
           .outputLines(List.of())
           .compilationUnits(Set.of())
           .success(RANDOM.nextBoolean())
@@ -282,9 +282,9 @@ class CompilationImplTest {
     @Test
     void buildingWithNullDiagnosticsRaisesNullPointerException() {
       // Given
-      var builder = CompilationImpl
+      var builder = JctCompilationImpl
           .builder()
-          .fileManager(MoreMocks.stub(FileManager.class))
+          .fileManager(MoreMocks.stub(JctFileManager.class))
           .outputLines(List.of())
           .compilationUnits(Set.of())
           .success(RANDOM.nextBoolean())
@@ -317,7 +317,7 @@ class CompilationImplTest {
     @Test
     void buildingWithoutFileManagerRaisesNullPointerException() {
       // Given
-      var builder = CompilationImpl
+      var builder = JctCompilationImpl
           .builder()
           .diagnostics(List.of())
           .compilationUnits(Set.of())
@@ -347,9 +347,9 @@ class CompilationImplTest {
     @Test
     void buildingWithoutOutputLinesRaisesNullPointerException() {
       // Given
-      var builder = CompilationImpl
+      var builder = JctCompilationImpl
           .builder()
-          .fileManager(MoreMocks.stub(FileManager.class))
+          .fileManager(MoreMocks.stub(JctFileManager.class))
           .diagnostics(List.of())
           .compilationUnits(Set.of())
           .success(RANDOM.nextBoolean())
@@ -365,9 +365,9 @@ class CompilationImplTest {
     @Test
     void buildingWithNullOutputLinesRaisesNullPointerException() {
       // Given
-      var builder = CompilationImpl
+      var builder = JctCompilationImpl
           .builder()
-          .fileManager(MoreMocks.stub(FileManager.class))
+          .fileManager(MoreMocks.stub(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .success(RANDOM.nextBoolean())
@@ -391,13 +391,13 @@ class CompilationImplTest {
     return Arrays.asList(values);
   }
 
-  static CompilationImpl.Builder filledBuilder() {
-    return CompilationImpl
+  static JctCompilationImpl.Builder filledBuilder() {
+    return JctCompilationImpl
         .builder()
         .compilationUnits(Set.of())
         .diagnostics(List.of())
         .failOnWarnings(RANDOM.nextBoolean())
-        .fileManager(MoreMocks.stub(FileManager.class))
+        .fileManager(MoreMocks.stub(JctFileManager.class))
         .outputLines(List.of())
         .success(RANDOM.nextBoolean());
   }

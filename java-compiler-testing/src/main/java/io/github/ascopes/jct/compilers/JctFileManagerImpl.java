@@ -48,13 +48,13 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Simple implementation of a {@link FileManager}.
+ * Simple implementation of a {@link JctFileManager}.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class FileManagerImpl implements FileManager {
+public final class JctFileManagerImpl implements JctFileManager {
 
   private static final int UNSUPPORTED_ARGUMENT = -1;
 
@@ -70,7 +70,7 @@ public final class FileManagerImpl implements FileManager {
    * @param release the release to use for multi-release JARs internally.
    */
   @SuppressWarnings("ThisEscapedInObjectConstruction")
-  public FileManagerImpl(String release) {
+  public JctFileManagerImpl(String release) {
     closed = false;
     this.release = requireNonNull(release, "release");
     packages = new ConcurrentHashMap<>();
@@ -123,7 +123,7 @@ public final class FileManagerImpl implements FileManager {
   }
 
   @Override
-  public void close(@WillClose FileManagerImpl this) throws IOException {
+  public void close(@WillClose JctFileManagerImpl this) throws IOException {
     // We explicitly close all resources on garbage collection rather than here. This prevents
     // the compiler implementation making our resources unavailable while we are still using them
     // to assert further outcomes in tests.

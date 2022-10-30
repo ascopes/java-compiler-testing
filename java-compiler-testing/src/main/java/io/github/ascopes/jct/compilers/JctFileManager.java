@@ -33,7 +33,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public interface FileManager extends JavaFileManager {
+public interface JctFileManager extends JavaFileManager {
 
   /**
    * Add a path to a given location.

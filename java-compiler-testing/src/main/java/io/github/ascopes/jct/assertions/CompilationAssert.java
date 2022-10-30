@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.assertions.helpers.DiagnosticListRepresentation;
-import io.github.ascopes.jct.compilers.Compilation;
+import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.List;
 import java.util.Set;
@@ -31,14 +31,14 @@ import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 
 /**
- * Assertions that apply to a {@link Compilation}.
+ * Assertions that apply to a {@link JctCompilation}.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 @SuppressWarnings("UnusedReturnValue")
-public final class CompilationAssert extends AbstractAssert<CompilationAssert, Compilation> {
+public final class CompilationAssert extends AbstractAssert<CompilationAssert, JctCompilation> {
 
   private static final Set<Kind> WARNING_DIAGNOSTIC_KINDS = Stream
       .of(Kind.WARNING, Kind.MANDATORY_WARNING)
@@ -58,7 +58,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, C
    *
    * @param value the value to assert on.
    */
-  public CompilationAssert(Compilation value) {
+  public CompilationAssert(JctCompilation value) {
     super(value, CompilationAssert.class);
   }
 

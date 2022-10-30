@@ -17,15 +17,15 @@ package io.github.ascopes.jct.testing.unit.compilers.javac;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.ascopes.jct.compilers.javac.JavacCompiler;
 import io.github.ascopes.jct.compilers.javac.JavacFlagBuilder;
+import io.github.ascopes.jct.compilers.javac.JavacJctCompiler;
 import io.github.ascopes.jct.testing.helpers.MoreMocks;
 import javax.tools.JavaCompiler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * {@link JavacCompiler} tests.
+ * {@link JavacJctCompiler} tests.
  *
  * @author Ashley Scopes
  */
@@ -35,7 +35,7 @@ class JavacCompilerTest {
   @DisplayName("compilers have the expected default name")
   @Test
   void compilersHaveTheExpectedDefaultName() {
-    assertThat(new JavacCompiler(MoreMocks.stub(JavaCompiler.class)).getName())
+    assertThat(new JavacJctCompiler(MoreMocks.stub(JavaCompiler.class)).getName())
         .isEqualTo("JDK Compiler");
   }
 
@@ -46,21 +46,21 @@ class JavacCompilerTest {
     var jsr199Compiler = MoreMocks.stub(JavaCompiler.class);
 
     // Then
-    assertThat(new JavacCompiler(jsr199Compiler).getJsr199Compiler())
+    assertThat(new JavacJctCompiler(jsr199Compiler).getJsr199Compiler())
         .isSameAs(jsr199Compiler);
   }
 
   @DisplayName("compilers have the expected flag builder")
   @Test
   void compilersHaveTheExpectedFlagBuilder() {
-    assertThat(new JavacCompiler(MoreMocks.stub(JavaCompiler.class)).getFlagBuilder())
+    assertThat(new JavacJctCompiler(MoreMocks.stub(JavaCompiler.class)).getFlagBuilder())
         .isInstanceOf(JavacFlagBuilder.class);
   }
 
   @DisplayName("compilers have the -implicit:class flag set")
   @Test
   void compilersHaveTheImplicitClassFlagSet() {
-    var compiler = new JavacCompiler(MoreMocks.stub(JavaCompiler.class));
+    var compiler = new JavacJctCompiler(MoreMocks.stub(JavaCompiler.class));
     assertThat(compiler.getCompilerOptions())
         .contains("-implicit:class");
   }

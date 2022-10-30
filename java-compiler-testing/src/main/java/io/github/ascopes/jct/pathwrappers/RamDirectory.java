@@ -84,14 +84,12 @@ public final class RamDirectory extends AbstractTestDirectory<RamDirectory> {
   /**
    * Create a new in-memory path.
    *
-   * @param name                     a symbolic name to give the path. This must be a valid POSIX
-   *                                 directory name.
-   * @param closeOnGc if {@code true}, then the {@link #close()} operation will be
-   *                                 called on the underlying {@link FileSystem} as soon as the
-   *                                 returned object from this method is garbage collected. If
-   *                                 {@code false}, then you must close the underlying file system
-   *                                 manually using the {@link #close()} method on the returned
-   *                                 object. Failing to do so will lead to resources being leaked.
+   * @param name      a symbolic name to give the path. This must be a valid POSIX directory name.
+   * @param closeOnGc if {@code true}, then the {@link #close()} operation will be called on the
+   *                  underlying {@link FileSystem} as soon as the returned object from this method
+   *                  is garbage collected. If {@code false}, then you must close the underlying
+   *                  file system manually using the {@link #close()} method on the returned object.
+   *                  Failing to do so will lead to resources being leaked.
    * @return the in-memory path.
    * @see #newRamDirectory(String)
    */

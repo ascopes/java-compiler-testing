@@ -29,7 +29,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public interface Compilation {
+public interface JctCompilation {
 
   /**
    * Determine if warnings were treated as errors.
@@ -82,5 +82,5 @@ public interface Compilation {
    *
    * @return the file manager.
    */
-  FileManager getFileManager();
+  JctFileManager getFileManager();
 }

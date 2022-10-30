@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.acceptancetests.springcontextindexer
 
-import io.github.ascopes.jct.compilers.Compiler
+import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
@@ -32,7 +32,7 @@ class SpringContextIndexerTest {
   @DisplayName("Spring will index the application context as expected")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
-  void springWillIndexTheApplicationContextAsExpected(Compiler compiler) {
+  void springWillIndexTheApplicationContextAsExpected(JctCompiler compiler) {
     // Given
     def sources = newRamDirectory("sources")
         .createDirectory("org", "example")

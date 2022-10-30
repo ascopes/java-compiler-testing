@@ -19,7 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory;
 import static io.github.ascopes.jct.pathwrappers.TempDirectory.newTempDirectory;
 
-import io.github.ascopes.jct.compilers.Compiler;
+import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import org.junit.jupiter.api.DisplayName;
 
@@ -33,7 +33,7 @@ class BasicModuleCompilationIntegrationTest {
 
   @DisplayName("I can compile a 'Hello, World!' module program using a RAM disk")
   @JavacCompilerTest(modules = true)
-  void helloWorldRamDisk(Compiler<?, ?> compiler) {
+  void helloWorldRamDisk(JctCompiler<?, ?> compiler) {
     var sources = newRamDirectory("hello.world")
         .createFile("com/example/HelloWorld.java").withContents(
             "package com.example;",
@@ -72,7 +72,7 @@ class BasicModuleCompilationIntegrationTest {
 
   @DisplayName("I can compile a 'Hello, World!' module program using a temporary directory")
   @JavacCompilerTest(modules = true)
-  void helloWorldUsingTempDirectory(Compiler<?, ?> compiler) {
+  void helloWorldUsingTempDirectory(JctCompiler<?, ?> compiler) {
     var sources = newTempDirectory("hello.world")
         .createFile("com/example/HelloWorld.java").withContents(
             "package com.example;",

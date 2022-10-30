@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.assertions;
 
-import io.github.ascopes.jct.compilers.Compilation;
+import io.github.ascopes.jct.compilers.JctCompilation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -38,7 +38,7 @@ public final class JctAssertions {
    * @param compilation the compilation to assert on.
    * @return the assertion.
    */
-  public static CompilationAssert assertThatCompilation(Compilation compilation) {
+  public static CompilationAssert assertThatCompilation(JctCompilation compilation) {
     return thenCompilation(compilation);
   }
 
@@ -48,7 +48,7 @@ public final class JctAssertions {
    * @param compilation the compilation to assert on.
    * @return the assertion.
    */
-  public static CompilationAssert thenCompilation(Compilation compilation) {
+  public static CompilationAssert thenCompilation(JctCompilation compilation) {
     return new CompilationAssert(compilation);
   }
 }

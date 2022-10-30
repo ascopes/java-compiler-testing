@@ -38,17 +38,17 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class CompilationImpl implements Compilation {
+public final class JctCompilationImpl implements JctCompilation {
 
   private final boolean success;
   private final boolean failOnWarnings;
   private final List<String> outputLines;
   private final Set<? extends JavaFileObject> compilationUnits;
   private final List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
-  private final @WillClose FileManager fileManager;
+  private final @WillClose JctFileManager fileManager;
 
   @SuppressWarnings("ThisEscapedInObjectConstruction")
-  private CompilationImpl(Builder builder) {
+  private JctCompilationImpl(Builder builder) {
     success = requireNonNull(builder.success, "success");
     failOnWarnings = requireNonNull(builder.failOnWarnings, "failOnWarnings");
     outputLines = nonNullUnmodifiableList(builder.outputLines, "outputLines");
@@ -95,7 +95,7 @@ public final class CompilationImpl implements Compilation {
   }
 
   @Override
-  public FileManager getFileManager() {
+  public JctFileManager getFileManager() {
     return fileManager;
   }
 
@@ -109,7 +109,7 @@ public final class CompilationImpl implements Compilation {
   }
 
   /**
-   * Builder type for a {@link CompilationImpl} to simplify initialization.
+   * Builder type for a {@link JctCompilationImpl} to simplify initialization.
    *
    * <p>This builder object <strong>must not</strong> be built more than once.
    *
@@ -124,7 +124,7 @@ public final class CompilationImpl implements Compilation {
     private List<String> outputLines;
     private Set<? extends JavaFileObject> compilationUnits;
     private List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
-    private @WillNotClose FileManager fileManager;
+    private @WillNotClose JctFileManager fileManager;
 
     private Builder() {
       // Only initialized in this file.
@@ -193,18 +193,18 @@ public final class CompilationImpl implements Compilation {
      * @param fileManager the file manager.
      * @return this builder.
      */
-    public Builder fileManager(@WillClose FileManager fileManager) {
+    public Builder fileManager(@WillClose JctFileManager fileManager) {
       this.fileManager = requireNonNull(fileManager, "fileManager");
       return this;
     }
 
     /**
-     * Build this builder and output the created {@link CompilationImpl}.
+     * Build this builder and output the created {@link JctCompilationImpl}.
      *
      * @return the built object.
      */
-    public CompilationImpl build() {
-      return new CompilationImpl(this);
+    public JctCompilationImpl build() {
+      return new JctCompilationImpl(this);
     }
   }
 }

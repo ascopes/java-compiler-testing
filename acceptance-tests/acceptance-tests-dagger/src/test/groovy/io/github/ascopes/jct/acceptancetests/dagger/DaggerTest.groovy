@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.acceptancetests.dagger
 
-import io.github.ascopes.jct.compilers.Compiler
+import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
 
@@ -26,7 +26,7 @@ import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
 class DaggerTest {
   @DisplayName("Dagger DI runs as expected in the annotation processing phase")
   @JavacCompilerTest
-  void daggerDiRunsAsExpectedInTheAnnotationProcessingPhase(Compiler compiler) {
+  void daggerDiRunsAsExpectedInTheAnnotationProcessingPhase(JctCompiler compiler) {
     // Given
     def sources = newRamDirectory("sources")
         .createDirectory("org", "example")

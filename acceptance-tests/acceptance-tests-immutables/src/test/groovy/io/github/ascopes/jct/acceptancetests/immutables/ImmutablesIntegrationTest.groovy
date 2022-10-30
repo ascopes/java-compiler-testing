@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.acceptancetests.immutables
 
-import io.github.ascopes.jct.compilers.Compiler
+import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
@@ -42,7 +42,7 @@ class ImmutablesIntegrationTest {
   @DisplayName("Immutables @Value produces the expected class")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
-  void immutablesValueProducesTheExpectedClass(Compiler compiler) {
+  void immutablesValueProducesTheExpectedClass(JctCompiler compiler) {
     // Given
     def sources = newRamDirectory("sources")
         .rootDirectory()
@@ -77,7 +77,7 @@ class ImmutablesIntegrationTest {
   @DisplayName("Immutables @Value produces the expected class for modules")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest(modules = true)
-  void immutablesValueProducesTheExpectedClassForModules(Compiler compiler) {
+  void immutablesValueProducesTheExpectedClassForModules(JctCompiler compiler) {
     // Given
     def sources = newRamDirectory("sources")
         .rootDirectory()

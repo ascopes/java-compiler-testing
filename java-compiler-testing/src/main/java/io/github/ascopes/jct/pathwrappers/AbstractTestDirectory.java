@@ -55,8 +55,7 @@ import org.slf4j.LoggerFactory;
  * Abstract base for implementing a reusable managed wrapper around a directory of some sort.
  *
  * <p>This is designed to simplify the creation of file and directory trees, and manage the release
- * of resources once no longer needed automatically, helping to keep test logic simple and
- * clean.
+ * of resources once no longer needed automatically, helping to keep test logic simple and clean.
  *
  * @param <I> the implementation type.
  * @author Ashley Scopes
@@ -305,7 +304,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
    *
    * @param name the directory name to check.
    * @throws IllegalArgumentException if the name is invalid.
-   * @throws NullPointerException if the name is {@code null}.
+   * @throws NullPointerException     if the name is {@code null}.
    */
   protected static void assertValidRootName(@Nullable String name) {
     Objects.requireNonNull(name, "name");

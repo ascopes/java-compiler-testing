@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.compilers.javac;
 
-import io.github.ascopes.jct.compilers.AbstractCompiler;
+import io.github.ascopes.jct.compilers.AbstractJctCompiler;
 import io.github.ascopes.jct.compilers.FileManagerBuilder;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
@@ -30,7 +30,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class JavacCompiler extends AbstractCompiler<JavacCompiler> {
+public class JavacJctCompiler extends AbstractJctCompiler<JavacJctCompiler> {
 
   private static final String NAME = "JDK Compiler";
 
@@ -38,7 +38,7 @@ public class JavacCompiler extends AbstractCompiler<JavacCompiler> {
   /**
    * Initialize a new Java compiler.
    */
-  public JavacCompiler() {
+  public JavacJctCompiler() {
     this(ToolProvider.getSystemJavaCompiler());
   }
 
@@ -47,7 +47,7 @@ public class JavacCompiler extends AbstractCompiler<JavacCompiler> {
    *
    * @param jsr199Compiler the JSR-199 compiler backend to use.
    */
-  public JavacCompiler(JavaCompiler jsr199Compiler) {
+  public JavacJctCompiler(JavaCompiler jsr199Compiler) {
     this(NAME, jsr199Compiler);
   }
 
@@ -56,7 +56,7 @@ public class JavacCompiler extends AbstractCompiler<JavacCompiler> {
    *
    * @param name the name to give the compiler.
    */
-  public JavacCompiler(String name) {
+  public JavacJctCompiler(String name) {
     this(name, ToolProvider.getSystemJavaCompiler());
   }
 
@@ -66,7 +66,7 @@ public class JavacCompiler extends AbstractCompiler<JavacCompiler> {
    * @param name           the name to give the compiler.
    * @param jsr199Compiler the JSR-199 compiler backend to use.
    */
-  public JavacCompiler(String name, JavaCompiler jsr199Compiler) {
+  public JavacJctCompiler(String name, JavaCompiler jsr199Compiler) {
     super(name, new FileManagerBuilder(), jsr199Compiler, new JavacFlagBuilder());
     addCompilerOptions("-implicit:class");
   }

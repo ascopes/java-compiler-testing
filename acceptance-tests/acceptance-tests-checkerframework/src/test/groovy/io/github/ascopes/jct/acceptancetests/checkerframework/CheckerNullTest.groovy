@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.acceptancetests.checkerframework
 
-import io.github.ascopes.jct.compilers.Compiler
+import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.checkerframework.checker.nullness.NullnessChecker
 import org.junit.jupiter.api.BeforeEach
@@ -43,7 +43,7 @@ class CheckerNullTest {
   @DisplayName("Happy paths work as expected")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
-  void happyPathsWorkAsExpected(Compiler compiler) {
+  void happyPathsWorkAsExpected(JctCompiler compiler) {
     // Given
     def sources = newRamDirectory("sources")
         .createDirectory("org", "example")
@@ -63,7 +63,7 @@ class CheckerNullTest {
   @DisplayName("Sad paths fail as expected")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
-  void sadPathsFailAsExpected(Compiler compiler) {
+  void sadPathsFailAsExpected(JctCompiler compiler) {
     // Given
     def sources = newRamDirectory("sources")
         .createDirectory("org", "example")

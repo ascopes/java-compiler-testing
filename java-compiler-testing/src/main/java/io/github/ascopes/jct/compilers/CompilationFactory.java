@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class CompilationFactory<A extends Compiler<A, CompilationImpl>> {
+public class CompilationFactory<A extends JctCompiler<A, JctCompilationImpl>> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CompilationFactory.class);
 
@@ -68,7 +68,7 @@ public class CompilationFactory<A extends Compiler<A, CompilationImpl>> {
    * @param flagBuilder    the flag builder to use.
    * @return the compilation result.
    */
-  public CompilationImpl compile(
+  public JctCompilationImpl compile(
       A compiler,
       FileManagerBuilder builder,
       JavaCompiler jsr199Compiler,
@@ -115,7 +115,7 @@ public class CompilationFactory<A extends Compiler<A, CompilationImpl>> {
 
         var outputLines = writer.toString().lines().collect(Collectors.toList());
 
-        return CompilationImpl.builder()
+        return JctCompilationImpl.builder()
             .failOnWarnings(compiler.isFailOnWarnings())
             .success(result)
             .outputLines(outputLines)
@@ -148,7 +148,7 @@ public class CompilationFactory<A extends Compiler<A, CompilationImpl>> {
       JavaCompiler jsr199Compiler,
       TeeWriter writer,
       List<String> flags,
-      FileManager fileManager,
+      JctFileManager fileManager,
       TracingDiagnosticListener<JavaFileObject> diagnosticListener,
       Set<JavaFileObject> previousCompilationUnits
   ) throws IOException {
@@ -211,13 +211,13 @@ public class CompilationFactory<A extends Compiler<A, CompilationImpl>> {
    * Build the {@link JavaFileManager} to use.
    *
    * <p>LoggingMode will be applied to this via
-   * {@link #applyLoggingToFileManager(Compiler, FileManager)}, which will be handled by
-   * {@link #compile(Compiler, FileManagerBuilder, JavaCompiler, FlagBuilder)}.
+   * {@link #applyLoggingToFileManager(JctCompiler, JctFileManager)}, which will be handled by
+   * {@link #compile(JctCompiler, FileManagerBuilder, JavaCompiler, FlagBuilder)}.
    *
    * @param compiler the compiler to use.
    * @return the file manager to use.
    */
-  protected FileManager buildFileManager(A compiler, FileManagerBuilder builder) {
+  protected JctFileManager buildFileManager(A compiler, FileManagerBuilder builder) {
     var release = compiler.getRelease()
         .or(compiler::getTarget)
         .orElseGet(compiler::getDefaultRelease);
@@ -269,10 +269,11 @@ public class CompilationFactory<A extends Compiler<A, CompilationImpl>> {
 
   /**
    * Apply the logging level to the file manager provided by
-   * {@link #buildFileManager(Compiler, FileManagerBuilder)}.
+   * {@link #buildFileManager(JctCompiler, FileManagerBuilder)}.
    *
    * <p>The default implementation will wrap the given {@link JavaFileManager} in a
-   * {@link LoggingFileManagerProxy} if the {@link Compiler#getFileManagerLoggingMode()} field is
+   * {@link LoggingFileManagerProxy} if the {@link JctCompiler#getFileManagerLoggingMode()} field
+   * is
    * <strong>not</strong> set to {@link LoggingMode#DISABLED}. In the latter scenario, the input
    * will be returned to the caller with no other modifications.
    *
@@ -280,9 +281,9 @@ public class CompilationFactory<A extends Compiler<A, CompilationImpl>> {
    * @param fileManager the file manager to apply to.
    * @return the file manager to use for future operations.
    */
-  protected FileManager applyLoggingToFileManager(
+  protected JctFileManager applyLoggingToFileManager(
       A compiler,
-      FileManager fileManager
+      JctFileManager fileManager
   ) {
     switch (compiler.getFileManagerLoggingMode()) {
       case STACKTRACES:
@@ -328,7 +329,7 @@ public class CompilationFactory<A extends Compiler<A, CompilationImpl>> {
       A compiler,
       JavaCompiler jsr199Compiler,
       Writer writer,
-      FileManager fileManager,
+      JctFileManager fileManager,
       DiagnosticListener<? super JavaFileObject> diagnosticListener,
       List<String> flags,
       List<? extends JavaFileObject> compilationUnits

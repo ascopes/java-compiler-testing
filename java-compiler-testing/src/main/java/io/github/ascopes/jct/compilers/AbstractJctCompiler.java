@@ -35,7 +35,7 @@ import org.apiguardian.api.API.Status;
 
 /**
  * Common functionality for a compiler that can be overridden and that produces a
- * {@link CompilationImpl} as the compilation result.
+ * {@link JctCompilationImpl} as the compilation result.
  *
  * <p>Implementations should extend this class and override anything they require.
  * In most cases, you should not need to override anything other than the constructor.
@@ -52,8 +52,8 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
-    implements Compiler<A, CompilationImpl> {
+public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
+    implements JctCompiler<A, JctCompilationImpl> {
 
   private final String name;
   private final JavaCompiler jsr199Compiler;
@@ -83,7 +83,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
    * @param jsr199Compiler     the JSR-199 compiler implementation to use.
    * @param flagBuilder        the flag builder to use.
    */
-  protected AbstractCompiler(
+  protected AbstractJctCompiler(
       String name,
       FileManagerBuilder fileManagerBuilder,
       JavaCompiler jsr199Compiler,
@@ -99,19 +99,19 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
     compilerOptions = new ArrayList<>();
     runtimeOptions = new ArrayList<>();
 
-    showWarnings = Compiler.DEFAULT_SHOW_WARNINGS;
-    showDeprecationWarnings = Compiler.DEFAULT_SHOW_DEPRECATION_WARNINGS;
-    failOnWarnings = Compiler.DEFAULT_FAIL_ON_WARNINGS;
-    locale = Compiler.DEFAULT_LOCALE;
-    logCharset = Compiler.DEFAULT_LOG_CHARSET;
-    previewFeatures = Compiler.DEFAULT_PREVIEW_FEATURES;
+    showWarnings = JctCompiler.DEFAULT_SHOW_WARNINGS;
+    showDeprecationWarnings = JctCompiler.DEFAULT_SHOW_DEPRECATION_WARNINGS;
+    failOnWarnings = JctCompiler.DEFAULT_FAIL_ON_WARNINGS;
+    locale = JctCompiler.DEFAULT_LOCALE;
+    logCharset = JctCompiler.DEFAULT_LOG_CHARSET;
+    previewFeatures = JctCompiler.DEFAULT_PREVIEW_FEATURES;
 
     release = null;
     source = null;
     target = null;
 
-    verbose = Compiler.DEFAULT_VERBOSE;
-    diagnosticLoggingMode = Compiler.DEFAULT_DIAGNOSTIC_LOGGING_MODE;
+    verbose = JctCompiler.DEFAULT_VERBOSE;
+    diagnosticLoggingMode = JctCompiler.DEFAULT_DIAGNOSTIC_LOGGING_MODE;
   }
 
   /**
@@ -142,7 +142,7 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   }
 
   @Override
-  public CompilationImpl compile() {
+  public JctCompilationImpl compile() {
     var factory = new CompilationFactory<A>();
 
     return factory.compile(
@@ -462,9 +462,9 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   }
 
   /**
-   * Get this implementation of {@link AbstractCompiler}, cast to the type parameter {@link A}.
+   * Get this implementation of {@link AbstractJctCompiler}, cast to the type parameter {@link A}.
    *
-   * @return this implementation of {@link AbstractCompiler}, cast to {@link A}.
+   * @return this implementation of {@link AbstractJctCompiler}, cast to {@link A}.
    */
   protected final A myself() {
     @SuppressWarnings("unchecked")

@@ -86,14 +86,14 @@ public final class FileManagerBuilder {
 
     locations = new HashMap<>();
 
-    fixJvmModulePathMismatch = Compiler.DEFAULT_FIX_JVM_MODULEPATH_MISMATCH;
-    inheritClassPath = Compiler.DEFAULT_INHERIT_CLASS_PATH;
-    inheritModulePath = Compiler.DEFAULT_INHERIT_MODULE_PATH;
-    inheritPlatformClassPath = Compiler.DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
-    inheritSystemModulePath = Compiler.DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
-    fileManagerLoggingMode = Compiler.DEFAULT_FILE_MANAGER_LOGGING_MODE;
-    annotationProcessorDiscovery = Compiler.DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
-    testDirectoryFactory = Compiler.DEFAULT_TEST_DIRECTORY_FACTORY;
+    fixJvmModulePathMismatch = JctCompiler.DEFAULT_FIX_JVM_MODULEPATH_MISMATCH;
+    inheritClassPath = JctCompiler.DEFAULT_INHERIT_CLASS_PATH;
+    inheritModulePath = JctCompiler.DEFAULT_INHERIT_MODULE_PATH;
+    inheritPlatformClassPath = JctCompiler.DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
+    inheritSystemModulePath = JctCompiler.DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
+    fileManagerLoggingMode = JctCompiler.DEFAULT_FILE_MANAGER_LOGGING_MODE;
+    annotationProcessorDiscovery = JctCompiler.DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
+    testDirectoryFactory = JctCompiler.DEFAULT_TEST_DIRECTORY_FACTORY;
   }
 
   @Override
@@ -178,7 +178,7 @@ public final class FileManagerBuilder {
    * enabled, and only applies to the current JVM classpath and module path.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
+   * {@link JctCompiler#DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
    *
    * @return {@code true} if enabled, or {@code false} if disabled.
    */
@@ -191,7 +191,7 @@ public final class FileManagerBuilder {
    * on the module path.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
+   * {@link JctCompiler#DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
    *
    * @param fixJvmModulePathMismatch whether to enable the mismatch fixing or not.
    */
@@ -203,7 +203,7 @@ public final class FileManagerBuilder {
    * Get whether the class path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_INHERIT_CLASS_PATH}.
+   * {@link JctCompiler#DEFAULT_INHERIT_CLASS_PATH}.
    *
    * @return whether the current class path is being inherited or not.
    */
@@ -215,7 +215,7 @@ public final class FileManagerBuilder {
    * Set whether the class path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_INHERIT_CLASS_PATH}.
+   * {@link JctCompiler#DEFAULT_INHERIT_CLASS_PATH}.
    *
    * @param inheritClassPath {@code true} to include it, or {@code false} to exclude it.
    */
@@ -227,7 +227,7 @@ public final class FileManagerBuilder {
    * Get whether the module path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_INHERIT_MODULE_PATH}.
+   * {@link JctCompiler#DEFAULT_INHERIT_MODULE_PATH}.
    *
    * @return whether the module path is being inherited or not.
    */
@@ -239,7 +239,7 @@ public final class FileManagerBuilder {
    * Set whether the module path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_INHERIT_MODULE_PATH}.
+   * {@link JctCompiler#DEFAULT_INHERIT_MODULE_PATH}.
    *
    * @param inheritModulePath {@code true} to include it, or {@code false} to exclude it.
    */
@@ -256,7 +256,7 @@ public final class FileManagerBuilder {
    * ignored.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_INHERIT_PLATFORM_CLASS_PATH}.
+   * {@link JctCompiler#DEFAULT_INHERIT_PLATFORM_CLASS_PATH}.
    *
    * @return whether the platform class path is being inherited or not.
    */
@@ -282,7 +282,7 @@ public final class FileManagerBuilder {
    * Get whether the system module path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_INHERIT_SYSTEM_MODULE_PATH}.
+   * {@link JctCompiler#DEFAULT_INHERIT_SYSTEM_MODULE_PATH}.
    *
    * @return whether the system module path is being inherited or not.
    */
@@ -294,7 +294,7 @@ public final class FileManagerBuilder {
    * Set whether the system module path is inherited from the caller JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_INHERIT_SYSTEM_MODULE_PATH}.
+   * {@link JctCompiler#DEFAULT_INHERIT_SYSTEM_MODULE_PATH}.
    *
    * @param inheritSystemModulePath {@code true} to include it, or {@code false} to exclude it.
    */
@@ -306,7 +306,7 @@ public final class FileManagerBuilder {
    * Get the current file manager logging mode.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_FILE_MANAGER_LOGGING_MODE}.
+   * {@link JctCompiler#DEFAULT_FILE_MANAGER_LOGGING_MODE}.
    *
    * @return the current file manager logging mode.
    */
@@ -318,7 +318,7 @@ public final class FileManagerBuilder {
    * Set how to handle logging calls to underlying file managers.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_FILE_MANAGER_LOGGING_MODE}.
+   * {@link JctCompiler#DEFAULT_FILE_MANAGER_LOGGING_MODE}.
    *
    * @param fileManagerLoggingMode the mode to use for file manager logging.
    */
@@ -330,7 +330,7 @@ public final class FileManagerBuilder {
    * Get how to perform annotation processor discovery.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY}.
+   * {@link JctCompiler#DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY}.
    *
    * @return the annotation processor discovery mode.
    */
@@ -342,7 +342,7 @@ public final class FileManagerBuilder {
    * Set how to perform annotation processor discovery.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY}.
+   * {@link JctCompiler#DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY}.
    *
    * @param annotationProcessorDiscovery the processor discovery mode to use.
    */
@@ -356,7 +356,7 @@ public final class FileManagerBuilder {
    * Get the factory used for creating temporary test directories.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link Compiler#DEFAULT_TEST_DIRECTORY_FACTORY}.
+   * {@link JctCompiler#DEFAULT_TEST_DIRECTORY_FACTORY}.
    *
    * @return the test directory factory to use.
    */
@@ -378,8 +378,8 @@ public final class FileManagerBuilder {
    *
    * @return the file manager.
    */
-  public FileManager createFileManager(String effectiveRelease) throws IOException {
-    var fileManager = new FileManagerImpl(effectiveRelease);
+  public JctFileManager createFileManager(String effectiveRelease) throws IOException {
+    var fileManager = new JctFileManagerImpl(effectiveRelease);
 
     // Inherit known resources from the current JVM where appropriate.
     configureClassPath(fileManager);
@@ -408,7 +408,7 @@ public final class FileManagerBuilder {
             fileManagerLoggingMode == LoggingMode.STACKTRACES);
   }
 
-  private Lazy<AbstractTestDirectory<?>> newFallbackFs(FileManagerImpl fileManager) {
+  private Lazy<AbstractTestDirectory<?>> newFallbackFs(JctFileManagerImpl fileManager) {
     return new Lazy<>(() -> {
       // Make the generated directory belong to the file manager that uses it rather than just
       // the reference to the Ram directory itself. This prevents premature closure and also ensures
@@ -424,7 +424,7 @@ public final class FileManagerBuilder {
   }
 
   private void createLocationIfNotPresent(
-      FileManagerImpl fileManager,
+      JctFileManagerImpl fileManager,
       Lazy<AbstractTestDirectory<?>> fallbackFs,
       Location location
   ) throws IOException {
@@ -434,7 +434,7 @@ public final class FileManagerBuilder {
     }
   }
 
-  private void configureClassPath(FileManagerImpl fileManager) {
+  private void configureClassPath(JctFileManagerImpl fileManager) {
     if (inheritClassPath) {
       for (var path : jvmClassPath.access()) {
         var wrapper = wrap(path);
@@ -452,7 +452,7 @@ public final class FileManagerBuilder {
     }
   }
 
-  private void configureModulePath(FileManagerImpl fileManager) {
+  private void configureModulePath(JctFileManagerImpl fileManager) {
     if (inheritModulePath) {
       for (var path : jvmModulePath.access()) {
         var wrapper = wrap(path);
@@ -466,7 +466,7 @@ public final class FileManagerBuilder {
     }
   }
 
-  private void configurePlatformClassPath(FileManagerImpl fileManager) {
+  private void configurePlatformClassPath(JctFileManagerImpl fileManager) {
     if (inheritPlatformClassPath) {
       for (var path : jvmPlatformPath.access()) {
         fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH, wrap(path));
@@ -474,7 +474,7 @@ public final class FileManagerBuilder {
     }
   }
 
-  private void configureJvmSystemModules(FileManagerImpl fileManager) {
+  private void configureJvmSystemModules(JctFileManagerImpl fileManager) {
     if (inheritSystemModulePath) {
       for (var path : jvmSystemModules.access()) {
         fileManager.addPath(StandardLocation.SYSTEM_MODULES, wrap(path));
@@ -482,7 +482,7 @@ public final class FileManagerBuilder {
     }
   }
 
-  private void configureAnnotationProcessorPaths(FileManager fileManager) {
+  private void configureAnnotationProcessorPaths(JctFileManager fileManager) {
     switch (annotationProcessorDiscovery) {
       case ENABLED:
         fileManager.ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);

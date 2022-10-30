@@ -28,45 +28,46 @@ are always welcome!
 ## Examples
 
 ```java
+
 @DisplayName("Example tests")
 class ExampleTest {
 
-  @DisplayName("I can compile a Hello World application")
-  @JavacCompilerTest
-  void canCompileHelloWorld(Compilable<?, ?> compiler) {
-    var sources = newRamDirectory("src")
-        .createFile("org/example/Message.java").withContents(
-            """
-            package org.example;
+    @DisplayName("I can compile a Hello World application")
+    @JavacCompilerTest
+    void canCompileHelloWorld(JctCompiler<?, ?> compiler) {
+        var sources = newRamDirectory("src")
+                .createFile("org/example/Message.java").withContents(
+                        """
+                                package org.example;
 
-            import lombok.Data;
-            import lombok.NonNull;
+                                import lombok.Data;
+                                import lombok.NonNull;
 
-            @Data
-            public class Message {
-              private String content;
+                                @Data
+                                public class Message {
+                                  private String content;
 
-              public static void main(String[] args) {
-                Message message = new Message("Hello, World!");
-                System.out.println(message);
-              }
-            }
-            """
-        );
+                                  public static void main(String[] args) {
+                                    Message message = new Message("Hello, World!");
+                                    System.out.println(message);
+                                  }
+                                }
+                                """
+                );
 
-    // When
-    var compilation = compiler
-        .addSourcePath(sources)
-        .compile();
+        // When
+        var compilation = compiler
+                .addSourcePath(sources)
+                .compile();
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings();
-    assertThatCompilation(compilation)
-        .classOutput().packages()
-        .fileExists("com/example/Message.class")
-        .isNotEmptyFile();
-  }
+        // Then
+        assertThatCompilation(compilation)
+                .isSuccessfulWithoutWarnings();
+        assertThatCompilation(compilation)
+                .classOutput().packages()
+                .fileExists("com/example/Message.class")
+                .isNotEmptyFile();
+    }
 }
 ```
 
@@ -79,61 +80,61 @@ JAR is already on the classpath for the JUnit test runner.
 @DisplayName("Example tests")
 class ExampleTest {
 
-  @DisplayName("I can compile a module that is using Lombok")
-  @JavacCompilerTest(modules = true)
-  void canCompileModuleUsingLombok(Compilable<?, ?> compiler) {
-    // Given
-    var sources = newRamDirectory("hello.world")
-        .createFile("org/example/Message.java").withContents(
-            """
-            package org.example;
+    @DisplayName("I can compile a module that is using Lombok")
+    @JavacCompilerTest(modules = true)
+    void canCompileModuleUsingLombok(JctCompiler<?, ?> compiler) {
+        // Given
+        var sources = newRamDirectory("hello.world")
+                .createFile("org/example/Message.java").withContents(
+                        """
+                                package org.example;
 
-            import lombok.Data;
-            import lombok.NonNull;
+                                import lombok.Data;
+                                import lombok.NonNull;
 
-            @Data
-            public class Message {
-              @NonNull
-              private final String content;
-            }
-            """
-        )
-        .and().createFile("org/example/Main.java").withContents(
-            """
-            package org.example;
+                                @Data
+                                public class Message {
+                                  @NonNull
+                                  private final String content;
+                                }
+                                """
+                )
+                .and().createFile("org/example/Main.java").withContents(
+                        """
+                                package org.example;
 
-            public class Main {
-              public static void main(String[] args) {
-                for (var arg : args) {
-                  var message = new Message(arg);
-                  System.out.println(arg);
-                }
-              }
-            }
-            """
-        )
+                                public class Main {
+                                  public static void main(String[] args) {
+                                    for (var arg : args) {
+                                      var message = new Message(arg);
+                                      System.out.println(arg);
+                                    }
+                                  }
+                                }
+                                """
+                )
         and().createFile("module-info.java").withContents(
-            """
-            module hello.world {
-              requires java.base;
-              requires static lombok;
-            }
-            """
+                """
+                        module hello.world {
+                          requires java.base;
+                          requires static lombok;
+                        }
+                        """
         );
 
-    // When
-    var compilation = compiler
-        .addModuleSourcePath("hello.world", sources)
-        .compile();
+        // When
+        var compilation = compiler
+                .addModuleSourcePath("hello.world", sources)
+                .compile();
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings();
-    assertThatCompilation(compilation)
-        .classOutput().packages()
-        .fileExists("com/example/Message.class")
-        .isNotEmptyFile();
-  }
+        // Then
+        assertThatCompilation(compilation)
+                .isSuccessfulWithoutWarnings();
+        assertThatCompilation(compilation)
+                .classOutput().packages()
+                .fileExists("com/example/Message.class")
+                .isNotEmptyFile();
+    }
 }
 ```
 

@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.acceptancetests.serviceloaderjpms.testing
 
 import io.github.ascopes.jct.acceptancetests.serviceloaderjpms.ServiceProcessor
-import io.github.ascopes.jct.compilers.Compiler
+import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
@@ -31,7 +31,7 @@ class ServiceProcessorTest {
   @DisplayName("Expected files get created when the processor is run")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest(modules = true)
-  void expectedFilesGetCreated(Compiler compiler) {
+  void expectedFilesGetCreated(JctCompiler compiler) {
     def sources = newRamDirectory("sources")
         .createDirectory("org", "example")
         .copyContentsFrom("src", "test", "resources", "code")

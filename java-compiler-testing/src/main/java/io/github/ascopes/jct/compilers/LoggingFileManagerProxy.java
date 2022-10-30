@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * A proxy that wraps a {@link FileManager} in a proxy that can log all interactions with the
+ * A proxy that wraps a {@link JctFileManager} in a proxy that can log all interactions with the
  * JavaFileManager, along with a corresponding stacktrace.
  *
  * <p>This is useful for diagnosing difficult-to-find errors being produced by {@code javac}
@@ -48,11 +48,11 @@ public class LoggingFileManagerProxy implements InvocationHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFileManagerProxy.class);
 
-  private final @WillNotClose FileManager inner;
+  private final @WillNotClose JctFileManager inner;
   private final boolean stackTraces;
   private final ThreadLocal<Integer> stackDepth;
 
-  private LoggingFileManagerProxy(@WillNotClose FileManager inner, boolean stackTraces) {
+  private LoggingFileManagerProxy(@WillNotClose JctFileManager inner, boolean stackTraces) {
     this.inner = inner;
     this.stackTraces = stackTraces;
     stackDepth = ThreadLocal.withInitial(() -> 0);
@@ -181,18 +181,19 @@ public class LoggingFileManagerProxy implements InvocationHandler {
   }
 
   /**
-   * Wrap the given {@link FileManager} in a proxy that logs any calls.
+   * Wrap the given {@link JctFileManager} in a proxy that logs any calls.
    *
    * @param manager     the manager to wrap.
    * @param stackTraces {@code true} to dump stacktraces on each interception, or {@code false} to
    *                    omit them.
-   * @return the proxy {@link FileManager} to use.
+   * @return the proxy {@link JctFileManager} to use.
    */
   @WillNotClose
-  public static FileManager wrap(@WillCloseWhenClosed FileManager manager, boolean stackTraces) {
-    return (FileManager) Proxy.newProxyInstance(
-        FileManager.class.getClassLoader(),
-        new Class<?>[]{FileManager.class},
+  public static JctFileManager wrap(@WillCloseWhenClosed JctFileManager manager,
+      boolean stackTraces) {
+    return (JctFileManager) Proxy.newProxyInstance(
+        JctFileManager.class.getClassLoader(),
+        new Class<?>[]{JctFileManager.class},
         new LoggingFileManagerProxy(manager, stackTraces)
     );
   }
