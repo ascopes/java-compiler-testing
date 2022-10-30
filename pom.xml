@@ -85,6 +85,7 @@
       -Dorg.slf4j.simpleLogger.log=INFO
       -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=DEBUG
       -Xshare:off
+      -Xlog:gc
     </argLine>
 
     <!-- Project flags -->
