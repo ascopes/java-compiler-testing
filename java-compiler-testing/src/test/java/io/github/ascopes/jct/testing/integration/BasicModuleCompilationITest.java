@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.testing.integration.basic;
+package io.github.ascopes.jct.testing.integration;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.DisplayName;
  * @author Ashley Scopes
  */
 @DisplayName("Basic module compilation integration tests")
-class BasicModuleCompilationTest {
+class BasicModuleCompilationITest {
 
   @DisplayName("I can compile a 'Hello, World!' module program")
   @JavacCompilerTest(modules = true)
