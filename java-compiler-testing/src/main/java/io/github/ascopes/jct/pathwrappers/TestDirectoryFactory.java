@@ -21,7 +21,6 @@ import org.apiguardian.api.API.Status;
 /**
  * Functional interface representing a factory that can create temporary directories for testing.
  *
- * @param <T> the implementation type.
  * @author Ashley Scopes
  * @since 0.0.1
  */
