@@ -28,7 +28,7 @@ import org.junit.jupiter.api.DisplayName;
  * @author Ashley Scopes
  */
 @DisplayName("Basic legacy compilation integration tests")
-class BasicLegacyCompilationITest {
+class BasicLegacyCompilationIntegrationTest {
 
   @DisplayName("I can compile a 'Hello, World!' program")
   @JavacCompilerTest

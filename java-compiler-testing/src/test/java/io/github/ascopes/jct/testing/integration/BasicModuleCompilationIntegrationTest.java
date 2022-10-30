@@ -28,7 +28,7 @@ import org.junit.jupiter.api.DisplayName;
  * @author Ashley Scopes
  */
 @DisplayName("Basic module compilation integration tests")
-class BasicModuleCompilationITest {
+class BasicModuleCompilationIntegrationTest {
 
   @DisplayName("I can compile a 'Hello, World!' module program")
   @JavacCompilerTest(modules = true)

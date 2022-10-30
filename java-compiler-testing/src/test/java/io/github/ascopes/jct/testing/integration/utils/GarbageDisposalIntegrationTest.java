@@ -48,9 +48,9 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  */
 @DisplayName("GarbageDisposal integration tests")
-class GarbageDisposalITest {
+class GarbageDisposalIntegrationTest {
 
-  static final Logger LOGGER = LoggerFactory.getLogger(GarbageDisposalITest.class);
+  static final Logger LOGGER = LoggerFactory.getLogger(GarbageDisposalIntegrationTest.class);
 
   ThreadPool threadPool;
 

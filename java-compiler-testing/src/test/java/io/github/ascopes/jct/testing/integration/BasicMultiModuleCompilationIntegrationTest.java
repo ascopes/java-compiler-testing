@@ -29,7 +29,7 @@ import org.junit.jupiter.api.DisplayName;
  * @author Ashley Scopes
  */
 @DisplayName("Basic multi-module compilation integration tests")
-class BasicMultiModuleCompilationITest {
+class BasicMultiModuleCompilationIntegrationTest {
 
   @DisplayName("I can compile a single module using multi-module layout")
   @JavacCompilerTest(modules = true)
