@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.ex;
 
+import static io.github.ascopes.jct.utils.StringUtils.quoted;
 import static java.util.Objects.requireNonNull;
 
 import javax.tools.JavaFileManager.Location;
@@ -43,9 +44,9 @@ public final class ClassMissingException extends ClassNotFoundException {
   public ClassMissingException(String binaryName, Location location) {
     super(
         String.format(
-            "Class '%s' was not found in location '%s'",
-            requireNonNull(binaryName, "binaryName"),
-            requireNonNull(location, "location").getName()
+            "Class %s was not found in location %s",
+            quoted(requireNonNull(binaryName, "binaryName")),
+            quoted(requireNonNull(location, "location").getName())
         )
     );
 
