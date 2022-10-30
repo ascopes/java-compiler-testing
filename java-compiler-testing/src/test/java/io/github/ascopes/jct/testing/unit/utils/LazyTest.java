@@ -88,7 +88,7 @@ class LazyTest {
   @ConcurrentRuns
   @ParameterizedTest(name = "for {0} concurrent read(s)")
   @RunTestsInIsolation
-  @Timeout(10)
+  @Timeout(30)
   void accessSynchronizesCorrectly(int concurrency) {
     try (var executor = new ThreadPool(concurrency)) {
       // Given
