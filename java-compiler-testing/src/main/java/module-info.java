@@ -58,4 +58,6 @@ module io.github.ascopes.jct {
   exports io.github.ascopes.jct.annotations to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.pathwrappers.impl to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.pathwrappers.impl to io.github.ascopes.jct.testing;
 }

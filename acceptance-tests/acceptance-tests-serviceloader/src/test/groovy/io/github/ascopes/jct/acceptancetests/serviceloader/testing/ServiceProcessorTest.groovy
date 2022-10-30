@@ -16,14 +16,14 @@
 package io.github.ascopes.jct.acceptancetests.serviceloader.testing
 
 import io.github.ascopes.jct.acceptancetests.serviceloader.ServiceProcessor
-import io.github.ascopes.jct.compilers.Compilable
+import io.github.ascopes.jct.compilers.Compiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
+import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
 
 @DisplayName("ServiceProcessor tests (no JPMS)")
 class ServiceProcessorTest {
@@ -31,8 +31,8 @@ class ServiceProcessorTest {
   @DisplayName("Expected files get created when the processor is run")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
-  void expectedFilesGetCreated(Compilable compiler) {
-    def sources = newRamFileSystem("sources")
+  void expectedFilesGetCreated(Compiler compiler) {
+    def sources = newRamDirectory("sources")
         .createDirectory("org", "example")
         .copyContentsFrom("src", "test", "resources", "code")
 

@@ -13,30 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers;
+package io.github.ascopes.jct.pathwrappers;
 
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Function representing a configuration operation that can be applied to a compiler.
+ * Functional interface representing a factory that can create temporary directories for testing.
  *
- * <p>This can allow encapsulating common configuration logic across tests into a single place.
- *
- * @param <C> the compiler type.
- * @param <T> the exception that may be thrown by the configurer.
+ * @param <T> the implementation type.
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.INTERNAL)
 @FunctionalInterface
-public interface CompilerConfigurer<C extends Compiler<C, ?>, T extends Exception> {
+public interface TestDirectoryFactory {
 
   /**
-   * Apply configuration logic to the given compiler.
+   * Create a new temporary directory.
    *
-   * @param compiler the compiler.
-   * @throws T any exception that may be thrown by the configurer.
+   * @param name      the name of the directory.
+   * @param closeOnGc whether to clean up resources when the returned object is garbage collected.
+   * @return the test directory object.
    */
-  void configure(C compiler) throws T;
+  AbstractTestDirectory<?> create(String name, boolean closeOnGc);
 }

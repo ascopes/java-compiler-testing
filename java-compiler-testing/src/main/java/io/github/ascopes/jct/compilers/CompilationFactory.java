@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
+public class CompilationFactory<A extends Compiler<A, CompilationImpl>> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CompilationFactory.class);
 
@@ -211,8 +211,8 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
    * Build the {@link JavaFileManager} to use.
    *
    * <p>LoggingMode will be applied to this via
-   * {@link #applyLoggingToFileManager(Compilable, FileManager)}, which will be handled by
-   * {@link #compile(Compilable, FileManagerBuilder, JavaCompiler, FlagBuilder)}.
+   * {@link #applyLoggingToFileManager(Compiler, FileManager)}, which will be handled by
+   * {@link #compile(Compiler, FileManagerBuilder, JavaCompiler, FlagBuilder)}.
    *
    * @param compiler the compiler to use.
    * @return the file manager to use.
@@ -269,10 +269,10 @@ public class CompilationFactory<A extends Compilable<A, CompilationImpl>> {
 
   /**
    * Apply the logging level to the file manager provided by
-   * {@link #buildFileManager(Compilable, FileManagerBuilder)}.
+   * {@link #buildFileManager(Compiler, FileManagerBuilder)}.
    *
    * <p>The default implementation will wrap the given {@link JavaFileManager} in a
-   * {@link LoggingFileManagerProxy} if the {@link Compilable#getFileManagerLoggingMode()} field is
+   * {@link LoggingFileManagerProxy} if the {@link Compiler#getFileManagerLoggingMode()} field is
    * <strong>not</strong> set to {@link LoggingMode#DISABLED}. In the latter scenario, the input
    * will be returned to the caller with no other modifications.
    *

@@ -15,20 +15,20 @@
  */
 package io.github.ascopes.jct.acceptancetests.dagger
 
-import io.github.ascopes.jct.compilers.Compilable
+import io.github.ascopes.jct.compilers.Compiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem
+import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
 
 @DisplayName("Dagger acceptance tests")
 class DaggerTest {
   @DisplayName("Dagger DI runs as expected in the annotation processing phase")
   @JavacCompilerTest
-  void daggerDiRunsAsExpectedInTheAnnotationProcessingPhase(Compilable compiler) {
+  void daggerDiRunsAsExpectedInTheAnnotationProcessingPhase(Compiler compiler) {
     // Given
-    def sources = newRamFileSystem("sources")
+    def sources = newRamDirectory("sources")
         .createDirectory("org", "example")
         .copyContentsFrom("src", "test", "resources", "code")
 

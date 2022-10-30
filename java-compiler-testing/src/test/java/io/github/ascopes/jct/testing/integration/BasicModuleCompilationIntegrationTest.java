@@ -16,9 +16,10 @@
 package io.github.ascopes.jct.testing.integration;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static io.github.ascopes.jct.pathwrappers.RamFileSystem.newRamFileSystem;
+import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory;
+import static io.github.ascopes.jct.pathwrappers.TempDirectory.newTempDirectory;
 
-import io.github.ascopes.jct.compilers.Compilable;
+import io.github.ascopes.jct.compilers.Compiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import org.junit.jupiter.api.DisplayName;
 
@@ -30,10 +31,49 @@ import org.junit.jupiter.api.DisplayName;
 @DisplayName("Basic module compilation integration tests")
 class BasicModuleCompilationIntegrationTest {
 
-  @DisplayName("I can compile a 'Hello, World!' module program")
+  @DisplayName("I can compile a 'Hello, World!' module program using a RAM disk")
   @JavacCompilerTest(modules = true)
-  void helloWorld(Compilable<?, ?> compiler) {
-    var sources = newRamFileSystem("hello.world")
+  void helloWorldRamDisk(Compiler<?, ?> compiler) {
+    var sources = newRamDirectory("hello.world")
+        .createFile("com/example/HelloWorld.java").withContents(
+            "package com.example;",
+            "public class HelloWorld {",
+            "  public static void main(String[] args) {",
+            "    System.out.println(\"Hello, World\");",
+            "  }",
+            "}"
+        )
+        .and().createFile("module-info.java").withContents(
+            "module hello.world {",
+            "  requires java.base;",
+            "  exports com.example;",
+            "}"
+        );
+
+    var compilation = compiler
+        .addSourcePath(sources)
+        .compile();
+
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings();
+
+    assertThatCompilation(compilation)
+        .classOutput()
+        .packages()
+        .fileExists("com/example/HelloWorld.class")
+        .isNotEmptyFile();
+
+    assertThatCompilation(compilation)
+        .classOutput()
+        .packages()
+        .fileExists("module-info.class")
+        .isNotEmptyFile();
+  }
+
+  @DisplayName("I can compile a 'Hello, World!' module program using a temporary directory")
+  @JavacCompilerTest(modules = true)
+  void helloWorldUsingTempDirectory(Compiler<?, ?> compiler) {
+    var sources = newTempDirectory("hello.world")
         .createFile("com/example/HelloWorld.java").withContents(
             "package com.example;",
             "public class HelloWorld {",

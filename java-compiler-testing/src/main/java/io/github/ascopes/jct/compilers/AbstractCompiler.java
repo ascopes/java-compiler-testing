@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
+import io.github.ascopes.jct.pathwrappers.TestDirectoryFactory;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
-    implements Compilable<A, CompilationImpl> {
+    implements Compiler<A, CompilationImpl> {
 
   private final String name;
   private final JavaCompiler jsr199Compiler;
@@ -98,19 +99,19 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
     compilerOptions = new ArrayList<>();
     runtimeOptions = new ArrayList<>();
 
-    showWarnings = Compilable.DEFAULT_SHOW_WARNINGS;
-    showDeprecationWarnings = Compilable.DEFAULT_SHOW_DEPRECATION_WARNINGS;
-    failOnWarnings = Compilable.DEFAULT_FAIL_ON_WARNINGS;
-    locale = Compilable.DEFAULT_LOCALE;
-    logCharset = Compilable.DEFAULT_LOG_CHARSET;
-    previewFeatures = Compilable.DEFAULT_PREVIEW_FEATURES;
+    showWarnings = Compiler.DEFAULT_SHOW_WARNINGS;
+    showDeprecationWarnings = Compiler.DEFAULT_SHOW_DEPRECATION_WARNINGS;
+    failOnWarnings = Compiler.DEFAULT_FAIL_ON_WARNINGS;
+    locale = Compiler.DEFAULT_LOCALE;
+    logCharset = Compiler.DEFAULT_LOG_CHARSET;
+    previewFeatures = Compiler.DEFAULT_PREVIEW_FEATURES;
 
     release = null;
     source = null;
     target = null;
 
-    verbose = Compilable.DEFAULT_VERBOSE;
-    diagnosticLoggingMode = Compilable.DEFAULT_DIAGNOSTIC_LOGGING_MODE;
+    verbose = Compiler.DEFAULT_VERBOSE;
+    diagnosticLoggingMode = Compiler.DEFAULT_DIAGNOSTIC_LOGGING_MODE;
   }
 
   /**
@@ -441,6 +442,17 @@ public abstract class AbstractCompiler<A extends AbstractCompiler<A>>
   public A annotationProcessorDiscovery(AnnotationProcessorDiscovery annotationProcessorDiscovery) {
     requireNonNull(annotationProcessorDiscovery, "annotationProcessorDiscovery");
     fileManagerBuilder.annotationProcessorDiscovery(annotationProcessorDiscovery);
+    return myself();
+  }
+
+  @Override
+  public TestDirectoryFactory getTestDirectoryFactory() {
+    return fileManagerBuilder.getTestDirectoryFactory();
+  }
+
+  @Override
+  public A testDirectoryFactory(TestDirectoryFactory testDirectoryFactory) {
+    fileManagerBuilder.setTestDirectoryFactory(testDirectoryFactory);
     return myself();
   }
 

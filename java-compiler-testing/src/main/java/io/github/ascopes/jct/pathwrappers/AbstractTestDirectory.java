@@ -18,10 +18,6 @@ package io.github.ascopes.jct.pathwrappers;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Feature;
-import com.google.common.jimfs.Jimfs;
-import com.google.common.jimfs.PathType;
 import io.github.ascopes.jct.annotations.CheckReturnValue;
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillClose;
@@ -29,6 +25,7 @@ import io.github.ascopes.jct.utils.GarbageDisposal;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,7 +35,6 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
@@ -54,69 +50,51 @@ import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
- * A wrapper around a temporary in-memory file system that exposes the root path of said file
- * system.
+ * Abstract base for implementing a reusable managed wrapper around a directory of some sort.
  *
- * <p>This provides a utility for constructing complex and dynamic directory tree structures
- * quickly and simply using fluent chained methods.
+ * <p>This is designed to simplify the creation of file and directory trees, and manage the release
+ * of resources once no longer needed automatically, helping to keep test logic simple and
+ * clean.
  *
- * <p>These file systems are integrated into the {@link FileSystem} API, and can be configured to
- * automatically destroy themselves once this RamPath handle is garbage collected.
- *
- * <p>In addition, these paths follow POSIX file system semantics, meaning that files are handled
- * with case-sensitive names, and use forward slashes to separate paths.
- *
- * <p>While this will create a global {@link FileSystem}, it is recommended that you only interact
- * with the file system via this class to prevent potentially confusing behaviour elsewhere.
- *
+ * @param <I> the implementation type.
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class RamFileSystem implements PathWrapper {
-
-  private static final String SEPARATOR = "/";
+public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
+    implements PathWrapper {
 
   private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-  private static final Logger LOGGER = LoggerFactory.getLogger(RamFileSystem.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTestDirectory.class);
 
-  private final Path path;
-  private final URI uri;
   private final String name;
+  private final Path rootDirectory;
+  private final String separator;
+  private final URI uri;
+  private final Closeable closeHook;
 
-  /**
-   * Initialize this in-memory path.
-   *
-   * @param name                     the name of the file system to create.
-   * @param closeOnGarbageCollection {@code true} to delegate
-   */
   @SuppressWarnings("ThisEscapedInObjectConstruction")
-  private RamFileSystem(String name, boolean closeOnGarbageCollection) {
+  protected AbstractTestDirectory(
+      String name,
+      Path rootDirectory,
+      String separator,
+      boolean closeOnGc,
+      Closeable closeHook
+  ) {
     this.name = requireNonNull(name, "name");
+    this.closeHook = requireNonNull(closeHook, "closeHook");
+    this.rootDirectory = requireNonNull(rootDirectory, "rootDirectory");
+    this.separator = requireNonNull(separator, "separator");
+    uri = this.rootDirectory.toUri();
 
-    var config = Configuration
-        .builder(PathType.unix())
-        .setSupportedFeatures(Feature.LINKS, Feature.SYMBOLIC_LINKS, Feature.FILE_CHANNEL)
-        .setAttributeViews("basic", "posix")
-        .setRoots(SEPARATOR)
-        .setWorkingDirectory(SEPARATOR)
-        .setPathEqualityUsesCanonicalForm(true)
-        .build();
-
-    var fileSystem = Jimfs.newFileSystem(config);
-    path = fileSystem.getRootDirectories().iterator().next().resolve(name);
-    uri = path.toUri();
-
-    // Ensure the base directory exists.
-    uncheckedIo(() -> Files.createDirectories(path));
-
-    if (closeOnGarbageCollection) {
-      GarbageDisposal.onPhantom(this, name, fileSystem);
+    if (closeOnGc) {
+      LOGGER.trace("Registering {} to be destroyed on garbage collection", uri);
+      GarbageDisposal.onPhantom(this, name, closeHook);
     }
-
-    LOGGER.trace("Initialized new in-memory directory {}", path);
   }
+
 
   /**
    * {@inheritDoc}
@@ -133,7 +111,7 @@ public final class RamFileSystem implements PathWrapper {
   @CheckReturnValue
   @Override
   public Path getPath() {
-    return path;
+    return rootDirectory;
   }
 
   @CheckReturnValue
@@ -158,7 +136,7 @@ public final class RamFileSystem implements PathWrapper {
    * @throws UncheckedIOException if an IO error occurs.
    */
   public void close() {
-    uncheckedIo(path.getFileSystem()::close);
+    uncheckedIo(closeHook::close);
   }
 
   /**
@@ -167,8 +145,8 @@ public final class RamFileSystem implements PathWrapper {
    * @return this object.
    */
   @CheckReturnValue
-  public RamFileSystem and() {
-    return this;
+  public I and() {
+    return thisTestFileSystem();
   }
 
   /**
@@ -224,16 +202,16 @@ public final class RamFileSystem implements PathWrapper {
    */
   @CheckReturnValue
   public DirectoryBuilder rootDirectory() {
-    return new DirectoryBuilder(path);
+    return new DirectoryBuilder(rootDirectory);
   }
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof RamFileSystem)) {
+    if (!(other instanceof AbstractTestDirectory<?>)) {
       return false;
     }
 
-    var that = (RamFileSystem) other;
+    var that = (AbstractTestDirectory<?>) other;
 
     return name.equals(that.name)
         && uri.equals(that.uri);
@@ -253,7 +231,7 @@ public final class RamFileSystem implements PathWrapper {
   }
 
   private Path makeRelativeToHere(Path relativePath) {
-    if (relativePath.isAbsolute() && !relativePath.startsWith(path)) {
+    if (relativePath.isAbsolute() && !relativePath.startsWith(rootDirectory)) {
       var fixedPath = relativePath.getRoot().relativize(relativePath);
 
       LOGGER.warn(
@@ -267,43 +245,9 @@ public final class RamFileSystem implements PathWrapper {
 
     // ToString is needed as JIMFS will fail on trying to make a relative path from a different
     // provider.
-    return relativePath.getFileSystem() == path.getFileSystem()
+    return relativePath.getFileSystem() == rootDirectory.getFileSystem()
         ? relativePath.normalize()
-        : path.resolve(relativePath.toString()).normalize();
-  }
-
-  /**
-   * Create a new in-memory path.
-   *
-   * <p>The underlying in-memory file system will be closed and destroyed when the returned
-   * object is garbage collected, or when {@link #close()} is called on it manually.
-   *
-   * @param name a symbolic name to give the path. This must be a valid POSIX directory name.
-   * @return the in-memory path.
-   * @see #newRamFileSystem(String, boolean)
-   */
-  @CheckReturnValue
-  public static RamFileSystem newRamFileSystem(String name) {
-    return newRamFileSystem(name, true);
-  }
-
-  /**
-   * Create a new in-memory path.
-   *
-   * @param name                     a symbolic name to give the path. This must be a valid POSIX
-   *                                 directory name.
-   * @param closeOnGarbageCollection if {@code true}, then the {@link #close()} operation will be
-   *                                 called on the underlying {@link FileSystem} as soon as the
-   *                                 returned object from this method is garbage collected. If
-   *                                 {@code false}, then you must close the underlying file system
-   *                                 manually using the {@link #close()} method on the returned
-   *                                 object. Failing to do so will lead to resources being leaked.
-   * @return the in-memory path.
-   * @see #newRamFileSystem(String)
-   */
-  @CheckReturnValue
-  public static RamFileSystem newRamFileSystem(String name, boolean closeOnGarbageCollection) {
-    return new RamFileSystem(name, closeOnGarbageCollection);
+        : rootDirectory.resolve(relativePath.toString()).normalize();
   }
 
   @CheckReturnValue
@@ -332,8 +276,8 @@ public final class RamFileSystem implements PathWrapper {
     return Thread.currentThread().getContextClassLoader();
   }
 
-  private static String collapsePath(String first, String... rest) {
-    var joiner = new StringJoiner(SEPARATOR);
+  private String collapsePath(String first, String... rest) {
+    var joiner = new StringJoiner(separator);
     joiner.add(first);
     for (var part : rest) {
       joiner.add(part);
@@ -341,12 +285,42 @@ public final class RamFileSystem implements PathWrapper {
     return joiner.toString();
   }
 
-  private static String collapsePath(Path path) {
-    var joiner = new StringJoiner(SEPARATOR);
+  private String collapsePath(Path path) {
+    var joiner = new StringJoiner(separator);
     for (var part : path) {
       joiner.add(part.toString());
     }
     return joiner.toString();
+  }
+
+  @SuppressWarnings("unchecked")
+  private I thisTestFileSystem() {
+    return (I) this;
+  }
+
+  /**
+   * Assert that the given name is a valid name for a directory, and that it does not contain
+   * potentially dangerous characters such as double-dots or slashes that could be used to escape
+   * the directory we are running from.
+   *
+   * @param name the directory name to check.
+   * @throws IllegalArgumentException if the name is invalid.
+   * @throws NullPointerException if the name is {@code null}.
+   */
+  protected static void assertValidRootName(@Nullable String name) {
+    Objects.requireNonNull(name, "name");
+
+    if (name.isBlank()) {
+      throw new IllegalArgumentException("Directory name cannot be blank");
+    }
+
+    if (!name.equals(name.trim())) {
+      throw new IllegalArgumentException("Directory name cannot begin or end in spaces");
+    }
+
+    if (name.contains("/") || name.contains("\\") || name.contains("..")) {
+      throw new IllegalArgumentException("Invalid file name provided");
+    }
   }
 
   /**
@@ -361,7 +335,7 @@ public final class RamFileSystem implements PathWrapper {
     private final Path targetPath;
 
     private FileBuilder(String first, String... rest) {
-      this(path.resolve(collapsePath(first, rest)));
+      this(rootDirectory.resolve(collapsePath(first, rest)));
     }
 
     private FileBuilder(Path targetPath) {
@@ -374,7 +348,7 @@ public final class RamFileSystem implements PathWrapper {
      * @param lines the lines to write using the default charset.
      * @return the file system for further configuration.
      */
-    public RamFileSystem withContents(String... lines) {
+    public I withContents(String... lines) {
       return withContents(DEFAULT_CHARSET, lines);
     }
 
@@ -385,7 +359,7 @@ public final class RamFileSystem implements PathWrapper {
      * @param lines   the lines to write.
      * @return the file system for further configuration.
      */
-    public RamFileSystem withContents(Charset charset, String... lines) {
+    public I withContents(Charset charset, String... lines) {
       return withContents(String.join("\n", lines).getBytes(charset));
     }
 
@@ -395,7 +369,7 @@ public final class RamFileSystem implements PathWrapper {
      * @param contents the bytes to write.
      * @return the file system for further configuration.
      */
-    public RamFileSystem withContents(byte[] contents) {
+    public I withContents(byte[] contents) {
       return uncheckedIo(() -> createFile(new ByteArrayInputStream(contents)));
     }
 
@@ -405,7 +379,7 @@ public final class RamFileSystem implements PathWrapper {
      * @param resource the resource to copy.
      * @return the file system for further configuration.
      */
-    public RamFileSystem copiedFromClassPath(String resource) {
+    public I copiedFromClassPath(String resource) {
       return copiedFromClassPath(currentCallerClassLoader(), resource);
     }
 
@@ -416,7 +390,7 @@ public final class RamFileSystem implements PathWrapper {
      * @param resource    the resource to copy.
      * @return the file system for further configuration.
      */
-    public RamFileSystem copiedFromClassPath(ClassLoader classLoader, String resource) {
+    public I copiedFromClassPath(ClassLoader classLoader, String resource) {
       return uncheckedIo(() -> {
         try (var input = classLoader.getResourceAsStream(resource)) {
           if (input == null) {
@@ -434,7 +408,7 @@ public final class RamFileSystem implements PathWrapper {
      * @param file the file to read.
      * @return the file system for further configuration.
      */
-    public RamFileSystem copiedFromFile(File file) {
+    public I copiedFromFile(File file) {
       return copiedFromFile(file.toPath());
     }
 
@@ -444,7 +418,7 @@ public final class RamFileSystem implements PathWrapper {
      * @param file the file to read.
      * @return the file system for further configuration.
      */
-    public RamFileSystem copiedFromFile(Path file) {
+    public I copiedFromFile(Path file) {
       return uncheckedIo(() -> {
         try (var input = Files.newInputStream(file)) {
           return createFile(input);
@@ -458,7 +432,7 @@ public final class RamFileSystem implements PathWrapper {
      * @param url the URL to read.
      * @return the file system for further configuration.
      */
-    public RamFileSystem copiedFromUrl(URL url) {
+    public I copiedFromUrl(URL url) {
       return uncheckedIo(() -> createFile(url.openStream()));
     }
 
@@ -467,7 +441,7 @@ public final class RamFileSystem implements PathWrapper {
      *
      * @return the file system for further configuration.
      */
-    public RamFileSystem thatIsEmpty() {
+    public I thatIsEmpty() {
       return fromInputStream(InputStream.nullInputStream());
     }
 
@@ -479,11 +453,11 @@ public final class RamFileSystem implements PathWrapper {
      * @param inputStream the input stream to read.
      * @return the file system for further configuration.
      */
-    public RamFileSystem fromInputStream(@WillClose InputStream inputStream) {
+    public I fromInputStream(@WillClose InputStream inputStream) {
       return uncheckedIo(() -> createFile(inputStream));
     }
 
-    private RamFileSystem createFile(InputStream input) throws IOException {
+    private I createFile(InputStream input) throws IOException {
       Files.createDirectories(targetPath.getParent());
 
       var opts = new OpenOption[]{
@@ -496,7 +470,7 @@ public final class RamFileSystem implements PathWrapper {
           var bufferedInput = maybeBuffer(input, targetPath.toUri().getScheme())
       ) {
         bufferedInput.transferTo(output);
-        return RamFileSystem.this;
+        return thisTestFileSystem();
       }
     }
   }
@@ -513,7 +487,7 @@ public final class RamFileSystem implements PathWrapper {
     private final Path targetPath;
 
     private DirectoryBuilder(String first, String... rest) {
-      this(path.resolve(collapsePath(first, rest)));
+      this(rootDirectory.resolve(collapsePath(first, rest)));
     }
 
     private DirectoryBuilder(Path targetPath) {
@@ -526,10 +500,10 @@ public final class RamFileSystem implements PathWrapper {
      * <p>This uses the default file system.
      *
      * @param first the first path fragment of the directory to copy from.
-     * @param rest  any additional path fragements to copy from.
+     * @param rest  any additional path fragments to copy from.
      * @return the file system for further configuration.
      */
-    public RamFileSystem copyContentsFrom(String first, String... rest) {
+    public I copyContentsFrom(String first, String... rest) {
       // Path.of is fine here as it is for the default file system.
       return copyContentsFrom(Path.of(first, rest));
     }
@@ -540,7 +514,7 @@ public final class RamFileSystem implements PathWrapper {
      * @param dir the directory to copy the contents from.
      * @return the file system for further configuration.
      */
-    public RamFileSystem copyContentsFrom(File dir) {
+    public I copyContentsFrom(File dir) {
       return copyContentsFrom(dir.toPath());
     }
 
@@ -550,7 +524,7 @@ public final class RamFileSystem implements PathWrapper {
      * @param rootDir the directory to copy the contents from.
      * @return the file system for further configuration.
      */
-    public RamFileSystem copyContentsFrom(Path rootDir) {
+    public I copyContentsFrom(Path rootDir) {
       uncheckedIo(() -> {
         Files.walkFileTree(rootDir, new SimpleFileVisitor<>() {
 
@@ -585,7 +559,7 @@ public final class RamFileSystem implements PathWrapper {
         });
       });
 
-      return RamFileSystem.this;
+      return thisTestFileSystem();
     }
 
     /**
@@ -593,9 +567,9 @@ public final class RamFileSystem implements PathWrapper {
      *
      * @return the file system for further configuration.
      */
-    public RamFileSystem thatIsEmpty() {
+    public I thatIsEmpty() {
       uncheckedIo(() -> Files.createDirectories(targetPath));
-      return RamFileSystem.this;
+      return thisTestFileSystem();
     }
   }
 }
