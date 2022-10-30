@@ -25,7 +25,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assumptions.abort;
 
 import io.github.ascopes.jct.testing.helpers.ThreadPool;
-import io.github.ascopes.jct.utils.GarbageDisposal;
+import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
@@ -43,14 +43,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Integration tests for {@link GarbageDisposal}.
+ * Integration tests for {@link GarbageDisposalUtils}.
  *
  * @author Ashley Scopes
  */
-@DisplayName("GarbageDisposal integration tests")
-class GarbageDisposalIntegrationTest {
+@DisplayName("GarbageDisposalUtils integration tests")
+class GarbageDisposalUtilsIntegrationTest {
 
-  static final Logger LOGGER = LoggerFactory.getLogger(GarbageDisposalIntegrationTest.class);
+  static final Logger LOGGER = LoggerFactory.getLogger(GarbageDisposalUtilsIntegrationTest.class);
 
   ThreadPool threadPool;
 
@@ -113,7 +113,7 @@ class GarbageDisposalIntegrationTest {
     AutoCloseable closeable = closedCount::incrementAndGet;
 
     // When
-    GarbageDisposal.onPhantom(new Object(), "foobar baz bork", closeable);
+    GarbageDisposalUtils.onPhantom(new Object(), "foobar baz bork", closeable);
 
     // Then
     await("the closeable object gets closed during garbage collection")
@@ -138,7 +138,7 @@ class GarbageDisposalIntegrationTest {
     };
 
     // When
-    GarbageDisposal.onPhantom(new Object(), "throwing closeable", closeable);
+    GarbageDisposalUtils.onPhantom(new Object(), "throwing closeable", closeable);
 
     // Then
     await("the closeable object gets closed during garbage collection")
@@ -164,7 +164,7 @@ class GarbageDisposalIntegrationTest {
     }
 
     // When
-    GarbageDisposal.onPhantom(new Object(), mapping);
+    GarbageDisposalUtils.onPhantom(new Object(), mapping);
 
     // Then
     await("the closeable objects get closed during garbage collection")
@@ -203,7 +203,7 @@ class GarbageDisposalIntegrationTest {
     }
 
     // When
-    GarbageDisposal.onPhantom(new Object(), mapping);
+    GarbageDisposalUtils.onPhantom(new Object(), mapping);
 
     // Then
     await("the closeable objects get closed during garbage collection")

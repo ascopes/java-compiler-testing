@@ -36,6 +36,7 @@ import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
 import io.github.ascopes.jct.containers.impl.FileUtils;
+import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -57,7 +58,12 @@ import org.junit.jupiter.params.provider.MethodSource;
  * @author Ashley Scopes
  */
 @DisplayName("FileUtils tests")
-class FileUtilsTest {
+class FileUtilsTest implements StaticClassTestTemplate {
+
+  @Override
+  public Class<?> getTypeBeingTested() {
+    return FileUtils.class;
+  }
 
   @DisplayName("pathToBinaryName throws an IllegalArgumentException for absolute paths")
   @Test

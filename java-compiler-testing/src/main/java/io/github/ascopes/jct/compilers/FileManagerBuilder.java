@@ -19,9 +19,9 @@ import io.github.ascopes.jct.pathwrappers.AbstractTestDirectory;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.pathwrappers.TestDirectoryFactory;
 import io.github.ascopes.jct.pathwrappers.impl.BasicPathWrapperImpl;
-import io.github.ascopes.jct.utils.GarbageDisposal;
+import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import io.github.ascopes.jct.utils.Lazy;
-import io.github.ascopes.jct.utils.SpecialLocations;
+import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
@@ -79,10 +79,10 @@ public final class FileManagerBuilder {
   public FileManagerBuilder() {
     // Init these references here so we access these as late as possible but then cache the
     // results.
-    jvmClassPath = new Lazy<>(SpecialLocations::currentClassPathLocations);
-    jvmModulePath = new Lazy<>(SpecialLocations::currentModulePathLocations);
-    jvmPlatformPath = new Lazy<>(SpecialLocations::currentPlatformClassPathLocations);
-    jvmSystemModules = new Lazy<>(SpecialLocations::javaRuntimeLocations);
+    jvmClassPath = new Lazy<>(SpecialLocationUtils::currentClassPathLocations);
+    jvmModulePath = new Lazy<>(SpecialLocationUtils::currentModulePathLocations);
+    jvmPlatformPath = new Lazy<>(SpecialLocationUtils::currentPlatformClassPathLocations);
+    jvmSystemModules = new Lazy<>(SpecialLocationUtils::javaRuntimeLocations);
 
     locations = new HashMap<>();
 
@@ -414,7 +414,7 @@ public final class FileManagerBuilder {
       // the reference to the Ram directory itself. This prevents premature closure and also ensures
       // the generated directory does not outlive the file manager.
       var tempFs = testDirectoryFactory.create("tmp", false);
-      GarbageDisposal.onPhantom(
+      GarbageDisposalUtils.onPhantom(
           fileManager,
           "temporary directory for compiler inputs and outputs (" + tempFs + ")",
           tempFs::close

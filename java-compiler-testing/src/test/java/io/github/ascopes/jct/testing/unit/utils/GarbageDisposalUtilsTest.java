@@ -16,19 +16,19 @@
 package io.github.ascopes.jct.testing.unit.utils;
 
 import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
-import io.github.ascopes.jct.utils.GarbageDisposal;
+import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import org.junit.jupiter.api.DisplayName;
 
 /**
- * Tests for {@link GarbageDisposal}.
+ * Tests for {@link GarbageDisposalUtils}.
  *
  * @author Ashley Scopes
  */
-@DisplayName("GarbageDisposal tests")
-class GarbageDisposalTest implements StaticClassTestTemplate {
+@DisplayName("GarbageDisposalUtils tests")
+class GarbageDisposalUtilsTest implements StaticClassTestTemplate {
 
   @Override
   public Class<?> getTypeBeingTested() {
-    return GarbageDisposal.class;
+    return GarbageDisposalUtils.class;
   }
 }

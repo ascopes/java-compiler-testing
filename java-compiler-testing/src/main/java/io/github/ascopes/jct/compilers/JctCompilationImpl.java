@@ -22,7 +22,7 @@ import static java.util.Objects.requireNonNull;
 import io.github.ascopes.jct.annotations.WillClose;
 import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
-import io.github.ascopes.jct.utils.GarbageDisposal;
+import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.List;
 import java.util.Set;
@@ -57,7 +57,7 @@ public final class JctCompilationImpl implements JctCompilation {
     fileManager = requireNonNull(builder.fileManager, "fileManager");
 
     // Ensure the File Manager gets closed on garbage collection.
-    GarbageDisposal.onPhantom(this, "file manager", fileManager);
+    GarbageDisposalUtils.onPhantom(this, "file manager", fileManager);
   }
 
   @Override

@@ -27,7 +27,7 @@ import io.github.ascopes.jct.containers.impl.ModuleContainerGroupImpl;
 import io.github.ascopes.jct.containers.impl.OutputContainerGroupImpl;
 import io.github.ascopes.jct.containers.impl.PackageContainerGroupImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
-import io.github.ascopes.jct.utils.GarbageDisposal;
+import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
@@ -77,9 +77,9 @@ public final class JctFileManagerImpl implements JctFileManager {
     modules = new ConcurrentHashMap<>();
     outputs = new ConcurrentHashMap<>();
 
-    GarbageDisposal.onPhantom(this, packages);
-    GarbageDisposal.onPhantom(this, modules);
-    GarbageDisposal.onPhantom(this, outputs);
+    GarbageDisposalUtils.onPhantom(this, packages);
+    GarbageDisposalUtils.onPhantom(this, modules);
+    GarbageDisposalUtils.onPhantom(this, outputs);
   }
 
   @Override

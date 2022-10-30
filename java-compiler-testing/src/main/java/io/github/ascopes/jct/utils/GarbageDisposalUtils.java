@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class GarbageDisposal {
+public final class GarbageDisposalUtils {
 
   // Tuning for JVMs on Windows.
   private static final int THREAD_PRIORITY = Thread.MAX_PRIORITY - 1;
@@ -39,8 +39,8 @@ public final class GarbageDisposal {
 
   private static final AtomicInteger CLEANER_THREAD_ID = new AtomicInteger(0);
   private static final ThreadGroup THREAD_GROUP = new ThreadGroup("JCT GarbageDisposal thread");
-  private static final Logger LOGGER = LoggerFactory.getLogger(GarbageDisposal.class);
-  private static final Lazy<Cleaner> CLEANER = new Lazy<>(GarbageDisposal::newCleaner);
+  private static final Logger LOGGER = LoggerFactory.getLogger(GarbageDisposalUtils.class);
+  private static final Lazy<Cleaner> CLEANER = new Lazy<>(GarbageDisposalUtils::newCleaner);
 
   /**
    * Close the given resources when the given reference becomes a phantom reference.
@@ -89,7 +89,7 @@ public final class GarbageDisposal {
     return thread;
   }
 
-  private GarbageDisposal() {
+  private GarbageDisposalUtils() {
     throw new UnsupportedOperationException("static-only class");
   }
 

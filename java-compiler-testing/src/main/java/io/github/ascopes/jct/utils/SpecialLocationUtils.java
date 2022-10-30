@@ -36,9 +36,9 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class SpecialLocations {
+public final class SpecialLocationUtils {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SpecialLocations.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(SpecialLocationUtils.class);
   private static final String NO_PATH = "";
   private static final URI JAVA_RUNTIME_URI = URI.create("jrt:/");
   private static final String JDK_MODULE_PROPERTY = "jdk.module.path";
@@ -46,7 +46,7 @@ public final class SpecialLocations {
       System.getProperty("path.separator", File.pathSeparator)
   );
 
-  private SpecialLocations() {
+  private SpecialLocationUtils() {
     throw new UnsupportedOperationException("static-only class");
   }
 
@@ -129,7 +129,7 @@ public final class SpecialLocations {
         // paths that don't actually exist to the class path, and Java will just ignore this
         // normally. It will cause random failures during builds, however, if directories such as
         // src/main/java do not exist.
-        .filter(SpecialLocations::exists)
+        .filter(SpecialLocationUtils::exists)
         .distinct()
         .collect(Collectors.toList());
   }

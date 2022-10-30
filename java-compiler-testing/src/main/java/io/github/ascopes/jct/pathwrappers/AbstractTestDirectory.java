@@ -21,7 +21,7 @@ import static java.util.Objects.requireNonNull;
 import io.github.ascopes.jct.annotations.CheckReturnValue;
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillClose;
-import io.github.ascopes.jct.utils.GarbageDisposal;
+import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -90,7 +90,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
 
     if (closeOnGc) {
       LOGGER.trace("Registering {} to be destroyed on garbage collection", uri);
-      GarbageDisposal.onPhantom(this, name, closeHook);
+      GarbageDisposalUtils.onPhantom(this, name, closeHook);
     }
   }
 

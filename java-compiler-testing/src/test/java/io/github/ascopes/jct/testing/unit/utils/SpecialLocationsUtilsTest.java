@@ -21,7 +21,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
-import io.github.ascopes.jct.utils.SpecialLocations;
+import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link SpecialLocations} tests.
+ * {@link SpecialLocationUtils} tests.
  *
  * <p>This is a little tricky to test, as we have to mock system properties and management beans
  * for this to be testable, and both of these are effectively global variables, so we have to
@@ -65,14 +65,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Ashley Scopes
  */
-@DisplayName("SpecialLocations tests")
+@DisplayName("SpecialLocationsUtils tests")
 @Execution(ExecutionMode.SAME_THREAD)
 @Isolated("modifies static state temporarily")
-class SpecialLocationsTest implements StaticClassTestTemplate {
+class SpecialLocationsUtilsTest implements StaticClassTestTemplate {
 
   @Override
   public Class<?> getTypeBeingTested() {
-    return SpecialLocations.class;
+    return SpecialLocationUtils.class;
   }
 
   @DisplayName("javaRuntimeLocations() returns the JRT location")
@@ -80,7 +80,7 @@ class SpecialLocationsTest implements StaticClassTestTemplate {
   @Test
   void javaRuntimeLocationsReturnsTheJrtLocation() {
     // When
-    var paths = SpecialLocations.javaRuntimeLocations();
+    var paths = SpecialLocationUtils.javaRuntimeLocations();
 
     // Then
     assertThat(paths)
@@ -102,7 +102,7 @@ class SpecialLocationsTest implements StaticClassTestTemplate {
       var deletedPath = tempPaths.deleteRandomPath();
 
       // When
-      var actual = SpecialLocations.currentClassPathLocations();
+      var actual = SpecialLocationUtils.currentClassPathLocations();
 
       // Then
       var expected = tempPaths.allExcept(deletedPath);
@@ -122,7 +122,7 @@ class SpecialLocationsTest implements StaticClassTestTemplate {
       var deletedPath = tempPaths.deleteRandomPath();
 
       // When
-      var actual = SpecialLocations.currentModulePathLocations();
+      var actual = SpecialLocationUtils.currentModulePathLocations();
 
       // Then
       var expected = tempPaths.allExcept(deletedPath);
@@ -145,7 +145,7 @@ class SpecialLocationsTest implements StaticClassTestTemplate {
       var deletedPath = tempPaths.deleteRandomPath();
 
       // When
-      var actual = SpecialLocations.currentPlatformClassPathLocations();
+      var actual = SpecialLocationUtils.currentPlatformClassPathLocations();
 
       // Then
       var expected = tempPaths.allExcept(deletedPath);
@@ -161,7 +161,7 @@ class SpecialLocationsTest implements StaticClassTestTemplate {
       given(mx.mock.isBootClassPathSupported()).willReturn(false);
 
       // When
-      var actual = SpecialLocations.currentPlatformClassPathLocations();
+      var actual = SpecialLocationUtils.currentPlatformClassPathLocations();
 
       // Then
       assertThat(actual).isEmpty();
