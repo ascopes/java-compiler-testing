@@ -36,23 +36,22 @@ class ExampleTest {
     @JavacCompilerTest
     void canCompileHelloWorld(JctCompiler<?, ?> compiler) {
         var sources = newRamDirectory("src")
-                .createFile("org/example/Message.java").withContents(
+                .createFile("org/example/Message.java").withContents("""
+                        package org.example;
+
+                        import lombok.Data;
+                        import lombok.NonNull;
+
+                        @Data
+                        public class Message {
+                          private String content;
+
+                          public static void main(String[] args) {
+                            Message message = new Message("Hello, World!");
+                            System.out.println(message);
+                          }
+                        }
                         """
-                                package org.example;
-
-                                import lombok.Data;
-                                import lombok.NonNull;
-
-                                @Data
-                                public class Message {
-                                  private String content;
-
-                                  public static void main(String[] args) {
-                                    Message message = new Message("Hello, World!");
-                                    System.out.println(message);
-                                  }
-                                }
-                                """
                 );
 
         // When
@@ -85,42 +84,39 @@ class ExampleTest {
     void canCompileModuleUsingLombok(JctCompiler<?, ?> compiler) {
         // Given
         var sources = newRamDirectory("hello.world")
-                .createFile("org/example/Message.java").withContents(
+                .createFile("org/example/Message.java").withContents("""
+                        package org.example;
+
+                        import lombok.Data;
+                        import lombok.NonNull;
+
+                        @Data
+                        public class Message {
+                          @NonNull
+                          private final String content;
+                        }
                         """
-                                package org.example;
-
-                                import lombok.Data;
-                                import lombok.NonNull;
-
-                                @Data
-                                public class Message {
-                                  @NonNull
-                                  private final String content;
-                                }
-                                """
                 )
-                .and().createFile("org/example/Main.java").withContents(
+                .and().createFile("org/example/Main.java").withContents("""
+                        package org.example;
+
+                        public class Main {
+                          public static void main(String[] args) {
+                            for (var arg : args) {
+                              var message = new Message(arg);
+                              System.out.println(arg);
+                            }
+                          }
+                        }
                         """
-                                package org.example;
-
-                                public class Main {
-                                  public static void main(String[] args) {
-                                    for (var arg : args) {
-                                      var message = new Message(arg);
-                                      System.out.println(arg);
-                                    }
-                                  }
-                                }
-                                """
                 )
-        and().createFile("module-info.java").withContents(
-                """
+                .and().createFile("module-info.java").withContents("""
                         module hello.world {
                           requires java.base;
                           requires static lombok;
                         }
                         """
-        );
+                );
 
         // When
         var compilation = compiler
