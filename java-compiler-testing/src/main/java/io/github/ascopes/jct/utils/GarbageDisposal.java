@@ -18,6 +18,7 @@ package io.github.ascopes.jct.utils;
 import java.lang.ref.Cleaner;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -32,6 +33,12 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class GarbageDisposal {
 
+  // Tuning for JVMs on Windows.
+  private static final int THREAD_PRIORITY = Thread.MAX_PRIORITY - 1;
+  private static final int THREAD_STACK_SIZE = 20 * 1_024;
+
+  private static final AtomicInteger CLEANER_THREAD_ID = new AtomicInteger(0);
+  private static final ThreadGroup THREAD_GROUP = new ThreadGroup("JCT GarbageDisposal thread");
   private static final Logger LOGGER = LoggerFactory.getLogger(GarbageDisposal.class);
   private static final Lazy<Cleaner> CLEANER = new Lazy<>(GarbageDisposal::newCleaner);
 
@@ -63,12 +70,23 @@ public final class GarbageDisposal {
 
   private static Cleaner newCleaner() {
     // This thread factory has exactly 1 thread created from it.
-    return Cleaner.create(runnable -> {
-      var thread = new Thread(runnable);
-      thread.setName("JCT GC hook caller");
-      thread.setPriority(Thread.MIN_PRIORITY);
-      return thread;
-    });
+    return Cleaner.create(runnable -> newThread("cleaner thread", runnable));
+  }
+
+  private static Thread newThread(String name, Runnable runnable) {
+    var thread = new Thread(
+        THREAD_GROUP,
+        runnable,
+        "JCT GarbageDisposal - thread #"
+            + CLEANER_THREAD_ID.incrementAndGet()
+            + " - "
+            + name,
+        THREAD_STACK_SIZE,
+        false
+    );
+    thread.setDaemon(false);
+    thread.setPriority(THREAD_PRIORITY);
+    return thread;
   }
 
   private GarbageDisposal() {
@@ -87,26 +105,24 @@ public final class GarbageDisposal {
 
     @Override
     public void run() {
-      var thread = new Thread(() -> {
-        try {
-          LOGGER.debug("Closing {} ({})", name, closeable);
-          closeable.close();
-        } catch (Exception ex) {
-          var thisThread = Thread.currentThread();
-          LOGGER.error(
-              "Failed to close {} ({}) on thread {} [{}]",
-              name,
-              closeable,
-              thisThread.getId(),
-              thisThread.getName(),
-              ex
-          );
-        }
-      });
+      newThread("dispose of " + name, this::runSync).start();
+    }
 
-      thread.setName(toString());
-      thread.setPriority(Thread.MAX_PRIORITY);
-      thread.start();
+    private void runSync() {
+      try {
+        LOGGER.debug("Closing {} ({})", name, closeable);
+        closeable.close();
+      } catch (Exception ex) {
+        var thisThread = Thread.currentThread();
+        LOGGER.error(
+            "Failed to close {} ({}) on thread {} [{}]",
+            name,
+            closeable,
+            thisThread.getId(),
+            thisThread.getName(),
+            ex
+        );
+      }
     }
   }
 }
