@@ -25,7 +25,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class CompilerException extends RuntimeException {
+public final class CompilerException extends RuntimeException {
 
   /**
    * Initialize the error.
