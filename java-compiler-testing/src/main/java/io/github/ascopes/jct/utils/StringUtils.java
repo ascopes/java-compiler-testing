@@ -32,7 +32,7 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class StringUtils {
 
-  private static final BigDecimal THOUSAND = BigDecimal.valueOf(1000);
+  private static final BigDecimal THOUSAND = BigDecimal.valueOf(1_000);
   private static final List<String> TIME_UNITS = List.of("ns", "µs", "ms", "s");
   private static final DecimalFormat TIME_FORMAT = new DecimalFormat("0.##");
 
