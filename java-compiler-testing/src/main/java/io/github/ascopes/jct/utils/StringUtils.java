@@ -71,7 +71,7 @@ public final class StringUtils {
       return "";
     }
 
-    if (words.size() == 1)
+    if (words.size() == 1) {
       return words.get(0).toString();
     }
 
