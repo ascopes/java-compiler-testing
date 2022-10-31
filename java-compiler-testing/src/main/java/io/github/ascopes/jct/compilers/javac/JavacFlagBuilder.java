@@ -17,10 +17,9 @@ package io.github.ascopes.jct.compilers.javac;
 
 import io.github.ascopes.jct.compilers.FlagBuilder;
 import io.github.ascopes.jct.utils.ToStringBuilder;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -44,17 +43,17 @@ public final class JavacFlagBuilder implements FlagBuilder {
   private static final String ANNOTATION_OPT = "-A";
   private static final String RUNTIME_OPT = "-J";
 
-  private final Stream.Builder<String> craftedFlags;
-  private final Stream.Builder<String> annotationProcessorOptions;
-  private final Stream.Builder<String> otherOptions;
+  private final List<String> craftedFlags;
+  private final List<String> annotationProcessorOptions;
+  private final List<String> otherOptions;
 
   /**
    * Initialize this flag builder.
    */
   public JavacFlagBuilder() {
-    craftedFlags = Stream.builder();
-    annotationProcessorOptions = Stream.builder();
-    otherOptions = Stream.builder();
+    craftedFlags = new ArrayList<>();
+    annotationProcessorOptions = new ArrayList<>();
+    otherOptions = new ArrayList<>();
   }
 
   @Override
@@ -120,16 +119,16 @@ public final class JavacFlagBuilder implements FlagBuilder {
 
   @Override
   public JavacFlagBuilder compilerOptions(List<String> options) {
-    options.forEach(otherOptions::add);
+    otherOptions.addAll(options);
     return this;
   }
 
   @Override
   public List<String> build() {
-    return Stream
-        .of(craftedFlags.build(), annotationProcessorOptions.build(), otherOptions.build())
-        .flatMap(Function.identity())
-        .collect(Collectors.toList());
+    var allFlags = new ArrayList<String>(craftedFlags);
+    allFlags.addAll(annotationProcessorOptions);
+    allFlags.addAll(otherOptions);
+    return Collections.unmodifiableList(allFlags);
   }
 
   private JavacFlagBuilder addFlagIfTrue(boolean condition, String flag) {
