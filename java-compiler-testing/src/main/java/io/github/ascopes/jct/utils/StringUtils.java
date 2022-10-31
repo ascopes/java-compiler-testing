@@ -71,6 +71,10 @@ public final class StringUtils {
       return "";
     }
 
+    if (words.size() == 1)
+      return words.get(0).toString();
+    }
+
     var builder = new StringBuilder(words.get(0));
 
     var index = 1;
@@ -79,11 +83,10 @@ public final class StringUtils {
       builder.append(connector).append(words.get(index));
     }
 
-    if (index < words.size()) {
-      builder.append(lastConnector).append(words.get(index));
-    }
-
-    return builder.toString();
+    return builder
+        .append(lastConnector)
+        .append(words.get(index))
+        .toString();
   }
 
   /**
