@@ -38,7 +38,7 @@ public final class StringUtils {
   private static final DecimalFormat TIME_FORMAT = new DecimalFormat("0.##");
 
   // Other stuff
-  private static final char LF ='\n';
+  private static final char LF = '\n';
   private static final String NULL_STRING = "null";
   private static final String EMPTY_STRING = "";
 
@@ -80,7 +80,6 @@ public final class StringUtils {
     }
 
     var builder = new StringBuilder(words.get(0));
-
     var index = 1;
 
     for (; index < words.size() - 1; ++index) {
@@ -126,7 +125,7 @@ public final class StringUtils {
     var index = 0;
     var length = content.length();
 
-    for(; currentLine < lineNumber && index < length; ++index) {
+    for (; currentLine < lineNumber && index < length; ++index) {
       if (content.charAt(index) == LF) {
         ++currentLine;
       }
