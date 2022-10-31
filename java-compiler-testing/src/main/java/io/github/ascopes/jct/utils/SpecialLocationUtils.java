@@ -129,9 +129,9 @@ public final class SpecialLocationUtils {
         // paths that don't actually exist to the class path, and Java will just ignore this
         // normally. It will cause random failures during builds, however, if directories such as
         // src/main/java do not exist.
-        .filter(SpecialLocationUtils::exists)
         .distinct()
-        .collect(Collectors.toList());
+        .filter(SpecialLocationUtils::exists)
+        .collect(Collectors.toUnmodifiableList());
   }
 
   private static boolean exists(Path path) {
