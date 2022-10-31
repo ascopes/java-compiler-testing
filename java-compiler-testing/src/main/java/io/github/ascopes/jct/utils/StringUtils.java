@@ -24,7 +24,7 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Utilities for string manipulation.
+ * Utilities for string manipulation used internally in this library.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -32,11 +32,15 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class StringUtils {
 
+  // Number formatting stuff
   private static final BigDecimal THOUSAND = BigDecimal.valueOf(1_000);
   private static final List<String> TIME_UNITS = List.of("ns", "µs", "ms", "s");
   private static final DecimalFormat TIME_FORMAT = new DecimalFormat("0.##");
 
-  private static final String NULL = "null";
+  // Other stuff
+  private static final char LF ='\n';
+  private static final String NULL_STRING = "null";
+  private static final String EMPTY_STRING = "";
 
   private StringUtils() {
     throw new UnsupportedOperationException("static-only class");
@@ -68,7 +72,7 @@ public final class StringUtils {
       CharSequence lastConnector
   ) {
     if (words.isEmpty()) {
-      return "";
+      return EMPTY_STRING;
     }
 
     if (words.size() == 1) {
@@ -122,11 +126,10 @@ public final class StringUtils {
     var index = 0;
     var length = content.length();
 
-    while (currentLine < lineNumber && index < length) {
-      if (content.charAt(index) == '\n') {
+    for(; currentLine < lineNumber && index < length; ++index) {
+      if (content.charAt(index) == LF) {
         ++currentLine;
       }
-      ++index;
     }
 
     return currentLine == lineNumber
@@ -144,7 +147,7 @@ public final class StringUtils {
    * @return the index of the end of line or end of string, whichever comes first.
    */
   public static int indexOfEndOfLine(String content, int startAt) {
-    var index = content.indexOf('\n', startAt);
+    var index = content.indexOf(LF, startAt);
     return index == -1 ? content.length() : index;
   }
 
@@ -158,8 +161,7 @@ public final class StringUtils {
   public static String formatNanos(long nanos) {
     var duration = BigDecimal.valueOf(nanos);
     var index = 0;
-    while (duration.compareTo(THOUSAND) >= 0 && index < TIME_UNITS.size() - 1) {
-      ++index;
+    for (; duration.compareTo(THOUSAND) >= 0 && index < TIME_UNITS.size() - 1; ++index) {
       duration = duration.divide(
           THOUSAND,
           TIME_FORMAT.getMaximumFractionDigits(),
@@ -193,7 +195,7 @@ public final class StringUtils {
    */
   public static String quotedIterable(Iterable<?> iterable) {
     if (iterable == null) {
-      return NULL;
+      return NULL_STRING;
     }
 
     var builder = new StringBuilder("[");
@@ -208,18 +210,18 @@ public final class StringUtils {
       appendQuoted(builder, item);
     }
 
-    return builder.append("]").toString();
+    return builder.append(']').toString();
   }
 
   private static void appendQuoted(StringBuilder builder, Object object) {
     if (object == null) {
-      builder.append(NULL);
+      builder.append(NULL_STRING);
       return;
     }
 
     var objectStr = Objects.toString(object);
 
-    builder.append("\"");
+    builder.append('"');
 
     for (var i = 0; i < objectStr.length(); ++i) {
       var c = objectStr.charAt(i);
@@ -235,6 +237,6 @@ public final class StringUtils {
       }
     }
 
-    builder.append("\"");
+    builder.append('"');
   }
 }
