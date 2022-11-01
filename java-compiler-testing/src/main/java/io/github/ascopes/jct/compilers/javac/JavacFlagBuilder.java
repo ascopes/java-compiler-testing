@@ -141,7 +141,8 @@ public final class JavacFlagBuilder implements FlagBuilder {
 
   private JavacFlagBuilder addVersionIfPresent(String flagPrefix, String version) {
     if (version != null) {
-      craftedFlags.add(flagPrefix).add(version);
+      craftedFlags.add(flagPrefix);
+      craftedFlags.add(version);
     }
 
     return this;
