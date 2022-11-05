@@ -89,9 +89,6 @@
 
     <!-- Project flags -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- https://issues.apache.org/jira/browse/MNG-7038 -->
-    <!--suppress UnresolvedMavenProperty -->
-    <parent-pom-directory>${maven.multiModuleProjectDirectory}</parent-pom-directory>
 
     <project-organization-url>https://github.com/ascopes</project-organization-url>
     <project-scm-url>${project.organization.url}/java-compiler-testing</project-scm-url>
@@ -228,80 +225,6 @@
         </plugin>
 
         <plugin>
-          <!-- Enforces our license header and allows adding it automatically to code. -->
-          <groupId>com.mycila</groupId>
-          <artifactId>license-maven-plugin</artifactId>
-          <version>${license-maven-plugin.version}</version>
-
-          <configuration>
-            <!-- Useful flags: https://mycila.carbou.me/license-maven-plugin/ -->
-            <header>${parent-pom-directory}/.mvn/license/license-header.txt</header>
-
-            <mapping>
-              <java>SLASHSTAR_STYLE</java>
-            </mapping>
-            <includes>
-              <include>src/**/*.java</include>
-              <include>src/**/*.groovy</include>
-            </includes>
-            <properties>
-              <currentYear>2022</currentYear>
-              <inceptionYear>${project.inceptionYear}</inceptionYear>
-            </properties>
-            <strictCheck>true</strictCheck>
-          </configuration>
-
-          <executions>
-            <execution>
-              <id>check-license-headers</id>
-              <phase>validate</phase>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
-          <!-- Checking style of code matches the Google code style -->
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>${maven-checkstyle-plugin.version}</version>
-
-          <executions>
-            <execution>
-              <id>check-code-style</id>
-              <phase>validate</phase>
-              <goals>
-                <goal>check</goal>
-              </goals>
-              <configuration>
-                <configLocation>
-                  ${parent-pom-directory}/.mvn/checkstyle/checkstyle.xml
-                </configLocation>
-                <consoleOutput>true</consoleOutput>
-                <failsOnError>true</failsOnError>
-                <includeResources>true</includeResources>
-                <sourceDirectories>${project.basedir}/src</sourceDirectories>
-                <suppressionsLocation>
-                  ${parent-pom-directory}/.mvn/checkstyle/suppressions.xml
-                </suppressionsLocation>
-                <violationSeverity>info</violationSeverity>
-              </configuration>
-            </execution>
-          </executions>
-
-          <dependencies>
-            <dependency>
-              <!-- Force the usage of checkstyle v10 rather than v8.28 -->
-              <groupId>com.puppycrawl.tools</groupId>
-              <artifactId>checkstyle</artifactId>
-              <version>${checkstyle.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-
-        <plugin>
           <!-- Java compiler config -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -400,14 +323,76 @@
     </pluginManagement>
 
     <plugins>
+
       <plugin>
+        <!-- Enforces our license header and allows adding it automatically to code. -->
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
+        <version>${license-maven-plugin.version}</version>
+
+        <configuration>
+          <!-- Useful flags: https://mycila.carbou.me/license-maven-plugin/ -->
+          <header>.mvn/license/license-header.txt</header>
+
+          <mapping>
+            <java>SLASHSTAR_STYLE</java>
+          </mapping>
+          <includes>
+            <include>src/**/*.java</include>
+            <include>src/**/*.groovy</include>
+          </includes>
+          <properties>
+            <currentYear>2022</currentYear>
+            <inceptionYear>${project.inceptionYear}</inceptionYear>
+          </properties>
+          <strictCheck>true</strictCheck>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>check-license-headers</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
+        <!-- Checking style of code matches the Google code style -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${maven-checkstyle-plugin.version}</version>
+        <inherited>true</inherited>
+
+        <executions>
+          <execution>
+            <id>check-code-style</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <configLocation>.mvn/checkstyle/checkstyle.xml</configLocation>
+              <consoleOutput>true</consoleOutput>
+              <failsOnError>true</failsOnError>
+              <includeResources>true</includeResources>
+              <sourceDirectories>${project.basedir}/src</sourceDirectories>
+              <suppressionsLocation>.mvn/checkstyle/suppressions.xml</suppressionsLocation>
+              <violationSeverity>info</violationSeverity>
+            </configuration>
+          </execution>
+        </executions>
+
+        <dependencies>
+          <dependency>
+            <!-- Force the usage of checkstyle v10 rather than v8.28 -->
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${checkstyle.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>
