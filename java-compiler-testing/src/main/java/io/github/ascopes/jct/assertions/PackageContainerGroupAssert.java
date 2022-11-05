@@ -16,9 +16,13 @@
 package io.github.ascopes.jct.assertions;
 
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
+import static java.util.function.Predicate.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.assertions.helpers.LocationRepresentation;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
+import io.github.ascopes.jct.utils.IterableUtils;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
@@ -72,6 +76,27 @@ public final class PackageContainerGroupAssert
   }
 
   /**
+   * Assert that all given files exist.
+   *
+   * @param path  the first path to check for
+   * @param paths additional paths to check for.
+   * @throws AssertionError if any of the files do not exist.
+   */
+  public void allFilesExist(String path, String... paths) {
+    allFilesExist(IterableUtils.combineOneOrMore(path, paths));
+  }
+
+  /**
+   * Assert that all given files exist.
+   *
+   * @param paths paths to check for.
+   * @throws AssertionError if any of the files do not exist.
+   */
+  public void allFilesExist(Iterable<String> paths) {
+    assertThat(paths).allSatisfy(this::fileExists);
+  }
+
+  /**
    * Assert that the given file exists.
    *
    * @param path the relative path to look for.
@@ -94,15 +119,16 @@ public final class PackageContainerGroupAssert
                 .flatMap(container -> uncheckedIo(() -> container
                     .listAllFiles()
                     .stream()
+                    .filter(not(Files::isDirectory))
                     .map(container.getPathWrapper().getPath()::relativize)
                 ))
                 .collect(Collectors.toList()),
-            Path::toString,
-            FUZZY_CUTOFF
+            Path::toString
         )
         .stream()
-        .filter(it -> it.getScore() >= FUZZY_MIN_SCORE)
+        .limit(FUZZY_CUTOFF)
         .map(BoundExtractedResult::getReferent)
+        .sorted()
         .collect(Collectors.toList());
 
     var locationName = LocationRepresentation.getInstance().toStringOf(actual.getLocation());

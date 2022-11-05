@@ -40,7 +40,6 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
     extends AbstractAssert<I, C> {
 
   protected static final int FUZZY_CUTOFF = 5;
-  protected static final int FUZZY_MIN_SCORE = 80;
 
   /**
    * Initialize the container group assertions.

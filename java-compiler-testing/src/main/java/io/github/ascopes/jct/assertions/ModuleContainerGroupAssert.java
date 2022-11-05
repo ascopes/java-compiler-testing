@@ -84,12 +84,12 @@ public final class ModuleContainerGroupAssert
         .extractSorted(
             module,
             actual.getModules().keySet(),
-            ModuleLocation::getModuleName,
-            FUZZY_CUTOFF
+            ModuleLocation::getModuleName
         )
         .stream()
-        .filter(it -> it.getScore() >= FUZZY_MIN_SCORE)
+        .limit(FUZZY_CUTOFF)
         .map(BoundExtractedResult::getReferent)
+        .sorted()
         .collect(Collectors.toList());
 
     var locationName = LocationRepresentation.getInstance().toStringOf(actual.getLocation());
