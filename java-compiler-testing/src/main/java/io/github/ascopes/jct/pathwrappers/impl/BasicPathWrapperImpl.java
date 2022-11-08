@@ -22,6 +22,7 @@ import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.pathwrappers.RamDirectory;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Objects;
 import org.apiguardian.api.API;
@@ -43,11 +44,15 @@ public final class BasicPathWrapperImpl implements PathWrapper {
   private final @Nullable PathWrapper parent;
   private final Path path;
   private final URI uri;
+  private final URL url;
 
   /**
    * Initialize this path wrapper from a given path.
    *
    * @param path the NIO path to wrap.
+   * @throws IllegalArgumentException if the path does not support dereferencing URLs (i.e. no URL
+   *                                  protocol handler is registered for the associated
+   *                                  {@link java.nio.file.FileSystem} providing the path).
    */
   public BasicPathWrapperImpl(Path path) {
     this(null, path);
@@ -58,6 +63,9 @@ public final class BasicPathWrapperImpl implements PathWrapper {
    *
    * @param parent the outer path-wrapper to use.
    * @param parts  the relative parts to resolve.
+   * @throws IllegalArgumentException if the path does not support dereferencing URLs (i.e. no URL
+   *                                  protocol handler is registered for the associated
+   *                                  {@link java.nio.file.FileSystem} providing the path).
    */
   public BasicPathWrapperImpl(PathWrapper parent, String... parts) {
     this(parent, resolveRecursively(parent.getPath(), parts));
@@ -67,6 +75,7 @@ public final class BasicPathWrapperImpl implements PathWrapper {
     this.parent = parent;
     this.path = requireNonNull(path, "path");
     uri = path.toUri();
+    url = PathWrapperUtils.retrieveRequiredUrl(this.path);
   }
 
   @Nullable
@@ -83,6 +92,11 @@ public final class BasicPathWrapperImpl implements PathWrapper {
   @Override
   public URI getUri() {
     return uri;
+  }
+
+  @Override
+  public URL getUrl() {
+    return url;
   }
 
   @Override

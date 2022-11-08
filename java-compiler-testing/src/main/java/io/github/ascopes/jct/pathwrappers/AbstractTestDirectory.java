@@ -21,6 +21,7 @@ import static java.util.Objects.requireNonNull;
 import io.github.ascopes.jct.annotations.CheckReturnValue;
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillClose;
+import io.github.ascopes.jct.pathwrappers.impl.PathWrapperUtils;
 import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
@@ -72,6 +73,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
   private final Path rootDirectory;
   private final String separator;
   private final URI uri;
+  private final URL url;
   private final Closeable closeHook;
 
   @SuppressWarnings("ThisEscapedInObjectConstruction")
@@ -82,16 +84,19 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
       boolean closeOnGc,
       Closeable closeHook
   ) {
+
+    // Register immediately so we still clean up if an exception is thrown from this constructor.
+    if (closeOnGc) {
+      LOGGER.trace("Registering {} to be destroyed on garbage collection", rootDirectory.toUri());
+      GarbageDisposalUtils.onPhantom(this, name, closeHook);
+    }
+
     this.name = requireNonNull(name, "name");
     this.closeHook = requireNonNull(closeHook, "closeHook");
     this.rootDirectory = requireNonNull(rootDirectory, "rootDirectory");
     this.separator = requireNonNull(separator, "separator");
     uri = this.rootDirectory.toUri();
-
-    if (closeOnGc) {
-      LOGGER.trace("Registering {} to be destroyed on garbage collection", uri);
-      GarbageDisposalUtils.onPhantom(this, name, closeHook);
-    }
+    url = PathWrapperUtils.retrieveRequiredUrl(this.rootDirectory);
   }
 
 
@@ -117,6 +122,12 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
   @Override
   public URI getUri() {
     return uri;
+  }
+
+  @CheckReturnValue
+  @Override
+  public URL getUrl() {
+    return url;
   }
 
   /**
@@ -295,31 +306,6 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
   @SuppressWarnings("unchecked")
   private I thisTestFileSystem() {
     return (I) this;
-  }
-
-  /**
-   * Assert that the given name is a valid name for a directory, and that it does not contain
-   * potentially dangerous characters such as double-dots or slashes that could be used to escape
-   * the directory we are running from.
-   *
-   * @param name the directory name to check.
-   * @throws IllegalArgumentException if the name is invalid.
-   * @throws NullPointerException     if the name is {@code null}.
-   */
-  protected static void assertValidRootName(@Nullable String name) {
-    Objects.requireNonNull(name, "name");
-
-    if (name.isBlank()) {
-      throw new IllegalArgumentException("Directory name cannot be blank");
-    }
-
-    if (!name.equals(name.trim())) {
-      throw new IllegalArgumentException("Directory name cannot begin or end in spaces");
-    }
-
-    if (name.contains("/") || name.contains("\\") || name.contains("..")) {
-      throw new IllegalArgumentException("Invalid file name provided");
-    }
   }
 
   /**

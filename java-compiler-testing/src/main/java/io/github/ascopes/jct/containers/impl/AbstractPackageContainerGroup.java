@@ -52,8 +52,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public abstract class AbstractPackageContainerGroup
-    implements PackageContainerGroup {
+public abstract class AbstractPackageContainerGroup implements PackageContainerGroup {
 
   // https://docs.oracle.com/cd/E19830-01/819-4712/ablgz/index.html
   private static final Set<String> ARCHIVE_EXTENSIONS = Set.of(
@@ -268,8 +267,10 @@ public abstract class AbstractPackageContainerGroup
     }
   }
 
-  protected ContainerGroupClassLoaderImpl createClassLoader() {
-    return new ContainerGroupClassLoaderImpl(getLocation(), getPackages());
-  }
-
+  /**
+   * Create a classloader and return it.
+   *
+   * @return the classloader.
+   */
+  protected abstract ClassLoader createClassLoader();
 }

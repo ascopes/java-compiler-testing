@@ -59,4 +59,9 @@ public class PackageContainerGroupImpl extends AbstractPackageContainerGroup {
       );
     }
   }
+
+  @Override
+  protected ClassLoader createClassLoader() {
+    return ContainerGroupUrlClassLoader.createClassLoaderFor(this);
+  }
 }

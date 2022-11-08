@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
@@ -213,7 +212,7 @@ public class OutputContainerGroupImpl
 
   @Override
   public Map<ModuleLocation, PackageContainerGroup> getModules() {
-    return null;
+    return Map.copyOf(modules);
   }
 
   @Override
@@ -227,16 +226,8 @@ public class OutputContainerGroupImpl
   }
 
   @Override
-  protected ContainerGroupClassLoaderImpl createClassLoader() {
-    var moduleMapping = modules
-        .entrySet()
-        .stream()
-        .collect(Collectors.toUnmodifiableMap(
-            entry -> entry.getKey().getModuleName(),
-            entry -> entry.getValue().getPackages()
-        ));
-
-    return new ContainerGroupClassLoaderImpl(location, getPackages(), moduleMapping);
+  protected ClassLoader createClassLoader() {
+    return ContainerGroupUrlClassLoader.createClassLoaderFor(this);
   }
 
   @SuppressWarnings("resource")
@@ -266,6 +257,11 @@ public class OutputContainerGroupImpl
 
     private OutputPackageContainerGroupImpl(Location location, String release) {
       super(location, release);
+    }
+
+    @Override
+    protected ClassLoader createClassLoader() {
+      return ContainerGroupUrlClassLoader.createClassLoaderFor(this);
     }
   }
 }
