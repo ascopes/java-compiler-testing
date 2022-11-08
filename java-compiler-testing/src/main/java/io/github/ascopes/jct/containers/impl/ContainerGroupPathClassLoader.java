@@ -40,15 +40,18 @@ import org.slf4j.LoggerFactory;
  *
  * @author Ashley Scopes
  * @since 0.0.1
+ * @deprecated use {@link ContainerGroupUrlClassLoader} instead. This class is kept for profiling
+ *     later on to compare the performance of the newer URL class loader versus this one.
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class ContainerGroupClassLoaderImpl extends ClassLoader {
+@API(since = "0.0.1", status = Status.DEPRECATED)
+@Deprecated(forRemoval = true)
+public class ContainerGroupPathClassLoader extends ClassLoader {
 
   static {
     ClassLoader.registerAsParallelCapable();
   }
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ContainerGroupClassLoaderImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ContainerGroupPathClassLoader.class);
   private static final List<Container> NO_PACKAGES = List.of();
   private static final Map<String, ? extends List<Container>> NO_MODULES = Map.of();
 
@@ -62,7 +65,7 @@ public class ContainerGroupClassLoaderImpl extends ClassLoader {
    * @param location          the location that the containers are for.
    * @param packageContainers the package containers.
    */
-  public ContainerGroupClassLoaderImpl(Location location,
+  public ContainerGroupPathClassLoader(Location location,
       List<? extends Container> packageContainers) {
     this(location, packageContainers, NO_MODULES);
   }
@@ -73,7 +76,7 @@ public class ContainerGroupClassLoaderImpl extends ClassLoader {
    * @param location         the location that the containers are for.
    * @param moduleContainers the module containers.
    */
-  public ContainerGroupClassLoaderImpl(
+  public ContainerGroupPathClassLoader(
       Location location,
       Map<String, ? extends List<Container>> moduleContainers
   ) {
@@ -87,7 +90,7 @@ public class ContainerGroupClassLoaderImpl extends ClassLoader {
    * @param packageContainers the package containers.
    * @param moduleContainers  the module containers.
    */
-  public ContainerGroupClassLoaderImpl(
+  public ContainerGroupPathClassLoader(
       Location location,
       List<? extends Container> packageContainers,
       Map<String, ? extends List<Container>> moduleContainers

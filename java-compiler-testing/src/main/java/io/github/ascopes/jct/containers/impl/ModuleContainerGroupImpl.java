@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -54,7 +53,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   private final Location location;
   private final Map<ModuleLocation, @WillCloseWhenClosed ModulePackageContainerGroupImpl> modules;
   private final String release;
-  private final Lazy<ContainerGroupClassLoaderImpl> classLoaderLazy;
+  private final Lazy<ClassLoader> classLoaderLazy;
 
   /**
    * Initialize this container group.
@@ -207,16 +206,8 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
         .toString();
   }
 
-  private ContainerGroupClassLoaderImpl createClassLoader() {
-    var moduleMapping = modules
-        .entrySet()
-        .stream()
-        .collect(Collectors.toUnmodifiableMap(
-            entry -> entry.getKey().getModuleName(),
-            entry -> entry.getValue().getPackages()
-        ));
-
-    return new ContainerGroupClassLoaderImpl(location, moduleMapping);
+  private ClassLoader createClassLoader() {
+    return ContainerGroupUrlClassLoader.createClassLoaderFor(this);
   }
 
   private ModulePackageContainerGroupImpl newPackageGroup(ModuleLocation location) {
@@ -232,6 +223,11 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
 
     private ModulePackageContainerGroupImpl(ModuleLocation location, String release) {
       super(location, release);
+    }
+
+    @Override
+    protected ClassLoader createClassLoader() {
+      return ContainerGroupUrlClassLoader.createClassLoaderFor(this);
     }
   }
 }

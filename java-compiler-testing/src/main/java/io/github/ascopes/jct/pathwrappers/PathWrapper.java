@@ -17,6 +17,7 @@ package io.github.ascopes.jct.pathwrappers;
 
 import io.github.ascopes.jct.annotations.Nullable;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import org.apiguardian.api.API;
@@ -59,6 +60,13 @@ public interface PathWrapper {
    * @return the URI.
    */
   URI getUri();
+
+  /**
+   * Get a URL representation of this path-like object.
+   *
+   * @return the URL.
+   */
+  URL getUrl();
 
   /**
    * Get the parent path wrapper, if there is one.
