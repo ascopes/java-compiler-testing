@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 @API(since = "0.0.1", status = Status.DEPRECATED)
 @Deprecated(forRemoval = true)
+@SuppressWarnings("removal")
 public class ContainerGroupPathClassLoader extends ClassLoader {
 
   static {
