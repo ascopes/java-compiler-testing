@@ -30,8 +30,10 @@ import org.apiguardian.api.API.Status;
  * @param <T> the type of each element the iterator returns.
  * @author Ashley Scopes
  * @since 0.0.1
+ * @deprecated No longer needed with the URL class loader.
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
+@Deprecated(forRemoval = true)
 public class EnumerationAdapter<T> implements Enumeration<T> {
 
   private final Iterator<T> iterator;
