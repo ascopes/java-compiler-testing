@@ -38,6 +38,7 @@ import org.junit.jupiter.params.provider.ValueSource;
  * @author Ashley Scopes
  */
 @DisplayName("EnumerationAdapter tests")
+@SuppressWarnings("removal")
 class EnumerationAdapterTest {
 
   @DisplayName("Initializing with a null iterator throws a NullPointerException")
