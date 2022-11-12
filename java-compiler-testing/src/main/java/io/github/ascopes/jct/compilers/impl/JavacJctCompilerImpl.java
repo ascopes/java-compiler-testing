@@ -73,13 +73,13 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
 
   @Override
   public String getDefaultRelease() {
-    return Integer.toString(getMaxVersion());
+    return Integer.toString(getLatestSupportedVersionInt());
   }
 
   /**
    * Get the maximum version of Javac that is supported.
    */
-  public static int getMaxVersion() {
+  public static int getLatestSupportedVersionInt() {
     return SourceVersion.latestSupported().ordinal();
   }
 }

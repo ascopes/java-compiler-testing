@@ -82,7 +82,7 @@ public @interface JavacCompilerTest {
           version -> new JavacJctCompilerImpl("Javac " + version).release(version),
           8,
           9,
-          JavacJctCompilerImpl.getMaxVersion()
+          JavacJctCompilerImpl.getLatestSupportedVersionInt()
       );
     }
 

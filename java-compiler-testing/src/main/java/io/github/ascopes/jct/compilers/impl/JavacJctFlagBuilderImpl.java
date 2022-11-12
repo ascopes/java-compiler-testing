@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.compilers.impl;
 
 import io.github.ascopes.jct.compilers.JctFlagBuilder;
-import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,25 +43,12 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   private static final String RUNTIME_OPT = "-J";
 
   private final List<String> craftedFlags;
-  private final List<String> annotationProcessorOptions;
-  private final List<String> otherOptions;
 
   /**
    * Initialize this flag builder.
    */
   public JavacJctFlagBuilderImpl() {
     craftedFlags = new ArrayList<>();
-    annotationProcessorOptions = new ArrayList<>();
-    otherOptions = new ArrayList<>();
-  }
-
-  @Override
-  public String toString() {
-    return new ToStringBuilder(this)
-        .attribute("craftedFlags", craftedFlags)
-        .attribute("annotationProcessorOptions", annotationProcessorOptions)
-        .attribute("otherOptions", otherOptions)
-        .toString();
   }
 
   @Override
@@ -107,28 +93,26 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
 
   @Override
   public JavacJctFlagBuilderImpl annotationProcessorOptions(List<String> options) {
-    options.forEach(option -> annotationProcessorOptions.add(ANNOTATION_OPT + option));
+    options.forEach(option -> craftedFlags.add(ANNOTATION_OPT + option));
     return this;
   }
 
   @Override
   public JavacJctFlagBuilderImpl runtimeOptions(List<String> options) {
-    options.forEach(option -> annotationProcessorOptions.add(RUNTIME_OPT + option));
+    options.forEach(option -> craftedFlags.add(RUNTIME_OPT + option));
     return this;
   }
 
   @Override
   public JavacJctFlagBuilderImpl compilerOptions(List<String> options) {
-    otherOptions.addAll(options);
+    craftedFlags.addAll(options);
     return this;
   }
 
   @Override
   public List<String> build() {
-    var allFlags = new ArrayList<String>(craftedFlags);
-    allFlags.addAll(annotationProcessorOptions);
-    allFlags.addAll(otherOptions);
-    return Collections.unmodifiableList(allFlags);
+    // Immutable copy.
+    return List.copyOf(craftedFlags);
   }
 
   private JavacJctFlagBuilderImpl addFlagIfTrue(boolean condition, String flag) {
