@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers.javac;
+package io.github.ascopes.jct.compilers.impl;
 
 import io.github.ascopes.jct.compilers.AbstractJctCompiler;
 import io.github.ascopes.jct.compilers.FileManagerBuilder;
@@ -29,8 +29,8 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class JavacJctCompiler extends AbstractJctCompiler<JavacJctCompiler> {
+@API(since = "0.0.1", status = Status.INTERNAL)
+public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctCompilerImpl> {
 
   private static final String NAME = "JDK Compiler";
 
@@ -38,7 +38,7 @@ public class JavacJctCompiler extends AbstractJctCompiler<JavacJctCompiler> {
   /**
    * Initialize a new Java compiler.
    */
-  public JavacJctCompiler() {
+  public JavacJctCompilerImpl() {
     this(ToolProvider.getSystemJavaCompiler());
   }
 
@@ -47,7 +47,7 @@ public class JavacJctCompiler extends AbstractJctCompiler<JavacJctCompiler> {
    *
    * @param jsr199Compiler the JSR-199 compiler backend to use.
    */
-  public JavacJctCompiler(JavaCompiler jsr199Compiler) {
+  public JavacJctCompilerImpl(JavaCompiler jsr199Compiler) {
     this(NAME, jsr199Compiler);
   }
 
@@ -56,7 +56,7 @@ public class JavacJctCompiler extends AbstractJctCompiler<JavacJctCompiler> {
    *
    * @param name the name to give the compiler.
    */
-  public JavacJctCompiler(String name) {
+  public JavacJctCompilerImpl(String name) {
     this(name, ToolProvider.getSystemJavaCompiler());
   }
 
@@ -66,8 +66,8 @@ public class JavacJctCompiler extends AbstractJctCompiler<JavacJctCompiler> {
    * @param name           the name to give the compiler.
    * @param jsr199Compiler the JSR-199 compiler backend to use.
    */
-  public JavacJctCompiler(String name, JavaCompiler jsr199Compiler) {
-    super(name, new FileManagerBuilder(), jsr199Compiler, new JavacFlagBuilder());
+  public JavacJctCompilerImpl(String name, JavaCompiler jsr199Compiler) {
+    super(name, new FileManagerBuilder(), jsr199Compiler, new JavacJctFlagBuilderImpl());
     addCompilerOptions("-implicit:class");
   }
 

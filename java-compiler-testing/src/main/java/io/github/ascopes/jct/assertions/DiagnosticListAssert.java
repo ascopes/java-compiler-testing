@@ -18,7 +18,7 @@ package io.github.ascopes.jct.assertions;
 import static java.util.Objects.requireNonNull;
 import static java.util.function.Predicate.not;
 
-import io.github.ascopes.jct.assertions.helpers.DiagnosticListRepresentation;
+import io.github.ascopes.jct.assertions.impl.DiagnosticListRepresentation;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.utils.IterableUtils;
 import io.github.ascopes.jct.utils.StringUtils;
@@ -41,7 +41,7 @@ import org.assertj.core.api.AbstractListAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class DiagnosticListAssert extends
+public final class DiagnosticListAssert extends
     AbstractListAssert<DiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, DiagnosticAssert> {
 
   /**

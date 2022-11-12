@@ -19,7 +19,7 @@ import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.ascopes.jct.assertions.helpers.LocationRepresentation;
+import io.github.ascopes.jct.assertions.impl.LocationRepresentation;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.nio.file.Files;

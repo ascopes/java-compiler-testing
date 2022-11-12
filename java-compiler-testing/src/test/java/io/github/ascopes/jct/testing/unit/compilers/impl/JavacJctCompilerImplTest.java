@@ -13,29 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.testing.unit.compilers.javac;
+package io.github.ascopes.jct.testing.unit.compilers.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.ascopes.jct.compilers.javac.JavacFlagBuilder;
-import io.github.ascopes.jct.compilers.javac.JavacJctCompiler;
+import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
+import io.github.ascopes.jct.compilers.impl.JavacJctFlagBuilderImpl;
 import io.github.ascopes.jct.testing.helpers.MoreMocks;
 import javax.tools.JavaCompiler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * {@link JavacJctCompiler} tests.
+ * {@link JavacJctCompilerImpl} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("JavacCompiler tests")
-class JavacCompilerTest {
+@DisplayName("JavacJctCompilerImpl tests")
+class JavacJctCompilerImplTest {
 
   @DisplayName("compilers have the expected default name")
   @Test
   void compilersHaveTheExpectedDefaultName() {
-    assertThat(new JavacJctCompiler(MoreMocks.stub(JavaCompiler.class)).getName())
+    assertThat(new JavacJctCompilerImpl(MoreMocks.stub(JavaCompiler.class)).getName())
         .isEqualTo("JDK Compiler");
   }
 
@@ -46,21 +46,21 @@ class JavacCompilerTest {
     var jsr199Compiler = MoreMocks.stub(JavaCompiler.class);
 
     // Then
-    assertThat(new JavacJctCompiler(jsr199Compiler).getJsr199Compiler())
+    assertThat(new JavacJctCompilerImpl(jsr199Compiler).getJsr199Compiler())
         .isSameAs(jsr199Compiler);
   }
 
   @DisplayName("compilers have the expected flag builder")
   @Test
   void compilersHaveTheExpectedFlagBuilder() {
-    assertThat(new JavacJctCompiler(MoreMocks.stub(JavaCompiler.class)).getFlagBuilder())
-        .isInstanceOf(JavacFlagBuilder.class);
+    assertThat(new JavacJctCompilerImpl(MoreMocks.stub(JavaCompiler.class)).getFlagBuilder())
+        .isInstanceOf(JavacJctFlagBuilderImpl.class);
   }
 
   @DisplayName("compilers have the -implicit:class flag set")
   @Test
   void compilersHaveTheImplicitClassFlagSet() {
-    var compiler = new JavacJctCompiler(MoreMocks.stub(JavaCompiler.class));
+    var compiler = new JavacJctCompilerImpl(MoreMocks.stub(JavaCompiler.class));
     assertThat(compiler.getCompilerOptions())
         .contains("-implicit:class");
   }

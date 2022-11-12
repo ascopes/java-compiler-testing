@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers;
+package io.github.ascopes.jct.compilers.impl;
 
 import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
 import io.github.ascopes.jct.annotations.WillNotClose;
+import io.github.ascopes.jct.compilers.JctFileManager;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -43,8 +44,8 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class LoggingFileManagerProxy implements InvocationHandler {
+@API(since = "0.0.1", status = Status.INTERNAL)
+public final class LoggingFileManagerProxy implements InvocationHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFileManagerProxy.class);
 

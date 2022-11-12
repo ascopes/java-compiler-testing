@@ -25,7 +25,7 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public interface FlagBuilder {
+public interface JctFlagBuilder {
 
   /**
    * Add output-verbosity preferences.
@@ -33,7 +33,7 @@ public interface FlagBuilder {
    * @param enabled whether the feature is enabled.
    * @return this builder.
    */
-  FlagBuilder verbose(boolean enabled);
+  JctFlagBuilder verbose(boolean enabled);
 
   /**
    * Add preview feature preferences.
@@ -41,7 +41,7 @@ public interface FlagBuilder {
    * @param enabled whether the feature is enabled.
    * @return this builder.
    */
-  FlagBuilder previewFeatures(boolean enabled);
+  JctFlagBuilder previewFeatures(boolean enabled);
 
   /**
    * Add warnings preferences.
@@ -49,7 +49,7 @@ public interface FlagBuilder {
    * @param enabled whether the feature is enabled.
    * @return this builder.
    */
-  FlagBuilder showWarnings(boolean enabled);
+  JctFlagBuilder showWarnings(boolean enabled);
 
   /**
    * Set whether to treat warnings as errors or not.
@@ -57,7 +57,7 @@ public interface FlagBuilder {
    * @param enabled whether to treat warnings as errors.
    * @return this builder.
    */
-  FlagBuilder failOnWarnings(boolean enabled);
+  JctFlagBuilder failOnWarnings(boolean enabled);
 
   /**
    * Add deprecation warning preferences.
@@ -65,7 +65,7 @@ public interface FlagBuilder {
    * @param enabled whether the feature is enabled.
    * @return this builder.
    */
-  FlagBuilder showDeprecationWarnings(boolean enabled);
+  JctFlagBuilder showDeprecationWarnings(boolean enabled);
 
   /**
    * Add the release version.
@@ -73,7 +73,7 @@ public interface FlagBuilder {
    * @param version the release version, or {@code null} if not specified.
    * @return this builder.
    */
-  FlagBuilder release(String version);
+  JctFlagBuilder release(String version);
 
   /**
    * Add the source version.
@@ -81,7 +81,7 @@ public interface FlagBuilder {
    * @param version the source version, or {@code null} if not specified.
    * @return this builder.
    */
-  FlagBuilder source(String version);
+  JctFlagBuilder source(String version);
 
   /**
    * Add the target version.
@@ -89,7 +89,7 @@ public interface FlagBuilder {
    * @param version the target version, or {@code null} if not specified.
    * @return this builder.
    */
-  FlagBuilder target(String version);
+  JctFlagBuilder target(String version);
 
   /**
    * Add annotation processor options.
@@ -97,7 +97,7 @@ public interface FlagBuilder {
    * @param options the annotation processor options to use.
    * @return this builder.
    */
-  FlagBuilder annotationProcessorOptions(List<String> options);
+  JctFlagBuilder annotationProcessorOptions(List<String> options);
 
   /**
    * Add runtime options.
@@ -105,7 +105,7 @@ public interface FlagBuilder {
    * @param options the options to pass to the runtime.
    * @return this builder.
    */
-  FlagBuilder runtimeOptions(List<String> options);
+  JctFlagBuilder runtimeOptions(List<String> options);
 
   /**
    * Add additional command line options.
@@ -113,7 +113,7 @@ public interface FlagBuilder {
    * @param options the additional commandline options to add.
    * @return this builder.
    */
-  FlagBuilder compilerOptions(List<String> options);
+  JctFlagBuilder compilerOptions(List<String> options);
 
   /**
    * Build the list of command line options to use.

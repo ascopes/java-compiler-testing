@@ -26,12 +26,11 @@ module io.github.ascopes.jct {
   requires static transitive org.apiguardian.api;
   requires org.assertj.core;
   requires static transitive org.junit.jupiter.params;
-  requires org.slf4j;
+  requires transitive org.slf4j;
 
   exports io.github.ascopes.jct.assertions;
   exports io.github.ascopes.jct.containers;
   exports io.github.ascopes.jct.compilers;
-  exports io.github.ascopes.jct.compilers.javac;
   exports io.github.ascopes.jct.diagnostics;
   exports io.github.ascopes.jct.ex;
   exports io.github.ascopes.jct.junit;
@@ -46,18 +45,21 @@ module io.github.ascopes.jct {
 
   opens io.github.ascopes.jct.annotations to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.assertions.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.compilers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.containers to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.diagnostics to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.ex to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.pathwrappers to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.pathwrappers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
 
   exports io.github.ascopes.jct.annotations to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.assertions.impl to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.compilers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.pathwrappers.impl to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.pathwrappers.impl to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
 }

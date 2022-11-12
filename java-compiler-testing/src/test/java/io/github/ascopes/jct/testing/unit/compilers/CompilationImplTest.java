@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.iterable;
 
-import io.github.ascopes.jct.compilers.JctCompilationImpl;
 import io.github.ascopes.jct.compilers.JctFileManager;
+import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.testing.helpers.MoreMocks;
 import io.github.ascopes.jct.testing.helpers.TypeRef;

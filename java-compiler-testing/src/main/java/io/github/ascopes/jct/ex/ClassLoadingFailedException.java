@@ -18,7 +18,6 @@ package io.github.ascopes.jct.ex;
 import static io.github.ascopes.jct.utils.StringUtils.quoted;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.utils.StringUtils;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;

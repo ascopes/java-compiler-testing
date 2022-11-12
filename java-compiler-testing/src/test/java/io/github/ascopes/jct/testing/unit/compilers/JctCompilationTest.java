@@ -32,9 +32,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
  *
  * @author Ashley Scopes
  */
-@DisplayName("Compilation tests")
+@DisplayName("JctCompilation tests")
 @ExtendWith(MockitoExtension.class)
-class CompilationTest {
+class JctCompilationTest {
 
   @Mock
   JctCompilation compilation;

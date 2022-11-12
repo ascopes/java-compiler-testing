@@ -15,18 +15,18 @@
  */
 open module io.github.ascopes.jct.testing {
   requires awaitility;
-  requires io.github.ascopes.jct;
+  requires transitive io.github.ascopes.jct;
   requires java.compiler;
   requires java.management;
   requires jimfs;
-  requires net.bytebuddy;         // required for mockito to work with JPMS.
-  requires net.bytebuddy.agent;   // required for mockito to work with JPMS.
-  requires org.assertj.core;
+  requires transitive net.bytebuddy;         // required for mockito to work with JPMS.
+  requires transitive net.bytebuddy.agent;   // required for mockito to work with JPMS.
+  requires transitive org.assertj.core;
   requires org.hamcrest;
-  requires org.junit.jupiter.api;
-  requires org.junit.jupiter.engine;
-  requires org.junit.jupiter.params;
+  requires transitive org.junit.jupiter.api;
+  requires transitive org.junit.jupiter.engine;
+  requires transitive org.junit.jupiter.params;
   requires org.mockito;
   requires org.mockito.junit.jupiter;
-  requires org.slf4j;
+  requires transitive org.slf4j;
 }

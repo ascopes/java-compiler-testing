@@ -17,6 +17,8 @@ package io.github.ascopes.jct.compilers;
 
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
+import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
+import io.github.ascopes.jct.compilers.impl.LoggingFileManagerProxy;
 import io.github.ascopes.jct.diagnostics.TeeWriter;
 import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import io.github.ascopes.jct.ex.CompilerException;
@@ -50,9 +52,9 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class CompilationFactory<A extends JctCompiler<A, JctCompilationImpl>> {
+public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(CompilationFactory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilationFactory.class);
 
   @Override
   public String toString() {
@@ -72,7 +74,7 @@ public class CompilationFactory<A extends JctCompiler<A, JctCompilationImpl>> {
       A compiler,
       FileManagerBuilder builder,
       JavaCompiler jsr199Compiler,
-      FlagBuilder flagBuilder
+      JctFlagBuilder flagBuilder
   ) {
     try {
       var flags = buildFlags(compiler, flagBuilder);
@@ -191,7 +193,7 @@ public class CompilationFactory<A extends JctCompiler<A, JctCompilationImpl>> {
    * @param flagBuilder the flag builder to use.
    * @return the flags to use.
    */
-  protected List<String> buildFlags(A compiler, FlagBuilder flagBuilder) {
+  protected List<String> buildFlags(A compiler, JctFlagBuilder flagBuilder) {
     return flagBuilder
         .annotationProcessorOptions(compiler.getAnnotationProcessorOptions())
         .showDeprecationWarnings(compiler.isShowDeprecationWarnings())
@@ -212,7 +214,7 @@ public class CompilationFactory<A extends JctCompiler<A, JctCompilationImpl>> {
    *
    * <p>LoggingMode will be applied to this via
    * {@link #applyLoggingToFileManager(JctCompiler, JctFileManager)}, which will be handled by
-   * {@link #compile(JctCompiler, FileManagerBuilder, JavaCompiler, FlagBuilder)}.
+   * {@link #compile(JctCompiler, FileManagerBuilder, JavaCompiler, JctFlagBuilder)}.
    *
    * @param compiler the compiler to use.
    * @return the file manager to use.

@@ -142,7 +142,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @return this compiler object for further call chaining.
    * @throws T any exception that may be thrown by the configurer.
    */
-  <T extends Exception> C configure(CompilerConfigurer<? super C, T> configurer) throws T;
+  <T extends Exception> C configure(JctCompilerConfigurer<? super C, T> configurer) throws T;
 
   /**
    * Add a path-like object to a given location.

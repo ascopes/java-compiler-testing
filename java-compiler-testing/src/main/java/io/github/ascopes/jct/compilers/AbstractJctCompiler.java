@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
+import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.pathwrappers.TestDirectoryFactory;
 import java.nio.charset.Charset;
@@ -43,9 +44,9 @@ import org.apiguardian.api.API.Status;
  * <p>This class is <strong>not</strong> thread-safe.
  *
  * <p>If you wish to create a common set of configuration settings for instances of
- * this class, you should consider writing a custom {@link CompilerConfigurer} object to apply the
- * desired operations, and then apply it to instances of this class using
- * {@link #configure(CompilerConfigurer)}.
+ * this class, you should consider writing a custom {@link JctCompilerConfigurer} object to apply
+ * the desired operations, and then apply it to instances of this class using
+ * {@link #configure(JctCompilerConfigurer)}.
  *
  * @param <A> the type of the class extending this class.
  * @author Ashley Scopes
@@ -57,7 +58,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
 
   private final String name;
   private final JavaCompiler jsr199Compiler;
-  private final FlagBuilder flagBuilder;
+  private final JctFlagBuilder flagBuilder;
   private final FileManagerBuilder fileManagerBuilder;
   private final List<Processor> annotationProcessors;
   private final List<String> annotationProcessorOptions;
@@ -87,7 +88,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
       String name,
       FileManagerBuilder fileManagerBuilder,
       JavaCompiler jsr199Compiler,
-      FlagBuilder flagBuilder
+      JctFlagBuilder flagBuilder
   ) {
     this.name = requireNonNull(name, "name");
     this.fileManagerBuilder = requireNonNull(fileManagerBuilder, "fileManagerTemplate");
@@ -119,7 +120,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
    *
    * @return the flag builder.
    */
-  public FlagBuilder getFlagBuilder() {
+  public JctFlagBuilder getFlagBuilder() {
     return flagBuilder;
   }
 
@@ -143,7 +144,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
 
   @Override
   public JctCompilationImpl compile() {
-    var factory = new CompilationFactory<A>();
+    var factory = new JctCompilationFactory<A>();
 
     return factory.compile(
         myself(),
@@ -155,7 +156,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
 
   @Override
   public final <T extends Exception> A configure(
-      CompilerConfigurer<? super A, T> configurer
+      JctCompilerConfigurer<? super A, T> configurer
   ) throws T {
     requireNonNull(configurer, "configurer");
     var me = myself();

@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.assertions;
 
-import io.github.ascopes.jct.assertions.helpers.LocationRepresentation;
+import io.github.ascopes.jct.assertions.impl.LocationRepresentation;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;

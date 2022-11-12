@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.assertions.helpers;
+package io.github.ascopes.jct.assertions.impl;
 
 import static javax.tools.Diagnostic.NOPOS;
 

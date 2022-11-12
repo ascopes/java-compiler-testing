@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers;
+package io.github.ascopes.jct.compilers.impl;
 
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillClose;
+import io.github.ascopes.jct.compilers.JctFileManager;
+import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.containers.ContainerGroup;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
@@ -53,7 +55,7 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.INTERNAL)
 public final class JctFileManagerImpl implements JctFileManager {
 
   private static final int UNSUPPORTED_ARGUMENT = -1;

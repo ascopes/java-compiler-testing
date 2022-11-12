@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.junit;
 
-import io.github.ascopes.jct.compilers.javac.JavacJctCompiler;
+import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
 import io.github.ascopes.jct.junit.JavacCompilerTest.JavacCompilersProvider;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -31,8 +31,8 @@ import org.junit.jupiter.params.support.AnnotationConsumer;
 
 /**
  * Annotation that can be applied to a {@link org.junit.jupiter.params.ParameterizedTest} to enable
- * passing in a range of {@link JavacJctCompiler} instances with specific configured versions as the
- * first parameter.
+ * passing in a range of {@link JavacJctCompilerImpl} instances with specific configured versions
+ * as the  first parameter.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -79,10 +79,10 @@ public @interface JavacCompilerTest {
 
     JavacCompilersProvider() {
       super(
-          version -> new JavacJctCompiler("Javac " + version).release(version),
+          version -> new JavacJctCompilerImpl("Javac " + version).release(version),
           8,
           9,
-          JavacJctCompiler.getMaxVersion()
+          JavacJctCompilerImpl.getMaxVersion()
       );
     }
 

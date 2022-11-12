@@ -53,9 +53,9 @@ import org.mockito.quality.Strictness;
  *
  * @author Ashley Scopes
  */
-@DisplayName("Compilable tests")
+@DisplayName("JctCompiler tests")
 @ExtendWith(MockitoExtension.class)
-class CompilableTest {
+class JctCompilerTest {
 
   @Mock
   JctCompiler<?, ?> compiler;

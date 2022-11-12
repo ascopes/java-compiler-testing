@@ -19,8 +19,8 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
-import io.github.ascopes.jct.compilers.ModuleLocation;
 import io.github.ascopes.jct.compilers.PathFileObject;
+import io.github.ascopes.jct.compilers.impl.ModuleLocation;
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;

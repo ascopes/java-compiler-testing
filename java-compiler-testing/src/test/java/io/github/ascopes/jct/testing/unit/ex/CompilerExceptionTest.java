@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
  */
 @DisplayName("ClassMissingException tests")
 class CompilerExceptionTest {
+
   @DisplayName("The message is set when no cause is given")
   @Test
   void messageIsSetWhenNoCauseGiven() {

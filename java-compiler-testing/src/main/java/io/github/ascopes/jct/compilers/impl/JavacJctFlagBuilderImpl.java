@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers.javac;
+package io.github.ascopes.jct.compilers.impl;
 
-import io.github.ascopes.jct.compilers.FlagBuilder;
+import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +30,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class JavacFlagBuilder implements FlagBuilder {
+public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
 
   private static final String VERBOSE = "-verbose";
   private static final String ENABLE_PREVIEW = "--enable-preview";
@@ -50,7 +50,7 @@ public final class JavacFlagBuilder implements FlagBuilder {
   /**
    * Initialize this flag builder.
    */
-  public JavacFlagBuilder() {
+  public JavacJctFlagBuilderImpl() {
     craftedFlags = new ArrayList<>();
     annotationProcessorOptions = new ArrayList<>();
     otherOptions = new ArrayList<>();
@@ -66,59 +66,59 @@ public final class JavacFlagBuilder implements FlagBuilder {
   }
 
   @Override
-  public JavacFlagBuilder verbose(boolean enabled) {
+  public JavacJctFlagBuilderImpl verbose(boolean enabled) {
     return addFlagIfTrue(enabled, VERBOSE);
   }
 
   @Override
-  public JavacFlagBuilder previewFeatures(boolean enabled) {
+  public JavacJctFlagBuilderImpl previewFeatures(boolean enabled) {
     return addFlagIfTrue(enabled, ENABLE_PREVIEW);
   }
 
   @Override
-  public JavacFlagBuilder showWarnings(boolean enabled) {
+  public JavacJctFlagBuilderImpl showWarnings(boolean enabled) {
     return addFlagIfTrue(!enabled, NOWARN);
   }
 
   @Override
-  public JavacFlagBuilder failOnWarnings(boolean enabled) {
+  public JavacJctFlagBuilderImpl failOnWarnings(boolean enabled) {
     return addFlagIfTrue(enabled, WERROR);
   }
 
   @Override
-  public JavacFlagBuilder showDeprecationWarnings(boolean enabled) {
+  public JavacJctFlagBuilderImpl showDeprecationWarnings(boolean enabled) {
     return addFlagIfTrue(enabled, DEPRECATION);
   }
 
   @Override
-  public JavacFlagBuilder release(String version) {
+  public JavacJctFlagBuilderImpl release(String version) {
     return addVersionIfPresent(RELEASE, version);
   }
 
   @Override
-  public JavacFlagBuilder source(String version) {
+  public JavacJctFlagBuilderImpl source(String version) {
     return addVersionIfPresent(SOURCE, version);
   }
 
   @Override
-  public JavacFlagBuilder target(String version) {
+  public JavacJctFlagBuilderImpl target(String version) {
     return addVersionIfPresent(TARGET, version);
   }
 
   @Override
-  public JavacFlagBuilder annotationProcessorOptions(List<String> options) {
+  public JavacJctFlagBuilderImpl annotationProcessorOptions(List<String> options) {
     options.forEach(option -> annotationProcessorOptions.add(ANNOTATION_OPT + option));
     return this;
   }
 
   @Override
-  public JavacFlagBuilder runtimeOptions(List<String> options) {
+  public JavacJctFlagBuilderImpl runtimeOptions(List<String> options) {
     options.forEach(option -> annotationProcessorOptions.add(RUNTIME_OPT + option));
     return this;
   }
 
   @Override
-  public JavacFlagBuilder compilerOptions(List<String> options) {
+  public JavacJctFlagBuilderImpl compilerOptions(List<String> options) {
     otherOptions.addAll(options);
     return this;
   }
@@ -131,7 +131,7 @@ public final class JavacFlagBuilder implements FlagBuilder {
     return Collections.unmodifiableList(allFlags);
   }
 
-  private JavacFlagBuilder addFlagIfTrue(boolean condition, String flag) {
+  private JavacJctFlagBuilderImpl addFlagIfTrue(boolean condition, String flag) {
     if (condition) {
       craftedFlags.add(flag);
     }
@@ -139,7 +139,7 @@ public final class JavacFlagBuilder implements FlagBuilder {
     return this;
   }
 
-  private JavacFlagBuilder addVersionIfPresent(String flagPrefix, String version) {
+  private JavacJctFlagBuilderImpl addVersionIfPresent(String flagPrefix, String version) {
     if (version != null) {
       craftedFlags.add(flagPrefix);
       craftedFlags.add(version);

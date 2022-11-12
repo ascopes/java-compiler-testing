@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Javac integration.
+ * Implementation details for compiler integrations.
  */
-package io.github.ascopes.jct.compilers.javac;
+package io.github.ascopes.jct.compilers.impl;

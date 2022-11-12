@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers;
+package io.github.ascopes.jct.compilers.impl;
 
 import static io.github.ascopes.jct.utils.IterableUtils.nonNullUnmodifiableList;
 import static io.github.ascopes.jct.utils.IterableUtils.nonNullUnmodifiableSet;
@@ -21,6 +21,8 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.WillClose;
 import io.github.ascopes.jct.annotations.WillNotClose;
+import io.github.ascopes.jct.compilers.JctCompilation;
+import io.github.ascopes.jct.compilers.JctFileManager;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
@@ -37,7 +39,7 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.INTERNAL)
 public final class JctCompilationImpl implements JctCompilation {
 
   private final boolean success;

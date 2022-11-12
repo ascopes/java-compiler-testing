@@ -30,7 +30,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 @FunctionalInterface
-public interface CompilerConfigurer<C extends JctCompiler<C, ?>, T extends Exception> {
+public interface JctCompilerConfigurer<C extends JctCompiler<C, ?>, T extends Exception> {
 
   /**
    * Apply configuration logic to the given compiler.

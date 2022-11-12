@@ -16,4 +16,4 @@
 /**
  * Various internal helper types for assertions.
  */
-package io.github.ascopes.jct.assertions.helpers;
+package io.github.ascopes.jct.assertions.impl;
