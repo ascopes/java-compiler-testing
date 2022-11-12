@@ -101,17 +101,4 @@ public final class MoreMocks {
   public static <T> T stubCast(TypeRef<T> typeRef, MockSettings settings) {
     return stub(typeRef.getRawType(), settings);
   }
-
-  /**
-   * Argument matcher that checks a {@link CharSequence}-assignable argument matches a given regular
-   * expression.
-   *
-   * @param pattern the regex to match.
-   * @param <T>     argument matcher type.
-   * @return the matcher.
-   */
-  public static <T extends CharSequence> T stringLike(String pattern) {
-    return argThat(input -> Pattern.matches(pattern, input));
-  }
-
 }
