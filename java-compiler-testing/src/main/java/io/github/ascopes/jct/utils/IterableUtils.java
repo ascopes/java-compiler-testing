@@ -15,14 +15,11 @@
  */
 package io.github.ascopes.jct.utils;
 
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apiguardian.api.API;
@@ -58,30 +55,6 @@ public final class IterableUtils {
     list.add(first);
     list.addAll(Arrays.asList(rest));
     return list;
-  }
-
-  /**
-   * Ensure a given list has no null elements, then wrap it in an unmodifiable container.
-   *
-   * @param list     the list to check.
-   * @param listName the name of the list to show in error messages.
-   * @param <T>      the element type in the list.
-   * @return the unmodifiable version of the list.
-   */
-  public static <T> List<T> nonNullUnmodifiableList(List<T> list, String listName) {
-    return unmodifiableList(requireNonNullValues(list, listName));
-  }
-
-  /**
-   * Ensure a given set has no null elements, then wrap it in an unmodifiable container.
-   *
-   * @param set     the set to check.
-   * @param setName the name of the set to show in error messages.
-   * @param <T>     the element type in the set.
-   * @return the unmodifiable version of the set.
-   */
-  public static <T> Set<T> nonNullUnmodifiableSet(Set<T> set, String setName) {
-    return unmodifiableSet(requireNonNullValues(set, setName));
   }
 
   /**

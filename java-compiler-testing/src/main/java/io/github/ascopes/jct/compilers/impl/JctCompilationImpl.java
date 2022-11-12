@@ -15,8 +15,9 @@
  */
 package io.github.ascopes.jct.compilers.impl;
 
-import static io.github.ascopes.jct.utils.IterableUtils.nonNullUnmodifiableList;
-import static io.github.ascopes.jct.utils.IterableUtils.nonNullUnmodifiableSet;
+import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.WillClose;
@@ -51,12 +52,12 @@ public final class JctCompilationImpl implements JctCompilation {
 
   @SuppressWarnings("ThisEscapedInObjectConstruction")
   private JctCompilationImpl(Builder builder) {
-    success = requireNonNull(builder.success, "success");
-    failOnWarnings = requireNonNull(builder.failOnWarnings, "failOnWarnings");
-    outputLines = nonNullUnmodifiableList(builder.outputLines, "outputLines");
-    compilationUnits = nonNullUnmodifiableSet(builder.compilationUnits, "compilationUnits");
-    diagnostics = nonNullUnmodifiableList(builder.diagnostics, "diagnostics");
-    fileManager = requireNonNull(builder.fileManager, "fileManager");
+    success = builder.success;
+    failOnWarnings = builder.failOnWarnings;
+    outputLines = unmodifiableList(builder.outputLines);
+    compilationUnits = unmodifiableSet(builder.compilationUnits);
+    diagnostics = unmodifiableList(builder.diagnostics);
+    fileManager = builder.fileManager;
 
     // Ensure the File Manager gets closed on garbage collection.
     GarbageDisposalUtils.onPhantom(this, "file manager", fileManager);
@@ -206,6 +207,13 @@ public final class JctCompilationImpl implements JctCompilation {
      * @return the built object.
      */
     public JctCompilationImpl build() {
+      requireNonNull(success, "success");
+      requireNonNull(failOnWarnings, "failOnWarnings");
+      requireNonNullValues(outputLines, "outputLines");
+      requireNonNullValues(compilationUnits, "compilationUnits");
+      requireNonNullValues(diagnostics, "diagnostics");
+      requireNonNull(fileManager, "fileManager");
+
       return new JctCompilationImpl(this);
     }
   }
