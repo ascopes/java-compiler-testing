@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.testing.unit.compilers.impl;
 
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -43,7 +42,7 @@ class JavacJctCompilerImplTest {
 
   @BeforeEach
   void setUp() {
-    javaCompiler = stub(JavaCompiler.class);
+    javaCompiler = mock(JavaCompiler.class);
     compiler = new JavacJctCompilerImpl(javaCompiler);
   }
 
@@ -94,6 +93,7 @@ class JavacJctCompilerImplTest {
 
   @DisplayName("the latest supported version int has the expected value")
   @Test
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   void theLatestSupportedVersionIntHasTheExpectedValue() {
     // Given
     try (var sourceVersionMock = mockStatic(SourceVersion.class)) {

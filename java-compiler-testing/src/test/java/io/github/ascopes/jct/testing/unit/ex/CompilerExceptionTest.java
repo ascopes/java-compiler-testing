@@ -15,8 +15,8 @@
  */
 package io.github.ascopes.jct.testing.unit.ex;
 
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 import io.github.ascopes.jct.ex.CompilerException;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +49,7 @@ class CompilerExceptionTest {
   void messageIsSetWhenCauseGiven() {
     // Given
     var message = "qux quxx quxxx";
-    var cause = stub(Throwable.class);
+    var cause = mock(Throwable.class);
 
     // When
     var ex = new CompilerException(message, cause);
@@ -64,7 +64,7 @@ class CompilerExceptionTest {
   void causeIsSetWhenCauseGiven() {
     // Given
     var message = "do ray me";
-    var cause = stub(Throwable.class);
+    var cause = mock(Throwable.class);
 
     // When
     var ex = new CompilerException(message, cause);

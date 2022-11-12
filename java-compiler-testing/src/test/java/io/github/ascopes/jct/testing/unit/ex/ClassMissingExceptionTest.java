@@ -15,9 +15,9 @@
  */
 package io.github.ascopes.jct.testing.unit.ex;
 
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.ex.ClassMissingException;
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  * @author Ashley Scopes
  */
 @DisplayName("ClassMissingException tests")
-@SuppressWarnings("ThrowableNotThrown")
+@SuppressWarnings({"ConstantConditions", "ThrowableNotThrown"})
 class ClassMissingExceptionTest {
 
   @DisplayName("Null binary names are not allowed")
@@ -64,7 +64,7 @@ class ClassMissingExceptionTest {
   @Test
   void binaryNameIsSet() {
     var name = "foo.bar.Baz";
-    var location = stub(Location.class);
+    var location = mock(Location.class);
     when(location.getName()).thenReturn("some \"location\" in a place");
 
     // When
@@ -80,7 +80,7 @@ class ClassMissingExceptionTest {
   @Test
   void locationIsSet() {
     var name = "foo.bar.Baz";
-    var location = stub(Location.class);
+    var location = mock(Location.class);
     when(location.getName()).thenReturn("some \"location\" in a place");
 
     // When
@@ -96,7 +96,7 @@ class ClassMissingExceptionTest {
   void messageIsExpectedValue() {
     // Given
     var name = "foo.bar.Baz";
-    var location = stub(Location.class);
+    var location = mock(Location.class);
     when(location.getName()).thenReturn("some \"location\" in a place");
 
     // When

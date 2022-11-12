@@ -15,16 +15,16 @@
  */
 package io.github.ascopes.jct.testing.unit.compilers;
 
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
+import static io.github.ascopes.jct.testing.helpers.GenericMock.mockRaw;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.iterable;
+import static org.mockito.Mockito.mock;
 
 import io.github.ascopes.jct.compilers.JctFileManager;
 import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
-import io.github.ascopes.jct.testing.helpers.MoreMocks;
-import io.github.ascopes.jct.testing.helpers.TypeRef;
+import io.github.ascopes.jct.testing.helpers.Fixtures;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -104,7 +104,7 @@ class CompilationImplTest {
   void getCompilationUnitsReturnsExpectedValue(int compilationUnitCount) {
     // Given
     var compilationUnits = Stream
-        .generate(() -> stub(JavaFileObject.class))
+        .generate(() -> mock(JavaFileObject.class))
         .limit(compilationUnitCount)
         .collect(Collectors.toSet());
 
@@ -123,9 +123,8 @@ class CompilationImplTest {
   @ParameterizedTest(name = "for diagnosticCount = {0}")
   void getDiagnosticsReturnsExpectedValue(int diagnosticCount) {
     // Given
-    var diagnosticType = new TypeRef<TraceDiagnostic<JavaFileObject>>() {};
     var diagnostics = Stream
-        .generate(() -> MoreMocks.stubCast(diagnosticType))
+        .generate(Fixtures::someTraceDiagnostic)
         .limit(diagnosticCount)
         .collect(Collectors.toList());
 
@@ -135,7 +134,7 @@ class CompilationImplTest {
 
     // Then
     assertThat(compilation.getDiagnostics())
-        .asInstanceOf(iterable(diagnosticType.getRawType()))
+        .asInstanceOf(iterable(TraceDiagnostic.class))
         .containsExactlyElementsOf(diagnostics);
   }
 
@@ -143,7 +142,7 @@ class CompilationImplTest {
   @Test
   void getFileManagerReturnsExpectedValue() {
     // Given
-    var fileManager = stub(JctFileManager.class);
+    var fileManager = mock(JctFileManager.class);
     var compilation = filledBuilder()
         .fileManager(fileManager)
         .build();
@@ -163,7 +162,7 @@ class CompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
-          .fileManager(stub(JctFileManager.class))
+          .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .compilationUnits(Set.of())
@@ -181,7 +180,7 @@ class CompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
-          .fileManager(stub(JctFileManager.class))
+          .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .compilationUnits(Set.of())
@@ -211,7 +210,7 @@ class CompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
-          .fileManager(stub(JctFileManager.class))
+          .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .success(RANDOM.nextBoolean())
@@ -229,17 +228,17 @@ class CompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
-          .fileManager(stub(JctFileManager.class))
+          .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .success(RANDOM.nextBoolean())
           .failOnWarnings(RANDOM.nextBoolean())
           .compilationUnits(nullableSetOf(
-              stub(JavaFileObject.class),
-              stub(JavaFileObject.class),
-              stub(JavaFileObject.class),
+              mock(JavaFileObject.class),
+              mock(JavaFileObject.class),
+              mock(JavaFileObject.class),
               null,
-              stub(JavaFileObject.class)
+              mock(JavaFileObject.class)
           ));
 
       // Then
@@ -266,7 +265,7 @@ class CompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
-          .fileManager(stub(JctFileManager.class))
+          .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .compilationUnits(Set.of())
           .success(RANDOM.nextBoolean())
@@ -284,15 +283,19 @@ class CompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
-          .fileManager(MoreMocks.stub(JctFileManager.class))
+          .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .compilationUnits(Set.of())
           .success(RANDOM.nextBoolean())
           .failOnWarnings(RANDOM.nextBoolean())
           .diagnostics(nullableListOf(
-              MoreMocks.stubCast(new TypeRef<>() {}),
+              mockRaw(TraceDiagnostic.class)
+                  .<TraceDiagnostic<? extends JavaFileObject>>upcastedTo()
+                  .build(),
               null,
-              MoreMocks.stubCast(new TypeRef<>() {})
+              mockRaw(TraceDiagnostic.class)
+                  .<TraceDiagnostic<? extends JavaFileObject>>upcastedTo()
+                  .build()
           ));
 
       // Then
@@ -349,7 +352,7 @@ class CompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
-          .fileManager(MoreMocks.stub(JctFileManager.class))
+          .fileManager(mock(JctFileManager.class))
           .diagnostics(List.of())
           .compilationUnits(Set.of())
           .success(RANDOM.nextBoolean())
@@ -367,7 +370,7 @@ class CompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
-          .fileManager(MoreMocks.stub(JctFileManager.class))
+          .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .success(RANDOM.nextBoolean())
@@ -397,7 +400,7 @@ class CompilationImplTest {
         .compilationUnits(Set.of())
         .diagnostics(List.of())
         .failOnWarnings(RANDOM.nextBoolean())
-        .fileManager(MoreMocks.stub(JctFileManager.class))
+        .fileManager(mock(JctFileManager.class))
         .outputLines(List.of())
         .success(RANDOM.nextBoolean());
   }

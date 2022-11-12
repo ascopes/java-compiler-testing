@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assumptions.abort;
 
-import io.github.ascopes.jct.testing.helpers.ThreadPool;
 import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
@@ -33,9 +32,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
@@ -52,10 +51,11 @@ class GarbageDisposalUtilsIntegrationTest {
 
   static final Logger LOGGER = LoggerFactory.getLogger(GarbageDisposalUtilsIntegrationTest.class);
 
-  ThreadPool threadPool;
+  volatile boolean stop;
+  Thread thread;
 
-  @BeforeAll
-  static void ensureSystemGcHookTriggersGc() {
+  @BeforeEach
+  void setUp() {
     var initialCollections = ManagementFactory
         .getGarbageCollectorMXBeans()
         .stream()
@@ -79,30 +79,49 @@ class GarbageDisposalUtilsIntegrationTest {
           "Calling System.gc() did not trigger the GC hook in time, this test pack would be flaky"
       );
     }
-  }
 
-  @BeforeEach
-  @SuppressWarnings("InfiniteLoopStatement")
-  void setUp() {
     // Set up GC stress threads.
     var random = new Random();
-    threadPool = new ThreadPool(1);
-    threadPool.execute(() -> {
+    thread = new Thread(() -> {
       LOGGER.info("Starting GC stress thread");
       // Put stress on the garbage collector to run during the tests many times.
-      while (true) {
-        var array = new int[1_000_000];
+
+      var i = 0L;
+
+      while (!stop) {
+        ++i;
+
+        var array = new int[10_000_000];
         Arrays.fill(array, random.nextInt());
         Arrays.fill(array, array[random.nextInt(array.length)]);
+
+        if (i % 100 == 0) {
+          var memory = ManagementFactory.getMemoryMXBean();
+          var garbageCollectors = ManagementFactory.getGarbageCollectorMXBeans();
+          var gcSummary = garbageCollectors
+              .stream()
+              .map(gc -> gc.getName() + " GC'ed " + gc.getCollectionCount() + " times")
+              .collect(Collectors.joining(", "));
+
+          LOGGER.info(
+              "100 GC stress test passes completed -- heap={} -- nonHeap={} -- gc={}",
+              memory.getHeapMemoryUsage(),
+              memory.getNonHeapMemoryUsage(),
+              gcSummary
+          );
+        }
       }
     });
+
+    thread.setDaemon(true);
+    thread.start();
   }
 
   @AfterEach
-  void stopGcStress() {
+  void stopGcStress() throws InterruptedException {
     LOGGER.info("Stopping GC stress thread");
-    threadPool.shutdownNow();
-    threadPool.close();
+    stop = true;
+    thread.join();
   }
 
   @DisplayName("onPhantom(Object, String, AutoCloseable) cleans up reference on garbage disposal")
@@ -115,11 +134,12 @@ class GarbageDisposalUtilsIntegrationTest {
     // When
     GarbageDisposalUtils.onPhantom(new Object(), "foobar baz bork", closeable);
 
+    System.gc();
+
     // Then
     await("the closeable object gets closed during garbage collection")
         .atMost(20, SECONDS)
         .pollInterval(10, MILLISECONDS)
-        .failFast(System::gc)
         .untilAtomic(closedCount, is(greaterThanOrEqualTo(1)));
 
     assertThat(closedCount)
@@ -140,11 +160,12 @@ class GarbageDisposalUtilsIntegrationTest {
     // When
     GarbageDisposalUtils.onPhantom(new Object(), "throwing closeable", closeable);
 
+    System.gc();
+
     // Then
     await("the closeable object gets closed during garbage collection")
         .atMost(20, SECONDS)
         .pollInterval(10, MILLISECONDS)
-        .failFast(System::gc)
         .untilAtomic(closedCount, is(greaterThanOrEqualTo(1)));
 
     assertThat(closedCount)
@@ -166,11 +187,12 @@ class GarbageDisposalUtilsIntegrationTest {
     // When
     GarbageDisposalUtils.onPhantom(new Object(), mapping);
 
+    System.gc();
+
     // Then
     await("the closeable objects get closed during garbage collection")
         .atMost(40, SECONDS)
         .pollInterval(1, MILLISECONDS)
-        .failFast(System::gc)
         .untilAsserted(() -> assertThat(mapping)
             .extracting(Map::keySet, iterable(int.class))
             .allSatisfy(index -> assertThat(closeCounts[index]).hasValueGreaterThanOrEqualTo(1)));
@@ -205,11 +227,12 @@ class GarbageDisposalUtilsIntegrationTest {
     // When
     GarbageDisposalUtils.onPhantom(new Object(), mapping);
 
+    System.gc();
+
     // Then
     await("the closeable objects get closed during garbage collection")
         .atMost(20, SECONDS)
         .pollInterval(10, MILLISECONDS)
-        .failFast(System::gc)
         .untilAsserted(() -> assertThat(mapping)
             .extracting(Map::keySet, iterable(int.class))
             .allSatisfy(index -> assertThat(closeCounts[index]).hasValueGreaterThanOrEqualTo(1)));

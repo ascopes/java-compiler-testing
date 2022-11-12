@@ -15,8 +15,7 @@
  */
 package io.github.ascopes.jct.testing.unit.compilers;
 
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.mockCast;
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
+import static io.github.ascopes.jct.testing.helpers.GenericMock.mockRaw;
 import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -26,11 +25,11 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
-import io.github.ascopes.jct.testing.helpers.TypeRef;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 import javax.lang.model.SourceVersion;
@@ -289,11 +288,11 @@ class JctCompilerTest {
         name + "(PathLike) should return the compiler",
         () -> {
           // Given
-          var pathLike = stub(PathWrapper.class);
-          JctCompiler<?, ?> compiler = mockCast(
-              new TypeRef<>() {},
-              withSettings().strictness(Strictness.LENIENT)
-          );
+          var pathLike = mock(PathWrapper.class);
+          var compiler = mockRaw(JctCompiler.class)
+              .<JctCompiler<?, ?>>upcastedTo()
+              .build(withSettings().strictness(Strictness.LENIENT));
+
           given(compiler.addPath(any(), any(PathWrapper.class))).will(ctx -> compiler);
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
@@ -312,11 +311,11 @@ class JctCompilerTest {
         name + "(Path) should return the compiler",
         () -> {
           // Given
-          var path = stub(Path.class);
-          JctCompiler<?, ?> compiler = mockCast(
-              new TypeRef<>() {},
-              withSettings().strictness(Strictness.LENIENT)
-          );
+          var path = mock(Path.class);
+          var compiler = mockRaw(JctCompiler.class)
+              .<JctCompiler<?, ?>>upcastedTo()
+              .build(withSettings().strictness(Strictness.LENIENT));
+
           given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
@@ -335,11 +334,11 @@ class JctCompilerTest {
         name + "(PathLike) should delegate to addPath(" + locName + ", PathLike)",
         () -> {
           // Given
-          var pathLike = stub(PathWrapper.class);
-          JctCompiler<?, ?> compiler = mockCast(
-              new TypeRef<>() {},
-              withSettings().strictness(Strictness.LENIENT)
-          );
+          var pathLike = mock(PathWrapper.class);
+          var compiler = mockRaw(JctCompiler.class)
+              .<JctCompiler<?, ?>>upcastedTo()
+              .build(withSettings().strictness(Strictness.LENIENT));
+
           given(compiler.addPath(any(), any(PathWrapper.class))).will(ctx -> compiler);
           given(pathLikeAdder.add(compiler, pathLike)).willCallRealMethod();
 
@@ -355,11 +354,11 @@ class JctCompilerTest {
         name + "(Path) should delegate to addPath(" + locName + ", Path)",
         () -> {
           // Given
-          var path = stub(Path.class);
-          JctCompiler<?, ?> compiler = mockCast(
-              new TypeRef<>() {},
-              withSettings().strictness(Strictness.LENIENT)
-          );
+          var path = mock(Path.class);
+          var compiler = mockRaw(JctCompiler.class)
+              .<JctCompiler<?, ?>>upcastedTo()
+              .build(withSettings().strictness(Strictness.LENIENT));
+
           given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
           given(pathAdder.add(compiler, path)).willCallRealMethod();
 
@@ -414,11 +413,11 @@ class JctCompilerTest {
         name + "(String, PathLike) should return the compiler",
         () -> {
           // Given
-          var pathLike = stub(PathWrapper.class);
-          JctCompiler<?, ?> compiler = mockCast(
-              new TypeRef<>() {},
-              withSettings().strictness(Strictness.LENIENT)
-          );
+          var pathLike = mock(PathWrapper.class);
+          var compiler = mockRaw(JctCompiler.class)
+              .<JctCompiler<?, ?>>upcastedTo()
+              .build(withSettings().strictness(Strictness.LENIENT));
+
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
           given(compiler.addPath(any(), any(PathWrapper.class))).will(ctx -> compiler);
@@ -437,11 +436,11 @@ class JctCompilerTest {
         name + "(String, Path) should return the compiler",
         () -> {
           // Given
-          var path = stub(Path.class);
-          JctCompiler<?, ?> compiler = mockCast(
-              new TypeRef<>() {},
-              withSettings().strictness(Strictness.LENIENT)
-          );
+          var path = mock(Path.class);
+          var compiler = mockRaw(JctCompiler.class)
+              .<JctCompiler<?, ?>>upcastedTo()
+              .build(withSettings().strictness(Strictness.LENIENT));
+
           // Stub this method to keep results consistent, even though we shouldn't call it.
           // Just keeps the failure test results consistent and meaningful.
           given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
@@ -460,11 +459,11 @@ class JctCompilerTest {
         name + "(String, PathLike) should delegate to addPath(" + locName + ", String, PathLike)",
         () -> {
           // Given
-          var pathLike = stub(PathWrapper.class);
-          JctCompiler<?, ?> compiler = mockCast(
-              new TypeRef<>() {},
-              withSettings().strictness(Strictness.LENIENT)
-          );
+          var pathLike = mock(PathWrapper.class);
+          var compiler = mockRaw(JctCompiler.class)
+              .<JctCompiler<?, ?>>upcastedTo()
+              .build(withSettings().strictness(Strictness.LENIENT));
+
           given(compiler.addPath(any(), any(PathWrapper.class))).will(ctx -> compiler);
           given(pathLikeAdder.add(compiler, moduleName, pathLike)).willCallRealMethod();
 
@@ -480,11 +479,11 @@ class JctCompilerTest {
         name + "(String, Path) should delegate to addPath(" + locName + ", String, Path)",
         () -> {
           // Given
-          var path = stub(Path.class);
-          JctCompiler<?, ?> compiler = mockCast(
-              new TypeRef<>() {},
-              withSettings().strictness(Strictness.LENIENT)
-          );
+          var path = mock(Path.class);
+          var compiler = mockRaw(JctCompiler.class)
+              .<JctCompiler<?, ?>>upcastedTo()
+              .build(withSettings().strictness(Strictness.LENIENT));
+
           given(compiler.addPath(any(), any(Path.class))).will(ctx -> compiler);
           given(pathAdder.add(compiler, moduleName, path)).willCallRealMethod();
 

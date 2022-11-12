@@ -106,9 +106,13 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
 
     var now = Instant.now();
     var thisThread = threadGetter.get();
-    var threadId = thisThread.getId();
     var threadName = thisThread.getName();
     var stackTrace = List.of(thisThread.getStackTrace());
+
+    // Thread#getId deprecated for Thread#threadId in Java 19.
+    @SuppressWarnings("deprecation")
+    var threadId = thisThread.getId();
+
     var wrapped = new TraceDiagnostic<S>(now, threadId, threadName, stackTrace, diagnostic);
 
     diagnostics.add(wrapped);

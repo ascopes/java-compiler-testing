@@ -15,9 +15,8 @@
  */
 package io.github.ascopes.jct.testing.unit.diagnostics;
 
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.mockCast;
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.stubCast;
+import static io.github.ascopes.jct.testing.helpers.Fixtures.someDiagnostic;
+import static io.github.ascopes.jct.testing.helpers.Fixtures.someStackTraceList;
 import static java.time.Instant.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.then;
@@ -25,14 +24,12 @@ import static org.assertj.core.api.BDDAssertions.thenCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.verify;
+import static org.mockito.Mockito.mock;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
-import io.github.ascopes.jct.testing.helpers.TypeRef;
-import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
-import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +50,7 @@ class TraceDiagnosticTest {
   @DisplayName("null original diagnostics are rejected")
   @Test
   void nullDiagnosticsAreRejected() {
-    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var stack = someStackTraceList();
     thenCode(() -> new TraceDiagnostic<>(now(), 123, "foo", stack, null))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("original");
@@ -64,8 +61,8 @@ class TraceDiagnosticTest {
   @ParameterizedTest(name = "for kind = {0}")
   void getKindDelegates(Kind expected) {
     // Given
-    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
-    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var original = someDiagnostic();
+    var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     given(original.getKind()).willReturn(expected);
 
@@ -77,10 +74,11 @@ class TraceDiagnosticTest {
   @Test
   void getSourceDelegates() {
     // Given
-    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
-    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var original = someDiagnostic();
+    var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
-    var source = stub(JavaFileObject.class);
+    var source = mock(JavaFileObject.class);
+
     given(original.getSource()).willReturn(source);
 
     // Then
@@ -91,8 +89,8 @@ class TraceDiagnosticTest {
   @Test
   void getPositionDelegates() {
     // Given
-    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
-    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var original = someDiagnostic();
+    var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     var position = new Random().nextLong();
     given(original.getPosition()).willReturn(position);
@@ -105,8 +103,8 @@ class TraceDiagnosticTest {
   @Test
   void getStartPositionDelegates() {
     // Given
-    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
-    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var original = someDiagnostic();
+    var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     var startPosition = new Random().nextLong();
     given(original.getStartPosition()).willReturn(startPosition);
@@ -119,8 +117,8 @@ class TraceDiagnosticTest {
   @Test
   void getEndPositionDelegates() {
     // Given
-    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
-    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var original = someDiagnostic();
+    var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     var endPosition = new Random().nextLong();
     given(original.getEndPosition()).willReturn(endPosition);
@@ -133,8 +131,8 @@ class TraceDiagnosticTest {
   @Test
   void getLineNumberDelegates() {
     // Given
-    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
-    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var original = someDiagnostic();
+    var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     var lineNumber = new Random().nextLong();
     given(original.getLineNumber()).willReturn(lineNumber);
@@ -147,8 +145,8 @@ class TraceDiagnosticTest {
   @Test
   void getColumnNumberDelegates() {
     // Given
-    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
-    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var original = someDiagnostic();
+    var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     var columnNumber = new Random().nextLong();
     given(original.getColumnNumber()).willReturn(columnNumber);
@@ -163,8 +161,8 @@ class TraceDiagnosticTest {
   @ParameterizedTest(name = "for code = \"{0}\"")
   void getCodeDelegates(String expected) {
     // Given
-    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
-    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var original = someDiagnostic();
+    var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     given(original.getCode()).willReturn(expected);
 
@@ -176,8 +174,8 @@ class TraceDiagnosticTest {
   @Test
   void getMessageDelegates() {
     // Given
-    var original = mockCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
-    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var original = someDiagnostic();
+    var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     var message = UUID.randomUUID().toString();
     given(original.getMessage(any())).willReturn(message);
@@ -190,8 +188,8 @@ class TraceDiagnosticTest {
   @DisplayName("null timestamps are rejected")
   @Test
   void nullTimestampsAreRejected() {
-    var stack = stubCast(new TypeRef<List<StackTraceElement>>() {});
-    var diag = stubCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
+    var diag = someDiagnostic();
+    var stack = someStackTraceList();
     thenCode(() -> new TraceDiagnostic<>(null, 123, "foo", stack, diag))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("timestamp");
@@ -201,7 +199,7 @@ class TraceDiagnosticTest {
   @Test
   void nullStackTracesAreRejected() {
     var now = now();
-    var diag = stubCast(new TypeRef<Diagnostic<JavaFileObject>>() {});
+    var diag = someDiagnostic();
     thenCode(() -> new TraceDiagnostic<>(now, 123, "foo", null, diag))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("stackTrace");
@@ -216,8 +214,8 @@ class TraceDiagnosticTest {
         expectedTimestamp,
         123,
         "foo",
-        stubCast(new TypeRef<>() {}),
-        stubCast(new TypeRef<>() {})
+        someStackTraceList(),
+        someDiagnostic()
     );
 
     // When
@@ -236,8 +234,8 @@ class TraceDiagnosticTest {
         now(),
         expectedThreadId,
         "foo",
-        stubCast(new TypeRef<>() {}),
-        stubCast(new TypeRef<>() {})
+        someStackTraceList(),
+        someDiagnostic()
     );
 
     // When
@@ -256,8 +254,8 @@ class TraceDiagnosticTest {
         now(),
         1234,
         expectedThreadName,
-        stubCast(new TypeRef<>() {}),
-        stubCast(new TypeRef<>() {})
+        someStackTraceList(),
+        someDiagnostic()
     );
 
     // When
@@ -275,8 +273,8 @@ class TraceDiagnosticTest {
         now(),
         1234,
         null,
-        stubCast(new TypeRef<>() {}),
-        stubCast(new TypeRef<>() {})
+        someStackTraceList(),
+        someDiagnostic()
     );
 
     // When
@@ -290,13 +288,13 @@ class TraceDiagnosticTest {
   @Test
   void getStackTraceReturnsTheStackTrace() {
     // Given
-    var expectedStackTrace = stubCast(new TypeRef<List<StackTraceElement>>() {});
+    var expectedStackTrace = someStackTraceList();
     var diagnostic = new TraceDiagnostic<>(
         now(),
         1234,
         "foo",
         expectedStackTrace,
-        stubCast(new TypeRef<>() {})
+        someDiagnostic()
     );
 
     // When

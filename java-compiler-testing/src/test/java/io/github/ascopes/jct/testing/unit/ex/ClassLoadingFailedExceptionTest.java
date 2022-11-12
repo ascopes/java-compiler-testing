@@ -15,9 +15,9 @@
  */
 package io.github.ascopes.jct.testing.unit.ex;
 
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.ex.ClassLoadingFailedException;
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
  * @author Ashley Scopes
  */
 @DisplayName("ClassLoadingFailedException tests")
-@SuppressWarnings("ThrowableNotThrown")
+@SuppressWarnings({"ConstantConditions", "ThrowableNotThrown"})
 class ClassLoadingFailedExceptionTest {
 
   @DisplayName("Null binary names are not allowed")
@@ -39,8 +39,8 @@ class ClassLoadingFailedExceptionTest {
   void nullBinaryNamesAreNotAllowed() {
     // Given
     String name = null;
-    var location = stub(Location.class);
-    var cause = stub(Throwable.class);
+    var location = mock(Location.class);
+    var cause = mock(Throwable.class);
 
     when(location.getName()).thenReturn("something");
 
@@ -56,7 +56,7 @@ class ClassLoadingFailedExceptionTest {
     // Given
     var name = "something";
     Location location = null;
-    var cause = stub(Throwable.class);
+    var cause = mock(Throwable.class);
 
     // Then
     assertThatThrownBy(() -> new ClassLoadingFailedException(name, location, cause))
@@ -69,7 +69,7 @@ class ClassLoadingFailedExceptionTest {
   void nullCausesAreNotAllowed() {
     // Given
     var name = "something";
-    var location = stub(Location.class);
+    var location = mock(Location.class);
     Throwable cause = null;
 
     when(location.getName()).thenReturn("something else");
@@ -85,8 +85,8 @@ class ClassLoadingFailedExceptionTest {
   void binaryNameIsSet() {
     // Given
     var name = "foo.bar.Baz";
-    var location = stub(Location.class);
-    Throwable cause = stub(Throwable.class);
+    var location = mock(Location.class);
+    Throwable cause = mock(Throwable.class);
 
     when(location.getName()).thenReturn("some location");
 
@@ -104,8 +104,8 @@ class ClassLoadingFailedExceptionTest {
   void locationIsSet() {
     // Given
     var name = "foo.bar.Baz";
-    var location = stub(Location.class);
-    Throwable cause = stub(Throwable.class);
+    var location = mock(Location.class);
+    Throwable cause = mock(Throwable.class);
 
     when(location.getName()).thenReturn("some location");
 
@@ -122,8 +122,8 @@ class ClassLoadingFailedExceptionTest {
   void causeIsSet() {
     // Given
     var name = "foo.bar.Baz";
-    var location = stub(Location.class);
-    Throwable cause = stub(Throwable.class);
+    var location = mock(Location.class);
+    Throwable cause = mock(Throwable.class);
 
     when(location.getName()).thenReturn("some location");
 
@@ -140,8 +140,8 @@ class ClassLoadingFailedExceptionTest {
   void messageIsExpectedValue() {
     // Given
     var name = "foo.bar.Baz";
-    var location = stub(Location.class);
-    Throwable cause = stub(Throwable.class);
+    var location = mock(Location.class);
+    Throwable cause = mock(Throwable.class);
 
     when(location.getName()).thenReturn("some \"location\" in a place");
     when(cause.getMessage()).thenReturn("something something darkside");

@@ -24,7 +24,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 import io.github.ascopes.jct.diagnostics.TeeWriter;
-import io.github.ascopes.jct.testing.helpers.MoreMocks;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -168,7 +167,7 @@ class TeeWriterTest {
   @Test
   void toStringShouldReturnTheBufferContent() throws IOException {
     // Given
-    var writer = MoreMocks.stub(OutputStream.class);
+    var writer = mock(OutputStream.class);
     var tee = new TeeWriter(StandardCharsets.UTF_8, writer);
 
     // When

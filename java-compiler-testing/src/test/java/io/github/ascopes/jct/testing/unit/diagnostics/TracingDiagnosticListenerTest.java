@@ -15,32 +15,26 @@
  */
 package io.github.ascopes.jct.testing.unit.diagnostics;
 
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.stubCast;
+import static io.github.ascopes.jct.testing.helpers.Fixtures.someDiagnostic;
 import static java.util.Locale.ROOT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static org.assertj.core.api.InstanceOfAssertFactories.optional;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import io.github.ascopes.jct.testing.helpers.Slf4jLoggerFake;
-import io.github.ascopes.jct.testing.helpers.TypeRef;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +43,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.quality.Strictness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -69,12 +62,27 @@ class TracingDiagnosticListenerTest {
   @Test
   void getDiagnosticsReturnsCopy() {
     // Given
-    var listener = new TracingDiagnosticListener<>(false, false);
-    var diag1 = someDiagnostic(Kind.OTHER, "getDiagnosticsTest1");
-    var diag2 = someDiagnostic(Kind.NOTE, "getDiagnosticsTest2");
-    var diag3 = someDiagnostic(Kind.WARNING, "getDiagnosticsTest3");
-    var diag4 = someDiagnostic(Kind.MANDATORY_WARNING, "getDiagnosticsTest4");
-    var diag5 = someDiagnostic(Kind.ERROR, "getDiagnosticsTest5");
+    final var listener = new TracingDiagnosticListener<>(false, false);
+
+    var diag1 = someDiagnostic();
+    when(diag1.getKind()).thenReturn(Kind.OTHER);
+    when(diag1.getMessage(ROOT)).thenReturn("getDiagnosticsTest1");
+
+    var diag2 = someDiagnostic();
+    when(diag2.getKind()).thenReturn(Kind.NOTE);
+    when(diag2.getMessage(ROOT)).thenReturn("getDiagnosticsTest2");
+
+    var diag3 = someDiagnostic();
+    when(diag3.getKind()).thenReturn(Kind.WARNING);
+    when(diag3.getMessage(ROOT)).thenReturn("getDiagnosticsTest3");
+
+    var diag4 = someDiagnostic();
+    when(diag4.getKind()).thenReturn(Kind.MANDATORY_WARNING);
+    when(diag4.getMessage(ROOT)).thenReturn("getDiagnosticsTest4");
+
+    var diag5 = someDiagnostic();
+    when(diag5.getKind()).thenReturn(Kind.ERROR);
+    when(diag5.getMessage(ROOT)).thenReturn("getDiagnosticsTest5");
 
     // When
     listener.report(diag1);
@@ -113,7 +121,9 @@ class TracingDiagnosticListenerTest {
     var now = Instant.now();
     try (var mockedInstant = mockStatic(Instant.class)) {
       mockedInstant.when(Instant::now).thenReturn(now);
-      var originalDiagnostic = someDiagnostic(Kind.NOTE, "Testing timestamps");
+      var originalDiagnostic = someDiagnostic();
+      when(originalDiagnostic.getKind()).thenReturn(Kind.OTHER);
+      when(originalDiagnostic.getMessage(ROOT)).thenReturn("Testing timestamps");
 
       // When
       listener.report(originalDiagnostic);
@@ -129,15 +139,20 @@ class TracingDiagnosticListenerTest {
   @DisplayName("Diagnostics are logged with the expected thread ID")
   @MethodSource("loggingArgs")
   @ParameterizedTest(name = "for logging={0}, stackTraces={1}")
+  @SuppressWarnings("deprecation")
   void diagnosticsAreLoggedWithTheExpectedThreadId(boolean logging, boolean stackTraces) {
     // Given
     var threadId = new Random().nextInt(15_999) + 1L;
-    var currentThread = stub(Thread.class);
+    var currentThread = mock(Thread.class);
+
+    // Thread#getId deprecated for Thread#threadId in Java 19.
     when(currentThread.getId()).thenReturn(threadId);
-    when(currentThread.getStackTrace()).thenAnswer(ctx -> someStackTrace());
+    when(currentThread.getStackTrace()).thenReturn(new StackTraceElement[0]);
     var listener = new AccessibleImpl<>(() -> currentThread, logging, stackTraces);
 
-    var originalDiagnostic = someDiagnostic(Kind.OTHER, "Testing thread IDs");
+    var originalDiagnostic = someDiagnostic();
+    when(originalDiagnostic.getKind()).thenReturn(Kind.OTHER);
+    when(originalDiagnostic.getMessage(ROOT)).thenReturn("Testing thread IDs");
 
     // When
     listener.report(originalDiagnostic);
@@ -155,12 +170,14 @@ class TracingDiagnosticListenerTest {
   void diagnosticsAreLoggedWithTheExpectedThreadName(boolean logging, boolean stackTraces) {
     // Given
     var threadName = UUID.randomUUID().toString();
-    var currentThread = stub(Thread.class);
+    var currentThread = mock(Thread.class);
     when(currentThread.getName()).thenReturn(threadName);
-    when(currentThread.getStackTrace()).thenAnswer(ctx -> someStackTrace());
+    when(currentThread.getStackTrace()).thenReturn(new StackTraceElement[0]);
     var listener = new AccessibleImpl<>(() -> currentThread, logging, stackTraces);
 
-    var originalDiagnostic = someDiagnostic(Kind.OTHER, "Testing non-null thread names");
+    var originalDiagnostic = someDiagnostic();
+    when(originalDiagnostic.getKind()).thenReturn(Kind.OTHER);
+    when(originalDiagnostic.getMessage(ROOT)).thenReturn("Testing non null thread names");
 
     // When
     listener.report(originalDiagnostic);
@@ -178,12 +195,14 @@ class TracingDiagnosticListenerTest {
   @ParameterizedTest(name = "for logging={0}, stackTraces={1}")
   void diagnosticsAreLoggedWithNoThreadName(boolean logging, boolean stackTraces) {
     // Given
-    var currentThread = stub(Thread.class);
+    var currentThread = mock(Thread.class);
     when(currentThread.getName()).thenReturn(null);
-    when(currentThread.getStackTrace()).thenAnswer(ctx -> someStackTrace());
+    when(currentThread.getStackTrace()).thenReturn(new StackTraceElement[0]);
     var listener = new AccessibleImpl<>(() -> currentThread, logging, stackTraces);
 
-    var originalDiagnostic = someDiagnostic(Kind.OTHER, "Testing null thread names");
+    var originalDiagnostic = someDiagnostic();
+    when(originalDiagnostic.getKind()).thenReturn(Kind.OTHER);
+    when(originalDiagnostic.getMessage(ROOT)).thenReturn("Testing null thread names");
 
     // When
     listener.report(originalDiagnostic);
@@ -200,12 +219,14 @@ class TracingDiagnosticListenerTest {
   @ParameterizedTest(name = "for logging={0}, stackTraces={1}")
   void diagnosticsAreLoggedWithTheExpectedStackTrace(boolean logging, boolean stackTraces) {
     // Given
-    var stackTrace = someStackTrace();
-    var currentThread = stub(Thread.class);
-    when(currentThread.getStackTrace()).thenAnswer(ctx -> stackTrace);
+    var stackTrace = new StackTraceElement[0];
+    var currentThread = mock(Thread.class);
+    when(currentThread.getStackTrace()).thenReturn(stackTrace);
     var listener = new AccessibleImpl<>(() -> currentThread, logging, stackTraces);
 
-    var originalDiagnostic = someDiagnostic(Kind.OTHER, "Testing stack traces");
+    var originalDiagnostic = someDiagnostic();
+    when(originalDiagnostic.getKind()).thenReturn(Kind.OTHER);
+    when(originalDiagnostic.getMessage(ROOT)).thenReturn("OTHER logging tests");
 
     // When
     listener.report(originalDiagnostic);
@@ -225,8 +246,11 @@ class TracingDiagnosticListenerTest {
     var logger = mock(Logger.class);
     var listener = new AccessibleImpl<>(logger, false, stackTraces);
 
+    var originalDiagnostic = someDiagnostic();
+    when(originalDiagnostic.getKind()).thenReturn(kind);
+    when(originalDiagnostic.getMessage(ROOT)).thenReturn("LoggingMode disabled tests");
+
     // When
-    var originalDiagnostic = someDiagnostic(kind, "LoggingMode disabled tests");
     listener.report(originalDiagnostic);
 
     // Then
@@ -241,8 +265,11 @@ class TracingDiagnosticListenerTest {
     var logger = new Slf4jLoggerFake();
     var listener = new AccessibleImpl<>(logger, true, false);
 
+    var originalDiagnostic = someDiagnostic();
+    when(originalDiagnostic.getKind()).thenReturn(kind);
+    when(originalDiagnostic.getMessage(ROOT)).thenReturn("ERROR logging tests");
+
     // When
-    var originalDiagnostic = someDiagnostic(kind, "ERROR logging tests");
     listener.report(originalDiagnostic);
 
     // Then
@@ -261,18 +288,21 @@ class TracingDiagnosticListenerTest {
     // Given
     var logger = new Slf4jLoggerFake();
 
-    var thread = stub(Thread.class);
-    var stackTrace = someStackTrace();
+    var thread = mock(Thread.class);
+    var stackTrace = new StackTraceElement[0];
     when(thread.getStackTrace()).thenReturn(stackTrace);
     var listener = new AccessibleImpl<>(logger, () -> thread, true, true);
 
-    var expectedTraceString = Stream
+    final var expectedTraceString = Stream
         .of(stackTrace)
         .map(frame -> "\n\t" + frame)
         .collect(Collectors.joining());
 
+    var originalDiagnostic = someDiagnostic();
+    when(originalDiagnostic.getKind()).thenReturn(kind);
+    when(originalDiagnostic.getMessage(ROOT)).thenReturn("ERROR logging tests");
+
     // When
-    var originalDiagnostic = someDiagnostic(kind, "ERROR logging tests");
     listener.report(originalDiagnostic);
 
     // Then
@@ -293,8 +323,11 @@ class TracingDiagnosticListenerTest {
     var logger = new Slf4jLoggerFake();
     var listener = new AccessibleImpl<>(logger, true, false);
 
+    var originalDiagnostic = someDiagnostic();
+    when(originalDiagnostic.getKind()).thenReturn(kind);
+    when(originalDiagnostic.getMessage(ROOT)).thenReturn("WARNING logging tests");
+
     // When
-    var originalDiagnostic = someDiagnostic(kind, "WARNING logging tests");
     listener.report(originalDiagnostic);
 
     // Then
@@ -312,18 +345,21 @@ class TracingDiagnosticListenerTest {
   void warningsShouldBeLoggedAsWarningsWhenStackTracesAreEnabled(Kind kind) {
     // Given
     var logger = new Slf4jLoggerFake();
-    var thread = stub(Thread.class);
-    var stackTrace = someStackTrace();
+    var thread = mock(Thread.class);
+    var stackTrace = new StackTraceElement[0];
     when(thread.getStackTrace()).thenReturn(stackTrace);
     var listener = new AccessibleImpl<>(logger, () -> thread, true, true);
 
-    var expectedTraceString = Stream
+    final var expectedTraceString = Stream
         .of(stackTrace)
         .map(frame -> "\n\t" + frame)
         .collect(Collectors.joining());
 
+    var originalDiagnostic = someDiagnostic();
+    when(originalDiagnostic.getKind()).thenReturn(kind);
+    when(originalDiagnostic.getMessage(ROOT)).thenReturn("WARNING logging tests");
+
     // When
-    var originalDiagnostic = someDiagnostic(kind, "WARNING logging tests");
     listener.report(originalDiagnostic);
 
     // Then
@@ -344,8 +380,11 @@ class TracingDiagnosticListenerTest {
     var logger = new Slf4jLoggerFake();
     var listener = new AccessibleImpl<>(logger, true, false);
 
+    var originalDiagnostic = someDiagnostic();
+    when(originalDiagnostic.getKind()).thenReturn(kind);
+    when(originalDiagnostic.getMessage(ROOT)).thenReturn("INFO logging tests");
+
     // When
-    var originalDiagnostic = someDiagnostic(kind, "INFO logging tests");
     listener.report(originalDiagnostic);
 
     // Then
@@ -364,18 +403,21 @@ class TracingDiagnosticListenerTest {
     // Given
     var logger = new Slf4jLoggerFake();
 
-    var thread = stub(Thread.class);
-    var stackTrace = someStackTrace();
+    var thread = mock(Thread.class);
+    var stackTrace = new StackTraceElement[0];
     when(thread.getStackTrace()).thenReturn(stackTrace);
     var listener = new AccessibleImpl<>(logger, () -> thread, true, true);
 
-    var expectedTraceString = Stream
+    final var expectedTraceString = Stream
         .of(stackTrace)
         .map(frame -> "\n\t" + frame)
         .collect(Collectors.joining());
 
+    var originalDiagnostic = someDiagnostic();
+    when(originalDiagnostic.getKind()).thenReturn(kind);
+    when(originalDiagnostic.getMessage(ROOT)).thenReturn("INFO logging tests");
+
     // When
-    var originalDiagnostic = someDiagnostic(kind, "INFO logging tests");
     listener.report(originalDiagnostic);
 
     // Then
@@ -406,25 +448,9 @@ class TracingDiagnosticListenerTest {
         ));
   }
 
-  static Diagnostic<JavaFileObject> someDiagnostic(Kind kind, String message) {
-    var diagnostic = stubCast(
-        new TypeRef<Diagnostic<JavaFileObject>>() {},
-        withSettings().strictness(Strictness.LENIENT)
-    );
-    when(diagnostic.getKind()).thenReturn(kind);
-    when(diagnostic.getMessage(any())).thenReturn(message);
-    return diagnostic;
-  }
-
-  static StackTraceElement[] someStackTrace() {
-    var stackTrace = Thread.currentThread().getStackTrace();
-    var maxSize = Math.min(5, stackTrace.length);
-    return Arrays.copyOf(stackTrace, maxSize);
-  }
-
   static Supplier<Thread> dummyThreadSupplier() {
-    var thread = stub(Thread.class);
-    when(thread.getStackTrace()).thenReturn(someStackTrace());
+    var thread = mock(Thread.class);
+    when(thread.getStackTrace()).thenReturn(new StackTraceElement[0]);
     return () -> thread;
   }
 

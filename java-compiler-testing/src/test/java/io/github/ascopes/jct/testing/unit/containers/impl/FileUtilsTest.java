@@ -25,11 +25,11 @@ import static io.github.ascopes.jct.containers.impl.FileUtils.pathToKind;
 import static io.github.ascopes.jct.containers.impl.FileUtils.relativeResourceNameToPath;
 import static io.github.ascopes.jct.containers.impl.FileUtils.resourceNameToPath;
 import static io.github.ascopes.jct.containers.impl.FileUtils.simpleClassNameToPath;
-import static io.github.ascopes.jct.testing.helpers.MoreMocks.stub;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Feature;
@@ -69,7 +69,7 @@ class FileUtilsTest implements StaticClassTestTemplate {
   @Test
   void pathToBinaryNameThrowsIllegalArgumentExceptionForAbsolutePaths() {
     // Given
-    var path = stub(Path.class);
+    var path = mock(Path.class);
     given(path.isAbsolute()).willReturn(true);
     given(path.toString()).willReturn("/foo/bar/baz");
 

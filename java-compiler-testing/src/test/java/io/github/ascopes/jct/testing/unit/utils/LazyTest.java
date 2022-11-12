@@ -15,6 +15,8 @@
  */
 package io.github.ascopes.jct.testing.unit.utils;
 
+import static io.github.ascopes.jct.testing.helpers.GenericMock.mockRaw;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenCode;
@@ -26,14 +28,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import io.github.ascopes.jct.testing.helpers.ConcurrentRuns;
-import io.github.ascopes.jct.testing.helpers.ThreadPool;
-import io.github.ascopes.jct.testing.helpers.ThreadPool.RunTestsInIsolation;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.Lazy.ThrowingConsumer;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * {@link Lazy} tests.
@@ -85,40 +87,50 @@ class LazyTest {
   }
 
   @DisplayName("access() synchronizes correctly")
-  @ConcurrentRuns
+  @ValueSource(ints = {2, 4, 10, 100})
   @ParameterizedTest(name = "for {0} concurrent read(s)")
-  @RunTestsInIsolation
   @Timeout(30)
   void accessSynchronizesCorrectly(int concurrency) {
-    try (var executor = new ThreadPool(concurrency)) {
+    // This is closeable in Java 19, but not before.
+    @SuppressWarnings("resource")
+    var executor = Executors.newFixedThreadPool(concurrency);
+
+    try {
       // Given
       var value = new Object();
 
-      var supplier = (Supplier<Object>) mock(Supplier.class);
+      var supplier = mockRaw(Supplier.class)
+          .<Supplier<Object>>upcastedTo()
+          .build();
+
       when(supplier.get()).thenReturn(value);
 
       var lazy = new Lazy<>(supplier);
 
-      Callable<Object> accession = () -> {
+      Function<CompletableFuture<Object>, Callable<Object>> accession = future -> () -> {
         var skew = (Math.random() - 0.5) * 50;
         Thread.sleep(100 + (int) skew);
-        return lazy.access();
+        var result = lazy.access();
+
+        assertThat(result).isSameAs(value);
+
+        future.complete(result);
+        return result;
       };
 
-      var tasks = Stream
-          .generate(() -> accession)
-          .limit(concurrency)
-          .collect(Collectors.toList());
-
       // When
-      var results = executor.awaitingAll(tasks).join();
+      CompletableFuture
+          .allOf(Stream
+              .generate(CompletableFuture::new)
+              .limit(concurrency)
+              .peek(future -> executor.submit(accession.apply(future)))
+              .toArray(size -> new CompletableFuture<?>[size]))
+          .join();
 
       // Then
       verify(supplier, times(1)).get();
-
-      then(results)
-          .hasSize(concurrency)
-          .allMatch(value::equals);
+    } finally {
+      executor.shutdownNow();
     }
   }
 
