@@ -29,7 +29,6 @@ import static io.github.ascopes.jct.pathwrappers.TempDirectory.newTempDirectory
 @DisplayName("Spring Boot Configuration Processor acceptance tests")
 class SpringBootConfigurationProcessorTest {
 
-  // TODO(ascopes): use JPMS modules when we move to Spring Framework v6.0.0
   @DisplayName("Spring will index the application context as expected")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
@@ -39,6 +38,43 @@ class SpringBootConfigurationProcessorTest {
     def sources = newTempDirectory("sources")
         .createDirectory("org", "example")
         .copyContentsFrom("src", "test", "resources", "code")
+
+    // When
+    def compilation = compiler
+        .addSourcePath(sources)
+        .addAnnotationProcessors(new ConfigurationMetadataAnnotationProcessor())
+        .testDirectoryFactory(TempDirectory.&newTempDirectory)
+        .compile()
+
+    // Then
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings()
+        .classOutput()
+        .packages()
+        .fileExists("META-INF/spring-configuration-metadata.json")
+        .isNotEmptyFile()
+  }
+
+  @DisplayName("Spring will index the application context as expected with modules")
+  @Execution(ExecutionMode.CONCURRENT)
+  @JavacCompilerTest(modules = true)
+  void springWillIndexTheApplicationContextAsExpectedWithModules(JctCompiler compiler) {
+    // Given
+    // Use a temporary directory here as the configuration processor uses java.io.File internally.
+    def sources = newTempDirectory("sources")
+        .createDirectory("org", "example")
+        .copyContentsFrom("src", "test", "resources", "code")
+        .createFile("module-info.java").withContents("""
+          module org.example {
+            requires java.base;
+            requires spring.beans;
+            requires spring.boot;
+            requires spring.context;
+            requires spring.core;
+            requires spring.web;
+            requires spring.webflux;
+          }
+        """.stripMargin())
 
     // When
     def compilation = compiler
