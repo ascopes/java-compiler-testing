@@ -30,7 +30,7 @@ class SpringContextIndexerTest {
 
   @DisplayName("Spring will index the application context as expected")
   @Execution(ExecutionMode.CONCURRENT)
-  @JavacCompilerTest
+  @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpected(JctCompiler compiler) {
     // Given
     def sources = newRamDirectory("sources")
@@ -54,7 +54,7 @@ class SpringContextIndexerTest {
 
   @DisplayName("Spring will index the application context as expected with modules")
   @Execution(ExecutionMode.CONCURRENT)
-  @JavacCompilerTest(modules = true)
+  @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpectedWithModules(JctCompiler compiler) {
     // Given
     def sources = newRamDirectory("sources")

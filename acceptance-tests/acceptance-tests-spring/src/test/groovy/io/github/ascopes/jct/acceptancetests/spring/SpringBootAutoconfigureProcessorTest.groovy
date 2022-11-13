@@ -31,7 +31,7 @@ class SpringBootAutoconfigureProcessorTest {
 
   @DisplayName("Spring will index the application context as expected")
   @Execution(ExecutionMode.CONCURRENT)
-  @JavacCompilerTest
+  @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpected(JctCompiler compiler) {
     // Given
     // Use a temporary directory here as the configuration processor uses java.io.File internally.
@@ -57,7 +57,7 @@ class SpringBootAutoconfigureProcessorTest {
 
   @DisplayName("Spring will index the application context as expected when using modules")
   @Execution(ExecutionMode.CONCURRENT)
-  @JavacCompilerTest(modules = true)
+  @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpectedWhenUsingModules(JctCompiler compiler) {
     // Given
     // Use a temporary directory here as the configuration processor uses java.io.File internally.
