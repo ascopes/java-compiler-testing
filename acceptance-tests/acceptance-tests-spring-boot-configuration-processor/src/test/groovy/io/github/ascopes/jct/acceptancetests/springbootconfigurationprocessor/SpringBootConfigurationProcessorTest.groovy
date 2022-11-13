@@ -17,16 +17,17 @@ package io.github.ascopes.jct.acceptancetests.springbootconfigurationprocessor
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.pathwrappers.TempDirectory
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import org.springframework.context.index.processor.CandidateComponentsIndexer
+import org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
+import static io.github.ascopes.jct.pathwrappers.TempDirectory.newTempDirectory
 
-@DisplayName("Spring Context Indexer acceptance tests")
-class SpringContextIndexerTest {
+@DisplayName("Spring Boot Configuration Processor acceptance tests")
+class SpringBootConfigurationProcessorTest {
 
   // TODO(ascopes): use JPMS modules when we move to Spring Framework v6.0.0
   @DisplayName("Spring will index the application context as expected")
@@ -34,14 +35,16 @@ class SpringContextIndexerTest {
   @JavacCompilerTest
   void springWillIndexTheApplicationContextAsExpected(JctCompiler compiler) {
     // Given
-    def sources = newRamDirectory("sources")
+    // Use a temporary directory here as the configuration processor uses java.io.File internally.
+    def sources = newTempDirectory("sources")
         .createDirectory("org", "example")
         .copyContentsFrom("src", "test", "resources", "code")
 
     // When
     def compilation = compiler
         .addSourcePath(sources)
-        .addAnnotationProcessors(new CandidateComponentsIndexer())
+        .addAnnotationProcessors(new ConfigurationMetadataAnnotationProcessor())
+        .testDirectoryFactory(TempDirectory.&newTempDirectory)
         .compile()
 
     // Then
@@ -49,7 +52,7 @@ class SpringContextIndexerTest {
         .isSuccessfulWithoutWarnings()
         .classOutput()
         .packages()
-        .fileExists("META-INF/spring.components")
+        .fileExists("META-INF/spring-configuration-metadata.json")
         .isNotEmptyFile()
   }
 }
