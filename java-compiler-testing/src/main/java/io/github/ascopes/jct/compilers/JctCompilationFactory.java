@@ -21,7 +21,7 @@ import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
 import io.github.ascopes.jct.compilers.impl.LoggingFileManagerProxy;
 import io.github.ascopes.jct.diagnostics.TeeWriter;
 import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
-import io.github.ascopes.jct.ex.CompilerException;
+import io.github.ascopes.jct.ex.JctCompilerException;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
@@ -127,7 +127,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
             .build();
       }
     } catch (IOException ex) {
-      throw new CompilerException("Failed to compile due to an IOException: " + ex, ex);
+      throw new JctCompilerException("Failed to compile due to an IOException: " + ex, ex);
     }
   }
 
@@ -365,13 +365,13 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
   /**
    * Run the compilation task.
    *
-   * <p>Any exceptions that get thrown will be wrapped in {@link CompilerException} instances
+   * <p>Any exceptions that get thrown will be wrapped in {@link JctCompilerException} instances
    * before being rethrown.
    *
    * @param compiler the compiler to use.
    * @param task     the task to run.
    * @return {@code true} if the compilation succeeded, or {@code false} if compilation failed.
-   * @throws CompilerException if compilation throws an unhandled exception.
+   * @throws JctCompilerException if compilation throws an unhandled exception.
    */
   protected boolean runCompilationTask(A compiler, CompilationTask task) {
     var name = compiler.toString();
@@ -382,7 +382,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
       var duration = System.nanoTime() - start;
 
       if (result == null) {
-        throw new CompilerException("The compiler failed to produce a valid result");
+        throw new JctCompilerException("The compiler failed to produce a valid result");
       }
 
       LOGGER.info("Compilation with compiler {} {} after ~{}",
@@ -400,7 +400,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
           ex.getClass().getName(),
           ex.getMessage()
       );
-      throw new CompilerException("The compiler threw an exception", ex);
+      throw new JctCompilerException("The compiler threw an exception", ex);
     }
   }
 

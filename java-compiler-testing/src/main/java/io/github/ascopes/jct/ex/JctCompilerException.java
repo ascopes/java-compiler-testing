@@ -25,14 +25,14 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class CompilerException extends RuntimeException {
+public final class JctCompilerException extends JctException {
 
   /**
    * Initialize the error.
    *
    * @param message the error message.
    */
-  public CompilerException(String message) {
+  public JctCompilerException(String message) {
     super(message);
   }
 
@@ -42,7 +42,7 @@ public final class CompilerException extends RuntimeException {
    * @param message the error message.
    * @param cause   the cause of the error.
    */
-  public CompilerException(String message, Throwable cause) {
+  public JctCompilerException(String message, Throwable cause) {
     super(message, cause);
   }
 }

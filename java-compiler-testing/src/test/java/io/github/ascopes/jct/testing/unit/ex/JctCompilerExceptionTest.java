@@ -18,17 +18,17 @@ package io.github.ascopes.jct.testing.unit.ex;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import io.github.ascopes.jct.ex.CompilerException;
+import io.github.ascopes.jct.ex.JctCompilerException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link CompilerException}.
+ * Tests for {@link JctCompilerException}.
  *
  * @author Ashley Scopes
  */
-@DisplayName("ClassMissingException tests")
-class CompilerExceptionTest {
+@DisplayName("JctCompilerException tests")
+class JctCompilerExceptionTest {
 
   @DisplayName("The message is set when no cause is given")
   @Test
@@ -37,7 +37,7 @@ class CompilerExceptionTest {
     var message = "foo bar baz";
 
     // When
-    var ex = new CompilerException(message);
+    var ex = new JctCompilerException(message);
 
     // Then
     assertThat(ex)
@@ -52,7 +52,7 @@ class CompilerExceptionTest {
     var cause = mock(Throwable.class);
 
     // When
-    var ex = new CompilerException(message, cause);
+    var ex = new JctCompilerException(message, cause);
 
     // Then
     assertThat(ex)
@@ -67,7 +67,7 @@ class CompilerExceptionTest {
     var cause = mock(Throwable.class);
 
     // When
-    var ex = new CompilerException(message, cause);
+    var ex = new JctCompilerException(message, cause);
 
     // Then
     assertThat(ex)

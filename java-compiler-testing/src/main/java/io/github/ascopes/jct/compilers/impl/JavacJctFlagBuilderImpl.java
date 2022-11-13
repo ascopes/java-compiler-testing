@@ -17,7 +17,6 @@ package io.github.ascopes.jct.compilers.impl;
 
 import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;

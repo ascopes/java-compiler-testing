@@ -31,8 +31,8 @@ import org.junit.jupiter.params.support.AnnotationConsumer;
 
 /**
  * Annotation that can be applied to a {@link org.junit.jupiter.params.ParameterizedTest} to enable
- * passing in a range of {@link JavacJctCompilerImpl} instances with specific configured versions
- * as the  first parameter.
+ * passing in a range of {@link JavacJctCompilerImpl} instances with specific configured versions as
+ * the  first parameter.
  *
  * @author Ashley Scopes
  * @since 0.0.1

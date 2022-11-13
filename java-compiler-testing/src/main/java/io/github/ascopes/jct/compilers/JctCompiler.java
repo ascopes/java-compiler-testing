@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.compilers;
 
-import io.github.ascopes.jct.ex.CompilerException;
+import io.github.ascopes.jct.ex.JctCompilerException;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.pathwrappers.RamDirectory;
 import io.github.ascopes.jct.pathwrappers.TestDirectoryFactory;
@@ -1203,7 +1203,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * Invoke the compilation and return the compilation result.
    *
    * @return the compilation result.
-   * @throws CompilerException     if the compiler threw an unhandled exception. This should not
+   * @throws JctCompilerException  if the compiler threw an unhandled exception. This should not
    *                               occur for compilation failures generally.
    * @throws IllegalStateException if no compilation units were found.
    * @throws UncheckedIOException  if an IO error occurs.
