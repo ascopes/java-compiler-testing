@@ -104,4 +104,10 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>sk</id>
+    </profile>
+  </profiles>
 </project>

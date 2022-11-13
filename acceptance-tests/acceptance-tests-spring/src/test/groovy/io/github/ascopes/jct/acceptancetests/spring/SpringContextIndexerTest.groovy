@@ -17,16 +17,28 @@ package io.github.ascopes.jct.acceptancetests.spring
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.JRE
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.springframework.context.index.processor.CandidateComponentsIndexer
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
 import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
+import static org.assertj.core.api.Assumptions.assumeThat
 
 @DisplayName("Spring Context Indexer acceptance tests")
 class SpringContextIndexerTest {
+
+  @BeforeEach
+  void ensureJdk17() {
+    assumeThat(JRE.currentVersion())
+        .withFailMessage(
+            "This test targets Java 17 and newer"
+        )
+        .isGreaterThanOrEqualTo(JRE.JAVA_17)
+  }
 
   @DisplayName("Spring will index the application context as expected")
   @Execution(ExecutionMode.CONCURRENT)
