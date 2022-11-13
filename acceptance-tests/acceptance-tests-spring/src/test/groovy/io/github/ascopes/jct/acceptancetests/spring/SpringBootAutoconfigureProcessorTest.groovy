@@ -13,34 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.acceptancetests.springbootconfigurationprocessor
+package io.github.ascopes.jct.acceptancetests.spring
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.pathwrappers.TempDirectory
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import org.springframework.context.index.processor.CandidateComponentsIndexer
+import org.springframework.boot.autoconfigureprocessor.AutoConfigureAnnotationProcessor
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
+import static io.github.ascopes.jct.pathwrappers.TempDirectory.newTempDirectory
 
-@DisplayName("Spring Context Indexer acceptance tests")
-class SpringContextIndexerTest {
+@DisplayName("Spring Boot Autoconfigure Processor acceptance tests")
+class SpringBootAutoconfigureProcessorTest {
 
   @DisplayName("Spring will index the application context as expected")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
   void springWillIndexTheApplicationContextAsExpected(JctCompiler compiler) {
     // Given
-    def sources = newRamDirectory("sources")
+    // Use a temporary directory here as the configuration processor uses java.io.File internally.
+    def sources = newTempDirectory("sources")
         .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code")
+        .copyContentsFrom("src", "test", "resources", "code", "autoconfigure")
 
     // When
     def compilation = compiler
         .addSourcePath(sources)
-        .addAnnotationProcessors(new CandidateComponentsIndexer())
+        .addAnnotationProcessors(new AutoConfigureAnnotationProcessor())
+        .testDirectoryFactory(TempDirectory.&newTempDirectory)
         .compile()
 
     // Then
@@ -48,23 +51,25 @@ class SpringContextIndexerTest {
         .isSuccessfulWithoutWarnings()
         .classOutput()
         .packages()
-        .fileExists("META-INF/spring.components")
+        .fileExists("META-INF/spring-autoconfigure-metadata.properties")
         .isNotEmptyFile()
   }
 
-  @DisplayName("Spring will index the application context as expected with modules")
+  @DisplayName("Spring will index the application context as expected when using modules")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest(modules = true)
-  void springWillIndexTheApplicationContextAsExpectedWithModules(JctCompiler compiler) {
+  void springWillIndexTheApplicationContextAsExpectedWhenUsingModules(JctCompiler compiler) {
     // Given
-    def sources = newRamDirectory("sources")
+    // Use a temporary directory here as the configuration processor uses java.io.File internally.
+    def sources = newTempDirectory("sources")
         .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code")
+        .copyContentsFrom("src", "test", "resources", "code", "autoconfigure")
         .createFile("module-info.java").withContents("""
           module org.example {
             requires java.base;
             requires spring.beans;
             requires spring.boot;
+            requires spring.boot.autoconfigure;
             requires spring.context;
             requires spring.core;
             requires spring.web;
@@ -75,7 +80,8 @@ class SpringContextIndexerTest {
     // When
     def compilation = compiler
         .addSourcePath(sources)
-        .addAnnotationProcessors(new CandidateComponentsIndexer())
+        .addAnnotationProcessors(new AutoConfigureAnnotationProcessor())
+        .testDirectoryFactory(TempDirectory.&newTempDirectory)
         .compile()
 
     // Then
@@ -83,7 +89,7 @@ class SpringContextIndexerTest {
         .isSuccessfulWithoutWarnings()
         .classOutput()
         .packages()
-        .fileExists("META-INF/spring.components")
+        .fileExists("META-INF/spring-autoconfigure-metadata.properties")
         .isNotEmptyFile()
   }
 }

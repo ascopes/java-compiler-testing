@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.acceptancetests.springbootautoconfigureprocessor
+package io.github.ascopes.jct.acceptancetests.spring
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
@@ -21,13 +21,13 @@ import io.github.ascopes.jct.pathwrappers.TempDirectory
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import org.springframework.boot.autoconfigureprocessor.AutoConfigureAnnotationProcessor
+import org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
 import static io.github.ascopes.jct.pathwrappers.TempDirectory.newTempDirectory
 
-@DisplayName("Spring Boot Autoconfigure Processor acceptance tests")
-class SpringBootAutoconfigureProcessorTest {
+@DisplayName("Spring Boot Configuration Processor acceptance tests")
+class SpringBootConfigurationProcessorTest {
 
   @DisplayName("Spring will index the application context as expected")
   @Execution(ExecutionMode.CONCURRENT)
@@ -37,12 +37,12 @@ class SpringBootAutoconfigureProcessorTest {
     // Use a temporary directory here as the configuration processor uses java.io.File internally.
     def sources = newTempDirectory("sources")
         .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code")
+        .copyContentsFrom("src", "test", "resources", "code", "configuration")
 
     // When
     def compilation = compiler
         .addSourcePath(sources)
-        .addAnnotationProcessors(new AutoConfigureAnnotationProcessor())
+        .addAnnotationProcessors(new ConfigurationMetadataAnnotationProcessor())
         .testDirectoryFactory(TempDirectory.&newTempDirectory)
         .compile()
 
@@ -51,25 +51,24 @@ class SpringBootAutoconfigureProcessorTest {
         .isSuccessfulWithoutWarnings()
         .classOutput()
         .packages()
-        .fileExists("META-INF/spring-autoconfigure-metadata.properties")
+        .fileExists("META-INF/spring-configuration-metadata.json")
         .isNotEmptyFile()
   }
 
-  @DisplayName("Spring will index the application context as expected when using modules")
+  @DisplayName("Spring will index the application context as expected with modules")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest(modules = true)
-  void springWillIndexTheApplicationContextAsExpectedWhenUsingModules(JctCompiler compiler) {
+  void springWillIndexTheApplicationContextAsExpectedWithModules(JctCompiler compiler) {
     // Given
     // Use a temporary directory here as the configuration processor uses java.io.File internally.
     def sources = newTempDirectory("sources")
         .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code")
+        .copyContentsFrom("src", "test", "resources", "code", "configuration")
         .createFile("module-info.java").withContents("""
           module org.example {
             requires java.base;
             requires spring.beans;
             requires spring.boot;
-            requires spring.boot.autoconfigure;
             requires spring.context;
             requires spring.core;
             requires spring.web;
@@ -80,7 +79,7 @@ class SpringBootAutoconfigureProcessorTest {
     // When
     def compilation = compiler
         .addSourcePath(sources)
-        .addAnnotationProcessors(new AutoConfigureAnnotationProcessor())
+        .addAnnotationProcessors(new ConfigurationMetadataAnnotationProcessor())
         .testDirectoryFactory(TempDirectory.&newTempDirectory)
         .compile()
 
@@ -89,7 +88,7 @@ class SpringBootAutoconfigureProcessorTest {
         .isSuccessfulWithoutWarnings()
         .classOutput()
         .packages()
-        .fileExists("META-INF/spring-autoconfigure-metadata.properties")
+        .fileExists("META-INF/spring-configuration-metadata.json")
         .isNotEmptyFile()
   }
 }

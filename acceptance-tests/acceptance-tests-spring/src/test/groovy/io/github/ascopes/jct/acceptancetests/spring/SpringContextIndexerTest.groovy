@@ -13,37 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.acceptancetests.springbootconfigurationprocessor
+package io.github.ascopes.jct.acceptancetests.spring
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.github.ascopes.jct.pathwrappers.TempDirectory
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor
+import org.springframework.context.index.processor.CandidateComponentsIndexer
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.TempDirectory.newTempDirectory
+import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
 
-@DisplayName("Spring Boot Configuration Processor acceptance tests")
-class SpringBootConfigurationProcessorTest {
+@DisplayName("Spring Context Indexer acceptance tests")
+class SpringContextIndexerTest {
 
   @DisplayName("Spring will index the application context as expected")
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
   void springWillIndexTheApplicationContextAsExpected(JctCompiler compiler) {
     // Given
-    // Use a temporary directory here as the configuration processor uses java.io.File internally.
-    def sources = newTempDirectory("sources")
+    def sources = newRamDirectory("sources")
         .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code")
+        .copyContentsFrom("src", "test", "resources", "code", "indexer")
 
     // When
     def compilation = compiler
         .addSourcePath(sources)
-        .addAnnotationProcessors(new ConfigurationMetadataAnnotationProcessor())
-        .testDirectoryFactory(TempDirectory.&newTempDirectory)
+        .addAnnotationProcessors(new CandidateComponentsIndexer())
         .compile()
 
     // Then
@@ -51,7 +48,7 @@ class SpringBootConfigurationProcessorTest {
         .isSuccessfulWithoutWarnings()
         .classOutput()
         .packages()
-        .fileExists("META-INF/spring-configuration-metadata.json")
+        .fileExists("META-INF/spring.components")
         .isNotEmptyFile()
   }
 
@@ -60,10 +57,9 @@ class SpringBootConfigurationProcessorTest {
   @JavacCompilerTest(modules = true)
   void springWillIndexTheApplicationContextAsExpectedWithModules(JctCompiler compiler) {
     // Given
-    // Use a temporary directory here as the configuration processor uses java.io.File internally.
-    def sources = newTempDirectory("sources")
+    def sources = newRamDirectory("sources")
         .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code")
+        .copyContentsFrom("src", "test", "resources", "code", "indexer")
         .createFile("module-info.java").withContents("""
           module org.example {
             requires java.base;
@@ -79,8 +75,7 @@ class SpringBootConfigurationProcessorTest {
     // When
     def compilation = compiler
         .addSourcePath(sources)
-        .addAnnotationProcessors(new ConfigurationMetadataAnnotationProcessor())
-        .testDirectoryFactory(TempDirectory.&newTempDirectory)
+        .addAnnotationProcessors(new CandidateComponentsIndexer())
         .compile()
 
     // Then
@@ -88,7 +83,7 @@ class SpringBootConfigurationProcessorTest {
         .isSuccessfulWithoutWarnings()
         .classOutput()
         .packages()
-        .fileExists("META-INF/spring-configuration-metadata.json")
+        .fileExists("META-INF/spring.components")
         .isNotEmptyFile()
   }
 }

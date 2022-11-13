@@ -25,9 +25,7 @@
     <module>acceptance-tests-mapstruct</module>
     <module>acceptance-tests-serviceloader</module>
     <module>acceptance-tests-serviceloader-jpms</module>
-    <module>acceptance-tests-spring-boot-autoconfigure-processor</module>
-    <module>acceptance-tests-spring-boot-configuration-processor</module>
-    <module>acceptance-tests-spring-context-indexer</module>
+    <module>acceptance-tests-spring</module>
   </modules>
 
   <properties>
