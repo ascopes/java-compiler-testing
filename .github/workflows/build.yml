@@ -78,6 +78,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '${{ matrix.java-version }}'
+          cache: 'maven'
 
       - name: Compile and run tests
         uses: nick-fields/retry@v2.8.2
@@ -166,6 +167,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '19'
+          cache: 'maven'
 
       - name: Run checks
         uses: nick-fields/retry@v2.8.2
@@ -202,6 +204,7 @@ jobs:
           # documentation correctly. I have opened an issue on GitHub with AssertJ to discuss
           # this being generated correctly: https://github.com/assertj/assertj-core/issues/2573.
           java-version: '19'
+          cache: 'maven'
 
       - name: Generate JavaDoc documentation
         uses: nick-fields/retry@v2.8.2
