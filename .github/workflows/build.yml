@@ -28,18 +28,22 @@ jobs:
           languages: java
 
       - name: Build project
-        run: >-
-          ./mvnw
-          -B
-          -T1
-          -U
-          --no-transfer-progress
-          -Dmaven.test.skip=true
-          -Dcheckstyle.skip=true
-          -Dlicense.skip=true
-          -DskipTests
-          -Dstyle.color=always
-          clean package
+        uses: nick-fields/retry@v2.8.2
+        with:
+          timeout_minutes: 15
+          max_attempts: 2
+          command: >-
+            ./mvnw
+            -B
+            -T1
+            -U
+            --no-transfer-progress
+            -Dmaven.test.skip=true
+            -Dcheckstyle.skip=true
+            -Dlicense.skip=true
+            -DskipTests
+            -Dstyle.color=always
+            clean package
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
@@ -76,16 +80,20 @@ jobs:
           java-version: '${{ matrix.java-version }}'
 
       - name: Compile and run tests
-        run: >-
-          ${{ matrix.build-script }} 
-          -B 
-          -T1
-          -U
-          --no-transfer-progress
-          '-Dcheckstyle.skip=true'
-          '-Dlicense.skip=true'
-          '-Dstyle.color=always'
-          clean package
+        uses: nick-fields/retry@v2.8.2
+        with:
+          timeout_minutes: 15
+          max_attempts: 2
+          command: >-
+            ${{ matrix.build-script }} 
+            -B 
+            -T1
+            -U
+            --no-transfer-progress
+            '-Dcheckstyle.skip=true'
+            '-Dlicense.skip=true'
+            '-Dstyle.color=always'
+            clean package
 
       - name: Annotate test reports with build environment info
         if: always()
@@ -160,19 +168,23 @@ jobs:
           java-version: '19'
 
       - name: Run checks
-        run: >-
-          ./mvnw 
-          -B 
-          -T1
-          -U
-          --no-transfer-progress
-          -DskipTests=true
-          -Dstyle.color=always
-          -Dmaven.main.skip
-          -Dmaven.jar.skip
-          -Dmaven.resources.skip
-          -Dmaven.test.skip
-          verify
+        uses: nick-fields/retry@v2.8.2
+        with:
+          timeout_minutes: 15
+          max_attempts: 2
+          command: >-
+            ./mvnw 
+            -B 
+            -T1
+            -U
+            --no-transfer-progress
+            -DskipTests=true
+            -Dstyle.color=always
+            -Dmaven.main.skip
+            -Dmaven.jar.skip
+            -Dmaven.resources.skip
+            -Dmaven.test.skip
+            verify
 
   javadoc:
     name: Code documentation
@@ -192,17 +204,21 @@ jobs:
           java-version: '19'
 
       - name: Generate JavaDoc documentation
-        run: >-
-          ./mvnw 
-          -B 
-          -T1
-          -U
-          --no-transfer-progress
-          -Dmaven.test.skip=true
-          -Dcheckstyle.skip=true
-          -Dlicense.skip=true
-          -Dstyle.color=always
-          clean compile javadoc:jar
+        uses: nick-fields/retry@v2.8.2
+        with:
+          timeout_minutes: 15
+          max_attempts: 2
+          command: >-
+            ./mvnw 
+            -B 
+            -T1
+            -U
+            --no-transfer-progress
+            -Dmaven.test.skip=true
+            -Dcheckstyle.skip=true
+            -Dlicense.skip=true
+            -Dstyle.color=always
+            clean compile javadoc:jar
 
       - name: Archive JavaDoc artifacts
         uses: actions/upload-artifact@v3
