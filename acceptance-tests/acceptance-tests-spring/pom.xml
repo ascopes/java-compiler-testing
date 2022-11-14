@@ -107,7 +107,7 @@
 
   <profiles>
     <profile>
-      <id>acceptance-tests-spring::ignore-tests-before-jdk17</id>
+      <id>${project.artifactId}::ignore-tests-before-jdk17</id>
       <activation>
         <jdk>[,17)</jdk>
       </activation>
