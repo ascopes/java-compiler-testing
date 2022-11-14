@@ -35,6 +35,7 @@ class ExampleTest {
     @DisplayName("I can compile a Hello World application")
     @JavacCompilerTest
     void canCompileHelloWorld(JctCompiler<?, ?> compiler) {
+        // Given
         var sources = newRamDirectory("src")
                 .createFile("org/example/Message.java").withContents("""
                         package org.example;
@@ -62,6 +63,7 @@ class ExampleTest {
         // Then
         assertThatCompilation(compilation)
                 .isSuccessfulWithoutWarnings();
+
         assertThatCompilation(compilation)
                 .classOutput().packages()
                 .fileExists("com/example/Message.class")
@@ -126,6 +128,7 @@ class ExampleTest {
         // Then
         assertThatCompilation(compilation)
                 .isSuccessfulWithoutWarnings();
+
         assertThatCompilation(compilation)
                 .classOutput().packages()
                 .fileExists("com/example/Message.class")
