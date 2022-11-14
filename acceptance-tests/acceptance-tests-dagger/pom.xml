@@ -14,7 +14,7 @@
   <artifactId>acceptance-tests-dagger</artifactId>
 
   <properties>
-    <dagger.version>2.44.1</dagger.version>
+    <dagger.version>2.44.2</dagger.version>
   </properties>
 
   <dependencies>
