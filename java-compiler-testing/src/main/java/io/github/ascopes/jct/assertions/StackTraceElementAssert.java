@@ -59,7 +59,6 @@ public final class StackTraceElementAssert
    * @return the assertions for the line number.
    */
   public IntegerAssert lineNumber() {
-    // Null for irrelevant values is less surprising than a negative value.
     return new IntegerAssert(actual.getLineNumber())
         .describedAs("line number %s", actual.getLineNumber());
   }
