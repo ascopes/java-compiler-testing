@@ -38,9 +38,14 @@ import org.apiguardian.api.API.Status;
 public class TeeWriter extends Writer {
 
   private final Object lock;
+
   private volatile boolean closed;
 
   private final @WillCloseWhenClosed Writer writer;
+
+  // We use a StringBuilder and manually synchronise it rather than
+  // a string buffer, as we want to manually synchronize the builder
+  // and the delegated output writer at the same time.
   private final StringBuilder builder;
 
   /**
@@ -73,26 +78,6 @@ public class TeeWriter extends Writer {
   }
 
   @Override
-  public void write(char[] cbuf, int off, int len) throws IOException {
-    synchronized (lock) {
-      ensureOpen();
-
-      writer.write(cbuf, off, len);
-      // Only append to the buffer once we know that the writing
-      // operation has completed.
-      builder.append(cbuf, off, len);
-    }
-  }
-
-  @Override
-  public void flush() throws IOException {
-    synchronized (lock) {
-      ensureOpen();
-      writer.flush();
-    }
-  }
-
-  @Override
   public void close() throws IOException {
     // release to set and acquire to check ensures in-order operations to prevent
     // a very minute chance of a race condition.
@@ -106,15 +91,31 @@ public class TeeWriter extends Writer {
     }
   }
 
-  /**
-   * Get the string content that was written out to the buffer.
-   *
-   * @return the buffer content.
-   */
+  @Override
+  public void flush() throws IOException {
+    synchronized (lock) {
+      ensureOpen();
+      writer.flush();
+    }
+  }
+
   @Override
   public String toString() {
     synchronized (lock) {
       return builder.toString();
+    }
+  }
+
+
+  @Override
+  public void write(char[] cbuf, int off, int len) throws IOException {
+    synchronized (lock) {
+      ensureOpen();
+
+      writer.write(cbuf, off, len);
+      // Only append to the buffer once we know that the writing
+      // operation has completed.
+      builder.append(cbuf, off, len);
     }
   }
 
