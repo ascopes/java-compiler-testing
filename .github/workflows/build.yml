@@ -43,6 +43,7 @@ jobs:
             -Dlicense.skip=true
             -DskipTests
             -Dstyle.color=always
+            -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
             clean package
 
       - name: Perform CodeQL Analysis
@@ -94,7 +95,8 @@ jobs:
             '-Dcheckstyle.skip=true'
             '-Dlicense.skip=true'
             '-Dstyle.color=always'
-            clean package
+            '-Dmaven.wagon.httpconnectionManager.ttlSeconds=120'
+            clean verify
 
       - name: Annotate test reports with build environment info
         if: always()
@@ -186,6 +188,7 @@ jobs:
             -Dmaven.jar.skip
             -Dmaven.resources.skip
             -Dmaven.test.skip
+            -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
             verify
 
   javadoc:
@@ -221,6 +224,7 @@ jobs:
             -Dcheckstyle.skip=true
             -Dlicense.skip=true
             -Dstyle.color=always
+            -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
             clean compile javadoc:jar
 
       - name: Archive JavaDoc artifacts
