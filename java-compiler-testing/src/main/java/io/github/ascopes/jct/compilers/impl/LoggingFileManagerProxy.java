@@ -70,6 +70,8 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
    */
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    // TODO(ascopes): does this work with methods that have receiver types?
+    //    e.g.  public @Override String toString(JctFileManager this) { ... }
     if (method.getName().equals("toString") && method.getParameterCount() == 0) {
       return toString();
     }
@@ -190,8 +192,10 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
    * @return the proxy {@link JctFileManager} to use.
    */
   @WillNotClose
-  public static JctFileManager wrap(@WillCloseWhenClosed JctFileManager manager,
-      boolean stackTraces) {
+  public static JctFileManager wrap(
+      @WillCloseWhenClosed JctFileManager manager,
+      boolean stackTraces
+  ) {
     return (JctFileManager) Proxy.newProxyInstance(
         JctFileManager.class.getClassLoader(),
         new Class<?>[]{JctFileManager.class},
