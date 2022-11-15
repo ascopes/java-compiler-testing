@@ -114,7 +114,8 @@ public class PathFileObject implements JavaFileObject {
   }
 
   @Override
-  public boolean equals(Object other) {
+  public boolean equals(@Nullable Object other) {
+    // Roughly the same as what Javac does.
     return other instanceof FileObject && uri.equals(((FileObject) other).toUri());
   }
 
@@ -199,12 +200,16 @@ public class PathFileObject implements JavaFileObject {
 
   @Override
   public int hashCode() {
+    // Corresponds to what the .equals override checks for.
     return uri.hashCode();
   }
 
   @Override
   public boolean isNameCompatible(String simpleName, Kind kind) {
-    return relativePath.getFileName().toString().equals(simpleName + kind.extension);
+    // TODO(ascopes): does this need to be case insensitive on Windows?
+    var fileName = simpleName + kind.extension;
+
+    return relativePath.getFileName().toString().equals(fileName);
   }
 
   @Override
