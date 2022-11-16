@@ -49,7 +49,7 @@ public final class FileUtils {
       .collect(toUnmodifiableList());
 
   private static final StringSlicer PACKAGE_SLICER = new StringSlicer(".");
-  private static final StringSlicer RESOURCE_SPLITTER = new StringSlicer("/");
+  private static final StringSlicer RESOURCE_SLICER = new StringSlicer("/");
 
   private FileUtils() {
     throw new UnsupportedOperationException("static-only class");
@@ -171,7 +171,7 @@ public final class FileUtils {
     var parts = new ArrayList<String>();
     parts.add("/");
 
-    for (var part : RESOURCE_SPLITTER.splitToArray(relativeName)) {
+    for (var part : RESOURCE_SLICER.splitToArray(relativeName)) {
       if (!part.isEmpty()) {
         parts.add(part);
       }
@@ -188,7 +188,7 @@ public final class FileUtils {
    * @return the path to the resource on the file system.
    */
   public static Path relativeResourceNameToPath(Path directory, String relativeName) {
-    var parts = RESOURCE_SPLITTER.splitToArray(relativeName);
+    var parts = RESOURCE_SLICER.splitToArray(relativeName);
     return resolve(directory, parts);
   }
 
