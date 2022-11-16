@@ -28,23 +28,19 @@ jobs:
           languages: java
 
       - name: Build project
-        uses: nick-fields/retry@v2.8.2
-        with:
-          timeout_minutes: 15
-          max_attempts: 2
-          command: >-
-            ./mvnw
-            -B
-            -T1
-            -U
-            --no-transfer-progress
-            -Dmaven.test.skip=true
-            -Dcheckstyle.skip=true
-            -Dlicense.skip=true
-            -DskipTests
-            -Dstyle.color=always
-            -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
-            clean package
+        run: >-
+          ./mvnw
+          -B
+          -T8
+          -U
+          --no-transfer-progress
+          -Dmaven.test.skip=true
+          -Dcheckstyle.skip=true
+          -Dlicense.skip=true
+          -DskipTests
+          -Dstyle.color=always
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+          clean package
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
@@ -82,21 +78,17 @@ jobs:
           cache: 'maven'
 
       - name: Compile and run tests
-        uses: nick-fields/retry@v2.8.2
-        with:
-          timeout_minutes: 15
-          max_attempts: 2
-          command: >-
-            ${{ matrix.build-script }} 
-            -B 
-            -T1
-            -U
-            --no-transfer-progress
-            '-Dcheckstyle.skip=true'
-            '-Dlicense.skip=true'
-            '-Dstyle.color=always'
-            '-Dmaven.wagon.httpconnectionManager.ttlSeconds=120'
-            clean verify
+        run: >-
+          ${{ matrix.build-script }} 
+          -B 
+          -T8
+          -U
+          --no-transfer-progress
+          '-Dcheckstyle.skip=true'
+          '-Dlicense.skip=true'
+          '-Dstyle.color=always'
+          '-Dmaven.wagon.httpconnectionManager.ttlSeconds=120'
+          clean verify
 
       - name: Annotate test reports with build environment info
         if: always()
@@ -172,24 +164,20 @@ jobs:
           cache: 'maven'
 
       - name: Run checks
-        uses: nick-fields/retry@v2.8.2
-        with:
-          timeout_minutes: 15
-          max_attempts: 2
-          command: >-
-            ./mvnw 
-            -B 
-            -T1
-            -U
-            --no-transfer-progress
-            -DskipTests=true
-            -Dstyle.color=always
-            -Dmaven.main.skip
-            -Dmaven.jar.skip
-            -Dmaven.resources.skip
-            -Dmaven.test.skip
-            -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
-            verify
+        run: >-
+          ./mvnw 
+          -B 
+          -T8
+          -U
+          --no-transfer-progress
+          -DskipTests=true
+          -Dstyle.color=always
+          -Dmaven.main.skip
+          -Dmaven.jar.skip
+          -Dmaven.resources.skip
+          -Dmaven.test.skip
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+          verify
 
   javadoc:
     name: Code documentation
@@ -210,22 +198,18 @@ jobs:
           cache: 'maven'
 
       - name: Generate JavaDoc documentation
-        uses: nick-fields/retry@v2.8.2
-        with:
-          timeout_minutes: 15
-          max_attempts: 2
-          command: >-
-            ./mvnw 
-            -B 
-            -T1
-            -U
-            --no-transfer-progress
-            -Dmaven.test.skip=true
-            -Dcheckstyle.skip=true
-            -Dlicense.skip=true
-            -Dstyle.color=always
-            -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
-            clean compile javadoc:jar
+        run: >-
+          ./mvnw 
+          -B 
+          -T8
+          -U
+          --no-transfer-progress
+          -Dmaven.test.skip=true
+          -Dcheckstyle.skip=true
+          -Dlicense.skip=true
+          -Dstyle.color=always
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+          clean compile javadoc:jar
 
       - name: Archive JavaDoc artifacts
         uses: actions/upload-artifact@v3
