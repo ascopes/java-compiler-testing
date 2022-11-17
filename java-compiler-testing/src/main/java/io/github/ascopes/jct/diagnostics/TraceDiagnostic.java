@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.diagnostics;
 
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.annotations.Nullable;
@@ -65,7 +66,7 @@ public class TraceDiagnostic<S extends JavaFileObject> implements Diagnostic<S> 
     this.timestamp = requireNonNull(timestamp, "timestamp");
     this.threadId = threadId;
     this.threadName = threadName;
-    this.stackTrace = requireNonNull(stackTrace, "stackTrace");
+    this.stackTrace = unmodifiableList(requireNonNull(stackTrace, "stackTrace"));
     this.original = requireNonNull(original, "original");
   }
 
@@ -137,7 +138,7 @@ public class TraceDiagnostic<S extends JavaFileObject> implements Diagnostic<S> 
   /**
    * Get the thread name for the thread that created this diagnostic.
    *
-   * @return the thread name, if known.
+   * @return the thread name, if known, or an empty optional otherwise.
    */
   public Optional<String> getThreadName() {
     return Optional.ofNullable(threadName);
@@ -146,7 +147,7 @@ public class TraceDiagnostic<S extends JavaFileObject> implements Diagnostic<S> 
   /**
    * Get the stacktrace of where the diagnostic was written from.
    *
-   * @return the stacktrace.
+   * @return the stacktrace, in an unmodifiable list.
    */
   public List<StackTraceElement> getStackTrace() {
     return stackTrace;
@@ -158,11 +159,11 @@ public class TraceDiagnostic<S extends JavaFileObject> implements Diagnostic<S> 
         .attribute("timestamp", timestamp)
         .attribute("threadId", threadId)
         .attribute("threadName", threadName)
-        .attribute("kind", getKind())
-        .attribute("code", getCode())
-        .attribute("column", getColumnNumber())
-        .attribute("line", getLineNumber())
-        .attribute("message", getMessage(Locale.ROOT))
+        .attribute("kind", original.getKind())
+        .attribute("code", original.getCode())
+        .attribute("column", original.getColumnNumber())
+        .attribute("line", original.getLineNumber())
+        .attribute("message", original.getMessage(Locale.ROOT))
         .toString();
   }
 }
