@@ -307,7 +307,7 @@ class TraceDiagnosticTest {
 
   @DisplayName("getStackTrace() returns an immutable list")
   @Test
-  void getStackTraceReturnsTheStackTrace() {
+  void getStackTraceReturnsAnImmutableStackTrace() {
     // Given
     var expectedStackTrace = someStackTraceList();
     var diagnostic = new TraceDiagnostic<>(
