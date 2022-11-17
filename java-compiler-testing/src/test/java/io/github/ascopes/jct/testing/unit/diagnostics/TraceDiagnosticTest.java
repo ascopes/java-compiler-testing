@@ -19,12 +19,11 @@ import static io.github.ascopes.jct.testing.helpers.Fixtures.someDiagnostic;
 import static io.github.ascopes.jct.testing.helpers.Fixtures.someStackTraceList;
 import static java.time.Instant.now;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.BDDAssertions.then;
-import static org.assertj.core.api.BDDAssertions.thenCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.verify;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.Locale;
@@ -50,8 +49,11 @@ class TraceDiagnosticTest {
   @DisplayName("null original diagnostics are rejected")
   @Test
   void nullDiagnosticsAreRejected() {
+    // Given
     var stack = someStackTraceList();
-    thenCode(() -> new TraceDiagnostic<>(now(), 123, "foo", stack, null))
+
+    // Then
+    assertThatThrownBy(() -> new TraceDiagnostic<>(now(), 123, "foo", stack, null))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("original");
   }
@@ -64,7 +66,7 @@ class TraceDiagnosticTest {
     var original = someDiagnostic();
     var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
-    given(original.getKind()).willReturn(expected);
+    when(original.getKind()).thenReturn(expected);
 
     // Then
     assertThat(wrapped.getKind()).isSameAs(expected);
@@ -78,8 +80,7 @@ class TraceDiagnosticTest {
     var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     var source = mock(JavaFileObject.class);
-
-    given(original.getSource()).willReturn(source);
+    when(original.getSource()).thenReturn(source);
 
     // Then
     assertThat(wrapped.getSource()).isSameAs(source);
@@ -93,7 +94,7 @@ class TraceDiagnosticTest {
     var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     var position = new Random().nextLong();
-    given(original.getPosition()).willReturn(position);
+    when(original.getPosition()).thenReturn(position);
 
     // Then
     assertThat(wrapped.getPosition()).isEqualTo(position);
@@ -107,7 +108,7 @@ class TraceDiagnosticTest {
     var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     var startPosition = new Random().nextLong();
-    given(original.getStartPosition()).willReturn(startPosition);
+    when(original.getStartPosition()).thenReturn(startPosition);
 
     // Then
     assertThat(wrapped.getStartPosition()).isEqualTo(startPosition);
@@ -121,7 +122,7 @@ class TraceDiagnosticTest {
     var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     var endPosition = new Random().nextLong();
-    given(original.getEndPosition()).willReturn(endPosition);
+    when(original.getEndPosition()).thenReturn(endPosition);
 
     // Then
     assertThat(wrapped.getEndPosition()).isEqualTo(endPosition);
@@ -135,7 +136,7 @@ class TraceDiagnosticTest {
     var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     var lineNumber = new Random().nextLong();
-    given(original.getLineNumber()).willReturn(lineNumber);
+    when(original.getLineNumber()).thenReturn(lineNumber);
 
     // Then
     assertThat(wrapped.getLineNumber()).isEqualTo(lineNumber);
@@ -149,7 +150,7 @@ class TraceDiagnosticTest {
     var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     var columnNumber = new Random().nextLong();
-    given(original.getColumnNumber()).willReturn(columnNumber);
+    when(original.getColumnNumber()).thenReturn(columnNumber);
 
     // Then
     assertThat(wrapped.getColumnNumber()).isEqualTo(columnNumber);
@@ -164,7 +165,7 @@ class TraceDiagnosticTest {
     var original = someDiagnostic();
     var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
-    given(original.getCode()).willReturn(expected);
+    when(original.getCode()).thenReturn(expected);
 
     // Then
     assertThat(wrapped.getCode()).isSameAs(expected);
@@ -178,7 +179,7 @@ class TraceDiagnosticTest {
     var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
     var message = UUID.randomUUID().toString();
-    given(original.getMessage(any())).willReturn(message);
+    when(original.getMessage(any())).thenReturn(message);
 
     // Then
     assertThat(wrapped.getMessage(Locale.TAIWAN)).isSameAs(message);
@@ -190,7 +191,7 @@ class TraceDiagnosticTest {
   void nullTimestampsAreRejected() {
     var diag = someDiagnostic();
     var stack = someStackTraceList();
-    thenCode(() -> new TraceDiagnostic<>(null, 123, "foo", stack, diag))
+    assertThatThrownBy(() -> new TraceDiagnostic<>(null, 123, "foo", stack, diag))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("timestamp");
   }
@@ -200,7 +201,7 @@ class TraceDiagnosticTest {
   void nullStackTracesAreRejected() {
     var now = now();
     var diag = someDiagnostic();
-    thenCode(() -> new TraceDiagnostic<>(now, 123, "foo", null, diag))
+    assertThatThrownBy(() -> new TraceDiagnostic<>(now, 123, "foo", null, diag))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("stackTrace");
   }
@@ -222,7 +223,7 @@ class TraceDiagnosticTest {
     var actualTimestamp = diagnostic.getTimestamp();
 
     // Then
-    then(actualTimestamp).isEqualTo(expectedTimestamp);
+    assertThat(actualTimestamp).isEqualTo(expectedTimestamp);
   }
 
   @DisplayName("getThreadId() returns the thread ID")
@@ -242,7 +243,7 @@ class TraceDiagnosticTest {
     var actualThreadId = diagnostic.getThreadId();
 
     // Then
-    then(actualThreadId).isEqualTo(expectedThreadId);
+    assertThat(actualThreadId).isEqualTo(expectedThreadId);
   }
 
   @DisplayName("getThreadName() returns the thread name when known")
@@ -262,7 +263,7 @@ class TraceDiagnosticTest {
     var actualThreadName = diagnostic.getThreadName();
 
     // Then
-    then(actualThreadName).isPresent().contains(expectedThreadName);
+    assertThat(actualThreadName).isPresent().contains(expectedThreadName);
   }
 
   @DisplayName("getThreadName() returns empty when the thread name is not known")
@@ -281,7 +282,7 @@ class TraceDiagnosticTest {
     var actualThreadName = diagnostic.getThreadName();
 
     // Then
-    then(actualThreadName).isEmpty();
+    assertThat(actualThreadName).isEmpty();
   }
 
   @DisplayName("getStackTrace() returns the stack trace")
@@ -301,6 +302,26 @@ class TraceDiagnosticTest {
     var actualStackTrace = diagnostic.getStackTrace();
 
     // Then
-    then(actualStackTrace).isSameAs(expectedStackTrace);
+    assertThat(actualStackTrace).isEqualTo(expectedStackTrace);
+  }
+
+  @DisplayName("getStackTrace() returns an immutable list")
+  @Test
+  void getStackTraceReturnsTheStackTrace() {
+    // Given
+    var expectedStackTrace = someStackTraceList();
+    var diagnostic = new TraceDiagnostic<>(
+        now(),
+        1234,
+        "foo",
+        expectedStackTrace,
+        someDiagnostic()
+    );
+
+    var actualStackTrace = diagnostic.getStackTrace();
+
+    // Then
+    assertThatThrownBy(() -> actualStackTrace.remove(0))
+        .isInstanceOf(UnsupportedOperationException.class);
   }
 }
