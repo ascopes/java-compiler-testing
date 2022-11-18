@@ -14,7 +14,7 @@
   <artifactId>acceptance-tests-google-auto-value</artifactId>
 
   <properties>
-    <auto-value.version>1.10</auto-value.version>
+    <auto-value.version>1.10.1</auto-value.version>
   </properties>
 
   <dependencies>
