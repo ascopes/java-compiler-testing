@@ -147,7 +147,11 @@ jobs:
         if: always()
         continue-on-error: true
         with:
+          json_test_case_results: true
+          json_thousands_separator: ","
           junit_files: "artifacts/**/TEST-*.xml"
+          report_individual_runs: true
+          time_unit: "milliseconds"
 
   checkstyle:
     name: Code style and licenses
