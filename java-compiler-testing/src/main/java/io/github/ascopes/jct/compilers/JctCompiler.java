@@ -137,12 +137,12 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
   /**
    * Apply a given configurer to this compiler that can throw a checked exception.
    *
-   * @param <T>        any exception that may be thrown.
+   * @param <E>        any exception that may be thrown.
    * @param configurer the configurer to invoke.
    * @return this compiler object for further call chaining.
-   * @throws T any exception that may be thrown by the configurer.
+   * @throws E any exception that may be thrown by the configurer.
    */
-  <T extends Exception> C configure(JctCompilerConfigurer<? super C, T> configurer) throws T;
+  <E extends Exception> C configure(JctCompilerConfigurer<E> configurer) throws E;
 
   /**
    * Add a path-like object to a given location.

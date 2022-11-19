@@ -155,9 +155,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public final <T extends Exception> A configure(
-      JctCompilerConfigurer<? super A, T> configurer
-  ) throws T {
+  public final <E extends Exception> A configure(JctCompilerConfigurer<E> configurer) throws E {
     requireNonNull(configurer, "configurer");
     var me = myself();
     configurer.configure(me);

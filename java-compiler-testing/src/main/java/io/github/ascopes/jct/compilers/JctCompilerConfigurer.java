@@ -23,14 +23,17 @@ import org.apiguardian.api.API.Status;
  *
  * <p>This can allow encapsulating common configuration logic across tests into a single place.
  *
- * @param <C> the compiler type.
+ * <p>If your configurer should not throw checked exceptions, you can just use
+ * {@link JctCompilerConfigurer.JctSimpleCompilerConfigurer the simple configurer interface}
+ * instead.
+ *
  * @param <T> the exception that may be thrown by the configurer.
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 @FunctionalInterface
-public interface JctCompilerConfigurer<C extends JctCompiler<C, ?>, T extends Exception> {
+public interface JctCompilerConfigurer<T extends Exception> {
 
   /**
    * Apply configuration logic to the given compiler.
@@ -38,5 +41,16 @@ public interface JctCompilerConfigurer<C extends JctCompiler<C, ?>, T extends Ex
    * @param compiler the compiler.
    * @throws T any exception that may be thrown by the configurer.
    */
-  void configure(C compiler) throws T;
+  void configure(JctCompiler<?, ?> compiler) throws T;
+
+  /**
+   * A compiler configurer interface that has no type parameters and cannot throw checked
+   * exceptions.
+   *
+   * @author Ashley Scopes
+   * @since 0.0.1
+   */
+  @API(since = "0.0.1", status = Status.EXPERIMENTAL)
+  @FunctionalInterface
+  interface JctSimpleCompilerConfigurer extends JctCompilerConfigurer<RuntimeException> {}
 }

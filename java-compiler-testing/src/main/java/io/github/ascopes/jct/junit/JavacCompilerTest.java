@@ -15,6 +15,8 @@
  */
 package io.github.ascopes.jct.junit;
 
+import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer;
 import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
 import io.github.ascopes.jct.junit.JavacCompilerTest.JavacCompilersProvider;
 import java.lang.annotation.Documented;
@@ -30,9 +32,9 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.support.AnnotationConsumer;
 
 /**
- * Annotation that can be applied to a {@link org.junit.jupiter.params.ParameterizedTest} to enable
- * passing in a range of {@link JavacJctCompilerImpl} instances with specific configured versions as
- * the  first parameter.
+ * Annotation that can be applied to a {@link ParameterizedTest} to enable passing in a range of
+ * {@link JavacJctCompilerImpl} instances with specific configured versions as the  first
+ * parameter.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -48,13 +50,27 @@ public @interface JavacCompilerTest {
 
   /**
    * Minimum version to use (inclusive).
+   *
+   * @return the minimum version.
    */
   int minVersion() default Integer.MIN_VALUE;
 
   /**
    * Maximum version to use (inclusive).
+   *
+   * @return the maximum version.
    */
   int maxVersion() default Integer.MAX_VALUE;
+
+  /**
+   * Get an array of compiler configurers to apply in-order before starting the test.
+   *
+   * <p>Each configurer must have a public no-args constructor, and their package must be
+   * open to this module if JPMS modules are in-use.
+   *
+   * @return an array of classes to run to configure the compiler. These run in the given order.
+   */
+  Class<? extends JctSimpleCompilerConfigurer>[] configurers() default {};
 
   /**
    * Whether we need to support modules or not.
@@ -78,12 +94,22 @@ public @interface JavacCompilerTest {
       implements AnnotationConsumer<JavacCompilerTest> {
 
     JavacCompilersProvider() {
-      super(
-          version -> new JavacJctCompilerImpl("Javac " + version).release(version),
-          8,
-          9,
-          JavacJctCompilerImpl.getLatestSupportedVersionInt()
-      );
+      // Do nothing, but keep this package private.
+    }
+
+    @Override
+    protected JctCompiler<?, ?> compilerForVersion(int release) {
+      return new JavacJctCompilerImpl("javac release " + release).release(release);
+    }
+
+    @Override
+    protected int minSupportedVersion(boolean modules) {
+      return JavacJctCompilerImpl.getEarliestSupportedVersionInt(modules);
+    }
+
+    @Override
+    protected int maxSupportedVersion(boolean modules) {
+      return JavacJctCompilerImpl.getLatestSupportedVersionInt(modules);
     }
 
     @Override
@@ -91,7 +117,8 @@ public @interface JavacCompilerTest {
       configure(
           javacCompilers.minVersion(),
           javacCompilers.maxVersion(),
-          javacCompilers.modules()
+          javacCompilers.modules(),
+          javacCompilers.configurers()
       );
     }
   }

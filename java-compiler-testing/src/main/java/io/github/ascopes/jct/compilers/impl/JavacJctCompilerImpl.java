@@ -73,13 +73,33 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
 
   @Override
   public String getDefaultRelease() {
-    return Integer.toString(getLatestSupportedVersionInt());
+    return Integer.toString(getLatestSupportedVersionInt(false));
+  }
+
+  /**
+   * Get the minimum version of Javac that is supported.
+   *
+   * @param modules whether modules need to be supported or not.
+   * @return the minimum supported version.
+   */
+  public static int getEarliestSupportedVersionInt(boolean modules) {
+    // Currently we set a hard limit on Java 8 for non-modules and Java 9 for modules.
+    // In future implementations of the JDK, however, this will change to support Java 9 or later
+    // as a minimum version. When this eventually does happen, this return value may need further
+    // logic behind it to calculate the right behaviour.
+    return modules
+        ? SourceVersion.RELEASE_9.ordinal()
+        : SourceVersion.RELEASE_8.ordinal();
   }
 
   /**
    * Get the maximum version of Javac that is supported.
+   *
+   * @param modules whether to require module support or not. This is currently ignored but exists
+   *                for future compatibility purposes.
+   * @return the maximum supported version.
    */
-  public static int getLatestSupportedVersionInt() {
+  public static int getLatestSupportedVersionInt(@SuppressWarnings("unused") boolean modules) {
     return SourceVersion.latestSupported().ordinal();
   }
 }

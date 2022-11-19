@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.testing.unit.compilers.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
@@ -28,6 +29,9 @@ import javax.tools.JavaCompiler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * {@link JavacJctCompilerImpl} tests.
@@ -82,19 +86,38 @@ class JavacJctCompilerImplTest {
       var latestSupportedInt = 11 + new Random().nextInt(10);
 
       compilerClassMock
-          .when(JavacJctCompilerImpl::getLatestSupportedVersionInt)
+          .when(() -> JavacJctCompilerImpl.getLatestSupportedVersionInt(anyBoolean()))
           .thenReturn(latestSupportedInt);
 
+      // When
+      var defaultRelease = compiler.getDefaultRelease();
+
       // Then
-      assertThat(compiler.getDefaultRelease())
+      compilerClassMock
+          .verify(() -> JavacJctCompilerImpl.getLatestSupportedVersionInt(false));
+
+      assertThat(defaultRelease)
           .isEqualTo("%d", latestSupportedInt);
     }
   }
 
+  @DisplayName("the earliest supported version int has the expected value")
+  @CsvSource({
+      "true, 9",
+      "false, 8",
+  })
+  @ParameterizedTest(name = "expect {1} when modules = {0}")
+  void theEarliestSupportedVersionIntHasTheExpectedValue(boolean modules, int expect) {
+    // Then
+    assertThat(JavacJctCompilerImpl.getEarliestSupportedVersionInt(modules))
+        .isEqualTo(expect);
+  }
+
   @DisplayName("the latest supported version int has the expected value")
-  @Test
+  @ValueSource(booleans = {true, false})
+  @ParameterizedTest(name = "for modules = {0}")
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  void theLatestSupportedVersionIntHasTheExpectedValue() {
+  void theLatestSupportedVersionIntHasTheExpectedValue(boolean modules) {
     // Given
     try (var sourceVersionMock = mockStatic(SourceVersion.class)) {
       var latestSupportedOrdinal = 11 + new Random().nextInt(10);
@@ -107,7 +130,7 @@ class JavacJctCompilerImplTest {
           .thenReturn(latestSupportedEnum);
 
       // Then
-      assertThat(JavacJctCompilerImpl.getLatestSupportedVersionInt())
+      assertThat(JavacJctCompilerImpl.getLatestSupportedVersionInt(modules))
           .isEqualTo(latestSupportedOrdinal);
     }
   }
