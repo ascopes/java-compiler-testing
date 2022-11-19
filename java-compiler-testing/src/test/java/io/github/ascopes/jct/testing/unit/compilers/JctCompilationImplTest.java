@@ -47,8 +47,8 @@ import org.junit.jupiter.params.provider.ValueSource;
  *
  * @author Ashley Scopes
  */
-@DisplayName("CompilationImpl tests")
-class CompilationImplTest {
+@DisplayName("JctCompilationImpl tests")
+class JctCompilationImplTest {
 
   static Random RANDOM = new Random();
 
