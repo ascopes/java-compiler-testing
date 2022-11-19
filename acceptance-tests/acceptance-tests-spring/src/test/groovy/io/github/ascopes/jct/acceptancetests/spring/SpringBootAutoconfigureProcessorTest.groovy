@@ -35,9 +35,7 @@ class SpringBootAutoconfigureProcessorTest {
   @BeforeEach
   void ensureJdk17() {
     assumeThat(JRE.currentVersion())
-        .withFailMessage(
-            "This test targets Java 17 and newer"
-        )
+        .as("Spring 6 requires JDK 17 or newer")
         .isGreaterThanOrEqualTo(JRE.JAVA_17)
   }
 

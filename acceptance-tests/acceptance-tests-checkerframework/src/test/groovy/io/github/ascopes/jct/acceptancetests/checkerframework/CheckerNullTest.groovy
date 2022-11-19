@@ -34,9 +34,7 @@ class CheckerNullTest {
   @BeforeEach
   void setUp() {
     assumeThat(JRE.currentVersion())
-        .withFailMessage(
-            "This test is disabled on this JRE due to unexpected behaviour in Checkerframework"
-        )
+        .as("Checkerframework may misbehave on this JVM, so has been disabled")
         .isIn(JRE.JAVA_16, JRE.JAVA_17, JRE.JAVA_18, JRE.JAVA_19, JRE.JAVA_20)
   }
 
