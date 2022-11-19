@@ -22,9 +22,6 @@ import org.assertj.core.api.AbstractAssert;
 /**
  * Assertions to perform on a classloader.
  *
- * <p>Deprecated for removal: see
- * <a href="https://github.com/assertj/assertj-core/issues/2639">assertj-core GH-2639</a>.
- *
  * @author Ashley Scopes
  * @since 0.0.1
  */

@@ -15,6 +15,8 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.github.ascopes.jct.utils.IoExceptionUtils;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
@@ -26,10 +28,10 @@ import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
-import org.assertj.core.api.ByteArrayAssert;
-import org.assertj.core.api.InstantAssert;
-import org.assertj.core.api.StringAssert;
-import org.assertj.core.api.UriAssert;
+import org.assertj.core.api.AbstractByteArrayAssert;
+import org.assertj.core.api.AbstractInstantAssert;
+import org.assertj.core.api.AbstractStringAssert;
+import org.assertj.core.api.AbstractUriAssert;
 
 /**
  * Abstract assertions for {@link JavaFileObject Java file objects}.
@@ -56,8 +58,8 @@ public abstract class AbstractJavaFileObjectAssert<S extends AbstractJavaFileObj
    *
    * @return the URI assertion.
    */
-  public UriAssert uri() {
-    return new UriAssert(actual.toUri());
+  public AbstractUriAssert<?> uri() {
+    return assertThat(actual.toUri());
   }
 
   /**
@@ -65,8 +67,8 @@ public abstract class AbstractJavaFileObjectAssert<S extends AbstractJavaFileObj
    *
    * @return the string assertion.
    */
-  public StringAssert name() {
-    return new StringAssert(actual.getName());
+  public AbstractStringAssert<?> name() {
+    return assertThat(actual.getName());
   }
 
   /**
@@ -74,8 +76,8 @@ public abstract class AbstractJavaFileObjectAssert<S extends AbstractJavaFileObj
    *
    * @return the byte array assertion.
    */
-  public ByteArrayAssert binaryContent() {
-    return new ByteArrayAssert(rawContent());
+  public AbstractByteArrayAssert<?> binaryContent() {
+    return assertThat(rawContent());
   }
 
   /**
@@ -84,7 +86,7 @@ public abstract class AbstractJavaFileObjectAssert<S extends AbstractJavaFileObj
    *
    * @return the string assertion.
    */
-  public StringAssert content() {
+  public AbstractStringAssert<?> content() {
     return content(StandardCharsets.UTF_8);
   }
 
@@ -94,7 +96,7 @@ public abstract class AbstractJavaFileObjectAssert<S extends AbstractJavaFileObj
    * @param charset the charset to decode the file with.
    * @return the string assertion.
    */
-  public StringAssert content(Charset charset) {
+  public AbstractStringAssert<?> content(Charset charset) {
     return content(charset.newDecoder());
   }
 
@@ -104,12 +106,12 @@ public abstract class AbstractJavaFileObjectAssert<S extends AbstractJavaFileObj
    * @param charsetDecoder the charset decoder to use to decode the file to a string.
    * @return the string assertion.
    */
-  public StringAssert content(CharsetDecoder charsetDecoder) {
+  public AbstractStringAssert<?> content(CharsetDecoder charsetDecoder) {
     var content = IoExceptionUtils.uncheckedIo(() -> charsetDecoder
         .decode(ByteBuffer.wrap(rawContent()))
         .toString());
 
-    return new StringAssert(content);
+    return assertThat(content);
   }
 
   /**
@@ -117,9 +119,9 @@ public abstract class AbstractJavaFileObjectAssert<S extends AbstractJavaFileObj
    *
    * @return the instant assertion.
    */
-  public InstantAssert lastModified() {
+  public AbstractInstantAssert<?> lastModified() {
     var instant = Instant.ofEpochMilli(actual.getLastModified());
-    return new InstantAssert(instant);
+    return assertThat(instant);
   }
 
   /**

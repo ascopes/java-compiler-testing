@@ -15,10 +15,12 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.assertj.core.api.StringAssert;
+import org.assertj.core.api.AbstractStringAssert;
 
 /**
  * Assertions for an individual {@link Kind Java file object kind}.
@@ -80,7 +82,7 @@ public final class JavaFileObjectKindAssert
    *
    * @return the assertions for the file extension of the kind.
    */
-  public StringAssert extension() {
-    return new StringAssert(actual.extension);
+  public AbstractStringAssert<?> extension() {
+    return assertThat(actual.extension);
   }
 }

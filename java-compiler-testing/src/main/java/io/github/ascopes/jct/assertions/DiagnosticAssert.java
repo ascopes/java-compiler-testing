@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.assertions;
 
 import static java.util.Objects.requireNonNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.assertions.impl.DiagnosticRepresentation;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
@@ -24,9 +25,9 @@ import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
-import org.assertj.core.api.InstantAssert;
-import org.assertj.core.api.LongAssert;
-import org.assertj.core.api.StringAssert;
+import org.assertj.core.api.AbstractInstantAssert;
+import org.assertj.core.api.AbstractLongAssert;
+import org.assertj.core.api.AbstractStringAssert;
 
 /**
  * Assertions for an individual {@link TraceDiagnostic trace diagnostic}.
@@ -73,7 +74,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the position of the diagnostic.
    */
-  public LongAssert position() {
+  public AbstractLongAssert<?> position() {
     return assertPosition(actual.getPosition(), "position");
   }
 
@@ -84,7 +85,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the start position of the diagnostic.
    */
-  public LongAssert startPosition() {
+  public AbstractLongAssert<?> startPosition() {
     return assertPosition(actual.getPosition(), "startPosition");
   }
 
@@ -95,7 +96,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the end position of the diagnostic.
    */
-  public LongAssert endPosition() {
+  public AbstractLongAssert<?> endPosition() {
     return assertPosition(actual.getEndPosition(), "endPosition");
   }
 
@@ -106,7 +107,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the line number of the diagnostic.
    */
-  public LongAssert lineNumber() {
+  public AbstractLongAssert<?> lineNumber() {
     return assertPosition(actual.getLineNumber(), "lineNumber");
   }
 
@@ -117,7 +118,7 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the column number of the diagnostic.
    */
-  public LongAssert columnNumber() {
+  public AbstractLongAssert<?> columnNumber() {
     return assertPosition(actual.getColumnNumber(), "columnNumber");
   }
 
@@ -126,8 +127,8 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the code of the diagnostic.
    */
-  public StringAssert code() {
-    return new StringAssert(actual.getCode());
+  public AbstractStringAssert<?> code() {
+    return assertThat(actual.getCode());
   }
 
   /**
@@ -135,8 +136,8 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the message of the diagnostic.
    */
-  public StringAssert message() {
-    return new StringAssert(actual.getMessage(null));
+  public AbstractStringAssert<?> message() {
+    return assertThat(actual.getMessage(null));
   }
 
   /**
@@ -145,9 +146,9 @@ public final class DiagnosticAssert
    * @param locale the locale to use.
    * @return the assertions for the message of the diagnostic.
    */
-  public StringAssert message(Locale locale) {
+  public AbstractStringAssert<?> message(Locale locale) {
     requireNonNull(locale, "locale");
-    return new StringAssert(actual.getMessage(locale));
+    return assertThat(actual.getMessage(locale));
   }
 
   /**
@@ -155,8 +156,8 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the timestamp of the diagnostic.
    */
-  public InstantAssert timestamp() {
-    return new InstantAssert(actual.getTimestamp());
+  public AbstractInstantAssert<?> timestamp() {
+    return assertThat(actual.getTimestamp());
   }
 
   /**
@@ -164,8 +165,8 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the thread ID.
    */
-  public LongAssert threadId() {
-    return new LongAssert(actual.getThreadId());
+  public AbstractLongAssert<?> threadId() {
+    return assertThat(actual.getThreadId());
   }
 
   /**
@@ -174,8 +175,8 @@ public final class DiagnosticAssert
    *
    * @return the assertions for the thread name.
    */
-  public StringAssert threadName() {
-    return new StringAssert(actual.getThreadName());
+  public AbstractStringAssert<?> threadName() {
+    return assertThat(actual.getThreadName());
   }
 
   /**
@@ -191,7 +192,7 @@ public final class DiagnosticAssert
     return new StackTraceAssert(actual.getStackTrace());
   }
 
-  private LongAssert assertPosition(long position, String name) {
-    return new LongAssert(position).describedAs(name);
+  private AbstractLongAssert<?> assertPosition(long position, String name) {
+    return assertThat(position).describedAs(name);
   }
 }

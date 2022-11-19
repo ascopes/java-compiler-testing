@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.assertions;
 
 import static java.util.Objects.requireNonNull;
+import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
 
 import io.github.ascopes.jct.containers.ContainerGroup;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractListAssert;
-import org.assertj.core.api.FactoryBasedNavigableListAssert;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ObjectAssert;
 
 /**
@@ -76,14 +77,18 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
    * @param <T>   the service type.
    * @return the assertions across the resultant services that are loaded for the given class.
    */
-  public <T> AbstractListAssert<?, List<? extends T>, T, ObjectAssert<T>> serviceLoader(
+  public <T> AbstractListAssert<?, List<? extends T>, T, ? extends ObjectAssert<T>> serviceLoader(
       Class<T> clazz
   ) {
+    // AssertJ currently returns ObjectAssert here, not AbstractObjectAssert. This is problematic
+    // as it causes a compiler error if we do not use the type they provide, due to covariance
+    // voodoo.
+
     requireNonNull(clazz, "class must not be null");
 
     var items = new ArrayList<T>();
     actual.getServiceLoader(clazz).iterator().forEachRemaining(items::add);
 
-    return FactoryBasedNavigableListAssert.assertThat(items, ObjectAssert::new);
+    return assertThat(items, Assertions::assertThat);
   }
 }

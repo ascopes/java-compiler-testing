@@ -30,7 +30,6 @@ import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractPathAssert;
-import org.assertj.core.api.PathAssert;
 
 /**
  * Assertions for package container groups.
@@ -107,7 +106,7 @@ public final class PackageContainerGroupAssert
     var file = actual.findFile(path);
 
     if (file != null) {
-      return new PathAssert(file);
+      return assertThat(file);
     }
 
     var closestMatches = FuzzySearch

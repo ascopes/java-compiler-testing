@@ -15,10 +15,12 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.github.ascopes.jct.compilers.PathFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.assertj.core.api.PathAssert;
+import org.assertj.core.api.AbstractPathAssert;
 
 /**
  * Assertions for {@link PathFileObject Path file objects}.
@@ -44,8 +46,8 @@ public final class PathFileObjectAssert
    *
    * @return the assertions for the path.
    */
-  public PathAssert relativePath() {
-    return new PathAssert(actual.getRelativePath());
+  public AbstractPathAssert<?> relativePath() {
+    return assertThat(actual.getRelativePath());
   }
 
   /**
@@ -53,7 +55,7 @@ public final class PathFileObjectAssert
    *
    * @return the assertions for the path.
    */
-  public PathAssert fullPath() {
-    return new PathAssert(actual.getFullPath());
+  public AbstractPathAssert<?> fullPath() {
+    return assertThat(actual.getFullPath());
   }
 }

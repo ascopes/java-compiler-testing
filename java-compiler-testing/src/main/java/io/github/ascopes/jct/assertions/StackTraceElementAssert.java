@@ -15,12 +15,14 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
-import org.assertj.core.api.BooleanAssert;
-import org.assertj.core.api.IntegerAssert;
-import org.assertj.core.api.StringAssert;
+import org.assertj.core.api.AbstractBooleanAssert;
+import org.assertj.core.api.AbstractIntegerAssert;
+import org.assertj.core.api.AbstractStringAssert;
 
 /**
  * Assertions to perform on a {@link StackTraceElement stack trace frame}.
@@ -46,8 +48,9 @@ public final class StackTraceElementAssert
    *
    * @return the assertions for the file name.
    */
-  public StringAssert fileName() {
-    return new StringAssert(actual.getFileName());
+  public AbstractStringAssert<?> fileName() {
+    return assertThat(actual.getFileName())
+        .as("file name");
   }
 
   /**
@@ -58,9 +61,9 @@ public final class StackTraceElementAssert
    *
    * @return the assertions for the line number.
    */
-  public IntegerAssert lineNumber() {
-    return new IntegerAssert(actual.getLineNumber())
-        .describedAs("line number %s", actual.getLineNumber());
+  public AbstractIntegerAssert<?> lineNumber() {
+    return assertThat(actual.getLineNumber())
+        .as("line number %s", actual.getLineNumber());
   }
 
   /**
@@ -70,8 +73,9 @@ public final class StackTraceElementAssert
    *
    * @return the assertions for the module name.
    */
-  public StringAssert moduleName() {
-    return new StringAssert(actual.getModuleName());
+  public AbstractStringAssert<?> moduleName() {
+    return assertThat(actual.getModuleName())
+        .as("module name");
   }
 
   /**
@@ -81,8 +85,9 @@ public final class StackTraceElementAssert
    *
    * @return the assertions for the module version.
    */
-  public StringAssert moduleVersion() {
-    return new StringAssert(actual.getModuleVersion());
+  public AbstractStringAssert<?> moduleVersion() {
+    return assertThat(actual.getModuleVersion())
+        .as("module version");
   }
 
   /**
@@ -90,8 +95,9 @@ public final class StackTraceElementAssert
    *
    * @return the assertions for the classloader name.
    */
-  public StringAssert classLoaderName() {
-    return new StringAssert(actual.getClassLoaderName());
+  public AbstractStringAssert<?> classLoaderName() {
+    return assertThat(actual.getClassLoaderName())
+        .as("class loader name");
   }
 
   /**
@@ -99,8 +105,9 @@ public final class StackTraceElementAssert
    *
    * @return the assertions for the class name.
    */
-  public StringAssert className() {
-    return new StringAssert(actual.getClassName());
+  public AbstractStringAssert<?> className() {
+    return assertThat(actual.getClassName())
+        .as("class name");
   }
 
   /**
@@ -108,8 +115,9 @@ public final class StackTraceElementAssert
    *
    * @return the assertions for the method name.
    */
-  public StringAssert methodName() {
-    return new StringAssert(actual.getMethodName());
+  public AbstractStringAssert<?> methodName() {
+    return assertThat(actual.getMethodName())
+        .as("method name");
   }
 
   /**
@@ -117,7 +125,8 @@ public final class StackTraceElementAssert
    *
    * @return the assertions for the method nativity.
    */
-  public BooleanAssert nativeMethod() {
-    return new BooleanAssert(actual.isNativeMethod());
+  public AbstractBooleanAssert<?> nativeMethod() {
+    return assertThat(actual.isNativeMethod())
+        .as("native method");
   }
 }

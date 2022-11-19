@@ -15,12 +15,14 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import io.github.ascopes.jct.assertions.impl.LocationRepresentation;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
-import org.assertj.core.api.StringAssert;
+import org.assertj.core.api.AbstractStringAssert;
 
 /**
  * Assertions for an individual {@link Location location}.
@@ -106,7 +108,7 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
    *
    * @return the string assertions to perform.
    */
-  public StringAssert name() {
-    return new StringAssert(actual.getName());
+  public AbstractStringAssert<?> name() {
+    return assertThat(actual.getName());
   }
 }
