@@ -346,6 +346,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     return new ModuleLocation(location, moduleName);
   }
 
+  @Nullable
   @Override
   public Location getLocationForModule(Location location, JavaFileObject fo) {
     requireOutputOrModuleOrientedLocation(location);
@@ -358,7 +359,10 @@ public final class JctFileManagerImpl implements JctFileManager {
         return moduleLocation;
       }
 
-      throw new IllegalArgumentException("File object " + fo + " is not for a module");
+      // The expectation is to return null if this is not for a module. Certain frameworks like
+      // manifold expect this behaviour, despite it not being documented very clearly in the
+      // Java compiler API.
+      return null;
     }
 
     throw new IllegalArgumentException(
