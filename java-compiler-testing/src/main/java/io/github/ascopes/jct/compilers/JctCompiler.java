@@ -888,8 +888,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
   }
 
   /**
-   * Get the current target version that is set, or {@code null} if left to the compiler
-   * default.
+   * Get the current target version that is set, or {@code null} if left to the compiler default.
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.

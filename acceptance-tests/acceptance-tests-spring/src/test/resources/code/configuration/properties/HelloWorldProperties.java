@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties("hello.world")
 public class HelloWorldProperties {
+
   private String message;
 
   public String getMessage() {

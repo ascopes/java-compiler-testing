@@ -19,8 +19,8 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * An exception that is thrown when a compiler configurer cannot be initialised
- * successfully using the JCT JUnit parameterised test API.
+ * An exception that is thrown when a compiler configurer cannot be initialised successfully using
+ * the JCT JUnit parameterised test API.
  *
  * @author Ashley Scopes
  * @since 0.0.1

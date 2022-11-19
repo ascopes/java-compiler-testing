@@ -29,9 +29,9 @@ public final class User {
   /**
    * Initialise the user.
    *
-   * @param id the user ID.
+   * @param id   the user ID.
    * @param name the user name.
-   * @param age the user age.
+   * @param age  the user age.
    */
   public User(long id, String name, int age) {
     this.id = id;
