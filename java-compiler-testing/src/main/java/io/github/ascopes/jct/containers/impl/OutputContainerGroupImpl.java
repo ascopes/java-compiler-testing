@@ -105,7 +105,7 @@ public class OutputContainerGroupImpl
   }
 
   @Override
-  public PackageContainerGroup findModule(String module) {
+  public PackageContainerGroup getModule(String module) {
     if (module.isEmpty()) {
       // We are a package container group internally.
       return this;

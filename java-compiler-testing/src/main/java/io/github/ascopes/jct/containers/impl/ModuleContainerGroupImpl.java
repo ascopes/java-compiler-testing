@@ -98,7 +98,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   }
 
   @Override
-  public PackageContainerGroup findModule(String module) {
+  public PackageContainerGroup getModule(String module) {
     if (module.isEmpty()) {
       throw new IllegalArgumentException("Cannot have module sources with no valid module name");
     }

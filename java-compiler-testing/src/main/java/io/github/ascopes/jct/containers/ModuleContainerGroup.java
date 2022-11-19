@@ -64,7 +64,7 @@ public interface ModuleContainerGroup extends ContainerGroup {
    * @return the container group, or {@code null} if no module was found by that name.
    */
   @Nullable
-  PackageContainerGroup findModule(String module);
+  PackageContainerGroup getModule(String module);
 
   /**
    * Get the {@link PackageContainerGroup} for a given module name, creating it if it does not yet
