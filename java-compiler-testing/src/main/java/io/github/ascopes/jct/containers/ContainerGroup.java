@@ -60,12 +60,12 @@ public interface ContainerGroup extends Closeable {
   Location getLocation();
 
   /**
-   * Get a service loader for the given service class.
+   * Get a service loader for the given service class, or throw an exception if the operation is not
+   * supported.
    *
    * @param service the service class to get.
    * @param <S>     the service class type.
-   * @return the service loader, if this location supports loading plugins. If not, an empty
-   *     optional is returned instead.
+   * @return the service loader.
    * @throws UnsupportedOperationException if the container group does not provide this
    *                                       functionality.
    */

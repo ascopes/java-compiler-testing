@@ -27,8 +27,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaFileManager.Location;
@@ -770,15 +770,16 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
   String getDefaultRelease();
 
   /**
-   * Get the current release version that is set, or an empty optional if left to the compiler
+   * Get the current release version that is set, or {@code null} if left to the compiler to decide.
    * default.
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
-   * @return the release version string.
+   * @return the release version string, if set.
    */
-  Optional<String> getRelease();
+  @Nullable
+  String getRelease();
 
   /**
    * Set the release version.
@@ -828,15 +829,16 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
   }
 
   /**
-   * Get the current source version that is set, or an empty optional if left to the compiler
+   * Get the current source version that is set, or {@code null} if left to the compiler to decide.
    * default.
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
-   * @return the source version string.
+   * @return the source version string, if set.
    */
-  Optional<String> getSource();
+  @Nullable
+  String getSource();
 
   /**
    * Set the source version.
@@ -886,15 +888,16 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
   }
 
   /**
-   * Get the current target version that is set, or an empty optional if left to the compiler
+   * Get the current target version that is set, or {@code null} if left to the compiler
    * default.
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
-   * @return the target version string.
+   * @return the target version string, if set.
    */
-  Optional<String> getTarget();
+  @Nullable
+  String getTarget();
 
   /**
    * Set the target version.

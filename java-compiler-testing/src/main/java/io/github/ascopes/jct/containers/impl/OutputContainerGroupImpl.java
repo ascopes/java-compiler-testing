@@ -32,7 +32,6 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject.Kind;
@@ -95,10 +94,8 @@ public class OutputContainerGroupImpl
   @Override
   public boolean contains(PathFileObject fileObject) {
     if (location instanceof ModuleLocation) {
-      return Optional
-          .ofNullable(modules.get(location))
-          .map(module -> module.contains(fileObject))
-          .orElse(false);
+      var module = modules.get(location);
+      return module != null && module.contains(fileObject);
     }
 
     return super.contains(fileObject);

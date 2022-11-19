@@ -263,7 +263,7 @@ class TraceDiagnosticTest {
     var actualThreadName = diagnostic.getThreadName();
 
     // Then
-    assertThat(actualThreadName).isPresent().contains(expectedThreadName);
+    assertThat(actualThreadName).isEqualTo(expectedThreadName);
   }
 
   @DisplayName("getThreadName() returns empty when the thread name is not known")
@@ -282,7 +282,7 @@ class TraceDiagnosticTest {
     var actualThreadName = diagnostic.getThreadName();
 
     // Then
-    assertThat(actualThreadName).isEmpty();
+    assertThat(actualThreadName).isNull();
   }
 
   @DisplayName("getStackTrace() returns the stack trace")

@@ -19,7 +19,6 @@ import static io.github.ascopes.jct.testing.helpers.Fixtures.someDiagnostic;
 import static java.util.Locale.ROOT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
-import static org.assertj.core.api.InstanceOfAssertFactories.optional;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -139,7 +138,6 @@ class TracingDiagnosticListenerTest {
   @DisplayName("Diagnostics are logged with the expected thread ID")
   @MethodSource("loggingArgs")
   @ParameterizedTest(name = "for logging={0}, stackTraces={1}")
-  @SuppressWarnings("deprecation")
   void diagnosticsAreLoggedWithTheExpectedThreadId(boolean logging, boolean stackTraces) {
     // Given
     var threadId = new Random().nextInt(15_999) + 1L;
@@ -185,9 +183,8 @@ class TracingDiagnosticListenerTest {
     // Then
     assertThat(listener.getDiagnostics())
         .singleElement()
-        .extracting(TraceDiagnostic::getThreadName, optional(String.class))
-        .isPresent()
-        .hasValue(threadName);
+        .extracting(TraceDiagnostic::getThreadName)
+        .isEqualTo(threadName);
   }
 
   @DisplayName("Diagnostics are logged with no thread name")
@@ -210,8 +207,8 @@ class TracingDiagnosticListenerTest {
     // Then
     assertThat(listener.getDiagnostics())
         .singleElement()
-        .extracting(TraceDiagnostic::getThreadName, optional(String.class))
-        .isNotPresent();
+        .extracting(TraceDiagnostic::getThreadName)
+        .isNull();
   }
 
   @DisplayName("Diagnostics are logged with the expected stacktrace")

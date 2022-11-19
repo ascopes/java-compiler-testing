@@ -80,7 +80,7 @@ public interface PackageContainerGroup extends ContainerGroup {
   /**
    * Get a {@link FileObject} that can have content read from it.
    *
-   * <p>This will return an empty optional if no file is found.
+   * <p>This will return {@code null} if no file is found.
    *
    * @param packageName  the package name of the file to read.
    * @param relativeName the relative name of the file to read.
@@ -92,7 +92,7 @@ public interface PackageContainerGroup extends ContainerGroup {
   /**
    * Get a {@link FileObject} that can have content written to it for the given file.
    *
-   * <p>This will attempt to write to the first writeable path in this group. An empty optional
+   * <p>This will attempt to write to the first writeable path in this group. {@code null}
    * will be returned if no writeable paths exist in this group.
    *
    * @param packageName  the name of the package the file is in.
@@ -106,7 +106,7 @@ public interface PackageContainerGroup extends ContainerGroup {
   /**
    * Get a {@link JavaFileObject} that can have content written to it for the given file.
    *
-   * <p>This will attempt to write to the first writeable path in this group. An empty optional
+   * <p>This will attempt to write to the first writeable path in this group. {@code null}
    * will be returned if no writeable paths exist in this group.
    *
    * @param className the binary name of the class to read.
@@ -120,7 +120,7 @@ public interface PackageContainerGroup extends ContainerGroup {
   /**
    * Get a {@link JavaFileObject} that can have content written to it for the given class.
    *
-   * <p>This will attempt to write to the first writeable path in this group. An empty optional
+   * <p>This will attempt to write to the first writeable path in this group. {@code null}
    * will be returned if no writeable paths exist in this group.
    *
    * @param className the name of the class.

@@ -175,7 +175,7 @@ public final class DiagnosticAssert
    * @return the assertions for the thread name.
    */
   public StringAssert threadName() {
-    return new StringAssert(actual.getThreadName().orElse(null));
+    return new StringAssert(actual.getThreadName());
   }
 
   /**

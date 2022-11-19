@@ -74,7 +74,7 @@ public interface Container extends Closeable {
   /**
    * Get a {@link FileObject} for reading, if it exists.
    *
-   * <p>If the file does not exist, an empty optional is returned.
+   * <p>If the file does not exist, {@code null} is returned.
    *
    * @param packageName  the package name of the file.
    * @param relativeName the relative name of the file in the package.
@@ -86,7 +86,7 @@ public interface Container extends Closeable {
   /**
    * Get a {@link FileObject} for writing.
    *
-   * <p>If the container is read-only, an empty optional is returned.
+   * <p>If the container is read-only, {@code null} is returned.
    *
    * @param packageName  the package name of the file.
    * @param relativeName the relative name of the file in the package.
@@ -98,7 +98,7 @@ public interface Container extends Closeable {
   /**
    * Get a {@link JavaFileObject} for reading, if it exists.
    *
-   * <p>If the file does not exist, an empty optional is returned.
+   * <p>If the file does not exist, {@code null} is returned.
    *
    * @param className the binary name of the class to open.
    * @param kind      the kind of file to open.
@@ -110,7 +110,7 @@ public interface Container extends Closeable {
   /**
    * Get a {@link JavaFileObject} for writing.
    *
-   * <p>If the container is read-only, an empty optional is returned.
+   * <p>If the container is read-only, {@code null} is returned.
    *
    * @param className the binary name of the class to open.
    * @param kind      the kind of file to open.

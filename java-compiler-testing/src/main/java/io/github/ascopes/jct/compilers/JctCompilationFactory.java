@@ -201,9 +201,9 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
         .compilerOptions(compiler.getCompilerOptions())
         .runtimeOptions(compiler.getRuntimeOptions())
         .previewFeatures(compiler.isPreviewFeatures())
-        .release(compiler.getRelease().orElse(null))
-        .source(compiler.getSource().orElse(null))
-        .target(compiler.getTarget().orElse(null))
+        .release(compiler.getRelease())
+        .source(compiler.getSource())
+        .target(compiler.getTarget())
         .verbose(compiler.isVerbose())
         .showWarnings(compiler.isShowWarnings())
         .build();
@@ -220,11 +220,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
    * @return the file manager to use.
    */
   protected JctFileManager buildFileManager(A compiler, FileManagerBuilder builder) {
-    var release = compiler.getRelease()
-        .or(compiler::getTarget)
-        .orElseGet(compiler::getDefaultRelease);
-
-    return uncheckedIo(() -> builder.createFileManager(release));
+    return uncheckedIo(() -> builder.createFileManager(determineRelease(compiler)));
   }
 
   /**
@@ -418,6 +414,21 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
     } else {
       LOGGER.trace("Annotation processor discovery will be performed");
     }
+  }
+
+  private String determineRelease(JctCompiler<?, ?> compiler) {
+    if (compiler.getRelease() != null) {
+      LOGGER.trace("Using explicitly set release as the base release version internally");
+      return compiler.getRelease();
+    }
+
+    if (compiler.getTarget() != null) {
+      LOGGER.trace("Using explicitly set target as the base release version internally");
+      return compiler.getTarget();
+    }
+
+    LOGGER.trace("Using compiler default release as the base release version internally");
+    return compiler.getDefaultRelease();
   }
 
   /**

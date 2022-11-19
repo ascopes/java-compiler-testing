@@ -161,7 +161,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
   /**
    * Perform assertions on the given package group, if it has been configured.
    *
-   * <p>If not configured, this will return an empty optional.
+   * <p>If not configured, this will return assertions on a {@code null} value instead.
    *
    * @param location the location to configure.
    * @return the assertions to perform.
@@ -239,8 +239,8 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
   /**
    * Get assertions on the path containing the source path, if it exists.
    *
-   * @return the assertions to perform on the source path, or an empty optional if no group exists
-   *     for that location.
+   * @return the assertions to perform on the source path, or assertions on a {@code null} value if
+   *     no group exists for that location.
    */
   public PackageContainerGroupAssert sourcePath() {
     return packageGroup(StandardLocation.SOURCE_PATH);
@@ -249,8 +249,8 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
   /**
    * Get assertions on the path containing the source path, if it exists.
    *
-   * @return the assertions to perform on the source path, or an empty optional if no group exists
-   *     for that location.
+   * @return the assertions to perform on the source path, or assertions on a {@code null} value if
+   *     no group exists for that location.
    */
   public ModuleContainerGroupAssert moduleSourcePath() {
     return moduleGroup(StandardLocation.MODULE_SOURCE_PATH);
@@ -259,8 +259,8 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
   /**
    * Get assertions on the path containing the module path, if it exists.
    *
-   * @return the assertions to perform on the module path, or an empty optional if no group exists
-   *     for that location.
+   * @return the assertions to perform on the module path, or assertions on a {@code null} value if
+   *     no group exists for that location.
    */
   public ModuleContainerGroupAssert modulePath() {
     return moduleGroup(StandardLocation.MODULE_PATH);

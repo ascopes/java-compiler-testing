@@ -17,12 +17,12 @@ package io.github.ascopes.jct.assertions.impl;
 
 import static javax.tools.Diagnostic.NOPOS;
 
+import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.utils.IoExceptionUtils;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Optional;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
@@ -88,11 +88,13 @@ public final class DiagnosticRepresentation implements Representation {
     builder.append("\n\n");
 
     IoExceptionUtils.uncheckedIo(() -> {
-      extractSnippet(diagnostic)
-          .ifPresent(snippet -> {
-            snippet.prettyPrintTo(builder);
-            builder.append('\n');
-          });
+      var snippet = extractSnippet(diagnostic);
+
+      if (snippet != null) {
+        snippet.prettyPrintTo(builder);
+        builder.append('\n');
+      }
+
       builder
           .append(PADDING)
           .append(diagnostic.getMessage(Locale.ROOT));
@@ -101,7 +103,8 @@ public final class DiagnosticRepresentation implements Representation {
     return builder.toString();
   }
 
-  private Optional<Snippet> extractSnippet(
+  @Nullable
+  private Snippet extractSnippet(
       Diagnostic<? extends JavaFileObject> diagnostic
   ) throws IOException {
     var source = diagnostic.getSource();
@@ -112,7 +115,7 @@ public final class DiagnosticRepresentation implements Representation {
 
     if (noSnippet) {
       // No info available about position, so don't bother extracting anything.
-      return Optional.empty();
+      return null;
     }
 
     var content = diagnostic.getSource().getCharContent(true).toString();
@@ -134,7 +137,7 @@ public final class DiagnosticRepresentation implements Representation {
         lineEndOffset - lineStartOffset
     );
 
-    return Optional.of(snippet);
+    return snippet;
   }
 
   private static final class Snippet {

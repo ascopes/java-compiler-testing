@@ -26,7 +26,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.Set;
 import javax.annotation.processing.Processor;
 import javax.tools.JavaCompiler;
@@ -284,9 +283,10 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     return myself();
   }
 
+  @Nullable
   @Override
-  public Optional<String> getRelease() {
-    return Optional.ofNullable(release);
+  public String getRelease() {
+    return release;
   }
 
   @Override
@@ -301,9 +301,10 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     return myself();
   }
 
+  @Nullable
   @Override
-  public Optional<String> getSource() {
-    return Optional.ofNullable(source);
+  public String getSource() {
+    return source;
   }
 
   @Override
@@ -315,9 +316,10 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     return myself();
   }
 
+  @Nullable
   @Override
-  public Optional<String> getTarget() {
-    return Optional.ofNullable(target);
+  public String getTarget() {
+    return target;
   }
 
   @Override

@@ -23,7 +23,6 @@ import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
@@ -138,10 +137,11 @@ public class TraceDiagnostic<S extends JavaFileObject> implements Diagnostic<S> 
   /**
    * Get the thread name for the thread that created this diagnostic.
    *
-   * @return the thread name, if known, or an empty optional otherwise.
+   * @return the thread name, if known, or else {@code null}.
    */
-  public Optional<String> getThreadName() {
-    return Optional.ofNullable(threadName);
+  @Nullable
+  public String getThreadName() {
+    return threadName;
   }
 
   /**

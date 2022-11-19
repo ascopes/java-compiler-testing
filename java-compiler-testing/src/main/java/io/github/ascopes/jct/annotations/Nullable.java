@@ -27,8 +27,6 @@ import org.apiguardian.api.API.Status;
  * Annotation for documentation purposes indicating that the annotated element may have a null
  * value.
  *
- * <p>Implementations should prefer the use of {@link java.util.Optional} over this class.
- *
  * @author Ashley Scopes
  * @since 0.0.1
  */
