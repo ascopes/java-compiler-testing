@@ -53,7 +53,18 @@ jobs:
       fail-fast: false
       matrix:
         os: [ 'ubuntu-latest' ]
-        java-version: [ 11, 12, 13, 14, 15, 16, 17, 18, 19 ]
+        java-version:
+          - 11
+          - 12
+          - 13
+          - 14
+          - 15
+          - 16
+          - 17
+          - 18
+          - 19
+          # Mockito currently does not support this distribution.
+          # - 20-ea
         build-script: [ './mvnw' ]
         include:
           - os: windows-latest
@@ -73,9 +84,10 @@ jobs:
       - name: Initialize JDK
         uses: actions/setup-java@v3
         with:
+          cache: 'maven'
+          check-latest: true
           distribution: 'zulu'
           java-version: '${{ matrix.java-version }}'
-          cache: 'maven'
 
       - name: Compile and run tests
         run: >-
