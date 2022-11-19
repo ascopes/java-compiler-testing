@@ -21,7 +21,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
-import javax.tools.StandardLocation
 import java.nio.file.Path
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
@@ -59,8 +58,8 @@ class LombokIntegrationTest {
         .isSuccessful()
 
     def animalClass = compilation
-        .getFileManager()
-        .getClassLoader(StandardLocation.CLASS_OUTPUT)
+        .classOutputs
+        .classLoader
         .loadClass("org.example.Animal")
 
     def animal = animalClass
@@ -103,8 +102,8 @@ class LombokIntegrationTest {
         .isSuccessful()
 
     def animalClass = compilation
-        .getFileManager()
-        .getClassLoader(StandardLocation.CLASS_OUTPUT)
+        .classOutputs
+        .classLoader
         .loadClass("org.example.Animal")
 
     def animal = animalClass

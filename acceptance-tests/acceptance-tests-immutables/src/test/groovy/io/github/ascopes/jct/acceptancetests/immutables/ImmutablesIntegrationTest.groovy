@@ -21,8 +21,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
-import javax.tools.StandardLocation
-
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
 import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
 import static org.assertj.core.api.SoftAssertions.assertSoftly
@@ -56,8 +54,8 @@ class ImmutablesIntegrationTest {
         .isSuccessful()
 
     def animalClass = compilation
-        .getFileManager()
-        .getClassLoader(StandardLocation.CLASS_OUTPUT)
+        .classOutputs
+        .classLoader
         .loadClass("org.example.ImmutableAnimal")
 
     def animal = animalClass
@@ -91,8 +89,8 @@ class ImmutablesIntegrationTest {
         .isSuccessful()
 
     def animalClass = compilation
-        .getFileManager()
-        .getClassLoader(StandardLocation.CLASS_OUTPUT)
+        .classOutputs
+        .classLoader
         .loadClass("org.example.ImmutableAnimal")
 
     def animal = animalClass

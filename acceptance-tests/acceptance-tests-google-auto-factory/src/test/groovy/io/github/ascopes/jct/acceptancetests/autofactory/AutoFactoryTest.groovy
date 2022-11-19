@@ -21,7 +21,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
-import javax.tools.StandardLocation
 import java.time.Instant
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
@@ -55,8 +54,8 @@ class AutoFactoryTest {
         .isNotEmptyFile()
 
     def userFactory = compilation
-        .fileManager
-        .getClassLoader(StandardLocation.CLASS_OUTPUT)
+        .classOutputs
+        .classLoader
         .loadClass("org.example.UserFactory")
         .getConstructor()
         .newInstance()
