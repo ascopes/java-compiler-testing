@@ -290,6 +290,7 @@
               This block is needed to show @DisplayName and @ParameterizedTest
               in reports with the provided names.
             -->
+            <runOrder>random</runOrder>
             <statelessTestsetReporter
               implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
               <disable>false</disable>
