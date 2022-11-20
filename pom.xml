@@ -278,6 +278,7 @@
             <detectLinks>true</detectLinks>
             <excludePackageNames>${javadoc-excluded-packages}</excludePackageNames>
             <links>
+              <link>https://docs.oracle.com/en/java/javase/11/docs/api/java.compiler</link>
               <link>https://javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}</link>
               <link>https://javadoc.io/doc/com.google.code.findbugs/jsr305/${jsr305.version}</link>
               <link>https://javadoc.io/doc/org.apiguardian/apiguardian-api/${apiguardian.version}</link>
