@@ -90,6 +90,9 @@
     <!-- Project flags -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <!-- JavaDocs -->
+    <javadoc-excluded-packages />
+
     <project-organization-url>https://github.com/ascopes</project-organization-url>
     <project-scm-url>${project.organization.url}/java-compiler-testing</project-scm-url>
   </properties>
@@ -269,13 +272,20 @@
           <configuration>
             <additionalOptions>
               <option>--override-methods=detail</option>
-              <option>-version</option>
+              <option>--show-packages=exported</option>
             </additionalOptions>
-            <source>11</source>
+            <defaultSince>0.0.1</defaultSince>
+            <detectLinks>true</detectLinks>
+            <excludePackageNames>${javadoc-excluded-packages}</excludePackageNames>
             <links>
               <link>https://javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}</link>
+              <link>https://javadoc.io/doc/com.google.code.findbugs/jsr305/${jsr305.version}</link>
+              <link>https://javadoc.io/doc/org.apiguardian/apiguardian-api/${apiguardian.version}</link>
               <link>https://javadoc.io/doc/org.assertj/assertj-core/${assertj.version}</link>
+              <link>https://javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}</link>
+              <link>https://junit.org/junit5/docs/${junit.version}/api</link>
             </links>
+            <source>11</source>
           </configuration>
         </plugin>
 

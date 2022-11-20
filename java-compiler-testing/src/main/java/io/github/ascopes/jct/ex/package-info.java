@@ -16,4 +16,8 @@
 /**
  * Exceptions used within this API.
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 package io.github.ascopes.jct.ex;
+
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
