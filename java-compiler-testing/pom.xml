@@ -15,7 +15,8 @@
 
   <properties>
     <javadoc-excluded-packages>
-      *.annotations,
+      <!-- Keep the annotations package in the documentation so
+           that readers can find the context for what annotations mean. -->
       *.impl,
       *.utils,
     </javadoc-excluded-packages>
