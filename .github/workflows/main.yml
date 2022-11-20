@@ -1,4 +1,4 @@
-name: PR and push actions
+name: Latest
 on:
   push:
     branches: [ main ]
