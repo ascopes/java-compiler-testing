@@ -13,6 +13,14 @@
 
   <artifactId>java-compiler-testing</artifactId>
 
+  <properties>
+    <javadoc-excluded-packages>
+      *.annotations,
+      *.impl,
+      *.utils,
+    </javadoc-excluded-packages>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.google.code.findbugs</groupId>

@@ -1,7 +1,7 @@
-name: Build
+name: PR and push actions
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ "**" ]
     types: [ opened, synchronize ]
   push:
     branches: [ main ]
@@ -10,14 +10,14 @@ on:
     - cron: "0 0 * * 0"
 
 jobs:
-  test:
-    name: JDK ${{ matrix.java-version }} on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+  build:
+    name: Build - JDK ${{ matrix.java-version }} - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
 
     strategy:
       fail-fast: false
       matrix:
-        os: [ 'ubuntu-latest' ]
+        os: [ ubuntu ]
         java-version:
           - 11
           - 12
@@ -32,10 +32,10 @@ jobs:
           # - 20-ea
         build-script: [ './mvnw' ]
         include:
-          - os: windows-latest
+          - os: windows
             build-script: './mvnw.cmd'
             java-version: '11'
-          - os: macos-latest
+          - os: macos
             build-script: './mvnw'
             java-version: '11'
 
@@ -85,9 +85,9 @@ jobs:
             **/target/site/jacoco/jacoco*.xml
           retention-days: 5
 
-  report-test-results:
-    name: Report results
-    needs: [ test ]
+  report-test-results-and-coverage:
+    name: Report test results and coverage
+    needs: [ build ]
     runs-on: ubuntu-latest
     if: always()
     permissions:
@@ -130,9 +130,64 @@ jobs:
           report_individual_runs: true
           time_unit: "milliseconds"
 
-  checkstyle:
-    name: Code style and licenses
+  javadocs:
+    name: Generate JavaDocs
     runs-on: ubuntu-latest
+    needs: [ report-test-results-and-coverage, compliance ]
+    if: github.event_name != 'schedule'
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Initialize Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          # We have to use >= 15 for now, as assertj causes JDK 14 and older to prevent linking
+          # documentation correctly. I have opened an issue on GitHub with AssertJ to discuss
+          # this being generated correctly: https://github.com/assertj/assertj-core/issues/2573.
+          java-version: '19'
+          cache: 'maven'
+
+      - name: Generate JavaDocs
+        run: >-
+          ./mvnw 
+          -B 
+          -T8
+          -U
+          -pl java-compiler-testing
+          --also-make
+          --no-transfer-progress
+          -Dmaven.test.skip=true
+          -Dcheckstyle.skip=true
+          -Dlicense.skip=true
+          -Dstyle.color=always
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+          clean compile javadoc:jar
+
+      - name: Upload JavaDocs to GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: java-compiler-testing/target/apidocs
+
+      - name: Deploy JavaDocs to GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        id: deployment
+        uses: actions/deploy-pages@v1
+
+  compliance:
+    name: Check Compliance
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    if: ${{ github.event_name != 'schedule' }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -159,45 +214,3 @@ jobs:
           -Dmaven.test.skip
           -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
           verify
-
-  javadoc:
-    name: Code documentation
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Initialize Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          # We have to use >= 15 for now, as assertj causes JDK 14 and older to prevent linking
-          # documentation correctly. I have opened an issue on GitHub with AssertJ to discuss
-          # this being generated correctly: https://github.com/assertj/assertj-core/issues/2573.
-          java-version: '19'
-          cache: 'maven'
-
-      - name: Generate JavaDoc documentation
-        run: >-
-          ./mvnw 
-          -B 
-          -T8
-          -U
-          --no-transfer-progress
-          -Dmaven.test.skip=true
-          -Dcheckstyle.skip=true
-          -Dlicense.skip=true
-          -Dstyle.color=always
-          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
-          clean compile javadoc:jar
-
-      - name: Archive JavaDoc artifacts
-        uses: actions/upload-artifact@v3
-        continue-on-error: true
-        if: success()
-        with:
-          name: javadocs
-          path: "**/target/apidocs/io.github.ascopes.*"
-          retention-days: 5
-

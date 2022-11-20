@@ -16,4 +16,8 @@
 /**
  * Additional functionality to simplify writing tests with Junit.
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 package io.github.ascopes.jct.junit;
+
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;

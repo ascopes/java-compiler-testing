@@ -9,26 +9,37 @@
 
 # java-compiler-testing
 
-Facility for running compilation tests and annotation processing tests
-for `javac` and other compliant compilers.
+A framework for performing exhaustive integration testing against Java compilers in modern Java
+libraries, with a focus on full JPMS support.
 
-I developed this after several months of pulling out my hair trying to
-find easy ways to integration test annotation processors for Java. While
-one or two tools exist for Java 8, I have yet to find one that works
-seamlessly with Java 11 and newer.
+The _Java Compiler Testing_ API has a number of facilities for assisting in
+testing anything related to the Java compiler. This includes Javac plugins and JSR-199 annotation
+processors.
 
-This module comes with full JPMS support. I decided to drop support for
-Java 8 due to complexity around implementing this without the ability to
-reference modules, and ideally this tool should be forward compatible to
-prevent future issues for any projects deciding to use it.
+All test cases are designed to be as stateless as possible, with facilities to produce
+in-memory file systems (using Google's JIMFS API) or using OS-provided temporary directories.
+All file system mechanisms are complimented with a fluent API that enables writing expressive
+declarations without unnecessary boilerplate.
+
+Integration test cases can be written to cross-compile against a range of Java compiler
+versions, with the ability to provide as much or as little configuration detail as you wish.
+Additionally, APIs can be easily extended to integrate with any other JSR-199-compliant compiler
+as required.
+
+Compilation results are complimented with a suite of assertion facilities that extend
+the AssertJ API to assist in writing fluent and human-readable test cases for your code. Each of
+these assertions comes with specially-developed human-readable error messages and formatting.
+
+Full JUnit5 integration is provided to help streamline the development process.
 
 **This module is still under development.** Any contributions or feedback
 are always welcome!
 
 ## Examples
 
-```java
+### In-memory code, using RAM disks for source directories
 
+```java
 @DisplayName("Example tests")
 class ExampleTest {
 
@@ -72,9 +83,63 @@ class ExampleTest {
 }
 ```
 
-Likewise, the following shows an example of compiling a multi-module style application with JPMS
+### Compiling and testing with a custom annotation processor
+
+```java
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
+import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory;
+
+import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.JavacCompilerTest;
+
+import org.example.processor.JsonSchemaAnnotationProcessor;
+import org.skyscreamer.jsonassert.JSONAssert;
+
+class JsonSchemaAnnotationProcessorTest {
+
+    @JavacCompilerTest(minVersion = 11, maxVersion = 19)
+    void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler<?, ?> compiler) {
+        // Given
+        var sources = newRamDirectory("sources")
+                .createDirectory("org", "example", "tests")
+                .copyContentsFrom("src", "test", "resources", "code", "schematest");
+
+        // When
+        var compilation = compiler
+                .addSources(sources)
+                .addAnnotationProcessors(new JsonSchemaAnnotationProcessor())
+                .addAnnotationProcessorOptions("jsonschema.verbose=true")
+                .failOnWarnings(true)
+                .showDeprecationWarnings(true)
+                .compile();
+
+        // Then
+        assertThatCompilation(compilation)
+                .isSuccessfulWithoutWarnings();
+
+        assertThatCompilation(compilation)
+                .diagnostics().notes().singleElement()
+                .message().isEqualTo(
+                        "Creating JSON schema in Java %s for package org.example.tests",
+                        compiler.getRelease()
+                );
+
+        assertThatCompilation(compilation)
+                .classOutputs().packages()
+                .fileExists("json-schemas/UserSchema.json").contents()
+                .isNotEmpty()
+                .satisfies(contents -> JSONAssert.assertEquals(...));
+    }
+}
+```
+
+### Compiling multi-module sources
+
+The following shows an example of compiling a multi-module style application with JPMS
 support, running the Lombok annotation processor over the input. This assumes that the Lombok
 JAR is already on the classpath for the JUnit test runner.
+
+Even Maven lacks native support for this, still!
 
 ```java
 

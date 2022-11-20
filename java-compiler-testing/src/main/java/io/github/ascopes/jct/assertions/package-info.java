@@ -16,4 +16,8 @@
 /**
  * Assertions to perform on the result of a compilation.
  */
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 package io.github.ascopes.jct.assertions;
+
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;

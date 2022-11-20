@@ -15,5 +15,13 @@
  */
 /**
  * Various internal helper types for assertions.
+ *
+ * <p>These components are part of the internal API and should not be used by external
+ * modules. As such, they are not covered by the semantic versioning policy and may change
+ * without notice.
  */
+@API(since = "0.0.1", status = Status.INTERNAL)
 package io.github.ascopes.jct.assertions.impl;
+
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
