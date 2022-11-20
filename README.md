@@ -1,4 +1,5 @@
-[![Build](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml/badge.svg?branch=main&event=push)](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml)
+[![Build](https://github.com/ascopes/java-compiler-testing/actions/workflows/main.yml/badge.svg?branch=main&event=push)](https://github.com/ascopes/java-compiler-testing/actions/workflows/main.yml)
+[![JavaDoc](https://img.shields.io/badge/JavaDoc-Latest-yellowgreen)](https://ascopes.github.io/java-compiler-testing)
 [![Code Coverage](https://codecov.io/gh/ascopes/java-compiler-testing/branch/main/graph/badge.svg?token=VT74BP2742)](https://codecov.io/gh/ascopes/java-compiler-testing)
 [![Releases](https://img.shields.io/github/downloads/ascopes/java-compiler-testing/total)](https://github.com/ascopes/java-compiler-testing/releases)
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.ascopes.jct/java-compiler-testing)](https://search.maven.org/artifact/com.github.ascopes.jct/java-compiler-testing)

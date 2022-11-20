@@ -1,8 +1,5 @@
 name: PR and push actions
 on:
-  pull_request:
-    branches: [ "**" ]
-    types: [ opened, synchronize ]
   push:
     branches: [ main ]
   schedule:
