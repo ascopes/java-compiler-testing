@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.annotations;
 
-import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,7 +30,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@Documented
 @javax.annotation.Nullable
 @Retention(RetentionPolicy.RUNTIME)
 @Target({
@@ -44,4 +42,6 @@ import org.apiguardian.api.API.Status;
     ElementType.TYPE_USE,
 })
 public @interface Nullable {
+  // Note to reader. This explicitly omits the @Documented
+  // annotation to prevent the JavaDocs defining it twice.
 }
