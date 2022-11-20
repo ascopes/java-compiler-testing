@@ -103,6 +103,8 @@ module io.github.ascopes.jct {
   requires static transitive org.junit.jupiter.params;
   requires org.slf4j;
 
+  // Annotations is internal, but we export it for documentation purposes.
+  exports io.github.ascopes.jct.annotations;
   exports io.github.ascopes.jct.assertions;
   exports io.github.ascopes.jct.containers;
   exports io.github.ascopes.jct.compilers;
@@ -131,7 +133,6 @@ module io.github.ascopes.jct {
   opens io.github.ascopes.jct.pathwrappers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
 
-  exports io.github.ascopes.jct.annotations to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.assertions.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.compilers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
