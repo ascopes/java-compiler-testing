@@ -125,7 +125,6 @@ module io.github.ascopes.jct {
   /// EXPOSURE OF INTERNALS TO THE TESTING NAMESPACE ///
   //////////////////////////////////////////////////////
 
-  opens io.github.ascopes.jct.annotations to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.assertions.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers to io.github.ascopes.jct.testing;
