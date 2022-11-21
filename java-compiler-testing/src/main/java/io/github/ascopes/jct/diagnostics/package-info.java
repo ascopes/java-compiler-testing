@@ -21,7 +21,7 @@
 @NonNullImpl
 package io.github.ascopes.jct.diagnostics;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import io.github.ascopes.jct.annotations.NonNullApi;
 import io.github.ascopes.jct.annotations.NonNullImpl;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
