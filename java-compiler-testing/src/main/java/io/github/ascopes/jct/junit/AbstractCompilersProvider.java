@@ -122,7 +122,14 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
 
   private void applyConfigurers(JctCompiler<?, ?> compiler) {
     for (var configurerClass : configurerClasses) {
-      initialiseConfigurer(configurerClass).configure(compiler);
+      try {
+        initialiseConfigurer(configurerClass).configure(compiler);
+      } catch (Exception ex) {
+        throw new JctJunitConfigurerException(
+            "Failed to configure compiler with " + configurerClass.getName(),
+            ex
+        );
+      }
     }
   }
 
@@ -135,7 +142,8 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
       constructor = configurerClass.getDeclaredConstructor();
     } catch (NoSuchMethodException ex) {
       throw new JctJunitConfigurerException(
-          "No no-args constructor was found for configurer class " + configurerClass.getName()
+          "No no-args constructor was found for configurer class " + configurerClass.getName(),
+          ex
       );
     }
 
