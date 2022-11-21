@@ -55,8 +55,10 @@
  *    import org.skyscreamer.jsonassert.JSONAssert;
  *
  *    class JsonSchemaAnnotationProcessorTest {
+ *
  *      {@literal @JavacCompilerTest(minVersion=11, maxVersion=19)}
  *      void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler&lt;?, ?&gt; compiler) {
+ *
  *        // Given
  *        var sources = newRamDirectory("sources")
  *            .createDirectory("org", "example", "tests")
@@ -113,12 +115,15 @@ module io.github.ascopes.jct {
   exports io.github.ascopes.jct.junit;
   exports io.github.ascopes.jct.pathwrappers;
 
+  // Runtime reflection support for annotations.
+  opens io.github.ascopes.jct.annotations;
+
   // Junit annotation support.
   opens io.github.ascopes.jct.junit;
 
-  ////////////////////
-  /// TESTING ONLY ///
-  ////////////////////
+  //////////////////////////////////////////////////////
+  /// EXPOSURE OF INTERNALS TO THE TESTING NAMESPACE ///
+  //////////////////////////////////////////////////////
 
   opens io.github.ascopes.jct.annotations to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
