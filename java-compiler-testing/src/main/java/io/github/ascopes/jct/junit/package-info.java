@@ -17,7 +17,11 @@
  * Additional functionality to simplify writing tests with Junit.
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@NonNullApi
+@NonNullImpl
 package io.github.ascopes.jct.junit;
 
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import io.github.ascopes.jct.annotations.NonNullApi;
+import io.github.ascopes.jct.annotations.NonNullImpl;
