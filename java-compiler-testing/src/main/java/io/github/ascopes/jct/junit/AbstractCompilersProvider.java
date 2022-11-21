@@ -124,6 +124,8 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
     for (var configurerClass : configurerClasses) {
       try {
         initialiseConfigurer(configurerClass).configure(compiler);
+      } catch (AssertionError ex) {
+        throw ex;
       } catch (Exception ex) {
         throw new JctJunitConfigurerException(
             "Failed to configure compiler with " + configurerClass.getName(),
