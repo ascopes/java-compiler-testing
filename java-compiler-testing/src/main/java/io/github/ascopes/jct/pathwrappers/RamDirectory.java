@@ -48,7 +48,11 @@ import org.slf4j.LoggerFactory;
  * <p>While this will create a global {@link FileSystem}, it is recommended that you only interact
  * with the file system via this class to prevent potentially confusing behaviour elsewhere.
  *
+ * <p>If an underlying system does not support reading files using the NIO path API, you can
+ * instead consider using {@link TempDirectory} in place of this class.
+ *
  * @author Ashley Scopes
+ * @see TempDirectory
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
