@@ -29,6 +29,7 @@ import org.apiguardian.api.API.Status;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.opentest4j.TestAbortedException;
 
 /**
  * Base for defining a compiler-supplying arguments provider for Junit Jupiter parameterised test
@@ -124,7 +125,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
     for (var configurerClass : configurerClasses) {
       try {
         initialiseConfigurer(configurerClass).configure(compiler);
-      } catch (AssertionError ex) {
+      } catch (TestAbortedException ex) {
         throw ex;
       } catch (Exception ex) {
         throw new JctJunitConfigurerException(

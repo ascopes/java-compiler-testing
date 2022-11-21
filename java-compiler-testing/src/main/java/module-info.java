@@ -103,6 +103,7 @@ module io.github.ascopes.jct {
   requires static transitive org.apiguardian.api;
   requires org.assertj.core;
   requires static transitive org.junit.jupiter.params;
+  requires static org.opentest4j;
   requires org.slf4j;
 
   // Annotations is internal, but we export it for documentation purposes.
