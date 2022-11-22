@@ -32,7 +32,7 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Interface describing a group of containers.
+ * Base interface representing a group of package-oriented paths.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -80,7 +80,7 @@ public interface PackageContainerGroup extends ContainerGroup {
   /**
    * Get a {@link FileObject} that can have content read from it.
    *
-   * <p>This will return {@code null} if no file is found.
+   * <p>This will return {@code null} if no file is found matching the criteria.
    *
    * @param packageName  the package name of the file to read.
    * @param relativeName the relative name of the file to read.
@@ -104,10 +104,9 @@ public interface PackageContainerGroup extends ContainerGroup {
   PathFileObject getFileForOutput(String packageName, String relativeName);
 
   /**
-   * Get a {@link JavaFileObject} that can have content written to it for the given file.
+   * Get a {@link JavaFileObject} that can have content read from it for the given file.
    *
-   * <p>This will attempt to write to the first writeable path in this group. {@code null}
-   * will be returned if no writeable paths exist in this group.
+   * <p>This will return {@code null} if no file is found matching the criteria.
    *
    * @param className the binary name of the class to read.
    * @param kind      the kind of file to read.
