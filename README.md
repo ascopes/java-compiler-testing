@@ -268,8 +268,11 @@ consistently either (such as using forward-slashes to delimit binary names).
 
 To keep this library simpler and more consistent, as of
 [!92](https://github.com/ascopes/java-compiler-testing/issues/92),
-this support has been officially removed due to the overwhelming work it was creating.
+this support was officially removed due to the overwhelming work it was creating.
 
-If Eclipse fix the issues detailed in the above PR in a future release, supporting ECJ out
-of the box in this library will be considered for inclusion. This may also include support
-for the AspectJ compiler since this relies on ECJ internally.
+Some architectural changes have been made since this issue was closed which may make ECJ
+feasible to support again. [!163](https://github.com/ascopes/java-compiler-testing/issues/163)
+has been opened to track this.
+
+ECJ support would also enable the potential support of AspectJ, since the AspectJ
+compiler is built from a fork of ECJ.
