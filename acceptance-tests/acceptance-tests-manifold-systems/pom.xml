@@ -14,7 +14,7 @@
   <artifactId>acceptance-tests-manifold-systems</artifactId>
 
   <properties>
-    <manifold.version>2022.1.26</manifold.version>
+    <manifold.version>2022.1.27</manifold.version>
   </properties>
 
   <dependencies>
