@@ -153,9 +153,35 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
    * Method that returns the object it is called upon to enable creating fluent-language builders.
    *
    * @return this object.
+   * @see #also
+   * @see #then
    */
   @CheckReturnValue
   public I and() {
+    return thisTestFileSystem();
+  }
+
+  /**
+   * Method that returns the object it is called upon to enable creating fluent-language builders.
+   *
+   * @return this object.
+   * @see #and
+   * @see #then
+   */
+  @CheckReturnValue
+  public I also() {
+    return thisTestFileSystem();
+  }
+
+  /**
+   * Method that returns the object it is called upon to enable creating fluent-language builders.
+   *
+   * @return this object.
+   * @see #and
+   * @see #also
+   */
+  @CheckReturnValue
+  public I then() {
     return thisTestFileSystem();
   }
 
