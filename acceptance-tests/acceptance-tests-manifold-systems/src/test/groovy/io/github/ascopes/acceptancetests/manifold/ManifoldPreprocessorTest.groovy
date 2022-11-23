@@ -17,7 +17,6 @@ package io.github.ascopes.acceptancetests.manifold
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
@@ -84,7 +83,6 @@ class ManifoldPreprocessorTest {
     assertThat(greeting).isEqualTo("Hello, World! (symbol was not defined)")
   }
 
-  @Disabled("See https://github.com/manifold-systems/manifold/issues/399")
   @DisplayName("Warning directives produce compiler warnings in JCT")
   @JavacCompilerTest(configurers = [ManifoldPluginConfigurer])
   void warningDirectivesProduceCompilerWarningsInJct(JctCompiler compiler) {
