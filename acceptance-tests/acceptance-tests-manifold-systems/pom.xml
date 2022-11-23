@@ -80,7 +80,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
 
         <configuration>
-          <failIfNoTests>true</failIfNoTests>
+          <failIfNoTests>false</failIfNoTests>
         </configuration>
       </plugin>
     </plugins>
