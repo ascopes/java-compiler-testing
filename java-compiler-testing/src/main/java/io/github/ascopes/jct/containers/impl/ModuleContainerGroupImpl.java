@@ -29,11 +29,11 @@ import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 import javax.annotation.WillCloseWhenClosed;
 import javax.tools.JavaFileManager.Location;
@@ -81,7 +81,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
       );
     }
 
-    modules = new HashMap<>();
+    modules = new ConcurrentHashMap<>();
   }
 
   @Override
@@ -137,6 +137,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   }
 
   @Nullable
+  @Override
   public PackageContainerGroup getModule(String name) {
     if (name.isEmpty()) {
       throw new IllegalArgumentException("Cannot have module sources with no valid module name");
@@ -209,7 +210,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
 
     @Override
     protected ClassLoader createClassLoader() {
-      return ContainerGroupUrlClassLoader.createClassLoaderFor(this);
+      return new PackageContainerGroupUrlClassLoader(this);
     }
   }
 }

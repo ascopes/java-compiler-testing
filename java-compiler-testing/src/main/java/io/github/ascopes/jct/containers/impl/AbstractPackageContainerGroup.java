@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.containers.impl;
 
+import static java.util.Collections.synchronizedSet;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.compilers.PathFileObject;
@@ -67,7 +68,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
 
   // Use a linked hash set here to deduplicate while retaining order. This is an optimisation
   // since defining the same path more than once does not make sense anyway.
-  protected final LinkedHashSet<Container> containers;
+  protected final Set<Container> containers;
   protected final Lazy<ClassLoader> classLoaderLazy;
 
   /**
@@ -80,7 +81,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
     this.location = requireNonNull(location, "location");
     this.release = requireNonNull(release, "release");
 
-    containers = new LinkedHashSet<>();
+    containers = synchronizedSet(new LinkedHashSet<>());
     classLoaderLazy = new Lazy<>(this::createClassLoader);
   }
 

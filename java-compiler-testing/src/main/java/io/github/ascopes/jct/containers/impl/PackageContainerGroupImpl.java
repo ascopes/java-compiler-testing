@@ -31,7 +31,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public class PackageContainerGroupImpl extends AbstractPackageContainerGroup {
+public final class PackageContainerGroupImpl extends AbstractPackageContainerGroup {
 
   /**
    * Initialize this group.
@@ -62,6 +62,6 @@ public class PackageContainerGroupImpl extends AbstractPackageContainerGroup {
 
   @Override
   protected ClassLoader createClassLoader() {
-    return ContainerGroupUrlClassLoader.createClassLoaderFor(this);
+    return new PackageContainerGroupUrlClassLoader(this);
   }
 }
