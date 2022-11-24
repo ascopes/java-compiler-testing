@@ -58,7 +58,7 @@ public final class PackageContainerGroupAssert
    * @throws AssertionError if the file exists.
    */
   public PackageContainerGroupAssert fileDoesNotExist(String path) {
-    var file = actual.findFile(path);
+    var file = actual.getFile(path);
 
     if (file == null) {
       return this;
@@ -96,6 +96,15 @@ public final class PackageContainerGroupAssert
   }
 
   /**
+   * Get assertions to perform on the class loader associated with this container group.
+   *
+   * @return the assertions to perform.
+   */
+  public ClassLoaderAssert classLoader() {
+    return new ClassLoaderAssert(actual.getClassLoader());
+  }
+
+  /**
    * Assert that the given file exists.
    *
    * @param path the relative path to look for.
@@ -103,7 +112,7 @@ public final class PackageContainerGroupAssert
    * @throws AssertionError if the file does not exist.
    */
   public AbstractPathAssert<?> fileExists(String path) {
-    var file = actual.findFile(path);
+    var file = actual.getFile(path);
 
     if (file != null) {
       return assertThat(file);
