@@ -200,6 +200,7 @@ jobs:
         run: >-
           ./mvnw 
           -B 
+          -Pdependency-scan
           -T8
           -U
           --no-transfer-progress
@@ -211,3 +212,12 @@ jobs:
           -Dmaven.test.skip
           -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
           verify
+
+      - name: Archive Dependency Scan reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: dependency-scan-report
+          path: |
+            **/target/dependency-check-report.html
+          retention-days: 30

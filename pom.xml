@@ -57,6 +57,7 @@
     <slf4j.version>2.0.4</slf4j.version>
 
     <!-- Plugins -->
+    <dependencycheck.version>7.3.2</dependencycheck.version>
     <gmaven-plugin.version>2.1.0</gmaven-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <license-maven-plugin.version>4.1</license-maven-plugin.version>
@@ -87,11 +88,14 @@
       -Xshare:off
     </argLine>
 
+    <!-- Scanning -->
+    <skip-dependency-scan>false</skip-dependency-scan>
+
     <!-- Project flags -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- JavaDocs -->
-    <javadoc-excluded-packages />
+    <javadoc-excluded-packages/>
 
     <project-organization-url>https://github.com/ascopes</project-organization-url>
     <project-scm-url>${project.organization.url}/java-compiler-testing</project-scm-url>
@@ -185,49 +189,6 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <!-- Groovy compiler -->
-          <groupId>org.codehaus.gmavenplus</groupId>
-          <artifactId>gmavenplus-plugin</artifactId>
-          <version>${gmaven-plugin.version}</version>
-
-          <executions>
-            <execution>
-              <goals>
-                <goal>addSources</goal>
-                <goal>addTestSources</goal>
-                <goal>compile</goal>
-                <goal>compileTests</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
-          <!-- Coverage tracing -->
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${jacoco-maven-plugin.version}</version>
-
-          <executions>
-            <execution>
-              <id>add-coverage-agent-to-surefire-args</id>
-              <phase>initialize</phase>
-              <goals>
-                <goal>prepare-agent</goal>
-              </goals>
-            </execution>
-
-            <execution>
-              <id>report-coverage</id>
-              <phase>test</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-
-        <plugin>
           <!-- Java compiler config -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -281,7 +242,8 @@
               <link>https://docs.oracle.com/en/java/javase/11/docs/api</link>
               <link>https://javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}</link>
               <link>https://javadoc.io/doc/com.google.code.findbugs/jsr305/${jsr305.version}</link>
-              <link>https://javadoc.io/doc/org.apiguardian/apiguardian-api/${apiguardian.version}</link>
+              <link>https://javadoc.io/doc/org.apiguardian/apiguardian-api/${apiguardian.version}
+              </link>
               <link>https://javadoc.io/doc/org.assertj/assertj-core/${assertj.version}</link>
               <link>https://javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}</link>
               <link>https://junit.org/junit5/docs/${junit.version}/api</link>
@@ -330,6 +292,49 @@
               <version>${maven-surefire-junit5-tree-reporter.version}</version>
             </dependency>
           </dependencies>
+        </plugin>
+
+        <plugin>
+          <!-- Groovy compiler -->
+          <groupId>org.codehaus.gmavenplus</groupId>
+          <artifactId>gmavenplus-plugin</artifactId>
+          <version>${gmaven-plugin.version}</version>
+
+          <executions>
+            <execution>
+              <goals>
+                <goal>addSources</goal>
+                <goal>addTestSources</goal>
+                <goal>compile</goal>
+                <goal>compileTests</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <!-- Coverage tracing -->
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco-maven-plugin.version}</version>
+
+          <executions>
+            <execution>
+              <id>add-coverage-agent-to-surefire-args</id>
+              <phase>initialize</phase>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+
+            <execution>
+              <id>report-coverage</id>
+              <phase>test</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -415,6 +420,41 @@
       <properties>
         <hide-test-logs-in-console>false</hide-test-logs-in-console>
       </properties>
+    </profile>
+
+    <profile>
+      <id>dependency-scan</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <version>${dependencycheck.version}</version>
+
+            <configuration>
+              <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
+              <formats>
+                <format>html</format>
+                <format>junit</format>
+              </formats>
+
+              <skip>${skip-dependency-scan}</skip>
+              <skipTestScope>true</skipTestScope>
+              <suppressionFile>${project.basedir}/security-suppressions.xml</suppressionFile>
+            </configuration>
+
+            <executions>
+              <execution>
+                <id>dependency-scan</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
