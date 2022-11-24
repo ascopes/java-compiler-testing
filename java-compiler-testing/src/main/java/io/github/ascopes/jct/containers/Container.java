@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.containers;
 
-import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import java.io.Closeable;
@@ -25,6 +24,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
+import javax.annotation.Nullable;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
@@ -59,7 +59,7 @@ public interface Container extends Closeable {
    * @return the path if the file exists, or null if it does not exist.
    */
   @Nullable
-  Path findFile(String path);
+  Path getFile(String path);
 
   /**
    * Get the binary data for a class, if it exists.
@@ -129,8 +129,10 @@ public interface Container extends Closeable {
   /**
    * Get a module finder for this container.
    *
-   * @return the module finder for this container.
+   * @return the module finder for this container, or {@code null} if not relevant to the
+   *     implementation.
    */
+  @Nullable
   ModuleFinder getModuleFinder();
 
   /**

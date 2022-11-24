@@ -20,8 +20,6 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.annotations.WillClose;
-import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.compilers.JctFileManager;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
@@ -29,6 +27,9 @@ import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nullable;
+import javax.annotation.WillClose;
+import javax.annotation.WillNotClose;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -120,17 +121,36 @@ public final class JctCompilationImpl implements JctCompilation {
    * @since 0.0.1
    */
   @API(since = "0.0.1", status = Status.EXPERIMENTAL)
+  @SuppressWarnings("ConstantConditions")
   public static final class Builder {
 
+    @Nullable
     private Boolean failOnWarnings;
+
+    @Nullable
     private Boolean success;
+
+    @Nullable
     private List<String> outputLines;
+
+    @Nullable
     private Set<? extends JavaFileObject> compilationUnits;
+
+    @Nullable
     private List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
-    private @WillNotClose JctFileManager fileManager;
+
+    @Nullable
+    @WillNotClose
+    private JctFileManager fileManager;
 
     private Builder() {
       // Only initialized in this file.
+      failOnWarnings = null;
+      success = null;
+      outputLines = null;
+      compilationUnits = null;
+      diagnostics = null;
+      fileManager = null;
     }
 
     /**

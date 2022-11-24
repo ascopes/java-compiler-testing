@@ -15,10 +15,9 @@
  */
 package io.github.ascopes.jct.compilers.impl;
 
+import static io.github.ascopes.jct.utils.GarbageDisposalUtils.onPhantom;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.annotations.Nullable;
-import io.github.ascopes.jct.annotations.WillClose;
 import io.github.ascopes.jct.compilers.JctFileManager;
 import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.containers.ContainerGroup;
@@ -43,6 +42,7 @@ import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.Nullable;
 import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -62,9 +62,9 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   private volatile boolean closed;
   private final String release;
-  private final Map<Location, @WillClose PackageContainerGroup> packages;
-  private final Map<Location, @WillClose ModuleContainerGroup> modules;
-  private final Map<Location, @WillClose OutputContainerGroup> outputs;
+  private final Map<Location, PackageContainerGroup> packages;
+  private final Map<Location, ModuleContainerGroup> modules;
+  private final Map<Location, OutputContainerGroup> outputs;
 
   /**
    * Initialize this file manager.
@@ -79,9 +79,9 @@ public final class JctFileManagerImpl implements JctFileManager {
     modules = new ConcurrentHashMap<>();
     outputs = new ConcurrentHashMap<>();
 
-    GarbageDisposalUtils.onPhantom(this, packages);
-    GarbageDisposalUtils.onPhantom(this, modules);
-    GarbageDisposalUtils.onPhantom(this, outputs);
+    onPhantom(this, packages);
+    onPhantom(this, modules);
+    onPhantom(this, outputs);
   }
 
   @Override
@@ -125,7 +125,7 @@ public final class JctFileManagerImpl implements JctFileManager {
   }
 
   @Override
-  public void close(@WillClose JctFileManagerImpl this) throws IOException {
+  public void close() throws IOException {
     // We explicitly close all resources on garbage collection rather than here. This prevents
     // the compiler implementation making our resources unavailable while we are still using them
     // to assert further outcomes in tests.

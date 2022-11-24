@@ -17,8 +17,6 @@ package io.github.ascopes.jct.containers.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.annotations.Nullable;
-import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
@@ -33,6 +31,8 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -83,7 +83,7 @@ public class PathWrappingContainerImpl implements Container {
 
   @Override
   @Nullable
-  public Path findFile(String path) {
+  public Path getFile(String path) {
     if (path.startsWith("/")) {
       throw new IllegalArgumentException("Absolute paths are not supported (got '" + path + "')");
     }
@@ -115,7 +115,6 @@ public class PathWrappingContainerImpl implements Container {
   }
 
   @Override
-  @Nullable
   public PathFileObject getFileForOutput(String packageName, String relativeName) {
     var path = FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName);
     return new PathFileObject(location, root.getPath(), path);
@@ -131,7 +130,6 @@ public class PathWrappingContainerImpl implements Container {
   }
 
   @Override
-  @Nullable
   public PathFileObject getJavaFileForOutput(String className, Kind kind) {
     var path = FileUtils.binaryNameToPath(root.getPath(), className, kind);
     return new PathFileObject(location, root.getPath(), path);

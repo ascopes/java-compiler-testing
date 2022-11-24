@@ -17,8 +17,6 @@ package io.github.ascopes.jct.containers.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
-import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.compilers.impl.ModuleLocation;
 import io.github.ascopes.jct.containers.Container;
@@ -37,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import javax.annotation.WillCloseWhenClosed;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -51,7 +50,7 @@ import org.apiguardian.api.API.Status;
 public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
 
   private final Location location;
-  private final Map<ModuleLocation, @WillCloseWhenClosed ModulePackageContainerGroupImpl> modules;
+  private final Map<ModuleLocation, ModulePackageContainerGroupImpl> modules;
   private final String release;
   private final Lazy<ClassLoader> classLoaderLazy;
 
@@ -93,7 +92,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   }
 
   @Override
-  public void addModule(String module, @WillNotClose PathWrapper path) {
+  public void addModule(String module, PathWrapper path) {
     getOrCreateModule(module).addPackage(path);
   }
 

@@ -17,12 +17,12 @@ package io.github.ascopes.jct.pathwrappers;
 
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
-import io.github.ascopes.jct.annotations.CheckReturnValue;
 import io.github.ascopes.jct.pathwrappers.impl.PathWrapperUtils;
 import io.github.ascopes.jct.utils.RecursiveDeleter;
 import java.io.Closeable;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import javax.annotation.CheckReturnValue;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;

@@ -18,9 +18,6 @@ package io.github.ascopes.jct.containers.impl;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.annotations.Nullable;
-import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
-import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
@@ -43,6 +40,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import javax.annotation.Nullable;
+import javax.annotation.WillCloseWhenClosed;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -69,7 +68,7 @@ public final class JarContainerImpl implements Container {
   private final Location location;
   private final PathWrapper jarPath;
   private final String release;
-  private final Lazy<@WillCloseWhenClosed PackageFileSystemHolder> holder;
+  private final Lazy<PackageFileSystemHolder> holder;
 
   /**
    * Initialize this JAR container.
@@ -78,7 +77,7 @@ public final class JarContainerImpl implements Container {
    * @param jarPath  the path to the JAR to open.
    * @param release  the release version to use for {@code Multi-Release} JARs.
    */
-  public JarContainerImpl(Location location, @WillNotClose PathWrapper jarPath, String release) {
+  public JarContainerImpl(Location location, PathWrapper jarPath, String release) {
     this.location = requireNonNull(location, "location");
     this.jarPath = requireNonNull(jarPath, "jarPath");
     this.release = requireNonNull(release, "release");
@@ -103,7 +102,7 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
-  public Path findFile(String path) {
+  public Path getFile(String path) {
     if (path.startsWith("/")) {
       throw new IllegalArgumentException("Absolute paths are not supported (got '" + path + "')");
     }

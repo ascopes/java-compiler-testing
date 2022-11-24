@@ -17,9 +17,6 @@ package io.github.ascopes.jct.containers.impl;
 
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
-import io.github.ascopes.jct.annotations.Nullable;
-import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
-import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.compilers.impl.ModuleLocation;
 import io.github.ascopes.jct.containers.Container;
@@ -33,6 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
+import javax.annotation.WillCloseWhenClosed;
+import javax.annotation.WillNotClose;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
@@ -52,7 +52,7 @@ public class OutputContainerGroupImpl
     extends AbstractPackageContainerGroup
     implements OutputContainerGroup {
 
-  private final Map<ModuleLocation, @WillCloseWhenClosed OutputPackageContainerGroupImpl> modules;
+  private final Map<ModuleLocation, OutputPackageContainerGroupImpl> modules;
 
   /**
    * Initialize this container group.
@@ -87,7 +87,7 @@ public class OutputContainerGroupImpl
   }
 
   @Override
-  public void addModule(String module, @WillNotClose PathWrapper path) {
+  public void addModule(String module, PathWrapper path) {
     getOrCreateModule(module).addPackage(path);
   }
 

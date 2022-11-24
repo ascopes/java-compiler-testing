@@ -17,15 +17,13 @@
  * Internal shared utilities.
  *
  * <p>These components are part of the internal API and should not be used by external
- * modules. As such, they are not covered by the semantic versioning policy and may change
- * without notice.
+ * modules. As such, they are not covered by the semantic versioning policy and may change without
+ * notice.
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 @NonNullApi
 @NonNullImpl
 package io.github.ascopes.jct.utils;
 
-import io.github.ascopes.jct.annotations.NonNullApi;
-import io.github.ascopes.jct.annotations.NonNullImpl;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;

@@ -15,12 +15,12 @@
  */
 package io.github.ascopes.jct.pathwrappers.impl;
 
-import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Objects;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 

@@ -15,12 +15,12 @@
  */
 package io.github.ascopes.jct.compilers;
 
-import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import java.util.Collection;
+import javax.annotation.Nullable;
 import javax.tools.JavaFileManager;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;

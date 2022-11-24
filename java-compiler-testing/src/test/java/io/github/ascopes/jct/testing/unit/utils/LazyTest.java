@@ -191,7 +191,7 @@ class LazyTest {
     var actual = lazy.toString();
 
     // Then
-    then(actual).isEqualTo("Lazy{data=null, initialized=false}");
+    then(actual).isEqualTo("Lazy{data=null}");
   }
 
   @DisplayName("ifInitialized() calls the callable when initialized")
@@ -251,9 +251,8 @@ class LazyTest {
 
   static Stream<Arguments> toStringInitializedCases() {
     return Stream.of(
-        Arguments.of(null, "Lazy{data=null, initialized=true}"),
-        Arguments.of(new Something(), "Lazy{data=Something{}, initialized=true}"),
-        Arguments.of("Hello, World!", "Lazy{data=\"Hello, World!\", initialized=true}")
+        Arguments.of(new Something(), "Lazy{data=Something{}}"),
+        Arguments.of("Hello, World!", "Lazy{data=\"Hello, World!\"}")
     );
   }
 

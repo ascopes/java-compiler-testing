@@ -18,11 +18,11 @@ package io.github.ascopes.jct.diagnostics;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
+import javax.annotation.Nullable;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;

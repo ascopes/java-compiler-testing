@@ -13,31 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.annotations;
+package io.github.ascopes.jct.utils;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.meta.TypeQualifierDefault;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Marker indicating the return value of a method must be closed explicitly.
+ * Marker annotation for a package.
+ *
+ * <p>Any package annotated with this will assume all internal implementation details
+ * adhere to strict null-safety semantics unless explicitly annotated with {@link Nullable}.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 @Documented
+@Inherited
+@Nonnull
 @Retention(RetentionPolicy.RUNTIME)
 @Target({
+    ElementType.PACKAGE,
+    ElementType.TYPE,
+})
+@TypeQualifierDefault({
     ElementType.FIELD,
-    ElementType.PARAMETER,
-    ElementType.TYPE_PARAMETER,
     ElementType.TYPE_USE,
 })
-@javax.annotation.WillNotClose
-public @interface WillNotClose {
+public @interface NonNullImpl {
 }

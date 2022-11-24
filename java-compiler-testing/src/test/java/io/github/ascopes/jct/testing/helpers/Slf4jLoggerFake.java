@@ -17,7 +17,6 @@ package io.github.ascopes.jct.testing.helpers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
@@ -53,9 +52,9 @@ public final class Slf4jLoggerFake extends AbstractLogger {
    */
   public void assertThatEntryLogged(
       Level level,
-      @Nullable Throwable ex,
+      Throwable ex,
       String message,
-      Object @Nullable ... args
+      Object... args
   ) {
     var levelEntries = entries
         .stream()

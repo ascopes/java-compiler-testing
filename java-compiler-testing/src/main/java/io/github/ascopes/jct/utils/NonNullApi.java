@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.annotations;
+package io.github.ascopes.jct.utils;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -22,6 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.meta.TypeQualifierDefault;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;

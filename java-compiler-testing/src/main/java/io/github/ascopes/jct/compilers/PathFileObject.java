@@ -17,8 +17,6 @@ package io.github.ascopes.jct.compilers;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.annotations.Nullable;
-import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.containers.impl.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
@@ -42,6 +40,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
 import javax.tools.FileObject;

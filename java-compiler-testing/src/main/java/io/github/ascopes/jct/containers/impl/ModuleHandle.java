@@ -17,8 +17,8 @@ package io.github.ascopes.jct.containers.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.utils.ToStringBuilder;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 

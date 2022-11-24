@@ -96,18 +96,15 @@
 module io.github.ascopes.jct {
   requires java.compiler;
   requires java.management;
-
   requires jimfs;
   requires static jsr305;
   requires me.xdrop.fuzzywuzzy;
   requires static transitive org.apiguardian.api;
   requires org.assertj.core;
   requires static transitive org.junit.jupiter.params;
-  requires static org.opentest4j;
+  requires static transitive org.opentest4j;
   requires org.slf4j;
 
-  // Annotations is internal, but we export it for documentation purposes.
-  exports io.github.ascopes.jct.annotations;
   exports io.github.ascopes.jct.assertions;
   exports io.github.ascopes.jct.containers;
   exports io.github.ascopes.jct.compilers;
@@ -116,15 +113,17 @@ module io.github.ascopes.jct {
   exports io.github.ascopes.jct.junit;
   exports io.github.ascopes.jct.pathwrappers;
 
-  // Runtime reflection support for annotations.
-  opens io.github.ascopes.jct.annotations;
-
-  // Junit annotation support.
   opens io.github.ascopes.jct.junit;
 
   //////////////////////////////////////////////////////
   /// EXPOSURE OF INTERNALS TO THE TESTING NAMESPACE ///
   //////////////////////////////////////////////////////
+
+  exports io.github.ascopes.jct.assertions.impl to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.compilers.impl to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.pathwrappers.impl to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
 
   opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.assertions.impl to io.github.ascopes.jct.testing;
@@ -137,10 +136,4 @@ module io.github.ascopes.jct {
   opens io.github.ascopes.jct.pathwrappers to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.pathwrappers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
-
-  exports io.github.ascopes.jct.assertions.impl to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.compilers.impl to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.pathwrappers.impl to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
 }

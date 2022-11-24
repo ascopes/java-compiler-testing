@@ -15,14 +15,14 @@
  */
 package io.github.ascopes.jct.containers;
 
-import io.github.ascopes.jct.annotations.Nullable;
-import io.github.ascopes.jct.annotations.WillClose;
-import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.compilers.impl.ModuleLocation;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
+import javax.annotation.WillClose;
+import javax.annotation.WillNotClose;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;

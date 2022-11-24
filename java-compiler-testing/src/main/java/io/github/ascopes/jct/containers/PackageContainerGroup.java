@@ -15,15 +15,15 @@
  */
 package io.github.ascopes.jct.containers;
 
-import io.github.ascopes.jct.annotations.Nullable;
-import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
-import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
+import javax.annotation.Nullable;
+import javax.annotation.WillCloseWhenClosed;
+import javax.annotation.WillNotClose;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;

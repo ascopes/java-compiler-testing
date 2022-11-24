@@ -18,7 +18,6 @@ package io.github.ascopes.jct.compilers;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.pathwrappers.TestDirectoryFactory;
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import javax.annotation.Nullable;
 import javax.annotation.processing.Processor;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager.Location;

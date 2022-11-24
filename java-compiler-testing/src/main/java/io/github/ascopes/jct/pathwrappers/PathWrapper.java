@@ -15,11 +15,11 @@
  */
 package io.github.ascopes.jct.pathwrappers;
 
-import io.github.ascopes.jct.annotations.Nullable;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 

@@ -17,12 +17,12 @@ package io.github.ascopes.jct.assertions.impl;
 
 import static javax.tools.Diagnostic.NOPOS;
 
-import io.github.ascopes.jct.annotations.Nullable;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.utils.IoExceptionUtils;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.io.IOException;
 import java.util.Locale;
+import javax.annotation.Nullable;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;

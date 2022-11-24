@@ -17,8 +17,6 @@ package io.github.ascopes.jct.containers.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.annotations.Nullable;
-import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
 import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.compilers.impl.ModuleLocation;
 import io.github.ascopes.jct.containers.Container;
@@ -35,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.Set;
+import javax.annotation.Nullable;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -68,7 +67,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
 
   // Use a linked hash set here to deduplicate while retaining order. This is an optimisation
   // since defining the same path more than once does not make sense anyway.
-  protected final LinkedHashSet<@WillCloseWhenClosed Container> containers;
+  protected final LinkedHashSet<Container> containers;
   protected final Lazy<ClassLoader> classLoaderLazy;
 
   /**
@@ -152,7 +151,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
   @Nullable
   public Path findFile(String path) {
     for (var container : containers) {
-      var result = container.findFile(path);
+      var result = container.getFile(path);
       if (result != null) {
         return result;
       }

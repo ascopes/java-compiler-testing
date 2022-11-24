@@ -15,8 +15,6 @@
  */
 package io.github.ascopes.jct.compilers.impl;
 
-import io.github.ascopes.jct.annotations.WillCloseWhenClosed;
-import io.github.ascopes.jct.annotations.WillNotClose;
 import io.github.ascopes.jct.compilers.JctFileManager;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.lang.reflect.InvocationHandler;
@@ -26,6 +24,9 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import javax.annotation.WillCloseWhenClosed;
+import javax.annotation.WillNotClose;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -49,11 +50,11 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFileManagerProxy.class);
 
-  private final @WillNotClose JctFileManager inner;
+  private final JctFileManager inner;
   private final boolean stackTraces;
   private final ThreadLocal<Integer> stackDepth;
 
-  private LoggingFileManagerProxy(@WillNotClose JctFileManager inner, boolean stackTraces) {
+  private LoggingFileManagerProxy(JctFileManager inner, boolean stackTraces) {
     this.inner = inner;
     this.stackTraces = stackTraces;
     stackDepth = ThreadLocal.withInitial(() -> 0);
@@ -69,7 +70,7 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
    * @throws Throwable any exception that is thrown.
    */
   @Override
-  public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+  public Object invoke(Object proxy, Method method, @Nullable Object[] args) throws Throwable {
     // TODO(ascopes): does this work with methods that have receiver types?
     //    e.g.  public @Override String toString(JctFileManager this) { ... }
     if (method.getName().equals("toString") && method.getParameterCount() == 0) {

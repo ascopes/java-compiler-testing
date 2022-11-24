@@ -15,9 +15,9 @@
  */
 package io.github.ascopes.jct.utils;
 
-import io.github.ascopes.jct.annotations.WillNotClose;
 import java.util.Objects;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -38,11 +38,13 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public class Lazy<@WillNotClose T> {
+@SuppressWarnings("ConstantConditions")
+public class Lazy<T> {
 
-  private final Supplier<@WillNotClose T> initializer;
+  private final Supplier<T> initializer;
   private final Object lock;
-  private volatile boolean initialized;
+
+  @Nullable
   private volatile T data;
 
   /**
@@ -53,7 +55,6 @@ public class Lazy<@WillNotClose T> {
   public Lazy(Supplier<T> initializer) {
     this.initializer = Objects.requireNonNull(initializer, "initializer must not be null");
     lock = new Object();
-    initialized = false;
     data = null;
   }
 
@@ -67,7 +68,6 @@ public class Lazy<@WillNotClose T> {
     synchronized (lock) {
       repr = new ToStringBuilder(this)
           .attribute("data", data)
-          .attribute("initialized", initialized)
           .toString();
     }
 
@@ -80,16 +80,15 @@ public class Lazy<@WillNotClose T> {
    * @return the value.
    */
   public T access() {
-    if (!initialized) {
+    if (data == null) {
       synchronized (lock) {
-        if (!initialized) {
+        if (data == null) {
           data = initializer.get();
-          initialized = true;
         }
       }
     }
 
-    return data;
+    return Objects.requireNonNull(data, "cannot store null data in Lazy");
   }
 
   /**
@@ -101,10 +100,9 @@ public class Lazy<@WillNotClose T> {
    * before making this call, if this behaviour is required.
    */
   public void destroy() {
-    if (initialized) {
+    if (data != null) {
       synchronized (lock) {
-        if (initialized) {
-          initialized = false;
+        if (data != null) {
           data = null;
         }
       }
@@ -123,9 +121,9 @@ public class Lazy<@WillNotClose T> {
   public <E extends Throwable> Lazy<T> ifInitialized(
       ThrowingConsumer<? super T, ? extends E> consumer
   ) throws E {
-    if (initialized) {
+    if (data != null) {
       synchronized (lock) {
-        if (initialized) {
+        if (data != null) {
           consumer.consume(data);
         }
       }
