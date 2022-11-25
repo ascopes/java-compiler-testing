@@ -23,18 +23,18 @@ import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
-import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.Nullable;
 import javax.annotation.WillCloseWhenClosed;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
@@ -52,7 +52,6 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   private final Location location;
   private final Map<ModuleLocation, ModulePackageContainerGroupImpl> modules;
   private final String release;
-  private final Lazy<ClassLoader> classLoaderLazy;
 
   /**
    * Initialize this container group.
@@ -82,8 +81,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
       );
     }
 
-    modules = new HashMap<>();
-    classLoaderLazy = new Lazy<>(this::createClassLoader);
+    modules = new ConcurrentHashMap<>();
   }
 
   @Override
@@ -94,21 +92,6 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   @Override
   public void addModule(String module, PathWrapper path) {
     getOrCreateModule(module).addPackage(path);
-  }
-
-  @Override
-  public PackageContainerGroup getModule(String module) {
-    if (module.isEmpty()) {
-      throw new IllegalArgumentException("Cannot have module sources with no valid module name");
-    }
-
-    return modules
-        .keySet()
-        .stream()
-        .filter(location -> location.getModuleName().equals(module))
-        .findFirst()
-        .map(modules::get)
-        .orElse(null);
   }
 
   @Override
@@ -144,11 +127,6 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   }
 
   @Override
-  public ClassLoader getClassLoader() {
-    return classLoaderLazy.access();
-  }
-
-  @Override
   public Location getLocation() {
     return location;
   }
@@ -158,14 +136,24 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
     return List.of(Set.copyOf(modules.keySet()));
   }
 
+  @Nullable
+  @Override
+  public PackageContainerGroup getModule(String name) {
+    if (name.isEmpty()) {
+      throw new IllegalArgumentException("Cannot have module sources with no valid module name");
+    }
+
+    return modules.get(new ModuleLocation(location, name));
+  }
+
   @Override
   public Map<ModuleLocation, PackageContainerGroup> getModules() {
     return Map.copyOf(modules);
   }
 
   @Override
-  public boolean hasLocation(ModuleLocation location) {
-    return modules.containsKey(location);
+  public PackageContainerGroup getOrCreateModule(String moduleName) {
+    return modules.computeIfAbsent(new ModuleLocation(location, moduleName), this::newPackageGroup);
   }
 
   @Override
@@ -193,8 +181,8 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   }
 
   @Override
-  public PackageContainerGroup getOrCreateModule(String moduleName) {
-    return modules.computeIfAbsent(new ModuleLocation(location, moduleName), this::newPackageGroup);
+  public boolean hasLocation(ModuleLocation location) {
+    return modules.containsKey(location);
   }
 
   @Override
@@ -203,10 +191,6 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
         .attribute("location", location)
         .attribute("moduleCount", modules.size())
         .toString();
-  }
-
-  private ClassLoader createClassLoader() {
-    return ContainerGroupUrlClassLoader.createClassLoaderFor(this);
   }
 
   private ModulePackageContainerGroupImpl newPackageGroup(ModuleLocation location) {
@@ -226,7 +210,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
 
     @Override
     protected ClassLoader createClassLoader() {
-      return ContainerGroupUrlClassLoader.createClassLoaderFor(this);
+      return new PackageContainerGroupUrlClassLoader(this);
     }
   }
 }

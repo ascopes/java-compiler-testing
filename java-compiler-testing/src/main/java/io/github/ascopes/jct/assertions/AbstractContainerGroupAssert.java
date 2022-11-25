@@ -53,15 +53,6 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
   }
 
   /**
-   * Get assertions to perform on the class loader associated with this container group.
-   *
-   * @return the assertions to perform.
-   */
-  public ClassLoaderAssert classLoader() {
-    return new ClassLoaderAssert(actual.getClassLoader());
-  }
-
-  /**
    * Get assertions to perform on the location of this container group.
    *
    * @return the assertions to perform.

@@ -67,6 +67,16 @@ public interface PackageContainerGroup extends ContainerGroup {
   void addPackage(@WillNotClose PathWrapper path);
 
   /**
+   * Get a class loader for this group of containers.
+   *
+   * <p>Note that adding additional containers to this group after accessing this class loader
+   * may result in the class loader being destroyed or re-created.
+   *
+   * @return the class loader.
+   */
+  ClassLoader getClassLoader();
+
+  /**
    * Find the first occurrence of a given path to a file in packages or modules.
    *
    * <p>Modules are treated as subdirectories.
@@ -75,7 +85,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    * @return the first occurrence of the path in this group, or null if not found.
    */
   @Nullable
-  Path findFile(String path);
+  Path getFile(String path);
 
   /**
    * Get a {@link FileObject} that can have content read from it.

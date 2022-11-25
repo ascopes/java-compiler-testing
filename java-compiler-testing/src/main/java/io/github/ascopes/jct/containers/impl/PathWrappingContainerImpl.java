@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public class PathWrappingContainerImpl implements Container {
+public final class PathWrappingContainerImpl implements Container {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PathWrappingContainerImpl.class);
 

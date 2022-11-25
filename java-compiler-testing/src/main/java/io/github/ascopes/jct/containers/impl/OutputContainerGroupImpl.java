@@ -48,7 +48,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public class OutputContainerGroupImpl
+public final class OutputContainerGroupImpl
     extends AbstractPackageContainerGroup
     implements OutputContainerGroup {
 
@@ -123,7 +123,7 @@ public class OutputContainerGroupImpl
     var moduleHandle = ModuleHandle.tryExtract(packageName);
 
     if (moduleHandle != null) {
-      var module = getOrCreateModule(moduleHandle.getModuleName());
+      var module = getModule(moduleHandle.getModuleName());
 
       if (module != null) {
         var file = module.getFileForInput(moduleHandle.getRest(), relativeName);
@@ -144,13 +144,10 @@ public class OutputContainerGroupImpl
 
     if (moduleHandle != null) {
       var module = getOrCreateModule(moduleHandle.getModuleName());
+      var file = module.getFileForOutput(moduleHandle.getRest(), relativeName);
 
-      if (module != null) {
-        var file = module.getFileForOutput(moduleHandle.getRest(), relativeName);
-
-        if (file != null) {
-          return file;
-        }
+      if (file != null) {
+        return file;
       }
     }
 
@@ -163,7 +160,7 @@ public class OutputContainerGroupImpl
     var moduleHandle = ModuleHandle.tryExtract(className);
 
     if (moduleHandle != null) {
-      var module = getOrCreateModule(moduleHandle.getModuleName());
+      var module = getModule(moduleHandle.getModuleName());
 
       if (module != null) {
         var file = module.getJavaFileForInput(moduleHandle.getRest(), kind);
@@ -184,13 +181,10 @@ public class OutputContainerGroupImpl
 
     if (moduleHandle != null) {
       var module = getOrCreateModule(moduleHandle.getModuleName());
+      var file = module.getJavaFileForOutput(moduleHandle.getRest(), kind);
 
-      if (module != null) {
-        var file = module.getJavaFileForOutput(moduleHandle.getRest(), kind);
-
-        if (file != null) {
-          return file;
-        }
+      if (file != null) {
+        return file;
       }
     }
 
@@ -224,7 +218,7 @@ public class OutputContainerGroupImpl
 
   @Override
   protected ClassLoader createClassLoader() {
-    return ContainerGroupUrlClassLoader.createClassLoaderFor(this);
+    return new PackageContainerGroupUrlClassLoader(this);
   }
 
   @SuppressWarnings("resource")
@@ -258,7 +252,7 @@ public class OutputContainerGroupImpl
 
     @Override
     protected ClassLoader createClassLoader() {
-      return ContainerGroupUrlClassLoader.createClassLoaderFor(this);
+      return new PackageContainerGroupUrlClassLoader(this);
     }
   }
 }

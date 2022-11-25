@@ -43,16 +43,6 @@ public interface ContainerGroup extends Closeable {
   boolean contains(PathFileObject fileObject);
 
   /**
-   * Get a class loader for this group of containers.
-   *
-   * <p>Note that adding additional containers to this group after accessing this class loader
-   * may result in the class loader being destroyed or re-created.
-   *
-   * @return the class loader.
-   */
-  ClassLoader getClassLoader();
-
-  /**
    * Get the location of this container group.
    *
    * @return the location.
