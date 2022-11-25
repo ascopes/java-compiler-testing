@@ -14,7 +14,7 @@
   <artifactId>acceptance-tests-micronaut</artifactId>
 
   <properties>
-    <micronaut.version>3.7.3</micronaut.version>
+    <micronaut.version>3.7.4</micronaut.version>
   </properties>
 
   <dependencyManagement>
