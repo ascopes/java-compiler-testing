@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.compilers;
 
 import io.github.ascopes.jct.compilers.impl.JctFileManagerImpl;
-import io.github.ascopes.jct.compilers.impl.LoggingFileManagerProxy;
 import io.github.ascopes.jct.compilers.impl.ModuleLocation;
 import io.github.ascopes.jct.pathwrappers.AbstractTestDirectory;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
@@ -405,10 +404,7 @@ public final class FileManagerBuilder {
     locations.forEach((location, paths) ->
         paths.forEach(path -> fileManager.addPath(location, path)));
 
-    return fileManagerLoggingMode == LoggingMode.DISABLED
-        ? fileManager
-        : LoggingFileManagerProxy.wrap(fileManager,
-            fileManagerLoggingMode == LoggingMode.STACKTRACES);
+    return fileManager;
   }
 
   private Lazy<AbstractTestDirectory<?>> newFallbackFs(JctFileManagerImpl fileManager) {
