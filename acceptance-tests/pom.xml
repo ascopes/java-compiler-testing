@@ -24,6 +24,7 @@
     <module>acceptance-tests-lombok</module>
     <module>acceptance-tests-manifold-systems</module>
     <module>acceptance-tests-mapstruct</module>
+    <module>acceptance-tests-micronaut</module>
     <module>acceptance-tests-serviceloader</module>
     <module>acceptance-tests-serviceloader-jpms</module>
     <module>acceptance-tests-spring</module>
