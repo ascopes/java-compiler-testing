@@ -20,6 +20,7 @@ import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.containers.PackageContainerGroup;
+import io.github.ascopes.jct.repr.LocationRepresentation;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.nio.file.Files;
 import java.nio.file.Path;

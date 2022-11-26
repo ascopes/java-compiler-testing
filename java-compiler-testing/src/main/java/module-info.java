@@ -110,8 +110,10 @@ module io.github.ascopes.jct {
   exports io.github.ascopes.jct.compilers;
   exports io.github.ascopes.jct.diagnostics;
   exports io.github.ascopes.jct.ex;
+  exports io.github.ascopes.jct.filemanagers;
   exports io.github.ascopes.jct.junit;
   exports io.github.ascopes.jct.pathwrappers;
+  exports io.github.ascopes.jct.repr;
 
   opens io.github.ascopes.jct.junit;
 
@@ -126,8 +128,8 @@ module io.github.ascopes.jct {
   opens io.github.ascopes.jct.containers to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.diagnostics to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.ex to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.pathwrappers to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.filemanagers;
   opens io.github.ascopes.jct.filemanagers to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.pathwrappers to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.repr to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
 }

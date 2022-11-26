@@ -19,6 +19,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.function.Predicate.not;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.repr.DiagnosticListRepresentation;
 import io.github.ascopes.jct.utils.IterableUtils;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.util.ArrayList;

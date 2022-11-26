@@ -17,6 +17,7 @@ package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
+import io.github.ascopes.jct.repr.LocationRepresentation;
 import java.util.stream.Collectors;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;

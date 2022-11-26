@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import io.github.ascopes.jct.repr.StackTraceRepresentation;
 import java.util.ArrayList;
 import java.util.List;
 import org.apiguardian.api.API;

@@ -13,40 +13,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.assertions;
+package io.github.ascopes.jct.repr;
 
-import javax.tools.JavaFileManager.Location;
+import static java.util.stream.Collectors.joining;
+
+import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import java.util.Collection;
+import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.presentation.Representation;
 
 /**
- * Representation for a {@link Location location}.
+ * Representation of a collection of diagnostics.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class LocationRepresentation implements Representation {
+public final class DiagnosticListRepresentation implements Representation {
 
-  private static final LocationRepresentation INSTANCE
-      = new LocationRepresentation();
+  private static final DiagnosticListRepresentation INSTANCE
+      = new DiagnosticListRepresentation();
 
   /**
-   * Get an instance of this location representation.
+   * Get an instance of this diagnostic collection representation.
    *
    * @return the instance.
    */
-  public static LocationRepresentation getInstance() {
+  public static DiagnosticListRepresentation getInstance() {
     return INSTANCE;
   }
 
-  private LocationRepresentation() {
+  private DiagnosticListRepresentation() {
     // Nothing to see here, move along now.
   }
 
   @Override
   public String toStringOf(Object object) {
-    return ((Location) object).getName();
+    if (object == null) {
+      return "null";
+    }
+
+    @SuppressWarnings("unchecked")
+    var diagnostics = (Collection<? extends TraceDiagnostic<? extends JavaFileObject>>) object;
+
+    return diagnostics
+        .stream()
+        .map(DiagnosticRepresentation.getInstance()::toStringOf)
+        .map(" - "::concat)
+        .collect(joining("\n\n"));
   }
 }
