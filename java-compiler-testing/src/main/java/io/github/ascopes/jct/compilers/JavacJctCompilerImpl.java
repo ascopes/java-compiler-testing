@@ -65,7 +65,7 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
    * @param jsr199Compiler the JSR-199 compiler backend to use.
    */
   public JavacJctCompilerImpl(String name, JavaCompiler jsr199Compiler) {
-    super(name, new FileManagerBuilder(), jsr199Compiler, new JavacJctFlagBuilderImpl());
+    super(name, new JctFileManagerBuilder(), jsr199Compiler, new JavacJctFlagBuilderImpl());
     addCompilerOptions("-implicit:class");
   }
 

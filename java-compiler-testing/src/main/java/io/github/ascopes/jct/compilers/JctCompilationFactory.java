@@ -70,7 +70,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
    */
   public JctCompilationImpl compile(
       A compiler,
-      FileManagerBuilder builder,
+      JctFileManagerBuilder builder,
       JavaCompiler jsr199Compiler,
       JctFlagBuilder flagBuilder
   ) {
@@ -212,12 +212,12 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
    *
    * <p>LoggingMode will be applied to this via
    * {@link #applyLoggingToFileManager(JctCompiler, JctFileManager)}, which will be handled by
-   * {@link #compile(JctCompiler, FileManagerBuilder, JavaCompiler, JctFlagBuilder)}.
+   * {@link #compile(JctCompiler, JctFileManagerBuilder, JavaCompiler, JctFlagBuilder)}.
    *
    * @param compiler the compiler to use.
    * @return the file manager to use.
    */
-  protected JctFileManager buildFileManager(A compiler, FileManagerBuilder builder) {
+  protected JctFileManager buildFileManager(A compiler, JctFileManagerBuilder builder) {
     return uncheckedIo(() -> builder.createFileManager(determineRelease(compiler)));
   }
 
@@ -265,7 +265,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
 
   /**
    * Apply the logging level to the file manager provided by
-   * {@link #buildFileManager(JctCompiler, FileManagerBuilder)}.
+   * {@link #buildFileManager(JctCompiler, JctFileManagerBuilder)}.
    *
    * <p>The default implementation will wrap the given {@link JavaFileManager} in a
    * {@link LoggingFileManagerProxy} if the {@link JctCompiler#getFileManagerLoggingMode()} field

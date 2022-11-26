@@ -53,9 +53,9 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class FileManagerBuilder {
+public final class JctFileManagerBuilder {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(FileManagerBuilder.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(JctFileManagerBuilder.class);
 
   private final Lazy<List<Path>> jvmClassPath;
   private final Lazy<List<Path>> jvmModulePath;
@@ -76,7 +76,7 @@ public final class FileManagerBuilder {
   /**
    * Initialize this workspace.
    */
-  public FileManagerBuilder() {
+  public JctFileManagerBuilder() {
     // Init these references here so we access these as late as possible but then cache the
     // results.
     jvmClassPath = new Lazy<>(SpecialLocationUtils::currentClassPathLocations);

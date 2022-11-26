@@ -57,7 +57,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   private final String name;
   private final JavaCompiler jsr199Compiler;
   private final JctFlagBuilder flagBuilder;
-  private final FileManagerBuilder fileManagerBuilder;
+  private final JctFileManagerBuilder fileManagerBuilder;
   private final List<Processor> annotationProcessors;
   private final List<String> annotationProcessorOptions;
   private final List<String> compilerOptions;
@@ -84,7 +84,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
    */
   protected AbstractJctCompiler(
       String name,
-      FileManagerBuilder fileManagerBuilder,
+      JctFileManagerBuilder fileManagerBuilder,
       JavaCompiler jsr199Compiler,
       JctFlagBuilder flagBuilder
   ) {
