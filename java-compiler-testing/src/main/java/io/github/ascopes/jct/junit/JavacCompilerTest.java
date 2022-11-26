@@ -15,10 +15,8 @@
  */
 package io.github.ascopes.jct.junit;
 
-import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer;
 import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
-import io.github.ascopes.jct.junit.JavacCompilerTest.JavacCompilersProvider;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -29,7 +27,6 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.junit.jupiter.params.support.AnnotationConsumer;
 
 /**
  * Annotation that can be applied to a {@link ParameterizedTest} to enable passing in a range of
@@ -82,45 +79,4 @@ public @interface JavacCompilerTest {
    */
   boolean modules() default false;
 
-  /**
-   * Argument provider for the {@link JavacCompilerTest} annotation.
-   *
-   * @author Ashley Scopes
-   * @since 0.0.1
-   */
-  @API(since = "0.0.1", status = Status.INTERNAL)
-  final class JavacCompilersProvider
-      extends AbstractCompilersProvider
-      implements AnnotationConsumer<JavacCompilerTest> {
-
-    JavacCompilersProvider() {
-      // Do nothing, but keep this package private.
-    }
-
-    @Override
-    protected JctCompiler<?, ?> compilerForVersion(int release) {
-      return new JavacJctCompilerImpl("javac release " + release).release(release);
-    }
-
-    @Override
-    protected int minSupportedVersion(boolean modules) {
-      return JavacJctCompilerImpl.getEarliestSupportedVersionInt(modules);
-    }
-
-    @Override
-    protected int maxSupportedVersion(boolean modules) {
-      return JavacJctCompilerImpl.getLatestSupportedVersionInt(modules);
-    }
-
-    @Override
-    public void accept(JavacCompilerTest javacCompilers) {
-      // Super is needed here to prevent IntelliJ getting confused.
-      super.configure(
-          javacCompilers.minVersion(),
-          javacCompilers.maxVersion(),
-          javacCompilers.modules(),
-          javacCompilers.configurers()
-      );
-    }
-  }
 }

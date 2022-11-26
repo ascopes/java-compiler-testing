@@ -20,31 +20,39 @@ import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer;
 import io.github.ascopes.jct.ex.JctJunitConfigurerException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.Objects;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.support.AnnotationConsumer;
 import org.opentest4j.TestAbortedException;
 
 /**
  * Base for defining a compiler-supplying arguments provider for Junit Jupiter parameterised test
  * support.
  *
+ * @param <A> the annotation type that can be consumed.
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public abstract class AbstractCompilersProvider implements ArgumentsProvider {
+public abstract class AbstractCompilersProvider<A extends Annotation>
+    implements ArgumentsProvider, AnnotationConsumer<A> {
 
   // Configured values by JUnit 5. Volatile in case JUnit ever does this from a different
   // thread in the future.
   private volatile int minVersion;
   private volatile int maxVersion;
+
+  @Nullable
   private volatile Class<? extends JctSimpleCompilerConfigurer>[] configurerClasses;
 
   /**
@@ -53,6 +61,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   protected AbstractCompilersProvider() {
     minVersion = 0;
     maxVersion = Integer.MAX_VALUE;
+    configurerClasses = null;
   }
 
   @Override
@@ -122,7 +131,9 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   protected abstract int maxSupportedVersion(@SuppressWarnings("unused") boolean modules);
 
   private void applyConfigurers(JctCompiler<?, ?> compiler) {
-    for (var configurerClass : configurerClasses) {
+    var classes = Objects.requireNonNull(configurerClasses, "class is not initialised correctly");
+
+    for (var configurerClass : classes) {
       try {
         initialiseConfigurer(configurerClass).configure(compiler);
       } catch (TestAbortedException ex) {
