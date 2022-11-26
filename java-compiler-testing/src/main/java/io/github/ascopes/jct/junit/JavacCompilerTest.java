@@ -15,9 +15,9 @@
  */
 package io.github.ascopes.jct.junit;
 
-import io.github.ascopes.jct.compilers.JavacJctCompilerImpl;
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer;
+import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
 import io.github.ascopes.jct.junit.JavacCompilerTest.JavacCompilersProvider;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -114,7 +114,8 @@ public @interface JavacCompilerTest {
 
     @Override
     public void accept(JavacCompilerTest javacCompilers) {
-      configure(
+      // Super is needed here to prevent IntelliJ getting confused.
+      super.configure(
           javacCompilers.minVersion(),
           javacCompilers.maxVersion(),
           javacCompilers.modules(),
