@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.containers;
 
-import io.github.ascopes.jct.compilers.PathFileObject;
+import io.github.ascopes.jct.filemanagers.PathFileObject;
 import java.io.Closeable;
 import java.util.ServiceLoader;
 import javax.tools.JavaFileManager.Location;

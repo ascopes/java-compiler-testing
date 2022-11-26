@@ -21,10 +21,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.compilers.JctCompilation;
-import io.github.ascopes.jct.compilers.JctFileManager;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
+import io.github.ascopes.jct.filemanagers.JctFileManager;
 import java.util.stream.Stream;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;

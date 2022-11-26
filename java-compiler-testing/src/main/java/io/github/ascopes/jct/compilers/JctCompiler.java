@@ -16,6 +16,8 @@
 package io.github.ascopes.jct.compilers;
 
 import io.github.ascopes.jct.ex.JctCompilerException;
+import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
+import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.pathwrappers.RamDirectory;

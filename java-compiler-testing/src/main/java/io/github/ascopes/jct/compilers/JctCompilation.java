@@ -19,6 +19,7 @@ import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.filemanagers.JctFileManager;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;

@@ -17,8 +17,8 @@ package io.github.ascopes.jct.containers;
 
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
-import io.github.ascopes.jct.compilers.ModuleLocation;
-import io.github.ascopes.jct.compilers.PathFileObject;
+import io.github.ascopes.jct.filemanagers.ModuleLocation;
+import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.ModuleHandle;

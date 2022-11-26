@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers;
+package io.github.ascopes.jct.filemanagers;
 
 import static io.github.ascopes.jct.utils.GarbageDisposalUtils.onPhantom;
 import static java.util.Objects.requireNonNull;

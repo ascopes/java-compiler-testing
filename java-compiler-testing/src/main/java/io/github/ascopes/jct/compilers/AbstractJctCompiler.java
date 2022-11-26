@@ -18,6 +18,9 @@ package io.github.ascopes.jct.compilers;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
+import io.github.ascopes.jct.filemanagers.JctFileManagerBuilder;
+import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.pathwrappers.TestDirectoryFactory;
 import java.nio.charset.Charset;

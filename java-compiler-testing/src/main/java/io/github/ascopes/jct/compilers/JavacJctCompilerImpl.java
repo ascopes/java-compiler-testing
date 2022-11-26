@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.compilers;
 
+import io.github.ascopes.jct.filemanagers.JctFileManagerBuilder;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;

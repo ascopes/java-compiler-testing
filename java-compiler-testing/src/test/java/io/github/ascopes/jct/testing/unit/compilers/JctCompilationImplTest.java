@@ -22,8 +22,8 @@ import static org.assertj.core.api.InstanceOfAssertFactories.iterable;
 import static org.mockito.Mockito.mock;
 
 import io.github.ascopes.jct.compilers.JctCompilationImpl;
-import io.github.ascopes.jct.compilers.JctFileManager;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.testing.helpers.Fixtures;
 import java.util.Arrays;
 import java.util.LinkedHashSet;

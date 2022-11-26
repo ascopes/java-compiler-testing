@@ -17,7 +17,7 @@ package io.github.ascopes.jct.assertions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.ascopes.jct.compilers.PathFileObject;
+import io.github.ascopes.jct.filemanagers.PathFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractPathAssert;

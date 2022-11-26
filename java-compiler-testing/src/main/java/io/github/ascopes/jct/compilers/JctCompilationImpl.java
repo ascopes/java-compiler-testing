@@ -21,6 +21,7 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.List;
