@@ -19,6 +19,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
+import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;

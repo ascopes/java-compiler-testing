@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.pathwrappers;
 
+import static io.github.ascopes.jct.utils.FileUtils.retrieveRequiredUrl;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
@@ -95,7 +96,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
     this.rootDirectory = requireNonNull(rootDirectory, "rootDirectory");
     this.separator = requireNonNull(separator, "separator");
     uri = this.rootDirectory.toUri();
-    url = PathWrapperUtils.retrieveRequiredUrl(this.rootDirectory);
+    url = retrieveRequiredUrl(this.rootDirectory);
   }
 
 

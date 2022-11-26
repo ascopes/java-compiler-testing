@@ -13,31 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.testing.unit.containers;
+package io.github.ascopes.jct.testing.unit.utils;
 
-import static io.github.ascopes.jct.containers.FileUtils.binaryNameToPackageName;
-import static io.github.ascopes.jct.containers.FileUtils.binaryNameToPath;
-import static io.github.ascopes.jct.containers.FileUtils.binaryNameToSimpleClassName;
-import static io.github.ascopes.jct.containers.FileUtils.fileWithAnyKind;
-import static io.github.ascopes.jct.containers.FileUtils.packageNameToPath;
-import static io.github.ascopes.jct.containers.FileUtils.pathToBinaryName;
-import static io.github.ascopes.jct.containers.FileUtils.pathToKind;
-import static io.github.ascopes.jct.containers.FileUtils.relativeResourceNameToPath;
-import static io.github.ascopes.jct.containers.FileUtils.resourceNameToPath;
-import static io.github.ascopes.jct.containers.FileUtils.simpleClassNameToPath;
+import static io.github.ascopes.jct.utils.FileUtils.binaryNameToPackageName;
+import static io.github.ascopes.jct.utils.FileUtils.binaryNameToPath;
+import static io.github.ascopes.jct.utils.FileUtils.binaryNameToSimpleClassName;
+import static io.github.ascopes.jct.utils.FileUtils.fileWithAnyKind;
+import static io.github.ascopes.jct.utils.FileUtils.packageNameToPath;
+import static io.github.ascopes.jct.utils.FileUtils.pathToBinaryName;
+import static io.github.ascopes.jct.utils.FileUtils.pathToKind;
+import static io.github.ascopes.jct.utils.FileUtils.relativeResourceNameToPath;
+import static io.github.ascopes.jct.utils.FileUtils.resourceNameToPath;
+import static io.github.ascopes.jct.utils.FileUtils.retrieveRequiredUrl;
+import static io.github.ascopes.jct.utils.FileUtils.simpleClassNameToPath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
-import io.github.ascopes.jct.containers.FileUtils;
 import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
+import io.github.ascopes.jct.utils.FileUtils;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -63,6 +67,40 @@ class FileUtilsTest implements StaticClassTestTemplate {
   @Override
   public Class<?> getTypeBeingTested() {
     return FileUtils.class;
+  }
+
+  @DisplayName("Supported paths can be dereferenced to URLs successfully")
+  @Test
+  void canDereferencePathsToUrls() throws IOException {
+    // Given
+    try (var fs = Jimfs.newFileSystem("PathWrapperUtils-test-fs")) {
+      Files.createDirectories(fs.getPath("foo", "bar"));
+      var file = Files.createFile(fs.getPath("foo", "bar", "baz.txt"));
+
+      // When
+      var url = retrieveRequiredUrl(file);
+
+      // Then
+      assertThat(url)
+          .isNotNull()
+          .isEqualTo(file.toUri().toURL())
+          .asString()
+          .startsWith(Jimfs.URI_SCHEME + "://");
+    }
+  }
+
+  @DisplayName("Unsupported paths throw an IllegalArgumentException when using an unknown scheme")
+  @Test
+  void throwsIllegalArgumentExceptionIfPathUsesUnknownUriScheme() {
+    // Given
+    var uri = URI.create("some-crazy-random-scheme://foo/bar/baz.txt");
+    var path = mock(Path.class);
+    when(path.toUri()).thenReturn(uri);
+
+    // Then
+    assertThatThrownBy(() -> retrieveRequiredUrl(path))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasCauseInstanceOf(MalformedURLException.class);
   }
 
   @DisplayName("pathToBinaryName throws an IllegalArgumentException for absolute paths")

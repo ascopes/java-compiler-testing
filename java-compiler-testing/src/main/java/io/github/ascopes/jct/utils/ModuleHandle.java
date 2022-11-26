@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.containers;
+package io.github.ascopes.jct.utils;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.utils.ToStringBuilder;
 import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;

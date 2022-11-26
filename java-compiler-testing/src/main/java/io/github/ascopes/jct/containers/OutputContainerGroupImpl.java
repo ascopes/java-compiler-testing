@@ -21,6 +21,7 @@ import io.github.ascopes.jct.compilers.ModuleLocation;
 import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
+import io.github.ascopes.jct.utils.ModuleHandle;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.nio.file.Files;
 import java.util.HashMap;

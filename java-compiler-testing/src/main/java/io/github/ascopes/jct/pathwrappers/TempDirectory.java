@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.pathwrappers;
 
+import static io.github.ascopes.jct.utils.FileUtils.assertValidRootName;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
 import io.github.ascopes.jct.utils.RecursiveDeleter;
@@ -87,7 +88,8 @@ public final class TempDirectory extends AbstractTestDirectory<TempDirectory> {
    */
   @CheckReturnValue
   public static TempDirectory newTempDirectory(String name, boolean closeOnGc) {
-    PathWrapperUtils.assertValidRootName(name);
+    assertValidRootName(name);
+
     var tempDir = uncheckedIo(() -> Files.createTempDirectory("jct-"));
     var innerDir = uncheckedIo(() -> Files.createDirectory(tempDir.resolve(name)));
 

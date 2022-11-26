@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.pathwrappers;
 
+import static io.github.ascopes.jct.utils.FileUtils.assertValidRootName;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
 import com.google.common.jimfs.Configuration;
@@ -99,7 +100,7 @@ public final class RamDirectory extends AbstractTestDirectory<RamDirectory> {
    */
   @CheckReturnValue
   public static RamDirectory newRamDirectory(String name, boolean closeOnGc) {
-    PathWrapperUtils.assertValidRootName(name);
+    assertValidRootName(name);
 
     var config = Configuration
         .builder(PathType.unix())

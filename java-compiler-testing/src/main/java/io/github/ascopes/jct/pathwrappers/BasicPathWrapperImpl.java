@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.pathwrappers;
 
+import static io.github.ascopes.jct.utils.FileUtils.retrieveRequiredUrl;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.utils.ToStringBuilder;
@@ -73,7 +74,7 @@ public final class BasicPathWrapperImpl implements PathWrapper {
     this.parent = parent;
     this.path = requireNonNull(path, "path");
     uri = path.toUri();
-    url = PathWrapperUtils.retrieveRequiredUrl(this.path);
+    url = retrieveRequiredUrl(this.path);
   }
 
   @Nullable
