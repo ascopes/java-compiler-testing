@@ -17,7 +17,7 @@ package io.github.ascopes.jct.compilers;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.containers.impl.FileUtils;
+import io.github.ascopes.jct.containers.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

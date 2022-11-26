@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers.impl;
+package io.github.ascopes.jct.compilers;
 
 import static io.github.ascopes.jct.utils.GarbageDisposalUtils.onPhantom;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.compilers.JctFileManager;
-import io.github.ascopes.jct.compilers.PathFileObject;
 import io.github.ascopes.jct.containers.ContainerGroup;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
+import io.github.ascopes.jct.containers.ModuleContainerGroupImpl;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
+import io.github.ascopes.jct.containers.OutputContainerGroupImpl;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
-import io.github.ascopes.jct.containers.impl.ModuleContainerGroupImpl;
-import io.github.ascopes.jct.containers.impl.OutputContainerGroupImpl;
-import io.github.ascopes.jct.containers.impl.PackageContainerGroupImpl;
+import io.github.ascopes.jct.containers.PackageContainerGroupImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.IOException;

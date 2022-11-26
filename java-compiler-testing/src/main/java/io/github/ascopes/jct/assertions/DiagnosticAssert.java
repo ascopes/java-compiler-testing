@@ -18,7 +18,6 @@ package io.github.ascopes.jct.assertions;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.ascopes.jct.assertions.impl.DiagnosticRepresentation;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.Locale;
 import javax.tools.JavaFileObject;

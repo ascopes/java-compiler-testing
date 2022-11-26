@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.pathwrappers.impl;
+package io.github.ascopes.jct.pathwrappers;
 
 import io.github.ascopes.jct.utils.StringUtils;
 import java.net.MalformedURLException;

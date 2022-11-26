@@ -15,12 +15,10 @@
  */
 package io.github.ascopes.jct.compilers;
 
-import io.github.ascopes.jct.compilers.impl.JctFileManagerImpl;
-import io.github.ascopes.jct.compilers.impl.ModuleLocation;
 import io.github.ascopes.jct.pathwrappers.AbstractTestDirectory;
+import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.pathwrappers.TestDirectoryFactory;
-import io.github.ascopes.jct.pathwrappers.impl.BasicPathWrapperImpl;
 import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;

@@ -16,10 +16,10 @@
 package io.github.ascopes.jct.compilers;
 
 import io.github.ascopes.jct.ex.JctCompilerException;
+import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.pathwrappers.RamDirectory;
 import io.github.ascopes.jct.pathwrappers.TestDirectoryFactory;
-import io.github.ascopes.jct.pathwrappers.impl.BasicPathWrapperImpl;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;

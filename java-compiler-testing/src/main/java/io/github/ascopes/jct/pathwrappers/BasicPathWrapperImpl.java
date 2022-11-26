@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.pathwrappers.impl;
+package io.github.ascopes.jct.pathwrappers;
 
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.pathwrappers.PathWrapper;
-import io.github.ascopes.jct.pathwrappers.RamDirectory;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.net.URI;
 import java.net.URL;

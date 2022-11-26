@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers.impl;
+package io.github.ascopes.jct.compilers;
 
-import io.github.ascopes.jct.compilers.AbstractJctCompiler;
-import io.github.ascopes.jct.compilers.FileManagerBuilder;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;

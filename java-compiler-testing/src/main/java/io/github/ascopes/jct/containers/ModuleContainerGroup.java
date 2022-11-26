@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.containers;
 
-import io.github.ascopes.jct.compilers.impl.ModuleLocation;
+import io.github.ascopes.jct.compilers.ModuleLocation;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import java.util.List;
 import java.util.Map;

@@ -21,7 +21,6 @@ import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
-import io.github.ascopes.jct.pathwrappers.impl.PathWrapperUtils;
 import java.io.Closeable;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;

@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.testing.unit.compilers.impl;
+package io.github.ascopes.jct.testing.unit.compilers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import io.github.ascopes.jct.compilers.impl.JavacJctFlagBuilderImpl;
+import io.github.ascopes.jct.compilers.JavacJctFlagBuilderImpl;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;

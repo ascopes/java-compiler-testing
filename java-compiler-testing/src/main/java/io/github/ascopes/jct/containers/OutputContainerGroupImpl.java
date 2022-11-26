@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.containers.impl;
+package io.github.ascopes.jct.containers;
 
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
+import io.github.ascopes.jct.compilers.ModuleLocation;
 import io.github.ascopes.jct.compilers.PathFileObject;
-import io.github.ascopes.jct.compilers.impl.ModuleLocation;
-import io.github.ascopes.jct.containers.Container;
-import io.github.ascopes.jct.containers.OutputContainerGroup;
-import io.github.ascopes.jct.containers.PackageContainerGroup;
+import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
-import io.github.ascopes.jct.pathwrappers.impl.BasicPathWrapperImpl;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.nio.file.Files;
 import java.util.HashMap;

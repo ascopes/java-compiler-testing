@@ -119,21 +119,13 @@ module io.github.ascopes.jct {
   /// EXPOSURE OF INTERNALS TO THE TESTING NAMESPACE ///
   //////////////////////////////////////////////////////
 
-  exports io.github.ascopes.jct.assertions.impl to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.compilers.impl to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.pathwrappers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
 
   opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.assertions.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.compilers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.containers to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.diagnostics to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.ex to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.pathwrappers to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.pathwrappers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
 }

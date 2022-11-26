@@ -13,40 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.assertions.impl;
+package io.github.ascopes.jct.containers;
 
-import javax.tools.JavaFileManager.Location;
+import io.github.ascopes.jct.pathwrappers.PathWrapper;
+import java.net.URL;
+import java.net.URLClassLoader;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.assertj.core.presentation.Representation;
 
 /**
- * Representation for a {@link Location location}.
+ * An extension of the Java {@link URLClassLoader} that wraps around container groups.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class LocationRepresentation implements Representation {
-
-  private static final LocationRepresentation INSTANCE
-      = new LocationRepresentation();
+public final class PackageContainerGroupUrlClassLoader extends URLClassLoader {
 
   /**
-   * Get an instance of this location representation.
+   * Initialise this class loader.
    *
-   * @return the instance.
+   * @param group the container group to use.
    */
-  public static LocationRepresentation getInstance() {
-    return INSTANCE;
-  }
-
-  private LocationRepresentation() {
-    // Nothing to see here, move along now.
-  }
-
-  @Override
-  public String toStringOf(Object object) {
-    return ((Location) object).getName();
+  public PackageContainerGroupUrlClassLoader(PackageContainerGroup group) {
+    super(
+        "Packages within " + group.getLocation().getName(),
+        group
+            .getPackages()
+            .stream()
+            .map(Container::getPathWrapper)
+            .map(PathWrapper::getUrl)
+            .distinct()
+            .toArray(URL[]::new),
+        ClassLoader.getSystemClassLoader()
+    );
   }
 }

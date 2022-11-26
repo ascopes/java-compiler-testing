@@ -13,47 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.assertions.impl;
+package io.github.ascopes.jct.assertions;
 
-import java.util.List;
+import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.presentation.Representation;
 
 /**
- * Representation of a {@link List list} of {@link StackTraceElement stack trace frames}.
+ * Representation for a {@link Location location}.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class StackTraceRepresentation implements Representation {
+public final class LocationRepresentation implements Representation {
 
-  private static final StackTraceRepresentation INSTANCE
-      = new StackTraceRepresentation();
+  private static final LocationRepresentation INSTANCE
+      = new LocationRepresentation();
 
   /**
-   * Get an instance of this stack trace representation.
+   * Get an instance of this location representation.
    *
    * @return the instance.
    */
-  public static StackTraceRepresentation getInstance() {
+  public static LocationRepresentation getInstance() {
     return INSTANCE;
   }
 
-
-  private StackTraceRepresentation() {
-    // Nothing to see here, move along now!
+  private LocationRepresentation() {
+    // Nothing to see here, move along now.
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public String toStringOf(Object object) {
-    var trace = (List<? extends StackTraceElement>) object;
-    var builder = new StringBuilder("Stacktrace:");
-    for (var frame : trace) {
-      builder.append("\n\tat ").append(frame);
-    }
-    return builder.toString();
+    return ((Location) object).getName();
   }
 }

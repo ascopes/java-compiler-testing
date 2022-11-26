@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.testing.unit.pathwrappers.impl;
+package io.github.ascopes.jct.testing.unit.pathwrappers;
 
-import static io.github.ascopes.jct.pathwrappers.impl.PathWrapperUtils.retrieveRequiredUrl;
+import static io.github.ascopes.jct.pathwrappers.PathWrapperUtils.retrieveRequiredUrl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.google.common.jimfs.Jimfs;
-import io.github.ascopes.jct.pathwrappers.impl.PathWrapperUtils;
+import io.github.ascopes.jct.pathwrappers.PathWrapperUtils;
 import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
 import java.io.IOException;
 import java.net.MalformedURLException;

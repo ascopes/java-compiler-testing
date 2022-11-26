@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.containers.impl;
+package io.github.ascopes.jct.containers;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.compilers.ModuleLocation;
 import io.github.ascopes.jct.compilers.PathFileObject;
-import io.github.ascopes.jct.compilers.impl.ModuleLocation;
-import io.github.ascopes.jct.containers.Container;
-import io.github.ascopes.jct.containers.ModuleContainerGroup;
-import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
