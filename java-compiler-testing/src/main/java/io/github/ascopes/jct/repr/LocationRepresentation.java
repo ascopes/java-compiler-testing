@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.repr;
 
+import javax.annotation.Nullable;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -46,7 +47,7 @@ public final class LocationRepresentation implements Representation {
   }
 
   @Override
-  public String toStringOf(Object object) {
-    return ((Location) object).getName();
+  public String toStringOf(@Nullable Object object) {
+    return object == null ? "null" : ((Location) object).getName();
   }
 }

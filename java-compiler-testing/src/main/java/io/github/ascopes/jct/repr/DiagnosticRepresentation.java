@@ -20,7 +20,9 @@ import static javax.tools.Diagnostic.NOPOS;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.utils.IoExceptionUtils;
 import io.github.ascopes.jct.utils.StringUtils;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import javax.annotation.Nullable;
 import javax.tools.Diagnostic;
@@ -58,7 +60,7 @@ public final class DiagnosticRepresentation implements Representation {
   }
 
   @Override
-  public String toStringOf(Object object) {
+  public String toStringOf(@Nullable Object object) {
     if (object == null) {
       return "null";
     }
@@ -104,6 +106,7 @@ public final class DiagnosticRepresentation implements Representation {
   }
 
   @Nullable
+  @SuppressWarnings("ConstantConditions")
   private Snippet extractSnippet(
       Diagnostic<? extends JavaFileObject> diagnostic
   ) throws IOException {
@@ -118,7 +121,14 @@ public final class DiagnosticRepresentation implements Representation {
       return null;
     }
 
-    var content = diagnostic.getSource().getCharContent(true).toString();
+    // ECJ throws a NullPointerException in some cases if we use .getCharContent, so read this
+    // manually instead.
+    var contentBytes = new ByteArrayOutputStream();
+    try (var input = diagnostic.getSource().openInputStream()) {
+      input.transferTo(contentBytes);
+    }
+
+    var content = contentBytes.toString(StandardCharsets.UTF_8);
 
     var startLine = Math.max(1, (int) diagnostic.getLineNumber() - ADDITIONAL_CONTEXT_LINES);
     var lineStartOffset = StringUtils.indexOfLine(content, startLine);
@@ -130,14 +140,12 @@ public final class DiagnosticRepresentation implements Representation {
       endOfSnippet = StringUtils.indexOfEndOfLine(content, endOfSnippet + 1);
     }
 
-    var snippet = new Snippet(
+    return new Snippet(
         content.substring(lineStartOffset, endOfSnippet),
         Math.max(1, diagnostic.getLineNumber() - ADDITIONAL_CONTEXT_LINES),
         diagnostic.getStartPosition() - lineStartOffset,
         lineEndOffset - lineStartOffset
     );
-
-    return snippet;
   }
 
   private static final class Snippet {

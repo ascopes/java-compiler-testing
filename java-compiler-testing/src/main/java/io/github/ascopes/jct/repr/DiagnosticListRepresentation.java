@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.joining;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.Collection;
+import javax.annotation.Nullable;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -50,7 +51,7 @@ public final class DiagnosticListRepresentation implements Representation {
   }
 
   @Override
-  public String toStringOf(Object object) {
+  public String toStringOf(@Nullable Object object) {
     if (object == null) {
       return "null";
     }

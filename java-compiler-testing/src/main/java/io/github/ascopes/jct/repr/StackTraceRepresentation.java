@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.repr;
 
 import java.util.List;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.presentation.Representation;
@@ -29,8 +30,7 @@ import org.assertj.core.presentation.Representation;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class StackTraceRepresentation implements Representation {
 
-  private static final StackTraceRepresentation INSTANCE
-      = new StackTraceRepresentation();
+  private static final StackTraceRepresentation INSTANCE = new StackTraceRepresentation();
 
   /**
    * Get an instance of this stack trace representation.
@@ -41,14 +41,17 @@ public final class StackTraceRepresentation implements Representation {
     return INSTANCE;
   }
 
-
   private StackTraceRepresentation() {
     // Nothing to see here, move along now!
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public String toStringOf(Object object) {
+  public String toStringOf(@Nullable Object object) {
+    if (object == null) {
+      return "null";
+    }
+
     var trace = (List<? extends StackTraceElement>) object;
     var builder = new StringBuilder("Stacktrace:");
     for (var frame : trace) {
