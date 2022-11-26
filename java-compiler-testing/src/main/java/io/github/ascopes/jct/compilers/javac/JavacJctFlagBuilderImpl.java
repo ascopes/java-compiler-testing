@@ -18,6 +18,7 @@ package io.github.ascopes.jct.compilers.javac;
 import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -76,17 +77,17 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   }
 
   @Override
-  public JavacJctFlagBuilderImpl release(String version) {
+  public JavacJctFlagBuilderImpl release(@Nullable String version) {
     return addVersionIfPresent(RELEASE, version);
   }
 
   @Override
-  public JavacJctFlagBuilderImpl source(String version) {
+  public JavacJctFlagBuilderImpl source(@Nullable String version) {
     return addVersionIfPresent(SOURCE, version);
   }
 
   @Override
-  public JavacJctFlagBuilderImpl target(String version) {
+  public JavacJctFlagBuilderImpl target(@Nullable String version) {
     return addVersionIfPresent(TARGET, version);
   }
 
@@ -122,7 +123,7 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
     return this;
   }
 
-  private JavacJctFlagBuilderImpl addVersionIfPresent(String flagPrefix, String version) {
+  private JavacJctFlagBuilderImpl addVersionIfPresent(String flagPrefix, @Nullable String version) {
     if (version != null) {
       craftedFlags.add(flagPrefix);
       craftedFlags.add(version);
