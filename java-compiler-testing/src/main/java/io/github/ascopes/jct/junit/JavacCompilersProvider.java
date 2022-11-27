@@ -19,6 +19,7 @@ import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.junit.jupiter.params.support.AnnotationConsumer;
 
 /**
  * Argument provider for the {@link JavacCompilerTest} annotation.
@@ -27,10 +28,11 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class JavacCompilersProvider extends AbstractCompilersProvider<JavacCompilerTest> {
+public final class JavacCompilersProvider extends AbstractCompilersProvider
+    implements AnnotationConsumer<JavacCompilerTest> {
 
-  JavacCompilersProvider() {
-    // Do nothing, but keep this package private.
+  public JavacCompilersProvider() {
+    // Visible for testing only.
   }
 
   @Override

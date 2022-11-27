@@ -16,14 +16,13 @@
 package io.github.ascopes.jct.junit;
 
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
+import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer;
 import io.github.ascopes.jct.ex.JctJunitConfigurerException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.util.Objects;
+import java.lang.reflect.InvocationTargetException;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
@@ -32,20 +31,17 @@ import org.apiguardian.api.API.Status;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
-import org.junit.jupiter.params.support.AnnotationConsumer;
 import org.opentest4j.TestAbortedException;
 
 /**
  * Base for defining a compiler-supplying arguments provider for Junit Jupiter parameterised test
  * support.
  *
- * @param <A> the annotation type that can be consumed.
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public abstract class AbstractCompilersProvider<A extends Annotation>
-    implements ArgumentsProvider, AnnotationConsumer<A> {
+public abstract class AbstractCompilersProvider implements ArgumentsProvider {
 
   // Configured values by JUnit 5. Volatile in case JUnit ever does this from a different
   // thread in the future.
@@ -131,16 +127,18 @@ public abstract class AbstractCompilersProvider<A extends Annotation>
   protected abstract int maxSupportedVersion(@SuppressWarnings("unused") boolean modules);
 
   private void applyConfigurers(JctCompiler<?, ?> compiler) {
-    var classes = Objects.requireNonNull(configurerClasses, "class is not initialised correctly");
+    var classes = requireNonNull(configurerClasses);
 
     for (var configurerClass : classes) {
+      var configurer = initialiseConfigurer(configurerClass);
+
       try {
-        initialiseConfigurer(configurerClass).configure(compiler);
+        configurer.configure(compiler);
       } catch (TestAbortedException ex) {
         throw ex;
       } catch (Exception ex) {
         throw new JctJunitConfigurerException(
-            "Failed to configure compiler with " + configurerClass.getName(),
+            "Failed to configure compiler with configurer class " + configurerClass.getName(),
             ex
         );
       }
@@ -154,6 +152,10 @@ public abstract class AbstractCompilersProvider<A extends Annotation>
 
     try {
       constructor = configurerClass.getDeclaredConstructor();
+      // Force-enable reflective access. If the user is using a SecurityManager for any reason then
+      // tough luck. JVM go bang.
+      constructor.setAccessible(true);
+
     } catch (NoSuchMethodException ex) {
       throw new JctJunitConfigurerException(
           "No no-args constructor was found for configurer class " + configurerClass.getName(),
@@ -161,15 +163,20 @@ public abstract class AbstractCompilersProvider<A extends Annotation>
       );
     }
 
-    if (!Modifier.isPublic(constructor.getModifiers())) {
-      throw new JctJunitConfigurerException(
-          "Constructor for " + configurerClass.getName() + " is not public"
-      );
-    }
-
     try {
       return constructor.newInstance();
     } catch (ReflectiveOperationException ex) {
+      if (ex instanceof InvocationTargetException
+          && ex.getCause() instanceof TestAbortedException) {
+
+        // Aborting the test from the constructor should be equally valid, so propagate this
+        // exception as a special edge case. Throw a new instance to do this to prevent the
+        // stacktrace getting a circular reference.
+        var newEx = new TestAbortedException(ex.getCause().getMessage());
+        newEx.addSuppressed(ex);
+        throw newEx;
+      }
+
       throw new JctJunitConfigurerException(
           "Failed to initialise a new instance of configurer class " + configurerClass.getName(),
           ex
