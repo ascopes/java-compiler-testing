@@ -499,7 +499,7 @@ public class AbstractCompilersProviderTest {
     /**
      * Initialise the configurer.
      */
-    NonDefaultConstructorConfigurer(Object unusedArgument) {
+    NonDefaultConstructorConfigurer(@SuppressWarnings("unused") Object unusedArgument) {
       // Need a constructor with a non-default signature for the test.
     }
 
