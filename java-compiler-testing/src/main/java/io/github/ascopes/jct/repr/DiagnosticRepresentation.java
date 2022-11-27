@@ -69,11 +69,11 @@ public final class DiagnosticRepresentation implements Representation {
 
     var builder = new StringBuilder("[")
         .append(diagnostic.getKind())
-        .append("] ");
+        .append("]");
 
     var code = diagnostic.getCode();
     if (code != null) {
-      builder.append(code);
+      builder.append(' ').append(code);
     }
 
     if (diagnostic.getSource() != null) {
@@ -185,6 +185,7 @@ public final class DiagnosticRepresentation implements Representation {
             // Ensure newline if we are adding the end-of-content line
             builder.append('\n');
           }
+
           appendPossibleUnderline(builder, startOfLine, i);
           ++lineIndex;
           startOfLine = i + 1;

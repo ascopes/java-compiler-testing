@@ -62,7 +62,11 @@ public final class DiagnosticListRepresentation implements Representation {
     return diagnostics
         .stream()
         .map(DiagnosticRepresentation.getInstance()::toStringOf)
-        .map(" - "::concat)
+        .map(this::indentAndBullet)
         .collect(joining("\n\n"));
+  }
+
+  private String indentAndBullet(String repr) {
+    return " - " + repr.lines().collect(joining("\n   "));
   }
 }

@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.testing.helpers.GenericMock.mockRaw;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.List;
+import java.util.Random;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
@@ -27,7 +28,10 @@ import javax.tools.JavaFileObject;
  *
  * @author Ashley Scopes
  */
+@SuppressWarnings("NullableProblems")
 public final class Fixtures {
+
+  private static final Random RANDOM = new Random();
 
   private Fixtures() {
     throw new UnsupportedOperationException("static-only class");
@@ -64,5 +68,17 @@ public final class Fixtures {
     return mockRaw(List.class)
         .<List<StackTraceElement>>upcastedTo()
         .build();
+  }
+
+  /**
+   * Return one of the given elements.
+   *
+   * @param items the elements to pick from.
+   * @param <T>   the type.
+   * @return the element.
+   */
+  @SafeVarargs
+  public static <T> T oneOf(T... items) {
+    return items[RANDOM.nextInt(items.length)];
   }
 }
