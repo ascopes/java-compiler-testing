@@ -39,6 +39,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 /**
  * {@link JavacCompilersProvider} tests.
  */
+@SuppressWarnings("unchecked")
 @DisplayName("JavacCompilersProvider tests")
 class JavacCompilersProviderTest {
 
