@@ -104,6 +104,11 @@ public class PathFileObject implements JavaFileObject {
     kind = FileUtils.pathToKind(relativePath);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return {@code true} if the file was deleted, or {@code false} if it was not deleted.
+   */
   @Override
   public boolean delete() {
     try {
@@ -114,12 +119,24 @@ public class PathFileObject implements JavaFileObject {
     }
   }
 
+  /**
+   * Determine if this object equals another.
+   *
+   * @param other the other object to compare with.
+   * @return {@code true} if the other object is also a {@link FileObject} and has the same
+   *     {@link #toUri() URI} as this object, or {@code false} otherwise.
+   */
   @Override
   public boolean equals(@Nullable Object other) {
     // Roughly the same as what Javac does.
     return other instanceof FileObject && uri.equals(((FileObject) other).toUri());
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return {@code null}, always. This implementation does not provide this functionality.
+   */
   @Nullable
   @Override
   public Modifier getAccessLevel() {
@@ -127,6 +144,13 @@ public class PathFileObject implements JavaFileObject {
     return null;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @param ignoreEncodingErrors ignore encoding errors if {@code true}, or throw them otherwise.
+   * @return the character content, encoded as UTF-8.
+   * @throws IOException if an IO error occurs.
+   */
   @Override
   public String getCharContent(boolean ignoreEncodingErrors) throws IOException {
     try (var input = openInputStream()) {
@@ -136,11 +160,22 @@ public class PathFileObject implements JavaFileObject {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return the inferred file kind.
+   */
   @Override
   public Kind getKind() {
     return kind;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return the timestamp in milliseconds since UNIX epoch that the file was last modified at, or
+   *     {@code 0L} if unmodified.
+   */
   @Override
   public long getLastModified() {
     try {
@@ -169,11 +204,21 @@ public class PathFileObject implements JavaFileObject {
     return rootPath;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return the name of the file.
+   */
   @Override
   public String getName() {
     return name;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return {@code null} in all cases, this operation is not implemented.
+   */
   @Nullable
   @Override
   public NestingKind getNestingKind() {
@@ -199,12 +244,23 @@ public class PathFileObject implements JavaFileObject {
     return relativePath;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return the hash code for the object.
+   */
   @Override
   public int hashCode() {
     // Corresponds to what the .equals override checks for.
     return uri.hashCode();
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return {@code true} if the simple name and kind are compatible with the current file object
+   *     name, or {@code false} if not.
+   */
   @Override
   public boolean isNameCompatible(String simpleName, Kind kind) {
     // TODO(ascopes): does this need to be case insensitive on Windows?
@@ -213,35 +269,71 @@ public class PathFileObject implements JavaFileObject {
     return relativePath.getFileName().toString().equals(fileName);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return a buffered input stream.
+   * @throws IOException if an IO error occurs.
+   */
   @Override
   @WillNotClose
   public BufferedInputStream openInputStream() throws IOException {
     return new BufferedInputStream(openUnbufferedInputStream());
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return a buffered output stream.
+   * @throws IOException if an IO error occurs.
+   */
   @Override
   @WillNotClose
   public BufferedOutputStream openOutputStream() throws IOException {
     return new BufferedOutputStream(openUnbufferedOutputStream());
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @param ignoreEncodingErrors {@code true} to suppress encoding errors, or {@code false} to throw
+   *                             them to the caller.
+   * @return a buffered reader
+   * @throws IOException if an IO error occurs.
+   */
   @Override
   @WillNotClose
   public BufferedReader openReader(boolean ignoreEncodingErrors) throws IOException {
     return new BufferedReader(openUnbufferedReader(ignoreEncodingErrors));
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return a buffered writer.
+   * @throws IOException if an IO error occurs.
+   */
   @Override
   @WillNotClose
   public BufferedWriter openWriter() throws IOException {
     return new BufferedWriter(openUnbufferedWriter());
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return the URI for this file object.
+   */
   @Override
   public URI toUri() {
     return uri;
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @return a string representation of this object.
+   */
   @Override
   public String toString() {
     return new ToStringBuilder(this)
