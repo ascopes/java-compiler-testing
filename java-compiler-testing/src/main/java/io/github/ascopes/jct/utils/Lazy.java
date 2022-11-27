@@ -102,9 +102,7 @@ public class Lazy<T> {
   public void destroy() {
     if (data != null) {
       synchronized (lock) {
-        if (data != null) {
-          data = null;
-        }
+        data = null;
       }
     }
   }

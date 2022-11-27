@@ -23,6 +23,7 @@ import static org.assertj.core.api.BDDAssertions.thenCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -86,11 +87,65 @@ class LazyTest {
     then(thirdResult).isSameAs(value);
   }
 
-  @DisplayName("access() synchronizes correctly")
+  @DisplayName("access() synchronizes correctly on initial accesses")
   @ValueSource(ints = {2, 4, 10, 100})
   @ParameterizedTest(name = "for {0} concurrent read(s)")
   @Timeout(30)
-  void accessSynchronizesCorrectly(int concurrency) {
+  void accessSynchronizesCorrectlyOnInitialAccesses(int concurrency) {
+    // This is closeable in Java 19, but not before.
+    @SuppressWarnings("resource")
+    var executor = Executors.newFixedThreadPool(concurrency);
+
+    try {
+      // Given
+      var value = new Object();
+
+      var supplier = mockRaw(Supplier.class)
+          .<Supplier<Object>>upcastedTo()
+          .build();
+
+      when(supplier.get()).then(ctx -> {
+        // Lagging here should make the inner condition in the acquire block hit both control
+        // paths.
+        var skew = (Math.random() - 0.5) * 50;
+        Thread.sleep(100 + (int) skew);
+        return value;
+      });
+
+      var lazy = new Lazy<>(supplier);
+
+      Function<CompletableFuture<Object>, Callable<Object>> accession = future -> () -> {
+        var skew = (Math.random() - 0.5) * 50;
+        Thread.sleep(100 + (int) skew);
+        var result = lazy.access();
+
+        assertThat(result).isSameAs(value);
+
+        future.complete(result);
+        return result;
+      };
+
+      // When
+      CompletableFuture
+          .allOf(Stream
+              .generate(CompletableFuture::new)
+              .limit(concurrency)
+              .peek(future -> executor.submit(accession.apply(future)))
+              .toArray(size -> new CompletableFuture<?>[size]))
+          .join();
+
+      // Then
+      verify(supplier, times(1)).get();
+    } finally {
+      executor.shutdownNow();
+    }
+  }
+
+  @DisplayName("access() synchronizes correctly on subsequent accesses")
+  @ValueSource(ints = {2, 4, 10, 100})
+  @ParameterizedTest(name = "for {0} concurrent read(s)")
+  @Timeout(30)
+  void accessSynchronizesCorrectlyOnSubsequentAccesses(int concurrency) {
     // This is closeable in Java 19, but not before.
     @SuppressWarnings("resource")
     var executor = Executors.newFixedThreadPool(concurrency);
@@ -209,6 +264,40 @@ class LazyTest {
 
     // Then
     verify(callback).consume(actual);
+  }
+
+  @DisplayName("ifInitialized() handles race conditions")
+  @ValueSource(ints = {5, 10, 50, 100})
+  @ParameterizedTest(name = "for concurrency = {0}")
+  @Timeout(30)
+  void ifInitializedHandlesRaceConditionsCorrectly(int concurrency) {
+    // Given
+    var initializer = (Supplier<Object>) mock(Supplier.class);
+    when(initializer.get()).thenReturn(new Object());
+    var lazy = spy(new Lazy<>(initializer));
+
+    // When
+    lazy.access();
+
+    var futures = Stream
+        .generate(() -> CompletableFuture.runAsync(() -> lazy.ifInitialized(value -> {
+          try {
+            // Lagging here should make the inner condition in the acquire block hit both control
+            // paths.
+            Thread.sleep(500);
+            lazy.destroy();
+          } catch (Exception ex) {
+            throw new RuntimeException(ex);
+          }
+        })))
+        .limit(concurrency)
+        .toArray(CompletableFuture[]::new);
+
+    CompletableFuture.allOf(futures).join();
+
+    // Then
+    // Should not ever result in more than one call here if locking works correctly.
+    verify(lazy, times(1)).destroy();
   }
 
   @DisplayName("ifInitialized() propagates exceptions when initialized")
