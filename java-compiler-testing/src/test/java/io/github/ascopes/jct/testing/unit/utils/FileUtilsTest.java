@@ -24,6 +24,7 @@ import static io.github.ascopes.jct.utils.FileUtils.packageNameToPath;
 import static io.github.ascopes.jct.utils.FileUtils.pathToBinaryName;
 import static io.github.ascopes.jct.utils.FileUtils.pathToKind;
 import static io.github.ascopes.jct.utils.FileUtils.relativeResourceNameToPath;
+import static io.github.ascopes.jct.utils.FileUtils.resolvePathRecursively;
 import static io.github.ascopes.jct.utils.FileUtils.resourceNameToPath;
 import static io.github.ascopes.jct.utils.FileUtils.retrieveRequiredUrl;
 import static io.github.ascopes.jct.utils.FileUtils.simpleClassNameToPath;
@@ -74,9 +75,9 @@ class FileUtilsTest implements StaticClassTestTemplate {
 
   @DisplayName("retrieveRequiredUrl with a supported path returns the expected result")
   @Test
-  void canDereferencePathsToUrls() throws IOException {
+  void retrieveRequiredUrlCanDereferencePathsToUrls() throws IOException {
     // Given
-    try (var fs = Jimfs.newFileSystem("PathWrapperUtils-test-fs")) {
+    try (var fs = Jimfs.newFileSystem("test-fs")) {
       Files.createDirectories(fs.getPath("foo", "bar"));
       var file = Files.createFile(fs.getPath("foo", "bar", "baz.txt"));
 
@@ -94,7 +95,7 @@ class FileUtilsTest implements StaticClassTestTemplate {
 
   @DisplayName("retrieveRequiredUrl with an invalid scheme throws an IllegalArgumentException")
   @Test
-  void throwsIllegalArgumentExceptionIfPathUsesUnknownUriScheme() {
+  void retrieveRequiredUrlThrowsIllegalArgumentExceptionIfPathUsesUnknownUriScheme() {
     // Given
     var uri = URI.create("some-crazy-random-scheme://foo/bar/baz.txt");
     var path = mock(Path.class);
@@ -104,6 +105,36 @@ class FileUtilsTest implements StaticClassTestTemplate {
     assertThatThrownBy(() -> retrieveRequiredUrl(path))
         .isInstanceOf(IllegalArgumentException.class)
         .hasCauseInstanceOf(MalformedURLException.class);
+  }
+
+  @DisplayName("resolvePathRecursively resolves the path recursively")
+  @CsvSource({
+      "foo/bar, '', foo/bar",
+      "foo/bar, baz, foo/bar/baz",
+      "foo/bar, baz/bork, foo/bar/baz/bork",
+      "foo/bar, bar/baz/bork, foo/bar/bar/baz/bork",
+      "foo/bar, baz/bork/qux quxx/eggs, foo/bar/baz/bork/qux quxx/eggs",
+      "foo/bar/baz, bork/../../qux, foo/bar/qux",
+      "foo/bar/baz, bork/../../qux/./.././quxx, foo/bar/quxx",
+  })
+  @ParameterizedTest(
+      name = "resolvePathRecursively(\"{0}\", \"{1}\".split(\"/\")) should return \"{2}\""
+  )
+  void resolvePathRecursivelyResolvesThePathRecursively(
+      String rootString,
+      String partsString,
+      String expectString
+  ) throws IOException {
+    // Given
+    try (var fs = Jimfs.newFileSystem("test-fs")) {
+      var root = fs.getPath(rootString);
+      var expect = fs.getPath(expectString);
+      var parts = partsString.split(fs.getSeparator());
+
+      // Then
+      assertThat(resolvePathRecursively(root, parts))
+          .isEqualTo(expect);
+    }
   }
 
   @DisplayName("assertValidRootName succeeds for valid root names")

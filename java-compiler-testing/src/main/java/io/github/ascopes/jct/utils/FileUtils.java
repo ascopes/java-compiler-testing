@@ -87,6 +87,20 @@ public final class FileUtils {
   }
 
   /**
+   * Recursively resolve the path fragments onto the given root and return it.
+   *
+   * @param root the root to start with.
+   * @param parts the parts to resolve.
+   * @return the resolved path.
+   */
+  public static Path resolvePathRecursively(Path root, String... parts) {
+    for (var part : parts) {
+      root = root.resolve(part);
+    }
+    return root.normalize();
+  }
+
+  /**
    * Assert that the given name is a valid name for a directory, and that it does not contain
    * potentially dangerous characters such as double-dots or slashes that could be used to escape
    * the directory we are running from.

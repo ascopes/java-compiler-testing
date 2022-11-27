@@ -18,6 +18,7 @@ package io.github.ascopes.jct.pathwrappers;
 import static io.github.ascopes.jct.utils.FileUtils.retrieveRequiredUrl;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.net.URI;
 import java.net.URL;
@@ -36,6 +37,8 @@ import org.apiguardian.api.API.Status;
  *
  * @author Ashley Scopes
  * @since 0.0.1
+ * @see RamDirectory
+ * @see TempDirectory
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class BasicPathWrapperImpl implements PathWrapper {
@@ -67,7 +70,7 @@ public final class BasicPathWrapperImpl implements PathWrapper {
    *                                  {@link java.nio.file.FileSystem} providing the path).
    */
   public BasicPathWrapperImpl(PathWrapper parent, String... parts) {
-    this(parent, resolveRecursively(parent.getPath(), parts));
+    this(parent, FileUtils.resolvePathRecursively(parent.getPath(), parts));
   }
 
   private BasicPathWrapperImpl(@Nullable PathWrapper parent, Path path) {
@@ -120,13 +123,5 @@ public final class BasicPathWrapperImpl implements PathWrapper {
         .attribute("parent", parent)
         .attribute("uri", uri)
         .toString();
-  }
-
-  private static Path resolveRecursively(Path root, String... parts) {
-    for (var part : parts) {
-      root = root.resolve(part);
-    }
-
-    return root;
   }
 }
