@@ -77,7 +77,7 @@ class FileUtilsTest implements StaticClassTestTemplate {
   @Test
   void retrieveRequiredUrlCanDereferencePathsToUrls() throws IOException {
     // Given
-    try (var fs = Jimfs.newFileSystem("test-fs")) {
+    try (var fs = newFileSystem()) {
       Files.createDirectories(fs.getPath("foo", "bar"));
       var file = Files.createFile(fs.getPath("foo", "bar", "baz.txt"));
 
@@ -126,7 +126,7 @@ class FileUtilsTest implements StaticClassTestTemplate {
       String expectString
   ) throws IOException {
     // Given
-    try (var fs = Jimfs.newFileSystem("test-fs")) {
+    try (var fs = newFileSystem()) {
       var root = fs.getPath(rootString);
       var expect = fs.getPath(expectString);
       var parts = partsString.split(fs.getSeparator());
