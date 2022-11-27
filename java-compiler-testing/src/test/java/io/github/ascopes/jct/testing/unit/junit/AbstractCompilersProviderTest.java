@@ -43,12 +43,10 @@ import org.opentest4j.TestAbortedException;
 /**
  * {@link AbstractCompilersProvider} tests.
  *
- * <p>This test has to remain {@code public}.
- *
  * @author Ashley Scopes
  */
 @DisplayName("AbstractCompilersProvider tests")
-public class AbstractCompilersProviderTest {
+class AbstractCompilersProviderTest {
 
   @DisplayName("Configuring the provider with a version too low will use the minimum version")
   @Test
@@ -286,6 +284,26 @@ public class AbstractCompilersProviderTest {
         .hasRootCauseMessage("Some error here");
   }
 
+
+  @DisplayName("Providing abstract configurers will produce exceptions")
+  @Test
+  void abstractConfigurersWillProduceExceptions() {
+    // Given
+    var provider = new CompilersProviderImpl(8, 17);
+
+    // When
+    provider.configureInternals(10, 15, AbstractConfigurer.class);
+
+    // Then
+    assertThatThrownBy(() -> provider.provideArguments(mock(ExtensionContext.class)).toArray())
+        .isInstanceOf(JctJunitConfigurerException.class)
+        .hasMessage(
+            "Failed to initialise a new instance of configurer class %s",
+            AbstractConfigurer.class.getName()
+        )
+        .hasCauseInstanceOf(InstantiationException.class);
+  }
+
   @DisplayName("Configurers that throw exceptions when configuring will be propagated")
   @Test
   void configurersThrowingExceptionsWhenConfiguringWillPropagate() {
@@ -476,6 +494,24 @@ public class AbstractCompilersProviderTest {
     @Override
     public void configure(JctCompiler<?, ?> compiler) {
       // Do nothing; unreachable.
+    }
+  }
+
+  /**
+   * An abstract configurer.
+   */
+  static abstract class AbstractConfigurer implements JctSimpleCompilerConfigurer {
+
+    /**
+     * Initialise the configurer.
+     */
+    AbstractConfigurer() {
+      // Nothing to do here.
+    }
+
+    @Override
+    public void configure(JctCompiler<?, ?> compiler) {
+      // Do nothing.
     }
   }
 
