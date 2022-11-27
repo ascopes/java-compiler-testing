@@ -86,7 +86,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
     min = Math.max(min, minSupportedVersion(modules));
     max = Math.min(max, maxSupportedVersion(modules));
 
-    if (min < 8 || max < 8) {
+    if (max < 8 || min < 8) {
       throw new IllegalArgumentException("Cannot use a Java version less than Java 8");
     }
 

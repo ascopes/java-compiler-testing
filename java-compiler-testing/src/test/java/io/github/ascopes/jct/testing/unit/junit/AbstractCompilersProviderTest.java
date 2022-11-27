@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.opentest4j.TestAbortedException;
 
 /**
@@ -107,13 +109,17 @@ public class AbstractCompilersProviderTest {
   }
 
   @DisplayName("Configuring the provider with a version below Java 8 will raise an exception")
-  @Test
-  void configuringTheProviderWithPreJava8WillRaiseException() {
+  @CsvSource({
+      "7, 12",
+      "5, 7",
+  })
+  @ParameterizedTest(name = "for min = {0} and max = {1}")
+  void configuringTheProviderWithPreJava8WillRaiseException(int min, int max) {
     // Given
-    var provider = new CompilersProviderImpl(5, 17);
+    var provider = new CompilersProviderImpl(3, 17);
 
     // Then
-    assertThatThrownBy(() -> provider.configureInternals(5, 17))
+    assertThatThrownBy(() -> provider.configureInternals(min, max))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Cannot use a Java version less than Java 8");
   }
