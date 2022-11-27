@@ -23,6 +23,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -105,7 +106,7 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Attempt to delete the file.
    *
    * @return {@code true} if the file was deleted, or {@code false} if it was not deleted.
    */
@@ -133,7 +134,7 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Get the class access level, where appropriate.
    *
    * @return {@code null}, always. This implementation does not provide this functionality.
    */
@@ -145,7 +146,8 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Read the character content of the file into memory and decode it using the default character
+   * set.
    *
    * @param ignoreEncodingErrors ignore encoding errors if {@code true}, or throw them otherwise.
    * @return the character content, encoded as UTF-8.
@@ -161,7 +163,7 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Get the kind of the file.
    *
    * @return the inferred file kind.
    */
@@ -171,7 +173,7 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Determine when the file was last modified.
    *
    * @return the timestamp in milliseconds since UNIX epoch that the file was last modified at, or
    *     {@code 0L} if unmodified.
@@ -205,7 +207,7 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Get the file name as a string.
    *
    * @return the name of the file.
    */
@@ -215,7 +217,7 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Determine the class nesting kind, where appropriate.
    *
    * @return {@code null} in all cases, this operation is not implemented.
    */
@@ -245,7 +247,7 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Determine the hash code for this object.
    *
    * @return the hash code for the object.
    */
@@ -256,7 +258,7 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Determine if a given simple name and file kind are compatible with this file object.
    *
    * @return {@code true} if the simple name and kind are compatible with the current file object
    *     name, or {@code false} if not.
@@ -270,10 +272,11 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Open an input stream into this file.
    *
    * @return a buffered input stream.
-   * @throws IOException if an IO error occurs.
+   * @throws FileNotFoundException if the file does not exist.
+   * @throws IOException           if an IO error occurs.
    */
   @Override
   @WillNotClose
@@ -282,7 +285,10 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Open an output stream to this file.
+   *
+   * <p>Create the file first if it does not already exist, otherwise, overwrite it and truncate
+   * it.
    *
    * @return a buffered output stream.
    * @throws IOException if an IO error occurs.
@@ -294,12 +300,13 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Open a reader to this file using the default charset (UTF-8).
    *
    * @param ignoreEncodingErrors {@code true} to suppress encoding errors, or {@code false} to throw
    *                             them to the caller.
-   * @return a buffered reader
-   * @throws IOException if an IO error occurs.
+   * @return a buffered reader.
+   * @throws FileNotFoundException if the file does not exist.
+   * @throws IOException           if an IO error occurs.
    */
   @Override
   @WillNotClose
@@ -308,7 +315,10 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Open a writer to this file using the default charset (UTF-8).
+   *
+   * <p>Create the file first if it does not already exist, otherwise, overwrite it and truncate
+   * it.
    *
    * @return a buffered writer.
    * @throws IOException if an IO error occurs.
@@ -320,7 +330,7 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Determine the URI for this file.
    *
    * @return the URI for this file object.
    */
@@ -330,7 +340,7 @@ public class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * {@inheritDoc}
+   * Get a string representation of this object.
    *
    * @return a string representation of this object.
    */
