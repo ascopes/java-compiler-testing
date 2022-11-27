@@ -500,7 +500,7 @@ class AbstractCompilersProviderTest {
   /**
    * An abstract configurer.
    */
-  static abstract class AbstractConfigurer implements JctSimpleCompilerConfigurer {
+  abstract static class AbstractConfigurer implements JctSimpleCompilerConfigurer {
 
     /**
      * Initialise the configurer.
