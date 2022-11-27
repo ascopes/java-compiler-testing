@@ -107,7 +107,7 @@ class DiagnosticRepresentationTest {
     when(diag.getLineNumber()).thenReturn(6L);
     when(diag.getColumnNumber()).thenReturn(16L);
     when(diag.getStartPosition()).thenReturn(77L);
-    when(diag.getEndPosition()).thenReturn(132L);
+    when(diag.getEndPosition()).thenReturn(133L);
     when(diag.getSource()).thenReturn(file);
     when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
 
@@ -149,7 +149,7 @@ class DiagnosticRepresentationTest {
     when(diag.getLineNumber()).thenReturn(6L);
     when(diag.getColumnNumber()).thenReturn(16L);
     when(diag.getStartPosition()).thenReturn(77L);
-    when(diag.getEndPosition()).thenReturn(190L);
+    when(diag.getEndPosition()).thenReturn(149L);
     when(diag.getSource()).thenReturn(file);
     when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
 
@@ -168,11 +168,9 @@ class DiagnosticRepresentationTest {
             "     6 |   public static int main(String[] args) throws Throwable {",
             "       +   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
             "     7 |     var scanner = new Scanner(System.in);",
-            "       + ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "       + ^^^^^^^^^^^^^^^",
             "     8 |     System.out.print(\"What is your name? \");",
-            "       + ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
             "     9 |     var name = scanner.nextLine();",
-            "    10 |     System.out.printf(\"Hello, %s!\", name);",
             "",
             "    Entrypoint must be a void method."
         );

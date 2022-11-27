@@ -132,10 +132,13 @@ public final class DiagnosticRepresentation implements Representation {
 
     var startLine = Math.max(1, (int) diagnostic.getLineNumber() - ADDITIONAL_CONTEXT_LINES);
     var lineStartOffset = StringUtils.indexOfLine(content, startLine);
-    var lineEndOffset = StringUtils.indexOfEndOfLine(content, (int) diagnostic.getEndPosition());
+    var endOffset = (int) diagnostic.getEndPosition();
 
-    // Advance to include the additional lines of context
-    var endOfSnippet = lineEndOffset;
+    // Advance to include the additional lines of context, and don't treat the current line as
+    // being one of those lines if we span over one and a half lines.
+    var endOfSnippet = content.charAt(endOffset) == '\n'
+        ? endOffset
+        : StringUtils.indexOfEndOfLine(content, endOffset + 1);
     for (var i = 0; i < ADDITIONAL_CONTEXT_LINES; ++i) {
       endOfSnippet = StringUtils.indexOfEndOfLine(content, endOfSnippet + 1);
     }
@@ -144,7 +147,7 @@ public final class DiagnosticRepresentation implements Representation {
         content.substring(lineStartOffset, endOfSnippet),
         Math.max(1, diagnostic.getLineNumber() - ADDITIONAL_CONTEXT_LINES),
         diagnostic.getStartPosition() - lineStartOffset,
-        lineEndOffset - lineStartOffset
+        endOffset - lineStartOffset
     );
   }
 
@@ -214,8 +217,8 @@ public final class DiagnosticRepresentation implements Representation {
           .append(" ".repeat(lineNumberWidth))
           .append(" + ");
 
-      for (int i = startOfLine; i < endOfLine; ++i) {
-        builder.append(startOffset <= i && i <= endOffset ? '^' : ' ');
+      for (int i = startOfLine; i < Math.min(endOfLine, endOffset); ++i) {
+        builder.append(startOffset <= i ? '^' : ' ');
       }
 
       builder.append('\n');
