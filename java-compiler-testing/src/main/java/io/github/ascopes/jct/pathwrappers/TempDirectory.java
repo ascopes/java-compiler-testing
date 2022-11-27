@@ -93,7 +93,7 @@ public final class TempDirectory extends AbstractTestDirectory<TempDirectory> {
     var tempDir = uncheckedIo(() -> Files.createTempDirectory("jct-"));
     var innerDir = uncheckedIo(() -> Files.createDirectory(tempDir.resolve(name)));
 
-    LOGGER.trace("Initialized new temporary directory {}", innerDir);
+    LOGGER.debug("Initialized new root '{}' using temporary path at {}", name, innerDir.toUri());
 
     // TODO(ascopes): delete on JVM exit recursively if closeOnGc is set.
     return new TempDirectory(

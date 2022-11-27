@@ -125,7 +125,8 @@ public final class RamDirectory extends AbstractTestDirectory<RamDirectory> {
         fileSystem
     );
 
-    LOGGER.trace("Initialized new in-memory directory {} - {}", path, fs);
+    LOGGER.debug("Initialized new root '{}' using RAM disk at {}", name, path.toUri());
+
     return fs;
   }
 }
