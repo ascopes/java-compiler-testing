@@ -76,6 +76,17 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
   private final URL url;
   private final Closeable closeHook;
 
+  /**
+   * Initialise this abstract test directory.
+   *
+   * @param name          the name of the test directory.
+   * @param rootDirectory the root directory of the test directory.
+   * @param separator     the path separator to use.
+   * @param closeOnGc     {@code true} to automatically register this directory to be closed when
+   *                      garbage collected, or {@code false} to disable this.
+   * @param closeHook     the hook to call when closing the directory to correctly dispose of all
+   *                      resources.
+   */
   @SuppressWarnings("ThisEscapedInObjectConstruction")
   protected AbstractTestDirectory(
       String name,
@@ -85,7 +96,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
       Closeable closeHook
   ) {
 
-    // Register immediately so we still clean up if an exception is thrown from this constructor.
+    // Register immediately, so we still clean up if an exception is thrown from this constructor.
     if (closeOnGc) {
       LOGGER.trace("Registering {} to be destroyed on garbage collection", rootDirectory.toUri());
       GarbageDisposalUtils.onPhantom(this, name, closeHook);

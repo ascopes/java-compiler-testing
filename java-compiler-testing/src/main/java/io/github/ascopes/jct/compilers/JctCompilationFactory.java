@@ -55,9 +55,16 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>> {
+public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilationFactory.class);
+
+  /**
+   * Initialise this factory.
+   */
+  public JctCompilationFactory() {
+    // Nothing to do here.
+  }
 
   @Override
   public String toString() {
@@ -148,7 +155,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
    * @return the outcome of the compilation.
    * @throws IOException if an {@link IOException} occurs during processing.
    */
-  protected CompilationResult performCompilerPass(
+  private CompilationResult performCompilerPass(
       A compiler,
       JavaCompiler jsr199Compiler,
       TeeWriter writer,
@@ -185,7 +192,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
    * @param compiler the compiler to use.
    * @return the tee writer.
    */
-  protected TeeWriter buildWriter(A compiler) {
+  private TeeWriter buildWriter(A compiler) {
     return new TeeWriter(compiler.getLogCharset(), System.out);
   }
 
@@ -196,7 +203,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
    * @param flagBuilder the flag builder to use.
    * @return the flags to use.
    */
-  protected List<String> buildFlags(A compiler, JctFlagBuilder flagBuilder) {
+  private List<String> buildFlags(A compiler, JctFlagBuilder flagBuilder) {
     return flagBuilder
         .annotationProcessorOptions(compiler.getAnnotationProcessorOptions())
         .showDeprecationWarnings(compiler.isShowDeprecationWarnings())
@@ -220,9 +227,10 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
    * {@link #compile(JctCompiler, JctFileManagerBuilder, JavaCompiler, JctFlagBuilder)}.
    *
    * @param compiler the compiler to use.
+   * @param builder  the file manager builder to build from.
    * @return the file manager to use.
    */
-  protected JctFileManager buildFileManager(A compiler, JctFileManagerBuilder builder) {
+  private JctFileManager buildFileManager(A compiler, JctFileManagerBuilder builder) {
     return uncheckedIo(() -> builder.createFileManager(determineRelease(compiler)));
   }
 
@@ -240,7 +248,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
    * @return the list of compilation units.
    * @throws IOException if an IO error occurs discovering any compilation units.
    */
-  protected List<? extends JavaFileObject> findCompilationUnits(
+  private List<? extends JavaFileObject> findCompilationUnits(
       JavaFileManager fileManager,
       Set<JavaFileObject> previousCompilationUnits
   ) throws IOException {
@@ -282,7 +290,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
    * @param fileManager the file manager to apply to.
    * @return the file manager to use for future operations.
    */
-  protected JctFileManager applyLoggingToFileManager(
+  private JctFileManager applyLoggingToFileManager(
       A compiler,
       JctFileManager fileManager
   ) {
@@ -305,7 +313,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
    * @param compiler the compiler to use.
    * @return the diagnostics listener.
    */
-  protected TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener(A compiler) {
+  private TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener(A compiler) {
     var logging = compiler.getDiagnosticLoggingMode();
 
     return new TracingDiagnosticListener<>(
@@ -326,7 +334,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
    * @param compilationUnits   the compilation units to compile with.
    * @return the compilation task, ready to be run.
    */
-  protected CompilationTask buildCompilationTask(
+  private CompilationTask buildCompilationTask(
       A compiler,
       JavaCompiler jsr199Compiler,
       Writer writer,
@@ -372,7 +380,7 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
    * @return {@code true} if the compilation succeeded, or {@code false} if compilation failed.
    * @throws JctCompilerException if compilation throws an unhandled exception.
    */
-  protected boolean runCompilationTask(A compiler, CompilationTask task) {
+  private boolean runCompilationTask(A compiler, CompilationTask task) {
     var name = compiler.toString();
 
     try {
@@ -436,10 +444,25 @@ public class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>>
 
   /**
    * Outcome of a compilation pass.
+   *
+   * @author Ashley Scopes
+   * @since 0.0.1
    */
+  @API(since = "0.0.1", status = Status.EXPERIMENTAL)
   protected enum CompilationResult {
+    /**
+     * The compilation succeeded.
+     */
     SUCCESS,
+
+    /**
+     * The compilation failed.
+     */
     FAILURE,
+
+    /**
+     * There was nothing else to compile, so nothing was run.
+     */
     SKIPPED,
   }
 }

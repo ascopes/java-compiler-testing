@@ -154,6 +154,11 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   }
 
   @Override
+  public String getRelease() {
+    return release;
+  }
+
+  @Override
   public <S> ServiceLoader<S> getServiceLoader(Class<S> service) {
     getClass().getModule().addUses(service);
 

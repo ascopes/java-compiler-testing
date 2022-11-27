@@ -91,6 +91,8 @@ public final class OutputContainerGroupImpl
 
   @Override
   public boolean contains(PathFileObject fileObject) {
+    var location = getLocation();
+
     if (location instanceof ModuleLocation) {
       var module = modules.get(location);
       return module != null && module.contains(fileObject);
@@ -190,11 +192,6 @@ public final class OutputContainerGroupImpl
   }
 
   @Override
-  public Location getLocation() {
-    return location;
-  }
-
-  @Override
   public List<Set<Location>> getLocationsForModules() {
     return List.of(Set.copyOf(modules.keySet()));
   }
@@ -206,6 +203,7 @@ public final class OutputContainerGroupImpl
 
   @Override
   public PackageContainerGroup getOrCreateModule(String moduleName) {
+    var location = getLocation();
     return modules.computeIfAbsent(new ModuleLocation(location, moduleName), this::newPackageGroup);
   }
 
@@ -225,6 +223,8 @@ public final class OutputContainerGroupImpl
     // For output locations, we only need the first root. We then just put a subdirectory
     // in there, as it reduces the complexity of this tenfold and means we don't have to
     // worry about creating more in-memory locations on the fly.
+    var release = getRelease();
+
     var group = new OutputPackageContainerGroupImpl(moduleLocation, release);
     var pathWrapper = new BasicPathWrapperImpl(
         getPackages().iterator().next().getPathWrapper(),

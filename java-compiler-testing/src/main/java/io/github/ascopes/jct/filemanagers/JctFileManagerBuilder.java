@@ -377,7 +377,11 @@ public final class JctFileManagerBuilder {
   /**
    * Create a file manager for this workspace.
    *
+   * @param effectiveRelease the effective release that the compiler is being run under. This is
+   *                         used to ensure correct semantics around looking up files in a
+   *                         Multi-Release JAR.
    * @return the file manager.
+   * @throws IOException if an IO error occurs creating the file manager and initialising it.
    */
   public JctFileManager createFileManager(String effectiveRelease) throws IOException {
     var fileManager = new JctFileManagerImpl(effectiveRelease);

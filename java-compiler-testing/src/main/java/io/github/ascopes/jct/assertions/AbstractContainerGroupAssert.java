@@ -40,6 +40,9 @@ import org.assertj.core.api.ObjectAssert;
 public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGroupAssert<I, C>, C extends ContainerGroup>
     extends AbstractAssert<I, C> {
 
+  /**
+   * Default number of matches to show when performing fuzzy matching.
+   */
   protected static final int FUZZY_CUTOFF = 5;
 
   /**

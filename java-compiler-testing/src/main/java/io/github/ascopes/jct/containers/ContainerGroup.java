@@ -50,6 +50,15 @@ public interface ContainerGroup extends Closeable {
   Location getLocation();
 
   /**
+   * Get the effective Java release being targeted by the compiler that owns this container group.
+   *
+   * <p>This is used to calculate Multi-Release JAR packages correctly.
+   *
+   * @return the effective release version.
+   */
+  String getRelease();
+
+  /**
    * Get a service loader for the given service class, or throw an exception if the operation is not
    * supported.
    *

@@ -211,6 +211,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * </ul>
    *
    * @param location the location to add.
+   * @param moduleName the name of the module to add.
    * @param pathLike the path-like object to add.
    * @return this compiler object for further call chaining.
    * @throws IllegalArgumentException if the location is not
@@ -233,8 +234,9 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    *   <li>A path to a ZIP containing a <strong>package</strong> or <strong>module</strong>.</li>
    * </ul>
    *
-   * @param location the location to add.
-   * @param path     the path to add.
+   * @param location   the location to add.
+   * @param moduleName the name of the module to add.
+   * @param path       the path to add.
    * @return this compiler object for further call chaining.
    * @throws IllegalArgumentException if the location is not
    *                                  {@link Location#isModuleOrientedLocation() module-oriented}.

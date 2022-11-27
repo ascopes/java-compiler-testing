@@ -37,11 +37,13 @@ import org.assertj.core.api.AbstractUriAssert;
  * Abstract assertions for {@link JavaFileObject Java file objects}.
  *
  * @author Ashley Scopes
+ * @param <I> the implementation class that is extending this class.
+ * @param <A> the file object implementation type.
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public abstract class AbstractJavaFileObjectAssert<S extends AbstractJavaFileObjectAssert<S, A>, A extends JavaFileObject>
-    extends AbstractAssert<S, A> {
+public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObjectAssert<I, A>, A extends JavaFileObject>
+    extends AbstractAssert<I, A> {
 
   /**
    * Initialize this assertion.

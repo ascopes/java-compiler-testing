@@ -61,13 +61,13 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
       ".zip"
   );
 
-  protected final Location location;
-  protected final String release;
-
-  // Use a linked hash set here to deduplicate while retaining order. This is an optimisation
-  // since defining the same path more than once does not make sense anyway.
-  protected final Set<Container> containers;
-  protected final Lazy<ClassLoader> classLoaderLazy;
+  /**
+   * The location of the container group.
+   */
+  private final Location location;
+  private final String release;
+  private final Set<Container> containers;
+  private final Lazy<ClassLoader> classLoaderLazy;
 
   /**
    * Initialize this container group.
@@ -224,6 +224,11 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
   @Override
   public final List<Container> getPackages() {
     return List.copyOf(containers);
+  }
+
+  @Override
+  public final String getRelease() {
+    return release;
   }
 
   @Override

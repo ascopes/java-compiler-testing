@@ -76,6 +76,7 @@ public class PathFileObject implements JavaFileObject {
   /**
    * Initialize this file object.
    *
+   * @param location     the location that the file object is located within.
    * @param rootPath     the root directory that the path is a package within.
    * @param relativePath the path to point to, relative to the root.
    */

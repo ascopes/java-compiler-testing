@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.compilers;
 
 import java.util.List;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -73,7 +74,7 @@ public interface JctFlagBuilder {
    * @param version the release version, or {@code null} if not specified.
    * @return this builder.
    */
-  JctFlagBuilder release(String version);
+  JctFlagBuilder release(@Nullable String version);
 
   /**
    * Add the source version.
@@ -81,7 +82,7 @@ public interface JctFlagBuilder {
    * @param version the source version, or {@code null} if not specified.
    * @return this builder.
    */
-  JctFlagBuilder source(String version);
+  JctFlagBuilder source(@Nullable String version);
 
   /**
    * Add the target version.
@@ -89,7 +90,7 @@ public interface JctFlagBuilder {
    * @param version the target version, or {@code null} if not specified.
    * @return this builder.
    */
-  JctFlagBuilder target(String version);
+  JctFlagBuilder target(@Nullable String version);
 
   /**
    * Add annotation processor options.
