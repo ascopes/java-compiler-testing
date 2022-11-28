@@ -52,5 +52,8 @@ public interface JctCompilerConfigurer<T extends Exception> {
    */
   @API(since = "0.0.1", status = Status.EXPERIMENTAL)
   @FunctionalInterface
-  interface JctSimpleCompilerConfigurer extends JctCompilerConfigurer<RuntimeException> {}
+  interface JctSimpleCompilerConfigurer extends JctCompilerConfigurer<RuntimeException> {
+    @Override
+    void configure(JctCompiler<?, ?> compiler);
+  }
 }
