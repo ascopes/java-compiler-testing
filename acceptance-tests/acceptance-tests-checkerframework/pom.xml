@@ -27,7 +27,7 @@
       --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
       --add-opens=jdk.compiler/com.sun.source.util=ALL-UNNAMED
     </argLine>
-    <checkerframework.version>3.27.0</checkerframework.version>
+    <checkerframework.version>3.28.0</checkerframework.version>
   </properties>
 
   <dependencies>
