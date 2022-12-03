@@ -421,13 +421,6 @@
 
   <profiles>
     <profile>
-      <id>show-test-logs-in-console</id>
-      <properties>
-        <hide-test-logs-in-console>false</hide-test-logs-in-console>
-      </properties>
-    </profile>
-
-    <profile>
       <id>dependency-scan</id>
       <build>
         <plugins>
