@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.pathwrappers;
+package io.github.ascopes.jct.workspaces;
 
 import static io.github.ascopes.jct.utils.FileUtils.retrieveRequiredUrl;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -28,7 +27,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -51,6 +49,7 @@ import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO(ascopes): interface time.
 
 /**
  * Abstract base for implementing a reusable managed wrapper around a directory of some sort.
@@ -58,23 +57,20 @@ import org.slf4j.LoggerFactory;
  * <p>This is designed to simplify the creation of file and directory trees, and manage the release
  * of resources once no longer needed automatically, helping to keep test logic simple and clean.
  *
- * @param <I> the implementation type.
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
-    implements PathWrapper {
+public abstract class TestDirectory implements PathWrapper {
 
   private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTestDirectory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TestDirectory.class);
 
   private final String name;
   private final Path rootDirectory;
   private final String separator;
   private final URI uri;
   private final URL url;
-  private final Closeable closeHook;
 
   /**
    * Initialise this abstract test directory.
@@ -82,34 +78,25 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
    * @param name          the name of the test directory.
    * @param rootDirectory the root directory of the test directory.
    * @param separator     the path separator to use.
-   * @param closeOnGc     {@code true} to automatically register this directory to be closed when
-   *                      garbage collected, or {@code false} to disable this.
-   * @param closeHook     the hook to call when closing the directory to correctly dispose of all
-   *                      resources.
    */
-  @SuppressWarnings("ThisEscapedInObjectConstruction")
-  protected AbstractTestDirectory(
-      String name,
-      Path rootDirectory,
-      String separator,
-      boolean closeOnGc,
-      Closeable closeHook
-  ) {
-
-    // Register immediately, so we still clean up if an exception is thrown from this constructor.
-    if (closeOnGc) {
-      LOGGER.trace("Registering {} to be destroyed on garbage collection", rootDirectory.toUri());
-      GarbageDisposalUtils.onPhantom(this, name, closeHook);
-    }
+  protected TestDirectory(String name, Path rootDirectory, String separator) {
 
     this.name = requireNonNull(name, "name");
-    this.closeHook = requireNonNull(closeHook, "closeHook");
     this.rootDirectory = requireNonNull(rootDirectory, "rootDirectory");
     this.separator = requireNonNull(separator, "separator");
     uri = this.rootDirectory.toUri();
     url = retrieveRequiredUrl(this.rootDirectory);
   }
 
+  /**
+   * Close the resource.
+   *
+   * <p>This specifically is not provided by implementing {@link Closeable} as to prevent IDEs
+   * giving false linting errors about not closing resources.
+   *
+   * @throws IOException if an IO exception occurs.
+   */
+  public abstract void close() throws IOException;
 
   /**
    * {@inheritDoc}
@@ -152,15 +139,6 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
   }
 
   /**
-   * Close the underlying file system.
-   *
-   * @throws UncheckedIOException if an IO error occurs.
-   */
-  public void close() {
-    uncheckedIo(closeHook::close);
-  }
-
-  /**
    * Method that returns the object it is called upon to enable creating fluent-language builders.
    *
    * @return this object.
@@ -168,8 +146,8 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
    * @see #then
    */
   @CheckReturnValue
-  public I and() {
-    return thisTestFileSystem();
+  public TestDirectory and() {
+    return this;
   }
 
   /**
@@ -180,8 +158,8 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
    * @see #then
    */
   @CheckReturnValue
-  public I also() {
-    return thisTestFileSystem();
+  public TestDirectory also() {
+    return this;
   }
 
   /**
@@ -192,8 +170,8 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
    * @see #also
    */
   @CheckReturnValue
-  public I then() {
-    return thisTestFileSystem();
+  public TestDirectory then() {
+    return this;
   }
 
   /**
@@ -254,11 +232,11 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof AbstractTestDirectory<?>)) {
+    if (!(other instanceof TestDirectory)) {
       return false;
     }
 
-    var that = (AbstractTestDirectory<?>) other;
+    var that = (TestDirectory) other;
 
     return name.equals(that.name)
         && uri.equals(that.uri);
@@ -298,7 +276,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
   }
 
   @CheckReturnValue
-  private static InputStream maybeBuffer(InputStream input, String scheme) {
+  private static InputStream maybeBuffer(InputStream input, @Nullable String scheme) {
     if (input instanceof BufferedInputStream || input instanceof ByteArrayInputStream) {
       return input;
     }
@@ -340,11 +318,6 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
     return joiner.toString();
   }
 
-  @SuppressWarnings("unchecked")
-  private I thisTestFileSystem() {
-    return (I) this;
-  }
-
   /**
    * Chainable builder for creating individual files.
    *
@@ -370,7 +343,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      * @param lines the lines to write using the default charset.
      * @return the file system for further configuration.
      */
-    public I withContents(String... lines) {
+    public TestDirectory withContents(String... lines) {
       return withContents(DEFAULT_CHARSET, lines);
     }
 
@@ -381,7 +354,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      * @param lines   the lines to write.
      * @return the file system for further configuration.
      */
-    public I withContents(Charset charset, String... lines) {
+    public TestDirectory withContents(Charset charset, String... lines) {
       return withContents(String.join("\n", lines).getBytes(charset));
     }
 
@@ -391,7 +364,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      * @param contents the bytes to write.
      * @return the file system for further configuration.
      */
-    public I withContents(byte[] contents) {
+    public TestDirectory withContents(byte[] contents) {
       return uncheckedIo(() -> createFile(new ByteArrayInputStream(contents)));
     }
 
@@ -401,7 +374,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      * @param resource the resource to copy.
      * @return the file system for further configuration.
      */
-    public I copiedFromClassPath(String resource) {
+    public TestDirectory copiedFromClassPath(String resource) {
       return copiedFromClassPath(currentCallerClassLoader(), resource);
     }
 
@@ -412,7 +385,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      * @param resource    the resource to copy.
      * @return the file system for further configuration.
      */
-    public I copiedFromClassPath(ClassLoader classLoader, String resource) {
+    public TestDirectory copiedFromClassPath(ClassLoader classLoader, String resource) {
       return uncheckedIo(() -> {
         try (var input = classLoader.getResourceAsStream(resource)) {
           if (input == null) {
@@ -430,7 +403,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      * @param file the file to read.
      * @return the file system for further configuration.
      */
-    public I copiedFromFile(File file) {
+    public TestDirectory copiedFromFile(File file) {
       return copiedFromFile(file.toPath());
     }
 
@@ -440,7 +413,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      * @param file the file to read.
      * @return the file system for further configuration.
      */
-    public I copiedFromFile(Path file) {
+    public TestDirectory copiedFromFile(Path file) {
       return uncheckedIo(() -> {
         try (var input = Files.newInputStream(file)) {
           return createFile(input);
@@ -454,7 +427,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      * @param url the URL to read.
      * @return the file system for further configuration.
      */
-    public I copiedFromUrl(URL url) {
+    public TestDirectory copiedFromUrl(URL url) {
       return uncheckedIo(() -> createFile(url.openStream()));
     }
 
@@ -463,7 +436,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      *
      * @return the file system for further configuration.
      */
-    public I thatIsEmpty() {
+    public TestDirectory thatIsEmpty() {
       return fromInputStream(InputStream.nullInputStream());
     }
 
@@ -475,11 +448,11 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      * @param inputStream the input stream to read.
      * @return the file system for further configuration.
      */
-    public I fromInputStream(@WillClose InputStream inputStream) {
+    public TestDirectory fromInputStream(@WillClose InputStream inputStream) {
       return uncheckedIo(() -> createFile(inputStream));
     }
 
-    private I createFile(InputStream input) throws IOException {
+    private TestDirectory createFile(InputStream input) throws IOException {
       Files.createDirectories(targetPath.getParent());
 
       var opts = new OpenOption[]{
@@ -492,7 +465,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
           var bufferedInput = maybeBuffer(input, targetPath.toUri().getScheme())
       ) {
         bufferedInput.transferTo(output);
-        return thisTestFileSystem();
+        return TestDirectory.this;
       }
     }
   }
@@ -525,7 +498,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      * @param rest  any additional path fragments to copy from.
      * @return the file system for further configuration.
      */
-    public I copyContentsFrom(String first, String... rest) {
+    public TestDirectory copyContentsFrom(String first, String... rest) {
       // Path.of is fine here as it is for the default file system.
       return copyContentsFrom(Path.of(first, rest));
     }
@@ -536,7 +509,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      * @param dir the directory to copy the contents from.
      * @return the file system for further configuration.
      */
-    public I copyContentsFrom(File dir) {
+    public TestDirectory copyContentsFrom(File dir) {
       return copyContentsFrom(dir.toPath());
     }
 
@@ -546,7 +519,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      * @param rootDir the directory to copy the contents from.
      * @return the file system for further configuration.
      */
-    public I copyContentsFrom(Path rootDir) {
+    public TestDirectory copyContentsFrom(Path rootDir) {
       uncheckedIo(() -> {
         Files.walkFileTree(rootDir, new SimpleFileVisitor<>() {
 
@@ -581,7 +554,7 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
         });
       });
 
-      return thisTestFileSystem();
+      return TestDirectory.this;
     }
 
     /**
@@ -589,9 +562,9 @@ public abstract class AbstractTestDirectory<I extends AbstractTestDirectory<I>>
      *
      * @return the file system for further configuration.
      */
-    public I thatIsEmpty() {
+    public TestDirectory thatIsEmpty() {
       uncheckedIo(() -> Files.createDirectories(targetPath));
-      return thisTestFileSystem();
+      return TestDirectory.this;
     }
   }
 }

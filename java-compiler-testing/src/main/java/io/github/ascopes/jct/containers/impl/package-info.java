@@ -19,7 +19,7 @@
 @API(since = "0.0.1", status = Status.INTERNAL)
 @NonNullApi
 @NonNullImpl
-package io.github.ascopes.jct.compilers.javac;
+package io.github.ascopes.jct.containers.impl;
 
 import io.github.ascopes.jct.utils.NonNullApi;
 import io.github.ascopes.jct.utils.NonNullImpl;

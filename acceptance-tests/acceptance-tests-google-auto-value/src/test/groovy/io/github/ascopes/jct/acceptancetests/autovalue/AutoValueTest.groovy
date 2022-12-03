@@ -24,7 +24,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import java.time.Instant
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
+import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 import static org.assertj.core.api.SoftAssertions.assertSoftly
 
 @DisplayName("AutoValue integration tests")

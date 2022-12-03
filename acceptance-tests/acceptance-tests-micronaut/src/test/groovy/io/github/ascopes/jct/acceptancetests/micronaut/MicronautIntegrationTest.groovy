@@ -25,7 +25,7 @@ import io.micronaut.annotation.processing.TypeElementVisitorProcessor
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
+import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 
 @DisplayName("Micronaut integration tests")
 class MicronautIntegrationTest {

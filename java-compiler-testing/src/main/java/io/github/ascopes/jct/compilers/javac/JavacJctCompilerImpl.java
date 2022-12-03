@@ -15,8 +15,7 @@
  */
 package io.github.ascopes.jct.compilers.javac;
 
-import io.github.ascopes.jct.compilers.AbstractJctCompiler;
-import io.github.ascopes.jct.filemanagers.JctFileManagerBuilder;
+import io.github.ascopes.jct.compilers.impl.AbstractJctCompiler;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -67,7 +66,7 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
    * @param jsr199Compiler the JSR-199 compiler backend to use.
    */
   public JavacJctCompilerImpl(String name, JavaCompiler jsr199Compiler) {
-    super(name, new JctFileManagerBuilder(), jsr199Compiler, new JavacJctFlagBuilderImpl());
+    super(name, jsr199Compiler, new JavacJctFlagBuilderImpl());
     addCompilerOptions("-implicit:class");
   }
 

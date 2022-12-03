@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers;
+package io.github.ascopes.jct.compilers.impl;
 
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
+import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
-import io.github.ascopes.jct.filemanagers.JctFileManagerBuilder;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
-import io.github.ascopes.jct.pathwrappers.PathWrapper;
-import io.github.ascopes.jct.pathwrappers.TestDirectoryFactory;
+import io.github.ascopes.jct.workspaces.Workspace;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,6 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import javax.annotation.processing.Processor;
 import javax.tools.JavaCompiler;
-import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -53,14 +53,13 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.INTERNAL)
 public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     implements JctCompiler<A, JctCompilationImpl> {
 
   private final String name;
   private final JavaCompiler jsr199Compiler;
   private final JctFlagBuilder flagBuilder;
-  private final JctFileManagerBuilder fileManagerBuilder;
   private final List<Processor> annotationProcessors;
   private final List<String> annotationProcessorOptions;
   private final List<String> compilerOptions;
@@ -76,23 +75,27 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   private @Nullable String source;
   private @Nullable String target;
   private LoggingMode diagnosticLoggingMode;
+  private boolean fixJvmModulePathMismatch;
+  private boolean inheritClassPath;
+  private boolean inheritModulePath;
+  private boolean inheritPlatformClassPath;
+  private boolean inheritSystemModulePath;
+  private LoggingMode fileManagerLoggingMode;
+  private AnnotationProcessorDiscovery annotationProcessorDiscovery;
 
   /**
    * Initialize this compiler.
    *
-   * @param name               the friendly name of the compiler.
-   * @param fileManagerBuilder the simple file manager template to use.
-   * @param jsr199Compiler     the JSR-199 compiler implementation to use.
-   * @param flagBuilder        the flag builder to use.
+   * @param name           the friendly name of the compiler.
+   * @param jsr199Compiler the JSR-199 compiler implementation to use.
+   * @param flagBuilder    the flag builder to use.
    */
   protected AbstractJctCompiler(
       String name,
-      JctFileManagerBuilder fileManagerBuilder,
       JavaCompiler jsr199Compiler,
       JctFlagBuilder flagBuilder
   ) {
     this.name = requireNonNull(name, "name");
-    this.fileManagerBuilder = requireNonNull(fileManagerBuilder, "fileManagerTemplate");
     this.jsr199Compiler = requireNonNull(jsr199Compiler, "jsr199Compiler");
     this.flagBuilder = requireNonNull(flagBuilder, "flagBuilder");
 
@@ -100,20 +103,38 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     annotationProcessorOptions = new ArrayList<>();
     compilerOptions = new ArrayList<>();
     runtimeOptions = new ArrayList<>();
-
     showWarnings = JctCompiler.DEFAULT_SHOW_WARNINGS;
     showDeprecationWarnings = JctCompiler.DEFAULT_SHOW_DEPRECATION_WARNINGS;
     failOnWarnings = JctCompiler.DEFAULT_FAIL_ON_WARNINGS;
     locale = JctCompiler.DEFAULT_LOCALE;
     logCharset = JctCompiler.DEFAULT_LOG_CHARSET;
     previewFeatures = JctCompiler.DEFAULT_PREVIEW_FEATURES;
-
     release = null;
     source = null;
     target = null;
-
     verbose = JctCompiler.DEFAULT_VERBOSE;
     diagnosticLoggingMode = JctCompiler.DEFAULT_DIAGNOSTIC_LOGGING_MODE;
+    fixJvmModulePathMismatch = JctCompiler.DEFAULT_FIX_JVM_MODULEPATH_MISMATCH;
+    inheritClassPath = JctCompiler.DEFAULT_INHERIT_CLASS_PATH;
+    inheritModulePath = JctCompiler.DEFAULT_INHERIT_MODULE_PATH;
+    inheritPlatformClassPath = JctCompiler.DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
+    inheritSystemModulePath = JctCompiler.DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
+    fileManagerLoggingMode = JctCompiler.DEFAULT_FILE_MANAGER_LOGGING_MODE;
+    annotationProcessorDiscovery = JctCompiler.DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
+  }
+
+  @Override
+  public JctCompilationImpl compile(Workspace workspace) {
+    return new JctCompilationFactory<>(workspace, myself(), jsr199Compiler, flagBuilder).build();
+  }
+
+  @Override
+  public final <E extends Exception> A configure(JctCompilerConfigurer<E> configurer) throws E {
+    requireNonNull(configurer, "configurer");
+    var me = myself();
+    configurer.configure(me);
+
+    return me;
   }
 
   /**
@@ -141,44 +162,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
    */
   public String getName() {
     return name;
-  }
-
-  @Override
-  public JctCompilationImpl compile() {
-    var factory = new JctCompilationFactory<A>();
-
-    return factory.compile(
-        myself(),
-        fileManagerBuilder,
-        jsr199Compiler,
-        flagBuilder
-    );
-  }
-
-  @Override
-  public final <E extends Exception> A configure(JctCompilerConfigurer<E> configurer) throws E {
-    requireNonNull(configurer, "configurer");
-    var me = myself();
-    configurer.configure(me);
-
-    return me;
-  }
-
-  @Override
-  public A addPath(Location location, PathWrapper pathLike) {
-    requireNonNull(location, "location");
-    requireNonNull(pathLike, "pathLike");
-    fileManagerBuilder.addPath(location, pathLike);
-    return myself();
-  }
-
-  @Override
-  public A addPath(Location location, String moduleName, PathWrapper pathLike) {
-    requireNonNull(location, "location");
-    requireNonNull(moduleName, "moduleName");
-    requireNonNull(pathLike, "pathLike");
-    fileManagerBuilder.addPath(location, moduleName, pathLike);
-    return myself();
   }
 
   @Override
@@ -335,56 +318,56 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
 
   @Override
   public boolean isFixJvmModulePathMismatch() {
-    return fileManagerBuilder.isFixJvmModulePathMismatch();
+    return fixJvmModulePathMismatch;
   }
 
   @Override
   public A fixJvmModulePathMismatch(boolean fixJvmModulePathMismatch) {
-    fileManagerBuilder.setFixJvmModulePathMismatch(fixJvmModulePathMismatch);
+    this.fixJvmModulePathMismatch = fixJvmModulePathMismatch;
     return myself();
   }
 
   @Override
   public boolean isInheritClassPath() {
-    return fileManagerBuilder.isInheritClassPath();
+    return inheritClassPath;
   }
 
   @Override
   public A inheritClassPath(boolean inheritClassPath) {
-    fileManagerBuilder.inheritClassPath(inheritClassPath);
+    this.inheritClassPath = inheritClassPath;
     return myself();
   }
 
   @Override
   public boolean isInheritModulePath() {
-    return fileManagerBuilder.isInheritModulePath();
+    return inheritModulePath;
   }
 
   @Override
   public A inheritModulePath(boolean inheritModulePath) {
-    fileManagerBuilder.inheritModulePath(inheritModulePath);
+    this.inheritModulePath = inheritModulePath;
     return myself();
   }
 
   @Override
   public boolean isInheritPlatformClassPath() {
-    return fileManagerBuilder.isInheritPlatformClassPath();
+    return inheritPlatformClassPath;
   }
 
   @Override
   public A inheritPlatformClassPath(boolean inheritPlatformClassPath) {
-    fileManagerBuilder.inheritPlatformClassPath(inheritPlatformClassPath);
+    this.inheritPlatformClassPath = inheritPlatformClassPath;
     return myself();
   }
 
   @Override
   public boolean isInheritSystemModulePath() {
-    return fileManagerBuilder.isInheritSystemModulePath();
+    return inheritSystemModulePath;
   }
 
   @Override
   public A inheritSystemModulePath(boolean inheritSystemModulePath) {
-    fileManagerBuilder.inheritSystemModulePath(inheritSystemModulePath);
+    this.inheritSystemModulePath = inheritSystemModulePath;
     return myself();
   }
 
@@ -414,13 +397,12 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
 
   @Override
   public LoggingMode getFileManagerLoggingMode() {
-    return fileManagerBuilder.getFileManagerLoggingMode();
+    return fileManagerLoggingMode;
   }
 
   @Override
   public A fileManagerLoggingMode(LoggingMode fileManagerLoggingMode) {
-    requireNonNull(fileManagerLoggingMode, "fileManagerLoggingMode");
-    fileManagerBuilder.fileManagerLoggingMode(fileManagerLoggingMode);
+    this.fileManagerLoggingMode = requireNonNull(fileManagerLoggingMode, "fileManagerLoggingMode");
     return myself();
   }
 
@@ -438,24 +420,15 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
 
   @Override
   public AnnotationProcessorDiscovery getAnnotationProcessorDiscovery() {
-    return fileManagerBuilder.getAnnotationProcessorDiscovery();
+    return annotationProcessorDiscovery;
   }
 
   @Override
   public A annotationProcessorDiscovery(AnnotationProcessorDiscovery annotationProcessorDiscovery) {
-    requireNonNull(annotationProcessorDiscovery, "annotationProcessorDiscovery");
-    fileManagerBuilder.annotationProcessorDiscovery(annotationProcessorDiscovery);
-    return myself();
-  }
-
-  @Override
-  public TestDirectoryFactory getTestDirectoryFactory() {
-    return fileManagerBuilder.getTestDirectoryFactory();
-  }
-
-  @Override
-  public A testDirectoryFactory(TestDirectoryFactory testDirectoryFactory) {
-    fileManagerBuilder.setTestDirectoryFactory(testDirectoryFactory);
+    this.annotationProcessorDiscovery = requireNonNull(
+        annotationProcessorDiscovery,
+        "annotationProcessorDiscovery"
+    );
     return myself();
   }
 

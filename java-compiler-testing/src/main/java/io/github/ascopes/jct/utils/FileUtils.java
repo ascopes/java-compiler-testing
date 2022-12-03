@@ -89,7 +89,7 @@ public final class FileUtils {
   /**
    * Recursively resolve the path fragments onto the given root and return it.
    *
-   * @param root the root to start with.
+   * @param root  the root to start with.
    * @param parts the parts to resolve.
    * @return the resolved path.
    */

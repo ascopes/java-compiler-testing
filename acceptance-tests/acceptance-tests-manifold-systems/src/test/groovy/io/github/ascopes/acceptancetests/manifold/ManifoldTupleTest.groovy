@@ -20,7 +20,7 @@ import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.TempDirectory.newTempDirectory
+import static io.github.ascopes.jct.workspaces.impl.TempDirectory.newTempDirectory
 import static org.assertj.core.api.Assertions.assertThat
 import static org.assertj.core.api.SoftAssertions.assertSoftly
 

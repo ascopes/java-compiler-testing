@@ -13,22 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers;
+package io.github.ascopes.jct.compilers.impl;
 
-import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
-
+import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import io.github.ascopes.jct.diagnostics.TeeWriter;
 import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import io.github.ascopes.jct.ex.JctCompilerException;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
-import io.github.ascopes.jct.filemanagers.JctFileManagerBuilder;
 import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
+import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
+import io.github.ascopes.jct.utils.Lazy;
+import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.utils.StringUtils;
-import io.github.ascopes.jct.utils.ToStringBuilder;
+import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.Workspace;
+import io.github.ascopes.jct.workspaces.impl.BasicPathWrapperImpl;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.module.FindException;
+import java.lang.module.ModuleFinder;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -59,39 +66,48 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilationFactory.class);
 
+  private final Workspace workspace;
+  private final A compiler;
+  private final JavaCompiler jsr199Compiler;
+  private final JctFlagBuilder flagBuilder;
+
+  private final Lazy<List<Path>> jvmClassPath;
+  private final Lazy<List<Path>> jvmModulePath;
+  private final Lazy<List<Path>> jvmPlatformPath;
+  private final Lazy<List<Path>> jvmSystemModules;
+
   /**
    * Initialise this factory.
    */
-  public JctCompilationFactory() {
-    // Nothing to do here.
-  }
+  public JctCompilationFactory(
+      Workspace workspace,
+      A compiler,
+      JavaCompiler jsr199Compiler,
+      JctFlagBuilder flagBuilder
+  ) {
+    this.workspace = workspace;
+    this.compiler = compiler;
+    this.jsr199Compiler = jsr199Compiler;
+    this.flagBuilder = flagBuilder;
+    jvmClassPath = new Lazy<>(SpecialLocationUtils::currentClassPathLocations);
+    jvmModulePath = new Lazy<>(SpecialLocationUtils::currentModulePathLocations);
+    jvmPlatformPath = new Lazy<>(SpecialLocationUtils::currentPlatformClassPathLocations);
+    jvmSystemModules = new Lazy<>(SpecialLocationUtils::javaRuntimeLocations);
 
-  @Override
-  public String toString() {
-    return new ToStringBuilder(this).toString();
   }
 
   /**
    * Run the compilation for the given compiler and return the compilation result.
    *
-   * @param compiler       the compiler to run.
-   * @param builder        the template to compile files within.
-   * @param jsr199Compiler the underlying JSR-199 compiler to run via.
-   * @param flagBuilder    the flag builder to use.
    * @return the compilation result.
    */
-  public JctCompilationImpl compile(
-      A compiler,
-      JctFileManagerBuilder builder,
-      JavaCompiler jsr199Compiler,
-      JctFlagBuilder flagBuilder
-  ) {
+  public JctCompilationImpl build() {
     try {
       var flags = buildFlags(compiler, flagBuilder);
       var diagnosticListener = buildDiagnosticListener(compiler);
       var writer = buildWriter(compiler);
 
-      try (var fileManager = buildFileManager(compiler, builder)) {
+      try (var fileManager = buildFileManager()) {
         var previousCompilationUnits = new LinkedHashSet<JavaFileObject>();
 
         boolean result;
@@ -141,20 +157,6 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     }
   }
 
-  /**
-   * Run compilation once, after discovering any new sources to compile.
-   *
-   * @param compiler                 the compiler object..
-   * @param jsr199Compiler           the JSR-199 compiler.
-   * @param writer                   the output log writer.
-   * @param flags                    the flags to pass to the compiler.
-   * @param fileManager              the file manager to use.
-   * @param diagnosticListener       the diagnostic listener to use.
-   * @param previousCompilationUnits any previous compilation units. This will be updated after each
-   *                                 call.
-   * @return the outcome of the compilation.
-   * @throws IOException if an {@link IOException} occurs during processing.
-   */
   private CompilationResult performCompilerPass(
       A compiler,
       JavaCompiler jsr199Compiler,
@@ -186,23 +188,10 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
         : CompilationResult.FAILURE;
   }
 
-  /**
-   * Build the {@link TeeWriter} to dump compiler logs to.
-   *
-   * @param compiler the compiler to use.
-   * @return the tee writer.
-   */
   private TeeWriter buildWriter(A compiler) {
     return new TeeWriter(compiler.getLogCharset(), System.out);
   }
 
-  /**
-   * Build the flags to pass to the JSR-199 compiler.
-   *
-   * @param compiler    the compiler to use.
-   * @param flagBuilder the flag builder to use.
-   * @return the flags to use.
-   */
   private List<String> buildFlags(A compiler, JctFlagBuilder flagBuilder) {
     return flagBuilder
         .annotationProcessorOptions(compiler.getAnnotationProcessorOptions())
@@ -219,35 +208,32 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
         .build();
   }
 
-  /**
-   * Build the {@link JavaFileManager} to use.
-   *
-   * <p>LoggingMode will be applied to this via
-   * {@link #applyLoggingToFileManager(JctCompiler, JctFileManager)}, which will be handled by
-   * {@link #compile(JctCompiler, JctFileManagerBuilder, JavaCompiler, JctFlagBuilder)}.
-   *
-   * @param compiler the compiler to use.
-   * @param builder  the file manager builder to build from.
-   * @return the file manager to use.
-   */
-  private JctFileManager buildFileManager(A compiler, JctFileManagerBuilder builder) {
-    return uncheckedIo(() -> builder.createFileManager(determineRelease(compiler)));
+  private JctFileManager buildFileManager() {
+    var fileManager = new JctFileManagerImpl(determineRelease());
+
+    // Copy all other explicit locations across first to give them priority.
+    workspace.getPaths().forEach((location, paths) ->
+        paths.forEach(path -> fileManager.addPath(location, path)));
+
+    // Inherit known resources from the current JVM where appropriate.
+    configureClassPath(fileManager);
+    configureModulePath(fileManager);
+    configurePlatformClassPath(fileManager);
+    configureJvmSystemModules(fileManager);
+    configureAnnotationProcessorPaths(fileManager);
+
+    // We have to manually create this one as javac will not attempt to access it lazily. Instead,
+    // it will just abort if it is not present. This means we cannot take advantage of the
+    // PathLocationRepository creating the roots as we try to access them for this specific case.
+    createLocationIfNotPresent(fileManager, StandardLocation.CLASS_OUTPUT);
+
+    // Annotation processors that create files will need this directory to exist if it is to
+    // work properly.
+    createLocationIfNotPresent(fileManager, StandardLocation.SOURCE_OUTPUT);
+
+    return fileManager;
   }
 
-  /**
-   * Discover all relevant compilation units for the file manager.
-   *
-   * <p>The default implementation will consider both {@link StandardLocation#SOURCE_PATH}
-   * <em>and</em> {@link StandardLocation#MODULE_SOURCE_PATH} locations.
-   *
-   * @param fileManager              the file manager to get the compilation units for.
-   * @param previousCompilationUnits the compilation units that were already compiled. This enables
-   *                                 tracking which sources change in the file manager root during
-   *                                 compilation to enable recompilation of generated sources
-   *                                 automatically.
-   * @return the list of compilation units.
-   * @throws IOException if an IO error occurs discovering any compilation units.
-   */
   private List<? extends JavaFileObject> findCompilationUnits(
       JavaFileManager fileManager,
       Set<JavaFileObject> previousCompilationUnits
@@ -276,20 +262,6 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     return objects;
   }
 
-  /**
-   * Apply the logging level to the file manager provided by
-   * {@link #buildFileManager(JctCompiler, JctFileManagerBuilder)}.
-   *
-   * <p>The default implementation will wrap the given {@link JavaFileManager} in a
-   * {@link LoggingFileManagerProxy} if the {@link JctCompiler#getFileManagerLoggingMode()} field
-   * is
-   * <strong>not</strong> set to {@link LoggingMode#DISABLED}. In the latter scenario, the input
-   * will be returned to the caller with no other modifications.
-   *
-   * @param compiler    the compiler to use.
-   * @param fileManager the file manager to apply to.
-   * @return the file manager to use for future operations.
-   */
   private JctFileManager applyLoggingToFileManager(
       A compiler,
       JctFileManager fileManager
@@ -305,14 +277,6 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     }
   }
 
-  /**
-   * Build a diagnostics listener.
-   *
-   * <p>This will also apply the desired logging configuration to the listener before returning it.
-   *
-   * @param compiler the compiler to use.
-   * @return the diagnostics listener.
-   */
   private TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener(A compiler) {
     var logging = compiler.getDiagnosticLoggingMode();
 
@@ -322,18 +286,6 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     );
   }
 
-  /**
-   * Build the compilation task.
-   *
-   * @param compiler           the compiler to use.
-   * @param jsr199Compiler     the JSR-199 compiler to use internally.
-   * @param writer             the writer to write diagnostics to.
-   * @param fileManager        the file manager to use.
-   * @param diagnosticListener the diagnostic listener to use.
-   * @param flags              the flags to pass to the JSR-199 compiler.
-   * @param compilationUnits   the compilation units to compile with.
-   * @return the compilation task, ready to be run.
-   */
   private CompilationTask buildCompilationTask(
       A compiler,
       JavaCompiler jsr199Compiler,
@@ -369,17 +321,6 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     return task;
   }
 
-  /**
-   * Run the compilation task.
-   *
-   * <p>Any exceptions that get thrown will be wrapped in {@link JctCompilerException} instances
-   * before being rethrown.
-   *
-   * @param compiler the compiler to use.
-   * @param task     the task to run.
-   * @return {@code true} if the compilation succeeded, or {@code false} if compilation failed.
-   * @throws JctCompilerException if compilation throws an unhandled exception.
-   */
   private boolean runCompilationTask(A compiler, CompilationTask task) {
     var name = compiler.toString();
 
@@ -427,7 +368,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     }
   }
 
-  private String determineRelease(JctCompiler<?, ?> compiler) {
+  private String determineRelease() {
     if (compiler.getRelease() != null) {
       LOGGER.trace("Using explicitly set release as the base release version internally");
       return compiler.getRelease();
@@ -442,6 +383,104 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     return compiler.getDefaultRelease();
   }
 
+  private void createLocationIfNotPresent(JctFileManagerImpl fileManager, Location location) {
+    if (!fileManager.hasLocation(location)) {
+      var dir = workspace.createPath(location);
+      fileManager.addPath(location, dir);
+    }
+  }
+
+  private void configureClassPath(JctFileManagerImpl fileManager) {
+    if (compiler.isInheritClassPath()) {
+      for (var path : jvmClassPath.access()) {
+        var wrapper = wrap(path);
+        fileManager.addPath(StandardLocation.CLASS_PATH, wrapper);
+
+        // IntelliJ appears to place modules on the classpath if we are not building the base
+        // project with JPMS. This is a problem because it means we cannot compile a module
+        // within a test pack not using JPMS, since the modules will be on the classpath rather
+        // than the module path. Fix this by adding classpath components with modules inside into
+        // the module path as well.
+        if (compiler.isFixJvmModulePathMismatch() && containsModules(path)) {
+          fileManager.addPath(StandardLocation.MODULE_PATH, wrapper);
+        }
+      }
+    }
+  }
+
+  private void configureModulePath(JctFileManagerImpl fileManager) {
+    if (compiler.isInheritModulePath()) {
+      for (var path : jvmModulePath.access()) {
+        var wrapper = wrap(path);
+
+        // Since we do not know if the code being compiled will use modules or not just yet,
+        // make sure any modules are on the class path as well so that they remain accessible
+        // in unnamed modules.
+        fileManager.addPath(StandardLocation.CLASS_PATH, wrapper);
+        fileManager.addPath(StandardLocation.MODULE_PATH, wrapper);
+      }
+    }
+  }
+
+  private void configurePlatformClassPath(JctFileManagerImpl fileManager) {
+    if (compiler.isInheritPlatformClassPath()) {
+      for (var path : jvmPlatformPath.access()) {
+        fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH, wrap(path));
+      }
+    }
+  }
+
+  private void configureJvmSystemModules(JctFileManagerImpl fileManager) {
+    if (compiler.isInheritSystemModulePath()) {
+      for (var path : jvmSystemModules.access()) {
+        fileManager.addPath(StandardLocation.SYSTEM_MODULES, wrap(path));
+      }
+    }
+  }
+
+  private void configureAnnotationProcessorPaths(JctFileManager fileManager) {
+    switch (compiler.getAnnotationProcessorDiscovery()) {
+      case ENABLED:
+        fileManager.ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
+        break;
+
+      case INCLUDE_DEPENDENCIES: {
+        // https://stackoverflow.com/q/53084037
+        // Seems that javac will always use the classpath to implement this behaviour, and never
+        // the module path. Let's keep this simple and mimic this behaviour. If someone complains
+        // about it being problematic in the future, then I am open to change how this works to
+        // keep it sensible.
+        fileManager.copyContainers(
+            StandardLocation.CLASS_PATH,
+            StandardLocation.ANNOTATION_PROCESSOR_PATH
+        );
+
+        break;
+      }
+
+      case DISABLED:
+      default:
+        // There is nothing to do to the file manager to configure annotation processing at this
+        // time.
+        break;
+    }
+  }
+
+  private PathWrapper wrap(Path path) {
+    return new BasicPathWrapperImpl(path);
+  }
+
+  private boolean containsModules(Path path) {
+    try {
+      return !ModuleFinder.of(path).findAll().isEmpty();
+    } catch (FindException ex) {
+      // Ignore, this just means that an invalid file name was found.
+      LOGGER.trace("Ignoring exception finding modules in {}", path, ex);
+      return false;
+    }
+  }
+
+
   /**
    * Outcome of a compilation pass.
    *
@@ -449,7 +488,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
    * @since 0.0.1
    */
   @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-  protected enum CompilationResult {
+  private enum CompilationResult {
     /**
      * The compilation succeeded.
      */

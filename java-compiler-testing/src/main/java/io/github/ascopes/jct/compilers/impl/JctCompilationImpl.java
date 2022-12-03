@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers;
+package io.github.ascopes.jct.compilers.impl;
 
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
-import io.github.ascopes.jct.utils.GarbageDisposalUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +50,6 @@ public final class JctCompilationImpl implements JctCompilation {
   private final List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
   private final @WillClose JctFileManager fileManager;
 
-  @SuppressWarnings("ThisEscapedInObjectConstruction")
   private JctCompilationImpl(Builder builder) {
     success = builder.success;
     failOnWarnings = builder.failOnWarnings;
@@ -58,9 +57,6 @@ public final class JctCompilationImpl implements JctCompilation {
     compilationUnits = unmodifiableSet(builder.compilationUnits);
     diagnostics = unmodifiableList(builder.diagnostics);
     fileManager = builder.fileManager;
-
-    // Ensure the File Manager gets closed on garbage collection.
-    GarbageDisposalUtils.onPhantom(this, "file manager", fileManager);
   }
 
   @Override

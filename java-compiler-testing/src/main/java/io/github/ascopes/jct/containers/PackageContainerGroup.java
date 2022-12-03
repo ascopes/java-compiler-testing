@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.containers;
 
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.pathwrappers.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathWrapper;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;

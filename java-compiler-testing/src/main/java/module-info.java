@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+import io.github.ascopes.jct.compilers.impl.AbstractJctCompiler;
+import io.github.ascopes.jct.workspaces.impl.RamDirectory;
+import io.github.ascopes.jct.workspaces.impl.TempDirectory;
+
 /**
  * A framework for performing exhaustive integration testing against Java compilers in modern Java
  * libraries, with a focus on full JPMS support.
@@ -23,16 +27,16 @@
  * processors.
  *
  * <p>All test cases are designed to be as stateless as possible, with facilities to produce
- * {@link io.github.ascopes.jct.pathwrappers.RamDirectory in-memory file systems} (using Google's
+ * {@link RamDirectory in-memory file systems} (using Google's
  * JIMFS API), or using
- * {@link io.github.ascopes.jct.pathwrappers.TempDirectory OS-provided temporary directories}. All
+ * {@link TempDirectory OS-provided temporary directories}. All
  * file system mechanisms are complimented with a fluent API that enables writing expressive
  * declarations without unnecessary boilerplate.
  *
  * <p>Integration test cases can be written to cross-compile against a range of Java compiler
  * versions, with the ability to provide as much or as little configuration detail as you wish.
  * Additionally, APIs can be easily
- * {@link io.github.ascopes.jct.compilers.AbstractJctCompiler extended} to integrate with any other
+ * {@link AbstractJctCompiler extended} to integrate with any other
  * JSR-199-compliant compiler as required.
  *
  * <p>Compilation results are complimented with a suite of
@@ -45,52 +49,7 @@
  * code rather than flaky test environments and dependency management.</p>
  *
  * <pre><code>
- *    import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
- *    import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory;
- *
- *    import io.github.ascopes.jct.compilers.JctCompiler;
- *    import io.github.ascopes.jct.junit.JavacCompilerTest;
- *
- *    import org.example.processor.JsonSchemaAnnotationProcessor;
- *    import org.skyscreamer.jsonassert.JSONAssert;
- *
- *    class JsonSchemaAnnotationProcessorTest {
- *
- *      {@literal @JavacCompilerTest(minVersion=11, maxVersion=19)}
- *      void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler&lt;?, ?&gt; compiler) {
- *
- *        // Given
- *        var sources = newRamDirectory("sources")
- *            .createDirectory("org", "example", "tests")
- *            .copyContentsFrom("src", "test", "resources", "code", "schematest");
- *
- *        // When
- *        var compilation = compiler
- *            .addSources(sources)
- *            .addAnnotationProcessors(new JsonSchemaAnnotationProcessor())
- *            .addAnnotationProcessorOptions("jsonschema.verbose=true")
- *            .failOnWarnings(true)
- *            .showDeprecationWarnings(true)
- *            .compile();
- *
- *        // Then
- *        assertThatCompilation(compilation)
- *            .isSuccessfulWithoutWarnings();
- *
- *        assertThatCompilation(compilation)
- *            .diagnostics().notes().singleElement()
- *            .message().isEqualTo(
- *                "Creating JSON schema in Java %s for package org.example.tests",
- *                compiler.getRelease()
- *            );
- *
- *        assertThatCompilation(compilation)
- *            .classOutputs().packages()
- *            .fileExists("json-schemas/UserSchema.json").contents()
- *            .isNotEmpty()
- *            .satisfies(contents -> JSONAssert.assertEquals(...));
- *      }
- *    }
+ *    TODO(ascopes): new example.
  * </code></pre>
  */
 module io.github.ascopes.jct {
@@ -113,25 +72,32 @@ module io.github.ascopes.jct {
   exports io.github.ascopes.jct.ex;
   exports io.github.ascopes.jct.filemanagers;
   exports io.github.ascopes.jct.junit;
-  exports io.github.ascopes.jct.pathwrappers;
   exports io.github.ascopes.jct.repr;
+  exports io.github.ascopes.jct.workspaces;
 
   opens io.github.ascopes.jct.junit;
 
   //////////////////////////////////////////////////////
   /// EXPOSURE OF INTERNALS TO THE TESTING NAMESPACE ///
   //////////////////////////////////////////////////////
-
+  exports io.github.ascopes.jct.compilers.impl to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.filemanagers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.workspaces.impl to io.github.ascopes.jct.testing;
 
   opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.compilers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.containers to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.diagnostics to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.ex to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.filemanagers to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.pathwrappers to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.filemanagers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.repr to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.workspaces to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.workspaces.impl to io.github.ascopes.jct.testing;
 }

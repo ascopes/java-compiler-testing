@@ -17,7 +17,7 @@ package io.github.ascopes.jct.acceptancetests.spring
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.github.ascopes.jct.pathwrappers.TempDirectory
+import io.github.ascopes.jct.workspaces.impl.TempDirectory
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.JRE
@@ -26,7 +26,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.TempDirectory.newTempDirectory
+import static io.github.ascopes.jct.workspaces.impl.TempDirectory.newTempDirectory
 import static org.assertj.core.api.Assumptions.assumeThat
 
 @DisplayName("Spring Boot Configuration Processor acceptance tests")
