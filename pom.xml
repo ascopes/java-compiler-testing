@@ -15,6 +15,7 @@
   </modules>
 
   <inceptionYear>2022</inceptionYear>
+  <url>https://github.com/${project-slug}</url>
 
   <contributors>
     <contributor>
@@ -23,10 +24,18 @@
     </contributor>
   </contributors>
 
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/${project-slug}</url>
+    </repository>
+  </distributionManagement>
+
   <licenses>
     <license>
       <name>Apache License v2.0</name>
-      <url>${project.scm-url}/blob/main/LICENSE.txt</url>
+      <url>${project.url}/blob/main/LICENSE.txt</url>
     </license>
   </licenses>
 
@@ -36,9 +45,9 @@
   </organization>
 
   <scm>
-    <url>scm:git:${project-scm-url}</url>
-    <connection>scm:git:${project-scm-url}</connection>
-    <developerConnection>scm:git:${project-scm-url}</developerConnection>
+    <url>scm:git:${project.url}</url>
+    <connection>scm:git:${project.url}</connection>
+    <developerConnection>scm:git:${project.url}</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
@@ -63,6 +72,7 @@
     <license-maven-plugin.version>4.1</license-maven-plugin.version>
     <maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+    <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
     <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
@@ -99,8 +109,8 @@
     <javadoc-excluded-packages/>
     <current-year>2022</current-year>
 
-    <project-organization-url>https://github.com/ascopes</project-organization-url>
-    <project-scm-url>${project.organization.url}/java-compiler-testing</project-scm-url>
+    <!-- Other configuration -->
+    <project-slug>ascopes/java-compiler-testing</project-slug>
   </properties>
 
   <dependencyManagement>
@@ -203,6 +213,16 @@
             <failOnWarning>true</failOnWarning>
             <showDeprecation>true</showDeprecation>
             <release>${java-release}</release>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>${maven-deploy-plugin.version}</version>
+
+          <configuration>
+            <deployAtEnd>true</deployAtEnd>
           </configuration>
         </plugin>
 

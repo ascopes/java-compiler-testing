@@ -32,6 +32,7 @@
 
   <properties>
     <maven.deploy.skip>true</maven.deploy.skip>
+    <maven.install.skip>true</maven.install.skip>
     <maven.jar.skip>true</maven.jar.skip>
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <skip-dependency-scan>true</skip-dependency-scan>
