@@ -136,9 +136,10 @@ public final class DiagnosticRepresentation implements Representation {
 
     // Advance to include the additional lines of context, and don't treat the current line as
     // being one of those lines if we span over one and a half lines.
-    var endOfSnippet = content.charAt(endOffset) == '\n'
+    var endOfSnippet = endOffset >= content.length() || content.charAt(endOffset) == '\n'
         ? endOffset
-        : StringUtils.indexOfEndOfLine(content, endOffset + 1);
+        : StringUtils.indexOfEndOfLine(content, endOffset);
+
     for (var i = 0; i < ADDITIONAL_CONTEXT_LINES; ++i) {
       endOfSnippet = StringUtils.indexOfEndOfLine(content, endOfSnippet + 1);
     }

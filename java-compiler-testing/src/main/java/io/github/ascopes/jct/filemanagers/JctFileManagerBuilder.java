@@ -411,7 +411,7 @@ public final class JctFileManagerBuilder {
       // Make the generated directory belong to the file manager that uses it rather than just
       // the reference to the Ram directory itself. This prevents premature closure and also ensures
       // the generated directory does not outlive the file manager.
-      var tempFs = testDirectoryFactory.create("tmp", false);
+      var tempFs = testDirectoryFactory.create("jct-generated", false);
       GarbageDisposalUtils.onPhantom(
           fileManager,
           "temporary directory for compiler inputs and outputs (" + tempFs + ")",
