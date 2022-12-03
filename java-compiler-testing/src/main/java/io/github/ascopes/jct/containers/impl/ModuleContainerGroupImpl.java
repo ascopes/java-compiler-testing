@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.containers;
+package io.github.ascopes.jct.containers.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.containers.Container;
+import io.github.ascopes.jct.containers.ModuleContainerGroup;
+import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
+import io.github.ascopes.jct.workspaces.PathWrapper;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.util.ArrayList;
@@ -93,19 +96,19 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
 
   @Override
   public void close() throws IOException {
-    var exceptions = new ArrayList<IOException>();
+    var exceptions = new ArrayList<Throwable>();
     for (var group : modules.values()) {
       try {
         group.close();
-      } catch (IOException ex) {
+      } catch (Exception ex) {
         exceptions.add(ex);
       }
     }
 
     if (!exceptions.isEmpty()) {
-      var ex = new IOException("One or more module impl failed to close");
-      exceptions.forEach(ex::addSuppressed);
-      throw ex;
+      var newEx = new IOException("One or more module impl failed to close");
+      exceptions.forEach(newEx::addSuppressed);
+      throw newEx;
     }
   }
 

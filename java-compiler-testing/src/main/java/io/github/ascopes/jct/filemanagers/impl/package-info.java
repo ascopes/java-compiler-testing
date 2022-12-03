@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.testing.unit.utils;
-
-import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
-import io.github.ascopes.jct.utils.GarbageDisposalUtils;
-import org.junit.jupiter.api.DisplayName;
-
 /**
- * Tests for {@link GarbageDisposalUtils}.
- *
- * @author Ashley Scopes
+ * TODO(ascopes): description.
  */
-@DisplayName("GarbageDisposalUtils tests")
-class GarbageDisposalUtilsTest implements StaticClassTestTemplate {
+@API(since = "0.0.1", status = Status.INTERNAL)
+@NonNullApi
+@NonNullImpl
+package io.github.ascopes.jct.filemanagers.impl;
 
-  @Override
-  public Class<?> getTypeBeingTested() {
-    return GarbageDisposalUtils.class;
-  }
-}
+import io.github.ascopes.jct.utils.NonNullApi;
+import io.github.ascopes.jct.utils.NonNullImpl;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;

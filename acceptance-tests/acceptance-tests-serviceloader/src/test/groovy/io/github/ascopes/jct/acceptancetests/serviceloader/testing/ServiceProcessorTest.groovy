@@ -23,7 +23,7 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
+import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 
 @DisplayName("ServiceProcessor tests (no JPMS)")
 class ServiceProcessorTest {

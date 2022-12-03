@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.containers;
+package io.github.ascopes.jct.containers.impl;
 
-import io.github.ascopes.jct.pathwrappers.PathWrapper;
+import io.github.ascopes.jct.containers.Container;
+import io.github.ascopes.jct.containers.PackageContainerGroup;
+import io.github.ascopes.jct.workspaces.PathWrapper;
 import java.net.URL;
 import java.net.URLClassLoader;
 import org.apiguardian.api.API;

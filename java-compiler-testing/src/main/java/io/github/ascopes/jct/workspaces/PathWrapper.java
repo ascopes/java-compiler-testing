@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.pathwrappers;
+package io.github.ascopes.jct.workspaces;
 
+import io.github.ascopes.jct.workspaces.impl.RamDirectory;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.FileSystem;

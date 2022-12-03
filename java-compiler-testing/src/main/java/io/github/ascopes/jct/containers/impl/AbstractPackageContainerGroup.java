@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.containers;
+package io.github.ascopes.jct.containers.impl;
 
 import static java.util.Collections.synchronizedSet;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.containers.Container;
+import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.ToStringBuilder;
+import io.github.ascopes.jct.workspaces.PathWrapper;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -128,7 +130,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
     for (var container : containers) {
       try {
         container.close();
-      } catch (IOException ex) {
+      } catch (Exception ex) {
         exceptions.add(ex);
       }
     }
@@ -140,9 +142,9 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
     }
 
     if (exceptions.size() > 0) {
-      var ioEx = new IOException("One or more components failed to close");
-      exceptions.forEach(ioEx::addSuppressed);
-      throw ioEx;
+      var newEx = new IOException("One or more components failed to close");
+      exceptions.forEach(newEx::addSuppressed);
+      throw newEx;
     }
   }
 

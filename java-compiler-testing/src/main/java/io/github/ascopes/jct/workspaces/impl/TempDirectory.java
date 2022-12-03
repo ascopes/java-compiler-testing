@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.pathwrappers;
+package io.github.ascopes.jct.workspaces.impl;
 
 import static io.github.ascopes.jct.utils.FileUtils.assertValidRootName;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
 import io.github.ascopes.jct.utils.RecursiveDeleter;
-import java.io.Closeable;
+import io.github.ascopes.jct.workspaces.TestDirectory;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.annotation.CheckReturnValue;
@@ -44,64 +45,40 @@ import org.slf4j.LoggerFactory;
  * @see RamDirectory
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class TempDirectory extends AbstractTestDirectory<TempDirectory> {
+@API(since = "0.0.1", status = Status.INTERNAL)
+public final class TempDirectory extends TestDirectory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(TempDirectory.class);
 
-  private TempDirectory(
-      String name,
-      Path rootDirectory,
-      String separator,
-      boolean closeOnGc,
-      Closeable closeHook
-  ) {
-    super(name, rootDirectory, separator, closeOnGc, closeHook);
+  private final Path rootDirectory;
+
+  private TempDirectory(String name, Path rootDirectory, String separator) {
+    super(name, rootDirectory, separator);
+    this.rootDirectory = rootDirectory;
+  }
+
+  @Override
+  public void close() throws IOException {
+    LOGGER.debug(
+        "Deleting temporary directory ({} @ {})",
+        rootDirectory.toUri(),
+        rootDirectory.getFileSystem()
+    );
+    RecursiveDeleter.deleteAll(rootDirectory);
   }
 
   /**
    * Create a new temporary directory on the root file system somewhere.
-   *
-   * <p>The underlying directory will be unlinked when the returned object is garbage collected,
-   * or when {@link #close()} is called on it manually.
    *
    * @param name a symbolic name to give the path. This must be a valid directory name for the
    *             environment you are using.
    * @return the temporary directory.
-   * @see #newTempDirectory(String, boolean)
    */
   @CheckReturnValue
   public static TempDirectory newTempDirectory(String name) {
-    return newTempDirectory(name, true);
-  }
-
-  /**
-   * Create a new temporary directory on the root file system somewhere.
-   *
-   * @param name      a symbolic name to give the path. This must be a valid directory name for the
-   *                  environment you are using.
-   * @param closeOnGc if {@code true}, then the temporary resources will be deleted automatically
-   *                  when the returned object is garbage collected. If {@code false}, then this
-   *                  must be deleted manually.
-   * @return the temporary directory.
-   * @see #newTempDirectory(String)
-   */
-  @CheckReturnValue
-  public static TempDirectory newTempDirectory(String name, boolean closeOnGc) {
     assertValidRootName(name);
-
-    var tempDir = uncheckedIo(() -> Files.createTempDirectory("jct-"));
-    var innerDir = uncheckedIo(() -> Files.createDirectory(tempDir.resolve(name)));
-
-    LOGGER.debug("Initialized new root '{}' using temporary path at {}", name, innerDir.toUri());
-
-    // TODO(ascopes): delete on JVM exit recursively if closeOnGc is set.
-    return new TempDirectory(
-        name,
-        innerDir,
-        tempDir.getFileSystem().getSeparator(),
-        closeOnGc,
-        () -> RecursiveDeleter.deleteAll(tempDir)
-    );
+    var tempDir = uncheckedIo(() -> Files.createTempDirectory("jct-" + name + "_"));
+    LOGGER.debug("Initialized new root '{}' using temporary path at {}", name, tempDir);
+    return new TempDirectory(name, tempDir, tempDir.getFileSystem().getSeparator());
   }
 }

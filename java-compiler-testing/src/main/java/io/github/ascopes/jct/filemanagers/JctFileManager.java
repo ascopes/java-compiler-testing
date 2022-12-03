@@ -18,7 +18,7 @@ package io.github.ascopes.jct.filemanagers;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
-import io.github.ascopes.jct.pathwrappers.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathWrapper;
 import java.util.Collection;
 import javax.annotation.Nullable;
 import javax.tools.JavaFileManager;

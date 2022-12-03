@@ -13,27 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.pathwrappers;
-
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
-
 /**
- * Functional interface representing a factory that can create temporary directories for testing.
- *
- * @author Ashley Scopes
- * @since 0.0.1
+ * TODO(ascopes): description.
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-@FunctionalInterface
-public interface TestDirectoryFactory {
+@NonNullApi
+@NonNullImpl
+package io.github.ascopes.jct.workspaces;
 
-  /**
-   * Create a new temporary directory.
-   *
-   * @param name      the name of the directory.
-   * @param closeOnGc whether to clean up resources when the returned object is garbage collected.
-   * @return the test directory object.
-   */
-  AbstractTestDirectory<?> create(String name, boolean closeOnGc);
-}
+import io.github.ascopes.jct.utils.NonNullApi;
+import io.github.ascopes.jct.utils.NonNullImpl;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;

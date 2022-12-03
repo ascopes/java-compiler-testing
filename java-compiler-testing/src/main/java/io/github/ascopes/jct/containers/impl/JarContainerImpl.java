@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.containers;
+package io.github.ascopes.jct.containers.impl;
 
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.pathwrappers.BasicPathWrapperImpl;
-import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.ToStringBuilder;
+import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.impl.BasicPathWrapperImpl;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.net.URL;
@@ -47,6 +48,8 @@ import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Container that wraps a JAR path and allows reading the contents of the JAR in-memory lazily.
@@ -64,6 +67,8 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class JarContainerImpl implements Container {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(JarContainerImpl.class);
 
   private final Location location;
   private final PathWrapper jarPath;
@@ -115,23 +120,6 @@ public final class JarContainerImpl implements Container {
     }
 
     return null;
-  }
-
-  @Override
-  public byte[] getClassBinary(String binaryName) throws IOException {
-    var packageName = FileUtils.binaryNameToPackageName(binaryName);
-    var packageDir = holder.access().getPackage(packageName);
-
-    if (packageDir == null) {
-      return null;
-    }
-
-    var className = FileUtils.binaryNameToSimpleClassName(binaryName);
-    var classPath = FileUtils.simpleClassNameToPath(packageDir.getPath(), className, Kind.CLASS);
-
-    return Files.isRegularFile(classPath)
-        ? Files.readAllBytes(classPath)
-        : null;
   }
 
   @Override
@@ -328,6 +316,11 @@ public final class JarContainerImpl implements Container {
     }
 
     private void close() throws IOException {
+      LOGGER.debug(
+          "Closing JAR file system handle ({} @ {})",
+          jarPath.getUri(),
+          fileSystem.getRootDirectories()
+      );
       packages.clear();
       fileSystem.close();
     }

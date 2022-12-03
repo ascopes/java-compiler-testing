@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.containers;
+package io.github.ascopes.jct.containers.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.pathwrappers.PathWrapper;
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
+import io.github.ascopes.jct.workspaces.PathWrapper;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.net.URL;
@@ -69,7 +70,7 @@ public final class PathWrappingContainerImpl implements Container {
   }
 
   @Override
-  public void close() throws IOException {
+  public void close() {
     // Do nothing for this implementation. We have nothing to close.
     // This also has the side effect of **not** closing TemporaryFileSystems early, as we use this
     // class with those objects as well.
@@ -92,15 +93,6 @@ public final class PathWrappingContainerImpl implements Container {
 
     return Files.isRegularFile(realPath)
         ? realPath
-        : null;
-  }
-
-  @Override
-  @Nullable
-  public byte[] getClassBinary(String binaryName) throws IOException {
-    var path = FileUtils.binaryNameToPath(root.getPath(), binaryName, Kind.CLASS);
-    return Files.isRegularFile(path)
-        ? Files.readAllBytes(path)
         : null;
   }
 

@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.containers;
 
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.pathwrappers.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathWrapper;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
@@ -60,16 +60,6 @@ public interface Container extends Closeable {
    */
   @Nullable
   Path getFile(String path);
-
-  /**
-   * Get the binary data for a class, if it exists.
-   *
-   * @param binaryName the binary name of the class.
-   * @return the binary data, if it exists, otherwise null.
-   * @throws IOException if an IO exception occurs.
-   */
-  @Nullable
-  byte[] getClassBinary(String binaryName) throws IOException;
 
   /**
    * Get a {@link FileObject} for reading, if it exists.

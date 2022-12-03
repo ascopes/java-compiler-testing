@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.pathwrappers;
+package io.github.ascopes.jct.workspaces.impl;
 
 import static io.github.ascopes.jct.utils.FileUtils.assertValidRootName;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
@@ -22,7 +22,8 @@ import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
-import java.io.Closeable;
+import io.github.ascopes.jct.workspaces.TestDirectory;
+import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,51 +56,37 @@ import org.slf4j.LoggerFactory;
  * @see TempDirectory
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class RamDirectory extends AbstractTestDirectory<RamDirectory> {
+@API(since = "0.0.1", status = Status.INTERNAL)
+public final class RamDirectory extends TestDirectory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RamDirectory.class);
 
-  private RamDirectory(
-      String name,
-      Path rootDirectory,
-      String separator,
-      boolean closeOnGc,
-      Closeable closeHook
-  ) {
-    super(name, rootDirectory, separator, closeOnGc, closeHook);
+  private final String name;
+  private final Path rootDirectory;
+  private final FileSystem fileSystem;
+
+  private RamDirectory(String name, FileSystem fileSystem, Path rootDirectory, String separator) {
+    super(name, rootDirectory, separator);
+    this.name = name;
+    this.rootDirectory = rootDirectory;
+    this.fileSystem = fileSystem;
   }
 
+  @Override
+  public void close() throws IOException {
+    LOGGER.debug("Closing RAM file system {} ({} @ {})", name, rootDirectory.toUri(), fileSystem);
+    fileSystem.close();
+  }
 
   /**
    * Create a new in-memory path.
-   *
-   * <p>The underlying in-memory file system will be closed and destroyed when the returned
-   * object is garbage collected, or when {@link #close()} is called on it manually.
    *
    * @param name a symbolic name to give the path. This must be a valid POSIX directory name.
    * @return the in-memory path.
-   * @see #newRamDirectory(String, boolean)
    */
   @CheckReturnValue
   public static RamDirectory newRamDirectory(String name) {
-    return newRamDirectory(name, true);
-  }
 
-  /**
-   * Create a new in-memory path.
-   *
-   * @param name      a symbolic name to give the path. This must be a valid POSIX directory name.
-   * @param closeOnGc if {@code true}, then the {@link #close()} operation will be called on the
-   *                  underlying {@link FileSystem} as soon as the returned object from this method
-   *                  is garbage collected. If {@code false}, then you must close the underlying
-   *                  file system manually using the {@link #close()} method on the returned object.
-   *                  Failing to do so will lead to resources being leaked.
-   * @return the in-memory path.
-   * @see #newRamDirectory(String)
-   */
-  @CheckReturnValue
-  public static RamDirectory newRamDirectory(String name, boolean closeOnGc) {
     assertValidRootName(name);
 
     var config = Configuration
@@ -117,13 +104,7 @@ public final class RamDirectory extends AbstractTestDirectory<RamDirectory> {
     // Ensure the base directory exists.
     uncheckedIo(() -> Files.createDirectories(path));
 
-    var fs = new RamDirectory(
-        name,
-        fileSystem.getRootDirectories().iterator().next(),
-        fileSystem.getSeparator(),
-        closeOnGc,
-        fileSystem
-    );
+    var fs = new RamDirectory(name, fileSystem, path,fileSystem.getSeparator());
 
     LOGGER.debug("Initialized new root '{}' using RAM disk at {}", name, path.toUri());
 

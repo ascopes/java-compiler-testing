@@ -25,7 +25,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import org.springframework.context.index.processor.CandidateComponentsIndexer
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory
+import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 import static org.assertj.core.api.Assumptions.assumeThat
 
 @DisplayName("Spring Context Indexer acceptance tests")

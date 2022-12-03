@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.filemanagers;
+package io.github.ascopes.jct.filemanagers.impl;
 
-import static io.github.ascopes.jct.utils.GarbageDisposalUtils.onPhantom;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.containers.ContainerGroup;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
-import io.github.ascopes.jct.containers.ModuleContainerGroupImpl;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
-import io.github.ascopes.jct.containers.OutputContainerGroupImpl;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
-import io.github.ascopes.jct.containers.PackageContainerGroupImpl;
-import io.github.ascopes.jct.pathwrappers.PathWrapper;
+import io.github.ascopes.jct.containers.impl.ModuleContainerGroupImpl;
+import io.github.ascopes.jct.containers.impl.OutputContainerGroupImpl;
+import io.github.ascopes.jct.containers.impl.PackageContainerGroupImpl;
+import io.github.ascopes.jct.filemanagers.JctFileManager;
+import io.github.ascopes.jct.filemanagers.ModuleLocation;
+import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.ToStringBuilder;
+import io.github.ascopes.jct.workspaces.PathWrapper;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.util.ArrayList;
@@ -75,10 +77,6 @@ public final class JctFileManagerImpl implements JctFileManager {
     packages = new ConcurrentHashMap<>();
     modules = new ConcurrentHashMap<>();
     outputs = new ConcurrentHashMap<>();
-
-    onPhantom(this, packages);
-    onPhantom(this, modules);
-    onPhantom(this, outputs);
   }
 
   @Override

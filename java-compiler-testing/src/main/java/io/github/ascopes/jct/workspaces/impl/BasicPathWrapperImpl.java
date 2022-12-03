@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.pathwrappers;
+package io.github.ascopes.jct.workspaces.impl;
 
 import static io.github.ascopes.jct.utils.FileUtils.retrieveRequiredUrl;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
+import io.github.ascopes.jct.workspaces.PathWrapper;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
@@ -36,9 +37,9 @@ import org.apiguardian.api.API.Status;
  * you. You may be interested in using {@link RamDirectory}, however.
  *
  * @author Ashley Scopes
- * @since 0.0.1
  * @see RamDirectory
  * @see TempDirectory
+ * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class BasicPathWrapperImpl implements PathWrapper {
