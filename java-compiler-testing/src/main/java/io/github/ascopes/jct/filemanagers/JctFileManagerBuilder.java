@@ -382,6 +382,10 @@ public final class JctFileManagerBuilder {
   public JctFileManager createFileManager(String effectiveRelease) throws IOException {
     var fileManager = new JctFileManagerImpl(effectiveRelease);
 
+    // Copy all other explicit locations across first to give them priority.
+    locations.forEach((location, paths) ->
+        paths.forEach(path -> fileManager.addPath(location, path)));
+
     // Inherit known resources from the current JVM where appropriate.
     configureClassPath(fileManager);
     configureModulePath(fileManager);
@@ -391,17 +395,15 @@ public final class JctFileManagerBuilder {
 
     // Continue preparing the file manager with additional defaults we need.
     var fallbackFs = newFallbackFs(fileManager);
+
     // We have to manually create this one as javac will not attempt to access it lazily. Instead,
     // it will just abort if it is not present. This means we cannot take advantage of the
     // PathLocationRepository creating the roots as we try to access them for this specific case.
     createLocationIfNotPresent(fileManager, fallbackFs, StandardLocation.CLASS_OUTPUT);
+
     // Annotation processors that create files will need this directory to exist if it is to
     // work properly.
     createLocationIfNotPresent(fileManager, fallbackFs, StandardLocation.SOURCE_OUTPUT);
-
-    // Copy all other explicit locations across.
-    locations.forEach((location, paths) ->
-        paths.forEach(path -> fileManager.addPath(location, path)));
 
     return fileManager;
   }
@@ -411,7 +413,7 @@ public final class JctFileManagerBuilder {
       // Make the generated directory belong to the file manager that uses it rather than just
       // the reference to the Ram directory itself. This prevents premature closure and also ensures
       // the generated directory does not outlive the file manager.
-      var tempFs = testDirectoryFactory.create("tmp", false);
+      var tempFs = testDirectoryFactory.create("jct-generated", false);
       GarbageDisposalUtils.onPhantom(
           fileManager,
           "temporary directory for compiler inputs and outputs (" + tempFs + ")",

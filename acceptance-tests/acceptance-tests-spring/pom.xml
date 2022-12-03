@@ -60,6 +60,15 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webflux</artifactId>
       <scope>test</scope>
+
+      <exclusions>
+        <!-- Don't include logging libraries from Spring, it will collide with the SLF4J provider
+             we use for testing purposes and emit a warning. -->
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
