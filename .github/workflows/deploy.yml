@@ -1,9 +1,14 @@
 on:
-  workflow_call: {}
+  workflow_dispatch:
+    inputs:
+      deploy-javadoc-to-gh-pages:
+        description: "Should I deploy JavaDocs to GitHub pages?"
+        required: true
+        type: boolean
 
 jobs:
   github:
-    name: "Deploy Snapshot to GitHub"
+    name: "Deploy to GitHub"
     runs-on: ubuntu-latest
 
     permissions:
@@ -25,7 +30,18 @@ jobs:
           # Must use >= JDK 17 for Javadocs to generate correctly.
           java-version: 17
 
-      - name: Build and deploy Maven artifacts
+      - name: Build artifacts
+        run: >-
+          ./mvnw
+          -B
+          -T4C
+          --no-transfer-progress
+          -Dmaven.source.includePom=true
+          -Dstyle.color=always
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+          clean install javadoc:jar source:jar
+
+      - name: Deploy Maven artifacts
         run: >-
           ./mvnw
           -B
@@ -34,18 +50,19 @@ jobs:
           -pl java-compiler-testing
           --also-make
           -Dmaven.source.includePom=true
-          -Dmaven.test.skip=true
           -Dstyle.color=always
           -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
-          clean install javadoc:jar source:jar deploy
+          deploy:deploy
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Upload JavaDocs as a build artifact
+        if: ${{ inputs.deploy-javadoc-to-gh-pages }}
         uses: actions/upload-pages-artifact@v1
         with:
           path: java-compiler-testing/target/apidocs
 
       - name: Deploy JavaDocs build artifact to GitHub Pages
+        if: ${{ inputs.deploy-javadoc-to-gh-pages }}
         id: deployment
         uses: actions/deploy-pages@v1

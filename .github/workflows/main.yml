@@ -1,3 +1,7 @@
+# This is kept separate to the PR pipeline, despite being identical.
+# The separation is used to allow creation of a status badge for the main branch
+# which is included in the README without reflecting PR statuses in that metric.
+
 name: Build main branch
 on:
   push:
@@ -13,8 +17,3 @@ jobs:
   compliance:
     name: Compliance
     uses: ./.github/workflows/_check-compliance.yml
-  publish-snapshot:
-    name: Publish Snapshot
-    needs: [ compliance, javadocs, tests ]
-    uses: ./.github/workflows/_publish_snapshot.yml
-    secrets: inherit
