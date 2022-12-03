@@ -1,3 +1,5 @@
+name: Deploy a branch
+
 on:
   workflow_dispatch:
     inputs:
