@@ -43,9 +43,11 @@ public final class SpecialLocationUtils {
   private static final Set<String> BLACKLISTED_FILE_NAMES = Set.of(
       // IntelliJ's idea_rt.jar causes problems on IDEA 2022.3:
       //  - [ERROR] compiler.err.package.clash.from.requires.in.unnamed
-      //       the unnamed module reads package com.intellij.rt.execution.junit from both idea.rt and junit.rt
+      //       the unnamed module reads package com.intellij.rt.execution.junit from both idea.rt
+      //       and junit.rt
       // - [ERROR] compiler.err.package.clash.from.requires
-      //       module spring.core reads package com.intellij.rt.execution.junit from both idea.rt and junit.rt
+      //       module spring.core reads package com.intellij.rt.execution.junit from both idea.rt
+      //       and junit.rt
       "idea_rt.jar"
   );
 
