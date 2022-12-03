@@ -2,7 +2,7 @@
 # The separation is used to allow creation of a status badge for the main branch
 # which is included in the README without reflecting PR statuses in that metric.
 
-name: Build main branch
+name: Main branch build
 on:
   push:
     branches: [ main ]
