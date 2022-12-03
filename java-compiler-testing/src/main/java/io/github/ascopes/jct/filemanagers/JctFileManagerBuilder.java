@@ -112,10 +112,6 @@ public final class JctFileManagerBuilder {
    * @throws IllegalArgumentException if the location is module-oriented or output oriented.
    */
   public void addPath(Location location, PathWrapper path) {
-    if (location.isOutputLocation()) {
-      throw new IllegalArgumentException("Can not add paths to an output oriented location.");
-    }
-
     if (location.isModuleOrientedLocation()) {
       throw new IllegalArgumentException(
           "Can not add paths directly to a module oriented location. Consider using "
