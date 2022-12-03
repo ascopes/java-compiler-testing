@@ -23,6 +23,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -37,6 +38,16 @@ import org.slf4j.LoggerFactory;
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class SpecialLocationUtils {
+
+  // Files we don't want to propagate by default as they may clash with the environment.
+  private static final Set<String> BLACKLISTED_FILE_NAMES = Set.of(
+      // IntelliJ's idea_rt.jar causes problems on IDEA 2022.3:
+      //  - [ERROR] compiler.err.package.clash.from.requires.in.unnamed
+      //       the unnamed module reads package com.intellij.rt.execution.junit from both idea.rt and junit.rt
+      // - [ERROR] compiler.err.package.clash.from.requires
+      //       module spring.core reads package com.intellij.rt.execution.junit from both idea.rt and junit.rt
+      "idea_rt.jar"
+  );
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SpecialLocationUtils.class);
   private static final String NO_PATH = "";
@@ -125,6 +136,7 @@ public final class SpecialLocationUtils {
         .splitToStream(raw)
         .filter(not(String::isBlank))
         .map(Path::of)
+        .filter(not(SpecialLocationUtils::isBlacklistedFile))
         // We have to check this, annoyingly, because some tools like Maven (Surefire) will report
         // paths that don't actually exist to the class path, and Java will just ignore this
         // normally. It will cause random failures during builds, however, if directories such as
@@ -140,6 +152,17 @@ public final class SpecialLocationUtils {
     }
 
     LOGGER.trace("Environment-provided path {} does not exist, so will be skipped", path);
+    return false;
+  }
+
+  private static boolean isBlacklistedFile(Path path) {
+    var fileName = path.getFileName().toString();
+
+    if (BLACKLISTED_FILE_NAMES.contains(fileName)) {
+      LOGGER.debug("Excluding {} from classpath as it is a blacklisted file", fileName);
+      return true;
+    }
+
     return false;
   }
 }
