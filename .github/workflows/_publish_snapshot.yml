@@ -1,0 +1,51 @@
+on:
+  workflow_call: {}
+
+jobs:
+  github:
+    name: "Deploy Snapshot to GitHub"
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Initialize JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          # Must use >= JDK 17 for Javadocs to generate correctly.
+          java-version: 17
+
+      - name: Build and deploy Maven artifacts
+        run: >-
+          ./mvnw
+          -B
+          -T4C
+          --no-transfer-progress
+          -pl java-compiler-testing
+          --also-make
+          -Dmaven.source.includePom=true
+          -Dmaven.test.skip=true
+          -Dstyle.color=always
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+          clean install javadoc:jar source:jar deploy
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Upload JavaDocs as a build artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: java-compiler-testing/target/apidocs
+
+      - name: Deploy JavaDocs build artifact to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
