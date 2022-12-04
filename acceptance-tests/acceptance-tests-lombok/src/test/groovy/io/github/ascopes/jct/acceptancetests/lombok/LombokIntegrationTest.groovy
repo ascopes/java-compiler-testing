@@ -17,12 +17,10 @@ package io.github.ascopes.jct.acceptancetests.lombok
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.workspaces.Workspace
 import org.junit.jupiter.api.DisplayName
 
-import java.nio.file.Path
-
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 import static org.assertj.core.api.SoftAssertions.assertSoftly
 
 /**
@@ -40,76 +38,69 @@ class LombokIntegrationTest {
   @DisplayName("Lombok @Data compiles the expected data class")
   @JavacCompilerTest
   void lombokDataCompilesTheExpectedDataClass(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .rootDirectory()
-        .copyContentsFrom("src", "test", "resources", "code", "flat")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .rootDirectory()
+          .copyContentsFrom("src", "test", "resources", "code", "flat")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .compile()
+      // When
+      def compilation = compiler.compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessful()
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessful()
 
-    def animalClass = compilation
-        .classOutputs
-        .classLoader
-        .loadClass("org.example.Animal")
+      def animalClass = compilation
+          .classOutputs
+          .classLoader
+          .loadClass("org.example.Animal")
 
-    def animal = animalClass
-        .getDeclaredConstructor(String.class, int.class, int.class)
-        .newInstance("Cat", 4, 5)
+      def animal = animalClass
+          .getDeclaredConstructor(String.class, int.class, int.class)
+          .newInstance("Cat", 4, 5)
 
-    assertSoftly { softly ->
-      softly.assertThatObject(animal.name).isEqualTo("Cat")
-      softly.assertThatObject(animal.legCount).isEqualTo(4)
-      softly.assertThatObject(animal.age).isEqualTo(5)
+      assertSoftly { softly ->
+        softly.assertThatObject(animal.name).isEqualTo("Cat")
+        softly.assertThatObject(animal.legCount).isEqualTo(4)
+        softly.assertThatObject(animal.age).isEqualTo(5)
+      }
     }
   }
 
   @DisplayName("Lombok @Data compiles the expected data class with module support")
   @JavacCompilerTest(modules = true)
   void lombokDataCompilesTheExpectedDataClassWithModuleSupport(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .rootDirectory()
-        .copyContentsFrom("src", "test", "resources", "code", "jpms")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .rootDirectory()
+          .copyContentsFrom("src", "test", "resources", "code", "jpms")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .addClassPathPackage(Path.of(
-            System.getenv("HOME"),
-            ".m2",
-            "repository",
-            "org",
-            "projectlombok",
-            "lombok",
-            "1.18.24",
-            "lombok-1.18.24.jar"
-        ))
-        .compile()
+      // When
+      def compilation = compiler
+          .compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessful()
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessful()
 
-    def animalClass = compilation
-        .classOutputs
-        .classLoader
-        .loadClass("org.example.Animal")
+      def animalClass = compilation
+          .classOutputs
+          .classLoader
+          .loadClass("org.example.Animal")
 
-    def animal = animalClass
-        .getDeclaredConstructor(String.class, int.class, int.class)
-        .newInstance("Cat", 4, 5)
+      def animal = animalClass
+          .getDeclaredConstructor(String.class, int.class, int.class)
+          .newInstance("Cat", 4, 5)
 
-    assertSoftly { softly ->
-      softly.assertThatObject(animal.name).isEqualTo("Cat")
-      softly.assertThatObject(animal.legCount).isEqualTo(4)
-      softly.assertThatObject(animal.age).isEqualTo(5)
+      assertSoftly { softly ->
+        softly.assertThatObject(animal.name).isEqualTo("Cat")
+        softly.assertThatObject(animal.legCount).isEqualTo(4)
+        softly.assertThatObject(animal.age).isEqualTo(5)
+      }
     }
   }
 }
