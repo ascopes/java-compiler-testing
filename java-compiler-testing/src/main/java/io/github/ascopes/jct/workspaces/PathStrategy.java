@@ -62,9 +62,8 @@ public enum PathStrategy {
    * contents of the directory in a file explorer.
    *
    * <p>Since the temporary directories are usually created on the
-   * {@link File default file system},
-   * they are compatible with any annotation processors or compiler implementations that expect to
-   * be run on the default file system only.
+   * {@link File default file system}, they are compatible with any annotation processors or
+   * compiler implementations that expect to be run on the default file system only.
    */
   TEMP_DIRECTORIES(TempDirectory::newTempDirectory);
 
