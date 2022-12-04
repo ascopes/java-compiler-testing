@@ -31,6 +31,9 @@ import org.junit.jupiter.params.support.AnnotationConsumer;
 public final class JavacCompilersProvider extends AbstractCompilersProvider
     implements AnnotationConsumer<JavacCompilerTest> {
 
+  /**
+   * Initialise the provider.
+   */
   public JavacCompilersProvider() {
     // Visible for testing only.
   }

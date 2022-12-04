@@ -230,7 +230,8 @@ public interface Workspace extends AutoCloseable {
   /**
    * Add a module to the native header outputs.
    *
-   * @param path the path to add.
+   * @param moduleName the name of the module.
+   * @param path       the path to add.
    * @throws IllegalArgumentException if the path does not exist.
    */
   default void addNativeHeaderOutputModule(String moduleName, Path path) {
