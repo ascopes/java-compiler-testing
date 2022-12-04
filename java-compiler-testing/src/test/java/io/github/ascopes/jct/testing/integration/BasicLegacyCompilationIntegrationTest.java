@@ -19,8 +19,8 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
+import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspace;
-import io.github.ascopes.jct.workspaces.Workspace.PathStrategy;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 
@@ -35,9 +35,9 @@ class BasicLegacyCompilationIntegrationTest {
   @DisplayName("I can compile a 'Hello, World!' program using a RAM directory")
   @JavacCompilerTest
   void helloWorldJavacRamDirectory(JctCompiler<?, ?> compiler) {
-    try (var workspace = new Workspace(PathStrategy.RAM_DIRECTORIES)) {
+    try (var workspace = Workspace.newDefaultWorkspace(PathStrategy.RAM_DIRECTORIES)) {
       workspace
-          .createPath(StandardLocation.SOURCE_PATH)
+          .createPackage(StandardLocation.SOURCE_PATH)
           .createFile("com/example/HelloWorld.java").withContents(
               "package com.example;",
               "public class HelloWorld {",
@@ -63,9 +63,9 @@ class BasicLegacyCompilationIntegrationTest {
   @DisplayName("I can compile a 'Hello, World!' program using a temp directory")
   @JavacCompilerTest
   void helloWorldJavacTempDirectory(JctCompiler<?, ?> compiler) {
-    try (var workspace = new Workspace(PathStrategy.TEMP_DIRECTORIES)) {
+    try (var workspace = Workspace.newDefaultWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       workspace
-          .createPath(StandardLocation.SOURCE_PATH)
+          .createPackage(StandardLocation.SOURCE_PATH)
           .createFile("com/example/HelloWorld.java").withContents(
               "package com.example;",
               "public class HelloWorld {",

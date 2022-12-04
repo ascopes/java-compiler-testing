@@ -84,7 +84,6 @@ module io.github.ascopes.jct {
   exports io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.filemanagers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.workspaces.impl to io.github.ascopes.jct.testing;
 
   opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers to io.github.ascopes.jct.testing;
@@ -100,4 +99,5 @@ module io.github.ascopes.jct {
   opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.workspaces to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.workspaces.impl to io.github.ascopes.jct.testing;
+  exports io.github.ascopes.jct.workspaces.impl;
 }

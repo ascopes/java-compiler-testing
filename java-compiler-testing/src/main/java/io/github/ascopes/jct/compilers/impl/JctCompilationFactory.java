@@ -212,7 +212,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     var fileManager = new JctFileManagerImpl(determineRelease());
 
     // Copy all other explicit locations across first to give them priority.
-    workspace.getPaths().forEach((location, paths) ->
+    workspace.getAllPaths().forEach((location, paths) ->
         paths.forEach(path -> fileManager.addPath(location, path)));
 
     // Inherit known resources from the current JVM where appropriate.
@@ -385,7 +385,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
 
   private void createLocationIfNotPresent(JctFileManagerImpl fileManager, Location location) {
     if (!fileManager.hasLocation(location)) {
-      var dir = workspace.createPath(location);
+      var dir = workspace.createPackage(location);
       fileManager.addPath(location, dir);
     }
   }
