@@ -17,15 +17,13 @@ package io.github.ascopes.jct.acceptancetests.checkerframework
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.workspaces.Workspace
 import org.checkerframework.checker.nullness.NullnessChecker
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.JRE
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 import static org.assertj.core.api.Assumptions.assumeThat
 
 @DisplayName("Checkerframework Nullness acceptance tests")
@@ -39,47 +37,49 @@ class CheckerNullTest {
   }
 
   @DisplayName("Happy paths work as expected")
-  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
   void happyPathsWorkAsExpected(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code", "nullness", "happy")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code", "nullness", "happy")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .addAnnotationProcessors(new NullnessChecker())
-        .compile()
+      // When
+      def compilation = compiler
+          .addAnnotationProcessors(new NullnessChecker())
+          .compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
+    }
   }
 
   @DisplayName("Sad paths fail as expected")
-  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
   void sadPathsFailAsExpected(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code", "nullness", "sad")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code", "nullness", "sad")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .addAnnotationProcessors(new NullnessChecker())
-        .compile()
+      // When
+      def compilation = compiler
+          .addAnnotationProcessors(new NullnessChecker())
+          .compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isFailure()
-        .diagnostics()
-        .errors()
-        .singleElement()
-        .message()
-        .startsWith("[assignment] incompatible types in assignment.")
+      // Then
+      assertThatCompilation(compilation)
+          .isFailure()
+          .diagnostics()
+          .errors()
+          .singleElement()
+          .message()
+          .startsWith("[assignment] incompatible types in assignment.")
+    }
   }
 }
