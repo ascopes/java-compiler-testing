@@ -17,12 +17,12 @@ package io.github.ascopes.jct.acceptancetests.mapstruct
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.workspaces.Workspace
 import org.junit.jupiter.api.DisplayName
 
 import javax.tools.StandardLocation
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 import static org.assertj.core.api.SoftAssertions.assertSoftly
 
 @DisplayName("MapStruct integration tests")
@@ -32,40 +32,41 @@ class MapStructIntegrationTest {
   @DisplayName("MapStruct generates expected mapping code")
   @JavacCompilerTest
   void mapStructGeneratesExpectedMappingCode(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .rootDirectory()
-        .copyContentsFrom("src", "test", "resources", "code", "flat")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .rootDirectory()
+          .copyContentsFrom("src", "test", "resources", "code", "flat")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .compile()
+      // When
+      def compilation = compiler.compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
 
-    def classLoader = compilation.getFileManager().getClassLoader(StandardLocation.CLASS_OUTPUT)
-    def packageName = "org.example"
+      def classLoader = compilation.getFileManager().getClassLoader(StandardLocation.CLASS_OUTPUT)
+      def packageName = "org.example"
 
-    def carTypeClass = classLoader.loadClass("${packageName}.CarType")
-    def carClass = classLoader.loadClass("${packageName}.Car")
-    def carMapperClass = classLoader.loadClass("${packageName}.CarMapper")
+      def carTypeClass = classLoader.loadClass("${packageName}.CarType")
+      def carClass = classLoader.loadClass("${packageName}.Car")
+      def carMapperClass = classLoader.loadClass("${packageName}.CarMapper")
 
-    def car = carClass.getConstructor().newInstance()
+      def car = carClass.getConstructor().newInstance()
 
-    car.make = "VW Polo"
-    car.type = carTypeClass.HATCHBACK
-    car.numberOfSeats = 5
+      car.make = "VW Polo"
+      car.type = carTypeClass.HATCHBACK
+      car.numberOfSeats = 5
 
-    def carMapper = carMapperClass.INSTANCE
-    def carDto = carMapper.carToCarDto(car)
+      def carMapper = carMapperClass.INSTANCE
+      def carDto = carMapper.carToCarDto(car)
 
-    assertSoftly { softly ->
-      softly.assertThatObject(carDto.make).isEqualTo("VW Polo")
-      softly.assertThatObject(carDto.type).isEqualTo("HATCHBACK")
-      softly.assertThatObject(carDto.seatCount).isEqualTo(5)
+      assertSoftly { softly ->
+        softly.assertThatObject(carDto.make).isEqualTo("VW Polo")
+        softly.assertThatObject(carDto.type).isEqualTo("HATCHBACK")
+        softly.assertThatObject(carDto.seatCount).isEqualTo(5)
+      }
     }
   }
 
@@ -73,39 +74,41 @@ class MapStructIntegrationTest {
   @JavacCompilerTest(modules = true)
   void mapStructGeneratesExpectedMappingCodeForModules(JctCompiler compiler) {
     // Given
-    def sources = newRamDirectory("sources")
-        .rootDirectory()
-        .copyContentsFrom("src", "test", "resources", "code", "jpms")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .rootDirectory()
+          .copyContentsFrom("src", "test", "resources", "code", "jpms")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .compile()
+      // When
+      def compilation = compiler.compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
 
-    def classLoader = compilation.getFileManager().getClassLoader(StandardLocation.CLASS_OUTPUT)
-    def packageName = "org.example"
+      def classLoader = compilation.getFileManager().getClassLoader(StandardLocation.CLASS_OUTPUT)
+      def packageName = "org.example"
 
-    def carTypeClass = classLoader.loadClass("${packageName}.CarType")
-    def carClass = classLoader.loadClass("${packageName}.Car")
-    def carMapperClass = classLoader.loadClass("${packageName}.CarMapper")
+      def carTypeClass = classLoader.loadClass("${packageName}.CarType")
+      def carClass = classLoader.loadClass("${packageName}.Car")
+      def carMapperClass = classLoader.loadClass("${packageName}.CarMapper")
 
-    def car = carClass.getConstructor().newInstance()
+      def car = carClass.getConstructor().newInstance()
 
-    car.make = "VW Polo"
-    car.type = carTypeClass.HATCHBACK
-    car.numberOfSeats = 5
+      car.make = "VW Polo"
+      car.type = carTypeClass.HATCHBACK
+      car.numberOfSeats = 5
 
-    def carMapper = carMapperClass.INSTANCE
-    def carDto = carMapper.carToCarDto(car)
+      def carMapper = carMapperClass.INSTANCE
+      def carDto = carMapper.carToCarDto(car)
 
-    assertSoftly { softly ->
-      softly.assertThatObject(carDto.make).isEqualTo("VW Polo")
-      softly.assertThatObject(carDto.type).isEqualTo("HATCHBACK")
-      softly.assertThatObject(carDto.seatCount).isEqualTo(5)
+      assertSoftly { softly ->
+        softly.assertThatObject(carDto.make).isEqualTo("VW Polo")
+        softly.assertThatObject(carDto.type).isEqualTo("HATCHBACK")
+        softly.assertThatObject(carDto.seatCount).isEqualTo(5)
+      }
     }
   }
 }
