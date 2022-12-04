@@ -77,28 +77,27 @@ public final class JctFileManagerImpl implements JctFileManager {
   }
 
   @Override
-  public void addPath(Location location, PathWrapper pathWrapper) {
-
+  public void addPath(Location location, PathWrapper path) {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
 
       if (location.isOutputLocation()) {
         getOrCreateOutput(moduleLocation.getParent())
-            .addModule(moduleLocation.getModuleName(), pathWrapper);
+            .addModule(moduleLocation.getModuleName(), path);
       } else {
         getOrCreateModule(moduleLocation.getParent())
-            .addModule(moduleLocation.getModuleName(), pathWrapper);
+            .addModule(moduleLocation.getModuleName(), path);
       }
 
     } else if (location.isOutputLocation()) {
       getOrCreateOutput(location)
-          .addPackage(pathWrapper);
+          .addPackage(path);
 
     } else if (location.isModuleOrientedLocation()) {
       // Attempt to find modules.
       var moduleGroup = getOrCreateModule(location);
 
-      for (var ref : ModuleFinder.of(pathWrapper.getPath()).findAll()) {
+      for (var ref : ModuleFinder.of(path.getPath()).findAll()) {
         var module = ref.descriptor().name();
 
         // Right now, assume the module is not in a nested directory. Not sure if there are
@@ -106,12 +105,19 @@ public final class JctFileManagerImpl implements JctFileManager {
         // to the end of JAR paths if I uncomment the following line.
         moduleGroup.getOrCreateModule(module)
             //.addPackage(new BasicPathWrapperImpl(pathWrapper, module));
-            .addPackage(pathWrapper);
+            .addPackage(path);
       }
 
     } else {
       getOrCreatePackage(location)
-          .addPackage(pathWrapper);
+          .addPackage(path);
+    }
+  }
+
+  @Override
+  public void addPaths(Location location, Collection<? extends PathWrapper> paths) {
+    for (var path : paths) {
+      addPath(location, path);
     }
   }
 
