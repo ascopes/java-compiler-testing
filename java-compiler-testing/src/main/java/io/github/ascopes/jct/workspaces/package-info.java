@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * TODO(ascopes): description.
+ * Workspace components to hold complex source code structures within memory.
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 @NonNullApi
