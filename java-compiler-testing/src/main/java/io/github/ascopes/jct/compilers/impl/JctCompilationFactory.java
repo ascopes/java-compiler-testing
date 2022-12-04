@@ -384,6 +384,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
 
   private void createLocationIfNotPresent(JctFileManagerImpl fileManager, Location location) {
     if (!fileManager.hasLocation(location)) {
+      LOGGER.trace("Creating a new package workspace for {}", location);
       var dir = workspace.createPackage(location);
       fileManager.addPath(location, dir);
     }
@@ -393,6 +394,8 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     if (compiler.isInheritClassPath()) {
       for (var path : jvmClassPath.access()) {
         var wrapper = wrap(path);
+
+        LOGGER.trace("Adding {} to the class path", path);
         fileManager.addPath(StandardLocation.CLASS_PATH, wrapper);
 
         // IntelliJ appears to place modules on the classpath if we are not building the base
@@ -401,6 +404,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
         // than the module path. Fix this by adding classpath components with modules inside into
         // the module path as well.
         if (compiler.isFixJvmModulePathMismatch() && containsModules(path)) {
+          LOGGER.trace("Adding {} to the module path as well since it contains modules", path);
           fileManager.addPath(StandardLocation.MODULE_PATH, wrapper);
         }
       }
@@ -411,6 +415,8 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     if (compiler.isInheritModulePath()) {
       for (var path : jvmModulePath.access()) {
         var wrapper = wrap(path);
+
+        LOGGER.trace("Adding {} to the module path and class path", path);
 
         // Since we do not know if the code being compiled will use modules or not just yet,
         // make sure any modules are on the class path as well so that they remain accessible
@@ -424,7 +430,10 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
   private void configurePlatformClassPath(JctFileManagerImpl fileManager) {
     if (compiler.isInheritPlatformClassPath()) {
       for (var path : jvmPlatformPath.access()) {
-        fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH, wrap(path));
+        var wrapper = wrap(path);
+
+        LOGGER.trace("Adding {} to the platform class path", path);
+        fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH, wrapper);
       }
     }
   }
@@ -432,7 +441,10 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
   private void configureJvmSystemModules(JctFileManagerImpl fileManager) {
     if (compiler.isInheritSystemModulePath()) {
       for (var path : jvmSystemModules.access()) {
-        fileManager.addPath(StandardLocation.SYSTEM_MODULES, wrap(path));
+        var wrapper = wrap(path);
+
+        LOGGER.trace("Adding {} to the system module path", path);
+        fileManager.addPath(StandardLocation.SYSTEM_MODULES, wrapper);
       }
     }
   }
@@ -440,6 +452,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
   private void configureAnnotationProcessorPaths(JctFileManager fileManager) {
     switch (compiler.getAnnotationProcessorDiscovery()) {
       case ENABLED:
+        LOGGER.trace("Annotation processor discovery is enabled, ensuring empty location exists");
         fileManager.ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
         break;
 
@@ -449,6 +462,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
         // the module path. Let's keep this simple and mimic this behaviour. If someone complains
         // about it being problematic in the future, then I am open to change how this works to
         // keep it sensible.
+        LOGGER.trace("Copying classpath dependencies into the annotation processor path");
         fileManager.copyContainers(
             StandardLocation.CLASS_PATH,
             StandardLocation.ANNOTATION_PROCESSOR_PATH
@@ -459,6 +473,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
 
       case DISABLED:
       default:
+        LOGGER.trace("Not configuring annotation processor discovery");
         // There is nothing to do to the file manager to configure annotation processing at this
         // time.
         break;
