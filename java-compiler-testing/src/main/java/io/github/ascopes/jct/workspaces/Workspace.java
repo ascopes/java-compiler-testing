@@ -294,8 +294,6 @@ public interface Workspace extends AutoCloseable {
    *   </li>
    * </ul>
    *
-   * <p>Use {@link }</p>
-   *
    * @param location the location to associate with.
    * @return the test directory that was created.
    * @throws IllegalArgumentException if the inputs are invalid.
@@ -320,8 +318,6 @@ public interface Workspace extends AutoCloseable {
    *     The {@code location} must not be a {@link ModuleLocation module-location handle} already.
    *   </li>
    * </ul>
-   *
-   * <p>Use {@link }</p>
    *
    * @param location   the location to associate with.
    * @param moduleName the module name to use.

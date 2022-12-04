@@ -83,13 +83,13 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
   // inheritance enabled.
   // Mapping of source location to target location.
   private static final Map<StandardLocation, StandardLocation> INHERITED_AP_PATHS = Map.of(
-      StandardLocation.CLASS_PATH, StandardLocation.ANNOTATION_PROCESSOR_PATH
       // https://stackoverflow.com/q/53084037
       // Seems that javac will always use the classpath to implement this behaviour, and never
       // the module path. Let's keep this simple and mimic this behaviour. If someone complains
       // about it being problematic in the future, then I am open to change how this works to
       // keep it sensible.
-      /* StandardLocation.MODULE_PATH, StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH */
+      // StandardLocation.MODULE_PATH, StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH,
+      StandardLocation.CLASS_PATH, StandardLocation.ANNOTATION_PROCESSOR_PATH
   );
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilationFactory.class);
