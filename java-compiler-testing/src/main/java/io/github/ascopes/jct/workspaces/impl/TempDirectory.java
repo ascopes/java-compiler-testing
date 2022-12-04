@@ -19,7 +19,6 @@ import static io.github.ascopes.jct.utils.FileUtils.assertValidRootName;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
 import io.github.ascopes.jct.utils.RecursiveDeleter;
-import io.github.ascopes.jct.workspaces.TestDirectory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class TempDirectory extends TestDirectory {
+public final class TempDirectory extends AbstractManagedDirectory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(TempDirectory.class);
 

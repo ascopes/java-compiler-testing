@@ -22,7 +22,6 @@ import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
-import io.github.ascopes.jct.workspaces.TestDirectory;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -57,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class RamDirectory extends TestDirectory {
+public final class RamDirectory extends AbstractManagedDirectory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RamDirectory.class);
 

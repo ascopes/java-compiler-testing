@@ -20,7 +20,6 @@ import static java.util.Objects.requireNonNull;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.PathWrapper;
-import io.github.ascopes.jct.workspaces.TestDirectory;
 import io.github.ascopes.jct.workspaces.Workspace;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -63,9 +62,9 @@ public final class WorkspaceImpl implements Workspace {
 
     for (var list : paths.values()) {
       for (var path : list) {
-        if (path instanceof TestDirectory) {
+        if (path instanceof AbstractManagedDirectory) {
           try {
-            ((TestDirectory) path).close();
+            ((AbstractManagedDirectory) path).close();
 
           } catch (Exception ex) {
             exceptions.add(ex);
@@ -118,7 +117,7 @@ public final class WorkspaceImpl implements Workspace {
   }
 
   @Override
-  public TestDirectory createPackage(Location location) {
+  public AbstractManagedDirectory createPackage(Location location) {
     requireNonNull(location, "location");
 
     if (location.isModuleOrientedLocation()) {
@@ -131,7 +130,7 @@ public final class WorkspaceImpl implements Workspace {
   }
 
   @Override
-  public TestDirectory createModule(Location location, String moduleName) {
+  public AbstractManagedDirectory createModule(Location location, String moduleName) {
     requireNonNull(location, "location");
     requireNonNull(location, "moduleName");
 
