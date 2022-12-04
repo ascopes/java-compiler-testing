@@ -85,7 +85,7 @@ class LombokIntegrationTest {
     // When
     def compilation = compiler
         .addSourcePath(sources)
-        .addClassPath(Path.of(
+        .addClassPathPackage(Path.of(
             System.getenv("HOME"),
             ".m2",
             "repository",

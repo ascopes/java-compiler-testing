@@ -1,0 +1,148 @@
+package io.github.ascopes.jct.workspaces.impl;
+
+import static java.util.Objects.requireNonNull;
+
+import io.github.ascopes.jct.filemanagers.ModuleLocation;
+import io.github.ascopes.jct.workspaces.PathStrategy;
+import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.TestDirectory;
+import io.github.ascopes.jct.workspaces.Workspace;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.tools.JavaFileManager.Location;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
+
+
+/**
+ * Implementation of a workspace to use by default.
+ *
+ * <p>This is not threadsafe, and should only be used once per test.
+ *
+ * <p>Care should be taken to use instances of this class in a try-with-resources block
+ * to ensure resources get closed correctly at the end of your tests.
+ *
+ * @author Ashley Scopes
+ * @since 0.0.1
+ */
+@API(since = "0.0.1", status = Status.INTERNAL)
+public class WorkspaceImpl implements Workspace {
+
+  private final PathStrategy pathStrategy;
+  private final Map<Location, List<PathWrapper>> paths;
+
+  public WorkspaceImpl(PathStrategy pathStrategy) {
+    this.pathStrategy = requireNonNull(pathStrategy, "pathStrategy");
+    paths = new HashMap<>();
+  }
+
+  @Override
+  public void close() {
+    // Close everything in a best-effort fashion.
+    var exceptions = new ArrayList<Throwable>();
+
+    for (var list : paths.values()) {
+      for (var path : list) {
+        if (path instanceof TestDirectory) {
+          try {
+            ((TestDirectory) path).close();
+
+          } catch (Exception ex) {
+            exceptions.add(ex);
+          }
+        }
+      }
+    }
+
+    if (exceptions.size() > 0) {
+      var newEx = new IllegalStateException("One or more components failed to close");
+      exceptions.forEach(newEx::addSuppressed);
+      throw newEx;
+    }
+  }
+
+  @Override
+  public void addPackage(Location location, Path path) {
+    requireNonNull(location, "location");
+    requireNonNull(path, "path");
+
+    if (location.isModuleOrientedLocation()) {
+      throw new IllegalArgumentException("Location must not be module-oriented");
+    }
+
+    if (!Files.exists(path)) {
+      throw new IllegalArgumentException("Path " + path + " does not exist");
+    }
+
+    var dir = new BasicPathWrapperImpl(path);
+    paths.computeIfAbsent(location, unused -> new ArrayList<>()).add(dir);
+  }
+
+  @Override
+  public void addModule(Location location, String moduleName, Path path) {
+    requireNonNull(location, "location");
+    requireNonNull(location, "moduleName");
+    requireNonNull(path, "path");
+
+    if (!location.isModuleOrientedLocation() && !location.isOutputLocation()) {
+      throw new IllegalArgumentException(
+          "Cannot add a module to a non-module-oriented or non-output location"
+      );
+    }
+
+    if (location instanceof ModuleLocation) {
+      throw new IllegalArgumentException("Cannot register a module within a module");
+    }
+
+    addPackage(new ModuleLocation(location, moduleName), path);
+  }
+
+  @Override
+  public TestDirectory createPackage(Location location) {
+    requireNonNull(location, "location");
+
+    if (location.isModuleOrientedLocation()) {
+      throw new IllegalArgumentException("Location must not be module-oriented");
+    }
+
+    var dir = pathStrategy.newInstance(location.getName());
+    paths.computeIfAbsent(location, unused -> new ArrayList<>()).add(dir);
+    return dir;
+  }
+
+  @Override
+  public TestDirectory createModule(Location location, String moduleName) {
+    requireNonNull(location, "location");
+    requireNonNull(location, "moduleName");
+
+    if (!location.isModuleOrientedLocation() && !location.isOutputLocation()) {
+      throw new IllegalArgumentException(
+          "Cannot add a module to a non-module-oriented or non-output location"
+      );
+    }
+
+    if (location instanceof ModuleLocation) {
+      throw new IllegalArgumentException("Cannot register a module within a module");
+    }
+
+    return createPackage(new ModuleLocation(location, moduleName));
+  }
+
+  @Override
+  public Map<Location, ? extends List<? extends PathWrapper>> getAllPaths() {
+    // Create an immutable copy.
+    var pathsCopy = new HashMap<Location, List<PathWrapper>>();
+    paths.forEach((location, list) -> pathsCopy.put(location, List.copyOf(list)));
+    return Collections.unmodifiableMap(pathsCopy);
+  }
+
+  @Override
+  public PathStrategy getPathStrategy() {
+    return pathStrategy;
+  }
+}
