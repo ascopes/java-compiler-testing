@@ -17,12 +17,12 @@ package io.github.ascopes.jct.acceptancetests.autovalue
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.workspaces.Workspace
 import org.junit.jupiter.api.DisplayName
 
 import java.time.Instant
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 import static org.assertj.core.api.SoftAssertions.assertSoftly
 
 @DisplayName("AutoValue integration tests")
@@ -32,49 +32,50 @@ class AutoValueTest {
   @DisplayName("The AutoValue implementation class is created as expected")
   @JavacCompilerTest
   void autoValueImplementationClassIsCreatedAsExpected(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .createDirectory("org/example")
-        .copyContentsFrom("src/test/resources/code")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org/example")
+          .copyContentsFrom("src/test/resources/code")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .compile()
+      // When
+      def compilation = compiler.compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
 
-    assertThatCompilation(compilation)
-        .classOutput()
-        .packages()
-        .allFilesExist(
-            "org/example/AutoValue_User.class",
-            "org/example/AutoBuilder_UserBuilder.class"
-        )
+      assertThatCompilation(compilation)
+          .classOutput()
+          .packages()
+          .allFilesExist(
+              "org/example/AutoValue_User.class",
+              "org/example/AutoBuilder_UserBuilder.class"
+          )
 
-    def userBuilder = compilation
-        .classOutputs
-        .classLoader
-        .loadClass("org.example.UserBuilder")
+      def userBuilder = compilation
+          .classOutputs
+          .classLoader
+          .loadClass("org.example.UserBuilder")
 
-    def now = Instant.now()
+      def now = Instant.now()
 
-    def user = userBuilder
-        .builder()
-        .setId("123456")
-        .setName("Roy Rodgers McFreely")
-        .setCreatedAt(now)
-        .build()
+      def user = userBuilder
+          .builder()
+          .setId("123456")
+          .setName("Roy Rodgers McFreely")
+          .setCreatedAt(now)
+          .build()
 
-    assertSoftly { softly ->
-      softly.assertThatObject(user)
-          .hasFieldOrPropertyWithValue("id", "123456")
-      softly.assertThatObject(user)
-          .hasFieldOrPropertyWithValue("name", "Roy Rodgers McFreely")
-      softly.assertThatObject(user)
-          .hasFieldOrPropertyWithValue("createdAt", now)
+      assertSoftly { softly ->
+        softly.assertThatObject(user)
+            .hasFieldOrPropertyWithValue("id", "123456")
+        softly.assertThatObject(user)
+            .hasFieldOrPropertyWithValue("name", "Roy Rodgers McFreely")
+        softly.assertThatObject(user)
+            .hasFieldOrPropertyWithValue("createdAt", now)
+      }
     }
   }
 }
