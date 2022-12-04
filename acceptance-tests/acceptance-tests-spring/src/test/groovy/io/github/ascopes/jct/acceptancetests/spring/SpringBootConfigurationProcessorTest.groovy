@@ -17,14 +17,14 @@ package io.github.ascopes.jct.acceptancetests.spring
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.github.ascopes.jct.workspaces.impl.TempDirectory
+import io.github.ascopes.jct.workspaces.PathStrategy
+import io.github.ascopes.jct.workspaces.Workspace
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.JRE
 import org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.workspaces.impl.TempDirectory.newTempDirectory
 import static org.assertj.core.api.Assumptions.assumeThat
 
 @DisplayName("Spring Boot Configuration Processor acceptance tests")
@@ -40,37 +40,38 @@ class SpringBootConfigurationProcessorTest {
   @DisplayName("Spring will index the application context as expected")
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpected(JctCompiler compiler) {
-    // Given
-    // Use a temporary directory here as the configuration processor uses java.io.File internally.
-    def sources = newTempDirectory("sources")
-        .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code", "configuration")
+    try (def workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code", "configuration")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .addAnnotationProcessors(new ConfigurationMetadataAnnotationProcessor())
-        .testDirectoryFactory(TempDirectory.&newTempDirectory)
-        .compile()
+      // When
+      def compilation = compiler
+          .addAnnotationProcessors(new ConfigurationMetadataAnnotationProcessor())
+          .compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
-        .classOutput()
-        .packages()
-        .fileExists("META-INF/spring-configuration-metadata.json")
-        .isNotEmptyFile()
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutput()
+          .packages()
+          .fileExists("META-INF/spring-configuration-metadata.json")
+          .isNotEmptyFile()
+    }
   }
 
   @DisplayName("Spring will index the application context as expected with modules")
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpectedWithModules(JctCompiler compiler) {
-    // Given
-    // Use a temporary directory here as the configuration processor uses java.io.File internally.
-    def sources = newTempDirectory("sources")
-        .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code", "configuration")
-        .createFile("module-info.java").withContents("""
+    try (def workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code", "configuration")
+          .createFile("module-info.java").withContents("""
           module org.example {
             requires java.base;
             requires spring.beans;
@@ -82,19 +83,18 @@ class SpringBootConfigurationProcessorTest {
           }
         """.stripMargin())
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .addAnnotationProcessors(new ConfigurationMetadataAnnotationProcessor())
-        .testDirectoryFactory(TempDirectory.&newTempDirectory)
-        .compile()
+      // When
+      def compilation = compiler
+          .addAnnotationProcessors(new ConfigurationMetadataAnnotationProcessor())
+          .compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
-        .classOutput()
-        .packages()
-        .fileExists("META-INF/spring-configuration-metadata.json")
-        .isNotEmptyFile()
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutput()
+          .packages()
+          .fileExists("META-INF/spring-configuration-metadata.json")
+          .isNotEmptyFile()
+    }
   }
 }

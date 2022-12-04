@@ -17,13 +17,13 @@ package io.github.ascopes.jct.acceptancetests.spring
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.workspaces.Workspace
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.JRE
 import org.springframework.context.index.processor.CandidateComponentsIndexer
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 import static org.assertj.core.api.Assumptions.assumeThat
 
 @DisplayName("Spring Context Indexer acceptance tests")
@@ -39,34 +39,38 @@ class SpringContextIndexerTest {
   @DisplayName("Spring will index the application context as expected")
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpected(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code", "indexer")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code", "indexer")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .addAnnotationProcessors(new CandidateComponentsIndexer())
-        .compile()
+      // When
+      def compilation = compiler
+          .addAnnotationProcessors(new CandidateComponentsIndexer())
+          .compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
-        .classOutput()
-        .packages()
-        .fileExists("META-INF/spring.components")
-        .isNotEmptyFile()
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutput()
+          .packages()
+          .fileExists("META-INF/spring.components")
+          .isNotEmptyFile()
+    }
   }
 
   @DisplayName("Spring will index the application context as expected with modules")
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpectedWithModules(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code", "indexer")
-        .createFile("module-info.java").withContents("""
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code", "indexer")
+          .createFile("module-info.java").withContents("""
           module org.example {
             requires java.base;
             requires spring.beans;
@@ -78,18 +82,18 @@ class SpringContextIndexerTest {
           }
         """.stripMargin())
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .addAnnotationProcessors(new CandidateComponentsIndexer())
-        .compile()
+      // When
+      def compilation = compiler
+          .addAnnotationProcessors(new CandidateComponentsIndexer())
+          .compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
-        .classOutput()
-        .packages()
-        .fileExists("META-INF/spring.components")
-        .isNotEmptyFile()
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutput()
+          .packages()
+          .fileExists("META-INF/spring.components")
+          .isNotEmptyFile()
+    }
   }
 }
