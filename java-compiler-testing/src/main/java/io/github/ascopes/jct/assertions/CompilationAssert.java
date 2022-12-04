@@ -131,34 +131,6 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
   }
 
   /**
-   * Assert that the file manager is closed.
-   *
-   * @return this assertion object to perform further assertions upon, if desired.
-   * @throws AssertionError if the file manager is unexpectedly open.
-   */
-  public CompilationAssert fileManagerIsClosed() {
-    if (!actual.getFileManager().isClosed()) {
-      throw failure("Expected file manager to be closed but it was open");
-    }
-
-    return myself;
-  }
-
-  /**
-   * Assert that the file manager is open.
-   *
-   * @return this assertion object to perform further assertions upon, if desired.
-   * @throws AssertionError if the file manager is unexpectedly closed.
-   */
-  public CompilationAssert fileManagerIsOpen() {
-    if (actual.getFileManager().isClosed()) {
-      throw failure("Expected file manager to be open but it was closed");
-    }
-
-    return myself;
-  }
-
-  /**
    * Perform assertions on the given package group, if it has been configured.
    *
    * <p>If not configured, this will return assertions on a {@code null} value instead.

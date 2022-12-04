@@ -59,7 +59,6 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   private static final int UNSUPPORTED_ARGUMENT = -1;
 
-  private volatile boolean closed;
   private final String release;
   private final Map<Location, PackageContainerGroup> packages;
   private final Map<Location, ModuleContainerGroup> modules;
@@ -70,9 +69,7 @@ public final class JctFileManagerImpl implements JctFileManager {
    *
    * @param release the release to use for multi-release JARs internally.
    */
-  @SuppressWarnings("ThisEscapedInObjectConstruction")
   public JctFileManagerImpl(String release) {
-    closed = false;
     this.release = requireNonNull(release, "release");
     packages = new ConcurrentHashMap<>();
     modules = new ConcurrentHashMap<>();
@@ -81,7 +78,6 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   @Override
   public void addPath(Location location, PathWrapper pathWrapper) {
-    requireFileManagerToBeOpen();
 
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
@@ -120,11 +116,8 @@ public final class JctFileManagerImpl implements JctFileManager {
   }
 
   @Override
-  public void close() throws IOException {
-    // We explicitly close all resources on garbage collection rather than here. This prevents
-    // the compiler implementation making our resources unavailable while we are still using them
-    // to assert further outcomes in tests.
-    closed = true;
+  public void close() {
+    // Nothing to close here.
   }
 
   @Override
@@ -138,10 +131,8 @@ public final class JctFileManagerImpl implements JctFileManager {
     return group != null && group.contains((PathFileObject) fo);
   }
 
-
   @Override
   public void copyContainers(Location from, Location to) {
-    requireFileManagerToBeOpen();
 
     if (from.isOutputLocation()) {
       if (!to.isOutputLocation()) {
@@ -193,7 +184,6 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   @Override
   public void ensureEmptyLocationExists(Location location) {
-    requireFileManagerToBeOpen();
 
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
@@ -217,7 +207,6 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   @Override
   public void flush() {
-    requireFileManagerToBeOpen();
     // Don't do anything else for now.
   }
 
@@ -275,7 +264,6 @@ public final class JctFileManagerImpl implements JctFileManager {
       String className,
       Kind kind
   ) {
-    requireFileManagerToBeOpen();
 
     var group = getExistingPackageOrientedOrOutputGroup(location);
 
@@ -292,7 +280,6 @@ public final class JctFileManagerImpl implements JctFileManager {
       Kind kind,
       FileObject sibling
   ) {
-    requireFileManagerToBeOpen();
 
     var group = getExistingPackageOrientedOrOutputGroup(location);
 
@@ -308,7 +295,6 @@ public final class JctFileManagerImpl implements JctFileManager {
       String packageName,
       String relativeName
   ) {
-    requireFileManagerToBeOpen();
 
     var group = getExistingPackageOrientedOrOutputGroup(location);
 
@@ -325,7 +311,6 @@ public final class JctFileManagerImpl implements JctFileManager {
       String relativeName,
       FileObject sibling
   ) {
-    requireFileManagerToBeOpen();
 
     var group = getExistingPackageOrientedOrOutputGroup(location);
 
@@ -380,7 +365,6 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   @Override
   public boolean handleOption(String current, Iterator<String> remaining) {
-    requireFileManagerToBeOpen();
 
     // We do not consume anything from the command line arguments in this implementation.
     return false;
@@ -404,7 +388,6 @@ public final class JctFileManagerImpl implements JctFileManager {
   @Nullable
   @Override
   public String inferBinaryName(Location location, JavaFileObject file) {
-    requireFileManagerToBeOpen();
 
     if (!(file instanceof PathFileObject)) {
       return null;
@@ -422,7 +405,6 @@ public final class JctFileManagerImpl implements JctFileManager {
   @Nullable
   @Override
   public String inferModuleName(Location location) {
-    requireFileManagerToBeOpen();
     requirePackageOrientedLocation(location);
 
     return location instanceof ModuleLocation
@@ -431,13 +413,7 @@ public final class JctFileManagerImpl implements JctFileManager {
   }
 
   @Override
-  public boolean isClosed() {
-    return closed;
-  }
-
-  @Override
   public boolean isSameFile(@Nullable FileObject a, @Nullable FileObject b) {
-    requireFileManagerToBeOpen();
 
     // Some annotation processors provide null values here for some reason.
     if (a == null || b == null) {
@@ -459,7 +435,6 @@ public final class JctFileManagerImpl implements JctFileManager {
       Set<Kind> kinds,
       boolean recurse
   ) throws IOException {
-    requireFileManagerToBeOpen();
 
     var group = getExistingPackageOrientedOrOutputGroup(location);
 
@@ -586,12 +561,6 @@ public final class JctFileManagerImpl implements JctFileManager {
       throw new IllegalArgumentException(
           "Location " + location.getName() + " must be package-oriented"
       );
-    }
-  }
-
-  private void requireFileManagerToBeOpen() {
-    if (closed) {
-      throw new IllegalStateException("Cannot perform this operation on a closed file manager");
     }
   }
 }

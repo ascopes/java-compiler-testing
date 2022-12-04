@@ -42,7 +42,6 @@ public interface JctFileManager extends JavaFileManager {
    *
    * @param location the location to use.
    * @param path     the path to add.
-   * @throws IllegalStateException if the file manager is {@link #isClosed() closed}.
    */
   void addPath(Location location, PathWrapper path);
 
@@ -51,7 +50,6 @@ public interface JctFileManager extends JavaFileManager {
    *
    * @param from the first location.
    * @param to   the second location.
-   * @throws IllegalStateException if the file manager is {@link #isClosed() closed}.
    */
   void copyContainers(Location from, Location to);
 
@@ -64,7 +62,6 @@ public interface JctFileManager extends JavaFileManager {
    * <p>If the location already exists, then do not do anything.
    *
    * @param location the location to apply an empty container for.
-   * @throws IllegalStateException if the file manager is {@link #isClosed() closed}.
    */
   void ensureEmptyLocationExists(Location location);
 
@@ -127,13 +124,4 @@ public interface JctFileManager extends JavaFileManager {
    * @return the output container impl.
    */
   Collection<OutputContainerGroup> getOutputContainerGroups();
-
-  /**
-   * Determine if the {@link #close()} method has been called on this file manager or not.
-   *
-   * <p>This can safely be called on a closed file manager.
-   *
-   * @return {@code false} if the file manager is open, or {@code true} if it is closed.
-   */
-  boolean isClosed();
 }
