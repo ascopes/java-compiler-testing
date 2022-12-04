@@ -21,8 +21,6 @@ import io.github.ascopes.jct.workspaces.impl.TempDirectory
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.JRE
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 import org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
@@ -40,7 +38,6 @@ class SpringBootConfigurationProcessorTest {
   }
 
   @DisplayName("Spring will index the application context as expected")
-  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpected(JctCompiler compiler) {
     // Given
@@ -66,7 +63,6 @@ class SpringBootConfigurationProcessorTest {
   }
 
   @DisplayName("Spring will index the application context as expected with modules")
-  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpectedWithModules(JctCompiler compiler) {
     // Given

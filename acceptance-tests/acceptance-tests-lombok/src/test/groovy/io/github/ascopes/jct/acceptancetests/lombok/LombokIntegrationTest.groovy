@@ -18,8 +18,6 @@ package io.github.ascopes.jct.acceptancetests.lombok
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 
 import java.nio.file.Path
 
@@ -40,7 +38,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly
 class LombokIntegrationTest {
 
   @DisplayName("Lombok @Data compiles the expected data class")
-  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
   void lombokDataCompilesTheExpectedDataClass(JctCompiler compiler) {
     // Given
@@ -74,7 +71,6 @@ class LombokIntegrationTest {
   }
 
   @DisplayName("Lombok @Data compiles the expected data class with module support")
-  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest(modules = true)
   void lombokDataCompilesTheExpectedDataClassWithModuleSupport(JctCompiler compiler) {
     // Given

@@ -19,8 +19,6 @@ import io.github.ascopes.jct.acceptancetests.serviceloader.ServiceProcessor
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
 import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
@@ -29,7 +27,6 @@ import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 class ServiceProcessorTest {
 
   @DisplayName("Expected files get created when the processor is run")
-  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
   void expectedFilesGetCreated(JctCompiler compiler) {
     def sources = newRamDirectory("sources")
