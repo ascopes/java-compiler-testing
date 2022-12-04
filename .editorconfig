@@ -486,9 +486,9 @@ ij_groovy_wrap_chain_calls_after_dot = false
 ij_groovy_wrap_long_lines = false
 
 [{*.markdown,*.md}]
-indent_size = 4
-tab_width = 4
-ij_continuation_indent_size = 8
+indent_size = 2
+tab_width = 2
+ij_continuation_indent_size = 4
 ij_markdown_force_one_space_after_blockquote_symbol = true
 ij_markdown_force_one_space_after_header_symbol = true
 ij_markdown_force_one_space_after_list_bullet = true

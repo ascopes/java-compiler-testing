@@ -35,7 +35,7 @@ class BasicLegacyCompilationIntegrationTest {
   @DisplayName("I can compile a 'Hello, World!' program using a RAM directory")
   @JavacCompilerTest
   void helloWorldJavacRamDirectory(JctCompiler<?, ?> compiler) {
-    try (var workspace = Workspace.newDefaultWorkspace(PathStrategy.RAM_DIRECTORIES)) {
+    try (var workspace = Workspace.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
       workspace
           .createPackage(StandardLocation.SOURCE_PATH)
           .createFile("com/example/HelloWorld.java").withContents(
@@ -63,7 +63,7 @@ class BasicLegacyCompilationIntegrationTest {
   @DisplayName("I can compile a 'Hello, World!' program using a temp directory")
   @JavacCompilerTest
   void helloWorldJavacTempDirectory(JctCompiler<?, ?> compiler) {
-    try (var workspace = Workspace.newDefaultWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+    try (var workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       workspace
           .createPackage(StandardLocation.SOURCE_PATH)
           .createFile("com/example/HelloWorld.java").withContents(
