@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * TODO(ascopes): description.
+ * Internal workspace implementation details.
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 @NonNullApi
