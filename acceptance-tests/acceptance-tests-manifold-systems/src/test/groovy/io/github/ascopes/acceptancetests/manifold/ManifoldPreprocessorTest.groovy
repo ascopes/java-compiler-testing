@@ -17,10 +17,11 @@ package io.github.ascopes.acceptancetests.manifold
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.workspaces.PathStrategy
+import io.github.ascopes.jct.workspaces.Workspace
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.workspaces.impl.TempDirectory.newTempDirectory
 import static org.assertj.core.api.Assertions.assertThat
 
 @DisplayName("Manifold Preprocessor acceptance tests")
@@ -29,97 +30,102 @@ class ManifoldPreprocessorTest {
   @DisplayName("Preprocessor produces the expected code when a preprocessor symbol is defined")
   @JavacCompilerTest(configurers = [ManifoldPluginConfigurer])
   void preprocessorProducesTheExpectedCodeWhenPreprocessorSymbolIsDefined(JctCompiler compiler) {
-    // Given
-    def sources = newTempDirectory("sources")
-        .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code", "preprocessor", "if")
-        .createFile("build.properties").withContents("SOME_SYMBOL=1")
+    try (def workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code", "preprocessor", "if")
+          .createFile("build.properties").withContents("SOME_SYMBOL=1")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .compile()
+      // When
+      def compilation = compiler.compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
 
-    String greeting = compilation
-        .classOutputs
-        .classLoader
-        .loadClass("org.example.HelloWorld")
-        .getDeclaredConstructor()
-        .newInstance()
-        .getGreeting()
+      String greeting = compilation
+          .classOutputs
+          .classLoader
+          .loadClass("org.example.HelloWorld")
+          .getDeclaredConstructor()
+          .newInstance()
+          .getGreeting()
 
-    assertThat(greeting).isEqualTo("Hello, World! (symbol was defined)")
+      assertThat(greeting).isEqualTo("Hello, World! (symbol was defined)")
+    }
   }
 
   @DisplayName("Preprocessor produces the expected code when a preprocessor symbol is undefined")
   @JavacCompilerTest(configurers = [ManifoldPluginConfigurer])
   void preprocessorProducesTheExpectedCodeWhenPreprocessorSymbolIsUndefined(JctCompiler compiler) {
-    // Given
-    def sources = newTempDirectory("sources")
-        .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code", "preprocessor", "if")
+    try (def workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code", "preprocessor", "if")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .compile()
+      // When
+      def compilation = compiler.compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
 
-    String greeting = compilation
-        .classOutputs
-        .classLoader
-        .loadClass("org.example.HelloWorld")
-        .getDeclaredConstructor()
-        .newInstance()
-        .getGreeting()
+      String greeting = compilation
+          .classOutputs
+          .classLoader
+          .loadClass("org.example.HelloWorld")
+          .getDeclaredConstructor()
+          .newInstance()
+          .getGreeting()
 
-    assertThat(greeting).isEqualTo("Hello, World! (symbol was not defined)")
+      assertThat(greeting).isEqualTo("Hello, World! (symbol was not defined)")
+    }
   }
 
   @DisplayName("Warning directives produce compiler warnings in JCT")
   @JavacCompilerTest(configurers = [ManifoldPluginConfigurer])
   void warningDirectivesProduceCompilerWarningsInJct(JctCompiler compiler) {
-    // Given
-    def sources = newTempDirectory("sources")
-        .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code", "preprocessor", "warning")
+    try (def workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code", "preprocessor", "warning")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .compile()
+      // When
+      def compilation = compiler.compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessful()
-        .diagnostics().warnings().singleElement()
-        .message().isEqualTo("Hello, this is a friendly warning!")
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessful()
+          .diagnostics().warnings().singleElement()
+          .message().isEqualTo("Hello, this is a friendly warning!")
+    }
   }
 
   @DisplayName("Error directives produce compiler errors in JCT")
   @JavacCompilerTest(configurers = [ManifoldPluginConfigurer])
   void warningDirectivesProduceCompilerErrorsInJct(JctCompiler compiler) {
     // Given
-    def sources = newTempDirectory("sources")
-        .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code", "preprocessor", "error")
+    try (def workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code", "preprocessor", "error")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .compile()
+      // When
+      def compilation = compiler.compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isFailure()
-        .diagnostics().errors().singleElement()
-        .message().isEqualTo("Hello, this is an error!")
+      // Then
+      assertThatCompilation(compilation)
+          .isFailure()
+          .diagnostics().errors().singleElement()
+          .message().isEqualTo("Hello, this is an error!")
+    }
   }
 }
