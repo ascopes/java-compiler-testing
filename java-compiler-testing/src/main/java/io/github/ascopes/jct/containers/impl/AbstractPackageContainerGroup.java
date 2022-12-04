@@ -125,24 +125,20 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
   @Override
   public void close() throws IOException {
     // Close everything in a best-effort fashion.
-    var exceptions = new ArrayList<Throwable>();
+    classLoaderLazy.destroy();
+
+    var exceptions = new ArrayList<IOException>();
 
     for (var container : containers) {
       try {
         container.close();
-      } catch (Exception ex) {
+      } catch (IOException ex) {
         exceptions.add(ex);
       }
     }
 
-    try {
-      classLoaderLazy.destroy();
-    } catch (Exception ex) {
-      exceptions.add(ex);
-    }
-
     if (exceptions.size() > 0) {
-      var newEx = new IOException("One or more components failed to close");
+      var newEx = new IOException("Containers failed to close in " + location.getName());
       exceptions.forEach(newEx::addSuppressed);
       throw newEx;
     }

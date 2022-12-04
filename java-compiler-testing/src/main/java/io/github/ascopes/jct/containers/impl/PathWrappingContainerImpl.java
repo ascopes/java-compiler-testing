@@ -70,10 +70,9 @@ public final class PathWrappingContainerImpl implements Container {
   }
 
   @Override
-  public void close() {
-    // Do nothing for this implementation. We have nothing to close.
-    // This also has the side effect of **not** closing TemporaryFileSystems early, as we use this
-    // class with those objects as well.
+  public void close() throws IOException {
+    // Do nothing for this implementation. We have nothing to close here. Anything wrapped in
+    // this type will be managed by the Workspace object instead if it needs to be closed.
   }
 
   @Override
