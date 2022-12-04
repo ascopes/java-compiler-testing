@@ -47,8 +47,7 @@ class BasicLegacyCompilationIntegrationTest {
               "}"
           );
 
-      var compilation = compiler
-          .compile(workspace);
+      var compilation = compiler.compile(workspace);
 
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings();
@@ -75,8 +74,7 @@ class BasicLegacyCompilationIntegrationTest {
               "}"
           );
 
-      var compilation = compiler
-          .compile(workspace);
+      var compilation = compiler.compile(workspace);
 
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings();

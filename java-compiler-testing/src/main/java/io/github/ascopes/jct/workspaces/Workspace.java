@@ -516,7 +516,7 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the workspace.
    */
-  static Workspace newDefaultWorkspace() {
+  static Workspace newWorkspace() {
     return newWorkspace(PathStrategy.defaultStrategy());
   }
 

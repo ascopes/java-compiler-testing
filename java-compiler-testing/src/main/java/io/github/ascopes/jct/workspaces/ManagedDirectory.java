@@ -157,7 +157,6 @@ public interface ManagedDirectory extends PathWrapper {
      * @param lines the lines to write using the default charset.
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory withContents(String... lines);
 
     /**
@@ -167,7 +166,6 @@ public interface ManagedDirectory extends PathWrapper {
      * @param lines   the lines to write.
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory withContents(Charset charset, String... lines);
 
     /**
@@ -176,7 +174,6 @@ public interface ManagedDirectory extends PathWrapper {
      * @param contents the bytes to write.
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory withContents(byte[] contents);
 
     /**
@@ -185,7 +182,6 @@ public interface ManagedDirectory extends PathWrapper {
      * @param resource the resource to copy.
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory copiedFromClassPath(String resource);
 
     /**
@@ -195,7 +191,6 @@ public interface ManagedDirectory extends PathWrapper {
      * @param resource    the resource to copy.
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory copiedFromClassPath(ClassLoader classLoader, String resource);
 
     /**
@@ -204,7 +199,6 @@ public interface ManagedDirectory extends PathWrapper {
      * @param file the file to read.
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory copiedFromFile(File file);
 
     /**
@@ -213,7 +207,6 @@ public interface ManagedDirectory extends PathWrapper {
      * @param file the file to read.
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory copiedFromFile(Path file);
 
     /**
@@ -222,7 +215,6 @@ public interface ManagedDirectory extends PathWrapper {
      * @param url the URL to read.
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory copiedFromUrl(URL url);
 
     /**
@@ -230,7 +222,6 @@ public interface ManagedDirectory extends PathWrapper {
      *
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory thatIsEmpty();
 
     /**
@@ -241,7 +232,6 @@ public interface ManagedDirectory extends PathWrapper {
      * @param inputStream the input stream to read.
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory fromInputStream(@WillClose InputStream inputStream);
   }
 
@@ -263,7 +253,6 @@ public interface ManagedDirectory extends PathWrapper {
      * @param rest  any additional path fragments to copy from.
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory copyContentsFrom(String first, String... rest);
 
     /**
@@ -272,7 +261,6 @@ public interface ManagedDirectory extends PathWrapper {
      * @param dir the directory to copy the contents from.
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory copyContentsFrom(File dir);
 
     /**
@@ -281,7 +269,6 @@ public interface ManagedDirectory extends PathWrapper {
      * @param rootDir the directory to copy the contents from.
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory copyContentsFrom(Path rootDir);
 
     /**
@@ -289,7 +276,6 @@ public interface ManagedDirectory extends PathWrapper {
      *
      * @return the file system for further configuration.
      */
-    @CheckReturnValue
     ManagedDirectory thatIsEmpty();
   }
 }
