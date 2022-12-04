@@ -38,12 +38,18 @@ public interface JctFileManager extends JavaFileManager {
   /**
    * Add a path to a given location.
    *
-   * <p>If the file manager is closed, this will raise an exception.
-   *
    * @param location the location to use.
    * @param path     the path to add.
    */
   void addPath(Location location, PathWrapper path);
+
+  /**
+   * Add a collection of paths to a given location.
+   *
+   * @param location the location to use.
+   * @param paths    the paths to add.
+   */
+  void addPaths(Location location, Collection<? extends PathWrapper> paths);
 
   /**
    * Copy all containers from the first location to the second location.
@@ -68,8 +74,6 @@ public interface JctFileManager extends JavaFileManager {
   /**
    * Get the container group for the given package-oriented location.
    *
-   * <p>This can safely be called on a closed file manager.
-   *
    * @param location the package oriented location.
    * @return the container group, or null if one does not exist.
    */
@@ -79,16 +83,12 @@ public interface JctFileManager extends JavaFileManager {
   /**
    * Get a collection of all package container impl in this file manager.
    *
-   * <p>This can safely be called on a closed file manager.
-   *
    * @return the package container impl.
    */
   Collection<PackageContainerGroup> getPackageContainerGroups();
 
   /**
    * Get the container group for the given module-oriented location.
-   *
-   * <p>This can safely be called on a closed file manager.
    *
    * @param location the module oriented location.
    * @return the container group, or null if one does not exist.
@@ -99,16 +99,12 @@ public interface JctFileManager extends JavaFileManager {
   /**
    * Get a collection of all module container impl in this file manager.
    *
-   * <p>This can safely be called on a closed file manager.
-   *
    * @return the module container impl.
    */
   Collection<ModuleContainerGroup> getModuleContainerGroups();
 
   /**
    * Get the container group for the given output-oriented location.
-   *
-   * <p>This can safely be called on a closed file manager.
    *
    * @param location the output oriented location.
    * @return the container group, or null if one does not exist.
@@ -118,8 +114,6 @@ public interface JctFileManager extends JavaFileManager {
 
   /**
    * Get a collection of all output container impl in this file manager.
-   *
-   * <p>This can safely be called on a closed file manager.
    *
    * @return the output container impl.
    */
