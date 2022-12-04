@@ -18,10 +18,10 @@ package io.github.ascopes.jct.acceptancetests.serviceloader.testing
 import io.github.ascopes.jct.acceptancetests.serviceloader.ServiceProcessor
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.workspaces.Workspace
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 
 @DisplayName("ServiceProcessor tests (no JPMS)")
 class ServiceProcessorTest {
@@ -29,20 +29,23 @@ class ServiceProcessorTest {
   @DisplayName("Expected files get created when the processor is run")
   @JavacCompilerTest
   void expectedFilesGetCreated(JctCompiler compiler) {
-    def sources = newRamDirectory("sources")
-        .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code")
 
-    def compilation = compiler
-        .addAnnotationProcessors(new ServiceProcessor())
-        .addSourcePath(sources)
-        .compile()
+      def compilation = compiler
+          .addAnnotationProcessors(new ServiceProcessor())
+          .compile(workspace)
 
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
-        .classOutput()
-        .packages()
-        .fileExists("META-INF/services/org.example.InsultProvider")
-        .hasContent("org.example.MeanInsultProviderImpl")
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutput()
+          .packages()
+          .fileExists("META-INF/services/org.example.InsultProvider")
+          .hasContent("org.example.MeanInsultProviderImpl")
+    }
   }
 }
