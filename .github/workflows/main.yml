@@ -8,7 +8,7 @@ on:
 
 jobs:
   compliance:
-    name: Check Compliance
+    name: Formatting, licenses, security scan
     runs-on: ubuntu-latest
 
     steps:
@@ -52,7 +52,7 @@ jobs:
 
 
   generate-javadocs:
-    name: Generate
+    name: JavaDocs
     runs-on: ubuntu-latest
 
     steps:
