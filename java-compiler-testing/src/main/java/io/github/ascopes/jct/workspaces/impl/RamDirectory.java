@@ -103,7 +103,7 @@ public final class RamDirectory extends AbstractManagedDirectory {
     // Ensure the base directory exists.
     uncheckedIo(() -> Files.createDirectories(path));
 
-    var fs = new RamDirectory(name, fileSystem, path,fileSystem.getSeparator());
+    var fs = new RamDirectory(name, fileSystem, path, fileSystem.getSeparator());
 
     LOGGER.debug("Initialized new root '{}' using RAM disk at {}", name, path.toUri());
 
