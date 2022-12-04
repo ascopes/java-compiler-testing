@@ -17,43 +17,44 @@ package io.github.ascopes.jct.acceptancetests.dagger
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.workspaces.Workspace
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 
 @DisplayName("Dagger acceptance tests")
 class DaggerTest {
   @DisplayName("Dagger DI runs as expected in the annotation processing phase")
   @JavacCompilerTest
   void daggerDiRunsAsExpectedInTheAnnotationProcessingPhase(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .compile()
+      // When
+      def compilation = compiler.compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation).isSuccessfulWithoutWarnings()
+      // Then
+      assertThatCompilation(compilation).isSuccessfulWithoutWarnings()
 
-    assertThatCompilation(compilation)
-        .sourceOutput().packages()
-        .fileExists("org/example/WebServer_Factory.java").isRegularFile()
+      assertThatCompilation(compilation)
+          .sourceOutput().packages()
+          .fileExists("org/example/WebServer_Factory.java").isRegularFile()
 
-    assertThatCompilation(compilation)
-        .classOutput().packages()
-        .fileExists("org/example/WebServer.class").isRegularFile()
+      assertThatCompilation(compilation)
+          .classOutput().packages()
+          .fileExists("org/example/WebServer.class").isRegularFile()
 
-    assertThatCompilation(compilation)
-        .classOutput().packages()
-        .fileExists("org/example/WebServerConfiguration.class").isRegularFile()
+      assertThatCompilation(compilation)
+          .classOutput().packages()
+          .fileExists("org/example/WebServerConfiguration.class").isRegularFile()
 
-    assertThatCompilation(compilation)
-        .classOutput().packages()
-        .fileExists("org/example/WebServer_Factory.class").isRegularFile()
+      assertThatCompilation(compilation)
+          .classOutput().packages()
+          .fileExists("org/example/WebServer_Factory.class").isRegularFile()
+    }
   }
 }
