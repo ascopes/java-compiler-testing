@@ -18,8 +18,6 @@ package io.github.ascopes.jct.acceptancetests.autovalue
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 
 import java.time.Instant
 
@@ -32,7 +30,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly
 class AutoValueTest {
 
   @DisplayName("The AutoValue implementation class is created as expected")
-  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
   void autoValueImplementationClassIsCreatedAsExpected(JctCompiler compiler) {
     // Given

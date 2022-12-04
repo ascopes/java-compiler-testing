@@ -15,13 +15,10 @@
  */
 package io.github.ascopes.jct.acceptancetests.autoservice
 
-
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import io.github.ascopes.jct.workspaces.Workspace
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
 
@@ -29,7 +26,6 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 class AutoServiceTest {
 
   @DisplayName("The AutoService descriptor is created as expected")
-  @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
   void autoServiceDescriptorIsCreatedAsExpected(JctCompiler compiler) {
     try (def workspace = Workspace.newWorkspace()) {
