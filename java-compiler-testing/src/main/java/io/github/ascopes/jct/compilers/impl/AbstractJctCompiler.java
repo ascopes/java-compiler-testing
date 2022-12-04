@@ -24,7 +24,6 @@ import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.workspaces.Workspace;
-import io.github.ascopes.jct.workspaces.impl.WorkspaceImpl;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -132,10 +131,8 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   @Override
   public final <E extends Exception> A configure(JctCompilerConfigurer<E> configurer) throws E {
     requireNonNull(configurer, "configurer");
-    var me = myself();
-    configurer.configure(me);
-
-    return me;
+    configurer.configure(this);
+    return myself();
   }
 
   /**
