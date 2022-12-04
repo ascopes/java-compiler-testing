@@ -17,10 +17,10 @@ package io.github.ascopes.jct.acceptancetests.immutables
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.workspaces.Workspace
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 import static org.assertj.core.api.SoftAssertions.assertSoftly
 
 /**
@@ -38,68 +38,70 @@ class ImmutablesIntegrationTest {
   @DisplayName("Immutables @Value produces the expected class")
   @JavacCompilerTest
   void immutablesValueProducesTheExpectedClass(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .rootDirectory()
-        .copyContentsFrom("src", "test", "resources", "code", "flat")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .rootDirectory()
+          .copyContentsFrom("src", "test", "resources", "code", "flat")
 
-    def compilation = compiler
-        .addSourcePath(sources)
-        .compile()
+      def compilation = compiler.compile(workspace)
 
-    assertThatCompilation(compilation)
-        .isSuccessful()
+      assertThatCompilation(compilation)
+          .isSuccessful()
 
-    def animalClass = compilation
-        .classOutputs
-        .classLoader
-        .loadClass("org.example.ImmutableAnimal")
+      def animalClass = compilation
+          .classOutputs
+          .classLoader
+          .loadClass("org.example.ImmutableAnimal")
 
-    def animal = animalClass
-        .builder()
-        .name("Cat")
-        .legCount(4)
-        .age(5)
-        .build()
+      def animal = animalClass
+          .builder()
+          .name("Cat")
+          .legCount(4)
+          .age(5)
+          .build()
 
-    assertSoftly { softly ->
-      softly.assertThatObject(animal.name).isEqualTo("Cat")
-      softly.assertThatObject(animal.legCount).isEqualTo(4)
-      softly.assertThatObject(animal.age).isEqualTo(5)
+      assertSoftly { softly ->
+        softly.assertThatObject(animal.name).isEqualTo("Cat")
+        softly.assertThatObject(animal.legCount).isEqualTo(4)
+        softly.assertThatObject(animal.age).isEqualTo(5)
+      }
     }
   }
 
   @DisplayName("Immutables @Value produces the expected class for modules")
   @JavacCompilerTest(modules = true)
   void immutablesValueProducesTheExpectedClassForModules(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .rootDirectory()
-        .copyContentsFrom("src", "test", "resources", "code", "jpms")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .rootDirectory()
+          .copyContentsFrom("src", "test", "resources", "code", "jpms")
 
-    def compilation = compiler
-        .addSourcePath(sources)
-        .compile()
+      def compilation = compiler.compile(workspace)
 
-    assertThatCompilation(compilation)
-        .isSuccessful()
+      assertThatCompilation(compilation)
+          .isSuccessful()
 
-    def animalClass = compilation
-        .classOutputs
-        .classLoader
-        .loadClass("org.example.ImmutableAnimal")
+      def animalClass = compilation
+          .classOutputs
+          .classLoader
+          .loadClass("org.example.ImmutableAnimal")
 
-    def animal = animalClass
-        .builder()
-        .name("Cat")
-        .legCount(4)
-        .age(5)
-        .build()
+      def animal = animalClass
+          .builder()
+          .name("Cat")
+          .legCount(4)
+          .age(5)
+          .build()
 
-    assertSoftly { softly ->
-      softly.assertThatObject(animal.name).isEqualTo("Cat")
-      softly.assertThatObject(animal.legCount).isEqualTo(4)
-      softly.assertThatObject(animal.age).isEqualTo(5)
+      assertSoftly { softly ->
+        softly.assertThatObject(animal.name).isEqualTo("Cat")
+        softly.assertThatObject(animal.legCount).isEqualTo(4)
+        softly.assertThatObject(animal.age).isEqualTo(5)
+      }
     }
   }
 }
