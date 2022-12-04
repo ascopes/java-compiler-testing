@@ -18,10 +18,12 @@ package io.github.ascopes.jct.workspaces.impl;
 import static io.github.ascopes.jct.utils.FileUtils.assertValidRootName;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
-import io.github.ascopes.jct.utils.RecursiveDeleter;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import javax.annotation.CheckReturnValue;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -63,7 +65,22 @@ public final class TempDirectory extends AbstractManagedDirectory {
         rootDirectory.toUri(),
         rootDirectory.getFileSystem()
     );
-    RecursiveDeleter.deleteAll(rootDirectory);
+
+    Files.walkFileTree(rootDirectory, new SimpleFileVisitor<>() {
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        Files.delete(file);
+        LOGGER.trace("Deleted {}", file);
+        return super.visitFile(file, attrs);
+      }
+
+      @Override
+      public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+        Files.delete(dir);
+        LOGGER.trace("Deleted {}", dir);
+        return super.postVisitDirectory(dir, exc);
+      }
+    });
   }
 
   /**
