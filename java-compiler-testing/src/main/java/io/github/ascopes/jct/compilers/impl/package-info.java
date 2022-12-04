@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * TODO(ascopes): description.
+ * Internal common shared compiler components.
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 @NonNullApi

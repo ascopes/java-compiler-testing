@@ -46,7 +46,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public class WorkspaceImpl implements Workspace {
+public final class WorkspaceImpl implements Workspace {
 
   private final PathStrategy pathStrategy;
   private final Map<Location, List<PathWrapper>> paths;
