@@ -96,17 +96,18 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
 
   @Override
   public void close() throws IOException {
-    var exceptions = new ArrayList<Throwable>();
+    var exceptions = new ArrayList<IOException>();
+
     for (var group : modules.values()) {
       try {
         group.close();
-      } catch (Exception ex) {
+      } catch (IOException ex) {
         exceptions.add(ex);
       }
     }
 
     if (!exceptions.isEmpty()) {
-      var newEx = new IOException("One or more module impl failed to close");
+      var newEx = new IOException("Containers failed to close in " + location.getName());
       exceptions.forEach(newEx::addSuppressed);
       throw newEx;
     }
