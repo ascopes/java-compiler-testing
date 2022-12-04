@@ -39,6 +39,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.tools.DiagnosticListener;
@@ -64,6 +65,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>> {
 
+  // Locations that we have to ensure exist before the compiler is run.
   private static final Set<StandardLocation> REQUIRED_LOCATIONS = Set.of(
       // We have to manually create this one as javac will not attempt to access it lazily. Instead,
       // it will just abort if it is not present. This means we cannot take advantage of the
@@ -76,6 +78,19 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
       // I might make this disabled by default in the future if there is too much overhead from
       // doing this by default.
       StandardLocation.NATIVE_HEADER_OUTPUT
+  );
+
+  // Locations to duplicate paths for when using annotation processor path discovery with
+  // inheritance enabled.
+  // Mapping of source location to target location.
+  private static final Map<StandardLocation, StandardLocation> INHERITED_AP_PATHS = Map.of(
+      StandardLocation.CLASS_PATH, StandardLocation.ANNOTATION_PROCESSOR_PATH
+      // https://stackoverflow.com/q/53084037
+      // Seems that javac will always use the classpath to implement this behaviour, and never
+      // the module path. Let's keep this simple and mimic this behaviour. If someone complains
+      // about it being problematic in the future, then I am open to change how this works to
+      // keep it sensible.
+      /* StandardLocation.MODULE_PATH, StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH */
   );
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilationFactory.class);
@@ -466,17 +481,8 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
         break;
 
       case INCLUDE_DEPENDENCIES: {
-        // https://stackoverflow.com/q/53084037
-        // Seems that javac will always use the classpath to implement this behaviour, and never
-        // the module path. Let's keep this simple and mimic this behaviour. If someone complains
-        // about it being problematic in the future, then I am open to change how this works to
-        // keep it sensible.
         LOGGER.trace("Copying classpath dependencies into the annotation processor path");
-        fileManager.copyContainers(
-            StandardLocation.CLASS_PATH,
-            StandardLocation.ANNOTATION_PROCESSOR_PATH
-        );
-
+        INHERITED_AP_PATHS.forEach(fileManager::copyContainers);
         break;
       }
 
