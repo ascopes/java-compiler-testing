@@ -17,6 +17,7 @@ package io.github.ascopes.jct.acceptancetests.autofactory
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.workspaces.Workspace
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
@@ -24,7 +25,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import java.time.Instant
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 import static org.assertj.core.api.SoftAssertions.assertSoftly
 
 @DisplayName("AutoFactory integration tests")
@@ -35,42 +35,43 @@ class AutoFactoryTest {
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
   void autoFactoryClassIsCreatedAsExpected(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .createDirectory("org/example")
-        .copyContentsFrom("src/test/resources/code")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org/example")
+          .copyContentsFrom("src/test/resources/code")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .compile()
+      // When
+      def compilation = compiler.compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
-        .classOutput()
-        .packages()
-        .fileExists("org/example/UserFactory.class")
-        .isNotEmptyFile()
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutput()
+          .packages()
+          .fileExists("org/example/UserFactory.class")
+          .isNotEmptyFile()
 
-    def userFactory = compilation
-        .classOutputs
-        .classLoader
-        .loadClass("org.example.UserFactory")
-        .getConstructor()
-        .newInstance()
+      def userFactory = compilation
+          .classOutputs
+          .classLoader
+          .loadClass("org.example.UserFactory")
+          .getConstructor()
+          .newInstance()
 
-    def now = Instant.now()
+      def now = Instant.now()
 
-    def user = userFactory.create("12345", "Roy Rodgers McFreely", now)
+      def user = userFactory.create("12345", "Roy Rodgers McFreely", now)
 
-    assertSoftly { softly ->
-      softly.assertThatObject(user)
-          .hasFieldOrPropertyWithValue("id", "12345")
-      softly.assertThatObject(user)
-          .hasFieldOrPropertyWithValue("name", "Roy Rodgers McFreely")
-      softly.assertThatObject(user)
-          .hasFieldOrPropertyWithValue("createdAt", now)
+      assertSoftly { softly ->
+        softly.assertThatObject(user)
+            .hasFieldOrPropertyWithValue("id", "12345")
+        softly.assertThatObject(user)
+            .hasFieldOrPropertyWithValue("name", "Roy Rodgers McFreely")
+        softly.assertThatObject(user)
+            .hasFieldOrPropertyWithValue("createdAt", now)
+      }
     }
   }
 }
