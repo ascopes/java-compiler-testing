@@ -266,25 +266,21 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
       return withContents(DEFAULT_CHARSET, lines);
     }
 
-    @CheckReturnValue
     @Override
     public ManagedDirectory withContents(Charset charset, String... lines) {
       return withContents(String.join("\n", lines).getBytes(charset));
     }
 
-    @CheckReturnValue
     @Override
     public ManagedDirectory withContents(byte[] contents) {
       return uncheckedIo(() -> createFile(new ByteArrayInputStream(contents)));
     }
 
-    @CheckReturnValue
     @Override
     public ManagedDirectory copiedFromClassPath(String resource) {
       return copiedFromClassPath(currentCallerClassLoader(), resource);
     }
 
-    @CheckReturnValue
     @Override
     public ManagedDirectory copiedFromClassPath(ClassLoader classLoader, String resource) {
       return uncheckedIo(() -> {
@@ -298,13 +294,11 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
       });
     }
 
-    @CheckReturnValue
     @Override
     public ManagedDirectory copiedFromFile(File file) {
       return copiedFromFile(file.toPath());
     }
 
-    @CheckReturnValue
     @Override
     public ManagedDirectory copiedFromFile(Path file) {
       return uncheckedIo(() -> {
@@ -314,19 +308,16 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
       });
     }
 
-    @CheckReturnValue
     @Override
     public ManagedDirectory copiedFromUrl(URL url) {
       return uncheckedIo(() -> createFile(url.openStream()));
     }
 
-    @CheckReturnValue
     @Override
     public ManagedDirectory thatIsEmpty() {
       return fromInputStream(InputStream.nullInputStream());
     }
 
-    @CheckReturnValue
     @Override
     public ManagedDirectory fromInputStream(@WillClose InputStream inputStream) {
       return uncheckedIo(() -> createFile(inputStream));
@@ -370,20 +361,17 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
       this.targetPath = makeRelativeToHere(targetPath);
     }
 
-    @CheckReturnValue
     @Override
     public ManagedDirectory copyContentsFrom(String first, String... rest) {
       // Path.of is fine here as it is for the default file system.
       return copyContentsFrom(Path.of(first, rest));
     }
 
-    @CheckReturnValue
     @Override
     public ManagedDirectory copyContentsFrom(File dir) {
       return copyContentsFrom(dir.toPath());
     }
 
-    @CheckReturnValue
     @Override
     public ManagedDirectory copyContentsFrom(Path rootDir) {
       uncheckedIo(() -> {
@@ -423,7 +411,6 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
       return AbstractManagedDirectory.this;
     }
 
-    @CheckReturnValue
     @Override
     public ManagedDirectory thatIsEmpty() {
       uncheckedIo(() -> Files.createDirectories(targetPath));
