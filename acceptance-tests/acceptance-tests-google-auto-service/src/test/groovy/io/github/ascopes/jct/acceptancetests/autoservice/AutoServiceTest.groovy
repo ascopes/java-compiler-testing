@@ -18,12 +18,12 @@ package io.github.ascopes.jct.acceptancetests.autoservice
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.workspaces.Workspace
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 
 @DisplayName("AutoService integration tests")
 class AutoServiceTest {
@@ -32,22 +32,23 @@ class AutoServiceTest {
   @Execution(ExecutionMode.CONCURRENT)
   @JavacCompilerTest
   void autoServiceDescriptorIsCreatedAsExpected(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .createDirectory("org/example")
-        .copyContentsFrom("src/test/resources/code")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org/example")
+          .copyContentsFrom("src/test/resources/code")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .compile()
+      // When
+      def compilation = compiler.compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
-        .classOutput()
-        .packages()
-        .fileExists("META-INF/services/org.example.SomeInterface")
-        .hasContent("org.example.SomeImpl")
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutput()
+          .packages()
+          .fileExists("META-INF/services/org.example.SomeInterface")
+          .hasContent("org.example.SomeImpl")
+    }
   }
 }
