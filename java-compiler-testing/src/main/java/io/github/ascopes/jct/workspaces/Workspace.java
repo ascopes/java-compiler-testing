@@ -300,7 +300,7 @@ public interface Workspace extends AutoCloseable {
    * @return the test directory that was created.
    * @throws IllegalArgumentException if the inputs are invalid.
    */
-  TestDirectory createPackage(Location location);
+  ManagedDirectory createPackage(Location location);
 
   /**
    * Create a new test directory for a package root and associate it with the given module name in
@@ -328,14 +328,14 @@ public interface Workspace extends AutoCloseable {
    * @return the test directory that was created.
    * @throws IllegalArgumentException if the inputs are invalid.
    */
-  TestDirectory createModule(Location location, String moduleName);
+  ManagedDirectory createModule(Location location, String moduleName);
 
   /**
    * Create a package in the class outputs.
    *
    * @return the created test directory.
    */
-  default TestDirectory createClassOutputPackage() {
+  default ManagedDirectory createClassOutputPackage() {
     return createPackage(StandardLocation.CLASS_OUTPUT);
   }
 
@@ -345,7 +345,7 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  default TestDirectory createClassOutputModule(String moduleName) {
+  default ManagedDirectory createClassOutputModule(String moduleName) {
     return createModule(StandardLocation.CLASS_OUTPUT, moduleName);
   }
 
@@ -354,7 +354,7 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the created test directory.
    */
-  default TestDirectory createSourceOutputPackage() {
+  default ManagedDirectory createSourceOutputPackage() {
     return createPackage(StandardLocation.SOURCE_OUTPUT);
   }
 
@@ -364,7 +364,7 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  default TestDirectory createSourceOutputModule(String moduleName) {
+  default ManagedDirectory createSourceOutputModule(String moduleName) {
     return createModule(StandardLocation.SOURCE_OUTPUT, moduleName);
   }
 
@@ -373,7 +373,7 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the created test directory.
    */
-  default TestDirectory createClassPathPackage() {
+  default ManagedDirectory createClassPathPackage() {
     return createPackage(StandardLocation.CLASS_PATH);
   }
 
@@ -383,7 +383,7 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  default TestDirectory createModulePathModule(String moduleName) {
+  default ManagedDirectory createModulePathModule(String moduleName) {
     return createModule(StandardLocation.MODULE_PATH, moduleName);
   }
 
@@ -392,7 +392,7 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the created test directory.
    */
-  default TestDirectory createSourcePathPackage() {
+  default ManagedDirectory createSourcePathPackage() {
     return createPackage(StandardLocation.SOURCE_PATH);
   }
 
@@ -410,7 +410,7 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  default TestDirectory createSourcePathModule(String moduleName) {
+  default ManagedDirectory createSourcePathModule(String moduleName) {
     return createModule(StandardLocation.MODULE_SOURCE_PATH, moduleName);
   }
 
@@ -422,7 +422,7 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the created test directory.
    */
-  default TestDirectory createAnnotationProcessorPathPackage() {
+  default ManagedDirectory createAnnotationProcessorPathPackage() {
     return createPackage(StandardLocation.ANNOTATION_PROCESSOR_PATH);
   }
 
@@ -435,7 +435,7 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  default TestDirectory createAnnotationProcessorPathModule(String moduleName) {
+  default ManagedDirectory createAnnotationProcessorPathModule(String moduleName) {
     return createModule(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, moduleName);
   }
 
@@ -444,7 +444,7 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the created test directory.
    */
-  default TestDirectory createPlatformClassPathPackage() {
+  default ManagedDirectory createPlatformClassPathPackage() {
     return createPackage(StandardLocation.PLATFORM_CLASS_PATH);
   }
 
@@ -453,7 +453,7 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the created test directory.
    */
-  default TestDirectory createNativeHeaderOutputPackage() {
+  default ManagedDirectory createNativeHeaderOutputPackage() {
     return createPackage(StandardLocation.NATIVE_HEADER_OUTPUT);
   }
 
@@ -463,7 +463,7 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  default TestDirectory createNativeHeaderOutputModule(String moduleName) {
+  default ManagedDirectory createNativeHeaderOutputModule(String moduleName) {
     return createModule(StandardLocation.NATIVE_HEADER_OUTPUT, moduleName);
   }
 
@@ -473,7 +473,7 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  default TestDirectory createUpgradeModulePathModule(String moduleName) {
+  default ManagedDirectory createUpgradeModulePathModule(String moduleName) {
     return createModule(StandardLocation.UPGRADE_MODULE_PATH, moduleName);
   }
 
@@ -483,7 +483,7 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  default TestDirectory createSystemModulePathModule(String moduleName) {
+  default ManagedDirectory createSystemModulePathModule(String moduleName) {
     return createModule(StandardLocation.SYSTEM_MODULES, moduleName);
   }
 
@@ -493,7 +493,7 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  default TestDirectory createPatchModulePathModule(String moduleName) {
+  default ManagedDirectory createPatchModulePathModule(String moduleName) {
     return createModule(StandardLocation.PATCH_MODULE_PATH, moduleName);
   }
 

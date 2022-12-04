@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.workspaces;
 
+import io.github.ascopes.jct.workspaces.impl.AbstractManagedDirectory;
 import io.github.ascopes.jct.workspaces.impl.RamDirectory;
 import io.github.ascopes.jct.workspaces.impl.TempDirectory;
 import java.io.File;
@@ -67,9 +68,9 @@ public enum PathStrategy {
    */
   TEMP_DIRECTORIES(TempDirectory::newTempDirectory);
 
-  private final Function<String, TestDirectory> constructor;
+  private final Function<String, AbstractManagedDirectory> constructor;
 
-  PathStrategy(Function<String, TestDirectory> constructor) {
+  PathStrategy(Function<String, AbstractManagedDirectory> constructor) {
     this.constructor = constructor;
   }
 
@@ -87,7 +88,7 @@ public enum PathStrategy {
    * @return the new test directory.
    */
   @API(since = "0.0.1", status = Status.INTERNAL)
-  public TestDirectory newInstance(String name) {
+  public AbstractManagedDirectory newInstance(String name) {
     return constructor.apply(name);
   }
 

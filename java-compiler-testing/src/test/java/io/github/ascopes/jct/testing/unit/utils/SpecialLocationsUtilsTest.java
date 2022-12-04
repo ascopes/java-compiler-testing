@@ -187,7 +187,7 @@ class SpecialLocationsUtilsTest implements StaticClassTestTemplate {
         var nextPath = Files
             .createDirectory(root.resolve(UUID.randomUUID().toString()))
             .toAbsolutePath();
-        LOGGER.debug("Created dir within temp location {}", nextPath);
+        LOGGER.trace("Created dir within temp location {}", nextPath);
         paths.add(nextPath);
       }
     }
@@ -222,17 +222,18 @@ class SpecialLocationsUtilsTest implements StaticClassTestTemplate {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
           Files.delete(file);
-          LOGGER.debug("Deleted file for temp location {}", file);
+          LOGGER.trace("Deleted file for temp location {}", file);
           return FileVisitResult.CONTINUE;
         }
 
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
           Files.delete(dir);
-          LOGGER.debug("Deleted dir for temp location {}", dir);
+          LOGGER.trace("Deleted dir for temp location {}", dir);
           return FileVisitResult.CONTINUE;
         }
       });
+      LOGGER.debug("Deleted temp dir {}", root);
     }
   }
 
