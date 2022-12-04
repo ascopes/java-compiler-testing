@@ -64,6 +64,20 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>> {
 
+  private static final Set<StandardLocation> REQUIRED_LOCATIONS = Set.of(
+      // We have to manually create this one as javac will not attempt to access it lazily. Instead,
+      // it will just abort if it is not present. This means we cannot take advantage of the
+      // container group creating the roots as we try to access them for this specific case.
+      StandardLocation.SOURCE_OUTPUT,
+      // Annotation processors that create files will need this directory to exist if it is to
+      // work properly.
+      StandardLocation.CLASS_OUTPUT,
+      // We need to provide a header output path in case header generation is enabled at any stage.
+      // I might make this disabled by default in the future if there is too much overhead from
+      // doing this by default.
+      StandardLocation.NATIVE_HEADER_OUTPUT
+  );
+
   private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilationFactory.class);
 
   private final Workspace workspace;
@@ -221,14 +235,9 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     configureJvmSystemModules(fileManager);
     configureAnnotationProcessorPaths(fileManager);
 
-    // We have to manually create this one as javac will not attempt to access it lazily. Instead,
-    // it will just abort if it is not present. This means we cannot take advantage of the
-    // PathLocationRepository creating the roots as we try to access them for this specific case.
-    createLocationIfNotPresent(fileManager, StandardLocation.CLASS_OUTPUT);
-
-    // Annotation processors that create files will need this directory to exist if it is to
-    // work properly.
-    createLocationIfNotPresent(fileManager, StandardLocation.SOURCE_OUTPUT);
+    for (var requiredLocation : REQUIRED_LOCATIONS) {
+      createLocationIfNotPresent(fileManager, requiredLocation);
+    }
 
     return fileManager;
   }
