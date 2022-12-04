@@ -42,47 +42,48 @@ are always welcome!
 ### In-memory code, using RAM disks for source directories
 
 ```java
+
 @DisplayName("Example tests")
 class ExampleTest {
 
-    @DisplayName("I can compile a Hello World application")
-    @JavacCompilerTest
-    void canCompileHelloWorld(JctCompiler<?, ?> compiler) {
-        // Given
-        var sources = newRamDirectory("src")
-                .createFile("org/example/Message.java").withContents("""
-                        package org.example;
+  @DisplayName("I can compile a Hello World application")
+  @JavacCompilerTest
+  void canCompileHelloWorld(JctCompiler<?, ?> compiler) {
+    try (var workspace = Workspace.newWorkspace()) {
+      // Given
+      var sources = workspace
+          .createSourcePathPackage()
+          .createFile("org/example/Message.java").withContents("""
+              package org.example;
+                  
+              import lombok.Data;
+              import lombok.NonNull;
+                  
+              @Data
+              public class Message {
+                private String content;
+                  
+                public static void main(String[] args) {
+                  Message message = new Message("Hello, World!");
+                  System.out.println(message);
+                }
+              }
+              """
+          );
 
-                        import lombok.Data;
-                        import lombok.NonNull;
+      // When
+      var compilation = compiler.compile(workspace);
 
-                        @Data
-                        public class Message {
-                          private String content;
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings();
 
-                          public static void main(String[] args) {
-                            Message message = new Message("Hello, World!");
-                            System.out.println(message);
-                          }
-                        }
-                        """
-                );
-
-        // When
-        var compilation = compiler
-                .addSourcePath(sources)
-                .compile();
-
-        // Then
-        assertThatCompilation(compilation)
-                .isSuccessfulWithoutWarnings();
-
-        assertThatCompilation(compilation)
-                .classOutput().packages()
-                .fileExists("com/example/Message.class")
-                .isNotEmptyFile();
+      assertThatCompilation(compilation)
+          .classOutput().packages()
+          .fileExists("com/example/Message.class")
+          .isNotEmptyFile();
     }
-}
+  }
 ```
 
 ### Compiling and testing with a custom annotation processor
@@ -99,39 +100,41 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 class JsonSchemaAnnotationProcessorTest {
 
-    @JavacCompilerTest(minVersion = 11, maxVersion = 19)
-    void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler<?, ?> compiler) {
-        // Given
-        var sources = newRamDirectory("sources")
-                .createDirectory("org", "example", "tests")
-                .copyContentsFrom("src", "test", "resources", "code", "schematest");
+  @JavacCompilerTest(minVersion = 11, maxVersion = 19)
+  void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler<?, ?> compiler) {
+    try (var workspace = Workspace.newWorkspace()) {
+      // Given
+      var sources = workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example", "tests")
+          .copyContentsFrom("src", "test", "resources", "code", "schematest");
 
-        // When
-        var compilation = compiler
-                .addSources(sources)
-                .addAnnotationProcessors(new JsonSchemaAnnotationProcessor())
-                .addAnnotationProcessorOptions("jsonschema.verbose=true")
-                .failOnWarnings(true)
-                .showDeprecationWarnings(true)
-                .compile();
+      // When
+      var compilation = compiler
+          .addAnnotationProcessors(new JsonSchemaAnnotationProcessor())
+          .addAnnotationProcessorOptions("jsonschema.verbose=true")
+          .failOnWarnings(true)
+          .showDeprecationWarnings(true)
+          .compile(compiler);
 
-        // Then
-        assertThatCompilation(compilation)
-                .isSuccessfulWithoutWarnings();
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings();
 
-        assertThatCompilation(compilation)
-                .diagnostics().notes().singleElement()
-                .message().isEqualTo(
-                        "Creating JSON schema in Java %s for package org.example.tests",
-                        compiler.getRelease()
-                );
+      assertThatCompilation(compilation)
+          .diagnostics().notes().singleElement()
+          .message().isEqualTo(
+              "Creating JSON schema in Java %s for package org.example.tests",
+              compiler.getRelease()
+          );
 
-        assertThatCompilation(compilation)
-                .classOutputs().packages()
-                .fileExists("json-schemas/UserSchema.json").contents()
-                .isNotEmpty()
-                .satisfies(contents -> JSONAssert.assertEquals(...));
+      assertThatCompilation(compilation)
+          .classOutputs().packages()
+          .fileExists("json-schemas/UserSchema.json").contents()
+          .isNotEmpty()
+          .satisfies(contents -> JSONAssert.assertEquals(...));
     }
+  }
 }
 ```
 
@@ -148,59 +151,60 @@ Even Maven lacks native support for this, still!
 @DisplayName("Example tests")
 class ExampleTest {
 
-    @DisplayName("I can compile a module that is using Lombok")
-    @JavacCompilerTest(modules = true)
-    void canCompileModuleUsingLombok(JctCompiler<?, ?> compiler) {
-        // Given
-        var sources = newRamDirectory("hello.world")
-                .createFile("org/example/Message.java").withContents("""
-                        package org.example;
+  @DisplayName("I can compile a module that is using Lombok")
+  @JavacCompilerTest(modules = true)
+  void canCompileModuleUsingLombok(JctCompiler<?, ?> compiler) {
+    try (var workspace = Workspace.newWorkspace()) {
+      // Given
+      var sources = workspace
+          .createSourcePathPackage("hello.world")
+          .createFile("org/example/Message.java").withContents("""
+                package org.example;
 
-                        import lombok.Data;
-                        import lombok.NonNull;
+                import lombok.Data;
+                import lombok.NonNull;
 
-                        @Data
-                        public class Message {
-                          @NonNull
-                          private final String content;
-                        }
-                        """
-                )
-                .and().createFile("org/example/Main.java").withContents("""
-                        package org.example;
+                @Data
+                public class Message {
+                  @NonNull
+                  private final String content;
+                }
+              """
+          )
+          .and().createFile("org/example/Main.java").withContents("""
+                package org.example;
 
-                        public class Main {
-                          public static void main(String[] args) {
-                            for (var arg : args) {
-                              var message = new Message(arg);
-                              System.out.println(arg);
-                            }
-                          }
-                        }
-                        """
-                )
-                .and().createFile("module-info.java").withContents("""
-                        module hello.world {
-                          requires java.base;
-                          requires static lombok;
-                        }
-                        """
-                );
+                public class Main {
+                  public static void main(String[] args) {
+                    for (var arg : args) {
+                      var message = new Message(arg);
+                      System.out.println(arg);
+                    }
+                  }
+                }
+              """
+          )
+          .and().createFile("module-info.java").withContents("""
+                module hello.world {
+                  requires java.base;
+                  requires static lombok;
+                }
+              """
+          );
 
-        // When
-        var compilation = compiler
-                .addModuleSourcePath("hello.world", sources)
-                .compile();
+      // When
+      var compilation = compiler.compile(workspace);
 
-        // Then
-        assertThatCompilation(compilation)
-                .isSuccessfulWithoutWarnings();
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings();
 
-        assertThatCompilation(compilation)
-                .classOutput().packages()
-                .fileExists("com/example/Message.class")
-                .isNotEmptyFile();
+      assertThatCompilation(compilation)
+          .classOutput().packages()
+          .fileExists("com/example/Message.class")
+          .isNotEmptyFile();
     }
+  }
 }
 ```
 
