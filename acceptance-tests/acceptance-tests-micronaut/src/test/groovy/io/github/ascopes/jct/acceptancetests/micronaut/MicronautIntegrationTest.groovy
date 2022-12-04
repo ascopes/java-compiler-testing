@@ -17,48 +17,37 @@ package io.github.ascopes.jct.acceptancetests.micronaut
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.micronaut.annotation.processing.AggregatingTypeElementVisitorProcessor
-import io.micronaut.annotation.processing.BeanDefinitionInjectProcessor
-import io.micronaut.annotation.processing.ConfigurationMetadataProcessor
-import io.micronaut.annotation.processing.PackageConfigurationInjectProcessor
-import io.micronaut.annotation.processing.TypeElementVisitorProcessor
+import io.github.ascopes.jct.workspaces.Workspace
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-import static io.github.ascopes.jct.workspaces.impl.RamDirectory.newRamDirectory
 
 @DisplayName("Micronaut integration tests")
 class MicronautIntegrationTest {
   @DisplayName("Micronaut generates the expected code")
-  @JavacCompilerTest
+  @JavacCompilerTest(configurers = [MicronautConfigurer])
   void micronautGeneratesTheExpectedCode(JctCompiler compiler) {
-    // Given
-    def sources = newRamDirectory("sources")
-        .createDirectory("org", "example")
-        .copyContentsFrom("src", "test", "resources", "code")
+    try (def workspace = Workspace.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathPackage()
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code")
 
-    // When
-    def compilation = compiler
-        .addSourcePath(sources)
-        .addAnnotationProcessors(
-            new AggregatingTypeElementVisitorProcessor(),
-            new BeanDefinitionInjectProcessor(),
-            new ConfigurationMetadataProcessor(),
-            new PackageConfigurationInjectProcessor(),
-            new TypeElementVisitorProcessor()
-        )
-        .compile()
+      // When
+      def compilation = compiler.compile(workspace)
 
-    // Then
-    assertThatCompilation(compilation)
-        .isSuccessfulWithoutWarnings()
-        .classOutput()
-        .packages()
-        .allFilesExist(
-            // Micronaut will generate these files.
-            'org/example/$HelloController$Definition.class',
-            'org/example/$HelloController$Definition$Exec.class',
-            'org/example/$HelloController$Definition$Reference.class',
-        )
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutput()
+          .packages()
+          .allFilesExist(
+              // Micronaut will generate these files.
+              'org/example/$HelloController$Definition.class',
+              'org/example/$HelloController$Definition$Exec.class',
+              'org/example/$HelloController$Definition$Reference.class',
+          )
+    }
   }
 }
