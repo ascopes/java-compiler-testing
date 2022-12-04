@@ -4,8 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       deploy-javadoc-to-gh-pages:
-        description: "Should I deploy JavaDocs to GitHub pages?"
-        required: true
+        description: "Deploy JavaDocs to GH Pages"
+        default: true
+        type: boolean
+
+      deploy-artifacts-to-gh-packages:
+        description: "Deploy artifacts to GH Packages"
+        default: true
         type: boolean
 
 jobs:
@@ -42,6 +47,7 @@ jobs:
           -Dstyle.color=always
           -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
           clean install javadoc:jar source:jar deploy
+          -Dmaven.deploy.skip=${{ ! inputs.deploy-artifacts-to-gh-packages }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
