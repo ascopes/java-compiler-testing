@@ -58,7 +58,7 @@ jobs:
           -Dstyle.color=always
           --also-make
           --no-transfer-progress
-          --project-list java-compiler-testing
+          --projects java-compiler-testing
           clean install javadoc:jar source:jar deploy
         env:
           GITHUB_TOKEN: ${{ github.token }}
