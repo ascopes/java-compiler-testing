@@ -14,8 +14,17 @@ on:
         type: boolean
 
 jobs:
+  codeql:
+    name: CodeQL Analysis
+    uses: ./.github/workflows/codeql.yml
+
+  build:
+    name: Build and run analysis
+    uses: ./.github/workflows/main.yml
+
   github:
     name: "Deploy to GitHub"
+    needs: [codeql, build]
     runs-on: ubuntu-latest
 
     permissions:
@@ -42,14 +51,15 @@ jobs:
           ./mvnw
           -B
           -T4C
-          --no-transfer-progress
-          -Dmaven.source.includePom=true
-          -Dstyle.color=always
-          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
-          -pl java-compiler-testing
-          --also-make
-          clean install javadoc:jar source:jar deploy
           -Dmaven.deploy.skip=${{ ! inputs.deploy-artifacts-to-gh-packages }}
+          -Dmaven.source.includePom=true
+          -Dmaven.test.skip=true
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+          -Dstyle.color=always
+          --also-make
+          --no-transfer-progress
+          --project-list java-compiler-testing
+          clean install javadoc:jar source:jar deploy
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
