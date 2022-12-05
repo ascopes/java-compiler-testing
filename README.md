@@ -51,7 +51,7 @@ class ExampleTest {
   void canCompileHelloWorld(JctCompiler<?, ?> compiler) {
     try (var workspace = Workspace.newWorkspace()) {
       // Given
-      var sources = workspace
+      workspace
           .createSourcePathPackage()
           .createFile("org/example/Message.java").withContents("""
               package org.example;
@@ -104,7 +104,7 @@ class JsonSchemaAnnotationProcessorTest {
   void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler<?, ?> compiler) {
     try (var workspace = Workspace.newWorkspace()) {
       // Given
-      var sources = workspace
+      workspace
           .createSourcePathPackage()
           .createDirectory("org", "example", "tests")
           .copyContentsFrom("src", "test", "resources", "code", "schematest");
@@ -156,7 +156,7 @@ class ExampleTest {
   void canCompileModuleUsingLombok(JctCompiler<?, ?> compiler) {
     try (var workspace = Workspace.newWorkspace()) {
       // Given
-      var sources = workspace
+      workspace
           .createSourcePathPackage("hello.world")
           .createFile("org/example/Message.java").withContents("""
                 package org.example;
