@@ -37,7 +37,7 @@ jobs:
           # Must use >= JDK 17 for Javadocs to generate correctly.
           java-version: 17
 
-      - name: Build artifacts and deploy to GitHub packages.
+      - name: Build artifacts and deploy to GitHub packages
         run: >-
           ./mvnw
           -B
@@ -46,6 +46,8 @@ jobs:
           -Dmaven.source.includePom=true
           -Dstyle.color=always
           -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+          -pl java-compiler-testing
+          --also-make
           clean install javadoc:jar source:jar deploy
           -Dmaven.deploy.skip=${{ ! inputs.deploy-artifacts-to-gh-packages }}
         env:
