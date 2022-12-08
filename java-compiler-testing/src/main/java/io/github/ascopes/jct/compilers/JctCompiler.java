@@ -595,7 +595,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * on the module path.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
+   * {@link #DEFAULT_FIX_JVM_MODULE_PATH_MISMATCH}.
    *
    * @param fixJvmModulePathMismatch whether to enable the mismatch fixing or not.
    * @return this compiler object for further call chaining.
