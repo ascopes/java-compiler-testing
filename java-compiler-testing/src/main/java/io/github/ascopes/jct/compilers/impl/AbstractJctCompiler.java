@@ -114,7 +114,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     target = null;
     verbose = JctCompiler.DEFAULT_VERBOSE;
     diagnosticLoggingMode = JctCompiler.DEFAULT_DIAGNOSTIC_LOGGING_MODE;
-    fixJvmModulePathMismatch = JctCompiler.DEFAULT_FIX_JVM_MODULEPATH_MISMATCH;
+    fixJvmModulePathMismatch = JctCompiler.DEFAULT_FIX_JVM_MODULE_PATH_MISMATCH;
     inheritClassPath = JctCompiler.DEFAULT_INHERIT_CLASS_PATH;
     inheritModulePath = JctCompiler.DEFAULT_INHERIT_MODULE_PATH;
     inheritPlatformClassPath = JctCompiler.DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
