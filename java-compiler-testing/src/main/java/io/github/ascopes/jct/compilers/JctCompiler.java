@@ -78,7 +78,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
   /**
    * Default setting for fixing modules being placed on the classpath by mistake ({@code true}).
    */
-  boolean DEFAULT_FIX_JVM_MODULEPATH_MISMATCH = true;
+  boolean DEFAULT_FIX_JVM_MODULE_PATH_MISMATCH = true;
 
   /**
    * Default setting for inclusion of the current class path ({@code true}).
@@ -584,7 +584,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * enabled, and only applies to the current JVM classpath and module path.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_FIX_JVM_MODULEPATH_MISMATCH}.
+   * {@link #DEFAULT_FIX_JVM_MODULE_PATH_MISMATCH}.
    *
    * @return {@code true} if enabled, or {@code false} if disabled.
    */
