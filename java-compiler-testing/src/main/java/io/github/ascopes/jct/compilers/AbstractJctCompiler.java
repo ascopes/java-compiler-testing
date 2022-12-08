@@ -52,7 +52,7 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
+@API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     implements JctCompiler<A, JctCompilationImpl> {
 
