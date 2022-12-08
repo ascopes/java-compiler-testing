@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.compilers.javac;
 
-import io.github.ascopes.jct.compilers.impl.AbstractJctCompiler;
+import io.github.ascopes.jct.compilers.AbstractJctCompiler;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
