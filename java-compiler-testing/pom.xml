@@ -125,7 +125,13 @@
           <failIfNoTests>true</failIfNoTests>
         </configuration>
       </plugin>
-
+      
+      <plugin>
+          <groupId>org.pitest</groupId>
+          <artifactId>pitest-maven</artifactId>
+          <version>LATEST</version>
+      </plugin>
+      
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
