@@ -11,7 +11,7 @@ on:
 jobs:
   compliance:
     name: Formatting, licenses, security scan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
@@ -55,7 +55,7 @@ jobs:
 
   generate-javadocs:
     name: JavaDocs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
@@ -92,7 +92,7 @@ jobs:
       fail-fast: false
       matrix:
         os-name:
-          - ubuntu-latest
+          - ubuntu-22.04
         java-version:
           - 11
           - 12
@@ -106,9 +106,9 @@ jobs:
           # Mockito currently does not support this distribution.
           # - 20-ea
         include:
-          - os-name: macos-latest
+          - os-name: macos-12
             java-version: 11
-          - os-name: windows-latest
+          - os-name: windows-2022
             java-version: 11
 
     name: Tests - JDK ${{ matrix.java-version }} - ${{ matrix.os-name }}
@@ -161,7 +161,7 @@ jobs:
 
   publish-test-reports:
     name: Publish test reports
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: always()
     needs:
       - run-tests
