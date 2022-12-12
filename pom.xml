@@ -63,7 +63,7 @@
     <jsr305.version>3.0.2</jsr305.version>
     <junit.version>5.9.1</junit.version>
     <mockito.version>4.9.0</mockito.version>
-    <slf4j.version>2.0.5</slf4j.version>
+    <slf4j.version>2.0.6</slf4j.version>
 
     <!-- Plugins -->
     <dependency-check.version>7.4.1</dependency-check.version>
