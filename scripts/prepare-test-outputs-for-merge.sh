@@ -54,6 +54,8 @@ if [[ -z ${CI+undefined} ]] && in-path xsltproc; then
 elif [[ "${OSTYPE}" = "darwin"* ]] && in-path brew; then
   info "Installing xsltproc from homebrew"
   brew install libxslt
+  info "Giving the brew xsltproc binary precedence over the default MacOS one..."
+  export PATH="/usr/local/opt/libxslt/bin:${PATH}"
 elif [[ "${OSTYPE}" =~ /win.*|mingw|msys|cygwin/ ]] && in-path choco; then
   info "Installing xsltproc from choco"
   choco install xsltproc
