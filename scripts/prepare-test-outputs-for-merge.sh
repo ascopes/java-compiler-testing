@@ -21,34 +21,23 @@
 ###
 
 set -o errexit
+set -o noclobber
+set -o nounset
 set -o pipefail
 
+unset undefined > /dev/null 2>&1 || true
 ci_java_version="${1?Pass the Java version as the first argument to this script!}"
 ci_os="${2?Pass the OS name as the second argument to this script!}"
 
-function log() {
+function log {
   printf "\033[1;${1}m%s:\033[0;${1}m %s\033[0m\n" "${2}" "${3}" >&2
 }
 
-function err() {
-  log 31 ERROR "${@}"
-}
-
-function warn() {
-  log 33 WARNING "${@}"
-}
-
-function info() {
-  log 34 INFO "${@}"
-}
-
-function stage() {
-  log 35 STAGE "${@}"
-}
-
-function success() {
-  log 32 SUCCESS "${@}"
-}
+function err()     { log 31 ERROR   "${@}"; }
+function success() { log 32 SUCCESS "${@}"; }
+function warn      { log 33 WARNING "${@}"; }
+function info      { log 34 INFO    "${@}"; }
+function stage     { log 35 STAGE   "${@}"; }
 
 stage "Looking for xsltproc binary..."
 
@@ -57,7 +46,7 @@ if ! command -v xsltproc > /dev/null 2>&1; then
   # If we are not running in CI, then the user needs to install this dependency
   # manually. If we are in CI, assume we are running on ubuntu-latest
   # on a GitHub Actions runner and just install xsltproc.
-  if [ -z ${CI+_} ]; then
+  if [ -z ${CI+undefined} ]; then
     err "xsltproc is not found -- make sure it is installed first."
     exit 2
   else
@@ -99,12 +88,12 @@ EOF
 
 info "Generated XSLT script at ${surefire_prefix_xslt}"
 
-function find-all-surefire-reports() {
+function find-all-surefire-reports {
   info "Discovering Surefire test reports"
   find . -wholename '**/target/surefire-reports/TEST-*Test.xml' -print0 | xargs -0
 }
 
-function find-all-jacoco-reports() {
+function find-all-jacoco-reports {
   info "Discovering JaCoCo coverage reports"
   # For now, we only want the one jacoco file for the main module, if it exists.
   local desired_jacoco_file="java-compiler-testing/target/site/jacoco/jacoco.xml"
