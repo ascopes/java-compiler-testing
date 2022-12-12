@@ -51,21 +51,21 @@ stage "Looking for xsltproc binary..."
 # is up-to-date first.
 if [[ -z ${CI+undefined} ]] && in-path xsltproc; then
   info "xsltproc appears to be installed, and this is not a CI run"
-elif [[ "${OSTYPE,,}" = "darwin"* ]] && in-path brew; then
+elif [[ "${OSTYPE}" = "darwin"* ]] && in-path brew; then
   info "Installing xsltproc from homebrew"
-  time brew install xsltproc
-elif [[ "${OSTYPE,,}" =~ /win.*|mingw|msys|cygwin/ ]] && in-path choco; then
+  brew install xsltproc
+elif [[ "${OSTYPE}" =~ /win.*|mingw|msys|cygwin/ ]] && in-path choco; then
   info "Installing xsltproc from choco"
-  time choco install xsltproc
-elif [[ "${OSTYPE,,}" = "linux"* ]] && in-path apt-get; then
+  choco install xsltproc
+elif [[ "${OSTYPE}" = "linux"* ]] && in-path apt-get; then
   info "Installing xsltproc using apt-get"
-  sudo sh -c "time apt-get install -y xsltproc"
-elif [[ "${OSTYPE,,}" = "linux"* ]] && in-path dnf; then
+  sudo apt-get install -qy xsltproc
+elif [[ "${OSTYPE}" = "linux"* ]] && in-path dnf; then
   info "Installing xsltproc using dnf"
-  sudo sh -c "time dnf install -y xsltproc"
-elif [[ "${OSTYPE,,}" = "linux"* ]] && in-path yum; then
+  sudo dnf install -qy xsltproc
+elif [[ "${OSTYPE}" = "linux"* ]] && in-path yum; then
   info "Installing xsltproc using yum"
-  sudo sh -c "time yum install -y xsltproc"
+  sudo yum install -qy xsltproc
 else
   err "Cannot find xsltproc, nor can I find a suitable package manager to install it with."
   err "Please install xsltproc manually and then try again."
