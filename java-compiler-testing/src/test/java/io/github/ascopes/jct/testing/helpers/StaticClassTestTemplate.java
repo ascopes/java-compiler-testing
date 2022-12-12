@@ -20,17 +20,13 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatObject;
 import static org.assertj.core.api.InstanceOfAssertFactories.BOOLEAN;
 import static org.assertj.core.api.InstanceOfAssertFactories.array;
-import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.api.Test;
+import org.opentest4j.TestAbortedException;
 
 /**
  * Template for testing that a class is correctly formatted as being {@code static}-only.
@@ -57,58 +53,54 @@ public interface StaticClassTestTemplate {
     type.getModule().addOpens(type.getPackageName(), getClass().getModule());
   }
 
-  /**
-   * Test that the type is static-only.
-   */
-  @DisplayName("This class should be marked as 'static'-only")
-  @Order(Integer.MIN_VALUE)
-  @TestFactory
-  default Stream<DynamicTest> ensureStaticClass() {
-    return Stream.of(
-        test(
-            "{name} should be final",
-            () -> assertThat(getTypeBeingTested()).isFinal()
-        ),
-        test(
-            "{name} should have a single constructor",
-            () -> assertThatObject(getTypeBeingTested())
-                .extracting(Class::getDeclaredConstructors, array(Constructor[].class))
-                .hasSize(1)
-        ),
-        test(
-            "{name}'s constructor should be private",
-            () -> assertThatObject(getSingleConstructor())
-                .extracting(Constructor::getModifiers)
-                .extracting(Modifier::isPrivate, BOOLEAN)
-                .isTrue()
-        ),
-        test(
-            "{name}'s constructor should take zero arguments",
-            () -> assertThatObject(getSingleConstructor())
-                .extracting(Constructor::getParameterCount)
-                .isEqualTo(0)
-        ),
-        test(
-            "{name}'s constructor should raise an UnsupportedOperationException",
-            () -> assertThatCode(() -> getSingleConstructor().newInstance())
-                .cause()
-                .isInstanceOf(UnsupportedOperationException.class)
-                .hasMessage("static-only class")
-        )
-    );
+  @DisplayName("Class should be final")
+  @Test
+  default void testClassIsFinal() {
+    assertThat(getTypeBeingTested()).isFinal();
   }
 
-  private Constructor<?> getSingleConstructor() throws NoSuchMethodException {
-    var type = getTypeBeingTested();
-    var constructor = type.getDeclaredConstructor();
-    constructor.setAccessible(true);
-    return constructor;
+  @DisplayName("Class should have a single constructor")
+  @Test
+  default void testClassSingleConstructor() {
+    assertThatObject(getTypeBeingTested())
+        .extracting(Class::getDeclaredConstructors, array(Constructor[].class))
+        .hasSize(1);
   }
 
-  private DynamicTest test(String nameTemplate, Executable test) {
-    return dynamicTest(
-        nameTemplate.replace("{name}", getTypeBeingTested().getSimpleName()),
-        test
-    );
+  @DisplayName("Class constructor should be private")
+  @Test
+  default void testClassConstructorIsPrivate() {
+    assertThatObject(getSingleConstructor())
+        .extracting(Constructor::getModifiers)
+        .extracting(Modifier::isPrivate, BOOLEAN)
+        .isTrue();
+  }
+
+  @DisplayName("Class constructor should take zero arguments")
+  @Test
+  default void testClassConstructorHasNoArguments() {
+    assertThatObject(getSingleConstructor())
+        .extracting(Constructor::getParameterCount)
+        .isEqualTo(0);
+  }
+
+  @DisplayName("Class constructor should throw an UnsupportedOperationException")
+  @Test
+  default void testClassConstructorThrowsUnsupportedOperationException() {
+    assertThatCode(() -> getSingleConstructor().newInstance())
+        .cause()
+        .isInstanceOf(UnsupportedOperationException.class)
+        .hasMessage("static-only class");
+  }
+
+  private Constructor<?> getSingleConstructor() {
+    try {
+      var type = getTypeBeingTested();
+      var constructor = type.getDeclaredConstructor();
+      constructor.setAccessible(true);
+      return constructor;
+    } catch (NoSuchMethodException ex) {
+      throw new TestAbortedException(ex.getMessage(), ex);
+    }
   }
 }
