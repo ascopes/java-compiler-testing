@@ -19,6 +19,9 @@
       io.github.ascopes.jct.**.impl;
       io.github.ascopes.jct.utils;
     </javadoc-excluded-packages>
+    <pitest-excluded-test-classes>
+      io.github.ascopes.jct.testing.integration.**;
+    </pitest-excluded-test-classes>
   </properties>
 
   <dependencies>
