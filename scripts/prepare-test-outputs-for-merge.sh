@@ -79,7 +79,7 @@ success "Found $(command -v xsltproc) $(xsltproc --version 2>/dev/null || true)"
 stage "Generating Surefire XSLT script..."
 surefire_prefix_xslt_dir="$(mktemp -d)"
 
-function tidy-up() {
+function tidy-up {
   info "Destroying ${surefire_prefix_xslt_dir}"
   rm -Rf "${surefire_prefix_xslt_dir}"
 }
