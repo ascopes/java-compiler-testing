@@ -76,7 +76,13 @@ success "Found $(command -v xsltproc) $(xsltproc --version 2>/dev/null || true)"
 
 stage "Generating Surefire XSLT script..."
 surefire_prefix_xslt_dir="$(mktemp -d)"
-trap 'rm -Rf "${surefire_prefix_xslt_dir}"' EXIT SIGINT SIGTERM SIGQUIT
+
+function tidy-up() {
+  info "Destroying ${surefire_prefix_xslt_dir}"
+  rm -Rf "${surefire_prefix_xslt_dir}"
+}
+
+trap tidy-up EXIT SIGINT SIGTERM SIGQUIT
 surefire_prefix_xslt="${surefire_prefix_xslt_dir}/surefire.xslt"
 
 sed 's/^  //g' > "${surefire_prefix_xslt}" <<'EOF'
