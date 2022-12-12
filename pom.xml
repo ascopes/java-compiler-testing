@@ -194,6 +194,15 @@
         <artifactId>slf4j-simple</artifactId>
         <version>${slf4j.version}</version>
       </dependency>
+      
+      <!--    Pitest for mutation test     -->
+      <dependency>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+        <version>1.10.3</version>
+        <type>maven-plugin</type>
+      </dependency>
+      
     </dependencies>
   </dependencyManagement>
 
