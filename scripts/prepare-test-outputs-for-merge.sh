@@ -21,57 +21,70 @@
 ###
 
 set -o errexit
+set -o noclobber
+set -o nounset
 set -o pipefail
 
+unset undefined > /dev/null 2>&1 || true
 ci_java_version="${1?Pass the Java version as the first argument to this script!}"
 ci_os="${2?Pass the OS name as the second argument to this script!}"
 
-function log() {
+function log {
   printf "\033[1;${1}m%s:\033[0;${1}m %s\033[0m\n" "${2}" "${3}" >&2
 }
 
-function err() {
-  log 31 ERROR "${@}"
-}
+function err       { log 31 ERROR   "${@}"; }
+function success   { log 32 SUCCESS "${@}"; }
+function warn      { log 33 WARNING "${@}"; }
+function info      { log 34 INFO    "${@}"; }
+function stage     { log 35 STAGE   "${@}"; }
 
-function warn() {
-  log 33 WARNING "${@}"
-}
-
-function info() {
-  log 34 INFO "${@}"
-}
-
-function stage() {
-  log 35 STAGE "${@}"
-}
-
-function success() {
-  log 32 SUCCESS "${@}"
+function in-path {
+  command -v "${1}" > /dev/null 2>&1
+  return "${?}"
 }
 
 stage "Looking for xsltproc binary..."
 
 # If we don't have xsltproc installed, try to resolve it first.
-if ! command -v xsltproc > /dev/null 2>&1; then
-  # If we are not running in CI, then the user needs to install this dependency
-  # manually. If we are in CI, assume we are running on ubuntu-latest
-  # on a GitHub Actions runner and just install xsltproc.
-  if [ -z ${CI+_} ]; then
-    err "xsltproc is not found -- make sure it is installed first."
-    exit 2
-  else
-    warn "xsltproc is not installed, so I will install it now..."
-    sudo apt-get install xsltproc -qy
-    success "Installed xsltproc successfully at $(command -v xsltproc)"
-  fi
+# If we are in CI, always attempt to install it so we ensure that it
+# is up-to-date first.
+if [[ -z ${CI+undefined} ]] && in-path xsltproc; then
+  info "xsltproc appears to be installed, and this is not a CI run"
+elif [[ "${OSTYPE}" = "darwin"* ]] && in-path brew; then
+  info "Installing xsltproc from homebrew"
+  brew install libxslt
+  info "Giving the brew xsltproc binary precedence over the default MacOS one..."
+  export PATH="/usr/local/opt/libxslt/bin:${PATH}"
+elif [[ "${OSTYPE}" =~ /win.*|mingw|msys|cygwin/ ]] && in-path choco; then
+  info "Installing xsltproc from choco"
+  choco install xsltproc
+elif [[ "${OSTYPE}" = "linux"* ]] && in-path apt-get; then
+  info "Installing xsltproc using apt-get"
+  sudo apt-get install -qy xsltproc
+elif [[ "${OSTYPE}" = "linux"* ]] && in-path dnf; then
+  info "Installing xsltproc using dnf"
+  sudo dnf install -qy xsltproc
+elif [[ "${OSTYPE}" = "linux"* ]] && in-path yum; then
+  info "Installing xsltproc using yum"
+  sudo yum install -qy xsltproc
 else
-  success "Found $(command -v xsltproc)"
+  err "Cannot find xsltproc, nor can I find a suitable package manager to install it with."
+  err "Please install xsltproc manually and then try again."
+  exit 2
 fi
+
+success "Found $(command -v xsltproc) $(xsltproc --version 2>/dev/null || true)"
 
 stage "Generating Surefire XSLT script..."
 surefire_prefix_xslt_dir="$(mktemp -d)"
-trap 'rm -Rf "${surefire_prefix_xslt_dir}"' EXIT SIGINT SIGTERM SIGQUIT
+
+function tidy-up {
+  info "Destroying ${surefire_prefix_xslt_dir}"
+  rm -Rf "${surefire_prefix_xslt_dir}"
+}
+
+trap tidy-up EXIT SIGINT SIGTERM SIGQUIT
 surefire_prefix_xslt="${surefire_prefix_xslt_dir}/surefire.xslt"
 
 sed 's/^  //g' > "${surefire_prefix_xslt}" <<'EOF'
@@ -99,12 +112,12 @@ EOF
 
 info "Generated XSLT script at ${surefire_prefix_xslt}"
 
-function find-all-surefire-reports() {
+function find-all-surefire-reports {
   info "Discovering Surefire test reports"
   find . -wholename '**/target/surefire-reports/TEST-*Test.xml' -print0 | xargs -0
 }
 
-function find-all-jacoco-reports() {
+function find-all-jacoco-reports {
   info "Discovering JaCoCo coverage reports"
   # For now, we only want the one jacoco file for the main module, if it exists.
   local desired_jacoco_file="java-compiler-testing/target/site/jacoco/jacoco.xml"

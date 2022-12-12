@@ -1,16 +1,20 @@
 name: Tests and compliance
 on:
   pull_request:
-    branches: [ "**" ]
-    types: [ opened, synchronize ]
+    branches:
+      - '**'
+    types: 
+      - opened
+      - synchronize
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_call: {}
   workflow_dispatch: {}
 
 jobs:
   compliance:
-    name: Formatting, licenses, security scan
+    name: Compliance and checks
     runs-on: ubuntu-22.04
 
     steps:
@@ -27,9 +31,10 @@ jobs:
           cache: 'maven'
 
       - name: Run checks
+        shell: bash
         run: >-
           ./mvnw 
-          -B 
+          -B
           -Pdependency-scan
           -T8
           -U
@@ -72,6 +77,7 @@ jobs:
           cache: 'maven'
 
       - name: Generate JavaDocs
+        shell: bash
         run: >-
           ./mvnw 
           -B 
@@ -87,7 +93,7 @@ jobs:
           -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
           clean compile javadoc:jar
 
-  run-tests:
+  build:
     strategy:
       fail-fast: false
       matrix:
@@ -111,7 +117,7 @@ jobs:
           - os-name: windows-2022
             java-version: 11
 
-    name: Tests - JDK ${{ matrix.java-version }} - ${{ matrix.os-name }}
+    name: Build - JDK ${{ matrix.java-version }} - ${{ matrix.os-name }}
     runs-on: ${{ matrix.os-name }}
 
     steps:
@@ -129,20 +135,22 @@ jobs:
           java-version: ${{ matrix.java-version }}
 
       - name: Compile and run tests
+        shell: bash
         run: >-
           ./mvnw 
           -B 
           -T8
           -U
           --no-transfer-progress
-          '-Dcheckstyle.skip=true'
-          '-Dlicense.skip=true'
-          '-Dstyle.color=always'
-          '-Dmaven.wagon.httpconnectionManager.ttlSeconds=120'
+          -Dcheckstyle.skip=true
+          -Dlicense.skip=true
+          -Dstyle.color=always
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
           clean verify
 
       - name: Annotate test reports with build environment info
         if: always()
+        shell: bash
         run: >-
           scripts/prepare-test-outputs-for-merge.sh
           ${{ matrix.java-version }}
@@ -164,7 +172,7 @@ jobs:
     runs-on: ubuntu-22.04
     if: always()
     needs:
-      - run-tests
+      - build
 
     permissions:
       checks: write
@@ -185,6 +193,7 @@ jobs:
       - name: Publish to codecov
         continue-on-error: true
         if: always()
+        shell: bash
         run: |-
           curl --fail https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import
           curl --fail -Os https://uploader.codecov.io/latest/linux/codecov
@@ -198,7 +207,6 @@ jobs:
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
-        continue-on-error: true
         with:
           json_test_case_results: true
           json_thousands_separator: ","
