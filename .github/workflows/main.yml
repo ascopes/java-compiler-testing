@@ -14,7 +14,7 @@ on:
 
 jobs:
   compliance:
-    name: Compliance and checks
+    name: Compliance
     runs-on: ubuntu-22.04
 
     steps:
@@ -35,12 +35,48 @@ jobs:
         run: >-
           ./mvnw 
           -B
-          -Pdependency-scan
           -T8
           -U
           --no-transfer-progress
           -DskipTests=true
           -Dstyle.color=always
+          -Dmaven.main.skip
+          -Dmaven.jar.skip
+          -Dmaven.resources.skip
+          -Dmaven.test.skip
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+          verify
+
+  dependency-check:
+    name: Dependency Check
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Initialize Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+          cache: 'maven'
+
+      - name: Run checks
+        shell: bash
+        run: >-
+          ./mvnw 
+          -B
+          -T8
+          -U
+          -Pdependency-check
+          --no-transfer-progress
+          -DskipTests=true
+          -Dstyle.color=always
+          -Dcheckstyle.skip=true
+          -Dlicense.skip=true
           -Dmaven.main.skip
           -Dmaven.jar.skip
           -Dmaven.resources.skip

@@ -66,7 +66,7 @@
     <slf4j.version>2.0.5</slf4j.version>
 
     <!-- Plugins -->
-    <dependencycheck.version>7.4.0</dependencycheck.version>
+    <dependency-check.version>7.4.0</dependency-check.version>
     <gmaven-plugin.version>2.1.0</gmaven-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <license-maven-plugin.version>4.1</license-maven-plugin.version>
@@ -361,6 +361,34 @@
             </execution>
           </executions>
         </plugin>
+
+        <plugin>
+          <groupId>org.owasp</groupId>
+          <artifactId>dependency-check-maven</artifactId>
+          <version>${dependency-check.version}</version>
+
+          <configuration>
+            <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
+            <formats>
+              <format>html</format>
+              <format>junit</format>
+            </formats>
+
+            <skip>${skip-dependency-scan}</skip>
+            <skipTestScope>true</skipTestScope>
+            <suppressionFile>${project.basedir}/security-suppressions.xml</suppressionFile>
+          </configuration>
+
+          <executions>
+            <execution>
+              <id>dependency-scan</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -441,35 +469,12 @@
 
   <profiles>
     <profile>
-      <id>dependency-scan</id>
+      <id>dependency-check</id>
       <build>
         <plugins>
           <plugin>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
-            <version>${dependencycheck.version}</version>
-
-            <configuration>
-              <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
-              <formats>
-                <format>html</format>
-                <format>junit</format>
-              </formats>
-
-              <skip>${skip-dependency-scan}</skip>
-              <skipTestScope>true</skipTestScope>
-              <suppressionFile>${project.basedir}/security-suppressions.xml</suppressionFile>
-            </configuration>
-
-            <executions>
-              <execution>
-                <id>dependency-scan</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>check</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>
