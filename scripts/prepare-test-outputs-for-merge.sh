@@ -47,8 +47,10 @@ function in-path {
 stage "Looking for xsltproc binary..."
 
 # If we don't have xsltproc installed, try to resolve it first.
-if in-path xsltproc; then
-  success "Found $(command -v xsltproc) $(xsltproc --version 2>/dev/null || true)"
+# If we are in CI, always attempt to install it so we ensure that it
+# is up-to-date first.
+if [[ -z ${CI+undefined} ]] && in-path xsltproc; then
+  info "xsltproc appears to be installed, and this is not a CI run"
 elif [[ "${OSTYPE,,}" = "darwin"* ]] && in-path brew; then
   info "Installing xsltproc from homebrew"
   time brew install xsltproc
@@ -69,6 +71,8 @@ else
   err "Please install xsltproc manually and then try again."
   exit 2
 fi
+
+success "Found $(command -v xsltproc) $(xsltproc --version 2>/dev/null || true)"
 
 stage "Generating Surefire XSLT script..."
 surefire_prefix_xslt_dir="$(mktemp -d)"
