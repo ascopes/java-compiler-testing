@@ -381,7 +381,7 @@
 
           <executions>
             <execution>
-              <id>dependency-scan</id>
+              <id>dependency-check</id>
               <phase>verify</phase>
               <goals>
                 <goal>check</goal>
