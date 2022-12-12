@@ -33,29 +33,41 @@ function log {
   printf "\033[1;${1}m%s:\033[0;${1}m %s\033[0m\n" "${2}" "${3}" >&2
 }
 
-function err()     { log 31 ERROR   "${@}"; }
-function success() { log 32 SUCCESS "${@}"; }
+function err       { log 31 ERROR   "${@}"; }
+function success   { log 32 SUCCESS "${@}"; }
 function warn      { log 33 WARNING "${@}"; }
 function info      { log 34 INFO    "${@}"; }
 function stage     { log 35 STAGE   "${@}"; }
 
+function in-path {
+  command -v "${1}" > /dev/null 2>&1
+  return "${?}"
+}
+
 stage "Looking for xsltproc binary..."
 
 # If we don't have xsltproc installed, try to resolve it first.
-if ! command -v xsltproc > /dev/null 2>&1; then
-  # If we are not running in CI, then the user needs to install this dependency
-  # manually. If we are in CI, assume we are running on ubuntu-latest
-  # on a GitHub Actions runner and just install xsltproc.
-  if [ -z ${CI+undefined} ]; then
-    err "xsltproc is not found -- make sure it is installed first."
-    exit 2
-  else
-    warn "xsltproc is not installed, so I will install it now..."
-    sudo apt-get install xsltproc -qy
-    success "Installed xsltproc successfully at $(command -v xsltproc)"
-  fi
+if in-path xsltproc; then
+  success "Found $(command -v xsltproc) $(xsltproc --version 2>/dev/null || true)"
+elif [[ "${OSTYPE,,}" = "darwin"* ]] && in-path brew; then
+  info "Installing xsltproc from homebrew"
+  time brew install xsltproc
+elif [[ "${OSTYPE,,}" =~ /win.*|mingw|msys|cygwin/ ]] && in-path choco; then
+  info "Installing xsltproc from choco"
+  time choco install xsltproc
+elif [[ "${OSTYPE,,}" = "linux"* ]] && in-path apt-get; then
+  info "Installing xsltproc using apt-get"
+  sudo sh -c "time apt-get install -y xsltproc"
+elif [[ "${OSTYPE,,}" = "linux"* ]] && in-path dnf; then
+  info "Installing xsltproc using dnf"
+  sudo sh -c "time dnf install -y xsltproc"
+elif [[ "${OSTYPE,,}" = "linux"* ]] && in-path yum; then
+  info "Installing xsltproc using yum"
+  sudo sh -c "time yum install -y xsltproc"
 else
-  success "Found $(command -v xsltproc)"
+  err "Cannot find xsltproc, nor can I find a suitable package manager to install it with."
+  err "Please install xsltproc manually and then try again."
+  exit 2
 fi
 
 stage "Generating Surefire XSLT script..."
