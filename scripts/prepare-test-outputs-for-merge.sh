@@ -53,7 +53,7 @@ if [[ -z ${CI+undefined} ]] && in-path xsltproc; then
   info "xsltproc appears to be installed, and this is not a CI run"
 elif [[ "${OSTYPE}" = "darwin"* ]] && in-path brew; then
   info "Installing xsltproc from homebrew"
-  brew install xsltproc
+  brew install libxslt
 elif [[ "${OSTYPE}" =~ /win.*|mingw|msys|cygwin/ ]] && in-path choco; then
   info "Installing xsltproc from choco"
   choco install xsltproc
