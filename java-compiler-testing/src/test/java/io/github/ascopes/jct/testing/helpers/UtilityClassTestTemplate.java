@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatObject;
 import static org.assertj.core.api.InstanceOfAssertFactories.BOOLEAN;
 import static org.assertj.core.api.InstanceOfAssertFactories.array;
 
+import io.github.ascopes.jct.utils.UtilityClass;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +34,7 @@ import org.opentest4j.TestAbortedException;
  *
  * @author Ashley Scopes
  */
-public interface StaticClassTestTemplate {
+public interface UtilityClassTestTemplate {
 
   /**
    * Get the type to test.
@@ -51,6 +52,13 @@ public interface StaticClassTestTemplate {
     // We probably do not need to do this, but it saves hassle of adding this later
     // by ensuring we open the module so that we can inspect it with reflection.
     type.getModule().addOpens(type.getPackageName(), getClass().getModule());
+  }
+
+  @DisplayName("Class should extend UtilityClass")
+  @Test
+  default void testClassExtendsUtilityClass() {
+    assertThat(getTypeBeingTested())
+        .hasSuperclass(UtilityClass.class);
   }
 
   @DisplayName("Class should be final")
@@ -90,7 +98,7 @@ public interface StaticClassTestTemplate {
     assertThatCode(() -> getSingleConstructor().newInstance())
         .cause()
         .isInstanceOf(UnsupportedOperationException.class)
-        .hasMessage("static-only class");
+        .hasMessage("this is a utility class that cannot be initialised or extended");
   }
 
   private Constructor<?> getSingleConstructor() {

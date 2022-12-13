@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
+import io.github.ascopes.jct.testing.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Ashley Scopes
  */
-class IterableUtilsTest implements StaticClassTestTemplate {
+class IterableUtilsTest implements UtilityClassTestTemplate {
 
   @Override
   public Class<?> getTypeBeingTested() {

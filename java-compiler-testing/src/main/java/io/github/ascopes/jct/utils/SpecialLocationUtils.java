@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class SpecialLocationUtils {
+public final class SpecialLocationUtils extends UtilityClass {
 
   // Files we don't want to propagate by default as they may clash with the environment.
   private static final Set<String> BLACKLISTED_FILE_NAMES = Set.of(
@@ -60,7 +60,7 @@ public final class SpecialLocationUtils {
   );
 
   private SpecialLocationUtils() {
-    throw new UnsupportedOperationException("static-only class");
+    // Disallow initialisation.
   }
 
   /**

@@ -21,7 +21,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenCode;
 import static org.assertj.core.api.InstanceOfAssertFactories.array;
 
-import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
+import io.github.ascopes.jct.testing.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.IoExceptionUtils;
 import io.github.ascopes.jct.utils.IoExceptionUtils.IoRunnable;
 import io.github.ascopes.jct.utils.IoExceptionUtils.IoSupplier;
@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
  */
 @SuppressWarnings("RedundantCast")
 @DisplayName("IoExceptionUtils tests")
-class IoExceptionUtilsTest implements StaticClassTestTemplate {
+class IoExceptionUtilsTest implements UtilityClassTestTemplate {
 
   @Override
   public Class<?> getTypeBeingTested() {

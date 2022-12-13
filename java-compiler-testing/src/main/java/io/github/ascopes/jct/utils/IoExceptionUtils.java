@@ -27,12 +27,11 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class IoExceptionUtils {
+public final class IoExceptionUtils extends UtilityClass {
 
   private IoExceptionUtils() {
-    throw new UnsupportedOperationException("static-only class");
+    // Disallow initialisation.
   }
-
 
   /**
    * Run some logic with no return value, throwing any {@link IOException} as an

@@ -40,7 +40,7 @@ import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
-import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
+import io.github.ascopes.jct.testing.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.FileUtils;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -66,7 +66,7 @@ import org.junit.jupiter.params.provider.ValueSource;
  * @author Ashley Scopes
  */
 @DisplayName("FileUtils tests")
-class FileUtilsTest implements StaticClassTestTemplate {
+class FileUtilsTest implements UtilityClassTestTemplate {
 
   @Override
   public Class<?> getTypeBeingTested() {

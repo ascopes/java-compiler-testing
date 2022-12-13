@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.compilers.JctCompilers;
 import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
-import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
+import io.github.ascopes.jct.testing.helpers.UtilityClassTestTemplate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -30,7 +30,7 @@ import org.mockito.Mockito;
  * @author Ashley Scopes
  */
 @DisplayName("JctCompilers tests")
-class JctCompilersTest implements StaticClassTestTemplate {
+class JctCompilersTest implements UtilityClassTestTemplate {
 
   @Override
   public Class<?> getTypeBeingTested() {

@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
-import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
+import io.github.ascopes.jct.testing.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ import org.junit.jupiter.params.provider.MethodSource;
  * @author Ashley Scopes
  */
 @DisplayName("StringUtils tests")
-class StringUtilsTest implements StaticClassTestTemplate {
+class StringUtilsTest implements UtilityClassTestTemplate {
 
   @Override
   public Class<?> getTypeBeingTested() {

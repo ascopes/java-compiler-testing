@@ -30,7 +30,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class StringUtils {
+public final class StringUtils extends UtilityClass {
 
   // Number formatting stuff
   private static final BigDecimal THOUSAND = BigDecimal.valueOf(1_000);
@@ -43,7 +43,7 @@ public final class StringUtils {
   private static final String EMPTY_STRING = "";
 
   private StringUtils() {
-    throw new UnsupportedOperationException("static-only class");
+    // Disallow initialisation.
   }
 
   /**

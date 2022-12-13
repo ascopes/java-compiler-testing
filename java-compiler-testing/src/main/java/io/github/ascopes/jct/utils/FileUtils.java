@@ -38,8 +38,8 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class FileUtils {
+@API(since = "0.0.1", status = Status.INTERNAL)
+public final class FileUtils extends UtilityClass {
 
   // Exclude any "empty" extensions. At the time of writing, this will just exclude Kind.EMPTY,
   // but doing this will prevent future API changes from breaking any assumptions we make. In
@@ -54,7 +54,7 @@ public final class FileUtils {
   private static final StringSlicer RESOURCE_SLICER = new StringSlicer("/");
 
   private FileUtils() {
-    throw new UnsupportedOperationException("static-only class");
+    // Disallow initialisation.
   }
 
   /**

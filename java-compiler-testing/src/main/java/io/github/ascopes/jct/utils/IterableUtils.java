@@ -32,10 +32,10 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class IterableUtils {
+public final class IterableUtils extends UtilityClass {
 
   private IterableUtils() {
-    throw new UnsupportedOperationException("static-only class");
+    // Disallow initialisation.
   }
 
   /**

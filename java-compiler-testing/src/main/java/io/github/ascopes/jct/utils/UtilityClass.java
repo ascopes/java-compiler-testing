@@ -13,32 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers;
+package io.github.ascopes.jct.utils;
 
-import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
-import io.github.ascopes.jct.utils.UtilityClass;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Helpers to create new compiler instances.
+ * Abstract base for a static-only class. This base cannot be initialised.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class JctCompilers extends UtilityClass {
-  private JctCompilers() {
-    // Disallow initialisation.
-  }
-
-  /**
-   * Create a new instance of the default platform compiler that is part of
-   * the JDK ({@code javac} on OpenJDK-derived implementations).
-   *
-   * @return the compiler instance.
-   */
-  public static JctCompiler<?, ?> createPlatformCompiler() {
-    return new JavacJctCompilerImpl();
+@API(since = "0.0.1", status = Status.INTERNAL)
+public abstract class UtilityClass {
+  protected UtilityClass() {
+    throw new UnsupportedOperationException(
+        "this is a utility class that cannot be initialised or extended"
+    );
   }
 }

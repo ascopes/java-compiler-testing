@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import io.github.ascopes.jct.testing.helpers.StaticClassTestTemplate;
+import io.github.ascopes.jct.testing.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import java.io.Closeable;
 import java.io.File;
@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
 @DisplayName("SpecialLocationsUtils tests")
 @Execution(ExecutionMode.SAME_THREAD)
 @Isolated("modifies static state temporarily")
-class SpecialLocationsUtilsTest implements StaticClassTestTemplate {
+class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
 
   @Override
   public Class<?> getTypeBeingTested() {
