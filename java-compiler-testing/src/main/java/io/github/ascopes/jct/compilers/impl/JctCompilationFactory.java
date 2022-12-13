@@ -29,7 +29,7 @@ import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.workspaces.Workspace;
-import io.github.ascopes.jct.workspaces.impl.BasicPathWrapperImpl;
+import io.github.ascopes.jct.workspaces.impl.WrappingDirectory;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.module.FindException;
@@ -416,7 +416,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
   private void configureClassPath(JctFileManagerImpl fileManager) {
     if (compiler.isInheritClassPath()) {
       for (var path : jvmClassPath.access()) {
-        var wrapper = new BasicPathWrapperImpl(path);
+        var wrapper = new WrappingDirectory(path);
 
         LOGGER.trace("Adding {} to the class path", path);
         fileManager.addPath(StandardLocation.CLASS_PATH, wrapper);
@@ -437,7 +437,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
   private void configureModulePath(JctFileManagerImpl fileManager) {
     if (compiler.isInheritModulePath()) {
       for (var path : jvmModulePath.access()) {
-        var wrapper = new BasicPathWrapperImpl(path);
+        var wrapper = new WrappingDirectory(path);
 
         LOGGER.trace("Adding {} to the module path and class path", path);
 
@@ -453,7 +453,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
   private void configurePlatformClassPath(JctFileManagerImpl fileManager) {
     if (compiler.isInheritPlatformClassPath()) {
       for (var path : jvmPlatformPath.access()) {
-        var wrapper = new BasicPathWrapperImpl(path);
+        var wrapper = new WrappingDirectory(path);
 
         LOGGER.trace("Adding {} to the platform class path", path);
         fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH, wrapper);
@@ -464,7 +464,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
   private void configureJvmSystemModules(JctFileManagerImpl fileManager) {
     if (compiler.isInheritSystemModulePath()) {
       for (var path : jvmSystemModules.access()) {
-        var wrapper = new BasicPathWrapperImpl(path);
+        var wrapper = new WrappingDirectory(path);
 
         LOGGER.trace("Adding {} to the system module path", path);
         fileManager.addPath(StandardLocation.SYSTEM_MODULES, wrapper);

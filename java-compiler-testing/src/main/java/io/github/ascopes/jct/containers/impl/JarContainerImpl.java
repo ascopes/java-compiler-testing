@@ -23,8 +23,8 @@ import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.ToStringBuilder;
-import io.github.ascopes.jct.workspaces.PathWrapper;
-import io.github.ascopes.jct.workspaces.impl.BasicPathWrapperImpl;
+import io.github.ascopes.jct.workspaces.PathRoot;
+import io.github.ascopes.jct.workspaces.impl.WrappingDirectory;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.net.URL;
@@ -71,7 +71,7 @@ public final class JarContainerImpl implements Container {
   private static final Logger LOGGER = LoggerFactory.getLogger(JarContainerImpl.class);
 
   private final Location location;
-  private final PathWrapper jarPath;
+  private final PathRoot jarPath;
   private final String release;
   private final Lazy<PackageFileSystemHolder> holder;
 
@@ -82,7 +82,7 @@ public final class JarContainerImpl implements Container {
    * @param jarPath  the path to the JAR to open.
    * @param release  the release version to use for {@code Multi-Release} JARs.
    */
-  public JarContainerImpl(Location location, PathWrapper jarPath, String release) {
+  public JarContainerImpl(Location location, PathRoot jarPath, String release) {
     this.location = requireNonNull(location, "location");
     this.jarPath = requireNonNull(jarPath, "jarPath");
     this.release = requireNonNull(release, "release");
@@ -193,7 +193,7 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
-  public PathWrapper getPathWrapper() {
+  public PathRoot getPathWrapper() {
     return jarPath;
   }
 
@@ -270,7 +270,7 @@ public final class JarContainerImpl implements Container {
    */
   private final class PackageFileSystemHolder {
 
-    private final Map<String, PathWrapper> packages;
+    private final Map<String, PathRoot> packages;
     private final @WillCloseWhenClosed FileSystem fileSystem;
 
     private PackageFileSystemHolder() throws IOException {
@@ -309,7 +309,7 @@ public final class JarContainerImpl implements Container {
               .map(root::relativize)
               .forEach(path -> packages.put(
                   FileUtils.pathToBinaryName(path),
-                  new BasicPathWrapperImpl(root.resolve(path))
+                  new WrappingDirectory(root.resolve(path))
               ));
         }
       }
@@ -325,12 +325,12 @@ public final class JarContainerImpl implements Container {
       fileSystem.close();
     }
 
-    private Map<String, PathWrapper> getPackages() {
+    private Map<String, PathRoot> getPackages() {
       return packages;
     }
 
     @Nullable
-    private PathWrapper getPackage(String name) {
+    private PathRoot getPackage(String name) {
       return packages.get(name);
     }
 

@@ -21,7 +21,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import io.github.ascopes.jct.workspaces.ManagedDirectory;
-import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -94,7 +94,7 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
   @CheckReturnValue
   @Nullable
   @Override
-  public PathWrapper getParent() {
+  public PathRoot getParent() {
     return null;
   }
 

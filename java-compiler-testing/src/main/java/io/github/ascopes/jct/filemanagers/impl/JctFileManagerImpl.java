@@ -28,7 +28,7 @@ import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.ToStringBuilder;
-import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public final class JctFileManagerImpl implements JctFileManager {
   }
 
   @Override
-  public void addPath(Location location, PathWrapper path) {
+  public void addPath(Location location, PathRoot path) {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
 
@@ -115,7 +115,7 @@ public final class JctFileManagerImpl implements JctFileManager {
   }
 
   @Override
-  public void addPaths(Location location, Collection<? extends PathWrapper> paths) {
+  public void addPaths(Location location, Collection<? extends PathRoot> paths) {
     for (var path : paths) {
       addPath(location, path);
     }

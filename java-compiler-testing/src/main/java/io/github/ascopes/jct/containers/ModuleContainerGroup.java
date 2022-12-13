@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.containers;
 
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
-import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +55,7 @@ public interface ModuleContainerGroup extends ContainerGroup {
    * @param module the name of the module that this is for.
    * @param path   the path to add.
    */
-  void addModule(String module, @WillNotClose PathWrapper path);
+  void addModule(String module, @WillNotClose PathRoot path);
 
   /**
    * Find the package container group for the given module.

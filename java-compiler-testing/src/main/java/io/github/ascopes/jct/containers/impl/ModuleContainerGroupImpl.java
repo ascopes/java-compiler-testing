@@ -24,7 +24,7 @@ import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
-import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   }
 
   @Override
-  public void addModule(String module, PathWrapper path) {
+  public void addModule(String module, PathRoot path) {
     getOrCreateModule(module).addPackage(path);
   }
 

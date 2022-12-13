@@ -18,7 +18,7 @@ package io.github.ascopes.jct.filemanagers;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
-import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import java.util.Collection;
 import javax.annotation.Nullable;
 import javax.tools.JavaFileManager;
@@ -26,7 +26,7 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Extension around a {@link JavaFileManager} that allows adding of {@link PathWrapper} objects to
+ * Extension around a {@link JavaFileManager} that allows adding of {@link PathRoot} objects to
  * the manager.
  *
  * @author Ashley Scopes
@@ -41,7 +41,7 @@ public interface JctFileManager extends JavaFileManager {
    * @param location the location to use.
    * @param path     the path to add.
    */
-  void addPath(Location location, PathWrapper path);
+  void addPath(Location location, PathRoot path);
 
   /**
    * Add a collection of paths to a given location.
@@ -49,7 +49,7 @@ public interface JctFileManager extends JavaFileManager {
    * @param location the location to use.
    * @param paths    the paths to add.
    */
-  void addPaths(Location location, Collection<? extends PathWrapper> paths);
+  void addPaths(Location location, Collection<? extends PathRoot> paths);
 
   /**
    * Copy all containers from the first location to the second location.

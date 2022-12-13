@@ -21,7 +21,7 @@ import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
-import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.net.URL;
@@ -54,7 +54,7 @@ public final class PathWrappingContainerImpl implements Container {
   private static final Logger LOGGER = LoggerFactory.getLogger(PathWrappingContainerImpl.class);
 
   private final Location location;
-  private final @WillNotClose PathWrapper root;
+  private final @WillNotClose PathRoot root;
   private final String name;
 
   /**
@@ -63,7 +63,7 @@ public final class PathWrappingContainerImpl implements Container {
    * @param location the location.
    * @param root     the root directory to hold.
    */
-  public PathWrappingContainerImpl(Location location, @WillNotClose PathWrapper root) {
+  public PathWrappingContainerImpl(Location location, @WillNotClose PathRoot root) {
     this.location = requireNonNull(location, "location");
     this.root = requireNonNull(root, "root");
     name = root.toString();
@@ -142,7 +142,7 @@ public final class PathWrappingContainerImpl implements Container {
   }
 
   @Override
-  public PathWrapper getPathWrapper() {
+  public PathRoot getPathWrapper() {
     return root;
   }
 

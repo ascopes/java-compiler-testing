@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.containers;
 
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
@@ -137,7 +137,7 @@ public interface Container extends Closeable {
    *
    * @return the path wrapper.
    */
-  PathWrapper getPathWrapper();
+  PathRoot getPathWrapper();
 
   /**
    * Get a classpath resource for the given resource path if it exists.

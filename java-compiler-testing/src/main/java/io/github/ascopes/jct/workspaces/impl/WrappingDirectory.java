@@ -20,7 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
-import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
@@ -31,7 +31,7 @@ import org.apiguardian.api.API.Status;
 
 /**
  * A wrapper around an existing {@link Path Java NIO Path} that makes it compatible with the
- * {@link PathWrapper} API.
+ * {@link PathRoot} API.
  *
  * <p>This is not designed to be used by users. The API will handle wrapping paths internally for
  * you. You may be interested in using {@link RamDirectory}, however.
@@ -42,9 +42,9 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class BasicPathWrapperImpl implements PathWrapper {
+public final class WrappingDirectory implements PathRoot {
 
-  private final @Nullable PathWrapper parent;
+  private final @Nullable PathRoot parent;
   private final Path path;
   private final URI uri;
   private final URL url;
@@ -57,7 +57,7 @@ public final class BasicPathWrapperImpl implements PathWrapper {
    *                                  protocol handler is registered for the associated
    *                                  {@link java.nio.file.FileSystem} providing the path).
    */
-  public BasicPathWrapperImpl(Path path) {
+  public WrappingDirectory(Path path) {
     this(null, path);
   }
 
@@ -70,11 +70,11 @@ public final class BasicPathWrapperImpl implements PathWrapper {
    *                                  protocol handler is registered for the associated
    *                                  {@link java.nio.file.FileSystem} providing the path).
    */
-  public BasicPathWrapperImpl(PathWrapper parent, String... parts) {
+  public WrappingDirectory(PathRoot parent, String... parts) {
     this(parent, FileUtils.resolvePathRecursively(parent.getPath(), parts));
   }
 
-  private BasicPathWrapperImpl(@Nullable PathWrapper parent, Path path) {
+  private WrappingDirectory(@Nullable PathRoot parent, Path path) {
     this.parent = parent;
     this.path = requireNonNull(path, "path");
     uri = path.toUri();
@@ -83,7 +83,7 @@ public final class BasicPathWrapperImpl implements PathWrapper {
 
   @Nullable
   @Override
-  public PathWrapper getParent() {
+  public PathRoot getParent() {
     return parent;
   }
 
@@ -104,11 +104,11 @@ public final class BasicPathWrapperImpl implements PathWrapper {
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof PathWrapper)) {
+    if (!(other instanceof PathRoot)) {
       return false;
     }
 
-    var that = (PathWrapper) other;
+    var that = (PathRoot) other;
 
     return uri.equals(that.getUri());
   }

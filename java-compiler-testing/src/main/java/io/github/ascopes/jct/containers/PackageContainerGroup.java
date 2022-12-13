@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.containers;
 
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -64,7 +64,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * @param path the path to add.
    */
-  void addPackage(@WillNotClose PathWrapper path);
+  void addPackage(@WillNotClose PathRoot path);
 
   /**
    * Get a class loader for this group of containers.

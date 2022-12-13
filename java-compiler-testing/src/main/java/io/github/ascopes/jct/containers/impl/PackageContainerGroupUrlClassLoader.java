@@ -17,7 +17,7 @@ package io.github.ascopes.jct.containers.impl;
 
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
-import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import java.net.URL;
 import java.net.URLClassLoader;
 import org.apiguardian.api.API;
@@ -44,7 +44,7 @@ public final class PackageContainerGroupUrlClassLoader extends URLClassLoader {
             .getPackages()
             .stream()
             .map(Container::getPathWrapper)
-            .map(PathWrapper::getUrl)
+            .map(PathRoot::getUrl)
             .distinct()
             .toArray(URL[]::new),
         ClassLoader.getSystemClassLoader()

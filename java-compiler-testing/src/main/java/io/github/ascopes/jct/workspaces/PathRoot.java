@@ -40,11 +40,23 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public interface PathWrapper {
+public interface PathRoot {
 
+  /**
+   * Determine if two path roots are equivalent. If the provided object is {@code null} or not an
+   * instance of a {@link PathRoot}, then this will return {@code false} unless otherwise specified.
+   *
+   * @param other the object to compare with.
+   * @return {@code true} if semantically equal, or {@code false} otherwise.
+   */
   @Override
   boolean equals(@Nullable Object other);
 
+  /**
+   * Determine the hash-code for the object.
+   *
+   * @return the hash code.
+   */
   @Override
   int hashCode();
 
@@ -70,10 +82,10 @@ public interface PathWrapper {
   URL getUrl();
 
   /**
-   * Get the parent path wrapper, if there is one.
+   * Get the parent path root, if there is one.
    *
-   * @return the parent path wrapper, or {@code null} if no parent wrapper exists.
+   * @return the parent path root, or {@code null} if no parent root exists.
    */
   @Nullable
-  PathWrapper getParent();
+  PathRoot getParent();
 }

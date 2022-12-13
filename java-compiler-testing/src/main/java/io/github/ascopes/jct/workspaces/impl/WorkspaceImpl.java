@@ -19,8 +19,8 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.workspaces.ManagedDirectory;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import io.github.ascopes.jct.workspaces.PathStrategy;
-import io.github.ascopes.jct.workspaces.PathWrapper;
 import io.github.ascopes.jct.workspaces.Workspace;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,7 +49,7 @@ import org.apiguardian.api.API.Status;
 public final class WorkspaceImpl implements Workspace {
 
   private final PathStrategy pathStrategy;
-  private final Map<Location, List<PathWrapper>> paths;
+  private final Map<Location, List<PathRoot>> paths;
 
   public WorkspaceImpl(PathStrategy pathStrategy) {
     this.pathStrategy = requireNonNull(pathStrategy, "pathStrategy");
@@ -94,7 +94,7 @@ public final class WorkspaceImpl implements Workspace {
       throw new IllegalArgumentException("Path " + path + " does not exist");
     }
 
-    var dir = new BasicPathWrapperImpl(path);
+    var dir = new WrappingDirectory(path);
     paths.computeIfAbsent(location, unused -> new ArrayList<>()).add(dir);
   }
 
@@ -149,9 +149,9 @@ public final class WorkspaceImpl implements Workspace {
   }
 
   @Override
-  public Map<Location, ? extends List<? extends PathWrapper>> getAllPaths() {
+  public Map<Location, ? extends List<? extends PathRoot>> getAllPaths() {
     // Create an immutable copy.
-    var pathsCopy = new HashMap<Location, List<PathWrapper>>();
+    var pathsCopy = new HashMap<Location, List<PathRoot>>();
     paths.forEach((location, list) -> pathsCopy.put(location, List.copyOf(list)));
     return Collections.unmodifiableMap(pathsCopy);
   }

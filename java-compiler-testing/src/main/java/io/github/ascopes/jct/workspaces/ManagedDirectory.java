@@ -35,7 +35,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public interface ManagedDirectory extends PathWrapper {
+public interface ManagedDirectory extends PathRoot {
 
   /**
    * Method that returns the object it is called upon to enable creating fluent-language builders.

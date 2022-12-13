@@ -24,7 +24,7 @@ import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.ToStringBuilder;
-import io.github.ascopes.jct.workspaces.PathWrapper;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -99,7 +99,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
   }
 
   @Override
-  public void addPackage(PathWrapper path) {
+  public void addPackage(PathRoot path) {
     var actualPath = path.getPath();
 
     // Null filename implies the path is the root directory of a file system (
