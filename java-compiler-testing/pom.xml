@@ -13,17 +13,6 @@
 
   <artifactId>java-compiler-testing</artifactId>
 
-  <properties>
-    <javadoc-excluded-packages>
-      io.github.ascopes.jct.compilers.javac;
-      io.github.ascopes.jct.**.impl;
-      io.github.ascopes.jct.utils;
-    </javadoc-excluded-packages>
-    <pitest-excluded-test-classes>
-      io.github.ascopes.jct.testing.integration.**;
-    </pitest-excluded-test-classes>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
@@ -118,6 +107,14 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+
+        <configuration>
+          <excludePackageNames>
+            io.github.ascopes.jct.compilers.javac;
+            io.github.ascopes.jct.**.impl;
+            io.github.ascopes.jct.utils;
+          </excludePackageNames>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -130,8 +127,15 @@
       </plugin>
       
       <plugin>
-          <groupId>org.pitest</groupId>
-          <artifactId>pitest-maven</artifactId>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+
+        <configuration>
+          <excludedGroups>
+            <!-- Do not mutation-test integration test packs. -->
+            <excludedGroup>integration</excludedGroup>
+          </excludedGroups>
+        </configuration>
       </plugin>
       
       <plugin>

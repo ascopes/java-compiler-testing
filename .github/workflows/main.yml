@@ -152,7 +152,6 @@ jobs:
           --also-make
           -Pmutation-test
           --no-transfer-progress
-          -DskipTests=true
           -Dstyle.color=always
           -Dcheckstyle.skip=true
           -Dlicense.skip=true

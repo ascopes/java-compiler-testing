@@ -110,11 +110,7 @@
     <java-release>11</java-release>
 
     <!-- JavaDocs -->
-    <javadoc-excluded-packages/>
     <current-year>2022</current-year>
-
-    <!-- Mutation testing -->
-    <pitest-excluded-test-classes/>
 
     <!-- Other configuration -->
     <project-slug>ascopes/java-compiler-testing</project-slug>
@@ -275,7 +271,6 @@
             </bottom>
             <defaultSince>0.0.1</defaultSince>
             <detectLinks>false</detectLinks>
-            <excludePackageNames>${javadoc-excluded-packages}</excludePackageNames>
             <keywords>true</keywords>
             <linksource>true</linksource>
             <links>
@@ -421,7 +416,6 @@
           <version>${pitest-maven.version}</version>
 
           <configuration>
-            <excludedTestClasses>${pitest-excluded-test-classes}</excludedTestClasses>
             <parseSurefireConfig>true</parseSurefireConfig>
             <skipFailingTests>true</skipFailingTests>
             <threads>16</threads>

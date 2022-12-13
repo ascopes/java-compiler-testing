@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
+import io.github.ascopes.jct.tests.helpers.IntegrationTest;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import javax.tools.StandardLocation;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.DisplayName;
  * @author Ashley Scopes
  */
 @DisplayName("Basic legacy compilation integration tests")
+@IntegrationTest
 class BasicLegacyCompilationIntegrationTest {
 
   @DisplayName("I can compile a 'Hello, World!' program using a RAM directory")
