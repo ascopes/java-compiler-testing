@@ -148,17 +148,16 @@ jobs:
           -B
           -T8
           -U
+          -pl java-compiler-testing
+          --also-make
           -Pmutation-test
           --no-transfer-progress
           -DskipTests=true
           -Dstyle.color=always
           -Dcheckstyle.skip=true
           -Dlicense.skip=true
-          -Dmaven.main.skip
-          -Dmaven.jar.skip
-          -Dmaven.resources.skip
           -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
-          verify
+          test
 
       - name: Archive Dependency Scan reports
         uses: actions/upload-artifact@v3
