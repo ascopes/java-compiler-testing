@@ -92,6 +92,7 @@ public final class TempDirectory extends AbstractManagedDirectory {
    */
   @CheckReturnValue
   public static TempDirectory newTempDirectory(String name) {
+    // TODO(ascopes): are MS-DOS file name length limits a potential issue here?
     assertValidRootName(name);
     var tempDir = uncheckedIo(() -> Files.createTempDirectory("jct-" + name + "_"));
     LOGGER.debug("Initialized new root '{}' using temporary path at {}", name, tempDir);

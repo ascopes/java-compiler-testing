@@ -95,7 +95,8 @@ public enum PathStrategy {
    * Determine the default strategy to fall back onto.
    *
    * <p>This will be {@link #RAM_DIRECTORIES} by default, but this may be subject to change between
-   * minor versions.
+   * minor versions without notice, so do not rely on this if you are testing code that may be
+   * sensitive to the type of file system being used.
    *
    * @return the path strategy to use by default.
    */

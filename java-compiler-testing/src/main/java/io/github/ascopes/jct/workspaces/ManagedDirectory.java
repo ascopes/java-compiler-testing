@@ -74,7 +74,6 @@ public interface ManagedDirectory extends PathRoot {
    */
   void close() throws IOException;
 
-
   /**
    * Create a directory builder for the given path in this RAM file system.
    *
