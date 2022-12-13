@@ -18,6 +18,7 @@ package io.github.ascopes.jct.workspaces.impl;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
+import io.github.ascopes.jct.workspaces.ManagedDirectory;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.PathWrapper;
 import io.github.ascopes.jct.workspaces.Workspace;
@@ -117,7 +118,7 @@ public final class WorkspaceImpl implements Workspace {
   }
 
   @Override
-  public AbstractManagedDirectory createPackage(Location location) {
+  public ManagedDirectory createPackage(Location location) {
     requireNonNull(location, "location");
 
     if (location.isModuleOrientedLocation()) {
@@ -130,7 +131,7 @@ public final class WorkspaceImpl implements Workspace {
   }
 
   @Override
-  public AbstractManagedDirectory createModule(Location location, String moduleName) {
+  public ManagedDirectory createModule(Location location, String moduleName) {
     requireNonNull(location, "location");
     requireNonNull(location, "moduleName");
 

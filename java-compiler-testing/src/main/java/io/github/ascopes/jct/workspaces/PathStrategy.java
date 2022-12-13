@@ -87,7 +87,7 @@ public enum PathStrategy {
    * @return the new test directory.
    */
   @API(since = "0.0.1", status = Status.INTERNAL)
-  public AbstractManagedDirectory newInstance(String name) {
+  public ManagedDirectory newInstance(String name) {
     return constructor.apply(name);
   }
 
