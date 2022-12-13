@@ -265,11 +265,14 @@
             <linksource>true</linksource>
             <links>
               <link>https://docs.oracle.com/en/java/javase/11/docs/api</link>
-              <link>https://javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}</link>
               <link>https://javadoc.io/doc/com.google.code.findbugs/jsr305/${jsr305.version}</link>
-              <link>https://javadoc.io/doc/org.apiguardian/apiguardian-api/${apiguardian.version}</link>
               <link>https://javadoc.io/doc/org.assertj/assertj-core/${assertj.version}</link>
-              <link>https://javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}</link>
+              <!-- SLF4J have not updated javadoc.io after making a release, which
+                   is breaking my builds on the JavaDoc step. For now, use the old
+                   version hosted on their website instead.
+                  <link>https://javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}</link>
+                  -->
+              <link>https://www.slf4j.org/apidocs</link>
               <link>https://junit.org/junit5/docs/${junit.version}/api</link>
             </links>
             <source>${java-release}</source>
