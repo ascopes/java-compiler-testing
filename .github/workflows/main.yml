@@ -152,7 +152,11 @@ jobs:
             java-version: 11
           - os-name: windows-2022
             java-version: 11
-
+          - os-name: macos-12
+            java-version: 19
+          - os-name: windows-2022
+            java-version: 19
+          
     name: Build - JDK ${{ matrix.java-version }} - ${{ matrix.os-name }}
     runs-on: ${{ matrix.os-name }}
 
