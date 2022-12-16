@@ -3,19 +3,19 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     assignees:
       - "ascopes"
     labels:
       - "ci"
-      - "housekeeping"
+      - "tiny"
 
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     assignees:
       - "ascopes"
     labels:
       - "maven"
-      - "housekeeping"
+      - "tiny"
