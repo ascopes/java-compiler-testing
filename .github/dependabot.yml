@@ -8,7 +8,6 @@ updates:
       - "ascopes"
     labels:
       - "ci"
-      - "tiny"
 
   - package-ecosystem: "maven"
     directory: "/"
@@ -18,4 +17,3 @@ updates:
       - "ascopes"
     labels:
       - "maven"
-      - "tiny"
