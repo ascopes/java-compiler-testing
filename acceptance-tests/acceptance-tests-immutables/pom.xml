@@ -14,7 +14,7 @@
   <artifactId>acceptance-tests-immutables</artifactId>
 
   <properties>
-    <immutables.version>2.9.2</immutables.version>
+    <immutables.version>2.9.3</immutables.version>
   </properties>
 
   <dependencies>
