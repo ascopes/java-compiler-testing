@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.acceptancetests.manifold
+package io.github.ascopes.jct.acceptancetests.manifold
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import org.junit.jupiter.api.condition.JRE
