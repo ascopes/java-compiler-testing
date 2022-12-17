@@ -279,7 +279,6 @@ public interface Workspace extends AutoCloseable {
   @Override
   void close();
 
-
   /**
    * Create a new test directory for a package root and associate it with the given location.
    *
