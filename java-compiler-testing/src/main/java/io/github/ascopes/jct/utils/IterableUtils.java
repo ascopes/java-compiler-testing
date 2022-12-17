@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -76,7 +77,7 @@ public final class IterableUtils extends UtilityClass {
     var badElements = Stream.<String>builder();
 
     var index = 0;
-    for (Object element : collection) {
+    for (@Nullable Object element : collection) {
       if (element == null) {
         badElements.add(collectionName + "[" + index + "]");
       }
@@ -104,6 +105,7 @@ public final class IterableUtils extends UtilityClass {
    * @param <T>       the input collection type.
    * @return the input array.
    */
+  @SuppressWarnings("NullableProblems")
   public static <T> T[] requireNonNullValues(
       T[] array,
       String arrayName
@@ -115,7 +117,7 @@ public final class IterableUtils extends UtilityClass {
     var badElements = Stream.<String>builder();
 
     var index = 0;
-    for (Object element : array) {
+    for (@Nullable Object element : array) {
       if (element == null) {
         badElements.add(arrayName + "[" + index + "]");
       }
