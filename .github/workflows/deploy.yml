@@ -20,7 +20,7 @@ jobs:
 
   github:
     name: "Deploy to GitHub"
-    needs: [codeql, build]
+    needs: [build]
     runs-on: ubuntu-22.04
 
     permissions:
