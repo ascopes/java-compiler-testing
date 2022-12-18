@@ -14,10 +14,6 @@ on:
         type: boolean
 
 jobs:
-  codeql:
-    name: CodeQL Analysis
-    uses: ./.github/workflows/codeql.yml
-
   build:
     name: Build and run analysis
     uses: ./.github/workflows/main.yml
