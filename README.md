@@ -49,7 +49,7 @@ class ExampleTest {
   @DisplayName("I can compile a Hello World application")
   @JavacCompilerTest
   void canCompileHelloWorld(JctCompiler<?, ?> compiler) {
-    try (var workspace = Workspace.newWorkspace()) {
+    try (var workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()
@@ -90,7 +90,7 @@ class ExampleTest {
 
 ```java
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static io.github.ascopes.jct.pathwrappers.RamDirectory.newRamDirectory;
+import static io.github.ascopes.jct.workspaces.Workspaces;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
@@ -102,7 +102,7 @@ class JsonSchemaAnnotationProcessorTest {
 
   @JavacCompilerTest(minVersion = 11, maxVersion = 19)
   void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler<?, ?> compiler) {
-    try (var workspace = Workspace.newWorkspace()) {
+    try (var workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()
@@ -154,7 +154,7 @@ class ExampleTest {
   @DisplayName("I can compile a module that is using Lombok")
   @JavacCompilerTest(modules = true)
   void canCompileModuleUsingLombok(JctCompiler<?, ?> compiler) {
-    try (var workspace = Workspace.newWorkspace()) {
+    try (var workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage("hello.world")

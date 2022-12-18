@@ -506,23 +506,4 @@ public interface Workspace extends AutoCloseable {
    * @return the path strategy.
    */
   PathStrategy getPathStrategy();
-
-  /**
-   * Create a new default workspace instance using the default path strategy.
-   *
-   * @return the workspace.
-   */
-  static Workspace newWorkspace() {
-    return newWorkspace(PathStrategy.defaultStrategy());
-  }
-
-  /**
-   * Create a new default workspace instance using the given path strategy.
-   *
-   * @param pathStrategy the path strategy to use.
-   * @return the workspace.
-   */
-  static Workspace newWorkspace(PathStrategy pathStrategy) {
-    return new WorkspaceImpl(pathStrategy);
-  }
 }

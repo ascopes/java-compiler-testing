@@ -18,7 +18,7 @@ package io.github.ascopes.jct.acceptancetests.manifold
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import io.github.ascopes.jct.workspaces.PathStrategy
-import io.github.ascopes.jct.workspaces.Workspace
+import io.github.ascopes.jct.workspaces.Workspaces
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
@@ -30,7 +30,7 @@ class ManifoldPreprocessorTest {
   @DisplayName("Preprocessor produces the expected code when a preprocessor symbol is defined")
   @JavacCompilerTest(configurers = [ManifoldPluginConfigurer])
   void preprocessorProducesTheExpectedCodeWhenPreprocessorSymbolIsDefined(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+    try (def workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       // Given
       workspace
           .createSourcePathPackage()
@@ -60,7 +60,7 @@ class ManifoldPreprocessorTest {
   @DisplayName("Preprocessor produces the expected code when a preprocessor symbol is undefined")
   @JavacCompilerTest(configurers = [ManifoldPluginConfigurer])
   void preprocessorProducesTheExpectedCodeWhenPreprocessorSymbolIsUndefined(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+    try (def workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       // Given
       workspace
           .createSourcePathPackage()
@@ -89,7 +89,7 @@ class ManifoldPreprocessorTest {
   @DisplayName("Warning directives produce compiler warnings in JCT")
   @JavacCompilerTest(configurers = [ManifoldPluginConfigurer])
   void warningDirectivesProduceCompilerWarningsInJct(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+    try (def workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       // Given
       workspace
           .createSourcePathPackage()
@@ -111,7 +111,7 @@ class ManifoldPreprocessorTest {
   @JavacCompilerTest(configurers = [ManifoldPluginConfigurer])
   void warningDirectivesProduceCompilerErrorsInJct(JctCompiler compiler) {
     // Given
-    try (def workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+    try (def workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       // Given
       workspace
           .createSourcePathPackage()

@@ -18,7 +18,7 @@ package io.github.ascopes.jct.acceptancetests.serviceloaderjpms.testing
 import io.github.ascopes.jct.acceptancetests.serviceloaderjpms.ServiceProcessor
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.github.ascopes.jct.workspaces.Workspace
+import io.github.ascopes.jct.workspaces.Workspaces
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
@@ -29,7 +29,7 @@ class ServiceProcessorJpmsTest {
   @DisplayName("Expected files get created when the processor is run")
   @JavacCompilerTest(modules = true)
   void expectedFilesGetCreated(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()

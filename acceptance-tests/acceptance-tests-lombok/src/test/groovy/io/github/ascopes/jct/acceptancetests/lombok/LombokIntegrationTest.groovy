@@ -17,7 +17,7 @@ package io.github.ascopes.jct.acceptancetests.lombok
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.github.ascopes.jct.workspaces.Workspace
+import io.github.ascopes.jct.workspaces.Workspaces
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
@@ -38,7 +38,7 @@ class LombokIntegrationTest {
   @DisplayName("Lombok @Data compiles the expected data class")
   @JavacCompilerTest
   void lombokDataCompilesTheExpectedDataClass(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()
@@ -72,7 +72,7 @@ class LombokIntegrationTest {
   @DisplayName("Lombok @Data compiles the expected data class with module support")
   @JavacCompilerTest(modules = true)
   void lombokDataCompilesTheExpectedDataClassWithModuleSupport(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()

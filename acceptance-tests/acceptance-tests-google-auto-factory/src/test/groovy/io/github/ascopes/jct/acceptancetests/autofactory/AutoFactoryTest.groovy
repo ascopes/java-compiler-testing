@@ -17,7 +17,7 @@ package io.github.ascopes.jct.acceptancetests.autofactory
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.github.ascopes.jct.workspaces.Workspace
+import io.github.ascopes.jct.workspaces.Workspaces
 import org.junit.jupiter.api.DisplayName
 
 import java.time.Instant
@@ -32,7 +32,7 @@ class AutoFactoryTest {
   @DisplayName("The AutoFactory class is created as expected")
   @JavacCompilerTest
   void autoFactoryClassIsCreatedAsExpected(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()

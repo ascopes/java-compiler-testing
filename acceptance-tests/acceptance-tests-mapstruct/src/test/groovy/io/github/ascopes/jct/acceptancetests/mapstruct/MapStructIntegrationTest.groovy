@@ -17,7 +17,7 @@ package io.github.ascopes.jct.acceptancetests.mapstruct
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.github.ascopes.jct.workspaces.Workspace
+import io.github.ascopes.jct.workspaces.Workspaces
 import org.junit.jupiter.api.DisplayName
 
 import javax.tools.StandardLocation
@@ -32,7 +32,7 @@ class MapStructIntegrationTest {
   @DisplayName("MapStruct generates expected mapping code")
   @JavacCompilerTest
   void mapStructGeneratesExpectedMappingCode(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()
@@ -74,7 +74,7 @@ class MapStructIntegrationTest {
   @JavacCompilerTest(modules = true)
   void mapStructGeneratesExpectedMappingCodeForModules(JctCompiler compiler) {
     // Given
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()

@@ -17,7 +17,7 @@ package io.github.ascopes.jct.acceptancetests.checkerframework
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.github.ascopes.jct.workspaces.Workspace
+import io.github.ascopes.jct.workspaces.Workspaces
 import org.checkerframework.checker.nullness.NullnessChecker
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -39,7 +39,7 @@ class CheckerNullTest {
   @DisplayName("Happy paths work as expected")
   @JavacCompilerTest
   void happyPathsWorkAsExpected(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()
@@ -60,7 +60,7 @@ class CheckerNullTest {
   @DisplayName("Sad paths fail as expected")
   @JavacCompilerTest
   void sadPathsFailAsExpected(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()

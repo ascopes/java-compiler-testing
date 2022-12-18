@@ -17,7 +17,7 @@ package io.github.ascopes.jct.acceptancetests.autoservice
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.github.ascopes.jct.workspaces.Workspace
+import io.github.ascopes.jct.workspaces.Workspaces
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
@@ -28,7 +28,7 @@ class AutoServiceTest {
   @DisplayName("The AutoService descriptor is created as expected")
   @JavacCompilerTest
   void autoServiceDescriptorIsCreatedAsExpected(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()

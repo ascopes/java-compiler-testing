@@ -39,7 +39,7 @@
  *
  * <pre><code>
  *    import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
- *    import static io.github.ascopes.jct.workspaces.Workspace;
+ *    import static io.github.ascopes.jct.workspaces.Workspaces;
  *
  *    import io.github.ascopes.jct.compilers.JctCompiler;
  *    import io.github.ascopes.jct.junit.JavacCompilerTest;
@@ -52,7 +52,7 @@
  *      {@literal @JavacCompilerTest(minVersion=11, maxVersion=19)}
  *      void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler&lt;?, ?&gt; compiler) {
  *
- *        try (var workspace = Workspace.newWorkspace()) {
+ *        try (var workspace = Workspaces.newWorkspace()) {
  *          // Given
  *          workspace
  *              .createSourcePathPackage()

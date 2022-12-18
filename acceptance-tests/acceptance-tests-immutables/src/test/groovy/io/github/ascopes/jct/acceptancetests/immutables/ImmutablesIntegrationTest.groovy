@@ -17,7 +17,7 @@ package io.github.ascopes.jct.acceptancetests.immutables
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.github.ascopes.jct.workspaces.Workspace
+import io.github.ascopes.jct.workspaces.Workspaces
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
@@ -38,7 +38,7 @@ class ImmutablesIntegrationTest {
   @DisplayName("Immutables @Value produces the expected class")
   @JavacCompilerTest
   void immutablesValueProducesTheExpectedClass(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()
@@ -73,7 +73,7 @@ class ImmutablesIntegrationTest {
   @DisplayName("Immutables @Value produces the expected class for modules")
   @JavacCompilerTest(modules = true)
   void immutablesValueProducesTheExpectedClassForModules(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()

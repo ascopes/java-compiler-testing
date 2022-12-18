@@ -17,7 +17,7 @@ package io.github.ascopes.jct.acceptancetests.spring
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.github.ascopes.jct.workspaces.Workspace
+import io.github.ascopes.jct.workspaces.Workspaces
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.JRE
@@ -39,7 +39,7 @@ class SpringContextIndexerTest {
   @DisplayName("Spring will index the application context as expected")
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpected(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()
@@ -64,7 +64,7 @@ class SpringContextIndexerTest {
   @DisplayName("Spring will index the application context as expected with modules")
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpectedWithModules(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()

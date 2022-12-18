@@ -15,17 +15,12 @@
  */
 package io.github.ascopes.jct.tests.unit.workspaces;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockConstruction;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 
-import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspace;
-import io.github.ascopes.jct.workspaces.impl.WorkspaceImpl;
 import java.nio.file.Path;
 import java.util.UUID;
 import javax.tools.StandardLocation;
@@ -528,45 +523,5 @@ class WorkspaceTest {
 
     // Then
     verify(workspace).createModule(StandardLocation.PATCH_MODULE_PATH, module);
-  }
-
-  @DisplayName("newWorkspace() calls newWorkspacee(PathStrategy.defaultStrategy()")
-  @Test
-  void newWorkspaceCreatesWorkspaceWithDefaultStrategy() {
-    // Given
-    try (var staticMock = mockStatic(Workspace.class)) {
-      staticMock.when(Workspace::newWorkspace).thenCallRealMethod();
-      var expectedWorkspace = mock(Workspace.class);
-      staticMock.when(() -> Workspace.newWorkspace(any())).thenReturn(expectedWorkspace);
-
-      // When
-      var actualWorkspace = Workspace.newWorkspace();
-
-      // Then
-      staticMock.verify(() -> Workspace.newWorkspace(PathStrategy.defaultStrategy()));
-      assertThat(actualWorkspace).isSameAs(expectedWorkspace);
-    }
-  }
-
-  @DisplayName("newWorkspace(PathStrategy) returns a new WorkspaceImpl")
-  @Test
-  void newWorkspaceReturnsNewWorkspaceImpl() {
-    // Given
-    try (var workspaceImplMock = mockConstruction(WorkspaceImpl.class)) {
-      var pathStrategy = mock(PathStrategy.class);
-
-      // When
-      var workspace = Workspace.newWorkspace(pathStrategy);
-
-      // Then
-      assertThat(workspace)
-          .isInstanceOf(WorkspaceImpl.class);
-
-      assertThat(workspaceImplMock.constructed())
-          .singleElement()
-          // Nested assertion to swap expected/actual args.
-          .satisfies(constructed -> assertThat(workspace).isSameAs(constructed));
-
-    }
   }
 }

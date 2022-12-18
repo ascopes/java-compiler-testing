@@ -20,7 +20,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.PathStrategy;
-import io.github.ascopes.jct.workspaces.Workspace;
+import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
 
 /**
@@ -34,7 +34,7 @@ class BasicModuleCompilationIntegrationTest {
   @DisplayName("I can compile a 'Hello, World!' module program using a RAM disk")
   @JavacCompilerTest(modules = true)
   void helloWorldRamDisk(JctCompiler<?, ?> compiler) {
-    try (var workspace = Workspace.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
+    try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
       // Given
       workspace
           .createSourcePathPackage()
@@ -77,7 +77,7 @@ class BasicModuleCompilationIntegrationTest {
   @DisplayName("I can compile a 'Hello, World!' module program using a temporary directory")
   @JavacCompilerTest(modules = true)
   void helloWorldUsingTempDirectory(JctCompiler<?, ?> compiler) {
-    try (var workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+    try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       // Given
       workspace
           .createSourcePathPackage()

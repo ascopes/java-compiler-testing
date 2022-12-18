@@ -17,7 +17,7 @@ package io.github.ascopes.jct.acceptancetests.dagger
 
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.github.ascopes.jct.workspaces.Workspace
+import io.github.ascopes.jct.workspaces.Workspaces
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
@@ -27,7 +27,7 @@ class DaggerTest {
   @DisplayName("Dagger DI runs as expected in the annotation processing phase")
   @JavacCompilerTest
   void daggerDiRunsAsExpectedInTheAnnotationProcessingPhase(JctCompiler compiler) {
-    try (def workspace = Workspace.newWorkspace()) {
+    try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()

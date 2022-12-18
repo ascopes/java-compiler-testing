@@ -20,7 +20,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.PathStrategy;
-import io.github.ascopes.jct.workspaces.Workspace;
+import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
 
 /**
@@ -34,7 +34,7 @@ class BasicMultiModuleCompilationIntegrationTest {
   @DisplayName("I can compile a single module using multi-module layout using a RAM disk")
   @JavacCompilerTest(modules = true)
   void singleModuleInMultiModuleLayoutRamDisk(JctCompiler<?, ?> compiler) {
-    try (var workspace = Workspace.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
+    try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
       // Given
       workspace
           .createSourcePathModule("hello.world")
@@ -75,7 +75,7 @@ class BasicMultiModuleCompilationIntegrationTest {
   @DisplayName("I can compile a single module using multi-module layout using a temp directory")
   @JavacCompilerTest(modules = true)
   void singleModuleInMultiModuleLayoutTempDirectory(JctCompiler<?, ?> compiler) {
-    try (var workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+    try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       // Given
       workspace
           .createSourcePathModule("hello.world")
@@ -115,7 +115,7 @@ class BasicMultiModuleCompilationIntegrationTest {
   @DisplayName("I can compile multiple modules using multi-module layout using a RAM disk")
   @JavacCompilerTest(modules = true)
   void multipleModulesInMultiModuleLayoutRamDisk(JctCompiler<?, ?> compiler) {
-    try (var workspace = Workspace.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
+    try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
       // Given
       workspace
           .createSourcePathModule("hello.world")
@@ -183,7 +183,7 @@ class BasicMultiModuleCompilationIntegrationTest {
   @DisplayName("I can compile multiple modules using multi-module layout using a temp directory")
   @JavacCompilerTest(modules = true)
   void multipleModulesInMultiModuleLayoutTempDirectory(JctCompiler<?, ?> compiler) {
-    try (var workspace = Workspace.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+    try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       // Given
       workspace
           .createSourcePathModule("hello.world")
