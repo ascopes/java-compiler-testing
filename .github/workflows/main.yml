@@ -14,7 +14,7 @@ on:
 
 jobs:
   codeql:
-    name: CodeQL analysis
+    name: CodeQL analysis (${{ matrix.language }})
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-22.04
     permissions:
