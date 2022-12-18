@@ -17,6 +17,7 @@
   <modules>
     <module>acceptance-tests-checkerframework</module>
     <module>acceptance-tests-dagger</module>
+    <module>acceptance-tests-error-prone</module>
     <module>acceptance-tests-google-auto-factory</module>
     <module>acceptance-tests-google-auto-service</module>
     <module>acceptance-tests-google-auto-value</module>
