@@ -25,14 +25,15 @@ import static org.assertj.core.api.Assumptions.assumeThat
  * Configurer that sets up Javac to invoke Manifold processors.
  */
 final class ManifoldPluginConfigurer implements JctSimpleCompilerConfigurer {
-
   @Override
   void configure(JctCompiler compiler) {
     assumeThat(JRE.currentVersion())
         .as("Manifold accesses internal JRE components at runtime which breaks after JDK 15")
         .isLessThanOrEqualTo(JRE.JAVA_15)
 
-    // TODO(ascopes): look into what is breaking this. Guess there is incompatibility somewhere.
+    // TODO(ascopes): look into what is breaking this. Guess there is incompatibility somewhere
+    //  with how Manifold is loading stubs of the JRE standard lib as this is failing on resolving
+    //  jdk.internal.vm.annotation.IntrinsicCandidate somewhere.
     assumeThat(JRE.currentVersion())
         .as("Manifold triggers exceptions after JDK 11")
         .isLessThanOrEqualTo(JRE.JAVA_11)

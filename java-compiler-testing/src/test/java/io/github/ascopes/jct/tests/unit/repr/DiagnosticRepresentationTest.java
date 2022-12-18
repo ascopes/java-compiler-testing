@@ -18,7 +18,10 @@ package io.github.ascopes.jct.tests.unit.repr;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.oneOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
@@ -90,9 +93,14 @@ class DiagnosticRepresentationTest {
         );
   }
 
-  @DisplayName("toStringOf(TraceDiagnostic) renders the diagnostic when file contents are present")
+  @SuppressWarnings("resource")
+  @DisplayName(
+      "toStringOf(TraceDiagnostic) renders the diagnostic when file contents are present "
+          + "via getCharContent"
+  )
   @Test
-  void toStringOfTraceDiagnosticRendersTheDiagnosticWhenFileContentsArePresent() {
+  void toStringOfTraceDiagnosticRendersTheDiagnosticWhenFileContentsArePresentViaGetCharContent()
+      throws IOException {
     // Given
     var file = someFileObject();
 
@@ -130,6 +138,159 @@ class DiagnosticRepresentationTest {
             "",
             "    Entrypoint must be a void method."
         );
+
+    verify(file).getCharContent(true);
+    verify(file, never()).openInputStream();
+  }
+
+  @SuppressWarnings("resource")
+  @DisplayName(
+      "toStringOf(TraceDiagnostic) renders the diagnostic when file contents are present "
+          + "via openInputStream but getCharContent raises an exception"
+  )
+  @Test
+  void toStringOfTraceDiagnosticRendersTheDiagnosticWhenFileContentsArePresentViaOpenInputStream()
+      throws IOException {
+
+    // Given
+    var file = someFileObject();
+    when(file.getCharContent(anyBoolean())).thenThrow(new RuntimeException("error"));
+
+    var kind = oneOf(Kind.values());
+
+    var diag = GenericMock
+        .mockRaw(TraceDiagnostic.class)
+        .<TraceDiagnostic<JavaFileObject>>upcastedTo()
+        .build();
+
+    when(diag.getKind()).thenReturn(kind);
+    when(diag.getLineNumber()).thenReturn(6L);
+    when(diag.getColumnNumber()).thenReturn(16L);
+    when(diag.getStartPosition()).thenReturn(77L);
+    when(diag.getEndPosition()).thenReturn(133L);
+    when(diag.getSource()).thenReturn(file);
+    when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
+
+    var repr = DiagnosticRepresentation.getInstance();
+
+    // When
+    var result = repr.toStringOf(diag);
+
+    // Then
+    assertThat(result.lines())
+        .containsExactly(
+            "[" + kind.toString() + "] " + file.getName() + " (at line 6, col 16)",
+            "",
+            "     4 | ",
+            "     5 | public class HelloWorld {",
+            "     6 |   public static int main(String[] args) throws Throwable {",
+            "       +   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "     7 |     var scanner = new Scanner(System.in);",
+            "     8 |     System.out.print(\"What is your name? \");",
+            "",
+            "    Entrypoint must be a void method."
+        );
+
+    verify(file).getCharContent(true);
+    verify(file).openInputStream();
+  }
+
+  @SuppressWarnings("resource")
+  @DisplayName(
+      "toStringOf(TraceDiagnostic) renders the diagnostic when file contents are present "
+          + "via openInputStream but getCharContent returns null"
+  )
+  @Test
+  void toStringOfTraceDiagnosticRendersDiagnosticWhenGetCharContentReturnsNullViaOpenInputStream()
+      throws IOException {
+
+    // Given
+    var file = someFileObject();
+    when(file.getCharContent(anyBoolean())).thenReturn(null);
+
+    var kind = oneOf(Kind.values());
+
+    var diag = GenericMock
+        .mockRaw(TraceDiagnostic.class)
+        .<TraceDiagnostic<JavaFileObject>>upcastedTo()
+        .build();
+
+    when(diag.getKind()).thenReturn(kind);
+    when(diag.getLineNumber()).thenReturn(6L);
+    when(diag.getColumnNumber()).thenReturn(16L);
+    when(diag.getStartPosition()).thenReturn(77L);
+    when(diag.getEndPosition()).thenReturn(133L);
+    when(diag.getSource()).thenReturn(file);
+    when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
+
+    var repr = DiagnosticRepresentation.getInstance();
+
+    // When
+    var result = repr.toStringOf(diag);
+
+    // Then
+    assertThat(result.lines())
+        .containsExactly(
+            "[" + kind.toString() + "] " + file.getName() + " (at line 6, col 16)",
+            "",
+            "     4 | ",
+            "     5 | public class HelloWorld {",
+            "     6 |   public static int main(String[] args) throws Throwable {",
+            "       +   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "     7 |     var scanner = new Scanner(System.in);",
+            "     8 |     System.out.print(\"What is your name? \");",
+            "",
+            "    Entrypoint must be a void method."
+        );
+
+    verify(file).getCharContent(true);
+    verify(file).openInputStream();
+  }
+
+  @SuppressWarnings("resource")
+  @DisplayName(
+      "toStringOf(TraceDiagnostic) does not render the diagnostic when file contents are not "
+          + "present"
+  )
+  @Test
+  void toStringOfTraceDiagnosticDoesNotRenderTheDiagnosticWhenFileContentsAreNotPresent()
+      throws IOException {
+
+    // Given
+    var file = someFileObject();
+    when(file.getCharContent(anyBoolean())).thenThrow(new RuntimeException("error"));
+    when(file.openInputStream()).thenThrow(new RuntimeException("error"));
+
+    var kind = oneOf(Kind.values());
+
+    var diag = GenericMock
+        .mockRaw(TraceDiagnostic.class)
+        .<TraceDiagnostic<JavaFileObject>>upcastedTo()
+        .build();
+
+    when(diag.getKind()).thenReturn(kind);
+    when(diag.getLineNumber()).thenReturn(6L);
+    when(diag.getColumnNumber()).thenReturn(16L);
+    when(diag.getStartPosition()).thenReturn(77L);
+    when(diag.getEndPosition()).thenReturn(133L);
+    when(diag.getSource()).thenReturn(file);
+    when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
+
+    var repr = DiagnosticRepresentation.getInstance();
+
+    // When
+    var result = repr.toStringOf(diag);
+
+    // Then
+    assertThat(result.lines())
+        .containsExactly(
+            "[" + kind.toString() + "] " + file.getName() + " (at line 6, col 16)",
+            "",
+            "    Entrypoint must be a void method."
+        );
+
+    verify(file).getCharContent(true);
+    verify(file).openInputStream();
   }
 
   @DisplayName("toStringOf(TraceDiagnostic) renders multiline snippets correctly")
@@ -293,6 +454,7 @@ class DiagnosticRepresentationTest {
     );
   }
 
+  @SuppressWarnings("SameParameterValue")
   JavaFileObject someFileObject(String fileName, String... lines) {
     var path = tempDir.resolve(fileName);
 
@@ -303,6 +465,7 @@ class DiagnosticRepresentationTest {
       }
 
       var fileObject = mock(JavaFileObject.class, withSettings().strictness(Strictness.LENIENT));
+      when(fileObject.getCharContent(anyBoolean())).then(ctx -> Files.readString(path));
       when(fileObject.openInputStream()).then(ctx -> Files.newInputStream(path));
       when(fileObject.toUri()).thenReturn(path.toUri());
       when(fileObject.getName()).thenReturn(path.toString());

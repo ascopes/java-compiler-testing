@@ -21,15 +21,17 @@ import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.utils.IoExceptionUtils;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import javax.annotation.Nullable;
 import javax.tools.Diagnostic;
+import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.presentation.Representation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Representation of a diagnostic.
@@ -52,6 +54,7 @@ public final class DiagnosticRepresentation implements Representation {
     return INSTANCE;
   }
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(DiagnosticRepresentation.class);
   private static final int ADDITIONAL_CONTEXT_LINES = 2;
   private static final String PADDING = " ".repeat(4);
 
@@ -107,9 +110,7 @@ public final class DiagnosticRepresentation implements Representation {
 
   @Nullable
   @SuppressWarnings("ConstantConditions")
-  private Snippet extractSnippet(
-      Diagnostic<? extends JavaFileObject> diagnostic
-  ) throws IOException {
+  private Snippet extractSnippet(Diagnostic<? extends JavaFileObject> diagnostic) {
     var source = diagnostic.getSource();
 
     var noSnippet = source == null
@@ -117,18 +118,17 @@ public final class DiagnosticRepresentation implements Representation {
         || diagnostic.getEndPosition() == NOPOS;
 
     if (noSnippet) {
-      // No info available about position, so don't bother extracting anything.
+      // No info available about position, or no source available, so don't bother extracting
+      // anything.
       return null;
     }
 
-    // ECJ throws a NullPointerException in some cases if we use .getCharContent, so read this
-    // manually instead.
-    var contentBytes = new ByteArrayOutputStream();
-    try (var input = diagnostic.getSource().openInputStream()) {
-      input.transferTo(contentBytes);
-    }
+    var content = tryGetContents(diagnostic.getSource());
 
-    var content = contentBytes.toString(StandardCharsets.UTF_8);
+    if (content == null) {
+      // Unable to read the file for whatever reason, so don't bother extracting anything.
+      return null;
+    }
 
     var startLine = Math.max(1, (int) diagnostic.getLineNumber() - ADDITIONAL_CONTEXT_LINES);
     var lineStartOffset = StringUtils.indexOfLine(content, startLine);
@@ -150,6 +150,48 @@ public final class DiagnosticRepresentation implements Representation {
         diagnostic.getStartPosition() - lineStartOffset,
         endOffset - lineStartOffset
     );
+  }
+
+  @Nullable
+  private static String tryGetContents(FileObject fileObject) {
+    // We may not always be able to read the contents of a file object correctly. This may be down
+    // to IO exceptions occurring on the disk, or it may be due to the components under-test
+    // using custom FileObject implementations that do not play nicely with being accessed like
+    // this (Manifold being an example here). To work around this, we operate on a best-effort
+    // basis only. Some calls just do not work properly under certain compilers either
+    // (getCharContent() can randomly fail under ECJ for example).
+
+    var implName = fileObject.getClass().getName();
+    var uri = fileObject.toUri();
+
+    // Try to get the content via the getCharContent method.
+    try {
+      var content = fileObject.getCharContent(true);
+      if (content != null) {
+        return content.toString();
+      }
+    } catch (Exception ex) {
+      LOGGER.debug("Failed to read char content for file object {} ({})", uri, implName, ex);
+    }
+
+    // If that fails, attempt to use an input stream to deal with this.
+    try (var input = fileObject.openInputStream()) {
+      var contentBytes = new ByteArrayOutputStream();
+      input.transferTo(contentBytes);
+      return contentBytes.toString(StandardCharsets.UTF_8);
+    } catch (Exception ex) {
+      LOGGER.debug("Failed to read input stream for file object {} ({})", uri, implName, ex);
+    }
+
+    // If we still cannot get anywhere, we should just give up.
+    LOGGER.warn(
+        "Failed to read content for file object {} ({}), cannot produce a snippet preview. "
+            + "Enable debug logs to see the cause of this issue.",
+        uri,
+        implName
+    );
+
+    return null;
   }
 
   private static final class Snippet {
