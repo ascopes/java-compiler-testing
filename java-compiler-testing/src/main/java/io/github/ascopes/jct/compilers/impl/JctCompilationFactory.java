@@ -138,42 +138,25 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
       try (var fileManager = buildFileManager()) {
         var previousCompilationUnits = new LinkedHashSet<JavaFileObject>();
 
-        boolean result;
-
-        loop:
-        do {
-          var nextResult = performCompilerPass(
-              compiler,
-              jsr199Compiler,
-              writer,
-              flags,
-              fileManager,
-              diagnosticListener,
-              previousCompilationUnits
-          );
-
-          switch (nextResult) {
-            case SUCCESS:
-              result = true;
-              break;
-
-            case FAILURE:
-              result = false;
-              break;
-
-            case SKIPPED:
-            default:
-              result = true;
-              LOGGER.info("Nothing else to compile. Finishing up...");
-              break loop;
-          }
-        } while (result);
+        var result = performCompilerPass(
+            compiler,
+            jsr199Compiler,
+            writer,
+            flags,
+            fileManager,
+            diagnosticListener,
+            previousCompilationUnits
+        );
 
         var outputLines = writer.toString().lines().collect(Collectors.toList());
 
+        if (result == CompilationResult.SKIPPED) {
+          LOGGER.warn("There was nothing to compile...");
+        }
+
         return JctCompilationImpl.builder()
             .failOnWarnings(compiler.isFailOnWarnings())
-            .success(result)
+            .success(result == CompilationResult.SUCCESS)
             .outputLines(outputLines)
             .compilationUnits(Set.copyOf(previousCompilationUnits))
             .diagnostics(diagnosticListener.getDiagnostics())
@@ -261,6 +244,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
       Set<JavaFileObject> previousCompilationUnits
   ) throws IOException {
     var locations = new LinkedHashSet<Location>();
+
     locations.add(StandardLocation.SOURCE_OUTPUT);
     locations.add(StandardLocation.SOURCE_PATH);
 
@@ -273,14 +257,13 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     for (var location : locations) {
       var items = fileManager.list(location, "", Set.of(Kind.SOURCE), true);
       for (var fileObject : items) {
-
         if (!previousCompilationUnits.contains(fileObject)) {
           objects.add(fileObject);
         }
       }
     }
 
-    previousCompilationUnits.addAll(objects);
+    //previousCompilationUnits.addAll(objects);
     return objects;
   }
 
