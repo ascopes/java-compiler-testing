@@ -149,7 +149,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
         );
 
         var outputLines = writer.toString().lines().collect(Collectors.toList());
-
+        
         if (result == CompilationResult.SKIPPED) {
           LOGGER.warn("There was nothing to compile...");
         }
