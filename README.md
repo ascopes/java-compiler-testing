@@ -115,7 +115,7 @@ class JsonSchemaAnnotationProcessorTest {
           .addAnnotationProcessorOptions("jsonschema.verbose=true")
           .failOnWarnings(true)
           .showDeprecationWarnings(true)
-          .compile(compiler);
+          .compile(workspace);
 
       // Then
       assertThatCompilation(compilation)
