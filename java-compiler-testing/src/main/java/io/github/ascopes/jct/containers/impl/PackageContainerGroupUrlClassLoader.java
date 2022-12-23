@@ -15,9 +15,7 @@
  */
 package io.github.ascopes.jct.containers.impl;
 
-import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
-import io.github.ascopes.jct.workspaces.PathRoot;
 import java.net.URL;
 import java.net.URLClassLoader;
 import org.apiguardian.api.API;
@@ -40,14 +38,20 @@ public final class PackageContainerGroupUrlClassLoader extends URLClassLoader {
   public PackageContainerGroupUrlClassLoader(PackageContainerGroup group) {
     super(
         "Packages within " + group.getLocation().getName(),
-        group
-            .getPackages()
-            .stream()
-            .map(Container::getPathWrapper)
-            .map(PathRoot::getUrl)
-            .distinct()
-            .toArray(URL[]::new),
+        extractUrls(group),
         ClassLoader.getSystemClassLoader()
     );
+  }
+
+  private static URL[] extractUrls(PackageContainerGroup group) {
+    // TODO(ascopes): should this API return a list to simplify this?
+    var pkgs = group.getPackages();
+    var iter = pkgs.iterator();
+    var urls = new URL[pkgs.size()];
+
+    for (var i = 0; i < urls.length; ++i) {
+      urls[i] = iter.next().getPathWrapper().getUrl();
+    }
+    return urls;
   }
 }
