@@ -38,7 +38,7 @@ class BasicMultiModuleCompilationIntegrationTest {
       // Given
       workspace
           .createSourcePathModule("hello.world")
-          .createFile("com/example/HelloWorld.java").withContents(
+          .createFile("com", "example", "HelloWorld.java").withContents(
               "package com.example;",
               "public class HelloWorld {",
               "  public static void main(String[] args) {",
@@ -62,7 +62,7 @@ class BasicMultiModuleCompilationIntegrationTest {
       assertThatCompilation(compilation)
           .classOutput().modules()
           .moduleExists("hello.world")
-          .fileExists("com/example/HelloWorld.class").isNotEmptyFile();
+          .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
 
       assertThatCompilation(compilation)
           .classOutput().modules()
@@ -79,7 +79,7 @@ class BasicMultiModuleCompilationIntegrationTest {
       // Given
       workspace
           .createSourcePathModule("hello.world")
-          .createFile("com/example/HelloWorld.java").withContents(
+          .createFile("com", "example", "HelloWorld.java").withContents(
               "package com.example;",
               "public class HelloWorld {",
               "  public static void main(String[] args) {",
@@ -103,7 +103,7 @@ class BasicMultiModuleCompilationIntegrationTest {
       assertThatCompilation(compilation)
           .classOutput().modules()
           .moduleExists("hello.world")
-          .fileExists("com/example/HelloWorld.class").isNotEmptyFile();
+          .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
 
       assertThatCompilation(compilation)
           .classOutput().modules()
@@ -119,7 +119,7 @@ class BasicMultiModuleCompilationIntegrationTest {
       // Given
       workspace
           .createSourcePathModule("hello.world")
-          .createFile("com/example/HelloWorld.java").withContents(
+          .createFile("com", "example", "HelloWorld.java").withContents(
               "package com.example;",
               "import com.example.greeter.Greeter;",
               "public class HelloWorld {",
@@ -137,7 +137,7 @@ class BasicMultiModuleCompilationIntegrationTest {
 
       workspace
           .createSourcePathModule("greeter")
-          .createFile("com/example/greeter/Greeter.java").withContents(
+          .createFile("com", "example", "greeter", "Greeter.java").withContents(
               "package com.example.greeter;",
               "public class Greeter {",
               "  public static String greet(String name) {",
@@ -161,7 +161,7 @@ class BasicMultiModuleCompilationIntegrationTest {
       assertThatCompilation(compilation)
           .classOutput().modules()
           .moduleExists("hello.world")
-          .fileExists("com/example/HelloWorld.class").isNotEmptyFile();
+          .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
 
       assertThatCompilation(compilation)
           .classOutput().modules()
@@ -171,7 +171,7 @@ class BasicMultiModuleCompilationIntegrationTest {
       assertThatCompilation(compilation)
           .classOutput().modules()
           .moduleExists("greeter")
-          .fileExists("com/example/greeter/Greeter.class").isNotEmptyFile();
+          .fileExists("com", "example", "greeter", "Greeter.class").isNotEmptyFile();
 
       assertThatCompilation(compilation)
           .classOutput().modules()
@@ -187,7 +187,7 @@ class BasicMultiModuleCompilationIntegrationTest {
       // Given
       workspace
           .createSourcePathModule("hello.world")
-          .createFile("com/example/HelloWorld.java").withContents(
+          .createFile("com", "example", "HelloWorld.java").withContents(
               "package com.example;",
               "import com.example.greeter.Greeter;",
               "public class HelloWorld {",
@@ -205,7 +205,7 @@ class BasicMultiModuleCompilationIntegrationTest {
 
       workspace
           .createSourcePathModule("greeter")
-          .createFile("com/example/greeter/Greeter.java").withContents(
+          .createFile("com", "example", "greeter", "Greeter.java").withContents(
               "package com.example.greeter;",
               "public class Greeter {",
               "  public static String greet(String name) {",
@@ -228,7 +228,7 @@ class BasicMultiModuleCompilationIntegrationTest {
       assertThatCompilation(compilation)
           .classOutput().modules()
           .moduleExists("hello.world")
-          .fileExists("com/example/HelloWorld.class").isNotEmptyFile();
+          .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
 
       assertThatCompilation(compilation)
           .classOutput().modules()
@@ -238,7 +238,7 @@ class BasicMultiModuleCompilationIntegrationTest {
       assertThatCompilation(compilation)
           .classOutput().modules()
           .moduleExists("greeter")
-          .fileExists("com/example/greeter/Greeter.class").isNotEmptyFile();
+          .fileExists("com", "example", "greeter", "Greeter.class").isNotEmptyFile();
 
       assertThatCompilation(compilation)
           .classOutput().modules()

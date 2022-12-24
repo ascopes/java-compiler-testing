@@ -56,7 +56,7 @@ class SpringContextIndexerTest {
           .isSuccessfulWithoutWarnings()
           .classOutput()
           .packages()
-          .fileExists("META-INF/spring.components")
+          .fileExists("META-INF", "spring.components")
           .isNotEmptyFile()
     }
   }
@@ -92,7 +92,7 @@ class SpringContextIndexerTest {
           .isSuccessfulWithoutWarnings()
           .classOutput()
           .packages()
-          .fileExists("META-INF/spring.components")
+          .fileExists("META-INF", "spring.components")
           .isNotEmptyFile()
     }
   }

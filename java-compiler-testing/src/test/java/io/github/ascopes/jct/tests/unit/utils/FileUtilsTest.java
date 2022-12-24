@@ -32,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -386,17 +387,14 @@ class FileUtilsTest implements UtilityClassTestTemplate {
   }
 
   @DisplayName("relativeResourceNameToPath should return the expected output")
-  @CsvSource({
-      "/foo/bar, com/example/something-cool.txt, /foo/bar/com/example/something-cool.txt",
-      "foo/bar, com/example/something-cool.txt, foo/bar/com/example/something-cool.txt",
-      "./foo/bar, com/example/something-cool.txt, foo/bar/com/example/something-cool.txt",
-      "/, com/example/something-cool.txt, /com/example/something-cool.txt",
-      "'', com/example/something-cool.txt, com/example/something-cool.txt",
-  })
-  @ParameterizedTest(name = "relativeResourceNameToPath(\"{0}\", \"{1}\") should return \"{2}\"")
+  @MethodSource("relativePathTestCases")
+  @ParameterizedTest(
+      name = "relativeResourceNameToPath(\"{0}\", \"{1}\", {2}) should return \"{3}\""
+  )
   void relativeResourceNameToPathShouldReturnTheExpectedOutput(
       String directory,
-      String relativeName,
+      String fragment,
+      String[] fragments,
       String expected
   ) throws IOException {
     try (var fs = newFileSystem()) {
@@ -405,7 +403,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       var expectedPath = fs.getPath(expected);
 
       // When
-      var actualPath = relativeResourceNameToPath(directoryPath, relativeName);
+      var actualPath = relativeResourceNameToPath(directoryPath, fragment, fragments);
 
       // Then
       assertSoftly(softly -> {
@@ -533,31 +531,97 @@ class FileUtilsTest implements UtilityClassTestTemplate {
     }
   }
 
+  static Stream<Arguments> relativePathTestCases() {
+    return Stream.of(
+        arguments(
+            "/foo/bar",
+            "com",
+            new String[]{"example", "something-cool"},
+            "/foo/bar/com/example/something-cool"
+        ),
+        arguments(
+            "/foo/bar",
+            "com/example/something-cool",
+            new String[0],
+            "/foo/bar/com/example/something-cool"
+        ),
+        arguments(
+            "foo/bar",
+            "com",
+            new String[]{"example", "something-cool.txt"},
+            "foo/bar/com/example/something-cool.txt"
+        ),
+        arguments(
+            "foo/bar",
+            "com/example/something-cool.txt",
+            new String[0],
+            "foo/bar/com/example/something-cool.txt"
+        ),
+        arguments(
+            "./foo/bar",
+            "com",
+            new String[]{"example", "something-cool.txt"},
+            "foo/bar/com/example/something-cool.txt"
+        ),
+
+        arguments(
+            "/foo/bar",
+            "com/example/something-cool.txt",
+            new String[0],
+            "/foo/bar/com/example/something-cool.txt"
+        ),
+        arguments(
+            "/",
+            "com",
+            new String[]{"example", "something-cool.txt"},
+            "/com/example/something-cool.txt"
+        ),
+        arguments(
+            "/",
+            "com/example/something-cool.txt",
+            new String[0],
+            "/com/example/something-cool.txt"
+        ),
+        arguments(
+            "",
+            "com",
+            new String[]{"example", "something-cool.txt"},
+            "com/example/something-cool.txt"
+        ),
+        arguments(
+            "",
+            "com/example/something-cool.txt",
+            new String[0],
+            "com/example/something-cool.txt"
+        )
+    );
+  }
+
   static Stream<Arguments> fileWithAnyKindExistingFileTestCases() {
     return Stream.of(
-        Arguments.of(set(Kind.SOURCE), "/foo/bar/baz.java", true),
-        Arguments.of(set(Kind.CLASS), "/foo/bar/baz.class", true),
-        Arguments.of(set(Kind.HTML), "/foo/bar/baz.html", true),
+        arguments(set(Kind.SOURCE), "/foo/bar/baz.java", true),
+        arguments(set(Kind.CLASS), "/foo/bar/baz.class", true),
+        arguments(set(Kind.HTML), "/foo/bar/baz.html", true),
 
-        Arguments.of(set(Kind.SOURCE, Kind.CLASS, Kind.HTML), "/foo/bar/baz.java", true),
-        Arguments.of(set(Kind.SOURCE, Kind.CLASS, Kind.HTML), "/foo/bar/baz.class", true),
-        Arguments.of(set(Kind.SOURCE, Kind.CLASS, Kind.HTML), "/foo/bar/baz.html", true),
+        arguments(set(Kind.SOURCE, Kind.CLASS, Kind.HTML), "/foo/bar/baz.java", true),
+        arguments(set(Kind.SOURCE, Kind.CLASS, Kind.HTML), "/foo/bar/baz.class", true),
+        arguments(set(Kind.SOURCE, Kind.CLASS, Kind.HTML), "/foo/bar/baz.html", true),
 
-        Arguments.of(set(Kind.SOURCE), "/foo/bar/baz.JAVA", false),
-        Arguments.of(set(Kind.CLASS), "/foo/bar/baz.CLASS", false),
-        Arguments.of(set(Kind.HTML), "/foo/bar/baz.HTML", false),
+        arguments(set(Kind.SOURCE), "/foo/bar/baz.JAVA", false),
+        arguments(set(Kind.CLASS), "/foo/bar/baz.CLASS", false),
+        arguments(set(Kind.HTML), "/foo/bar/baz.HTML", false),
 
-        Arguments.of(set(Kind.SOURCE), "/foo/bar/baz.class", false),
-        Arguments.of(set(Kind.CLASS), "/foo/bar/baz.html", false),
-        Arguments.of(set(Kind.HTML), "/foo/bar/baz.java", false),
+        arguments(set(Kind.SOURCE), "/foo/bar/baz.class", false),
+        arguments(set(Kind.CLASS), "/foo/bar/baz.html", false),
+        arguments(set(Kind.HTML), "/foo/bar/baz.java", false),
 
-        Arguments.of(set(Kind.SOURCE, Kind.HTML), "/foo/bar/baz.class", false),
-        Arguments.of(set(Kind.CLASS, Kind.SOURCE), "/foo/bar/baz.html", false),
-        Arguments.of(set(Kind.HTML, Kind.CLASS), "/foo/bar/baz.java", false),
+        arguments(set(Kind.SOURCE, Kind.HTML), "/foo/bar/baz.class", false),
+        arguments(set(Kind.CLASS, Kind.SOURCE), "/foo/bar/baz.html", false),
+        arguments(set(Kind.HTML, Kind.CLASS), "/foo/bar/baz.java", false),
 
-        Arguments.of(set(Kind.OTHER), "/foo/bar/baz", true),
-        Arguments.of(set(Kind.SOURCE, Kind.OTHER), "/foo/bar/baz", true),
-        Arguments.of(set(Kind.HTML, Kind.CLASS, Kind.OTHER), "/foo/bar/baz.blah", true)
+        arguments(set(Kind.OTHER), "/foo/bar/baz", true),
+        arguments(set(Kind.SOURCE, Kind.OTHER), "/foo/bar/baz", true),
+        arguments(set(Kind.HTML, Kind.CLASS, Kind.OTHER), "/foo/bar/baz.blah", true)
     );
   }
 

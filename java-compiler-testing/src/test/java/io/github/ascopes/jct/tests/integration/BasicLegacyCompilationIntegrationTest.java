@@ -38,7 +38,7 @@ class BasicLegacyCompilationIntegrationTest {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
       workspace
           .createPackage(StandardLocation.SOURCE_PATH)
-          .createFile("com/example/HelloWorld.java").withContents(
+          .createFile("com", "example", "HelloWorld.java").withContents(
               "package com.example;",
               "public class HelloWorld {",
               "  public static void main(String[] args) {",
@@ -54,7 +54,7 @@ class BasicLegacyCompilationIntegrationTest {
 
       assertThatCompilation(compilation)
           .classOutput().packages()
-          .fileExists("com/example/HelloWorld.class")
+          .fileExists("com", "example", "HelloWorld.class")
           .isNotEmptyFile();
     }
   }
@@ -65,7 +65,7 @@ class BasicLegacyCompilationIntegrationTest {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       workspace
           .createPackage(StandardLocation.SOURCE_PATH)
-          .createFile("com/example/HelloWorld.java").withContents(
+          .createFile("com", "example", "HelloWorld.java").withContents(
               "package com.example;",
               "public class HelloWorld {",
               "  public static void main(String[] args) {",
@@ -81,7 +81,7 @@ class BasicLegacyCompilationIntegrationTest {
 
       assertThatCompilation(compilation)
           .classOutput().packages()
-          .fileExists("com/example/HelloWorld.class")
+          .fileExists("com", "example", "HelloWorld.class")
           .isNotEmptyFile();
     }
   }

@@ -20,7 +20,6 @@ import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
@@ -55,11 +54,12 @@ public interface Container extends Closeable {
   /**
    * Find the physical path to a given string file path.
    *
-   * @param path the path to the file to find.
+   * @param fragment the first fragment to the file to find.
+   * @param fragments any additional fragments to the file to find.
    * @return the path if the file exists, or null if it does not exist.
    */
   @Nullable
-  Path getFile(String path);
+  Path getFile(String fragment, String... fragments);
 
   /**
    * Get a {@link FileObject} for reading, if it exists.
@@ -138,18 +138,6 @@ public interface Container extends Closeable {
    * @return the path wrapper.
    */
   PathRoot getPathWrapper();
-
-  /**
-   * Get a classpath resource for the given resource path if it exists.
-   *
-   * <p>If the resource does not exist, then return {@code null}.
-   *
-   * @param resourcePath the path to the resource.
-   * @return the URL to the resource if it exists, or null if it does not exist.
-   * @throws IOException if an IO error occurs looking for the resource.
-   */
-  @Nullable
-  URL getResource(String resourcePath) throws IOException;
 
   /**
    * Infer the binary name of a given Java file object.

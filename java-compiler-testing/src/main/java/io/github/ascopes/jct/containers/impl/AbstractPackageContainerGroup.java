@@ -146,9 +146,9 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
 
   @Override
   @Nullable
-  public Path getFile(String path) {
+  public Path getFile(String fragment, String... fragments) {
     for (var container : containers) {
-      var result = container.getFile(path);
+      var result = container.getFile(fragment, fragments);
       if (result != null) {
         return result;
       }

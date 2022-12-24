@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.repr.LocationRepresentation;
 import io.github.ascopes.jct.utils.IterableUtils;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
@@ -53,24 +54,26 @@ public final class PackageContainerGroupAssert
   /**
    * Assert that the given file does not exist.
    *
-   * @param path the relative path to look for.
+   * @param fragment the first part of the path.
+   * @param fragments additional parts of the path.
    * @return this assertion object for further assertions.
    * @throws AssertionError if the file exists.
    */
-  public PackageContainerGroupAssert fileDoesNotExist(String path) {
-    var file = actual.getFile(path);
+  public PackageContainerGroupAssert fileDoesNotExist(String fragment, String... fragments) {
+    var expectedFile = fragmentPathToString(fragment, fragments);
+    var actualFile = actual.getFile(fragment, fragments);
 
-    if (file == null) {
+    if (actualFile == null) {
       return this;
     }
 
     var locationName = LocationRepresentation.getInstance().toStringOf(actual.getLocation());
 
     throw failure(
-        "Expected path %s to not exist in %s but it was found at %s",
-        path,
+        "Expected path \"%s\" to not exist in \"%s\" but it was found at \"%s\"",
+        expectedFile,
         locationName,
-        file
+        actualFile
     );
   }
 
@@ -107,20 +110,22 @@ public final class PackageContainerGroupAssert
   /**
    * Assert that the given file exists.
    *
-   * @param path the relative path to look for.
+   * @param fragment the path fragment.
+   * @param fragments any additional path fragments.
    * @return assertions to perform on the path of the file that exists.
    * @throws AssertionError if the file does not exist.
    */
-  public AbstractPathAssert<?> fileExists(String path) {
-    var file = actual.getFile(path);
+  public AbstractPathAssert<?> fileExists(String fragment, String... fragments) {
+    var expectedFile = fragmentPathToString(fragment, fragments);
+    var actualFile = actual.getFile(fragment, fragments);
 
-    if (file != null) {
-      return assertThat(file);
+    if (actualFile != null) {
+      return assertThat(actualFile);
     }
 
     var closestMatches = FuzzySearch
         .extractSorted(
-            path,
+            expectedFile,
             actual
                 .getPackages()
                 .stream()
@@ -142,11 +147,11 @@ public final class PackageContainerGroupAssert
     var locationName = LocationRepresentation.getInstance().toStringOf(actual.getLocation());
 
     if (closestMatches.isEmpty()) {
-      throw failure("No file in %s files found named %s", locationName, path);
+      throw failure("No file in %s files found named \"%s\"", locationName, expectedFile);
     } else {
       throw failure(
           "No file named \"%s\" found in %s. Did you mean...%s",
-          path,
+          expectedFile,
           locationName,
           closestMatches
               .stream()
@@ -155,5 +160,10 @@ public final class PackageContainerGroupAssert
               .collect(Collectors.joining())
       );
     }
+  }
+
+  private static String fragmentPathToString(String fragment, String... fragments) {
+    // Path#toString uses the default separator if we use Path#of
+    return String.join(File.separator, IterableUtils.combineOneOrMore(fragment, fragments));
   }
 }

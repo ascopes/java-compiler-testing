@@ -38,7 +38,7 @@ class BasicModuleCompilationIntegrationTest {
       // Given
       workspace
           .createSourcePathPackage()
-          .createFile("com/example/HelloWorld.java").withContents(
+          .createFile("com", "example", "HelloWorld.java").withContents(
               "package com.example;",
               "public class HelloWorld {",
               "  public static void main(String[] args) {",
@@ -63,7 +63,7 @@ class BasicModuleCompilationIntegrationTest {
       assertThatCompilation(compilation)
           .classOutput()
           .packages()
-          .fileExists("com/example/HelloWorld.class")
+          .fileExists("com", "example", "HelloWorld.class")
           .isNotEmptyFile();
 
       assertThatCompilation(compilation)
@@ -81,7 +81,7 @@ class BasicModuleCompilationIntegrationTest {
       // Given
       workspace
           .createSourcePathPackage()
-          .createFile("com/example/HelloWorld.java").withContents(
+          .createFile("com", "example", "HelloWorld.java").withContents(
               "package com.example;",
               "public class HelloWorld {",
               "  public static void main(String[] args) {",
@@ -106,7 +106,7 @@ class BasicModuleCompilationIntegrationTest {
       assertThatCompilation(compilation)
           .classOutput()
           .packages()
-          .fileExists("com/example/HelloWorld.class")
+          .fileExists("com", "example", "HelloWorld.class")
           .isNotEmptyFile();
 
       assertThatCompilation(compilation)

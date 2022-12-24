@@ -57,7 +57,7 @@ class SpringBootAutoconfigureProcessorTest {
           .isSuccessfulWithoutWarnings()
           .classOutput()
           .packages()
-          .fileExists("META-INF/spring-autoconfigure-metadata.properties")
+          .fileExists("META-INF", "spring-autoconfigure-metadata.properties")
           .isNotEmptyFile()
     }
   }
@@ -94,7 +94,7 @@ class SpringBootAutoconfigureProcessorTest {
           .isSuccessfulWithoutWarnings()
           .classOutput()
           .packages()
-          .fileExists("META-INF/spring-autoconfigure-metadata.properties")
+          .fileExists("META-INF", "spring-autoconfigure-metadata.properties")
           .isNotEmptyFile()
     }
   }

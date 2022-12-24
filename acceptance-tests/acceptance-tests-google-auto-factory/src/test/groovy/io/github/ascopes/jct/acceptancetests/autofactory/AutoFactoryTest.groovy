@@ -36,8 +36,8 @@ class AutoFactoryTest {
       // Given
       workspace
           .createSourcePathPackage()
-          .createDirectory("org/example")
-          .copyContentsFrom("src/test/resources/code")
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code")
 
       // When
       def compilation = compiler.compile(workspace)
@@ -47,7 +47,7 @@ class AutoFactoryTest {
           .isSuccessfulWithoutWarnings()
           .classOutput()
           .packages()
-          .fileExists("org/example/UserFactory.class")
+          .fileExists("org", "example", "UserFactory.class")
           .isNotEmptyFile()
 
       def userFactory = compilation

@@ -83,12 +83,8 @@ public final class PathWrappingContainerImpl implements Container {
 
   @Override
   @Nullable
-  public Path getFile(String path) {
-    if (path.startsWith("/")) {
-      throw new IllegalArgumentException("Absolute paths are not supported (got '" + path + "')");
-    }
-
-    var realPath = FileUtils.relativeResourceNameToPath(root.getPath(), path);
+  public Path getFile(String fragment, String... fragments) {
+    var realPath = FileUtils.relativeResourceNameToPath(root.getPath(), fragment, fragments);
 
     return Files.isRegularFile(realPath)
         ? realPath
@@ -144,17 +140,6 @@ public final class PathWrappingContainerImpl implements Container {
   @Override
   public PathRoot getPathWrapper() {
     return root;
-  }
-
-  @Override
-  @Nullable
-  public URL getResource(String resourcePath) throws IOException {
-    var path = FileUtils.relativeResourceNameToPath(root.getPath(), resourcePath);
-    // Getting a URL of a directory within a JAR breaks the JAR file system implementation
-    // completely.
-    return Files.isRegularFile(path)
-        ? path.toUri().toURL()
-        : null;
   }
 
   @Override

@@ -107,13 +107,9 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
-  public Path getFile(String path) {
-    if (path.startsWith("/")) {
-      throw new IllegalArgumentException("Absolute paths are not supported (got '" + path + "')");
-    }
-
+  public Path getFile(String fragment, String... fragments) {
     for (var root : holder.access().getRootDirectories()) {
-      var fullPath = FileUtils.relativeResourceNameToPath(root, path);
+      var fullPath = FileUtils.relativeResourceNameToPath(root, fragment, fragments);
       if (Files.isRegularFile(fullPath)) {
         return fullPath;
       }
@@ -195,19 +191,6 @@ public final class JarContainerImpl implements Container {
   @Override
   public PathRoot getPathWrapper() {
     return jarPath;
-  }
-
-  @Override
-  @Nullable
-  public URL getResource(String resourcePath) throws IOException {
-    for (var root : holder.access().getRootDirectories()) {
-      var path = FileUtils.relativeResourceNameToPath(root, resourcePath);
-      if (Files.isRegularFile(path)) {
-        return path.toUri().toURL();
-      }
-    }
-
-    return null;
   }
 
   @Override

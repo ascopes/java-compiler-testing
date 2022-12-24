@@ -81,11 +81,13 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * <p>Modules are treated as subdirectories.
    *
-   * @param path the path to the file to find.
+   * @param fragment the first part of the path.
+   * @param fragments any additional parts of the path.
    * @return the first occurrence of the path in this group, or null if not found.
+   * @throws IllegalArgumentException if the provided path is absolute.
    */
   @Nullable
-  Path getFile(String path);
+  Path getFile(String fragment, String... fragments);
 
   /**
    * Get a {@link FileObject} that can have content read from it.

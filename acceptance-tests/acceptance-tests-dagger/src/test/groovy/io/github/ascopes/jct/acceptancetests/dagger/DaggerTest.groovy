@@ -42,19 +42,19 @@ class DaggerTest {
 
       assertThatCompilation(compilation)
           .sourceOutput().packages()
-          .fileExists("org/example/WebServer_Factory.java").isRegularFile()
+          .fileExists("org", "example", "WebServer_Factory.java").isRegularFile()
 
       assertThatCompilation(compilation)
           .classOutput().packages()
-          .fileExists("org/example/WebServer.class").isRegularFile()
+          .fileExists("org", "example", "WebServer.class").isRegularFile()
 
       assertThatCompilation(compilation)
           .classOutput().packages()
-          .fileExists("org/example/WebServerConfiguration.class").isRegularFile()
+          .fileExists("org", "example", "WebServerConfiguration.class").isRegularFile()
 
       assertThatCompilation(compilation)
           .classOutput().packages()
-          .fileExists("org/example/WebServer_Factory.class").isRegularFile()
+          .fileExists("org", "example", "WebServer_Factory.class").isRegularFile()
     }
   }
 }

@@ -57,7 +57,7 @@ class SpringBootConfigurationProcessorTest {
           .isSuccessfulWithoutWarnings()
           .classOutput()
           .packages()
-          .fileExists("META-INF/spring-configuration-metadata.json")
+          .fileExists("META-INF", "spring-configuration-metadata.json")
           .isNotEmptyFile()
     }
   }
@@ -93,7 +93,7 @@ class SpringBootConfigurationProcessorTest {
           .isSuccessfulWithoutWarnings()
           .classOutput()
           .packages()
-          .fileExists("META-INF/spring-configuration-metadata.json")
+          .fileExists("META-INF", "spring-configuration-metadata.json")
           .isNotEmptyFile()
     }
   }

@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.utils;
 
+import static io.github.ascopes.jct.utils.IterableUtils.combineOneOrMore;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
 import java.net.MalformedURLException;
@@ -253,13 +254,17 @@ public final class FileUtils extends UtilityClass {
   /**
    * Convert a relative class path resource path to a NIO path.
    *
-   * @param directory    the directory the resource sits within.
-   * @param relativeName the relative path of the resource within the directory.
+   * @param directory the directory the resource sits within.
+   * @param fragment  the first path fragment.
+   * @param fragments any additional path fragments.
    * @return the path to the resource on the file system.
    */
-  public static Path relativeResourceNameToPath(Path directory, String relativeName) {
-    var parts = RESOURCE_SLICER.splitToArray(relativeName);
-    return resolve(directory, parts);
+  public static Path relativeResourceNameToPath(
+      Path directory,
+      String fragment,
+      String... fragments
+  ) {
+    return resolve(directory, combineOneOrMore(fragment, fragments));
   }
 
   /**

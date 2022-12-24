@@ -32,8 +32,8 @@ class AutoServiceTest {
       // Given
       workspace
           .createSourcePathPackage()
-          .createDirectory("org/example")
-          .copyContentsFrom("src/test/resources/code")
+          .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code")
 
       // When
       def compilation = compiler.compile(workspace)
@@ -43,7 +43,7 @@ class AutoServiceTest {
           .isSuccessfulWithoutWarnings()
           .classOutput()
           .packages()
-          .fileExists("META-INF/services/org.example.SomeInterface")
+          .fileExists("META-INF", "services", "org.example.SomeInterface")
           .hasContent("org.example.SomeImpl")
     }
   }
