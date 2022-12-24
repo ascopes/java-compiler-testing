@@ -16,6 +16,7 @@
 
   <modules>
     <module>acceptance-tests-avaje-inject</module>
+    <module>acceptance-tests-avaje-jsonb</module>
     <module>acceptance-tests-checkerframework</module>
     <module>acceptance-tests-dagger</module>
     <module>acceptance-tests-error-prone</module>
