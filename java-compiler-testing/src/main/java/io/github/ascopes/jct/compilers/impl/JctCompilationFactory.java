@@ -28,6 +28,7 @@ import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.utils.StringUtils;
+import io.github.ascopes.jct.utils.VisibleForTestingOnly;
 import io.github.ascopes.jct.workspaces.Workspace;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectory;
 import java.io.IOException;
@@ -105,8 +106,18 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
   private final Lazy<List<Path>> jvmSystemModules;
 
   /**
-   * Initialise this factory.
+   * Initialise this compilation factory.
+   *
+   * <p>Consider using {@link #compile(Workspace, JctCompiler, JavaCompiler, JctFlagBuilder)}
+   * instead of initialising this class directly, as this constructor is only visible for testing
+   * purposes.
+   *
+   * @param workspace the workspace.
+   * @param compiler the compiler.
+   * @param jsr199Compiler the JSR-199 compiler.
+   * @param flagBuilder the flag builder.
    */
+  @VisibleForTestingOnly
   public JctCompilationFactory(
       Workspace workspace,
       A compiler,
@@ -121,7 +132,6 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     jvmModulePath = new Lazy<>(SpecialLocationUtils::currentModulePathLocations);
     jvmPlatformPath = new Lazy<>(SpecialLocationUtils::currentPlatformClassPathLocations);
     jvmSystemModules = new Lazy<>(SpecialLocationUtils::javaRuntimeLocations);
-
   }
 
   /**
@@ -149,7 +159,7 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
         );
 
         var outputLines = writer.toString().lines().collect(Collectors.toList());
-        
+
         if (result == CompilationResult.SKIPPED) {
           LOGGER.warn("There was nothing to compile...");
         }
@@ -485,6 +495,28 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
       LOGGER.trace("Ignoring exception finding modules in {}", path, ex);
       return false;
     }
+  }
+
+  /**
+   * Initialise a new instance of this compilation factory internally and run the compilation.
+   *
+   * @param workspace      the workspace to use.
+   * @param compiler       the compiler to use.
+   * @param jsr199Compiler the JSR-199 compiler to use.
+   * @param flagBuilder    the flag builder to use.
+   * @param <A>            the compiler type.
+   * @return the compilation factory.
+   */
+  public static <A extends JctCompiler<A, JctCompilationImpl>> JctCompilationImpl compile(
+      Workspace workspace,
+      A compiler,
+      JavaCompiler jsr199Compiler,
+      JctFlagBuilder flagBuilder
+  ) {
+    // This method is mostly pointless as we could call the constructor instead. However, Mockito
+    // makes verifying the arguments passed to a constructor much more difficult than arguments
+    // passed to a static method, so this acts as a nexus to make testing a bit easier for me.
+    return new JctCompilationFactory<>(workspace, compiler, jsr199Compiler, flagBuilder).build();
   }
 
 

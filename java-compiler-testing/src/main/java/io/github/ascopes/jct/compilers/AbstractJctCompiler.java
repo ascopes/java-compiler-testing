@@ -27,7 +27,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import javax.annotation.Nullable;
 import javax.annotation.processing.Processor;
 import javax.tools.JavaCompiler;
@@ -124,7 +123,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
 
   @Override
   public JctCompilationImpl compile(Workspace workspace) {
-    return new JctCompilationFactory<>(workspace, myself(), jsr199Compiler, flagBuilder).build();
+    return JctCompilationFactory.compile(workspace, myself(), jsr199Compiler, flagBuilder);
   }
 
   @Override
@@ -229,8 +228,8 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public Set<Processor> getAnnotationProcessors() {
-    return Set.copyOf(annotationProcessors);
+  public List<Processor> getAnnotationProcessors() {
+    return List.copyOf(annotationProcessors);
   }
 
   @Override

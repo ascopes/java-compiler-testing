@@ -38,7 +38,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
  */
 @DisplayName("Workspace tests")
 @ExtendWith(MockitoExtension.class)
-@SuppressWarnings("resource")
 class WorkspaceTest {
 
   @Mock

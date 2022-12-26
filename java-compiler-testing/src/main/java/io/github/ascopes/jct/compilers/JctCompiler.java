@@ -25,7 +25,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import javax.annotation.Nullable;
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
@@ -178,11 +177,11 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
 
   /**
    * Get an <strong>immutable snapshot view</strong> of the current annotation processors that are
-   * explicitly set to be run.
+   * explicitly set to be run, in the order that they were provided to the compiler.
    *
    * @return the current annotation processors that are set.
    */
-  Set<? extends Processor> getAnnotationProcessors();
+  List<Processor> getAnnotationProcessors();
 
 
   /**
