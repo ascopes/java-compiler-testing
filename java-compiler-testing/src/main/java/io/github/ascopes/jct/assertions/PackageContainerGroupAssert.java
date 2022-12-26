@@ -54,7 +54,7 @@ public final class PackageContainerGroupAssert
   /**
    * Assert that the given file does not exist.
    *
-   * @param fragment the first part of the path.
+   * @param fragment  the first part of the path.
    * @param fragments additional parts of the path.
    * @return this assertion object for further assertions.
    * @throws AssertionError if the file exists.
@@ -110,7 +110,7 @@ public final class PackageContainerGroupAssert
   /**
    * Assert that the given file exists.
    *
-   * @param fragment the path fragment.
+   * @param fragment  the path fragment.
    * @param fragments any additional path fragments.
    * @return assertions to perform on the path of the file that exists.
    * @throws AssertionError if the file does not exist.

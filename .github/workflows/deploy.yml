@@ -46,7 +46,7 @@ jobs:
         run: >-
           ./mvnw
           -B
-          -T4C
+          -T4
           -Dmaven.deploy.skip=${{ ! inputs.deploy-artifacts-to-gh-packages }}
           -Dmaven.source.includePom=true
           -Dmaven.test.skip=true

@@ -27,7 +27,6 @@ import io.github.ascopes.jct.workspaces.PathRoot;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectory;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
-import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;

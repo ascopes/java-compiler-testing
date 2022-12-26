@@ -28,13 +28,14 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class JctCompilers extends UtilityClass {
+
   private JctCompilers() {
     // Disallow initialisation.
   }
 
   /**
-   * Create a new instance of the default platform compiler that is part of
-   * the JDK ({@code javac} on OpenJDK-derived implementations).
+   * Create a new instance of the default platform compiler that is part of the JDK ({@code javac}
+   * on OpenJDK-derived implementations).
    *
    * @return the compiler instance.
    */

@@ -26,8 +26,8 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Extension around a {@link JavaFileManager} that allows adding of {@link PathRoot} objects to
- * the manager.
+ * Extension around a {@link JavaFileManager} that allows adding of {@link PathRoot} objects to the
+ * manager.
  *
  * @author Ashley Scopes
  * @since 0.0.1

@@ -81,7 +81,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * <p>Modules are treated as subdirectories.
    *
-   * @param fragment the first part of the path.
+   * @param fragment  the first part of the path.
    * @param fragments any additional parts of the path.
    * @return the first occurrence of the path in this group, or null if not found.
    * @throws IllegalArgumentException if the provided path is absolute.

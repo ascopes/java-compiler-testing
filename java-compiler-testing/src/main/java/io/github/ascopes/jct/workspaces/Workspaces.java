@@ -28,6 +28,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class Workspaces extends UtilityClass {
+
   private Workspaces() {
     // Do nothing.
   }

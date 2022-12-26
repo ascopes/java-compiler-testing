@@ -66,7 +66,7 @@ jobs:
         run: >-
           ./mvnw 
           -B
-          -T8
+          -T4
           -U
           --no-transfer-progress
           -DskipTests=true
@@ -100,7 +100,7 @@ jobs:
         run: >-
           ./mvnw 
           -B
-          -T8
+          -T4
           -U
           -Pdependency-check
           --no-transfer-progress
@@ -147,7 +147,7 @@ jobs:
         run: >-
           ./mvnw 
           -B 
-          -T8
+          -T4
           -U
           -pl java-compiler-testing
           --also-make
@@ -209,7 +209,7 @@ jobs:
         run: >-
           ./mvnw 
           -B 
-          -T8
+          -T4
           -U
           --no-transfer-progress
           -Dcheckstyle.skip=true
@@ -231,9 +231,9 @@ jobs:
         if: always()
         with:
           name: reports-java-${{ matrix.java-version }}-${{ matrix.os-name }}
+          if-no-files-found: error
           path: |-
-            **/target/surefire-reports/*.xml
-            **/target/surefire-reports/*.txt
+            **/target/surefire-reports/
             **/target/site/jacoco/jacoco*.xml
           retention-days: 5
 

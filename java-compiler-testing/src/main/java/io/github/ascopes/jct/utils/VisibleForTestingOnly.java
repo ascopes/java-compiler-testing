@@ -24,8 +24,8 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Marker annotation that signifies the annotated method or constructor is only visible
- * to assist in internal testing and should not be used as part of the public API elsewhere.
+ * Marker annotation that signifies the annotated method or constructor is only visible to assist in
+ * internal testing and should not be used as part of the public API elsewhere.
  *
  * @author Ashley Scopes
  * @since 0.0.1

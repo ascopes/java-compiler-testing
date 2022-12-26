@@ -44,7 +44,8 @@ public interface PathRoot {
 
   /**
    * Determine if two path roots are equivalent. If the provided object is {@code null} or not an
-   * instance of a {@link PathRoot}, then this will return {@code false} unless otherwise specified.
+   * instance of a {@link PathRoot}, then this will return {@code false} unless otherwise
+   * specified.
    *
    * @param other the object to compare with.
    * @return {@code true} if semantically equal, or {@code false} otherwise.

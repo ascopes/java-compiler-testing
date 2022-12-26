@@ -26,6 +26,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 public abstract class UtilityClass {
+
   protected UtilityClass() {
     throw new UnsupportedOperationException(
         "this is a utility class that cannot be initialised or extended"

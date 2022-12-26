@@ -112,10 +112,10 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
    * instead of initialising this class directly, as this constructor is only visible for testing
    * purposes.
    *
-   * @param workspace the workspace.
-   * @param compiler the compiler.
+   * @param workspace      the workspace.
+   * @param compiler       the compiler.
    * @param jsr199Compiler the JSR-199 compiler.
-   * @param flagBuilder the flag builder.
+   * @param flagBuilder    the flag builder.
    */
   @VisibleForTestingOnly
   public JctCompilationFactory(
