@@ -283,8 +283,13 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
+          action_fail: true
+          action_fail_on_inconclusive: true
+          check_run_annotations: "skipped tests"
+          deduplicate_classes_by_file_name: true
           json_test_case_results: true
           json_thousands_separator: ","
           junit_files: "artifacts/**/TEST-*.xml"
-          report_individual_runs: true
+          report_individual_runs: false
+          test_changes_limit: 500
           time_unit: "milliseconds"
