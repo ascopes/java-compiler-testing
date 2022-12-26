@@ -138,7 +138,7 @@ public final class PathWrappingContainerImpl implements Container {
   }
 
   @Override
-  public PathRoot getPathWrapper() {
+  public PathRoot getPathRoot() {
     return root;
   }
 

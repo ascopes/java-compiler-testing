@@ -189,7 +189,7 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
-  public PathRoot getPathWrapper() {
+  public PathRoot getPathRoot() {
     return jarPath;
   }
 

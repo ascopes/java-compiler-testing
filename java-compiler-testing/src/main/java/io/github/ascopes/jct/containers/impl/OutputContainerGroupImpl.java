@@ -230,7 +230,7 @@ public final class OutputContainerGroupImpl
 
     var group = new OutputPackageContainerGroupImpl(moduleLocation, release);
     var pathWrapper = new WrappingDirectory(
-        getPackages().iterator().next().getPathWrapper(),
+        getPackages().iterator().next().getPathRoot(),
         moduleLocation.getModuleName()
     );
     uncheckedIo(() -> Files.createDirectories(pathWrapper.getPath()));

@@ -50,7 +50,7 @@ public final class WrappingDirectory implements PathRoot {
   private final URL url;
 
   /**
-   * Initialize this path wrapper from a given path.
+   * Initialize this path root from a given path.
    *
    * @param path the NIO path to wrap.
    * @throws IllegalArgumentException if the path does not support dereferencing URLs (i.e. no URL
@@ -62,7 +62,7 @@ public final class WrappingDirectory implements PathRoot {
   }
 
   /**
-   * Initialize this path wrapper from another path wrapper and a relative path to represent.
+   * Initialize this path root from another path root and a relative path to represent.
    *
    * @param parent the outer path-wrapper to use.
    * @param parts  the relative parts to resolve.

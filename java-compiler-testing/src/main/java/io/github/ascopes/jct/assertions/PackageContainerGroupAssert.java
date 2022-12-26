@@ -133,7 +133,7 @@ public final class PackageContainerGroupAssert
                     .listAllFiles()
                     .stream()
                     .filter(not(Files::isDirectory))
-                    .map(container.getPathWrapper().getPath()::relativize)
+                    .map(container.getPathRoot().getPath()::relativize)
                 ))
                 .collect(Collectors.toList()),
             Path::toString

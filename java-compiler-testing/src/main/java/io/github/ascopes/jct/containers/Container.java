@@ -133,11 +133,11 @@ public interface Container extends Closeable {
   String getName();
 
   /**
-   * Get the path wrapper of the container.
+   * Get the path root of the container.
    *
-   * @return the path wrapper.
+   * @return the path root.
    */
-  PathRoot getPathWrapper();
+  PathRoot getPathRoot();
 
   /**
    * Infer the binary name of a given Java file object.

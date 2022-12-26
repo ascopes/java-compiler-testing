@@ -50,7 +50,7 @@ public final class PackageContainerGroupUrlClassLoader extends URLClassLoader {
     var urls = new URL[pkgs.size()];
 
     for (var i = 0; i < urls.length; ++i) {
-      urls[i] = iter.next().getPathWrapper().getUrl();
+      urls[i] = iter.next().getPathRoot().getUrl();
     }
     return urls;
   }
