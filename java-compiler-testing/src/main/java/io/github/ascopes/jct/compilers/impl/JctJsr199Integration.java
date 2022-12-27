@@ -25,14 +25,13 @@ import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
-import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.utils.StringUtils;
+import io.github.ascopes.jct.utils.UtilityClass;
 import io.github.ascopes.jct.utils.VisibleForTestingOnly;
 import io.github.ascopes.jct.workspaces.Workspace;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectory;
 import java.io.IOException;
-import java.io.Writer;
 import java.lang.module.FindException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
@@ -42,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileManager;
@@ -56,14 +54,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper for performing a compilation using a given compiler.
+ * Helper for performing the actual compilation logic during a compilation run.
  *
- * @param <A> the compiler implementation to use.
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilationImpl>> {
+public final class JctJsr199Integration extends UtilityClass {
 
   // Locations that we have to ensure exist before the compiler is run.
   private static final Set<StandardLocation> REQUIRED_LOCATIONS = Set.of(
@@ -93,60 +90,34 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
       StandardLocation.CLASS_PATH, StandardLocation.ANNOTATION_PROCESSOR_PATH
   );
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilationFactory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(JctJsr199Integration.class);
 
-  private final Workspace workspace;
-  private final A compiler;
-  private final JavaCompiler jsr199Compiler;
-  private final JctFlagBuilder flagBuilder;
-
-  private final Lazy<List<Path>> jvmClassPath;
-  private final Lazy<List<Path>> jvmModulePath;
-  private final Lazy<List<Path>> jvmPlatformPath;
-  private final Lazy<List<Path>> jvmSystemModules;
-
-  /**
-   * Initialise this compilation factory.
-   *
-   * <p>Consider using {@link #compile(Workspace, JctCompiler, JavaCompiler, JctFlagBuilder)}
-   * instead of initialising this class directly, as this constructor is only visible for testing
-   * purposes.
-   *
-   * @param workspace      the workspace.
-   * @param compiler       the compiler.
-   * @param jsr199Compiler the JSR-199 compiler.
-   * @param flagBuilder    the flag builder.
-   */
-  @VisibleForTestingOnly
-  public JctCompilationFactory(
-      Workspace workspace,
-      A compiler,
-      JavaCompiler jsr199Compiler,
-      JctFlagBuilder flagBuilder
-  ) {
-    this.workspace = workspace;
-    this.compiler = compiler;
-    this.jsr199Compiler = jsr199Compiler;
-    this.flagBuilder = flagBuilder;
-    jvmClassPath = new Lazy<>(SpecialLocationUtils::currentClassPathLocations);
-    jvmModulePath = new Lazy<>(SpecialLocationUtils::currentModulePathLocations);
-    jvmPlatformPath = new Lazy<>(SpecialLocationUtils::currentPlatformClassPathLocations);
-    jvmSystemModules = new Lazy<>(SpecialLocationUtils::javaRuntimeLocations);
+  private JctJsr199Integration() {
+    // Static-only class.
   }
 
   /**
-   * Run the compilation for the given compiler and return the compilation result.
+   * Initialise a new instance of this compilation factory internally and run the compilation.
    *
-   * @return the compilation result.
+   * @param workspace      the workspace to use.
+   * @param compiler       the compiler to use.
+   * @param jsr199Compiler the JSR-199 compiler to use.
+   * @param flagBuilder    the flag builder to use.
+   * @return the compilation factory.
    */
-  public JctCompilationImpl build() {
+  public static JctCompilationImpl compile(
+      Workspace workspace,
+      JctCompiler<?, ?> compiler,
+      JavaCompiler jsr199Compiler,
+      JctFlagBuilder flagBuilder
+  ) {
     try {
       var flags = buildFlags(compiler, flagBuilder);
       var diagnosticListener = buildDiagnosticListener(compiler);
       var writer = buildWriter(compiler);
 
-      try (var fileManager = buildFileManager()) {
-        var previousCompilationUnits = new LinkedHashSet<JavaFileObject>();
+      try (var fileManager = buildFileManager(compiler, workspace)) {
+        var compilationUnits = findCompilationUnits(fileManager);
 
         var result = performCompilerPass(
             compiler,
@@ -155,20 +126,16 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
             flags,
             fileManager,
             diagnosticListener,
-            previousCompilationUnits
+            compilationUnits
         );
 
         var outputLines = writer.toString().lines().collect(Collectors.toList());
 
-        if (result == CompilationResult.SKIPPED) {
-          LOGGER.warn("There was nothing to compile...");
-        }
-
         return JctCompilationImpl.builder()
             .failOnWarnings(compiler.isFailOnWarnings())
-            .success(result == CompilationResult.SUCCESS)
+            .success(result)
             .outputLines(outputLines)
-            .compilationUnits(Set.copyOf(previousCompilationUnits))
+            .compilationUnits(Set.copyOf(compilationUnits))
             .diagnostics(diagnosticListener.getDiagnostics())
             .fileManager(fileManager)
             .build();
@@ -178,42 +145,26 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     }
   }
 
-  private CompilationResult performCompilerPass(
-      A compiler,
-      JavaCompiler jsr199Compiler,
-      TeeWriter writer,
-      List<String> flags,
-      JctFileManager fileManager,
-      TracingDiagnosticListener<JavaFileObject> diagnosticListener,
-      Set<JavaFileObject> previousCompilationUnits
-  ) throws IOException {
-    var compilationUnits = findCompilationUnits(fileManager, previousCompilationUnits);
-    LOGGER.debug("Found {} compilation units {}", compilationUnits.size(), compilationUnits);
-
-    if (compilationUnits.isEmpty()) {
-      return CompilationResult.SKIPPED;
-    }
-
-    var task = buildCompilationTask(
-        compiler,
-        jsr199Compiler,
-        writer,
-        applyLoggingToFileManager(compiler, fileManager),
-        diagnosticListener,
-        flags,
-        compilationUnits
-    );
-
-    return runCompilationTask(compiler, task)
-        ? CompilationResult.SUCCESS
-        : CompilationResult.FAILURE;
-  }
-
-  private TeeWriter buildWriter(A compiler) {
+  /**
+   * Build a TeeWriter.
+   *
+   * @param compiler the compiler to use.
+   * @return the tee writer.
+   */
+  @VisibleForTestingOnly
+  public static TeeWriter buildWriter(JctCompiler<?, ?> compiler) {
     return new TeeWriter(compiler.getLogCharset(), System.out);
   }
 
-  private List<String> buildFlags(A compiler, JctFlagBuilder flagBuilder) {
+  /**
+   * Build the flags for the compiler.
+   *
+   * @param compiler    the compiler.
+   * @param flagBuilder the flag builder to use.
+   * @return the flags.
+   */
+  @VisibleForTestingOnly
+  public static List<String> buildFlags(JctCompiler<?, ?> compiler, JctFlagBuilder flagBuilder) {
     return flagBuilder
         .annotationProcessorOptions(compiler.getAnnotationProcessorOptions())
         .showDeprecationWarnings(compiler.isShowDeprecationWarnings())
@@ -229,58 +180,37 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
         .build();
   }
 
-  private JctFileManager buildFileManager() {
-    var fileManager = new JctFileManagerImpl(determineRelease());
+  /**
+   * Build a file manager from the compiler and workspace.
+   *
+   * <p>This also applies any logging proxy that is required.
+   *
+   * @param compiler  the compiler to use.
+   * @param workspace the workspace to use.
+   * @return the file manager.
+   */
+  @VisibleForTestingOnly
+  public static JctFileManager buildFileManager(
+      JctCompiler<?, ?> compiler,
+      Workspace workspace
+  ) {
+    var release = determineRelease(compiler);
+    var fileManager = new JctFileManagerImpl(release);
 
     // Copy all other explicit locations across first to give them priority.
     workspace.getAllPaths().forEach(fileManager::addPaths);
 
     // Inherit known resources from the current JVM where appropriate.
-    configureClassPath(fileManager);
-    configureModulePath(fileManager);
-    configurePlatformClassPath(fileManager);
-    configureJvmSystemModules(fileManager);
-    configureAnnotationProcessorPaths(fileManager);
+    configureClassPath(compiler, fileManager);
+    configureModulePath(compiler, fileManager);
+    configurePlatformClassPath(compiler, fileManager);
+    configureJvmSystemModules(compiler, fileManager);
+    configureAnnotationProcessorPaths(compiler, fileManager);
 
     for (var requiredLocation : REQUIRED_LOCATIONS) {
-      createLocationIfNotPresent(fileManager, requiredLocation);
+      createLocationIfNotPresent(workspace, fileManager, requiredLocation);
     }
 
-    return fileManager;
-  }
-
-  private List<? extends JavaFileObject> findCompilationUnits(
-      JavaFileManager fileManager,
-      Set<JavaFileObject> previousCompilationUnits
-  ) throws IOException {
-    var locations = new LinkedHashSet<Location>();
-
-    locations.add(StandardLocation.SOURCE_OUTPUT);
-    locations.add(StandardLocation.SOURCE_PATH);
-
-    fileManager
-        .listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH)
-        .forEach(locations::addAll);
-
-    var objects = new ArrayList<JavaFileObject>();
-
-    for (var location : locations) {
-      var items = fileManager.list(location, "", Set.of(Kind.SOURCE), true);
-      for (var fileObject : items) {
-        if (!previousCompilationUnits.contains(fileObject)) {
-          objects.add(fileObject);
-        }
-      }
-    }
-
-    //previousCompilationUnits.addAll(objects);
-    return objects;
-  }
-
-  private JctFileManager applyLoggingToFileManager(
-      A compiler,
-      JctFileManager fileManager
-  ) {
     switch (compiler.getFileManagerLoggingMode()) {
       case STACKTRACES:
         return LoggingFileManagerProxy.wrap(fileManager, true);
@@ -292,7 +222,48 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     }
   }
 
-  private TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener(A compiler) {
+  /**
+   * Find any compilation units to use in a compilation.
+   *
+   * @param fileManager the file manager to search.
+   * @return the compilation units.
+   * @throws IOException if an IO error occurs.
+   */
+  @VisibleForTestingOnly
+  public static List<JavaFileObject> findCompilationUnits(
+      JavaFileManager fileManager
+  ) throws IOException {
+    var locations = new LinkedHashSet<Location>();
+
+    locations.add(StandardLocation.SOURCE_OUTPUT);
+    locations.add(StandardLocation.SOURCE_PATH);
+
+    for (var modules : fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH)) {
+      locations.addAll(modules);
+    }
+
+    var objects = new ArrayList<JavaFileObject>();
+
+    for (var location : locations) {
+      var items = fileManager.list(location, "", Set.of(Kind.SOURCE), true);
+      for (var fileObject : items) {
+        objects.add(fileObject);
+      }
+    }
+
+    return objects;
+  }
+
+  /**
+   * Build a tracing diagnostic listener for the compiler.
+   *
+   * @param compiler the compiler.
+   * @return the tracing diagnostic listener.
+   */
+  @VisibleForTestingOnly
+  public static TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener(
+      JctCompiler<?, ?> compiler
+  ) {
     var logging = compiler.getDiagnosticLoggingMode();
 
     return new TracingDiagnosticListener<>(
@@ -301,15 +272,31 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     );
   }
 
-  private CompilationTask buildCompilationTask(
-      A compiler,
+  /**
+   * Perform an individual compilation pass.
+   *
+   * @param compiler           the compiler to use.
+   * @param jsr199Compiler     the JSR-199 compiler to build a compilation task from.
+   * @param writer             the tee writer to use.
+   * @param flags              the compiler flags to pass.
+   * @param fileManager        the file manager to use.
+   * @param diagnosticListener the tracing diagnostic listener to write diagnostics to.
+   * @param compilationUnits   the compilation units to compile.
+   * @return {@code true} if compilation succeeded, or {@code false} if it failed.
+   * @throws IOException          if an IO error occurs.
+   * @throws JctCompilerException if the compilation task throws an unhandled exception during the
+   *                              run.
+   */
+  @VisibleForTestingOnly
+  public static boolean performCompilerPass(
+      JctCompiler<?, ?> compiler,
       JavaCompiler jsr199Compiler,
-      Writer writer,
-      JctFileManager fileManager,
-      DiagnosticListener<? super JavaFileObject> diagnosticListener,
+      TeeWriter writer,
       List<String> flags,
-      List<? extends JavaFileObject> compilationUnits
-  ) {
+      JctFileManager fileManager,
+      TracingDiagnosticListener<JavaFileObject> diagnosticListener,
+      List<JavaFileObject> compilationUnits
+  ) throws IOException {
     var name = compiler.toString();
 
     var task = jsr199Compiler.getTask(
@@ -322,7 +309,6 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     );
 
     configureAnnotationProcessorDiscovery(compiler, task);
-
     task.setLocale(compiler.getLocale());
 
     LOGGER
@@ -332,12 +318,6 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
         .addArgument(name)
         .addArgument(() -> StringUtils.quotedIterable(flags))
         .log("Starting compilation of {} file{} with compiler {} using flags {}");
-
-    return task;
-  }
-
-  private boolean runCompilationTask(A compiler, CompilationTask task) {
-    var name = compiler.toString();
 
     try {
       var start = System.nanoTime();
@@ -367,7 +347,17 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     }
   }
 
-  private void configureAnnotationProcessorDiscovery(A compiler, CompilationTask task) {
+  /**
+   * Configure annotation processor discovery on the given compilation task.
+   *
+   * @param compiler the compiler to use.
+   * @param task     the compilation task to use.
+   */
+  @VisibleForTestingOnly
+  public static void configureAnnotationProcessorDiscovery(
+      JctCompiler<?, ?> compiler,
+      CompilationTask task
+  ) {
     if (compiler.getAnnotationProcessors().size() > 0) {
       LOGGER.debug("Annotation processor discovery is disabled (processors explicitly provided)");
       task.setProcessors(compiler.getAnnotationProcessors());
@@ -383,7 +373,14 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     }
   }
 
-  private String determineRelease() {
+  /**
+   * Determine the effective release to run the compiler under.
+   *
+   * @param compiler the compiler to determine the release from.
+   * @return the release.
+   */
+  @VisibleForTestingOnly
+  public static String determineRelease(JctCompiler<?, ?> compiler) {
     if (compiler.getRelease() != null) {
       LOGGER.trace("Using explicitly set release as the base release version internally");
       return compiler.getRelease();
@@ -398,7 +395,19 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     return compiler.getDefaultRelease();
   }
 
-  private void createLocationIfNotPresent(JctFileManagerImpl fileManager, Location location) {
+  /**
+   * Create a location in the workspace if it is not present in the file manager.
+   *
+   * @param workspace   the workspace.
+   * @param fileManager the file manager to check.
+   * @param location    the location to check for.
+   */
+  @VisibleForTestingOnly
+  public static void createLocationIfNotPresent(
+      Workspace workspace,
+      JctFileManagerImpl fileManager,
+      Location location
+  ) {
     if (!fileManager.hasLocation(location)) {
       LOGGER.trace("Creating a new package workspace for {}", location);
       var dir = workspace.createPackage(location);
@@ -406,9 +415,19 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     }
   }
 
-  private void configureClassPath(JctFileManagerImpl fileManager) {
+  /**
+   * Configure the classpath for the compiler in the file manager.
+   *
+   * @param compiler    the compiler to use.
+   * @param fileManager the file manager to use.
+   */
+  @VisibleForTestingOnly
+  public static void configureClassPath(
+      JctCompiler<?, ?> compiler,
+      JctFileManagerImpl fileManager
+  ) {
     if (compiler.isInheritClassPath()) {
-      for (var path : jvmClassPath.access()) {
+      for (var path : SpecialLocationUtils.currentClassPathLocations()) {
         var wrapper = new WrappingDirectory(path);
 
         LOGGER.trace("Adding {} to the class path", path);
@@ -427,9 +446,19 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     }
   }
 
-  private void configureModulePath(JctFileManagerImpl fileManager) {
+  /**
+   * Configure the module path for the compiler in the file manager.
+   *
+   * @param compiler    the compiler to use.
+   * @param fileManager the file manager to use.
+   */
+  @VisibleForTestingOnly
+  public static void configureModulePath(
+      JctCompiler<?, ?> compiler,
+      JctFileManagerImpl fileManager
+  ) {
     if (compiler.isInheritModulePath()) {
-      for (var path : jvmModulePath.access()) {
+      for (var path : SpecialLocationUtils.currentModulePathLocations()) {
         var wrapper = new WrappingDirectory(path);
 
         LOGGER.trace("Adding {} to the module path and class path", path);
@@ -443,9 +472,19 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     }
   }
 
-  private void configurePlatformClassPath(JctFileManagerImpl fileManager) {
+  /**
+   * Configure the platform classpath for the compiler in the file manager.
+   *
+   * @param compiler    the compiler to use.
+   * @param fileManager the file manager to use.
+   */
+  @VisibleForTestingOnly
+  public static void configurePlatformClassPath(
+      JctCompiler<?, ?> compiler,
+      JctFileManagerImpl fileManager
+  ) {
     if (compiler.isInheritPlatformClassPath()) {
-      for (var path : jvmPlatformPath.access()) {
+      for (var path : SpecialLocationUtils.currentPlatformClassPathLocations()) {
         var wrapper = new WrappingDirectory(path);
 
         LOGGER.trace("Adding {} to the platform class path", path);
@@ -454,9 +493,19 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     }
   }
 
-  private void configureJvmSystemModules(JctFileManagerImpl fileManager) {
+  /**
+   * Configure the JVM system modules for the compiler in the file manager.
+   *
+   * @param compiler    the compiler to use.
+   * @param fileManager the file manager to use.
+   */
+  @VisibleForTestingOnly
+  public static void configureJvmSystemModules(
+      JctCompiler<?, ?> compiler,
+      JctFileManagerImpl fileManager
+  ) {
     if (compiler.isInheritSystemModulePath()) {
-      for (var path : jvmSystemModules.access()) {
+      for (var path : SpecialLocationUtils.javaRuntimeLocations()) {
         var wrapper = new WrappingDirectory(path);
 
         LOGGER.trace("Adding {} to the system module path", path);
@@ -465,7 +514,17 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     }
   }
 
-  private void configureAnnotationProcessorPaths(JctFileManager fileManager) {
+  /**
+   * Configure the annotation processor paths for the compiler in the file manager.
+   *
+   * @param compiler    the compiler to use.
+   * @param fileManager the file manager to use.
+   */
+  @VisibleForTestingOnly
+  public static void configureAnnotationProcessorPaths(
+      JctCompiler<?, ?> compiler,
+      JctFileManagerImpl fileManager
+  ) {
     switch (compiler.getAnnotationProcessorDiscovery()) {
       case ENABLED:
         LOGGER.trace("Annotation processor discovery is enabled, ensuring empty location exists");
@@ -487,7 +546,14 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
     }
   }
 
-  private boolean containsModules(Path path) {
+  /**
+   * Determine if the given path root contains modules.
+   *
+   * @param path the path to check
+   * @return {@code true} if modules are found, or {@code false} otherwise
+   */
+  @VisibleForTestingOnly
+  public static boolean containsModules(Path path) {
     try {
       return !ModuleFinder.of(path).findAll().isEmpty();
     } catch (FindException ex) {
@@ -495,52 +561,5 @@ public final class JctCompilationFactory<A extends JctCompiler<A, JctCompilation
       LOGGER.trace("Ignoring exception finding modules in {}", path, ex);
       return false;
     }
-  }
-
-  /**
-   * Initialise a new instance of this compilation factory internally and run the compilation.
-   *
-   * @param workspace      the workspace to use.
-   * @param compiler       the compiler to use.
-   * @param jsr199Compiler the JSR-199 compiler to use.
-   * @param flagBuilder    the flag builder to use.
-   * @param <A>            the compiler type.
-   * @return the compilation factory.
-   */
-  public static <A extends JctCompiler<A, JctCompilationImpl>> JctCompilationImpl compile(
-      Workspace workspace,
-      A compiler,
-      JavaCompiler jsr199Compiler,
-      JctFlagBuilder flagBuilder
-  ) {
-    // This method is mostly pointless as we could call the constructor instead. However, Mockito
-    // makes verifying the arguments passed to a constructor much more difficult than arguments
-    // passed to a static method, so this acts as a nexus to make testing a bit easier for me.
-    return new JctCompilationFactory<>(workspace, compiler, jsr199Compiler, flagBuilder).build();
-  }
-
-
-  /**
-   * Outcome of a compilation pass.
-   *
-   * @author Ashley Scopes
-   * @since 0.0.1
-   */
-  @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-  private enum CompilationResult {
-    /**
-     * The compilation succeeded.
-     */
-    SUCCESS,
-
-    /**
-     * The compilation failed.
-     */
-    FAILURE,
-
-    /**
-     * There was nothing else to compile, so nothing was run.
-     */
-    SKIPPED,
   }
 }
