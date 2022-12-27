@@ -44,12 +44,13 @@ public final class ModuleLocation implements Location {
    *                                  module-oriented location.
    */
   public ModuleLocation(Location parent, String moduleName) {
-    Objects.requireNonNull(parent);
-    Objects.requireNonNull(moduleName);
+    Objects.requireNonNull(parent, "parent");
+    Objects.requireNonNull(moduleName, "moduleName");
 
     if (!parent.isOutputLocation() && !parent.isModuleOrientedLocation()) {
       throw new IllegalArgumentException(
-          "The parent of a module location must be either an output location or be module-oriented:"
+          "The parent of a module location must be either an output location "
+              + "or be module-oriented, but got "
               + parent.getName()
       );
     }
