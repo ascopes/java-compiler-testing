@@ -80,7 +80,7 @@
  *
  *          assertThatCompilation(compilation)
  *              .classOutputs().packages()
- *              .fileExists("json-schemas/UserSchema.json").contents()
+ *              .fileExists("json-schemas", "UserSchema.json").contents()
  *              .isNotEmpty()
  *              .satisfies(contents -> JSONAssert.assertEquals(...));
  *      }
