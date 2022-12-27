@@ -39,11 +39,10 @@
  *
  * <pre><code>
  *    import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
- *    import static io.github.ascopes.jct.workspaces.Workspaces;
  *
  *    import io.github.ascopes.jct.compilers.JctCompiler;
  *    import io.github.ascopes.jct.junit.JavacCompilerTest;
- *
+ *    import io.github.ascopes.jct.workspaces.Workspaces;
  *    import org.example.processor.JsonSchemaAnnotationProcessor;
  *    import org.skyscreamer.jsonassert.JSONAssert;
  *
