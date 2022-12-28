@@ -47,21 +47,21 @@ class TeeWriterTest {
   @DisplayName("Null charsets are disallowed")
   @Test
   void nullCharsetsAreDisallowed() {
-    assertThatCode(() -> new TeeWriter(null, new ByteArrayOutputStream()))
+    assertThatCode(() -> TeeWriter.wrap(null, new ByteArrayOutputStream()))
         .isInstanceOf(NullPointerException.class);
   }
 
   @DisplayName("Null output streams are disallowed")
   @Test
   void nullOutputStreamsAreDisallowed() {
-    assertThatCode(() -> new TeeWriter(StandardCharsets.UTF_8, null))
+    assertThatCode(() -> TeeWriter.wrap(StandardCharsets.UTF_8, null))
         .isInstanceOf(NullPointerException.class);
   }
 
   @DisplayName("Null writers are disallowed")
   @Test
   void nullWritersAreDisallowed() {
-    assertThatCode(() -> new TeeWriter(null))
+    assertThatCode(() -> TeeWriter.wrap(null))
         .isInstanceOf(NullPointerException.class);
   }
 
@@ -70,7 +70,7 @@ class TeeWriterTest {
   void writeFailsIfWriterIsClosed() throws IOException {
     // Given
     var writer = new StringWriter();
-    var tee = new TeeWriter(writer);
+    var tee = TeeWriter.wrap(writer);
     var text = UUID.randomUUID().toString();
     tee.close();
 
@@ -90,7 +90,7 @@ class TeeWriterTest {
   void writeDelegatesToTheWriter() throws IOException {
     // Given
     var writer = new StringWriter();
-    var tee = new TeeWriter(writer);
+    var tee = TeeWriter.wrap(writer);
     var text = UUID.randomUUID().toString();
 
     // When
@@ -105,7 +105,7 @@ class TeeWriterTest {
   void flushFailsIfTheWriterIsClosed() throws IOException {
     // Given
     var writer = mock(Writer.class);
-    var tee = new TeeWriter(writer);
+    var tee = TeeWriter.wrap(writer);
     tee.close();
     clearInvocations(writer);
 
@@ -122,7 +122,7 @@ class TeeWriterTest {
   void flushDelegatesToTheWriter() throws IOException {
     // Given
     var writer = mock(OutputStream.class);
-    var tee = new TeeWriter(StandardCharsets.UTF_8, writer);
+    var tee = TeeWriter.wrap(StandardCharsets.UTF_8, writer);
 
     // When
     tee.flush();
@@ -139,7 +139,7 @@ class TeeWriterTest {
     // Given
     var writer = mock(Writer.class);
 
-    try (var ignoredTee = new TeeWriter(writer)) {
+    try (var ignoredTee = TeeWriter.wrap(writer)) {
       // Do nothing
     }
 
@@ -153,7 +153,7 @@ class TeeWriterTest {
   @Test
   void closeIsIdempotent() throws IOException {
     var writer = mock(Writer.class);
-    var tee = new TeeWriter(writer);
+    var tee = TeeWriter.wrap(writer);
 
     for (var i = 0; i < 10; ++i) {
       tee.close();
@@ -168,7 +168,7 @@ class TeeWriterTest {
   void toStringShouldReturnTheBufferContent() throws IOException {
     // Given
     var writer = mock(OutputStream.class);
-    var tee = new TeeWriter(StandardCharsets.UTF_8, writer);
+    var tee = TeeWriter.wrap(StandardCharsets.UTF_8, writer);
 
     // When
     tee.write("Hello, ");

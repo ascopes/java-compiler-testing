@@ -32,7 +32,7 @@ import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer;
 import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
-import io.github.ascopes.jct.compilers.impl.JctJsr199Integration;
+import io.github.ascopes.jct.compilers.impl.JctJsr199Interop;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.workspaces.Workspace;
@@ -335,10 +335,10 @@ class AbstractJctCompilerTest {
   @DisplayName(".compile(...) builds the expected compilation object")
   @Test
   void compileReturnsTheExpectedObject() {
-    try (var factoryCls = mockStatic(JctJsr199Integration.class)) {
+    try (var factoryCls = mockStatic(JctJsr199Interop.class)) {
       // Given
       var expectedCompilation = mock(JctCompilationImpl.class);
-      factoryCls.when(() -> JctJsr199Integration.compile(any(), any(), any(), any()))
+      factoryCls.when(() -> JctJsr199Interop.compile(any(), any(), any(), any()))
           .thenReturn(expectedCompilation);
       var expectedWorkspace = mock(Workspace.class);
 
@@ -346,7 +346,7 @@ class AbstractJctCompilerTest {
       var actualCompilation = compiler.compile(expectedWorkspace);
 
       // Then
-      factoryCls.verify(() -> JctJsr199Integration
+      factoryCls.verify(() -> JctJsr199Interop
           .compile(expectedWorkspace, compiler, jsr199Compiler, flagBuilder));
 
       assertThat(actualCompilation).isSameAs(expectedCompilation);

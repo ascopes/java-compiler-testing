@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class JctJsr199Integration extends UtilityClass {
+public final class JctJsr199Interop extends UtilityClass {
 
   // Locations that we have to ensure exist before the compiler is run.
   private static final Set<StandardLocation> REQUIRED_LOCATIONS = Set.of(
@@ -90,9 +90,9 @@ public final class JctJsr199Integration extends UtilityClass {
       StandardLocation.CLASS_PATH, StandardLocation.ANNOTATION_PROCESSOR_PATH
   );
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(JctJsr199Integration.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(JctJsr199Interop.class);
 
-  private JctJsr199Integration() {
+  private JctJsr199Interop() {
     // Static-only class.
   }
 
@@ -111,37 +111,40 @@ public final class JctJsr199Integration extends UtilityClass {
       JavaCompiler jsr199Compiler,
       JctFlagBuilder flagBuilder
   ) {
-    try {
+    // This method sucks, I hate it. If there is a nicer way of doing this without a load of
+    // additional overhead, additional code, or additional complexity either in this class or the
+    // unit tests, then I am all for ripping all of this out and reimplementing it in the future.
+
+    try (
+        var writer = buildWriter(compiler);
+        var fileManager = buildFileManager(compiler, workspace)
+    ) {
       var flags = buildFlags(compiler, flagBuilder);
       var diagnosticListener = buildDiagnosticListener(compiler);
-      var writer = buildWriter(compiler);
+      var compilationUnits = findCompilationUnits(fileManager);
 
-      try (var fileManager = buildFileManager(compiler, workspace)) {
-        var compilationUnits = findCompilationUnits(fileManager);
+      var result = performCompilerPass(
+          compiler,
+          jsr199Compiler,
+          writer,
+          flags,
+          fileManager,
+          diagnosticListener,
+          compilationUnits
+      );
 
-        var result = performCompilerPass(
-            compiler,
-            jsr199Compiler,
-            writer,
-            flags,
-            fileManager,
-            diagnosticListener,
-            compilationUnits
-        );
+      var outputLines = writer.toString().lines().collect(Collectors.toList());
 
-        var outputLines = writer.toString().lines().collect(Collectors.toList());
-
-        return JctCompilationImpl.builder()
-            .failOnWarnings(compiler.isFailOnWarnings())
-            .success(result)
-            .outputLines(outputLines)
-            .compilationUnits(Set.copyOf(compilationUnits))
-            .diagnostics(diagnosticListener.getDiagnostics())
-            .fileManager(fileManager)
-            .build();
-      }
-    } catch (IOException ex) {
-      throw new JctCompilerException("Failed to compile due to an IOException: " + ex, ex);
+      return JctCompilationImpl.builder()
+          .failOnWarnings(compiler.isFailOnWarnings())
+          .success(result)
+          .outputLines(outputLines)
+          .compilationUnits(Set.copyOf(compilationUnits))
+          .diagnostics(diagnosticListener.getDiagnostics())
+          .fileManager(fileManager)
+          .build();
+    } catch (Exception ex) {
+      throw new JctCompilerException("Failed to compile due to an error: " + ex, ex);
     }
   }
 
@@ -153,7 +156,7 @@ public final class JctJsr199Integration extends UtilityClass {
    */
   @VisibleForTestingOnly
   public static TeeWriter buildWriter(JctCompiler<?, ?> compiler) {
-    return new TeeWriter(compiler.getLogCharset(), System.out);
+    return TeeWriter.wrap(compiler.getLogCharset(), System.out);
   }
 
   /**
@@ -195,21 +198,15 @@ public final class JctJsr199Integration extends UtilityClass {
       Workspace workspace
   ) {
     var release = determineRelease(compiler);
-    var fileManager = new JctFileManagerImpl(release);
+    var fileManager = JctFileManagerImpl.forRelease(release);
 
-    // Copy all other explicit locations across first to give them priority.
-    workspace.getAllPaths().forEach(fileManager::addPaths);
-
-    // Inherit known resources from the current JVM where appropriate.
+    configureWorkspacePaths(workspace, fileManager);
     configureClassPath(compiler, fileManager);
     configureModulePath(compiler, fileManager);
     configurePlatformClassPath(compiler, fileManager);
     configureJvmSystemModules(compiler, fileManager);
     configureAnnotationProcessorPaths(compiler, fileManager);
-
-    for (var requiredLocation : REQUIRED_LOCATIONS) {
-      createLocationIfNotPresent(workspace, fileManager, requiredLocation);
-    }
+    configureRequiredLocations(workspace, fileManager);
 
     switch (compiler.getFileManagerLoggingMode()) {
       case STACKTRACES:
@@ -219,157 +216,6 @@ public final class JctJsr199Integration extends UtilityClass {
       case DISABLED:
       default:
         return fileManager;
-    }
-  }
-
-  /**
-   * Find any compilation units to use in a compilation.
-   *
-   * @param fileManager the file manager to search.
-   * @return the compilation units.
-   * @throws IOException if an IO error occurs.
-   */
-  @VisibleForTestingOnly
-  public static List<JavaFileObject> findCompilationUnits(
-      JavaFileManager fileManager
-  ) throws IOException {
-    var locations = new LinkedHashSet<Location>();
-
-    locations.add(StandardLocation.SOURCE_OUTPUT);
-    locations.add(StandardLocation.SOURCE_PATH);
-
-    for (var modules : fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH)) {
-      locations.addAll(modules);
-    }
-
-    var objects = new ArrayList<JavaFileObject>();
-
-    for (var location : locations) {
-      var items = fileManager.list(location, "", Set.of(Kind.SOURCE), true);
-      for (var fileObject : items) {
-        objects.add(fileObject);
-      }
-    }
-
-    return objects;
-  }
-
-  /**
-   * Build a tracing diagnostic listener for the compiler.
-   *
-   * @param compiler the compiler.
-   * @return the tracing diagnostic listener.
-   */
-  @VisibleForTestingOnly
-  public static TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener(
-      JctCompiler<?, ?> compiler
-  ) {
-    var logging = compiler.getDiagnosticLoggingMode();
-
-    return new TracingDiagnosticListener<>(
-        logging != LoggingMode.DISABLED,
-        logging == LoggingMode.STACKTRACES
-    );
-  }
-
-  /**
-   * Perform an individual compilation pass.
-   *
-   * @param compiler           the compiler to use.
-   * @param jsr199Compiler     the JSR-199 compiler to build a compilation task from.
-   * @param writer             the tee writer to use.
-   * @param flags              the compiler flags to pass.
-   * @param fileManager        the file manager to use.
-   * @param diagnosticListener the tracing diagnostic listener to write diagnostics to.
-   * @param compilationUnits   the compilation units to compile.
-   * @return {@code true} if compilation succeeded, or {@code false} if it failed.
-   * @throws IOException          if an IO error occurs.
-   * @throws JctCompilerException if the compilation task throws an unhandled exception during the
-   *                              run.
-   */
-  @VisibleForTestingOnly
-  public static boolean performCompilerPass(
-      JctCompiler<?, ?> compiler,
-      JavaCompiler jsr199Compiler,
-      TeeWriter writer,
-      List<String> flags,
-      JctFileManager fileManager,
-      TracingDiagnosticListener<JavaFileObject> diagnosticListener,
-      List<JavaFileObject> compilationUnits
-  ) throws IOException {
-    var name = compiler.toString();
-
-    var task = jsr199Compiler.getTask(
-        writer,
-        fileManager,
-        diagnosticListener,
-        flags,
-        null,
-        compilationUnits
-    );
-
-    configureAnnotationProcessorDiscovery(compiler, task);
-    task.setLocale(compiler.getLocale());
-
-    LOGGER
-        .atInfo()
-        .addArgument(compilationUnits::size)
-        .addArgument(() -> compilationUnits.size() == 1 ? "" : "s")
-        .addArgument(name)
-        .addArgument(() -> StringUtils.quotedIterable(flags))
-        .log("Starting compilation of {} file{} with compiler {} using flags {}");
-
-    try {
-      var start = System.nanoTime();
-      var result = task.call();
-      var duration = System.nanoTime() - start;
-
-      if (result == null) {
-        throw new JctCompilerException("The compiler failed to produce a valid result");
-      }
-
-      LOGGER.info("Compilation with compiler {} {} after ~{}",
-          name,
-          result ? "succeeded" : "failed",
-          StringUtils.formatNanos(duration)
-      );
-
-      return result;
-
-    } catch (Exception ex) {
-      LOGGER.warn(
-          "Compiler {} threw an exception: {}: {}",
-          name,
-          ex.getClass().getName(),
-          ex.getMessage()
-      );
-      throw new JctCompilerException("The compiler threw an exception", ex);
-    }
-  }
-
-  /**
-   * Configure annotation processor discovery on the given compilation task.
-   *
-   * @param compiler the compiler to use.
-   * @param task     the compilation task to use.
-   */
-  @VisibleForTestingOnly
-  public static void configureAnnotationProcessorDiscovery(
-      JctCompiler<?, ?> compiler,
-      CompilationTask task
-  ) {
-    if (compiler.getAnnotationProcessors().size() > 0) {
-      LOGGER.debug("Annotation processor discovery is disabled (processors explicitly provided)");
-      task.setProcessors(compiler.getAnnotationProcessors());
-
-    } else if (compiler.getAnnotationProcessorDiscovery()
-        == AnnotationProcessorDiscovery.DISABLED) {
-      LOGGER.trace("Annotation processor discovery is disabled (explicitly disabled)");
-      // Set the processor list explicitly to instruct the compiler to not perform discovery.
-      task.setProcessors(List.of());
-
-    } else {
-      LOGGER.trace("Annotation processor discovery will be performed");
     }
   }
 
@@ -396,23 +242,15 @@ public final class JctJsr199Integration extends UtilityClass {
   }
 
   /**
-   * Create a location in the workspace if it is not present in the file manager.
+   * Configure all workspace paths into the file manager.
    *
-   * @param workspace   the workspace.
-   * @param fileManager the file manager to check.
-   * @param location    the location to check for.
+   * @param workspace the workspace.
+   * @param fileManager the file manager.
    */
   @VisibleForTestingOnly
-  public static void createLocationIfNotPresent(
-      Workspace workspace,
-      JctFileManagerImpl fileManager,
-      Location location
-  ) {
-    if (!fileManager.hasLocation(location)) {
-      LOGGER.trace("Creating a new package workspace for {}", location);
-      var dir = workspace.createPackage(location);
-      fileManager.addPath(location, dir);
-    }
+  public static void configureWorkspacePaths(Workspace workspace, JctFileManagerImpl fileManager) {
+    // Copy all other explicit locations across first to give them priority.
+    workspace.getAllPaths().forEach(fileManager::addPaths);
   }
 
   /**
@@ -443,6 +281,23 @@ public final class JctJsr199Integration extends UtilityClass {
           fileManager.addPath(StandardLocation.MODULE_PATH, wrapper);
         }
       }
+    }
+  }
+
+  /**
+   * Determine if the given path root contains modules.
+   *
+   * @param path the path to check
+   * @return {@code true} if modules are found, or {@code false} otherwise
+   */
+  @VisibleForTestingOnly
+  public static boolean containsModules(Path path) {
+    try {
+      return !ModuleFinder.of(path).findAll().isEmpty();
+    } catch (FindException ex) {
+      // Ignore, this just means that an invalid file name was found.
+      LOGGER.trace("Ignoring exception finding modules in {}", path, ex);
+      return false;
     }
   }
 
@@ -547,19 +402,187 @@ public final class JctJsr199Integration extends UtilityClass {
   }
 
   /**
-   * Determine if the given path root contains modules.
+   * Configure the required locations in the workspace and add them to the file manager.
    *
-   * @param path the path to check
-   * @return {@code true} if modules are found, or {@code false} otherwise
+   * @param workspace the workspace.
+   * @param fileManager the file manager.
    */
   @VisibleForTestingOnly
-  public static boolean containsModules(Path path) {
+  public static void configureRequiredLocations(
+      Workspace workspace,
+      JctFileManagerImpl fileManager
+  ) {
+    for (var requiredLocation : REQUIRED_LOCATIONS) {
+      createLocationIfNotPresent(workspace, fileManager, requiredLocation);
+    }
+  }
+
+  /**
+   * Create a location in the workspace if it is not present in the file manager.
+   *
+   * @param workspace   the workspace.
+   * @param fileManager the file manager to check.
+   * @param location    the location to check for.
+   */
+  @VisibleForTestingOnly
+  public static void createLocationIfNotPresent(
+      Workspace workspace,
+      JctFileManagerImpl fileManager,
+      Location location
+  ) {
+    if (!fileManager.hasLocation(location)) {
+      LOGGER.trace("Creating a new package workspace for {}", location);
+      var dir = workspace.createPackage(location);
+      fileManager.addPath(location, dir);
+    }
+  }
+
+  /**
+   * Find any compilation units to use in a compilation.
+   *
+   * @param fileManager the file manager to search.
+   * @return the compilation units.
+   * @throws IOException if an IO error occurs.
+   */
+  @VisibleForTestingOnly
+  public static List<JavaFileObject> findCompilationUnits(
+      JavaFileManager fileManager
+  ) throws IOException {
+    var locations = new LinkedHashSet<Location>();
+
+    locations.add(StandardLocation.SOURCE_OUTPUT);
+    locations.add(StandardLocation.SOURCE_PATH);
+
+    for (var modules : fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH)) {
+      locations.addAll(modules);
+    }
+
+    var objects = new ArrayList<JavaFileObject>();
+
+    for (var location : locations) {
+      var items = fileManager.list(location, "", Set.of(Kind.SOURCE), true);
+      for (var fileObject : items) {
+        objects.add(fileObject);
+      }
+    }
+
+    return objects;
+  }
+
+  /**
+   * Build a tracing diagnostic listener for the compiler.
+   *
+   * @param compiler the compiler.
+   * @return the tracing diagnostic listener.
+   */
+  @VisibleForTestingOnly
+  public static TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener(
+      JctCompiler<?, ?> compiler
+  ) {
+    var logging = compiler.getDiagnosticLoggingMode();
+
+    return new TracingDiagnosticListener<>(
+        logging != LoggingMode.DISABLED,
+        logging == LoggingMode.STACKTRACES
+    );
+  }
+
+  /**
+   * Perform an individual compilation pass.
+   *
+   * @param compiler           the compiler to use.
+   * @param jsr199Compiler     the JSR-199 compiler to build a compilation task from.
+   * @param writer             the tee writer to use.
+   * @param flags              the compiler flags to pass.
+   * @param fileManager        the file manager to use.
+   * @param diagnosticListener the tracing diagnostic listener to write diagnostics to.
+   * @param compilationUnits   the compilation units to compile.
+   * @return {@code true} if compilation succeeded, or {@code false} if it failed.
+   */
+  @VisibleForTestingOnly
+  public static boolean performCompilerPass(
+      JctCompiler<?, ?> compiler,
+      JavaCompiler jsr199Compiler,
+      TeeWriter writer,
+      List<String> flags,
+      JctFileManager fileManager,
+      TracingDiagnosticListener<JavaFileObject> diagnosticListener,
+      List<JavaFileObject> compilationUnits
+  ) {
+    var name = compiler.toString();
+
+    var task = jsr199Compiler.getTask(
+        writer,
+        fileManager,
+        diagnosticListener,
+        flags,
+        null,
+        compilationUnits
+    );
+
+    configureAnnotationProcessorDiscovery(compiler, task);
+    task.setLocale(compiler.getLocale());
+
+    LOGGER
+        .atInfo()
+        .addArgument(compilationUnits::size)
+        .addArgument(() -> compilationUnits.size() == 1 ? "" : "s")
+        .addArgument(name)
+        .addArgument(() -> StringUtils.quotedIterable(flags))
+        .log("Starting compilation of {} file{} with compiler {} using flags {}");
+
     try {
-      return !ModuleFinder.of(path).findAll().isEmpty();
-    } catch (FindException ex) {
-      // Ignore, this just means that an invalid file name was found.
-      LOGGER.trace("Ignoring exception finding modules in {}", path, ex);
-      return false;
+      var start = System.nanoTime();
+      var result = task.call();
+      var duration = System.nanoTime() - start;
+
+      if (result == null) {
+        throw new JctCompilerException("The compiler failed to produce a valid result");
+      }
+
+      LOGGER.info(
+          "Compilation with compiler {} {} after ~{}",
+          name,
+          result ? "succeeded" : "failed",
+          StringUtils.formatNanos(duration)
+      );
+
+      return result;
+
+    } catch (Exception ex) {
+      LOGGER.warn(
+          "Compiler {} threw an exception: {}: {}",
+          name,
+          ex.getClass().getName(),
+          ex.getMessage()
+      );
+      throw new JctCompilerException("The compiler threw an exception", ex);
+    }
+  }
+
+  /**
+   * Configure annotation processor discovery on the given compilation task.
+   *
+   * @param compiler the compiler to use.
+   * @param task     the compilation task to use.
+   */
+  @VisibleForTestingOnly
+  public static void configureAnnotationProcessorDiscovery(
+      JctCompiler<?, ?> compiler,
+      CompilationTask task
+  ) {
+    if (compiler.getAnnotationProcessors().size() > 0) {
+      LOGGER.debug("Annotation processor discovery is disabled (processors explicitly provided)");
+      task.setProcessors(compiler.getAnnotationProcessors());
+
+    } else if (compiler.getAnnotationProcessorDiscovery()
+        == AnnotationProcessorDiscovery.DISABLED) {
+      LOGGER.trace("Annotation processor discovery is disabled (explicitly disabled)");
+      // Set the processor list explicitly to instruct the compiler to not perform discovery.
+      task.setProcessors(List.of());
+
+    } else {
+      LOGGER.trace("Annotation processor discovery will be performed");
     }
   }
 }

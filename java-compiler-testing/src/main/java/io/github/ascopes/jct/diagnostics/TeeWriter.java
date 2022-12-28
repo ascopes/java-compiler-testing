@@ -35,7 +35,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public class TeeWriter extends Writer {
+public final class TeeWriter extends Writer {
 
   private final Object lock;
 
@@ -44,31 +44,11 @@ public class TeeWriter extends Writer {
   private final @WillCloseWhenClosed Writer writer;
 
   // We use a StringBuilder and manually synchronise it rather than
-  // a string buffer, as we want to manually synchronize the builder
+  // a string buffer, as we want to manually synchronise the builder
   // and the delegated output writer at the same time.
   private final StringBuilder builder;
 
-  /**
-   * Initialize this writer by wrapping an output stream in an internally-held writer.
-   *
-   * <p>Note that this will not buffer the output stream itself. That is up to you to do.
-   *
-   * @param charset      the charset to write with.
-   * @param outputStream the output stream to delegate to.
-   */
-  public TeeWriter(Charset charset, @WillCloseWhenClosed OutputStream outputStream) {
-    this(new OutputStreamWriter(
-        requireNonNull(outputStream, "outputStream"),
-        requireNonNull(charset, "charset")
-    ));
-  }
-
-  /**
-   * Initialize this writer.
-   *
-   * @param writer the writer to delegate to.
-   */
-  public TeeWriter(@WillCloseWhenClosed Writer writer) {
+  private TeeWriter(@WillCloseWhenClosed Writer writer) {
     lock = new Object();
     closed = false;
 
@@ -106,7 +86,6 @@ public class TeeWriter extends Writer {
     }
   }
 
-
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
     synchronized (lock) {
@@ -123,5 +102,28 @@ public class TeeWriter extends Writer {
     if (closed) {
       throw new IllegalStateException("TeeWriter is closed");
     }
+  }
+
+  /**
+   * Initialize this writer by wrapping an output stream in an internally-held writer.
+   *
+   * <p>Note that this will not buffer the output stream itself. That is up to you to do.
+   *
+   * @param charset      the charset to write with.
+   * @param outputStream the output stream to delegate to.
+   */
+  public static TeeWriter wrap(
+      Charset charset,
+      @WillCloseWhenClosed OutputStream outputStream
+  ) {
+    var writer = new OutputStreamWriter(
+        requireNonNull(outputStream, "outputStream"),
+        requireNonNull(charset, "charset")
+    );
+    return wrap(writer);
+  }
+
+  public static TeeWriter wrap(@WillCloseWhenClosed Writer writer) {
+    return new TeeWriter(writer);
   }
 }

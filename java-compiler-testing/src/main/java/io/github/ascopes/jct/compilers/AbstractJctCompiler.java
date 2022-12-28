@@ -19,7 +19,7 @@ import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
-import io.github.ascopes.jct.compilers.impl.JctJsr199Integration;
+import io.github.ascopes.jct.compilers.impl.JctJsr199Interop;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.workspaces.Workspace;
@@ -123,7 +123,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
 
   @Override
   public JctCompilationImpl compile(Workspace workspace) {
-    return JctJsr199Integration.compile(workspace, myself(), jsr199Compiler, flagBuilder);
+    return JctJsr199Interop.compile(workspace, myself(), jsr199Compiler, flagBuilder);
   }
 
   @Override

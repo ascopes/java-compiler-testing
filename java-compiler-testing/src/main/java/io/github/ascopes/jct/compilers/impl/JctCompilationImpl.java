@@ -46,8 +46,8 @@ public final class JctCompilationImpl implements JctCompilation {
   private final boolean success;
   private final boolean failOnWarnings;
   private final List<String> outputLines;
-  private final Set<? extends JavaFileObject> compilationUnits;
-  private final List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
+  private final Set<JavaFileObject> compilationUnits;
+  private final List<TraceDiagnostic<? extends JavaFileObject>> diagnostics;
   private final @WillClose JctFileManager fileManager;
 
   private JctCompilationImpl(Builder builder) {
@@ -84,12 +84,12 @@ public final class JctCompilationImpl implements JctCompilation {
   }
 
   @Override
-  public Set<? extends JavaFileObject> getCompilationUnits() {
+  public Set<JavaFileObject> getCompilationUnits() {
     return compilationUnits;
   }
 
   @Override
-  public List<? extends TraceDiagnostic<? extends JavaFileObject>> getDiagnostics() {
+  public List<TraceDiagnostic<? extends JavaFileObject>> getDiagnostics() {
     return diagnostics;
   }
 

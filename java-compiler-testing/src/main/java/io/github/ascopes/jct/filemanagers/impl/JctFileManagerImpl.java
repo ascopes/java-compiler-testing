@@ -64,12 +64,7 @@ public final class JctFileManagerImpl implements JctFileManager {
   private final Map<Location, ModuleContainerGroup> modules;
   private final Map<Location, OutputContainerGroup> outputs;
 
-  /**
-   * Initialize this file manager.
-   *
-   * @param release the release to use for multi-release JARs internally.
-   */
-  public JctFileManagerImpl(String release) {
+  private JctFileManagerImpl(String release) {
     this.release = requireNonNull(release, "release");
     packages = new ConcurrentHashMap<>();
     modules = new ConcurrentHashMap<>();
@@ -568,5 +563,15 @@ public final class JctFileManagerImpl implements JctFileManager {
           "Location " + location.getName() + " must be package-oriented"
       );
     }
+  }
+
+  /**
+   * Initialize this file manager.
+   *
+   * @param release the release to use for multi-release JARs internally.
+   */
+  public static JctFileManagerImpl forRelease(String release) {
+    // Easier to stub and verify than a constructor elsewhere.
+    return new JctFileManagerImpl(release);
   }
 }
