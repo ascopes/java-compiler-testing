@@ -3,24 +3,29 @@ name: Deploy a branch
 on:
   workflow_dispatch:
     inputs:
-      deploy-javadoc-to-gh-pages:
-        description: "Deploy JavaDocs to GH Pages"
-        default: true
-        type: boolean
 
       deploy-artifacts-to-gh-packages:
         description: "Deploy artifacts to GH Packages"
         default: true
         type: boolean
 
+      deploy-javadoc-to-gh-pages:
+        description: "Deploy JavaDocs to GH Pages"
+        default: true
+        type: boolean
+
 jobs:
   build:
-    name: Build and run analysis
-    uses: ./.github/workflows/main.yml
+    name: Build
+    uses: ./.github/workflows/build.yml
+
+  compliance:
+    name: Build
+    uses: ./.github/workflows/compliance.yml
 
   github:
     name: "Deploy to GitHub"
-    needs: [build]
+    needs: [build, compliance]
     runs-on: ubuntu-22.04
 
     permissions:
