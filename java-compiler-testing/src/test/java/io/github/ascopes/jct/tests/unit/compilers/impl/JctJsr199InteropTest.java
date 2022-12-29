@@ -27,17 +27,35 @@ import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.configureMod
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.configurePlatformClassPath;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.configureRequiredLocations;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.configureWorkspacePaths;
+import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.containsModules;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.determineRelease;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.findCompilationUnits;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.performCompilerPass;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someBoolean;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someCharset;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someCompilationUnits;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someFlags;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someIoException;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someLinesOfText;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someLocation;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someModuleReference;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.somePath;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.somePathRoot;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someRelease;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someTraceDiagnostics;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someUncheckedException;
 import static io.github.ascopes.jct.tests.helpers.GenericMock.mockRaw;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
@@ -47,27 +65,33 @@ import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
 import io.github.ascopes.jct.compilers.impl.JctJsr199Interop;
 import io.github.ascopes.jct.diagnostics.TeeWriter;
-import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import io.github.ascopes.jct.ex.JctCompilerException;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
+import io.github.ascopes.jct.tests.helpers.Fixtures;
 import io.github.ascopes.jct.tests.helpers.UtilityClassTestTemplate;
+import io.github.ascopes.jct.utils.SpecialLocationUtils;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import io.github.ascopes.jct.workspaces.Workspace;
+import io.github.ascopes.jct.workspaces.impl.WrappingDirectory;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import java.lang.module.FindException;
+import java.lang.module.ModuleFinder;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.tools.JavaCompiler;
+import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
+import javax.tools.StandardLocation;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -77,7 +101,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Answers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.quality.Strictness;
@@ -90,8 +116,6 @@ import org.mockito.stubbing.Answer;
  */
 @DisplayName("JctJsr199Interop tests")
 class JctJsr199InteropTest implements UtilityClassTestTemplate {
-
-  static final Random RANDOM = new Random();
 
   @Override
   public Class<?> getTypeBeingTested() {
@@ -370,7 +394,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       staticMock.when(() -> buildDiagnosticListener(any()))
           .thenReturn(diagnosticListener);
 
-      var diagnostics = someDiagnostics();
+      var diagnostics = someTraceDiagnostics();
       when(diagnosticListener.getDiagnostics())
           .thenReturn(diagnostics);
 
@@ -705,83 +729,409 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     }
   }
 
-  ///////////////////////
-  /// Common fixtures ///
-  ///////////////////////
+  /////////////////////////
+  /// .determineRelease ///
+  /////////////////////////
 
-  List<String> someFlags() {
-    return Stream
-        .generate(UUID::randomUUID)
-        .map(UUID::toString)
-        .map("--"::concat)
-        .limit(10)
-        .collect(Collectors.toList());
+  @DisplayName("JctJsr199Interop#determineRelease tests")
+  @Nested
+  class DetermineReleaseTest {
+
+    @DisplayName("The correct release should be determined")
+    @CsvSource({
+        // Preferring release
+        "12,   ,   , 11, 12",
+        "12,   ,   , 13, 12",
+        "12,   ,   , 11, 12",
+        "12, 14,   , 11, 12",
+        "12, 13,   , 13, 12",
+        "12, 10,   , 11, 12",
+        "12,   ,  8, 11, 12",
+        "12,   ,  9, 13, 12",
+        "12,   , 10, 11, 12",
+        "12, 14, 11, 11, 12",
+        "12, 13, 13, 13, 12",
+        "12, 10, 14, 11, 12",
+        // Preferring target
+        "  ,   ,  8, 11,  8",
+        "  ,   ,  9, 13,  9",
+        "  ,   , 10, 11, 10",
+        "  , 14, 11, 10, 11",
+        "  , 13, 13, 13, 13",
+        "  , 10, 14, 11, 14",
+        // Preferring default release
+        "  ,   ,   , 13, 13",
+        "  ,   ,   , 11, 11",
+        "  , 14,   , 10, 10",
+        "  , 13,   , 17, 17",
+    })
+    @ParameterizedTest(
+        name = "for release = {0}, source = {1}, target = {2}, defaultRelease = {3}, expect {4}"
+    )
+    void theCorrectReleaseShouldBeDetermined(
+        String release,
+        String source,
+        String target,
+        String defaultRelease,
+        String expectedRelease
+    ) {
+      // Given
+      var compiler = mockRaw(JctCompiler.class)
+          .<JctCompiler<?, ?>>upcastedTo()
+          .build(withSettings().strictness(Strictness.LENIENT));
+      when(compiler.getRelease()).thenReturn(release);
+      when(compiler.getSource()).thenReturn(source);
+      when(compiler.getTarget()).thenReturn(target);
+      when(compiler.getDefaultRelease()).thenReturn(defaultRelease);
+
+      // Then
+      assertThat(determineRelease(compiler))
+          .isEqualTo(expectedRelease);
+    }
   }
 
-  List<TraceDiagnostic<? extends JavaFileObject>> someDiagnostics() {
-    return Stream
-        .generate(() -> mockRaw(TraceDiagnostic.class)
-            .<TraceDiagnostic<? extends JavaFileObject>>upcastedTo()
-            .build(withSettings().strictness(Strictness.LENIENT)))
-        .limit(5)
-        .collect(Collectors.toList());
+  ////////////////////////////////
+  /// .configureWorkspacePaths ///
+  ////////////////////////////////
+
+  @DisplayName("JctJsr199Interop#configureWorkspacePaths tests")
+  @ExtendWith(MockitoExtension.class)
+  @Nested
+  class ConfigureWorkspacePathsTest {
+
+    @Mock
+    Workspace workspace;
+
+    @Mock
+    JctFileManagerImpl fileManager;
+
+    @DisplayName("all paths should be added to the file manager")
+    @Test
+    void allPathsShouldBeAddedToTheFileManager() {
+      // Given
+      var paths = Map.<Location, List<? extends PathRoot>>of(
+          someLocation(), List.of(somePathRoot()),
+          someLocation(), List.of(somePathRoot(), somePathRoot()),
+          someLocation(), List.of(somePathRoot(), somePathRoot(), somePathRoot()),
+          someLocation(), List.of(somePathRoot())
+      );
+      when(workspace.getAllPaths()).thenReturn(paths);
+
+      // When
+      configureWorkspacePaths(workspace, fileManager);
+
+      // Then
+      paths.forEach((location, roots) -> verify(fileManager).addPaths(location, roots));
+    }
   }
 
-  List<JavaFileObject> someCompilationUnits() {
-    return Stream
-        .generate(() -> mock(JavaFileObject.class, withSettings().strictness(Strictness.LENIENT)))
-        .peek(mock -> when(mock.getName()).thenReturn(UUID.randomUUID().toString()))
-        .limit(5)
-        .collect(Collectors.toList());
+  ///////////////////////////
+  /// .configureClassPath ///
+  ///////////////////////////
+
+  @DisplayName("JctJsr199Interop#configureClassPath tests")
+  @ExtendWith(MockitoExtension.class)
+  @Nested
+  class ConfigureClassPathTest {
+
+    @Mock(answer = Answers.RETURNS_MOCKS)
+    MockedStatic<JctJsr199Interop> staticMock;
+
+    @Mock
+    MockedStatic<SpecialLocationUtils> specialLocationUtils;
+
+    @Mock
+    JctCompiler<?, ?> compiler;
+
+    @Mock
+    JctFileManagerImpl fileManager;
+
+    MockedConstruction<WrappingDirectory> wrappingDirectory;
+
+    @BeforeEach
+    void setUp() {
+      staticMock.when(() -> configureClassPath(any(), any()))
+          .thenCallRealMethod();
+
+      wrappingDirectory = mockConstruction(
+          WrappingDirectory.class,
+          (obj, ctx) -> when(obj.getPath()).thenReturn((Path) ctx.arguments().get(0))
+      );
+    }
+
+    @AfterEach
+    void tearDown() {
+      wrappingDirectory.closeOnDemand();
+    }
+
+    @DisplayName("Nothing is configured if classpath inheritance is disabled")
+    @Test
+    void nothingIsConfiguredIfClasspathInheritanceIsDisabled() {
+      // Given
+      when(compiler.isInheritClassPath()).thenReturn(false);
+
+      // When
+      configureClassPath(compiler, fileManager);
+
+      // Then
+      verifyNoInteractions(fileManager);
+    }
+
+    @DisplayName("Paths are registered when module path mismatch fixing is disabled")
+    @Test
+    void pathsAreRegisteredWhenModulePathMismatchFixingIsDisabled() {
+      // Given
+      var paths = Stream
+          .generate(Fixtures::somePath)
+          .limit(5)
+          .collect(Collectors.toList());
+      specialLocationUtils.when(SpecialLocationUtils::currentClassPathLocations)
+          .thenReturn(paths);
+
+      when(compiler.isInheritClassPath())
+          .thenReturn(true);
+      when(compiler.isFixJvmModulePathMismatch())
+          .thenReturn(false);
+
+      // When
+      configureClassPath(compiler, fileManager);
+
+      // Then
+      var captor = ArgumentCaptor.forClass(WrappingDirectory.class);
+      verify(fileManager, times(5))
+          .addPath(same(StandardLocation.CLASS_PATH), captor.capture());
+      assertThat(captor.getAllValues())
+          .allSatisfy(pathRoot -> assertThat(pathRoot.getPath()).isIn(paths));
+      verifyNoMoreInteractions(fileManager);
+    }
+
+
+    @DisplayName("Paths are registered when module path mismatch fixing is enabled")
+    @Test
+    void pathsAreRegisteredWhenModulePathMismatchFixingIsEnabled() {
+      // Given
+      var modulePaths = Stream
+          .generate(Fixtures::somePath)
+          .limit(3)
+          .collect(Collectors.toList());
+
+      var classPaths = Stream
+          .generate(Fixtures::somePath)
+          .limit(5)
+          .collect(Collectors.toList());
+
+      var paths = Stream.concat(modulePaths.stream(), classPaths.stream())
+          .collect(Collectors.toList());
+
+      specialLocationUtils.when(SpecialLocationUtils::currentClassPathLocations)
+          .thenReturn(paths);
+
+      when(compiler.isInheritClassPath())
+          .thenReturn(true);
+      when(compiler.isFixJvmModulePathMismatch())
+          .thenReturn(true);
+
+      classPaths.forEach(path -> staticMock.when(() -> containsModules(path)).thenReturn(false));
+      modulePaths.forEach(path -> staticMock.when(() -> containsModules(path)).thenReturn(true));
+
+      // When
+      configureClassPath(compiler, fileManager);
+
+      // Then
+      var classPathCaptor = ArgumentCaptor.forClass(WrappingDirectory.class);
+      verify(fileManager, times(8))
+          .addPath(same(StandardLocation.CLASS_PATH), classPathCaptor.capture());
+      assertThat(classPathCaptor.getAllValues())
+          .allSatisfy(pathRoot -> assertThat(pathRoot.getPath()).isIn(paths));
+
+      var modulePathCaptor = ArgumentCaptor.forClass(WrappingDirectory.class);
+      verify(fileManager, times(3))
+          .addPath(same(StandardLocation.MODULE_PATH), classPathCaptor.capture());
+      assertThat(modulePathCaptor.getAllValues())
+          .allSatisfy(pathRoot -> assertThat(pathRoot.getPath()).isIn(modulePaths));
+
+      verifyNoMoreInteractions(fileManager);
+    }
   }
 
-  String someLinesOfText() {
-    return Stream
-        .generate(UUID::randomUUID)
-        .map(UUID::toString)
-        .limit(15)
-        .collect(Collectors.joining("\n"));
+  ////////////////////////
+  /// .containsModules ///
+  ////////////////////////
+
+  @DisplayName("JctJsr199Interop#containsModules tests")
+  @ExtendWith(MockitoExtension.class)
+  @Nested
+  class ContainsModulesTest {
+
+    @Mock
+    MockedStatic<ModuleFinder> moduleFinderStaticMock;
+
+    @Mock
+    ModuleFinder moduleFinder;
+
+    @BeforeEach
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    void setUp() {
+      moduleFinderStaticMock.when(() -> ModuleFinder.of(any())).thenReturn(moduleFinder);
+    }
+
+    @DisplayName("ModuleFinder is initialised using the given path")
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @Test
+    void moduleFinderIsInitialisedUsingTheGivenPath() {
+      // Given
+      var path = somePath();
+
+      // When
+      containsModules(path);
+
+      // Then
+      moduleFinderStaticMock.verify(() -> ModuleFinder.of(path));
+      moduleFinderStaticMock.verifyNoMoreInteractions();
+    }
+
+    @DisplayName("Expect true when modules exist")
+    @Test
+    void expectTrueWhenModulesExist() {
+      // Given
+      when(moduleFinder.findAll()).thenReturn(Set.of(
+          someModuleReference(),
+          someModuleReference(),
+          someModuleReference()
+      ));
+
+      // When
+      var result = containsModules(somePath());
+
+      // Then
+      assertThat(result).isTrue();
+    }
+
+    @DisplayName("Expect false when modules do not exist")
+    @Test
+    void expectFalseWhenModulesDoNotExist() {
+      // Given
+      when(moduleFinder.findAll()).thenReturn(Set.of());
+
+      // When
+      var result = containsModules(somePath());
+
+      // Then
+      assertThat(result).isFalse();
+    }
+
+    @DisplayName("Expect false when errors resolving modules occur")
+    @Test
+    void expectFalseWhenErrorsResolvingModulesOccur() {
+      // Given
+      when(moduleFinder.findAll()).thenThrow(FindException.class);
+
+      // When
+      var result = containsModules(somePath());
+
+      // Then
+      assertThat(result).isFalse();
+    }
   }
 
-  boolean someBoolean() {
-    return RANDOM.nextBoolean();
+  ////////////////////////////
+  /// .configureModulePath ///
+  ////////////////////////////
+
+  @DisplayName("JctJsr199Interop#configureModulePath tests")
+  @Nested
+  class ConfigureModulePathTest {
+
   }
 
-  Throwable someUncheckedException() {
-    var message = Stream
-        .generate(UUID::randomUUID)
-        .map(UUID::toString)
-        .limit(3)
-        .collect(Collectors.joining(" blah blah "));
-    return new RuntimeException(message)
-        .fillInStackTrace();
+  ///////////////////////////////////
+  /// .configurePlatformClassPath ///
+  ///////////////////////////////////
+
+  @DisplayName("JctJsr199Interop#configurePlatformClassPath tests")
+  @Nested
+  class ConfigurePlatformClassPathTest {
+
   }
 
-  Throwable someIoException() {
-    var message = Stream
-        .generate(UUID::randomUUID)
-        .map(UUID::toString)
-        .limit(3)
-        .collect(Collectors.joining(" blah blah "));
-    return new IOException(message)
-        .fillInStackTrace();
+  //////////////////////////////////
+  /// .configureJvmSystemModules ///
+  //////////////////////////////////
+
+  @DisplayName("JctJsr199Interop#configureJvmSystemModules tests")
+  @Nested
+  class ConfigureJvmSystemModulesTest {
+
   }
 
-  Charset someCharset() {
-    var options = List.of(
-        StandardCharsets.UTF_8,
-        StandardCharsets.UTF_16BE,
-        StandardCharsets.UTF_16LE,
-        StandardCharsets.UTF_16,
-        StandardCharsets.ISO_8859_1,
-        StandardCharsets.US_ASCII
-    );
+  //////////////////////////////////////////
+  /// .configureAnnotationProcessorPaths ///
+  //////////////////////////////////////////
 
-    return options.get(RANDOM.nextInt(options.size()));
+  @DisplayName("JctJsr199Interop#configureAnnotationProcessorPaths tests")
+  @Nested
+  class ConfigureAnnotationProcessorPathsTest {
+
   }
 
-  String someRelease() {
-    return Integer.toString(RANDOM.nextInt(11) + 11);
+  ///////////////////////////////////
+  /// .configureRequiredLocations ///
+  ///////////////////////////////////
+
+  @DisplayName("JctJsr199Interop#configureRequiredLocations tests")
+  @Nested
+  class ConfigureRequiredLocationsTest {
+
+  }
+
+  ///////////////////////////////////
+  /// .createLocationIfNotPresent ///
+  ///////////////////////////////////
+
+  @DisplayName("JctJsr199Interop#createLocationIfNotPresent tests")
+  @Nested
+  class CreateLocationIfNotPresentTest {
+
+  }
+
+  /////////////////////////////
+  /// .findCompilationUnits ///
+  /////////////////////////////
+
+  @DisplayName("JctJsr199Interop#findCompilationUnits tests")
+  @Nested
+  class FindCompilationUnitsTest {
+
+  }
+
+  ////////////////////////////////
+  /// .buildDiagnosticListener ///
+  ////////////////////////////////
+
+  @DisplayName("JctJsr199Interop#buildDiagnosticListener tests")
+  @Nested
+  class BuildDiagnosticListenerTest {
+
+  }
+
+  ////////////////////////////
+  /// .performCompilerPass ///
+  ////////////////////////////
+
+  @DisplayName("JctJsr199Interop#performCompilerPass tests")
+  @Nested
+  class PerformCompilerPassTest {
+
+  }
+
+  //////////////////////////////////////////////
+  /// .configureAnnotationProcessorDiscovery ///
+  //////////////////////////////////////////////
+
+  @DisplayName("JctJsr199Interop#configureAnnotationProcessorDiscovery tests")
+  @Nested
+  class ConfigureAnnotationProcessorDiscoveryTest {
+
   }
 
   @SuppressWarnings("DataFlowIssue")
