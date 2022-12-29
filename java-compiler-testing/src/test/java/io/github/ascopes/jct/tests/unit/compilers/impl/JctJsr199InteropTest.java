@@ -295,7 +295,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     }
 
     @DisplayName("performCompilerPass is called with the expected arguments")
-    @SuppressWarnings({"resource", "NullableProblems"})
+    @SuppressWarnings("resource")
     @Test
     void performCompilerPassCalledWithExpectedArguments() {
       // Given
@@ -352,7 +352,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     }
 
     @DisplayName("compilation results are returned")
-    @SuppressWarnings({"resource", "NullableProblems"})
+    @SuppressWarnings("resource")
     @ValueSource(booleans = {true, false})
     @ParameterizedTest(name = "for a compilation returning {0}")
     void compilationResultsAreReturned(boolean result) {
@@ -718,7 +718,6 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
         .collect(Collectors.toList());
   }
 
-  @SuppressWarnings("NullableProblems")
   List<TraceDiagnostic<? extends JavaFileObject>> someDiagnostics() {
     return Stream
         .generate(() -> mockRaw(TraceDiagnostic.class)
@@ -785,6 +784,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     return Integer.toString(RANDOM.nextInt(11) + 11);
   }
 
+  @SuppressWarnings("DataFlowIssue")
   Answer<Void> addMethodNameTo(List<String> list) {
     return ctx -> {
       list.add(ctx.getMethod().getName());

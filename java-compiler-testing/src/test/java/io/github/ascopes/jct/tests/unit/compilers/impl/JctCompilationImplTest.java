@@ -193,6 +193,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Setting null compilation units raises a NullPointerException")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void settingNullCompilationUnitsRaisesNullPointerException() {
       // Given
@@ -223,6 +224,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Building with null compilation units raises a NullPointerException")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void buildingWithNullCompilationUnitsRaisesNullPointerException() {
       // Given
@@ -248,6 +250,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Setting null diagnostics raises a NullPointerException")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void settingNullDiagnosticsRaisesNullPointerException() {
       // Given
@@ -278,6 +281,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Building with null diagnostics raises a NullPointerException")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void buildingWithNullDiagnosticsRaisesNullPointerException() {
       // Given
@@ -305,6 +309,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Setting null file managers raises a NullPointerException")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void settingNullFileManagerRaisesNullPointerException() {
       // Given
@@ -335,6 +340,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Setting null output lines raises a NullPointerException")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void settingNullOutputLinesRaisesNullPointerException() {
       // Given
@@ -365,6 +371,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Building with null output lines raises a NullPointerException")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void buildingWithNullOutputLinesRaisesNullPointerException() {
       // Given
