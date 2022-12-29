@@ -127,10 +127,13 @@ public final class JctJsr199Interop extends UtilityClass {
     // additional overhead, additional code, or additional complexity either in this class or the
     // unit tests, then I am all for ripping all of this out and reimplementing it in the future.
 
-    try (
-        var writer = buildWriter(compiler);
-        var fileManager = buildFileManager(compiler, workspace)
-    ) {
+    try (var fileManager = buildFileManager(compiler, workspace)) {
+      // DO NOT CLOSE THE WRITER, IT IS ATTACHED TO SYSTEM.OUT.
+      // Closing SYSTEM.OUT causes IntelliJ to abort the entire test runner.
+      //    See https://youtrack.jetbrains.com/issue/IDEA-120628
+      // Other platforms may see other weird behaviour if we do this (Surefire, for example).
+      var writer = buildWriter(compiler);
+
       var flags = buildFlags(compiler, flagBuilder);
       var diagnosticListener = buildDiagnosticListener(compiler);
       var compilationUnits = findCompilationUnits(fileManager);

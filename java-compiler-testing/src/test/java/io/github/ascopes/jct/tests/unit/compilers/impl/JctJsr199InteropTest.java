@@ -53,6 +53,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -183,10 +184,15 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .hasCause(ex);
     }
 
-    @DisplayName("the writer is closed after usage")
+    @DisplayName("the writer is NOT closed after usage")
     @SuppressWarnings("resource")
     @Test
-    void writerIsClosedAfterUsage() throws IOException {
+    void writerIsNotClosedAfterUsage() throws IOException {
+      // DO NOT CLOSE THE WRITER, IT IS ATTACHED TO SYSTEM.OUT.
+      // Closing SYSTEM.OUT causes IntelliJ to abort the entire test runner.
+      //    See https://youtrack.jetbrains.com/issue/IDEA-120628
+      // Other platforms may see other weird behaviour if we do this (Surefire, for example).
+
       // Given
       var writer = mock(TeeWriter.class);
       staticMock.when(() -> buildWriter(any())).thenReturn(writer);
@@ -195,7 +201,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       doCompile();
 
       // Then
-      verify(writer).close();
+      verify(writer, never()).close();
     }
 
     @DisplayName("the file manager is built using the compiler and workspace")
