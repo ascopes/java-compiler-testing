@@ -68,6 +68,7 @@ import io.github.ascopes.jct.compilers.impl.JctJsr199Interop;
 import io.github.ascopes.jct.diagnostics.TeeWriter;
 import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import io.github.ascopes.jct.ex.JctCompilerException;
+import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
@@ -100,6 +101,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
@@ -911,7 +914,6 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       verifyNoMoreInteractions(fileManager);
     }
 
-
     @DisplayName("Paths are registered when module path mismatch fixing is enabled")
     @Test
     void pathsAreRegisteredWhenModulePathMismatchFixingIsEnabled() {
@@ -1045,9 +1047,78 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   ////////////////////////////
 
   @DisplayName("JctJsr199Interop#configureModulePath tests")
+  @ExtendWith(MockitoExtension.class)
   @Nested
   class ConfigureModulePathTest {
+    @Mock
+    MockedStatic<SpecialLocationUtils> specialLocationUtils;
 
+    @Mock
+    JctCompiler<?, ?> compiler;
+
+    @Mock
+    JctFileManagerImpl fileManager;
+
+    MockedConstruction<WrappingDirectory> wrappingDirectory;
+
+    @BeforeEach
+    void setUp() {
+      wrappingDirectory = mockConstruction(
+          WrappingDirectory.class,
+          (obj, ctx) -> when(obj.getPath()).thenReturn((Path) ctx.arguments().get(0))
+      );
+    }
+
+    @AfterEach
+    void tearDown() {
+      wrappingDirectory.closeOnDemand();
+    }
+
+    @DisplayName("Nothing is configured if module path inheritance is disabled")
+    @Test
+    void nothingIsConfiguredIfModulePathInheritanceIsDisabled() {
+      // Given
+      when(compiler.isInheritModulePath()).thenReturn(false);
+
+      // When
+      configureModulePath(compiler, fileManager);
+
+      // Then
+      verifyNoInteractions(fileManager);
+    }
+
+    @DisplayName("Paths are registered")
+    @Test
+    void pathsAreRegistered() {
+      // Given
+      var paths = Stream
+          .generate(Fixtures::somePath)
+          .limit(5)
+          .collect(Collectors.toList());
+
+      specialLocationUtils.when(SpecialLocationUtils::currentModulePathLocations)
+          .thenReturn(paths);
+
+      when(compiler.isInheritModulePath())
+          .thenReturn(true);
+
+      // When
+      configureModulePath(compiler, fileManager);
+
+      // Then
+      var modulePathCaptor = ArgumentCaptor.forClass(WrappingDirectory.class);
+      var classPathCaptor = ArgumentCaptor.forClass(WrappingDirectory.class);
+
+      verify(fileManager, times(5))
+          .addPath(same(StandardLocation.MODULE_PATH), modulePathCaptor.capture());
+      verify(fileManager, times(5))
+          .addPath(same(StandardLocation.CLASS_PATH), classPathCaptor.capture());
+      assertThat(modulePathCaptor.getAllValues())
+          .allSatisfy(pathRoot -> assertThat(pathRoot.getPath()).isIn(paths));
+      assertThat(classPathCaptor.getAllValues())
+          .allSatisfy(pathRoot -> assertThat(pathRoot.getPath()).isIn(paths));
+      verifyNoMoreInteractions(fileManager);
+    }
   }
 
   ///////////////////////////////////
@@ -1055,9 +1126,74 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   ///////////////////////////////////
 
   @DisplayName("JctJsr199Interop#configurePlatformClassPath tests")
+  @ExtendWith(MockitoExtension.class)
   @Nested
   class ConfigurePlatformClassPathTest {
 
+    @Mock
+    MockedStatic<SpecialLocationUtils> specialLocationUtils;
+
+    @Mock
+    JctCompiler<?, ?> compiler;
+
+    @Mock
+    JctFileManagerImpl fileManager;
+
+    MockedConstruction<WrappingDirectory> wrappingDirectory;
+
+    @BeforeEach
+    void setUp() {
+      wrappingDirectory = mockConstruction(
+          WrappingDirectory.class,
+          (obj, ctx) -> when(obj.getPath()).thenReturn((Path) ctx.arguments().get(0))
+      );
+    }
+
+    @AfterEach
+    void tearDown() {
+      wrappingDirectory.closeOnDemand();
+    }
+
+    @DisplayName("Nothing is configured if platform classpath inheritance is disabled")
+    @Test
+    void nothingIsConfiguredIfPlatformClasspathInheritanceIsDisabled() {
+      // Given
+      when(compiler.isInheritPlatformClassPath()).thenReturn(false);
+
+      // When
+      configurePlatformClassPath(compiler, fileManager);
+
+      // Then
+      verifyNoInteractions(fileManager);
+    }
+
+    @DisplayName("Paths are registered")
+    @Test
+    void pathsAreRegistered() {
+      // Given
+      var paths = Stream
+          .generate(Fixtures::somePath)
+          .limit(5)
+          .collect(Collectors.toList());
+
+      specialLocationUtils.when(SpecialLocationUtils::currentPlatformClassPathLocations)
+          .thenReturn(paths);
+
+      when(compiler.isInheritPlatformClassPath())
+          .thenReturn(true);
+
+      // When
+      configurePlatformClassPath(compiler, fileManager);
+
+      // Then
+      var captor = ArgumentCaptor.forClass(WrappingDirectory.class);
+
+      verify(fileManager, times(5))
+          .addPath(same(StandardLocation.PLATFORM_CLASS_PATH), captor.capture());
+      assertThat(captor.getAllValues())
+          .allSatisfy(pathRoot -> assertThat(pathRoot.getPath()).isIn(paths));
+      verifyNoMoreInteractions(fileManager);
+    }
   }
 
   //////////////////////////////////
@@ -1065,9 +1201,74 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   //////////////////////////////////
 
   @DisplayName("JctJsr199Interop#configureJvmSystemModules tests")
+  @ExtendWith(MockitoExtension.class)
   @Nested
   class ConfigureJvmSystemModulesTest {
 
+    @Mock
+    MockedStatic<SpecialLocationUtils> specialLocationUtils;
+
+    @Mock
+    JctCompiler<?, ?> compiler;
+
+    @Mock
+    JctFileManagerImpl fileManager;
+
+    MockedConstruction<WrappingDirectory> wrappingDirectory;
+
+    @BeforeEach
+    void setUp() {
+      wrappingDirectory = mockConstruction(
+          WrappingDirectory.class,
+          (obj, ctx) -> when(obj.getPath()).thenReturn((Path) ctx.arguments().get(0))
+      );
+    }
+
+    @AfterEach
+    void tearDown() {
+      wrappingDirectory.closeOnDemand();
+    }
+
+    @DisplayName("Nothing is configured if system module inheritance is disabled")
+    @Test
+    void nothingIsConfiguredIfSystemModuleInheritanceIsDisabled() {
+      // Given
+      when(compiler.isInheritSystemModulePath()).thenReturn(false);
+
+      // When
+      configureJvmSystemModules(compiler, fileManager);
+
+      // Then
+      verifyNoInteractions(fileManager);
+    }
+
+    @DisplayName("Paths are registered")
+    @Test
+    void pathsAreRegistered() {
+      // Given
+      var paths = Stream
+          .generate(Fixtures::somePath)
+          .limit(5)
+          .collect(Collectors.toList());
+
+      specialLocationUtils.when(SpecialLocationUtils::javaRuntimeLocations)
+          .thenReturn(paths);
+
+      when(compiler.isInheritSystemModulePath())
+          .thenReturn(true);
+
+      // When
+      configureJvmSystemModules(compiler, fileManager);
+
+      // Then
+      var captor = ArgumentCaptor.forClass(WrappingDirectory.class);
+
+      verify(fileManager, times(5))
+          .addPath(same(StandardLocation.SYSTEM_MODULES), captor.capture());
+      assertThat(captor.getAllValues())
+          .allSatisfy(pathRoot -> assertThat(pathRoot.getPath()).isIn(paths));
+      verifyNoMoreInteractions(fileManager);
+    }
   }
 
   //////////////////////////////////////////
@@ -1075,9 +1276,60 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   //////////////////////////////////////////
 
   @DisplayName("JctJsr199Interop#configureAnnotationProcessorPaths tests")
+  @ExtendWith(MockitoExtension.class)
   @Nested
   class ConfigureAnnotationProcessorPathsTest {
+    @Mock
+    JctCompiler<?, ?> compiler;
 
+    @Mock
+    JctFileManagerImpl fileManager;
+
+    @DisplayName("Ensure containers copied when AP discovery included with dependencies")
+    @Test
+    void ensureContainersAreCopiedWhenApDiscoveryIncludedWithDependencies() {
+      // Given
+      when(compiler.getAnnotationProcessorDiscovery())
+          .thenReturn(AnnotationProcessorDiscovery.INCLUDE_DEPENDENCIES);
+
+      // When
+      configureAnnotationProcessorPaths(compiler, fileManager);
+
+      // Then
+      verify(fileManager)
+          .copyContainers(StandardLocation.CLASS_PATH, StandardLocation.ANNOTATION_PROCESSOR_PATH);
+    }
+
+    @DisplayName("Ensure ANNOTATION_PROCESSOR_PATH exists when AP discovery enabled")
+    @EnumSource(value = AnnotationProcessorDiscovery.class, mode = Mode.EXCLUDE, names = "DISABLED")
+    @ParameterizedTest(name = "when AnnotationProcessorDiscovery set to {0}")
+    void ensureAnnotationProcessorPathExistsWhenApDiscoveryEnabled(
+        AnnotationProcessorDiscovery discovery
+    ) {
+      // Given
+      when(compiler.getAnnotationProcessorDiscovery())
+          .thenReturn(discovery);
+
+      // When
+      configureAnnotationProcessorPaths(compiler, fileManager);
+
+      // Then
+      verify(fileManager).ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
+    }
+
+    @DisplayName("Ensure no changes if AP discovery is disabled")
+    @Test
+    void ensureNoChangesIfApDiscoveryDisabled() {
+      // Given
+      when(compiler.getAnnotationProcessorDiscovery())
+          .thenReturn(AnnotationProcessorDiscovery.DISABLED);
+
+      // When
+      configureAnnotationProcessorPaths(compiler, fileManager);
+
+      // Then
+      verifyNoInteractions(fileManager);
+    }
   }
 
   ///////////////////////////////////
@@ -1087,16 +1339,6 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   @DisplayName("JctJsr199Interop#configureRequiredLocations tests")
   @Nested
   class ConfigureRequiredLocationsTest {
-
-  }
-
-  ///////////////////////////////////
-  /// .createLocationIfNotPresent ///
-  ///////////////////////////////////
-
-  @DisplayName("JctJsr199Interop#createLocationIfNotPresent tests")
-  @Nested
-  class CreateLocationIfNotPresentTest {
 
   }
 
@@ -1115,9 +1357,41 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   ////////////////////////////////
 
   @DisplayName("JctJsr199Interop#buildDiagnosticListener tests")
+  @ExtendWith(MockitoExtension.class)
   @Nested
   class BuildDiagnosticListenerTest {
 
+    @Mock
+    JctCompiler<?, ?> compiler;
+
+    @DisplayName("TracingDiagnosticListener is initialised with the expected arguments")
+    @CsvSource({
+        "STACKTRACES,  true,  true",
+        "    ENABLED,  true, false",
+        "   DISABLED, false, false"
+    })
+    @ParameterizedTest(name = "LoggingMode.{0} implies logging = {1}, stackTraces = {2}")
+    void tracingDiagnosticListenerIsInitialisedWithExpectedArguments(
+        LoggingMode loggingMode,
+        boolean logging,
+        boolean stackTraces
+    ) {
+      // Given
+      when(compiler.getDiagnosticLoggingMode()).thenReturn(loggingMode);
+
+      // When
+      var listener = buildDiagnosticListener(compiler);
+
+      // Then
+      assertSoftly(softly -> {
+        softly.assertThat(listener.isLoggingEnabled())
+            .as("listener.isLoggingEnabled()")
+            .isEqualTo(logging);
+        softly.assertThat(listener.isStackTraceReportingEnabled())
+            .as("listener.isStackTraceReportingEnabled()")
+            .isEqualTo(stackTraces);
+      });
+    }
   }
 
   ////////////////////////////

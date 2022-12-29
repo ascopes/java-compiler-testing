@@ -74,6 +74,21 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class JctJsr199Interop extends UtilityClass {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(JctJsr199Interop.class);
+
+  // Locations to duplicate paths for when using annotation processor path discovery with
+  // inheritance enabled.
+  // Mapping of source location to target location.
+  private static final Map<StandardLocation, StandardLocation> INHERITED_AP_PATHS = Map.of(
+      // https://stackoverflow.com/q/53084037
+      // Seems that javac will always use the classpath to implement this behaviour, and never
+      // the module path. Let's keep this simple and mimic this behaviour. If someone complains
+      // about it being problematic in the future, then I am open to change how this works to
+      // keep it sensible.
+      // (from -> to)
+      StandardLocation.CLASS_PATH, StandardLocation.ANNOTATION_PROCESSOR_PATH
+  );
+
   // Locations that we have to ensure exist before the compiler is run.
   private static final Set<StandardLocation> REQUIRED_LOCATIONS = Set.of(
       // We have to manually create this one as javac will not attempt to access it lazily. Instead,
@@ -88,21 +103,6 @@ public final class JctJsr199Interop extends UtilityClass {
       // doing this by default.
       StandardLocation.NATIVE_HEADER_OUTPUT
   );
-
-  // Locations to duplicate paths for when using annotation processor path discovery with
-  // inheritance enabled.
-  // Mapping of source location to target location.
-  private static final Map<StandardLocation, StandardLocation> INHERITED_AP_PATHS = Map.of(
-      // https://stackoverflow.com/q/53084037
-      // Seems that javac will always use the classpath to implement this behaviour, and never
-      // the module path. Let's keep this simple and mimic this behaviour. If someone complains
-      // about it being problematic in the future, then I am open to change how this works to
-      // keep it sensible.
-      // StandardLocation.MODULE_PATH, StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH,
-      StandardLocation.CLASS_PATH, StandardLocation.ANNOTATION_PROCESSOR_PATH
-  );
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(JctJsr199Interop.class);
 
   private JctJsr199Interop() {
     // Static-only class.
@@ -385,16 +385,16 @@ public final class JctJsr199Interop extends UtilityClass {
       JctFileManagerImpl fileManager
   ) {
     switch (compiler.getAnnotationProcessorDiscovery()) {
+      case INCLUDE_DEPENDENCIES:
+        LOGGER.trace("Copying classpath dependencies into the annotation processor path");
+        INHERITED_AP_PATHS.forEach(fileManager::copyContainers);
+        fileManager.ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
+        break;
+
       case ENABLED:
         LOGGER.trace("Annotation processor discovery is enabled, ensuring empty location exists");
         fileManager.ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
         break;
-
-      case INCLUDE_DEPENDENCIES: {
-        LOGGER.trace("Copying classpath dependencies into the annotation processor path");
-        INHERITED_AP_PATHS.forEach(fileManager::copyContainers);
-        break;
-      }
 
       case DISABLED:
       default:
@@ -415,27 +415,11 @@ public final class JctJsr199Interop extends UtilityClass {
       Workspace workspace,
       JctFileManagerImpl fileManager
   ) {
-    for (var requiredLocation : REQUIRED_LOCATIONS) {
-      createLocationIfNotPresent(workspace, fileManager, requiredLocation);
-    }
-  }
-
-  /**
-   * Create a location in the workspace if it is not present in the file manager.
-   *
-   * @param workspace   the workspace.
-   * @param fileManager the file manager to check.
-   * @param location    the location to check for.
-   */
-  public static void createLocationIfNotPresent(
-      Workspace workspace,
-      JctFileManagerImpl fileManager,
-      Location location
-  ) {
-    if (!fileManager.hasLocation(location)) {
-      LOGGER.trace("Creating a new package workspace for {}", location);
-      var dir = workspace.createPackage(location);
-      fileManager.addPath(location, dir);
+    for (var location : REQUIRED_LOCATIONS) {
+      if (!fileManager.hasLocation(location)) {
+        LOGGER.trace("Creating a new package workspace for {}", location);
+        fileManager.addPath(location, workspace.createPackage(location));
+      }
     }
   }
 
@@ -515,6 +499,8 @@ public final class JctJsr199Interop extends UtilityClass {
         fileManager,
         diagnosticListener,
         flags,
+        // TODO(ascopes): in the future, consider adding something here to allow customising
+        //  the classes that get compiled, if desired.
         null,
         compilationUnits
     );
@@ -525,10 +511,9 @@ public final class JctJsr199Interop extends UtilityClass {
     LOGGER
         .atInfo()
         .addArgument(compilationUnits::size)
-        .addArgument(() -> compilationUnits.size() == 1 ? "" : "s")
         .addArgument(name)
         .addArgument(() -> StringUtils.quotedIterable(flags))
-        .log("Starting compilation of {} file{} with compiler {} using flags {}");
+        .log("Starting compilation of {} file(s) with compiler {} using flags {}");
 
     try {
       var start = System.nanoTime();
@@ -555,6 +540,7 @@ public final class JctJsr199Interop extends UtilityClass {
           ex.getClass().getName(),
           ex.getMessage()
       );
+
       throw new JctCompilerException("The compiler threw an exception", ex);
     }
   }
@@ -569,13 +555,17 @@ public final class JctJsr199Interop extends UtilityClass {
       JctCompiler<?, ?> compiler,
       CompilationTask task
   ) {
-    if (compiler.getAnnotationProcessors().size() > 0) {
+    var processorCount = compiler.getAnnotationProcessors().size();
+    var discovery = compiler.getAnnotationProcessorDiscovery();
+
+    if (processorCount > 0) {
       LOGGER.debug("Annotation processor discovery is disabled (processors explicitly provided)");
+
       task.setProcessors(compiler.getAnnotationProcessors());
 
-    } else if (compiler.getAnnotationProcessorDiscovery()
-        == AnnotationProcessorDiscovery.DISABLED) {
+    } else if (discovery == AnnotationProcessorDiscovery.DISABLED) {
       LOGGER.trace("Annotation processor discovery is disabled (explicitly disabled)");
+
       // Set the processor list explicitly to instruct the compiler to not perform discovery.
       task.setProcessors(List.of());
 
