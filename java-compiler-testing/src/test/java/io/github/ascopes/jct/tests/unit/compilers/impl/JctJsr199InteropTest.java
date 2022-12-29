@@ -74,6 +74,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Answers;
 import org.mockito.Mock;
@@ -564,7 +565,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     MockedStatic<JctFileManagerImpl> fileManagerStaticMock;
 
     @Mock
-    MockedStatic<LoggingFileManagerProxy> fileManagerProxyStaticMock;
+    MockedStatic<LoggingFileManagerProxy> proxyStaticMock;
 
     @Mock
     JctFileManagerImpl fileManager;
@@ -672,45 +673,31 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
 
       // Then
       assertThat(actualFileManager).isSameAs(fileManager);
-      fileManagerProxyStaticMock.verifyNoInteractions();
+      proxyStaticMock.verifyNoInteractions();
     }
 
     @DisplayName("a proxy is used when file manager logging is enabled")
-    @Test
-    void proxyIsUsedWhenFileManagerLoggingIsEnabled() {
+    @CsvSource({
+        "ENABLED, false",
+        "STACKTRACES, true",
+    })
+    @ParameterizedTest(name = "enable stacktraces = {1} when LoggingMode = {0}")
+    void proxyIsUsedWhenFileManagerLoggingIsEnabled(
+        LoggingMode loggingMode,
+        boolean enableStacktraces
+    ) {
       // Given
-      when(compiler.getFileManagerLoggingMode()).thenReturn(LoggingMode.ENABLED);
+      when(compiler.getFileManagerLoggingMode()).thenReturn(loggingMode);
       var proxyFileManger = mock(JctFileManager.class);
-      fileManagerProxyStaticMock.when(() -> LoggingFileManagerProxy.wrap(any(), anyBoolean()))
+      proxyStaticMock.when(() -> LoggingFileManagerProxy.wrap(any(), anyBoolean()))
           .thenReturn(proxyFileManger);
 
       // When
       var actualFileManager = doBuild();
 
       // Then
-      fileManagerProxyStaticMock.verify(() -> LoggingFileManagerProxy.wrap(fileManager, false));
-      fileManagerProxyStaticMock.verifyNoMoreInteractions();
-
-      assertThat(actualFileManager)
-          .isSameAs(proxyFileManger)
-          .isNotSameAs(fileManager);
-    }
-
-    @DisplayName("a proxy is used when file manager logging is enabled with stacktraces")
-    @Test
-    void proxyIsUsedWhenFileManagerLoggingIsEnabledWithStackTraces() {
-      // Given
-      when(compiler.getFileManagerLoggingMode()).thenReturn(LoggingMode.STACKTRACES);
-      var proxyFileManger = mock(JctFileManager.class);
-      fileManagerProxyStaticMock.when(() -> LoggingFileManagerProxy.wrap(any(), anyBoolean()))
-          .thenReturn(proxyFileManger);
-
-      // When
-      var actualFileManager = doBuild();
-
-      // Then
-      fileManagerProxyStaticMock.verify(() -> LoggingFileManagerProxy.wrap(fileManager, true));
-      fileManagerProxyStaticMock.verifyNoMoreInteractions();
+      proxyStaticMock.verify(() -> LoggingFileManagerProxy.wrap(fileManager, enableStacktraces));
+      proxyStaticMock.verifyNoMoreInteractions();
 
       assertThat(actualFileManager)
           .isSameAs(proxyFileManger)
