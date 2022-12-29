@@ -27,6 +27,7 @@ import io.github.ascopes.jct.compilers.javac.JavacJctFlagBuilderImpl;
 import java.util.Random;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,22 @@ class JavacJctCompilerImplTest {
   void setUp() {
     javaCompiler = mock(JavaCompiler.class);
     compiler = new JavacJctCompilerImpl(javaCompiler);
+  }
+
+  @DisplayName("initialising a compiler with no arguments uses the platform compiler")
+  @Test
+  void initialisingCompilerWithNoArgumentsUsesPlatformCompiler() {
+    try (var toolProvider = mockStatic(ToolProvider.class)) {
+      // Given
+      toolProvider.when(ToolProvider::getSystemJavaCompiler).thenReturn(javaCompiler);
+
+      // When
+      var compiler = new JavacJctCompilerImpl();
+
+      // Then
+      assertThat(compiler.getJsr199Compiler()).isSameAs(javaCompiler);
+      toolProvider.verify(ToolProvider::getSystemJavaCompiler);
+    }
   }
 
   @DisplayName("compilers have the expected default name")
