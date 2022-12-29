@@ -15,8 +15,10 @@
  */
 package io.github.ascopes.jct.tests.unit.diagnostics;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.oneOf;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someDiagnostic;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someInt;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someLong;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someStackTraceList;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static java.time.Instant.now;
@@ -28,11 +30,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.utils.StringUtils;
 import java.util.Locale;
 import java.util.Random;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -45,6 +49,7 @@ import org.junit.jupiter.params.provider.ValueSource;
  * @author Ashley Scopes
  */
 @DisplayName("TraceDiagnostic tests")
+@SuppressWarnings("DataFlowIssue")
 class TraceDiagnosticTest {
 
   @DisplayName("null original diagnostics are rejected")
@@ -228,6 +233,7 @@ class TraceDiagnosticTest {
   }
 
   @DisplayName("getThreadId() returns the thread ID")
+  @SuppressWarnings("deprecation")
   @Test
   void getThreadIdReturnsTheThreadId() {
     // Given
@@ -324,5 +330,56 @@ class TraceDiagnosticTest {
     // Then
     assertThatThrownBy(() -> actualStackTrace.remove(0))
         .isInstanceOf(UnsupportedOperationException.class);
+  }
+
+  @DisplayName("toString() returns the expected value")
+  @RepeatedTest(5)
+  void toStringReturnsExpectedValue() {
+    // Given
+    var expectedStackTrace = someStackTraceList();
+    var original = someDiagnostic();
+    when(original.getKind()).thenReturn(oneOf(Kind.class));
+    when(original.getCode()).thenReturn(oneOf(null, someText()));
+    when(original.getColumnNumber()).thenReturn(someLong(99));
+    when(original.getLineNumber()).thenReturn(someLong(500));
+    when(original.getMessage(any())).thenReturn(someText());
+
+    var diagnostic = new TraceDiagnostic<>(
+        now(),
+        1234,
+        "foo",
+        expectedStackTrace,
+        original
+    );
+
+    // Then
+    var expectedFmt = String.join(
+        "",
+        "TraceDiagnostic{",
+        "timestamp=%s, ",
+        "threadId=%s, ",
+        "threadName=%s, ",
+        "kind=%s, ",
+        "code=%s, ",
+        "column=%s, ",
+        "line=%s, ",
+        "message=%s",
+        "}"
+    );
+
+    assertThat(diagnostic)
+        .asString()
+        .as("diagnostic.toString()")
+        .isEqualTo(
+            expectedFmt,
+            StringUtils.quoted(diagnostic.getTimestamp()),
+            diagnostic.getThreadId(),
+            StringUtils.quoted(diagnostic.getThreadName()),
+            diagnostic.getKind(),
+            StringUtils.quoted(diagnostic.getCode()),
+            diagnostic.getColumnNumber(),
+            diagnostic.getLineNumber(),
+            StringUtils.quoted(diagnostic.getMessage(Locale.ROOT))
+        );
   }
 }
