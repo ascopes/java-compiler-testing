@@ -99,7 +99,7 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
         var mx = new MockedMxBean<>(ManagementFactory::getRuntimeMXBean, RuntimeMXBean.class)
     ) {
       // We always exclude this path.
-      var ideaRt = tempPaths.addPath("idea_rt.jar"); 
+      var ideaRt = tempPaths.addFile("idea_rt.jar");
       
       given(mx.mock.getClassPath()).willReturn(tempPaths.toPathString());
       // We don't want to include non-existent paths in this, so test it by deleting one of them.
@@ -123,7 +123,7 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
         var ignored = new MockedSystemProperty("jdk.module.path", tempPaths.toPathString())
     ) {
       // We always exclude this path.
-      var ideaRt = tempPaths.addPath("idea_rt.jar");
+      var ideaRt = tempPaths.addFile("idea_rt.jar");
       
       // We don't want to include non-existent paths in this, so test it by deleting one of them.
       var deletedPath = tempPaths.deleteRandomPath();
@@ -200,8 +200,9 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private Path addPath(String path) {
+    private Path addFile(String path) throws IOException {
       var actual = root.resolve(path);
+      Files.createFile(actual);
       paths.add(actual);
       return actual;
     }
