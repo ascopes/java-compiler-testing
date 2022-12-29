@@ -28,7 +28,6 @@ import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.UtilityClass;
-import io.github.ascopes.jct.utils.VisibleForTestingOnly;
 import io.github.ascopes.jct.workspaces.Workspace;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectory;
 import java.io.IOException;
@@ -56,10 +55,23 @@ import org.slf4j.LoggerFactory;
 /**
  * Helper for performing the actual compilation logic during a compilation run.
  *
+ * <p>This class currently contains the majority of the procedural logic needed to configure
+ * a JSR-199 compiler and trigger the compilation, given the components in the JCT framework.
+ *
+ * <p>While I have considered other implementation models, such as an interceptor-chain pattern,
+ * or factories, this has turned out to be the simplest, albeit least Java-y way to achieve what
+ * I want while keeping stuff easily testable and easy to debug.
+ *
+ * <p>If this ends up getting more complex in the future, then I may reconsider how this is
+ * implemented (this may need to change for ECJ support in the future possibly, not sure yet).
+ *
+ * <p>You should not need to call most methods outside this class other than {@link #compile}.
+ * The methods are exposed to simplify testing.
+ *
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.INTERNAL)
 public final class JctJsr199Interop extends UtilityClass {
 
   // Locations that we have to ensure exist before the compiler is run.
@@ -154,7 +166,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param compiler the compiler to use.
    * @return the tee writer.
    */
-  @VisibleForTestingOnly
   public static TeeWriter buildWriter(JctCompiler<?, ?> compiler) {
     return TeeWriter.wrap(compiler.getLogCharset(), System.out);
   }
@@ -166,7 +177,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param flagBuilder the flag builder to use.
    * @return the flags.
    */
-  @VisibleForTestingOnly
   public static List<String> buildFlags(JctCompiler<?, ?> compiler, JctFlagBuilder flagBuilder) {
     return flagBuilder
         .annotationProcessorOptions(compiler.getAnnotationProcessorOptions())
@@ -192,7 +202,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param workspace the workspace to use.
    * @return the file manager.
    */
-  @VisibleForTestingOnly
   public static JctFileManager buildFileManager(
       JctCompiler<?, ?> compiler,
       Workspace workspace
@@ -225,7 +234,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param compiler the compiler to determine the release from.
    * @return the release.
    */
-  @VisibleForTestingOnly
   public static String determineRelease(JctCompiler<?, ?> compiler) {
     if (compiler.getRelease() != null) {
       LOGGER.trace("Using explicitly set release as the base release version internally");
@@ -247,7 +255,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param workspace the workspace.
    * @param fileManager the file manager.
    */
-  @VisibleForTestingOnly
   public static void configureWorkspacePaths(Workspace workspace, JctFileManagerImpl fileManager) {
     // Copy all other explicit locations across first to give them priority.
     workspace.getAllPaths().forEach(fileManager::addPaths);
@@ -259,7 +266,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param compiler    the compiler to use.
    * @param fileManager the file manager to use.
    */
-  @VisibleForTestingOnly
   public static void configureClassPath(
       JctCompiler<?, ?> compiler,
       JctFileManagerImpl fileManager
@@ -290,7 +296,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param path the path to check
    * @return {@code true} if modules are found, or {@code false} otherwise
    */
-  @VisibleForTestingOnly
   public static boolean containsModules(Path path) {
     try {
       return !ModuleFinder.of(path).findAll().isEmpty();
@@ -307,7 +312,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param compiler    the compiler to use.
    * @param fileManager the file manager to use.
    */
-  @VisibleForTestingOnly
   public static void configureModulePath(
       JctCompiler<?, ?> compiler,
       JctFileManagerImpl fileManager
@@ -333,7 +337,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param compiler    the compiler to use.
    * @param fileManager the file manager to use.
    */
-  @VisibleForTestingOnly
   public static void configurePlatformClassPath(
       JctCompiler<?, ?> compiler,
       JctFileManagerImpl fileManager
@@ -354,7 +357,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param compiler    the compiler to use.
    * @param fileManager the file manager to use.
    */
-  @VisibleForTestingOnly
   public static void configureJvmSystemModules(
       JctCompiler<?, ?> compiler,
       JctFileManagerImpl fileManager
@@ -375,7 +377,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param compiler    the compiler to use.
    * @param fileManager the file manager to use.
    */
-  @VisibleForTestingOnly
   public static void configureAnnotationProcessorPaths(
       JctCompiler<?, ?> compiler,
       JctFileManagerImpl fileManager
@@ -407,7 +408,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param workspace the workspace.
    * @param fileManager the file manager.
    */
-  @VisibleForTestingOnly
   public static void configureRequiredLocations(
       Workspace workspace,
       JctFileManagerImpl fileManager
@@ -424,7 +424,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param fileManager the file manager to check.
    * @param location    the location to check for.
    */
-  @VisibleForTestingOnly
   public static void createLocationIfNotPresent(
       Workspace workspace,
       JctFileManagerImpl fileManager,
@@ -444,7 +443,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @return the compilation units.
    * @throws IOException if an IO error occurs.
    */
-  @VisibleForTestingOnly
   public static List<JavaFileObject> findCompilationUnits(
       JavaFileManager fileManager
   ) throws IOException {
@@ -475,7 +473,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param compiler the compiler.
    * @return the tracing diagnostic listener.
    */
-  @VisibleForTestingOnly
   public static TracingDiagnosticListener<JavaFileObject> buildDiagnosticListener(
       JctCompiler<?, ?> compiler
   ) {
@@ -499,7 +496,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param compilationUnits   the compilation units to compile.
    * @return {@code true} if compilation succeeded, or {@code false} if it failed.
    */
-  @VisibleForTestingOnly
   public static boolean performCompilerPass(
       JctCompiler<?, ?> compiler,
       JavaCompiler jsr199Compiler,
@@ -566,7 +562,6 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param compiler the compiler to use.
    * @param task     the compilation task to use.
    */
-  @VisibleForTestingOnly
   public static void configureAnnotationProcessorDiscovery(
       JctCompiler<?, ?> compiler,
       CompilationTask task

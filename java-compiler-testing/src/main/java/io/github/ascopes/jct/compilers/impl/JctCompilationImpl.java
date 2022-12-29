@@ -115,7 +115,7 @@ public final class JctCompilationImpl implements JctCompilation {
    * @author Ashley Scopes
    * @since 0.0.1
    */
-  @API(since = "0.0.1", status = Status.EXPERIMENTAL)
+  @API(since = "0.0.1", status = Status.INTERNAL)
   @SuppressWarnings("ConstantConditions")
   public static final class Builder {
 
