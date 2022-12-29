@@ -497,7 +497,7 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the paths.
    */
-  Map<Location, ? extends List<? extends PathRoot>> getAllPaths();
+  Map<Location, List<? extends PathRoot>> getAllPaths();
 
   /**
    * Get the path strategy in use.

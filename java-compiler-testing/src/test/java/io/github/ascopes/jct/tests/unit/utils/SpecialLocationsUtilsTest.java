@@ -15,6 +15,8 @@
  */
 package io.github.ascopes.jct.tests.unit.utils;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.oneOf;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -34,7 +36,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
@@ -185,7 +186,7 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
       paths = new ArrayList<>();
       for (var i = 0; i < 10; ++i) {
         var nextPath = Files
-            .createDirectory(root.resolve(UUID.randomUUID().toString()))
+            .createDirectory(root.resolve(someText()))
             .toAbsolutePath();
         LOGGER.trace("Created dir within temp location {}", nextPath);
         paths.add(nextPath);
@@ -195,8 +196,7 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
     private Path deleteRandomPath() throws IOException {
       // Do NOT remove it from the list. We are testing that entries provided that do not
       // actually exist get discarded by our logic.
-      var index = new Random().nextInt(paths.size());
-      var path = paths.get(index);
+      var path = oneOf(paths);
       Files.delete(path);
       return path;
     }

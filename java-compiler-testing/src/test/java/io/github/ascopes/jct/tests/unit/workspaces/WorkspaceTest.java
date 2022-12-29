@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.tests.unit.workspaces;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
@@ -22,7 +23,6 @@ import static org.mockito.Mockito.verify;
 
 import io.github.ascopes.jct.workspaces.Workspace;
 import java.nio.file.Path;
-import java.util.UUID;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ class WorkspaceTest {
   void addClassOutputModuleCallsAddModule() {
     // Given
     doCallRealMethod().when(workspace).addClassOutputModule(any(), any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
     var path = mock(Path.class);
 
     // When
@@ -91,7 +91,7 @@ class WorkspaceTest {
   void addSourceOutputModuleCallsAddModule() {
     // Given
     doCallRealMethod().when(workspace).addSourceOutputModule(any(), any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
     var path = mock(Path.class);
 
     // When
@@ -120,7 +120,7 @@ class WorkspaceTest {
   void addModulePathModuleCallsAddModule() {
     // Given
     doCallRealMethod().when(workspace).addModulePathModule(any(), any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
     var path = mock(Path.class);
 
     // When
@@ -151,7 +151,7 @@ class WorkspaceTest {
   void addSourcePathModuleCallsAddModule() {
     // Given
     doCallRealMethod().when(workspace).addSourcePathModule(any(), any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
     var path = mock(Path.class);
 
     // When
@@ -185,7 +185,7 @@ class WorkspaceTest {
   void addAnnotationProcessorPathModuleCallsAddModule() {
     // Given
     doCallRealMethod().when(workspace).addAnnotationProcessorPathModule(any(), any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
     var path = mock(Path.class);
 
     // When
@@ -231,7 +231,7 @@ class WorkspaceTest {
   void addNativeHeaderOutputModuleCallsAddModule() {
     // Given
     doCallRealMethod().when(workspace).addNativeHeaderOutputModule(any(), any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
     var path = mock(Path.class);
 
     // When
@@ -248,7 +248,7 @@ class WorkspaceTest {
   void addUpgradeModulePathModuleCallsAddModule() {
     // Given
     doCallRealMethod().when(workspace).addUpgradeModulePathModule(any(), any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
     var path = mock(Path.class);
 
     // When
@@ -265,7 +265,7 @@ class WorkspaceTest {
   void addSystemModulePathModuleCallsAddModule() {
     // Given
     doCallRealMethod().when(workspace).addSystemModulePathModule(any(), any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
     var path = mock(Path.class);
 
     // When
@@ -282,7 +282,7 @@ class WorkspaceTest {
   void addPatchModulePathModuleCallsAddModule() {
     // Given
     doCallRealMethod().when(workspace).addPatchModulePathModule(any(), any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
     var path = mock(Path.class);
 
     // When
@@ -310,7 +310,7 @@ class WorkspaceTest {
   void createClassOutputModuleCallsCreateModule() {
     // Given
     doCallRealMethod().when(workspace).createClassOutputModule(any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
 
     // When
     workspace.createClassOutputModule(module);
@@ -337,7 +337,7 @@ class WorkspaceTest {
   void createSourceOutputModuleCallsCreateModule() {
     // Given
     doCallRealMethod().when(workspace).createSourceOutputModule(any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
 
     // When
     workspace.createSourceOutputModule(module);
@@ -364,7 +364,7 @@ class WorkspaceTest {
   void createModulePathModuleCallsCreateModule() {
     // Given
     doCallRealMethod().when(workspace).createModulePathModule(any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
 
     // When
     workspace.createModulePathModule(module);
@@ -393,7 +393,7 @@ class WorkspaceTest {
   void createSourcePathModuleCallsCreateModule() {
     // Given
     doCallRealMethod().when(workspace).createSourcePathModule(any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
 
     // When
     workspace.createSourcePathModule(module);
@@ -425,7 +425,7 @@ class WorkspaceTest {
   void createAnnotationProcessorPathModuleCallsCreateModule() {
     // Given
     doCallRealMethod().when(workspace).createAnnotationProcessorPathModule(any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
 
     // When
     workspace.createAnnotationProcessorPathModule(module);
@@ -467,7 +467,7 @@ class WorkspaceTest {
   void createNativeHeaderOutputModuleCallsCreateModule() {
     // Given
     doCallRealMethod().when(workspace).createNativeHeaderOutputModule(any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
 
     // When
     workspace.createNativeHeaderOutputModule(module);
@@ -483,7 +483,7 @@ class WorkspaceTest {
   void createUpgradeModulePathModuleCallsCreateModule() {
     // Given
     doCallRealMethod().when(workspace).createUpgradeModulePathModule(any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
 
     // When
     workspace.createUpgradeModulePathModule(module);
@@ -499,7 +499,7 @@ class WorkspaceTest {
   void createSystemModulePathModuleCallsCreateModule() {
     // Given
     doCallRealMethod().when(workspace).createSystemModulePathModule(any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
 
     // When
     workspace.createSystemModulePathModule(module);
@@ -515,7 +515,7 @@ class WorkspaceTest {
   void createPatchModulePathModuleCallsCreateModule() {
     // Given
     doCallRealMethod().when(workspace).createPatchModulePathModule(any());
-    var module = UUID.randomUUID().toString();
+    var module = someText();
 
     // When
     workspace.createPatchModulePathModule(module);

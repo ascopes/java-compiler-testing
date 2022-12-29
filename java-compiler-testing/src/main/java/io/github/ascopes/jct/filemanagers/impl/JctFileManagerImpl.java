@@ -66,6 +66,8 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   private JctFileManagerImpl(String release) {
     this.release = requireNonNull(release, "release");
+
+    // TODO(ascopes): does this need to be concurrent-safe, do we only read it concurrently?
     packages = new ConcurrentHashMap<>();
     modules = new ConcurrentHashMap<>();
     outputs = new ConcurrentHashMap<>();

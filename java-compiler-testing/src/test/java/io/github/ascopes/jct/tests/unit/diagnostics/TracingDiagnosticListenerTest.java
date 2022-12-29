@@ -16,6 +16,8 @@
 package io.github.ascopes.jct.tests.unit.diagnostics;
 
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someDiagnostic;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someLong;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static java.util.Locale.ROOT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
@@ -29,8 +31,6 @@ import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import io.github.ascopes.jct.tests.helpers.Slf4jLoggerFake;
 import java.time.Instant;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -140,7 +140,7 @@ class TracingDiagnosticListenerTest {
   @ParameterizedTest(name = "for logging={0}, stackTraces={1}")
   void diagnosticsAreLoggedWithTheExpectedThreadId(boolean logging, boolean stackTraces) {
     // Given
-    var threadId = new Random().nextInt(15_999) + 1L;
+    var threadId = someLong(16_000L, 65_536L);
     var currentThread = mock(Thread.class);
 
     // Thread#getId deprecated for Thread#threadId in Java 19.
@@ -167,7 +167,7 @@ class TracingDiagnosticListenerTest {
   @ParameterizedTest(name = "For logging={0}, stackTraces={1}")
   void diagnosticsAreLoggedWithTheExpectedThreadName(boolean logging, boolean stackTraces) {
     // Given
-    var threadName = UUID.randomUUID().toString();
+    var threadName = someText();
     var currentThread = mock(Thread.class);
     when(currentThread.getName()).thenReturn(threadName);
     when(currentThread.getStackTrace()).thenReturn(new StackTraceElement[0]);

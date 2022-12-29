@@ -15,6 +15,8 @@
  */
 package io.github.ascopes.jct.tests.unit.compilers;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someInt;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static io.github.ascopes.jct.tests.helpers.GenericMock.mockRaw;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -46,8 +48,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
-import java.util.UUID;
 import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
 import javax.tools.JavaCompiler;
@@ -78,8 +78,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 class AbstractJctCompilerTest {
 
-  static final Random RANDOM = new Random();
-
   @Mock
   JavaCompiler jsr199Compiler;
 
@@ -92,8 +90,8 @@ class AbstractJctCompilerTest {
 
   @BeforeEach
   void setUp() {
-    name = UUID.randomUUID().toString();
-    defaultRelease = Integer.toString(11 + RANDOM.nextInt(10));
+    name = someText();
+    defaultRelease = Integer.toString(someInt(11, 21));
     compiler = new CompilerImpl(name, jsr199Compiler, flagBuilder, defaultRelease);
   }
 

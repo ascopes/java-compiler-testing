@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.tests.unit.compilers.javac;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someInt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mock;
@@ -83,8 +84,7 @@ class JavacJctCompilerImplTest {
   void compilersHaveTheExpectedDefaultRelease() {
     // Given
     try (var compilerClassMock = mockStatic(JavacJctCompilerImpl.class)) {
-      var latestSupportedInt = 11 + new Random().nextInt(10);
-
+      var latestSupportedInt = someInt(11, 21);
       compilerClassMock
           .when(() -> JavacJctCompilerImpl.getLatestSupportedVersionInt(anyBoolean()))
           .thenReturn(latestSupportedInt);

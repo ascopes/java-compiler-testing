@@ -148,7 +148,7 @@ public final class WorkspaceImpl implements Workspace {
   }
 
   @Override
-  public Map<Location, ? extends List<? extends PathRoot>> getAllPaths() {
+  public Map<Location, List<? extends PathRoot>> getAllPaths() {
     // Create an immutable copy.
     var pathsCopy = new HashMap<Location, List<PathRoot>>();
     paths.forEach((location, list) -> pathsCopy.put(location, List.copyOf(list)));

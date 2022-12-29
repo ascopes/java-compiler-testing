@@ -16,7 +16,9 @@
 package io.github.ascopes.jct.tests.unit.diagnostics;
 
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someDiagnostic;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someInt;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someStackTraceList;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static java.time.Instant.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -28,7 +30,6 @@ import static org.mockito.Mockito.when;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.Locale;
 import java.util.Random;
-import java.util.UUID;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.DisplayName;
@@ -178,7 +179,7 @@ class TraceDiagnosticTest {
     var original = someDiagnostic();
     var stack = someStackTraceList();
     var wrapped = new TraceDiagnostic<>(now(), 123, "foo", stack, original);
-    var message = UUID.randomUUID().toString();
+    var message = someText();
     when(original.getMessage(any())).thenReturn(message);
 
     // Then
@@ -230,7 +231,7 @@ class TraceDiagnosticTest {
   @Test
   void getThreadIdReturnsTheThreadId() {
     // Given
-    var expectedThreadId = Thread.currentThread().getId() + new Random().nextInt(100);
+    var expectedThreadId = Thread.currentThread().getId() + someInt(100);
     var diagnostic = new TraceDiagnostic<>(
         now(),
         expectedThreadId,
@@ -250,7 +251,7 @@ class TraceDiagnosticTest {
   @Test
   void getThreadNameReturnsTheThreadNameWhenKnown() {
     // Given
-    var expectedThreadName = UUID.randomUUID().toString();
+    var expectedThreadName = someText();
     var diagnostic = new TraceDiagnostic<>(
         now(),
         1234,

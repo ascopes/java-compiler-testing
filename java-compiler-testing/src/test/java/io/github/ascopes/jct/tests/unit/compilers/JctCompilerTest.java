@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.tests.unit.compilers;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,7 +27,6 @@ import static org.mockito.Mockito.mock;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import java.util.Arrays;
-import java.util.UUID;
 import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
@@ -62,8 +62,8 @@ class JctCompilerTest {
     given(compiler.addAnnotationProcessorOptions(any(Iterable.class)))
         .will(ctx -> compiler);
 
-    var first = UUID.randomUUID().toString();
-    var second = UUID.randomUUID().toString();
+    var first = someText();
+    var second = someText();
 
     // When
     var result = compiler.addAnnotationProcessorOptions(first, second);
@@ -102,8 +102,8 @@ class JctCompilerTest {
     given(compiler.addCompilerOptions(any(Iterable.class)))
         .will(ctx -> compiler);
 
-    var first = UUID.randomUUID().toString();
-    var second = UUID.randomUUID().toString();
+    var first = someText();
+    var second = someText();
 
     // When
     var result = compiler.addCompilerOptions(first, second);
@@ -122,8 +122,8 @@ class JctCompilerTest {
     given(compiler.addRuntimeOptions(any(Iterable.class)))
         .will(ctx -> compiler);
 
-    var first = UUID.randomUUID().toString();
-    var second = UUID.randomUUID().toString();
+    var first = someText();
+    var second = someText();
 
     // When
     var result = compiler.addRuntimeOptions(first, second);

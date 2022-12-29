@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.tests.unit.diagnostics;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,7 +31,6 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -70,7 +70,7 @@ class TeeWriterTest {
     // Given
     var writer = new StringWriter();
     var tee = TeeWriter.wrap(writer);
-    var text = UUID.randomUUID().toString();
+    var text = someText();
     tee.close();
 
     // Then
@@ -90,7 +90,7 @@ class TeeWriterTest {
     // Given
     var writer = new StringWriter();
     var tee = TeeWriter.wrap(writer);
-    var text = UUID.randomUUID().toString();
+    var text = someText();
 
     // When
     tee.write(text);

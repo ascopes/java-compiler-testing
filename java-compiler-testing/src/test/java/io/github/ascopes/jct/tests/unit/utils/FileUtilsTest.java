@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.tests.unit.utils;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someTemporaryFileSystem;
 import static io.github.ascopes.jct.utils.FileUtils.assertValidRootName;
 import static io.github.ascopes.jct.utils.FileUtils.binaryNameToPackageName;
 import static io.github.ascopes.jct.utils.FileUtils.binaryNameToPath;
@@ -37,20 +38,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Feature;
-import com.google.common.jimfs.Jimfs;
-import com.google.common.jimfs.PathType;
 import io.github.ascopes.jct.tests.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.FileUtils;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Stream;
 import javax.tools.JavaFileObject.Kind;
 import org.junit.jupiter.api.DisplayName;
@@ -78,9 +73,9 @@ class FileUtilsTest implements UtilityClassTestTemplate {
   @Test
   void retrieveRequiredUrlCanDereferencePathsToUrls() throws IOException {
     // Given
-    try (var fs = newFileSystem()) {
-      Files.createDirectories(fs.getPath("foo", "bar"));
-      var file = Files.createFile(fs.getPath("foo", "bar", "baz.txt"));
+    try (var fs = someTemporaryFileSystem()) {
+      Files.createDirectories(fs.getFileSystem().getPath("foo", "bar"));
+      var file = Files.createFile(fs.getFileSystem().getPath("foo", "bar", "baz.txt"));
 
       // When
       var url = retrieveRequiredUrl(file);
@@ -90,7 +85,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
           .isNotNull()
           .isEqualTo(file.toUri().toURL())
           .asString()
-          .startsWith(Jimfs.URI_SCHEME + "://");
+          .startsWith(fs.getScheme() + "://");
     }
   }
 
@@ -127,10 +122,10 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       String expectString
   ) throws IOException {
     // Given
-    try (var fs = newFileSystem()) {
-      var root = fs.getPath(rootString);
-      var expect = fs.getPath(expectString);
-      var parts = partsString.split(fs.getSeparator());
+    try (var fs = someTemporaryFileSystem()) {
+      var root = fs.getFileSystem().getPath(rootString);
+      var expect = fs.getFileSystem().getPath(expectString);
+      var parts = partsString.split(fs.getFileSystem().getSeparator());
 
       // Then
       assertThat(resolvePathRecursively(root, parts))
@@ -200,9 +195,9 @@ class FileUtilsTest implements UtilityClassTestTemplate {
   void pathToBinaryNameConvertsRelativePathsAsExpected(String input, String expected)
       throws IOException {
 
-    try (var fs = newFileSystem()) {
+    try (var fs = someTemporaryFileSystem()) {
       // Given
-      var path = fs.getPath(input);
+      var path = fs.getFileSystem().getPath(input);
 
       // When
       var actual = pathToBinaryName(path);
@@ -268,10 +263,10 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       Kind kind,
       String expected
   ) throws IOException {
-    try (var fs = newFileSystem()) {
+    try (var fs = someTemporaryFileSystem()) {
       // Given
-      var directoryPath = fs.getPath(directory);
-      var expectedPath = fs.getPath(expected);
+      var directoryPath = fs.getFileSystem().getPath(directory);
+      var expectedPath = fs.getFileSystem().getPath(expected);
 
       // When
       var actualPath = binaryNameToPath(directoryPath, binaryName, kind);
@@ -299,10 +294,10 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       String packageName,
       String expected
   ) throws IOException {
-    try (var fs = newFileSystem()) {
+    try (var fs = someTemporaryFileSystem()) {
       // Given
-      var directoryPath = fs.getPath(directory);
-      var expectedPath = fs.getPath(expected);
+      var directoryPath = fs.getFileSystem().getPath(directory);
+      var expectedPath = fs.getFileSystem().getPath(expected);
 
       // When
       var actualPath = packageNameToPath(directoryPath, packageName);
@@ -331,10 +326,10 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       Kind kind,
       String expected
   ) throws IOException {
-    try (var fs = newFileSystem()) {
+    try (var fs = someTemporaryFileSystem()) {
       // Given
-      var packageDirectoryPath = fs.getPath(packageDirectory);
-      var expectedPath = fs.getPath(expected);
+      var packageDirectoryPath = fs.getFileSystem().getPath(packageDirectory);
+      var expectedPath = fs.getFileSystem().getPath(expected);
 
       // When
       var actualPath = simpleClassNameToPath(packageDirectoryPath, className, kind);
@@ -370,10 +365,10 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       String relativeName,
       String expected
   ) throws IOException {
-    try (var fs = newFileSystem()) {
+    try (var fs = someTemporaryFileSystem()) {
       // Given
-      var directoryPath = fs.getPath(directory);
-      var expectedPath = fs.getPath(expected);
+      var directoryPath = fs.getFileSystem().getPath(directory);
+      var expectedPath = fs.getFileSystem().getPath(expected);
 
       // When
       var actualPath = resourceNameToPath(directoryPath, packageName, relativeName);
@@ -397,10 +392,10 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       String[] fragments,
       String expected
   ) throws IOException {
-    try (var fs = newFileSystem()) {
+    try (var fs = someTemporaryFileSystem()) {
       // Given
-      var directoryPath = fs.getPath(directory);
-      var expectedPath = fs.getPath(expected);
+      var directoryPath = fs.getFileSystem().getPath(directory);
+      var expectedPath = fs.getFileSystem().getPath(expected);
 
       // When
       var actualPath = relativeResourceNameToPath(directoryPath, fragment, fragments);
@@ -443,9 +438,9 @@ class FileUtilsTest implements UtilityClassTestTemplate {
   })
   @ParameterizedTest(name = "pathToKind(\"{0}\") should return Kind.{1}")
   void pathToKindReturnsTheExpectedOutput(String pathName, Kind expectedKind) throws IOException {
-    try (var fs = newFileSystem()) {
+    try (var fs = someTemporaryFileSystem()) {
       // Given
-      var path = fs.getPath(pathName);
+      var path = fs.getFileSystem().getPath(pathName);
 
       // When
       var actualKind = pathToKind(path);
@@ -467,9 +462,9 @@ class FileUtilsTest implements UtilityClassTestTemplate {
   )
   void fileWithAnyKindShouldFailIfThePathDoesNotExist(Kind kind, String pathName)
       throws IOException {
-    try (var fs = newFileSystem()) {
+    try (var fs = someTemporaryFileSystem()) {
       // Given
-      var path = fs.getPath(pathName);
+      var path = fs.getFileSystem().getPath(pathName);
       assertThat(path).doesNotExist();
       var kindSet = set(kind);
       var predicate = fileWithAnyKind(kindSet);
@@ -491,9 +486,9 @@ class FileUtilsTest implements UtilityClassTestTemplate {
   )
   void fileWithAnyKindShouldFailIfThePathIsDirectory(Kind kind, String pathName)
       throws IOException {
-    try (var fs = newFileSystem()) {
+    try (var fs = someTemporaryFileSystem()) {
       // Given
-      var dir = fs.getPath(pathName);
+      var dir = fs.getFileSystem().getPath(pathName);
       makeParentDirs(dir);
       Files.createDirectory(dir);
       var kindSet = set(kind);
@@ -514,9 +509,9 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       String pathName,
       boolean isMatch
   ) throws IOException {
-    try (var fs = newFileSystem()) {
+    try (var fs = someTemporaryFileSystem()) {
       // Given
-      var path = fs.getPath(pathName);
+      var path = fs.getFileSystem().getPath(pathName);
       makeParentDirs(path);
       Files.createFile(path);
 
@@ -635,20 +630,5 @@ class FileUtilsTest implements UtilityClassTestTemplate {
     if (parent != null) {
       Files.createDirectories(parent);
     }
-  }
-
-  static FileSystem newFileSystem() {
-    // Default to UNIX to keep behaviour consistent.
-    var name = UUID.randomUUID().toString();
-    var config = Configuration
-        .builder(PathType.unix())
-        .setSupportedFeatures(Feature.LINKS, Feature.SYMBOLIC_LINKS, Feature.FILE_CHANNEL)
-        .setAttributeViews("basic", "posix")
-        .setRoots("/")
-        .setWorkingDirectory("/")
-        .setPathEqualityUsesCanonicalForm(true)
-        .build();
-
-    return Jimfs.newFileSystem(name, config);
   }
 }

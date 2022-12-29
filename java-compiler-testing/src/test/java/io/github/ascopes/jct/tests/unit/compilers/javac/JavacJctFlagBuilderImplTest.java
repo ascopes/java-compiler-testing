@@ -15,12 +15,12 @@
  */
 package io.github.ascopes.jct.tests.unit.compilers.javac;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.github.ascopes.jct.compilers.javac.JavacJctFlagBuilderImpl;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
@@ -251,7 +251,7 @@ class JavacJctFlagBuilderImplTest {
   void addsAnnotationProcessorOptions() {
     // Given
     var options = Stream
-        .generate(() -> UUID.randomUUID().toString())
+        .generate(() -> someText())
         .limit(5)
         .collect(Collectors.toList());
 
@@ -270,7 +270,7 @@ class JavacJctFlagBuilderImplTest {
   void addsCompilerOptions() {
     // Given
     var options = Stream
-        .generate(() -> UUID.randomUUID().toString())
+        .generate(() -> someText())
         .limit(5)
         .collect(Collectors.toList());
 
@@ -287,7 +287,7 @@ class JavacJctFlagBuilderImplTest {
   void addsRuntimeOptions() {
     // Given
     var options = Stream
-        .generate(() -> UUID.randomUUID().toString())
+        .generate(() -> someText())
         .limit(5)
         .collect(Collectors.toList());
 

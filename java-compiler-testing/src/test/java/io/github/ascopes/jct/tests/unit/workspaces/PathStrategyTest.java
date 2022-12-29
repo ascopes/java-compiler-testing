@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.tests.unit.workspaces;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
@@ -23,7 +24,6 @@ import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.impl.RamDirectory;
 import io.github.ascopes.jct.workspaces.impl.TempDirectory;
 import java.io.IOException;
-import java.util.UUID;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,7 +63,7 @@ class PathStrategyTest {
       PathStrategy strategy,
       Class<?> ignored
   ) throws IOException {
-    var name = UUID.randomUUID().toString();
+    var name = someText();
     var obj = strategy.newInstance(name);
 
     try {
