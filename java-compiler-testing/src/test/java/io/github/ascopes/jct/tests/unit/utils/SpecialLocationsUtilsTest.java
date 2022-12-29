@@ -98,6 +98,9 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
         var tempPaths = new TempPaths();
         var mx = new MockedMxBean<>(ManagementFactory::getRuntimeMXBean, RuntimeMXBean.class)
     ) {
+      // We always exclude this path.
+      var ideaRt = tempPaths.addPath("idea_rt.jar"); 
+      
       given(mx.mock.getClassPath()).willReturn(tempPaths.toPathString());
       // We don't want to include non-existent paths in this, so test it by deleting one of them.
       var deletedPath = tempPaths.deleteRandomPath();
@@ -106,7 +109,7 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
       var actual = SpecialLocationUtils.currentClassPathLocations();
 
       // Then
-      var expected = tempPaths.allExcept(deletedPath);
+      var expected = tempPaths.allExcept(deletedPath, ideaRt);
       assertThat(actual).containsExactlyElementsOf(expected);
     }
   }
@@ -119,6 +122,9 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
         var tempPaths = new TempPaths();
         var ignored = new MockedSystemProperty("jdk.module.path", tempPaths.toPathString())
     ) {
+      // We always exclude this path.
+      var ideaRt = tempPaths.addPath("idea_rt.jar");
+      
       // We don't want to include non-existent paths in this, so test it by deleting one of them.
       var deletedPath = tempPaths.deleteRandomPath();
 
@@ -126,7 +132,7 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
       var actual = SpecialLocationUtils.currentModulePathLocations();
 
       // Then
-      var expected = tempPaths.allExcept(deletedPath);
+      var expected = tempPaths.allExcept(deletedPath, ideaRt);
       assertThat(actual).containsExactlyElementsOf(expected);
     }
   }
@@ -191,6 +197,13 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
         LOGGER.trace("Created dir within temp location {}", nextPath);
         paths.add(nextPath);
       }
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private Path addPath(String path) {
+      var actual = root.resolve(path);
+      paths.add(actual);
+      return actual;
     }
 
     private Path deleteRandomPath() throws IOException {
