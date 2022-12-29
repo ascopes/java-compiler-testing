@@ -151,6 +151,24 @@ class JctCompilationImplTest {
     Assertions.assertThat(compilation.getFileManager()).isEqualTo(fileManager);
   }
 
+  @DisplayName("toString returns the expected value")
+  @Test
+  void toStringReturnsExpectedValue() {
+    // Given
+    var compilation = filledBuilder().build();
+
+    // Then
+    assertThat(compilation)
+        .asString()
+        .as("compilation.toString()")
+        .isEqualTo(
+            "JctCompilationImpl{success=%s, failOnWarnings=%s, fileManager=%s}",
+            compilation.isSuccessful(),
+            compilation.isFailOnWarnings(),
+            compilation.getFileManager()
+        );
+  }
+
   @DisplayName("CompilationImpl.Builder tests")
   @Nested
   class BuilderTest {
