@@ -33,7 +33,6 @@ import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
-
 /**
  * Implementation of a workspace to use by default.
  *

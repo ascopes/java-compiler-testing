@@ -205,7 +205,6 @@ public final class FileUtils extends UtilityClass {
     return directory;
   }
 
-
   /**
    * Convert a simple class name to a path.
    *

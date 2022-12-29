@@ -183,7 +183,6 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    */
   List<Processor> getAnnotationProcessors();
 
-
   /**
    * Add annotation processors to invoke.
    *
@@ -219,7 +218,6 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @return the current compiler  options that are set.
    */
   List<String> getCompilerOptions();
-
 
   /**
    * Add command line options to pass to {@code javac}.

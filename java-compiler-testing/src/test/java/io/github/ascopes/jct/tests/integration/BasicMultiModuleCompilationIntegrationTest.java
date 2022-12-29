@@ -73,7 +73,6 @@ class BasicMultiModuleCompilationIntegrationTest {
     }
   }
 
-
   @DisplayName("I can compile a single module using multi-module layout using a temp directory")
   @JavacCompilerTest(modules = true)
   void singleModuleInMultiModuleLayoutTempDirectory(JctCompiler<?, ?> compiler) {

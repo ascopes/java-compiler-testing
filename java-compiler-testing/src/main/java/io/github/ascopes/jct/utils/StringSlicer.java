@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
-
 /**
  * Utility to efficiently split strings using a delimiter without using regular expressions.
  *

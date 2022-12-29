@@ -35,7 +35,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-
 /**
  * {@link JavacCompilersProvider} tests.
  */

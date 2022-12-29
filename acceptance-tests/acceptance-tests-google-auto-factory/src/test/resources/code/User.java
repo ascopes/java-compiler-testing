@@ -18,7 +18,6 @@ package org.example;
 import com.google.auto.factory.AutoFactory;
 import java.time.Instant;
 
-
 /**
  * A user type.
  */

@@ -28,7 +28,6 @@ import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
-
 /**
  * A wrapper around a {@link Diagnostic} which contains additional information about where the
  * diagnostic was reported.

@@ -18,7 +18,6 @@ package org.example;
 import com.google.auto.value.AutoValue;
 import java.time.Instant;
 
-
 /**
  * An abstract representation of a user.
  */

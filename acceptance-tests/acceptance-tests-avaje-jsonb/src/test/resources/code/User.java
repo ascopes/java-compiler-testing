@@ -18,7 +18,6 @@ package org.example;
 import io.avaje.jsonb.Json;
 import java.time.Instant;
 
-
 /**
  * A user object.
  */

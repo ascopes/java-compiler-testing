@@ -59,8 +59,8 @@ import org.slf4j.LoggerFactory;
  * a JSR-199 compiler and trigger the compilation, given the components in the JCT framework.
  *
  * <p>While I have considered other implementation models, such as an interceptor-chain pattern,
- * or factories, this has turned out to be the simplest, albeit least Java-y way to achieve what
- * I want while keeping stuff easily testable and easy to debug.
+ * or factories, this has turned out to be the simplest, albeit least Java-y way to achieve what I
+ * want while keeping stuff easily testable and easy to debug.
  *
  * <p>If this ends up getting more complex in the future, then I may reconsider how this is
  * implemented (this may need to change for ECJ support in the future possibly, not sure yet).
@@ -252,7 +252,7 @@ public final class JctJsr199Interop extends UtilityClass {
   /**
    * Configure all workspace paths into the file manager.
    *
-   * @param workspace the workspace.
+   * @param workspace   the workspace.
    * @param fileManager the file manager.
    */
   public static void configureWorkspacePaths(Workspace workspace, JctFileManagerImpl fileManager) {
@@ -405,7 +405,7 @@ public final class JctJsr199Interop extends UtilityClass {
   /**
    * Configure the required locations in the workspace and add them to the file manager.
    *
-   * @param workspace the workspace.
+   * @param workspace   the workspace.
    * @param fileManager the file manager.
    */
   public static void configureRequiredLocations(

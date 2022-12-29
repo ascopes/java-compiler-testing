@@ -111,7 +111,6 @@ public interface ManagedDirectory extends PathRoot {
   @CheckReturnValue
   FileBuilder createFile(String first, String... rest);
 
-
   /**
    * Create a file builder for the given path in this RAM file system.
    *

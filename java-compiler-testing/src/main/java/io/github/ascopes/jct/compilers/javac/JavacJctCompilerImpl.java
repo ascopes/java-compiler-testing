@@ -33,7 +33,6 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
 
   private static final String NAME = "JDK Compiler";
 
-
   /**
    * Initialize a new Java compiler.
    */

@@ -284,7 +284,6 @@ class AbstractCompilersProviderTest {
         .hasRootCauseMessage("Some error here");
   }
 
-
   @DisplayName("Providing abstract configurers will produce exceptions")
   @Test
   void abstractConfigurersWillProduceExceptions() {

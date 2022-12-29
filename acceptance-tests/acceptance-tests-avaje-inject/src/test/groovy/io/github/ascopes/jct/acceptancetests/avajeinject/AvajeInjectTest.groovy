@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.acceptancetests.avajeinject
 
-
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.filemanagers.LoggingMode
 import io.github.ascopes.jct.junit.JavacCompilerTest

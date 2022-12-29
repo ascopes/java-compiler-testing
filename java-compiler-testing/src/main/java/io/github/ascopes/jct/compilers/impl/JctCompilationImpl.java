@@ -32,7 +32,6 @@ import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
-
 /**
  * Representation of the result of running a Javac compilation.
  *
@@ -102,7 +101,6 @@ public final class JctCompilationImpl implements JctCompilation {
         .attribute("fileManager", fileManager)
         .toString();
   }
-
 
   /**
    * Initialize a builder for a new {@link JctCompilationImpl} object.

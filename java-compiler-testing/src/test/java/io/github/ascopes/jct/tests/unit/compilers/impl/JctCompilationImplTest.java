@@ -151,7 +151,6 @@ class JctCompilationImplTest {
     Assertions.assertThat(compilation.getFileManager()).isEqualTo(fileManager);
   }
 
-
   @DisplayName("CompilationImpl.Builder tests")
   @Nested
   class BuilderTest {

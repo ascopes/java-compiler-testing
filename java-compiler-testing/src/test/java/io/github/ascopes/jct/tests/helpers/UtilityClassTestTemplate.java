@@ -145,7 +145,6 @@ public interface UtilityClassTestTemplate {
         });
   }
 
-
   @DisplayName("All nested classes should be static")
   @TestFactory
   default Stream<DynamicTest> allNestedClassesShouldBeStatic() {

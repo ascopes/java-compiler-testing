@@ -17,7 +17,6 @@ package org.example;
 
 import io.micronaut.runtime.Micronaut;
 
-
 /**
  * Example Micronaut entrypoint.
  */

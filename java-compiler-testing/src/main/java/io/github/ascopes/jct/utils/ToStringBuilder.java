@@ -62,7 +62,6 @@ public final class ToStringBuilder {
       URL.class
   );
 
-
   private final Object owner;
   private final Map<String, Object> attributes;
 

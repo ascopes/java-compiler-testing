@@ -31,7 +31,6 @@ import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * A proxy that wraps a {@link JctFileManager} in a proxy that can log all interactions with the
  * JavaFileManager, along with a corresponding stacktrace.

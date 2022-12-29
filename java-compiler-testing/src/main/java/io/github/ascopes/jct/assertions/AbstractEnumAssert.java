@@ -24,7 +24,6 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 
-
 /**
  * Abstract base class for an assertion on an {@link Enum}.
  *

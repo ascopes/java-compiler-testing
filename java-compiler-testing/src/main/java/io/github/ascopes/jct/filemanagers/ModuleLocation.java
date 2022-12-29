@@ -21,7 +21,6 @@ import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
-
 /**
  * Handle that represents the location of a module.
  *
