@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
  */
 @DisplayName("SpecialLocationsUtils tests")
 @Execution(ExecutionMode.SAME_THREAD)
-@Isolated("modifies static state temporarily")
+@Isolated("modifies JVM properties")
 class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
 
   @Override
@@ -100,7 +100,7 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
     ) {
       // We always exclude this path.
       var ideaRt = tempPaths.addFile("idea_rt.jar");
-      
+
       given(mx.mock.getClassPath()).willReturn(tempPaths.toPathString());
       // We don't want to include non-existent paths in this, so test it by deleting one of them.
       var deletedPath = tempPaths.deleteRandomPath();
@@ -124,7 +124,7 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
     ) {
       // We always exclude this path.
       var ideaRt = tempPaths.addFile("idea_rt.jar");
-      
+
       // We don't want to include non-existent paths in this, so test it by deleting one of them.
       var deletedPath = tempPaths.deleteRandomPath();
 
