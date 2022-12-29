@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.tests.unit.diagnostics;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someBoolean;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someDiagnostic;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someLong;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
@@ -42,6 +43,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -56,6 +58,28 @@ import org.slf4j.event.Level;
  */
 @DisplayName("TracingDiagnosticListener test")
 class TracingDiagnosticListenerTest {
+
+  @DisplayName("isLoggingEnabled() returns expected value")
+  @ValueSource(booleans = {true, false})
+  @ParameterizedTest(name = "when logging = {0}")
+  void isLoggingEnabledReturnsExpectedValue(boolean logging) {
+    // Given
+    var listener = new TracingDiagnosticListener<>(logging, someBoolean());
+
+    // Then
+    assertThat(listener.isLoggingEnabled()).isEqualTo(logging);
+  }
+
+  @DisplayName("isStackTraceReportingEnabled() returns expected value")
+  @ValueSource(booleans = {true, false})
+  @ParameterizedTest(name = "when stackTraces = {0}")
+  void isisStackTraceReportingEnabledReturnsExpectedValue(boolean stackTraces) {
+    // Given
+    var listener = new TracingDiagnosticListener<>(someBoolean(), stackTraces);
+
+    // Then
+    assertThat(listener.isStackTraceReportingEnabled()).isEqualTo(stackTraces);
+  }
 
   @DisplayName("getDiagnostics() returns a copy")
   @Test

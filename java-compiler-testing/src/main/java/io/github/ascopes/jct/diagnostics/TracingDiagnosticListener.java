@@ -91,6 +91,27 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
   }
 
   /**
+   * Determine if logging is enabled.
+   *
+   * @return {@code true} if enabled, or {@code false} if disabled.
+   */
+  public boolean isLoggingEnabled() {
+    return logging;
+  }
+
+  /**
+   * Determine if stack trace reporting is enabled.
+   *
+   * <p>Note that stack traces are only reported if {@link #isLoggingEnabled() logging is enabled}
+   * as well.
+   *
+   * @return {@code true} if enabled, or {@code false} if disabled.
+   */
+  public boolean isStackTraceReportingEnabled() {
+    return stackTraces;
+  }
+
+  /**
    * Get a copy of the queue containing all the diagnostics that have been detected.
    *
    * @return the diagnostics in a list.
