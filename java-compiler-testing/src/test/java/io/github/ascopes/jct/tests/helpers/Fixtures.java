@@ -343,8 +343,8 @@ public final class Fixtures {
    * Return one of the members of a given enum.
    *
    * @param cls the enum class.
-   * @return one of the enum members.
    * @param <E> the enum type.
+   * @return one of the enum members.
    */
   public static <E extends Enum<E>> E oneOf(Class<E> cls) {
     return oneOf(cls.getEnumConstants());
