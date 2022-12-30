@@ -29,6 +29,7 @@ import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.configureReq
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.configureWorkspacePaths;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.containsModules;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.determineRelease;
+import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.findCompilationUnitLocations;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.findCompilationUnits;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.performCompilerPass;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someBoolean;
@@ -36,6 +37,7 @@ import static io.github.ascopes.jct.tests.helpers.Fixtures.someCharset;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someCompilationUnits;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someFlags;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someIoException;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someJavaFileObject;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someLinesOfText;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someLocation;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someModuleReference;
@@ -45,13 +47,13 @@ import static io.github.ascopes.jct.tests.helpers.Fixtures.someRelease;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someTraceDiagnostics;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someUncheckedException;
 import static io.github.ascopes.jct.tests.helpers.GenericMock.mockRaw;
+import static io.github.ascopes.jct.utils.IterableUtils.flatten;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
@@ -74,6 +76,7 @@ import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
+import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
 import io.github.ascopes.jct.tests.helpers.Fixtures;
 import io.github.ascopes.jct.tests.helpers.UtilityClassTestTemplate;
@@ -95,6 +98,7 @@ import java.util.stream.Stream;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
+import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -1400,8 +1404,147 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   @ExtendWith(MockitoExtension.class)
   @Nested
   class FindCompilationUnitsTest {
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    MockedStatic<JctJsr199Interop> staticMock;
+
     @Mock
     JctFileManagerImpl fileManager;
+
+    @BeforeEach
+    void setUp() {
+      staticMock.when(() -> findCompilationUnits(any()))
+          .thenCallRealMethod();
+    }
+
+    @DisplayName("All compilation units are returned")
+    @Test
+    void allCompilationUnitsAreReturned() throws IOException {
+      // Given
+      var locationsAndFiles = Map.<Location, Iterable<JavaFileObject>>of(
+          someLocation(), List.of(someJavaFileObject(), someJavaFileObject()),
+          someLocation(), List.of(),
+          someLocation(), List.of(someJavaFileObject(), someJavaFileObject(), someJavaFileObject()),
+          someLocation(), List.of(someJavaFileObject(), someJavaFileObject(), someJavaFileObject()),
+          someLocation(), List.of(someJavaFileObject())
+      );
+
+      staticMock.when(() -> findCompilationUnitLocations(any()))
+          .thenReturn(List.copyOf(locationsAndFiles.keySet()));
+
+      for (var location : locationsAndFiles.keySet()) {
+        when(fileManager.list(same(location), any(), any(), anyBoolean()))
+            .thenReturn(locationsAndFiles.get(location));
+      }
+
+      // When
+      var actualFiles = findCompilationUnits(fileManager);
+
+      // Then
+      for (var location : locationsAndFiles.keySet()) {
+        verify(fileManager).list(location, "", Set.of(Kind.SOURCE), true);
+      }
+
+      assertThat(actualFiles)
+          .containsExactlyInAnyOrderElementsOf(flatten(locationsAndFiles.values()));
+
+      verifyNoMoreInteractions(fileManager);
+    }
+  }
+
+  /////////////////////////////////////
+  /// .findCompilationUnitLocations ///
+  /////////////////////////////////////
+
+  @DisplayName("JctJsr199Interop#findCompilationUnitLocations tests")
+  @ExtendWith(MockitoExtension.class)
+  @Nested
+  class FindCompilationUnitLocationsTest {
+    @Mock
+    JctFileManagerImpl fileManager;
+
+    @DisplayName("Modules are returned if present")
+    @Test
+    void modulesAreReturnedIfPresent() throws IOException {
+      // Given
+      var module1 = someModuleLocation("module1");
+      var module2 = someModuleLocation("module2");
+      var module3 = someModuleLocation("module3");
+      var module4 = someModuleLocation("module4");
+      var module5 = someModuleLocation("module5");
+      var module6 = someModuleLocation("module6");
+      var module7 = someModuleLocation("module7");
+
+      var listLocationsForModulesResult = List.<Set<Location>>of(
+          Set.of(module1, module2, module3),
+          Set.of(),
+          Set.of(module4),
+          Set.of(),
+          Set.of(module5, module6),
+          Set.of(module7)
+      );
+
+      when(fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH))
+          .thenReturn(listLocationsForModulesResult);
+
+      // When
+      var result = findCompilationUnitLocations(fileManager);
+
+      // Then
+      verify(fileManager).listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH);
+      verifyNoMoreInteractions(fileManager);
+      assertThat(result)
+          .containsExactlyInAnyOrder(module1, module2, module3, module4, module5, module6, module7);
+    }
+
+    @DisplayName("Source path is not returned if modules are present")
+    @Test
+    void sourcePathIsNotReturnedIfModulesArePresent() throws IOException {
+      // Given
+      var module1 = someModuleLocation("module1");
+      var module2 = someModuleLocation("module2");
+      var module3 = someModuleLocation("module3");
+      var module4 = someModuleLocation("module4");
+      var module5 = someModuleLocation("module5");
+      var module6 = someModuleLocation("module6");
+      var module7 = someModuleLocation("module7");
+
+      var listLocationsForModulesResult = List.<Set<Location>>of(
+          Set.of(module1, module2, module3),
+          Set.of(),
+          Set.of(module4),
+          Set.of(),
+          Set.of(module5, module6),
+          Set.of(module7)
+      );
+
+      when(fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH))
+          .thenReturn(listLocationsForModulesResult);
+
+      // When
+      var result = findCompilationUnitLocations(fileManager);
+
+      // Then
+      assertThat(result).doesNotContain(StandardLocation.SOURCE_PATH);
+    }
+
+    @DisplayName("Source path is returned if no modules are present")
+    @Test
+    void sourcePathIsReturnedIfNoModulesArePresent() throws IOException {
+      when(fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH))
+          .thenReturn(List.of());
+
+      // When
+      var result = findCompilationUnitLocations(fileManager);
+
+      // Then
+      assertThat(result)
+          .hasSize(1)
+          .containsExactly(StandardLocation.SOURCE_PATH);
+    }
+
+    ModuleLocation someModuleLocation(String name) {
+      return new ModuleLocation(StandardLocation.MODULE_SOURCE_PATH, name);
+    }
   }
 
   ////////////////////////////////

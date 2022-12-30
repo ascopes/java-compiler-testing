@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.tests.helpers;
 
 import static io.github.ascopes.jct.tests.helpers.GenericMock.mockRaw;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
@@ -43,6 +44,7 @@ import java.util.stream.Stream;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
+import javax.tools.JavaFileObject.Kind;
 import org.mockito.quality.Strictness;
 
 /**
@@ -273,6 +275,23 @@ public final class Fixtures {
    */
   public static String someRelease() {
     return Integer.toString(RANDOM.nextInt(11) + 11);
+  }
+
+  /**
+   * Get some mock Java file object with a dummy name and some assigned {@link Kind}.
+   *
+   * @return some mock Java file object.
+   */
+  public static JavaFileObject someJavaFileObject() {
+    var name = someText() + ".java";
+    var obj = mock(JavaFileObject.class, withSettings()
+        .name(name)
+        .defaultAnswer(RETURNS_DEEP_STUBS)
+        .strictness(Strictness.LENIENT));
+
+    when(obj.getName()).thenReturn(name);
+    when(obj.getKind()).thenReturn(Kind.SOURCE);
+    return obj;
   }
 
   /**

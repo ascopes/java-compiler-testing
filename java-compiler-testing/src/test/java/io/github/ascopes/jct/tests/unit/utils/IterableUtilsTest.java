@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.tests.unit.utils;
 
 import static io.github.ascopes.jct.utils.IterableUtils.combineOneOrMore;
+import static io.github.ascopes.jct.utils.IterableUtils.flatten;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -25,6 +26,7 @@ import io.github.ascopes.jct.tests.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +35,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Ashley Scopes
  */
+@SuppressWarnings("DataFlowIssue")
 class IterableUtilsTest implements UtilityClassTestTemplate {
 
   @Override
@@ -40,14 +43,38 @@ class IterableUtilsTest implements UtilityClassTestTemplate {
     return IterableUtils.class;
   }
 
+  @DisplayName("flatten(...) returns the expected value")
+  @Test
+  void flattenReturnsExpectedValue() {
+    // Given
+    var inputItems = List.<Iterable<String>>of(
+        List.of("foo", "bar"),
+        Set.of(),
+        List.of("baz", "bork", "qux"),
+        List.of("eggs"),
+        Set.of(),
+        List.of("spam")
+    );
+    var expectedItems = List.of("foo", "bar", "baz", "bork", "qux", "eggs", "spam");
+
+    // When
+    var actualItems = flatten(inputItems);
+
+    // Then
+    assertThat(actualItems)
+        .containsExactlyElementsOf(expectedItems);
+  }
+
   @DisplayName("combineOneOrMore(T, T...) returns the expected value")
   @Test
   void combineOneOrMoreReturnsTheExpectedValue() {
+    // Given
     var foo = new Object();
     var bar = new Object();
     var baz = new Object();
     var bork = new Object();
 
+    // Then
     assertThat(combineOneOrMore(foo))
         .isEqualTo(List.of(foo));
 

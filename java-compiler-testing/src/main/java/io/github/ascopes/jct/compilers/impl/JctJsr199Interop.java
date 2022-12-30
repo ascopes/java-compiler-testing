@@ -25,6 +25,7 @@ import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
+import io.github.ascopes.jct.utils.IterableUtils;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.UtilityClass;
@@ -35,7 +36,6 @@ import java.lang.module.FindException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -433,18 +433,9 @@ public final class JctJsr199Interop extends UtilityClass {
   public static List<JavaFileObject> findCompilationUnits(
       JavaFileManager fileManager
   ) throws IOException {
-    var locations = new LinkedHashSet<Location>();
-
-    locations.add(StandardLocation.SOURCE_OUTPUT);
-    locations.add(StandardLocation.SOURCE_PATH);
-
-    for (var modules : fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH)) {
-      locations.addAll(modules);
-    }
-
     var objects = new ArrayList<JavaFileObject>();
 
-    for (var location : locations) {
+    for (var location : findCompilationUnitLocations(fileManager)) {
       var items = fileManager.list(location, "", Set.of(Kind.SOURCE), true);
       for (var fileObject : items) {
         objects.add(fileObject);
@@ -452,6 +443,28 @@ public final class JctJsr199Interop extends UtilityClass {
     }
 
     return objects;
+  }
+
+  /**
+   * Find interesting locations for compilation units.
+   *
+   * <p>If there are any modules in the module source path, these will be returned.
+   * If none are found, this will return the legacy source path instead. This is
+   * done to mimic the behaviour of Javac.
+   *
+   * @param fileManager the file manager to use.
+   * @return the list of locations.
+   * @throws IOException if an IO error occurs.
+   */
+  public static List<Location> findCompilationUnitLocations(
+      JavaFileManager fileManager
+  ) throws IOException {
+    var modules = IterableUtils
+        .flatten(fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH));
+
+    return modules.isEmpty()
+        ? List.of(StandardLocation.SOURCE_PATH)
+        : modules;
   }
 
   /**

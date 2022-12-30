@@ -40,6 +40,23 @@ public final class IterableUtils extends UtilityClass {
   }
 
   /**
+   * Take an iterable of iterables and flatten them into a list of individual items.
+   *
+   * @param iterableOfItems the items to flatten.
+   * @param <T>             the inner type.
+   * @return the flattened items.
+   */
+  public static <T> List<T> flatten(Iterable<? extends Iterable<T>> iterableOfItems) {
+    var flattenedItems = new ArrayList<T>();
+    for (var items : iterableOfItems) {
+      for (var item : items) {
+        flattenedItems.add(item);
+      }
+    }
+    return flattenedItems;
+  }
+
+  /**
    * Convert variadic arguments with an enforced first element into a list of those elements.
    *
    * <p>This pattern is used to ensure vararg overloads take at least one element, by enforcing
