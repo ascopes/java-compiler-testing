@@ -20,6 +20,7 @@ import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import io.github.ascopes.jct.diagnostics.TeeWriter;
 import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import io.github.ascopes.jct.ex.JctCompilerException;
+import io.github.ascopes.jct.ex.JctException;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
@@ -517,43 +518,53 @@ public final class JctJsr199Interop extends UtilityClass {
         compilationUnits
     );
 
-    configureAnnotationProcessorDiscovery(compiler, task);
     task.setLocale(compiler.getLocale());
+    configureAnnotationProcessorDiscovery(compiler, task);
 
     LOGGER
         .atInfo()
         .addArgument(compilationUnits::size)
-        .addArgument(name)
+        .addArgument(() -> StringUtils.quoted(name))
         .addArgument(() -> StringUtils.quotedIterable(flags))
         .log("Starting compilation of {} file(s) with compiler {} using flags {}");
 
+    var start = System.nanoTime();
+
     try {
-      var start = System.nanoTime();
       var result = task.call();
       var duration = System.nanoTime() - start;
 
       if (result == null) {
-        throw new JctCompilerException("The compiler failed to produce a valid result");
+        throw new JctCompilerException(
+            "Compiler " + StringUtils.quoted(name) + " failed to produce a valid result, this is a "
+                + "bug in the compiler implementation, please report it to the compiler vendor!");
       }
 
-      LOGGER.info(
-          "Compilation with compiler {} {} after ~{}",
-          name,
-          result ? "succeeded" : "failed",
-          StringUtils.formatNanos(duration)
-      );
+      LOGGER
+          .atInfo()
+          .addArgument(() -> StringUtils.quoted(name))
+          .addArgument(() -> result ? "succeeded" : "failed")
+          .addArgument(() -> StringUtils.formatNanos(duration))
+          .log("Compilation with compiler {} {} after ~{}");
 
       return result;
 
+    } catch (JctException ex) {
+      throw ex;
     } catch (Exception ex) {
-      LOGGER.warn(
-          "Compiler {} threw an exception: {}: {}",
-          name,
-          ex.getClass().getName(),
-          ex.getMessage()
-      );
+      var duration = System.nanoTime() - start;
 
-      throw new JctCompilerException("The compiler threw an exception", ex);
+      LOGGER
+          .atWarn()
+          .addArgument(() -> StringUtils.quoted(name))
+          .addArgument(() -> StringUtils.formatNanos(duration))
+          .addArgument(() -> ex.getClass().getName())
+          .addArgument(() -> StringUtils.quoted(ex.getMessage()))
+          .log("Compilation with compiler {} threw an unhandled exception after ~{} -- {}: {}");
+
+      throw new JctCompilerException(
+          "Compiler " + StringUtils.quoted(name) + " raised an unhandled exception", ex
+      );
     }
   }
 

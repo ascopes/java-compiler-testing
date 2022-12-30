@@ -40,6 +40,7 @@ import static io.github.ascopes.jct.tests.helpers.Fixtures.someFlags;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someIoException;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someJavaFileObject;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someLinesOfText;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someLocale;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someLocation;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someModuleReference;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.somePath;
@@ -56,6 +57,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.never;
@@ -90,7 +92,6 @@ import java.io.IOException;
 import java.lang.module.FindException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -120,7 +121,6 @@ import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.quality.Strictness;
-import org.mockito.stubbing.Answer;
 
 /**
  * {@link JctJsr199Interop} tests.
@@ -669,47 +669,20 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     @Test
     void fileManagerPathsAreConfiguredInTheCorrectOrder() {
       // Given
-      // Mockito doesn't seem to support in-order mocking of static methods, so we have to
-      // improvise.
-      var actualCallOrder = new ArrayList<String>();
-      staticMock.when(() -> configureWorkspacePaths(any(), any()))
-          .then(addMethodNameTo(actualCallOrder));
-      staticMock.when(() -> configureClassPath(any(), any()))
-          .then(addMethodNameTo(actualCallOrder));
-      staticMock.when(() -> configureModulePath(any(), any()))
-          .then(addMethodNameTo(actualCallOrder));
-      staticMock.when(() -> configurePlatformClassPath(any(), any()))
-          .then(addMethodNameTo(actualCallOrder));
-      staticMock.when(() -> configureJvmSystemModules(any(), any()))
-          .then(addMethodNameTo(actualCallOrder));
-      staticMock.when(() -> configureAnnotationProcessorPaths(any(), any()))
-          .then(addMethodNameTo(actualCallOrder));
-      staticMock.when(() -> configureRequiredLocations(any(), any()))
-          .then(addMethodNameTo(actualCallOrder));
+      var order = inOrder(JctJsr199Interop.class);
 
       // When
       doBuild();
 
       // Then
-      staticMock.verify(() -> configureWorkspacePaths(workspace, fileManager));
-      staticMock.verify(() -> configureClassPath(compiler, fileManager));
-      staticMock.verify(() -> configureModulePath(compiler, fileManager));
-      staticMock.verify(() -> configurePlatformClassPath(compiler, fileManager));
-      staticMock.verify(() -> configureJvmSystemModules(compiler, fileManager));
-      staticMock.verify(() -> configureAnnotationProcessorPaths(compiler, fileManager));
-      staticMock.verify(() -> configureRequiredLocations(workspace, fileManager));
-
-      assertThat(actualCallOrder)
-          .as("call order (%s)", actualCallOrder)
-          .containsExactly(
-              "configureWorkspacePaths",
-              "configureClassPath",
-              "configureModulePath",
-              "configurePlatformClassPath",
-              "configureJvmSystemModules",
-              "configureAnnotationProcessorPaths",
-              "configureRequiredLocations"
-          );
+      order.verify(staticMock, () -> configureWorkspacePaths(workspace, fileManager));
+      order.verify(staticMock, () -> configureClassPath(compiler, fileManager));
+      order.verify(staticMock, () -> configureModulePath(compiler, fileManager));
+      order.verify(staticMock, () -> configurePlatformClassPath(compiler, fileManager));
+      order.verify(staticMock, () -> configureJvmSystemModules(compiler, fileManager));
+      order.verify(staticMock, () -> configureAnnotationProcessorPaths(compiler, fileManager));
+      order.verify(staticMock, () -> configureRequiredLocations(workspace, fileManager));
+      order.verifyNoMoreInteractions();
     }
 
     @DisplayName("no proxy is used when file manager logging is disabled")
@@ -1653,6 +1626,130 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   @Nested
   class PerformCompilerPassTest {
 
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    MockedStatic<JctJsr199Interop> staticMock;
+
+    @Mock(name = "compiler that is mocked with Mockito")
+    JctCompiler<?, ?> compiler;
+
+    @Mock(strictness = Mock.Strictness.LENIENT)
+    JavaCompiler jctJsr199Compiler;
+
+    @Mock
+    TeeWriter writer;
+
+    List<String> flags;
+
+    @Mock
+    JctFileManager fileManager;
+
+    @Mock
+    TracingDiagnosticListener<JavaFileObject> tracingDiagnosticListener;
+
+    List<JavaFileObject> compilationUnits;
+
+    @Mock
+    CompilationTask task;
+
+    @BeforeEach
+    void setUp() {
+      staticMock.when(() -> performCompilerPass(any(), any(), any(), any(), any(), any(), any()))
+          .thenCallRealMethod();
+      when(jctJsr199Compiler.getTask(any(), any(), any(), any(), any(), any()))
+          .thenReturn(task);
+      flags = someFlags();
+      compilationUnits = someCompilationUnits();
+    }
+
+    boolean doPerformCompilerPass() {
+      return performCompilerPass(
+          compiler,
+          jctJsr199Compiler,
+          writer,
+          flags,
+          fileManager,
+          tracingDiagnosticListener,
+          compilationUnits
+      );
+    }
+
+    @DisplayName("the compilation task is initialised in the correct order before being called")
+    @Test
+    void theCompilationTaskIsInitialisedInTheCorrectOrderBeforeBeingCalled() {
+      // Given
+      var locale = someLocale();
+      when(compiler.getLocale()).thenReturn(locale);
+      when(task.call()).thenReturn(true);
+      var orderedMock = inOrder(jctJsr199Compiler, JctJsr199Interop.class, task);
+
+      // When
+      doPerformCompilerPass();
+
+      // Then
+      orderedMock.verify(jctJsr199Compiler).getTask(
+          writer,
+          fileManager,
+          tracingDiagnosticListener,
+          flags,
+          null,
+          compilationUnits
+      );
+      orderedMock.verify(task).setLocale(locale);
+      orderedMock.verify(staticMock, () -> configureAnnotationProcessorDiscovery(compiler, task));
+      orderedMock.verify(task).call();
+      orderedMock.verifyNoMoreInteractions();
+    }
+
+    @DisplayName("Compilations return the result")
+    @ValueSource(booleans = {true, false})
+    @ParameterizedTest(name = "when calling the compilation task returns {0}")
+    void compilationsReturnTheResult(boolean expectedResult) {
+      // Given
+      when(task.call()).thenReturn(expectedResult);
+
+      // When
+      var actualResult = doPerformCompilerPass();
+
+      // Then
+      assertThat(actualResult).isEqualTo(expectedResult);
+      verify(task).call();
+    }
+
+    @DisplayName("Buggy compilers returning null from task#call() raise an exception")
+    @Test
+    void buggyCompilersReturningNullFromTaskCallRaiseException() {
+      // Given
+      when(task.call()).thenReturn(null);
+
+      // Then
+      assertThatThrownBy(this::doPerformCompilerPass)
+          .isInstanceOf(JctCompilerException.class)
+          .hasNoCause()
+          .hasMessage(
+              "Compiler \"%s\" failed to produce a valid result, this is a bug in the "
+                  + "compiler implementation, please report it to the compiler vendor!",
+              compiler
+          )
+          .hasNoSuppressedExceptions();
+    }
+
+    @DisplayName("Exceptions thrown by the compiler are wrapped and reraised")
+    @Test
+    void exceptionsThrownByTheCompilerAreWrappedAndReraised() {
+      // Given
+      var cause = someUncheckedException();
+      when(task.call()).thenThrow(cause);
+
+      // Then
+      assertThatThrownBy(this::doPerformCompilerPass)
+          .isInstanceOf(JctCompilerException.class)
+          .hasCause(cause)
+          .hasMessage(
+              "Compiler \"%s\" raised an unhandled exception",
+              compiler
+          )
+          .hasNoSuppressedExceptions();
+    }
   }
 
   //////////////////////////////////////////////
@@ -1764,13 +1861,5 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       verify(task).setProcessors(List.of());
       verifyNoMoreInteractions(task);
     }
-  }
-
-  @SuppressWarnings("DataFlowIssue")
-  Answer<Void> addMethodNameTo(List<String> list) {
-    return ctx -> {
-      list.add(ctx.getMethod().getName());
-      return null;
-    };
   }
 }

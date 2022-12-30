@@ -37,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -89,7 +90,7 @@ public final class Fixtures {
    * @return some int value.
    */
   public static int someInt(int min, int max) {
-    return RANDOM.nextInt(max - min) + max;
+    return RANDOM.nextInt(max - min) + min;
   }
 
   /**
@@ -109,10 +110,10 @@ public final class Fixtures {
     } else {
       // This discards over-represented values for subsequent calls.
       var u = r >>> 1;
-      while (u + m - (r = u % max) < 0L) {
+      while (u + m - (u % max) < 0L) {
+        r = u % max;
         u = RANDOM.nextLong() >>> 1;
       }
-      r = u;
     }
 
     return r;
@@ -126,7 +127,7 @@ public final class Fixtures {
    * @return some long value.
    */
   public static long someLong(long min, long max) {
-    return someLong(max - min) + max;
+    return someLong(max - min) + min;
   }
 
   /**
@@ -147,7 +148,7 @@ public final class Fixtures {
     return Stream
         .generate(UUID::randomUUID)
         .map(UUID::toString)
-        .limit(15)
+        .limit(someInt(5, 15))
         .collect(Collectors.joining("\n"));
   }
 
@@ -161,7 +162,7 @@ public final class Fixtures {
         .generate(UUID::randomUUID)
         .map(UUID::toString)
         .map("--"::concat)
-        .limit(10)
+        .limit(someInt(2, 4))
         .collect(Collectors.toList());
   }
 
@@ -206,7 +207,7 @@ public final class Fixtures {
   public static List<TraceDiagnostic<? extends JavaFileObject>> someTraceDiagnostics() {
     return Stream
         .generate(Fixtures::someTraceDiagnostic)
-        .limit(5)
+        .limit(someInt(3, 8))
         .collect(Collectors.toList());
   }
 
@@ -219,7 +220,7 @@ public final class Fixtures {
     return Stream
         .generate(() -> mock(JavaFileObject.class, withSettings().strictness(Strictness.LENIENT)))
         .peek(mock -> when(mock.getName()).thenReturn(someText()))
-        .limit(5)
+        .limit(someInt(3, 8))
         .collect(Collectors.toList());
   }
 
@@ -232,7 +233,7 @@ public final class Fixtures {
     var message = Stream
         .generate(UUID::randomUUID)
         .map(UUID::toString)
-        .limit(3)
+        .limit(someInt(1, 4))
         .collect(Collectors.joining(" blah blah "));
     return new RuntimeException(message)
         .fillInStackTrace();
@@ -247,7 +248,7 @@ public final class Fixtures {
     var message = Stream
         .generate(UUID::randomUUID)
         .map(UUID::toString)
-        .limit(3)
+        .limit(someInt(1, 4))
         .collect(Collectors.joining(" blah blah "));
     return new IOException(message)
         .fillInStackTrace();
@@ -266,6 +267,28 @@ public final class Fixtures {
         StandardCharsets.UTF_16,
         StandardCharsets.ISO_8859_1,
         StandardCharsets.US_ASCII
+    );
+  }
+
+  /**
+   * Get some locale.
+   *
+   * @return some locale.
+   */
+  public static Locale someLocale() {
+    return oneOf(
+        Locale.ROOT,
+        Locale.US,
+        Locale.UK,
+        Locale.ENGLISH,
+        Locale.GERMAN,
+        Locale.JAPAN,
+        Locale.GERMANY,
+        Locale.JAPANESE,
+        Locale.SIMPLIFIED_CHINESE,
+        Locale.TRADITIONAL_CHINESE,
+        Locale.CHINESE,
+        Locale.CHINA
     );
   }
 
@@ -319,12 +342,13 @@ public final class Fixtures {
    * @return some dummy path.
    */
   public static Path somePath() {
-    return FileSystems.getDefault().getRootDirectories().iterator().next()
-        .resolve(someText())
-        .resolve(someText())
-        .resolve(someText())
-        .resolve(someText())
-        .resolve("some-dummy-path");
+    var root = FileSystems.getDefault().getRootDirectories().iterator().next();
+
+    for (var i = 0; i < someInt(1, 4); ++i) {
+      root = root.resolve(someText());
+    }
+
+    return root.resolve("some-dummy-path");
   }
 
   /**
@@ -443,6 +467,7 @@ public final class Fixtures {
      *
      * @return the root path.
      */
+    @SuppressWarnings("unused")
     public Path getRootPath() {
       return root;
     }
