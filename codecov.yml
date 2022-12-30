@@ -1,8 +1,52 @@
+# General behaviour.
 codecov:
   max_report_age: 12
   require_ci_to_pass: true
+
+# PR comment format.
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: false
+  require_base: true
+  require_head: true
+
+# Global coverage options.
 coverage:
   precision: 2
-  # TODO: adjust this once coverage is better.
   range: "10...100"
   round: down
+
+# Feature flags
+flag_management:
+  default_rules:
+    carryforward: true
+    statuses:
+      - type: project
+        target: auto
+        threshold: 1%
+      - type: patch
+        target: 90%
+
+  individual_flags:
+    # Unit testing coverage
+    - name: unit
+      paths:
+        - '**/target/site/jacoco/unit/jacoco*.xml'
+      statuses:
+        - type: project
+          target: auto
+          threshold: 65%
+        - type: patch
+          target: 90%
+
+    # Integration testing coverage
+    - name: integration
+      paths:
+        - '**/target/site/jacoco/int/jacoco*.xml'
+      statuses:
+        - type: project
+          target: auto
+          threshold: 0%
+        - type: patch
+          target: 0%

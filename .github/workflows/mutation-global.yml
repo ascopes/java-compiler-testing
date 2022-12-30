@@ -31,8 +31,9 @@ jobs:
         run: >-
           ./mvnw 
           -B
+          -e
           -U
-          -am
+          --also-make
           -pl java-compiler-testing
           --no-transfer-progress
           -P mutation

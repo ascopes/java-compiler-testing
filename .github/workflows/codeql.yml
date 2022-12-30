@@ -2,7 +2,7 @@ name: CodeQL analysis
 on:
   pull_request:
     branches:
-      - '**'
+      - 'main'
     types:
       - opened
       - synchronize

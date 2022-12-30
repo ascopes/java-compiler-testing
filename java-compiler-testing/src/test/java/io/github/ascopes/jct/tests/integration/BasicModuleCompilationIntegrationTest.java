@@ -19,7 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
-import io.github.ascopes.jct.tests.helpers.IntegrationTest;
+import io.github.ascopes.jct.tests.helpers.DoNotMutationTest;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +30,7 @@ import org.junit.jupiter.api.DisplayName;
  * @author Ashley Scopes
  */
 @DisplayName("Basic module compilation integration tests")
-@IntegrationTest
+@DoNotMutationTest
 class BasicModuleCompilationIntegrationTest {
 
   @DisplayName("I can compile a 'Hello, World!' module program using a RAM disk")
