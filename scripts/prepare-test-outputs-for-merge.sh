@@ -117,17 +117,25 @@ function find-all-surefire-reports {
   find . -wholename '**/target/surefire-reports/TEST-*Test.xml' -print0 | xargs -0
 }
 
+function find-all-failsafe-reports {
+  info "Discovering Failsafe test reports"
+  find . -wholename '**/target/failsafe-reports/TEST-*Test.xml' -print0 | xargs -0
+}
+
 function find-all-jacoco-reports {
   info "Discovering JaCoCo coverage reports"
-  # For now, we only want the one jacoco file for the main module, if it exists.
-  local desired_jacoco_file="java-compiler-testing/target/site/jacoco/jacoco.xml"
-  if [ -f "${desired_jacoco_file}" ]; then
-    echo "${desired_jacoco_file}"
+  local desired_jacoco_unit_file="java-compiler-testing/target/site/jacoco/unit/jacoco.xml"
+  if [ -f "${desired_jacoco_unit_file}" ]; then
+    echo "${desired_jacoco_unit_file}"
+  fi
+  local desired_jacoco_int_file="java-compiler-testing/target/site/jacoco/int/jacoco.xml"
+  if [ -f "${desired_jacoco_int_file}" ]; then
+    echo "${desired_jacoco_int_file}"
   fi
 }
 
-stage "Updating Surefire reports..."
-for surefire_report in $(find-all-surefire-reports); do
+stage "Updating test reports..."
+for surefire_report in $(find-all-surefire-reports) $(find-all-failsafe-reports); do
   info "Adding Java version to test case names in ${surefire_report}..."
   new_surefire_report=${surefire_report/.xml/-java-${ci_java_version}-${ci_os}.xml}
   xsltproc --stringparam prefix "[Java-${ci_java_version}-${ci_os}]" \

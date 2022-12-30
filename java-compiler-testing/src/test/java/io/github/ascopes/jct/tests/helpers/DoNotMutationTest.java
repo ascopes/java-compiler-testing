@@ -23,14 +23,13 @@ import java.lang.annotation.Target;
 import org.junit.jupiter.api.Tag;
 
 /**
- * Marks a test as an integration test. These get excluded from some places such as mutation
- * testing.
+ * Marks a test so that it will not be mutation tested.
  *
  * @author Ashley Scopes
  */
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
-@Tag("integration")
-public @interface IntegrationTest {
+@Tag("no-mutation")
+public @interface DoNotMutationTest {
 }

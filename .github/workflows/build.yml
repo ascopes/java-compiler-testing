@@ -35,7 +35,8 @@ jobs:
         shell: bash
         run: >-
           ./mvnw 
-          -B 
+          -B
+          -e
           -T4
           -U
           -pl java-compiler-testing
@@ -98,6 +99,7 @@ jobs:
         run: >-
           ./mvnw 
           -B 
+          -e
           -T4
           -U
           --no-transfer-progress
@@ -115,15 +117,17 @@ jobs:
           ${{ matrix.java-version }}
           ${{ matrix.os-name }}
 
-      - name: Archive Surefire and Jacoco reports
+      - name: Archive test and coverage reports
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: reports-java-${{ matrix.java-version }}-${{ matrix.os-name }}
           if-no-files-found: error
           path: |-
+            **/target/failsafe-reports/
             **/target/surefire-reports/
-            **/target/site/jacoco/jacoco*.xml
+            **/target/site/jacoco/unit/jacoco*.xml
+            **/target/site/jacoco/int/jacoco*.xml
           retention-days: 5
 
   publish-test-reports:

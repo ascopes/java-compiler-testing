@@ -52,7 +52,6 @@
   </scm>
 
   <properties>
-
     <!-- Dependencies -->
     <apiguardian.version>1.1.2</apiguardian.version>
     <assertj.version>3.23.1</assertj.version>
@@ -73,6 +72,7 @@
     <maven-checkstyle-plugin.version>3.2.0</maven-checkstyle-plugin.version>
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
     <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
+    <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
     <maven-install-plugin.version>3.1.0</maven-install-plugin.version>
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
@@ -230,6 +230,67 @@
         </plugin>
 
         <plugin>
+          <!-- Integration testing config -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven-failsafe-plugin.version}</version>
+
+          <configuration>
+            <includes>
+              <include>*IntegrationTest</include>
+            </includes>
+
+            <failIfNoTests>true</failIfNoTests>
+            <runOrder>random</runOrder>
+            <useModulePath>true</useModulePath>
+
+            <!--
+              This block is needed to show @DisplayName and @ParameterizedTest
+              in reports with the provided names.
+            -->
+            <statelessTestsetReporter
+              implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
+              <disable>false</disable>
+              <version>3.0</version>
+              <usePhrasedFileName>false</usePhrasedFileName>
+              <usePhrasedTestSuiteClassName>true</usePhrasedTestSuiteClassName>
+              <usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>
+              <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
+            </statelessTestsetReporter>
+            <consoleOutputReporter>
+              <disable>${hide-test-logs-in-console}</disable>
+            </consoleOutputReporter>
+            <statelessTestsetInfoReporter
+              implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+              <disable>false</disable>
+              <usePhrasedFileName>false</usePhrasedFileName>
+              <usePhrasedClassNameInRunning>true</usePhrasedClassNameInRunning>
+              <usePhrasedClassNameInTestCaseSummary>true</usePhrasedClassNameInTestCaseSummary>
+            </statelessTestsetInfoReporter>
+          </configuration>
+
+          <dependencies>
+            <dependency>
+              <groupId>me.fabriciorby</groupId>
+              <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+              <version>${maven-surefire-junit5-tree-reporter.version}</version>
+            </dependency>
+          </dependencies>
+
+          <executions>
+            <execution>
+              <!-- Enable failsafe to run -->
+              <id>integration-test</id>
+              <!-- This must not run during the test phase - JaCoCo messes up the reporting! -->
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
           <version>${maven-install-plugin.version}</version>
@@ -303,11 +364,18 @@
           <version>${maven-surefire-plugin.version}</version>
 
           <configuration>
+            <excludes>
+              <exclude>*IntegrationTest</exclude>
+            </excludes>
+
+            <failIfNoTests>true</failIfNoTests>
+            <runOrder>random</runOrder>
+            <useModulePath>true</useModulePath>
+
             <!--
               This block is needed to show @DisplayName and @ParameterizedTest
               in reports with the provided names.
             -->
-            <runOrder>random</runOrder>
             <statelessTestsetReporter
               implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
               <disable>false</disable>
@@ -369,14 +437,45 @@
               <goals>
                 <goal>prepare-agent</goal>
               </goals>
+
+              <configuration>
+                <destFile>${project.build.directory}/jacoco-unit.bin</destFile>
+              </configuration>
             </execution>
 
             <execution>
-              <id>report-coverage</id>
+              <id>report-unit-test-coverage</id>
               <phase>test</phase>
               <goals>
                 <goal>report</goal>
               </goals>
+              <configuration>
+                <dataFile>${project.build.directory}/jacoco-unit.bin</dataFile>
+                <outputDirectory>${project.build.directory}/site/jacoco/unit</outputDirectory>
+              </configuration>
+            </execution>
+
+            <execution>
+              <id>add-coverage-agent-to-failsafe-args</id>
+              <phase>pre-integration-test</phase>
+              <goals>
+                <goal>prepare-agent-integration</goal>
+              </goals>
+              <configuration>
+                <destFile>${project.build.directory}/jacoco-int.bin</destFile>
+              </configuration>
+            </execution>
+
+            <execution>
+              <id>report-integration-test-coverage</id>
+              <phase>post-integration-test</phase>
+              <goals>
+                <goal>report-integration</goal>
+              </goals>
+              <configuration>
+                <dataFile>${project.build.directory}/jacoco-int.bin</dataFile>
+                <outputDirectory>${project.build.directory}/site/jacoco/int</outputDirectory>
+              </configuration>
             </execution>
           </executions>
         </plugin>
