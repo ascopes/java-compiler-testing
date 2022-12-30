@@ -337,6 +337,60 @@ class DiagnosticRepresentationTest {
         );
   }
 
+  @DisplayName(
+      "toStringOf(TraceDiagnostic) renders snippets with erroneous end positions correctly"
+  )
+  @Test
+  void toStringOfRendersMultilineSnippetsCorrectlyWithErroneousEndPositions() {
+    // Given
+    var file = someFileObject();
+
+    var kind = oneOf(Kind.values());
+
+    var diag = GenericMock
+        .mockRaw(TraceDiagnostic.class)
+        .<TraceDiagnostic<JavaFileObject>>upcastedTo()
+        .build();
+
+    when(diag.getKind()).thenReturn(kind);
+    when(diag.getLineNumber()).thenReturn(6L);
+    when(diag.getColumnNumber()).thenReturn(16L);
+    when(diag.getStartPosition()).thenReturn(77L);
+    when(diag.getEndPosition()).thenReturn(100_000_000L);
+    when(diag.getSource()).thenReturn(file);
+    when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
+
+    var repr = DiagnosticRepresentation.getInstance();
+
+    // When
+    var result = repr.toStringOf(diag);
+
+    // Then
+    assertThat(result.lines())
+        .containsExactly(
+            "[" + kind.toString() + "] " + file.getName() + " (at line 6, col 16)",
+            "",
+            "     4 | ",
+            "     5 | public class HelloWorld {",
+            "     6 |   public static int main(String[] args) throws Throwable {",
+            "       +   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "     7 |     var scanner = new Scanner(System.in);",
+            "       + ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "     8 |     System.out.print(\"What is your name? \");",
+            "       + ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "     9 |     var name = scanner.nextLine();",
+            "       + ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "    10 |     System.out.printf(\"Hello, %s!\", name);",
+            "       + ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "    11 |   }",
+            "       + ^^^",
+            "    12 | }",
+            "       + ^",
+            "",
+            "    Entrypoint must be a void method."
+        );
+  }
+
   @DisplayName("toStringOf(TraceDiagnostic) renders the diagnostic when source is not present")
   @Test
   void toStringOfTraceDiagnosticRendersTheDiagnosticWhenSourceIsNotPresent() {
