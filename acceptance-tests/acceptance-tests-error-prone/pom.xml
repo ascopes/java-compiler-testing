@@ -30,7 +30,7 @@
       --add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED
     </argLine>
 
-    <error-prone.version>2.16</error-prone.version>
+    <error-prone.version>2.17.0</error-prone.version>
   </properties>
 
   <dependencies>
