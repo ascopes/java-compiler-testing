@@ -51,6 +51,8 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.never;
@@ -76,6 +78,7 @@ import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
 import io.github.ascopes.jct.tests.helpers.Fixtures;
 import io.github.ascopes.jct.tests.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
+import io.github.ascopes.jct.workspaces.ManagedDirectory;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import io.github.ascopes.jct.workspaces.Workspace;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectory;
@@ -1337,9 +1340,56 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   ///////////////////////////////////
 
   @DisplayName("JctJsr199Interop#configureRequiredLocations tests")
+  @ExtendWith(MockitoExtension.class)
   @Nested
   class ConfigureRequiredLocationsTest {
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    Workspace workspace;
 
+    @Mock
+    JctFileManagerImpl fileManager;
+
+    @DisplayName("The expected locations are created when not present")
+    @EnumSource(
+        value = StandardLocation.class,
+        names = {
+            "SOURCE_OUTPUT",
+            "CLASS_OUTPUT",
+            "NATIVE_HEADER_OUTPUT",
+        }
+    )
+    @ParameterizedTest(name = "An empty path for {0} is created when it is not present")
+    void expectedLocationsAreCreated(Location expectedLocation) {
+      // Given
+      when(fileManager.hasLocation(any())).thenReturn(true);
+      when(fileManager.hasLocation(expectedLocation)).thenReturn(false);
+
+      var expectedManagedDirectory = mock(ManagedDirectory.class);
+      when(workspace.createPackage(expectedLocation)).thenReturn(expectedManagedDirectory);
+
+      // When
+      configureRequiredLocations(workspace, fileManager);
+
+      // Then
+      verify(workspace).createPackage(expectedLocation);
+      verify(fileManager).addPath(expectedLocation, expectedManagedDirectory);
+      verifyNoMoreInteractions(workspace);
+    }
+
+    @DisplayName("No locations are created if all are present")
+    @Test
+    void noLocationsAreCreatedIfAllArePresent() {
+      // Given
+      when(fileManager.hasLocation(any())).thenReturn(true);
+
+      // When
+      configureRequiredLocations(workspace, fileManager);
+
+      // Then
+      verifyNoInteractions(workspace);
+      verify(fileManager, atLeastOnce()).hasLocation(any());
+      verifyNoMoreInteractions(fileManager);
+    }
   }
 
   /////////////////////////////
@@ -1347,9 +1397,11 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   /////////////////////////////
 
   @DisplayName("JctJsr199Interop#findCompilationUnits tests")
+  @ExtendWith(MockitoExtension.class)
   @Nested
   class FindCompilationUnitsTest {
-
+    @Mock
+    JctFileManagerImpl fileManager;
   }
 
   ////////////////////////////////
