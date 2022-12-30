@@ -20,7 +20,6 @@ import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import io.github.ascopes.jct.diagnostics.TeeWriter;
 import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import io.github.ascopes.jct.ex.JctCompilerException;
-import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
@@ -568,22 +567,29 @@ public final class JctJsr199Interop extends UtilityClass {
       JctCompiler<?, ?> compiler,
       CompilationTask task
   ) {
-    var processorCount = compiler.getAnnotationProcessors().size();
+    var processors = compiler.getAnnotationProcessors();
     var discovery = compiler.getAnnotationProcessorDiscovery();
 
-    if (processorCount > 0) {
-      LOGGER.debug("Annotation processor discovery is disabled (processors explicitly provided)");
+    if (!processors.isEmpty()) {
+      LOGGER.trace("Annotation processor discovery is disabled (processors explicitly provided)");
+      task.setProcessors(processors);
+      return;
+    }
 
-      task.setProcessors(compiler.getAnnotationProcessors());
+    switch (discovery) {
+      case INCLUDE_DEPENDENCIES:
+        LOGGER.debug("Annotation processor discovery will scan the source paths and dependencies");
+        break;
+      case ENABLED:
+        LOGGER.trace("Annotation processor discovery will scan the source paths");
+        break;
 
-    } else if (discovery == AnnotationProcessorDiscovery.DISABLED) {
-      LOGGER.trace("Annotation processor discovery is disabled (explicitly disabled)");
-
-      // Set the processor list explicitly to instruct the compiler to not perform discovery.
-      task.setProcessors(List.of());
-
-    } else {
-      LOGGER.trace("Annotation processor discovery will be performed");
+      case DISABLED:
+      default:
+        LOGGER.trace("Annotation processor discovery will be disabled");
+        // Set an empty list to avoid discovery being performed.
+        task.setProcessors(List.of());
+        break;
     }
   }
 }

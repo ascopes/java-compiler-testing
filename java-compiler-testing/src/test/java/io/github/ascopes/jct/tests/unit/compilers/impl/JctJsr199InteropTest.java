@@ -20,6 +20,7 @@ import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.buildFileMan
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.buildFlags;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.buildWriter;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.compile;
+import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.configureAnnotationProcessorDiscovery;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.configureAnnotationProcessorPaths;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.configureClassPath;
 import static io.github.ascopes.jct.compilers.impl.JctJsr199Interop.configureJvmSystemModules;
@@ -96,6 +97,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.tools.JavaCompiler;
+import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -1057,6 +1059,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   @ExtendWith(MockitoExtension.class)
   @Nested
   class ConfigureModulePathTest {
+
     @Mock
     MockedStatic<SpecialLocationUtils> specialLocationUtils;
 
@@ -1286,6 +1289,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   @ExtendWith(MockitoExtension.class)
   @Nested
   class ConfigureAnnotationProcessorPathsTest {
+
     @Mock
     JctCompiler<?, ?> compiler;
 
@@ -1347,6 +1351,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   @ExtendWith(MockitoExtension.class)
   @Nested
   class ConfigureRequiredLocationsTest {
+
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     Workspace workspace;
 
@@ -1404,6 +1409,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   @ExtendWith(MockitoExtension.class)
   @Nested
   class FindCompilationUnitsTest {
+
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     MockedStatic<JctJsr199Interop> staticMock;
 
@@ -1459,6 +1465,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   @ExtendWith(MockitoExtension.class)
   @Nested
   class FindCompilationUnitLocationsTest {
+
     @Mock
     JctFileManagerImpl fileManager;
 
@@ -1604,9 +1611,106 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   //////////////////////////////////////////////
 
   @DisplayName("JctJsr199Interop#configureAnnotationProcessorDiscovery tests")
+  @ExtendWith(MockitoExtension.class)
   @Nested
   class ConfigureAnnotationProcessorDiscoveryTest {
 
+    @Mock
+    JctCompiler<?, ?> compiler;
+
+    @Mock
+    CompilationTask task;
+
+    @DisplayName("Disable AP discovery if any Processors are provided and discovery is ENABLED")
+    @ValueSource(ints = {1, 2, 3, 5, 10})
+    @ParameterizedTest(name = "for {0} explicit processor(s)")
+    void disableApDiscoveryIfAnyProcessorsAreProvidedExplicitlyAndDiscoveryEnabled(int count) {
+      disableApDiscoveryIfAnyProcessorsAreProvided(AnnotationProcessorDiscovery.ENABLED, count);
+    }
+
+    @DisplayName("Disable AP discovery if any Processors are provided and discovery is DISABLED")
+    @ValueSource(ints = {1, 2, 3, 5, 10})
+    @ParameterizedTest(name = "for {0} explicit processor(s)")
+    void disableApDiscoveryIfAnyProcessorsAreProvidedExplicitlyAndDiscoveryDisabled(int count) {
+      disableApDiscoveryIfAnyProcessorsAreProvided(AnnotationProcessorDiscovery.DISABLED, count);
+    }
+
+    @DisplayName(
+        "Disable AP discovery if any Processors are provided and discovery is INCLUDE_DEPENDENCIES"
+    )
+    @ValueSource(ints = {1, 2, 3, 5, 10})
+    @ParameterizedTest(name = "for {0} explicit processor(s)")
+    void disableApDiscoveryIfAnyProcessorsAreProvidedExplicitlyAndDiscoveryIncludeDependencies(
+        int count
+    ) {
+      disableApDiscoveryIfAnyProcessorsAreProvided(
+          AnnotationProcessorDiscovery.INCLUDE_DEPENDENCIES,
+          count
+      );
+    }
+
+    private void disableApDiscoveryIfAnyProcessorsAreProvided(
+        AnnotationProcessorDiscovery discovery,
+        int processorCount
+    ) {
+      // Given
+      var processors = Stream.generate(Fixtures::someAnnotationProcessor)
+          .limit(processorCount)
+          .collect(Collectors.toList());
+
+      when(compiler.getAnnotationProcessorDiscovery())
+          .thenReturn(discovery);
+      when(compiler.getAnnotationProcessors())
+          .thenReturn(processors);
+
+      // When
+      configureAnnotationProcessorDiscovery(compiler, task);
+
+      // Then
+      verify(task).setProcessors(processors);
+      verifyNoMoreInteractions(task);
+      verify(compiler).getAnnotationProcessorDiscovery();
+      verify(compiler).getAnnotationProcessors();
+      verifyNoMoreInteractions(compiler);
+    }
+
+    @DisplayName("Enable AP discovery when no processors are provided and discovery is enabled")
+    @EnumSource(
+        value = AnnotationProcessorDiscovery.class,
+        mode = Mode.EXCLUDE,
+        names = {"DISABLED"}
+    )
+    @ParameterizedTest(name = "for discovery mode {0}")
+    void enableApDiscovery(AnnotationProcessorDiscovery discovery) {
+      // Given
+      when(compiler.getAnnotationProcessorDiscovery())
+          .thenReturn(discovery);
+      when(compiler.getAnnotationProcessors())
+          .thenReturn(List.of());
+
+      // When
+      configureAnnotationProcessorDiscovery(compiler, task);
+
+      // Then
+      verifyNoInteractions(task);
+    }
+
+    @DisplayName("Disable AP discovery when no processors are provided and discovery is disabled")
+    @Test
+    void disableApDiscovery() {
+      // Given
+      when(compiler.getAnnotationProcessorDiscovery())
+          .thenReturn(AnnotationProcessorDiscovery.DISABLED);
+      when(compiler.getAnnotationProcessors())
+          .thenReturn(List.of());
+
+      // When
+      configureAnnotationProcessorDiscovery(compiler, task);
+
+      // Then
+      verify(task).setProcessors(List.of());
+      verifyNoMoreInteractions(task);
+    }
   }
 
   @SuppressWarnings("DataFlowIssue")

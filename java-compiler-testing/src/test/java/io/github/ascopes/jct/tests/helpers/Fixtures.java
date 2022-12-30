@@ -41,6 +41,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.processing.Processor;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
@@ -344,6 +345,15 @@ public final class Fixtures {
    */
   public static TempFileSystem someTemporaryFileSystem() {
     return new TempFileSystem();
+  }
+
+  /**
+   * Get some annotation processor.
+   *
+   * @return some annotation processor.
+   */
+  public static Processor someAnnotationProcessor() {
+    return mock(Processor.class, someText() + " processor");
   }
 
   /**
