@@ -111,6 +111,7 @@ public final class TeeWriter extends Writer {
    *
    * @param charset      the charset to write with.
    * @param outputStream the output stream to delegate to.
+   * @return the tee writer.
    */
   public static TeeWriter wrap(
       Charset charset,
@@ -123,6 +124,14 @@ public final class TeeWriter extends Writer {
     return wrap(writer);
   }
 
+  /**
+   * Initialize this writer by wrapping an output stream in an internally-held writer.
+   *
+   * <p>Note that this will not buffer the output stream itself. That is up to you to do.
+   *
+   * @param writer the writer to wrap.
+   * @return the tee writer.
+   */
   public static TeeWriter wrap(@WillCloseWhenClosed Writer writer) {
     return new TeeWriter(writer);
   }
