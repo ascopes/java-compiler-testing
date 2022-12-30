@@ -507,6 +507,10 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     @Mock
     MockedStatic<TeeWriter> teeWriterCls;
 
+    TeeWriter doBuildWriter() {
+      return buildWriter(compiler);
+    }
+
     @DisplayName(".buildWriter(...) initialises the writer and returns it")
     @Test
     void buildWriterInitialisesWriter() {
@@ -519,7 +523,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(expectedWriter);
 
       // When
-      var actualWriter = buildWriter(compiler);
+      var actualWriter = doBuildWriter();
 
       // Then
       teeWriterCls.verify(() -> TeeWriter.wrap(charset, System.out));
@@ -553,11 +557,15 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(expectedFlags);
     }
 
+    List<String> doBuildFlags() {
+      return buildFlags(jctCompiler, flagBuilder);
+    }
+
     @DisplayName(".buildFlags(...) builds the flags and returns them")
     @Test
     void buildFlagsBuildsTheFlags() {
       // When
-      final var actualFlags = buildFlags(jctCompiler, flagBuilder);
+      final var actualFlags = doBuildFlags();
 
       // Then
       verify(flagBuilder)
@@ -823,6 +831,10 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     @Mock
     JctFileManagerImpl fileManager;
 
+    void doConfigureWorkspacePaths() {
+      configureWorkspacePaths(workspace, fileManager);
+    }
+
     @DisplayName("all paths should be added to the file manager")
     @Test
     void allPathsShouldBeAddedToTheFileManager() {
@@ -836,7 +848,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       when(workspace.getAllPaths()).thenReturn(paths);
 
       // When
-      configureWorkspacePaths(workspace, fileManager);
+      doConfigureWorkspacePaths();
 
       // Then
       paths.forEach((location, roots) -> verify(fileManager).addPaths(location, roots));
@@ -882,6 +894,10 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       wrappingDirectory.closeOnDemand();
     }
 
+    void doConfigureClassPath() {
+      configureClassPath(compiler, fileManager);
+    }
+
     @DisplayName("Nothing is configured if classpath inheritance is disabled")
     @Test
     void nothingIsConfiguredIfClasspathInheritanceIsDisabled() {
@@ -889,7 +905,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       when(compiler.isInheritClassPath()).thenReturn(false);
 
       // When
-      configureClassPath(compiler, fileManager);
+      doConfigureClassPath();
 
       // Then
       verifyNoInteractions(fileManager);
@@ -912,7 +928,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(false);
 
       // When
-      configureClassPath(compiler, fileManager);
+      doConfigureClassPath();
 
       // Then
       var captor = ArgumentCaptor.forClass(WrappingDirectory.class);
@@ -952,7 +968,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       modulePaths.forEach(path -> staticMock.when(() -> containsModules(path)).thenReturn(true));
 
       // When
-      configureClassPath(compiler, fileManager);
+      doConfigureClassPath();
 
       // Then
       var classPathCaptor = ArgumentCaptor.forClass(WrappingDirectory.class);
@@ -1084,6 +1100,10 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       wrappingDirectory.closeOnDemand();
     }
 
+    void doConfigureModulePath() {
+      configureModulePath(compiler, fileManager);
+    }
+
     @DisplayName("Nothing is configured if module path inheritance is disabled")
     @Test
     void nothingIsConfiguredIfModulePathInheritanceIsDisabled() {
@@ -1091,7 +1111,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       when(compiler.isInheritModulePath()).thenReturn(false);
 
       // When
-      configureModulePath(compiler, fileManager);
+      doConfigureModulePath();
 
       // Then
       verifyNoInteractions(fileManager);
@@ -1113,7 +1133,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(true);
 
       // When
-      configureModulePath(compiler, fileManager);
+      doConfigureModulePath();
 
       // Then
       var modulePathCaptor = ArgumentCaptor.forClass(WrappingDirectory.class);
@@ -1164,6 +1184,10 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       wrappingDirectory.closeOnDemand();
     }
 
+    void doConfigurePlatformClassPath() {
+      configurePlatformClassPath(compiler, fileManager);
+    }
+
     @DisplayName("Nothing is configured if platform classpath inheritance is disabled")
     @Test
     void nothingIsConfiguredIfPlatformClasspathInheritanceIsDisabled() {
@@ -1171,7 +1195,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       when(compiler.isInheritPlatformClassPath()).thenReturn(false);
 
       // When
-      configurePlatformClassPath(compiler, fileManager);
+      doConfigurePlatformClassPath();
 
       // Then
       verifyNoInteractions(fileManager);
@@ -1193,7 +1217,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(true);
 
       // When
-      configurePlatformClassPath(compiler, fileManager);
+      doConfigurePlatformClassPath();
 
       // Then
       var captor = ArgumentCaptor.forClass(WrappingDirectory.class);
@@ -1239,6 +1263,10 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       wrappingDirectory.closeOnDemand();
     }
 
+    void doConfigureJvmSystemModules() {
+      configureJvmSystemModules(compiler, fileManager);
+    }
+
     @DisplayName("Nothing is configured if system module inheritance is disabled")
     @Test
     void nothingIsConfiguredIfSystemModuleInheritanceIsDisabled() {
@@ -1246,7 +1274,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       when(compiler.isInheritSystemModulePath()).thenReturn(false);
 
       // When
-      configureJvmSystemModules(compiler, fileManager);
+      doConfigureJvmSystemModules();
 
       // Then
       verifyNoInteractions(fileManager);
@@ -1268,7 +1296,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(true);
 
       // When
-      configureJvmSystemModules(compiler, fileManager);
+      doConfigureJvmSystemModules();
 
       // Then
       var captor = ArgumentCaptor.forClass(WrappingDirectory.class);
@@ -1296,6 +1324,10 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     @Mock
     JctFileManagerImpl fileManager;
 
+    void doConfigureAnnotationProcessorPaths() {
+      configureAnnotationProcessorPaths(compiler, fileManager);
+    }
+
     @DisplayName("Ensure containers copied when AP discovery included with dependencies")
     @Test
     void ensureContainersAreCopiedWhenApDiscoveryIncludedWithDependencies() {
@@ -1304,7 +1336,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(AnnotationProcessorDiscovery.INCLUDE_DEPENDENCIES);
 
       // When
-      configureAnnotationProcessorPaths(compiler, fileManager);
+      doConfigureAnnotationProcessorPaths();
 
       // Then
       verify(fileManager)
@@ -1322,7 +1354,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(discovery);
 
       // When
-      configureAnnotationProcessorPaths(compiler, fileManager);
+      doConfigureAnnotationProcessorPaths();
 
       // Then
       verify(fileManager).ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
@@ -1336,7 +1368,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(AnnotationProcessorDiscovery.DISABLED);
 
       // When
-      configureAnnotationProcessorPaths(compiler, fileManager);
+      doConfigureAnnotationProcessorPaths();
 
       // Then
       verifyNoInteractions(fileManager);
@@ -1358,6 +1390,10 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     @Mock
     JctFileManagerImpl fileManager;
 
+    void doConfigureRequiredLocations() {
+      configureRequiredLocations(workspace, fileManager);
+    }
+
     @DisplayName("The expected locations are created when not present")
     @EnumSource(
         value = StandardLocation.class,
@@ -1377,7 +1413,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       when(workspace.createPackage(expectedLocation)).thenReturn(expectedManagedDirectory);
 
       // When
-      configureRequiredLocations(workspace, fileManager);
+      doConfigureRequiredLocations();
 
       // Then
       verify(workspace).createPackage(expectedLocation);
@@ -1392,7 +1428,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       when(fileManager.hasLocation(any())).thenReturn(true);
 
       // When
-      configureRequiredLocations(workspace, fileManager);
+      doConfigureRequiredLocations();
 
       // Then
       verifyNoInteractions(workspace);
@@ -1422,6 +1458,10 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenCallRealMethod();
     }
 
+    List<JavaFileObject> doFindCompilationUnits() throws IOException {
+      return findCompilationUnits(fileManager);
+    }
+
     @DisplayName("All compilation units are returned")
     @Test
     void allCompilationUnitsAreReturned() throws IOException {
@@ -1443,7 +1483,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       }
 
       // When
-      var actualFiles = findCompilationUnits(fileManager);
+      var actualFiles = doFindCompilationUnits();
 
       // Then
       for (var location : locationsAndFiles.keySet()) {
@@ -1468,6 +1508,10 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
 
     @Mock
     JctFileManagerImpl fileManager;
+
+    List<Location> doFindCompilationUnitLocations() throws IOException {
+      return findCompilationUnitLocations(fileManager);
+    }
 
     @DisplayName("Modules are returned if present")
     @Test
@@ -1494,7 +1538,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(listLocationsForModulesResult);
 
       // When
-      var result = findCompilationUnitLocations(fileManager);
+      var result = doFindCompilationUnitLocations();
 
       // Then
       verify(fileManager).listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH);
@@ -1528,7 +1572,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(listLocationsForModulesResult);
 
       // When
-      var result = findCompilationUnitLocations(fileManager);
+      var result = doFindCompilationUnitLocations();
 
       // Then
       assertThat(result).doesNotContain(StandardLocation.SOURCE_PATH);
@@ -1541,7 +1585,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(List.of());
 
       // When
-      var result = findCompilationUnitLocations(fileManager);
+      var result = doFindCompilationUnitLocations();
 
       // Then
       assertThat(result)
@@ -1566,6 +1610,10 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     @Mock
     JctCompiler<?, ?> compiler;
 
+    TracingDiagnosticListener<JavaFileObject> doBuildDiagnosticListener() {
+      return buildDiagnosticListener(compiler);
+    }
+
     @DisplayName("TracingDiagnosticListener is initialised with the expected arguments")
     @CsvSource({
         "STACKTRACES,  true,  true",
@@ -1582,7 +1630,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       when(compiler.getDiagnosticLoggingMode()).thenReturn(loggingMode);
 
       // When
-      var listener = buildDiagnosticListener(compiler);
+      var listener = doBuildDiagnosticListener();
 
       // Then
       assertSoftly(softly -> {
@@ -1601,6 +1649,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   ////////////////////////////
 
   @DisplayName("JctJsr199Interop#performCompilerPass tests")
+  @ExtendWith(MockitoExtension.class)
   @Nested
   class PerformCompilerPassTest {
 
@@ -1620,6 +1669,10 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
 
     @Mock
     CompilationTask task;
+
+    void doConfigureAnnotationProcessorDiscovery() {
+      configureAnnotationProcessorDiscovery(compiler, task);
+    }
 
     @DisplayName("Disable AP discovery if any Processors are provided and discovery is ENABLED")
     @ValueSource(ints = {1, 2, 3, 5, 10})
@@ -1664,7 +1717,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(processors);
 
       // When
-      configureAnnotationProcessorDiscovery(compiler, task);
+      doConfigureAnnotationProcessorDiscovery();
 
       // Then
       verify(task).setProcessors(processors);
@@ -1689,7 +1742,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(List.of());
 
       // When
-      configureAnnotationProcessorDiscovery(compiler, task);
+      doConfigureAnnotationProcessorDiscovery();
 
       // Then
       verifyNoInteractions(task);
@@ -1705,7 +1758,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(List.of());
 
       // When
-      configureAnnotationProcessorDiscovery(compiler, task);
+      doConfigureAnnotationProcessorDiscovery();
 
       // Then
       verify(task).setProcessors(List.of());
