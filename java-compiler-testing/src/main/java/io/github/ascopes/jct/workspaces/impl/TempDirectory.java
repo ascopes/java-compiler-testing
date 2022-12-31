@@ -53,8 +53,8 @@ public final class TempDirectory extends AbstractManagedDirectory {
 
   private final Path rootDirectory;
 
-  private TempDirectory(String name, Path rootDirectory, String separator) {
-    super(name, rootDirectory, separator);
+  private TempDirectory(String name, Path rootDirectory) {
+    super(name, rootDirectory);
     this.rootDirectory = rootDirectory;
   }
 
@@ -96,6 +96,6 @@ public final class TempDirectory extends AbstractManagedDirectory {
     assertValidRootName(name);
     var tempDir = uncheckedIo(() -> Files.createTempDirectory("jct-" + name + "_"));
     LOGGER.debug("Initialized new root '{}' using temporary path at {}", name, tempDir);
-    return new TempDirectory(name, tempDir, tempDir.getFileSystem().getSeparator());
+    return new TempDirectory(name, tempDir);
   }
 }

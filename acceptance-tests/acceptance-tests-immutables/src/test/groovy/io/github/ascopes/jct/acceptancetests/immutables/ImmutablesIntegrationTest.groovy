@@ -42,7 +42,6 @@ class ImmutablesIntegrationTest {
       // Given
       workspace
           .createSourcePathPackage()
-          .rootDirectory()
           .copyContentsFrom("src", "test", "resources", "code", "flat")
 
       def compilation = compiler.compile(workspace)
@@ -77,7 +76,6 @@ class ImmutablesIntegrationTest {
       // Given
       workspace
           .createSourcePathPackage()
-          .rootDirectory()
           .copyContentsFrom("src", "test", "resources", "code", "jpms")
 
       def compilation = compiler.compile(workspace)

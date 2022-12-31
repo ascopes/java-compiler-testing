@@ -42,7 +42,6 @@ class LombokIntegrationTest {
       // Given
       workspace
           .createSourcePathPackage()
-          .rootDirectory()
           .copyContentsFrom("src", "test", "resources", "code", "flat")
 
       // When
@@ -76,7 +75,6 @@ class LombokIntegrationTest {
       // Given
       workspace
           .createSourcePathPackage()
-          .rootDirectory()
           .copyContentsFrom("src", "test", "resources", "code", "jpms")
 
       // When

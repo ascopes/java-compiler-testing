@@ -32,7 +32,6 @@ class AvajeInjectTest {
     try (def workspace = Workspaces.newWorkspace()) {
       workspace
           .createSourcePathPackage()
-          .rootDirectory()
           .copyContentsFrom("src", "test", "resources", "code")
 
       // When
