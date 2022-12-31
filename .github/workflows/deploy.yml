@@ -19,13 +19,9 @@ jobs:
     name: Build
     uses: ./.github/workflows/build.yml
 
-  compliance:
-    name: Build
-    uses: ./.github/workflows/compliance.yml
-
   github:
     name: "Deploy to GitHub"
-    needs: [build, compliance]
+    needs: [build]
     runs-on: ubuntu-22.04
 
     permissions:
