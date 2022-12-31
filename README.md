@@ -84,6 +84,7 @@ class ExampleTest {
           .isNotEmptyFile();
     }
   }
+}
 ```
 
 ### Compiling and testing with a custom annotation processor
