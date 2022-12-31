@@ -107,7 +107,8 @@ public final class WrappingDirectoryImpl implements PathRoot {
 
   @Override
   public boolean equals(@Nullable Object that) {
-    return that instanceof PathRoot && ((PathRoot) that).getUri().equals(uri);
+    return that instanceof WrappingDirectoryImpl
+        && ((WrappingDirectoryImpl) that).getUri().equals(uri);
   }
 
   @Override
