@@ -281,15 +281,6 @@ jobs:
         with:
           path: 'artifacts/'
 
-      - name: Publish to codecov
-        continue-on-error: true
-        if: always()
-        uses: codecov/codecov-action@v3
-        with:
-          fail_ci_if_error: true
-          flags: unit,integration
-          verbose: true
-
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
@@ -304,3 +295,23 @@ jobs:
           report_individual_runs: false
           test_changes_limit: 500
           time_unit: "milliseconds"
+
+      - name: Validate codecov.yml
+        shell: bash
+        continue-on-error: false
+        run: curl --data-binary --fail @codecov.yml https://codecov.io/validate
+
+      - name: Publish to codecov
+        continue-on-error: true
+        if: always()
+        shell: bash
+        run: |-
+          curl --fail https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring \
+              --keyring trustedkeys.gpg --import
+          curl --fail -Os https://uploader.codecov.io/latest/linux/codecov
+          curl --fail -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
+          curl --fail -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig
+          gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
+          shasum -a 256 -c codecov.SHA256SUM
+          chmod -v +x codecov
+          ./codecov -c -F unit -F integration -v
