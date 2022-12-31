@@ -16,11 +16,9 @@
 package io.github.ascopes.jct.tests.unit.workspaces.impl;
 
 import static io.github.ascopes.jct.tests.helpers.Fixtures.somePath;
-import static io.github.ascopes.jct.tests.helpers.Fixtures.somePathRoot;
 import static io.github.ascopes.jct.utils.FileUtils.retrieveRequiredUrl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
@@ -151,6 +149,7 @@ class WrappingDirectoryImplTest {
   @DisplayName("WrappingDirectoryImpl#equals tests")
   @Nested
   class EqualsTest {
+
     WrappingDirectoryImpl wrappingDirectory;
 
     @BeforeEach

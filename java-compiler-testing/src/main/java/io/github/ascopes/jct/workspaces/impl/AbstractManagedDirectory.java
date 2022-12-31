@@ -132,19 +132,14 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
   }
 
   @Override
-  public boolean equals(@Nullable Object other) {
-    if (!(other instanceof AbstractManagedDirectory)) {
-      return false;
-    }
-
-    var that = (AbstractManagedDirectory) other;
-
-    return name.equals(that.name) && uri.equals(that.uri);
+  public boolean equals(@Nullable Object that) {
+    return that instanceof AbstractManagedDirectory
+        && ((AbstractManagedDirectory) that).uri.equals(uri);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, uri);
+    return uri.hashCode();
   }
 
   @Override
