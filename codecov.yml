@@ -20,37 +20,38 @@ coverage:
   round: down
 
 # Feature flags
-flag_management:
-  default_rules:
-    carryforward: true
-    statuses:
-      - type: project
-        target: auto
-        threshold: 1%
-      - type: patch
-        target: 90%
-
-  individual_flags:
-    # Unit testing coverage
-    - name: unit
-      carryforward: true
-      paths:
-        - '**/target/site/jacoco/unit/jacoco*.xml'
-      statuses:
-        - type: project
-          target: auto
-          threshold: 65%
-        - type: patch
-          target: 90%
-
-    # Integration testing coverage
-    - name: integration
-      carryforward: true
-      paths:
-        - '**/target/site/jacoco/int/jacoco*.xml'
-      statuses:
-        - type: project
-          target: auto
-          threshold: 0%
-        - type: patch
-          target: 0%
+# TODO: enable when codecov fix this feature, and then readd flags in uploader for build.yml
+#flag_management:
+#  default_rules:
+#    carryforward: true
+#    statuses:
+#      - type: project
+#        target: auto
+#        threshold: 1%
+#      - type: patch
+#        target: 90%
+#
+#  individual_flags:
+#    # Unit testing coverage
+#    - name: unit
+#      carryforward: true
+#      paths:
+#        - '**/target/site/jacoco/unit/jacoco*.xml'
+#      statuses:
+#        - type: project
+#          target: auto
+#          threshold: 65%
+#        - type: patch
+#          target: 90%
+#
+#    # Integration testing coverage
+#    - name: integration
+#      carryforward: true
+#      paths:
+#        - '**/target/site/jacoco/int/jacoco*.xml'
+#      statuses:
+#        - type: project
+#          target: auto
+#          threshold: 0%
+#        - type: patch
+#          target: 0%

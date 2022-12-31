@@ -314,4 +314,6 @@ jobs:
           gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
           shasum -a 256 -c codecov.SHA256SUM
           chmod -v +x codecov
-          ./codecov -c -F unit -F integration -v
+          ./codecov
+          # TODO: replace original call with this when the feature actually works properly.
+          #./codecov -c -F unit -F integration -v
