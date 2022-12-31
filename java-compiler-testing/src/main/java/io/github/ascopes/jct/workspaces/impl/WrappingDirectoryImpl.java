@@ -15,16 +15,16 @@
  */
 package io.github.ascopes.jct.workspaces.impl;
 
+import static io.github.ascopes.jct.utils.FileUtils.resolvePathRecursively;
 import static io.github.ascopes.jct.utils.FileUtils.retrieveRequiredUrl;
+import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
-import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.Objects;
 import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -53,7 +53,7 @@ public final class WrappingDirectoryImpl implements PathRoot {
    * Initialize this path root from a given path.
    *
    * @param path the NIO path to wrap.
-   * @throws IllegalArgumentException if the path does not support dereferencing URLs (i.e. no URL
+   * @throws IllegalArgumentException if the path does not support de-referencing URLs (i.e. no URL
    *                                  protocol handler is registered for the associated
    *                                  {@link java.nio.file.FileSystem} providing the path).
    */
@@ -66,12 +66,15 @@ public final class WrappingDirectoryImpl implements PathRoot {
    *
    * @param parent the outer path-wrapper to use.
    * @param parts  the relative parts to resolve.
-   * @throws IllegalArgumentException if the path does not support dereferencing URLs (i.e. no URL
+   * @throws IllegalArgumentException if the path does not support de-referencing URLs (i.e. no URL
    *                                  protocol handler is registered for the associated
    *                                  {@link java.nio.file.FileSystem} providing the path).
    */
   public WrappingDirectoryImpl(PathRoot parent, String... parts) {
-    this(parent, FileUtils.resolvePathRecursively(parent.getPath(), parts));
+    this(
+        requireNonNull(parent, "parent"),
+        resolvePathRecursively(parent.getPath(), requireNonNullValues(parts, "parts"))
+    );
   }
 
   private WrappingDirectoryImpl(@Nullable PathRoot parent, Path path) {
@@ -103,19 +106,13 @@ public final class WrappingDirectoryImpl implements PathRoot {
   }
 
   @Override
-  public boolean equals(@Nullable Object other) {
-    if (!(other instanceof PathRoot)) {
-      return false;
-    }
-
-    var that = (PathRoot) other;
-
-    return uri.equals(that.getUri());
+  public boolean equals(@Nullable Object that) {
+    return that instanceof PathRoot && ((PathRoot) that).getUri().equals(uri);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uri);
+    return uri.hashCode();
   }
 
   @Override
