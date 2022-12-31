@@ -1,7 +1,9 @@
 # General behaviour.
 codecov:
+  branch: main
   max_report_age: 12
   require_ci_to_pass: true
+  strict_yaml_branch: main
 
 # PR comment format.
 comment:
@@ -31,6 +33,7 @@ flag_management:
   individual_flags:
     # Unit testing coverage
     - name: unit
+      carryforward: true
       paths:
         - '**/target/site/jacoco/unit/jacoco*.xml'
       statuses:
@@ -42,6 +45,7 @@ flag_management:
 
     # Integration testing coverage
     - name: integration
+      carryforward: true
       paths:
         - '**/target/site/jacoco/int/jacoco*.xml'
       statuses:
