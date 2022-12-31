@@ -239,32 +239,6 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
   }
 
   /**
-   * Get an <strong>immutable snapshot view</strong> of the current runtime options that are set.
-   *
-   * @return the current runtime options that are set.
-   */
-  List<String> getRuntimeOptions();
-
-  /**
-   * Add options to pass to the Java runtime.
-   *
-   * @param runtimeOptions the options to pass to the runtime.
-   * @return this compiler for further call chaining.
-   */
-  C addRuntimeOptions(Iterable<String> runtimeOptions);
-
-  /**
-   * Add options to pass to the Java runtime.
-   *
-   * @param runtimeOption  the first option to pass to the runtime.
-   * @param runtimeOptions additional options to pass to the runtime.
-   * @return this compiler for further call chaining.
-   */
-  default C addRuntimeOptions(String runtimeOption, String... runtimeOptions) {
-    return addRuntimeOptions(IterableUtils.combineOneOrMore(runtimeOption, runtimeOptions));
-  }
-
-  /**
    * Determine whether verbose logging is enabled or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to

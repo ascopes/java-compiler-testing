@@ -98,12 +98,6 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   }
 
   @Override
-  public JavacJctFlagBuilderImpl runtimeOptions(List<String> options) {
-    options.forEach(option -> craftedFlags.add(RUNTIME_OPT + option));
-    return this;
-  }
-
-  @Override
   public JavacJctFlagBuilderImpl compilerOptions(List<String> options) {
     craftedFlags.addAll(options);
     return this;

@@ -179,15 +179,6 @@ class AbstractJctCompilerTest {
           .isEmpty();
     }
 
-    @DisplayName("constructor initialises runtimeOptions to empty list")
-    @Test
-    void constructorInitialisesRuntimeOptionsToEmptyList() {
-      // Then
-      assertThatCompilerField("runtimeOptions")
-          .asList()
-          .isEmpty();
-    }
-
     @DisplayName("constructor initialises showWarnings to default value")
     @Test
     void constructorInitialisesShowWarningsToDefaultValue() {
@@ -798,58 +789,6 @@ class AbstractJctCompilerTest {
     void addCompilerOptionsReturnsTheCompiler() {
       // When
       var result = compiler.addCompilerOptions(List.of("foo", "bar"));
-
-      // Then
-      assertThat(result).isSameAs(compiler);
-    }
-  }
-
-  @DisplayName(".getRuntimeOptions returns a copy of the expected value")
-  @Test
-  void getRuntimeOptionsReturnsCopyOfTheExpectedValue() {
-    // Given
-    // Arrays#asList returns a mutable copy which is important as List#copyOf will not copy
-    // immutable lists made from List#of, as an internal optimisation.
-    var fieldValue = Arrays.asList("foo", "bar", "baz");
-    setFieldOnCompiler("runtimeOptions", fieldValue);
-
-    // When
-    var actual = compiler.getRuntimeOptions();
-
-    // Then
-    assertThat(actual)
-        .isEqualTo(fieldValue)
-        .isNotSameAs(fieldValue);
-  }
-
-  @DisplayName("AbstractJctCompiler#addRuntimeOptions tests")
-  @Nested
-  class AddRuntimeOptionsTest {
-
-    @DisplayName(".addRuntimeOptions(...) adds the expected values")
-    @Test
-    void addRuntimeOptionsAddsTheExpectedValues() {
-      // Given
-      final var first = List.of("foo", "bar", "baz");
-      final var second = List.of("baz", "bork", "qux", "quxx");
-      final var third = List.of("eggs", "spam");
-      final var joined = concat(first, second, third);
-
-      // When
-      compiler.addRuntimeOptions(first);
-      compiler.addRuntimeOptions(second);
-      compiler.addRuntimeOptions(third);
-
-      // Then
-      assertThatCompilerField("runtimeOptions")
-          .isEqualTo(joined);
-    }
-
-    @DisplayName(".addRuntimeOptions(...) returns the compiler")
-    @Test
-    void addRuntimeOptionsReturnsTheCompiler() {
-      // When
-      var result = compiler.addRuntimeOptions(List.of("foo", "bar"));
 
       // Then
       assertThat(result).isSameAs(compiler);

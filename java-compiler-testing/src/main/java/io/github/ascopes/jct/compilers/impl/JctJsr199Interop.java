@@ -186,7 +186,6 @@ public final class JctJsr199Interop extends UtilityClass {
         .showDeprecationWarnings(compiler.isShowDeprecationWarnings())
         .failOnWarnings(compiler.isFailOnWarnings())
         .compilerOptions(compiler.getCompilerOptions())
-        .runtimeOptions(compiler.getRuntimeOptions())
         .previewFeatures(compiler.isPreviewFeatures())
         .release(compiler.getRelease())
         .source(compiler.getSource())

@@ -113,26 +113,6 @@ class JctCompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("addRuntimeOptions(String, String...) should call the expected method")
-  @Test
-  void addRuntimeOptionsCallsTheExpectedMethod() {
-    // Given
-    given(compiler.addRuntimeOptions(any(String.class), any(String.class)))
-        .willCallRealMethod();
-    given(compiler.addRuntimeOptions(any(Iterable.class)))
-        .will(ctx -> compiler);
-
-    var first = someText();
-    var second = someText();
-
-    // When
-    var result = compiler.addRuntimeOptions(first, second);
-
-    // Then
-    then(compiler).should().addRuntimeOptions(Arrays.asList(first, second));
-    assertThat(result).isSameAs(compiler);
-  }
-
   @DisplayName("releaseVersion(int) should call releaseVersion(String)")
   @ValueSource(ints = {11, 12, 13, 14, 15, 16, 17})
   @ParameterizedTest(name = "for version = {0}")

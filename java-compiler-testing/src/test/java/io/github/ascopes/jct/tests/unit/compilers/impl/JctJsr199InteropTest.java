@@ -577,8 +577,6 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       verify(flagBuilder)
           .compilerOptions(jctCompiler.getCompilerOptions());
       verify(flagBuilder)
-          .runtimeOptions(jctCompiler.getRuntimeOptions());
-      verify(flagBuilder)
           .previewFeatures(jctCompiler.isPreviewFeatures());
       verify(flagBuilder)
           .release(jctCompiler.getRelease());

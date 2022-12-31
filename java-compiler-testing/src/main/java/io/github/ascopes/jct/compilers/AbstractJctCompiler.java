@@ -61,7 +61,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   private final List<Processor> annotationProcessors;
   private final List<String> annotationProcessorOptions;
   private final List<String> compilerOptions;
-  private final List<String> runtimeOptions;
   private boolean showWarnings;
   private boolean showDeprecationWarnings;
   private boolean failOnWarnings;
@@ -100,7 +99,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     annotationProcessors = new ArrayList<>();
     annotationProcessorOptions = new ArrayList<>();
     compilerOptions = new ArrayList<>();
-    runtimeOptions = new ArrayList<>();
     showWarnings = JctCompiler.DEFAULT_SHOW_WARNINGS;
     showDeprecationWarnings = JctCompiler.DEFAULT_SHOW_DEPRECATION_WARNINGS;
     failOnWarnings = JctCompiler.DEFAULT_FAIL_ON_WARNINGS;
@@ -249,18 +247,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   public A addCompilerOptions(Iterable<String> compilerOptions) {
     requireNonNullValues(compilerOptions, "compilerOptions");
     compilerOptions.forEach(this.compilerOptions::add);
-    return myself();
-  }
-
-  @Override
-  public List<String> getRuntimeOptions() {
-    return List.copyOf(runtimeOptions);
-  }
-
-  @Override
-  public A addRuntimeOptions(Iterable<String> runtimeOptions) {
-    requireNonNullValues(runtimeOptions, "runtimeOptions");
-    runtimeOptions.forEach(this.runtimeOptions::add);
     return myself();
   }
 

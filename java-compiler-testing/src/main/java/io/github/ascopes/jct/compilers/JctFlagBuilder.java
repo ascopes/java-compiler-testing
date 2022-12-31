@@ -101,14 +101,6 @@ public interface JctFlagBuilder {
   JctFlagBuilder annotationProcessorOptions(List<String> options);
 
   /**
-   * Add runtime options.
-   *
-   * @param options the options to pass to the runtime.
-   * @return this builder.
-   */
-  JctFlagBuilder runtimeOptions(List<String> options);
-
-  /**
    * Add additional command line options.
    *
    * @param options the additional commandline options to add.

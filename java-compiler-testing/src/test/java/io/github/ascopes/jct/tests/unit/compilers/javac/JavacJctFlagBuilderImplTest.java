@@ -282,25 +282,6 @@ class JavacJctFlagBuilderImplTest {
         .containsSequence(options);
   }
 
-  @DisplayName("Setting .runtimeOptions(List<String>) adds the options")
-  @Test
-  void addsRuntimeOptions() {
-    // Given
-    var options = Stream
-        .generate(() -> someText())
-        .limit(5)
-        .collect(Collectors.toList());
-
-    // When
-    flagBuilder.runtimeOptions(options);
-
-    // Then
-    assertThat(flagBuilder.build())
-        .containsSequence(options.stream()
-            .map("-J"::concat)
-            .collect(Collectors.toList()));
-  }
-
   @Order(Integer.MAX_VALUE - 1)
   @DisplayName("The flag builder adds multiple flags correctly")
   @Test
