@@ -39,21 +39,21 @@ import org.slf4j.LoggerFactory;
  * {@link java.io.File}, {@link java.io.FileInputStream}, etc.
  *
  * <p>The downside to this is that if the JVM crashes, the directory may not be deleted. It may
- * also be slower than {@link RamDirectory}, and does not provide isolation from the environment
+ * also be slower than {@link RamDirectoryImpl}, and does not provide isolation from the environment
  * that the tests are running in.
  *
  * @author Ashley Scopes
- * @see RamDirectory
+ * @see RamDirectoryImpl
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class TempDirectory extends AbstractManagedDirectory {
+public final class TempDirectoryImpl extends AbstractManagedDirectory {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(TempDirectory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TempDirectoryImpl.class);
 
   private final Path rootDirectory;
 
-  private TempDirectory(String name, Path rootDirectory) {
+  private TempDirectoryImpl(String name, Path rootDirectory) {
     super(name, rootDirectory);
     this.rootDirectory = rootDirectory;
   }
@@ -91,11 +91,11 @@ public final class TempDirectory extends AbstractManagedDirectory {
    * @return the temporary directory.
    */
   @CheckReturnValue
-  public static TempDirectory newTempDirectory(String name) {
+  public static TempDirectoryImpl newTempDirectory(String name) {
     // TODO(ascopes): are MS-DOS file name length limits a potential issue here?
     assertValidRootName(name);
     var tempDir = uncheckedIo(() -> Files.createTempDirectory("jct-" + name + "_"));
     LOGGER.debug("Initialized new root '{}' using temporary path at {}", name, tempDir);
-    return new TempDirectory(name, tempDir);
+    return new TempDirectoryImpl(name, tempDir);
   }
 }

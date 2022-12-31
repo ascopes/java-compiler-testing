@@ -16,8 +16,8 @@
 package io.github.ascopes.jct.workspaces;
 
 import io.github.ascopes.jct.workspaces.impl.AbstractManagedDirectory;
-import io.github.ascopes.jct.workspaces.impl.RamDirectory;
-import io.github.ascopes.jct.workspaces.impl.TempDirectory;
+import io.github.ascopes.jct.workspaces.impl.RamDirectoryImpl;
+import io.github.ascopes.jct.workspaces.impl.TempDirectoryImpl;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.function.Function;
@@ -49,7 +49,7 @@ public enum PathStrategy {
    * <p>Some non-Javac compiler implementations (such as ECJ) may also have some difficulties
    * dealing with these paths.
    */
-  RAM_DIRECTORIES(RamDirectory::newRamDirectory),
+  RAM_DIRECTORIES(RamDirectoryImpl::newRamDirectory),
 
   /**
    * Use OS-level temporary directories for any created directories.
@@ -65,7 +65,7 @@ public enum PathStrategy {
    * {@link File default file system}, they are compatible with any annotation processors or
    * compiler implementations that expect to be run on the default file system only.
    */
-  TEMP_DIRECTORIES(TempDirectory::newTempDirectory);
+  TEMP_DIRECTORIES(TempDirectoryImpl::newTempDirectory);
 
   private final Function<String, AbstractManagedDirectory> constructor;
 

@@ -28,13 +28,10 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.StringJoiner;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base for implementing a reusable managed wrapper around a directory of some sort.
@@ -47,8 +44,6 @@ import org.slf4j.LoggerFactory;
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 public abstract class AbstractManagedDirectory implements ManagedDirectory {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractManagedDirectory.class);
 
   private final String name;
   private final Path rootDirectory;

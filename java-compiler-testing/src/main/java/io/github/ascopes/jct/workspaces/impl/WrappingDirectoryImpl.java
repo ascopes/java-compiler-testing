@@ -34,15 +34,15 @@ import org.apiguardian.api.API.Status;
  * {@link PathRoot} API.
  *
  * <p>This is not designed to be used by users. The API will handle wrapping paths internally for
- * you. You may be interested in using {@link RamDirectory}, however.
+ * you. You may be interested in using {@link RamDirectoryImpl}, however.
  *
  * @author Ashley Scopes
- * @see RamDirectory
- * @see TempDirectory
+ * @see RamDirectoryImpl
+ * @see TempDirectoryImpl
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class WrappingDirectory implements PathRoot {
+public final class WrappingDirectoryImpl implements PathRoot {
 
   private final @Nullable PathRoot parent;
   private final Path path;
@@ -57,7 +57,7 @@ public final class WrappingDirectory implements PathRoot {
    *                                  protocol handler is registered for the associated
    *                                  {@link java.nio.file.FileSystem} providing the path).
    */
-  public WrappingDirectory(Path path) {
+  public WrappingDirectoryImpl(Path path) {
     this(null, path);
   }
 
@@ -70,11 +70,11 @@ public final class WrappingDirectory implements PathRoot {
    *                                  protocol handler is registered for the associated
    *                                  {@link java.nio.file.FileSystem} providing the path).
    */
-  public WrappingDirectory(PathRoot parent, String... parts) {
+  public WrappingDirectoryImpl(PathRoot parent, String... parts) {
     this(parent, FileUtils.resolvePathRecursively(parent.getPath(), parts));
   }
 
-  private WrappingDirectory(@Nullable PathRoot parent, Path path) {
+  private WrappingDirectoryImpl(@Nullable PathRoot parent, Path path) {
     this.parent = parent;
     this.path = requireNonNull(path, "path");
     uri = path.toUri();

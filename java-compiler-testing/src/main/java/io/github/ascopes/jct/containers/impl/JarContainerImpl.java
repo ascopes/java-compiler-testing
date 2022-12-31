@@ -24,7 +24,7 @@ import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import io.github.ascopes.jct.workspaces.PathRoot;
-import io.github.ascopes.jct.workspaces.impl.WrappingDirectory;
+import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.FileSystem;
@@ -291,7 +291,7 @@ public final class JarContainerImpl implements Container {
               .map(root::relativize)
               .forEach(path -> packages.put(
                   FileUtils.pathToBinaryName(path),
-                  new WrappingDirectory(root.resolve(path))
+                  new WrappingDirectoryImpl(root.resolve(path))
               ));
         }
       }

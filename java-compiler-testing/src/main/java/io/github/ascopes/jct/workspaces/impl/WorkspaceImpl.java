@@ -93,7 +93,7 @@ public final class WorkspaceImpl implements Workspace {
       throw new IllegalArgumentException("Path " + path + " does not exist");
     }
 
-    var dir = new WrappingDirectory(path);
+    var dir = new WrappingDirectoryImpl(path);
     paths.computeIfAbsent(location, unused -> new ArrayList<>()).add(dir);
   }
 

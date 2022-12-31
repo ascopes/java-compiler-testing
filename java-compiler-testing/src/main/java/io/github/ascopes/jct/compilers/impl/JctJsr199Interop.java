@@ -30,7 +30,7 @@ import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.UtilityClass;
 import io.github.ascopes.jct.workspaces.Workspace;
-import io.github.ascopes.jct.workspaces.impl.WrappingDirectory;
+import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
 import java.io.IOException;
 import java.lang.module.FindException;
 import java.lang.module.ModuleFinder;
@@ -275,7 +275,7 @@ public final class JctJsr199Interop extends UtilityClass {
   ) {
     if (compiler.isInheritClassPath()) {
       for (var path : SpecialLocationUtils.currentClassPathLocations()) {
-        var wrapper = new WrappingDirectory(path);
+        var wrapper = new WrappingDirectoryImpl(path);
 
         LOGGER.trace("Adding {} to the class path", path);
         fileManager.addPath(StandardLocation.CLASS_PATH, wrapper);
@@ -321,7 +321,7 @@ public final class JctJsr199Interop extends UtilityClass {
   ) {
     if (compiler.isInheritModulePath()) {
       for (var path : SpecialLocationUtils.currentModulePathLocations()) {
-        var wrapper = new WrappingDirectory(path);
+        var wrapper = new WrappingDirectoryImpl(path);
 
         LOGGER.trace("Adding {} to the module path and class path", path);
 
@@ -346,7 +346,7 @@ public final class JctJsr199Interop extends UtilityClass {
   ) {
     if (compiler.isInheritPlatformClassPath()) {
       for (var path : SpecialLocationUtils.currentPlatformClassPathLocations()) {
-        var wrapper = new WrappingDirectory(path);
+        var wrapper = new WrappingDirectoryImpl(path);
 
         LOGGER.trace("Adding {} to the platform class path", path);
         fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH, wrapper);
@@ -366,7 +366,7 @@ public final class JctJsr199Interop extends UtilityClass {
   ) {
     if (compiler.isInheritSystemModulePath()) {
       for (var path : SpecialLocationUtils.javaRuntimeLocations()) {
-        var wrapper = new WrappingDirectory(path);
+        var wrapper = new WrappingDirectoryImpl(path);
 
         LOGGER.trace("Adding {} to the system module path", path);
         fileManager.addPath(StandardLocation.SYSTEM_MODULES, wrapper);

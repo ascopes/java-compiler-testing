@@ -21,8 +21,8 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import io.github.ascopes.jct.workspaces.ManagedDirectory;
 import io.github.ascopes.jct.workspaces.PathStrategy;
-import io.github.ascopes.jct.workspaces.impl.RamDirectory;
-import io.github.ascopes.jct.workspaces.impl.TempDirectory;
+import io.github.ascopes.jct.workspaces.impl.RamDirectoryImpl;
+import io.github.ascopes.jct.workspaces.impl.TempDirectoryImpl;
 import java.io.IOException;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
@@ -84,8 +84,8 @@ class PathStrategyTest {
 
   static Stream<Arguments> testCases() {
     return Stream.of(
-        arguments(PathStrategy.RAM_DIRECTORIES, RamDirectory.class),
-        arguments(PathStrategy.TEMP_DIRECTORIES, TempDirectory.class)
+        arguments(PathStrategy.RAM_DIRECTORIES, RamDirectoryImpl.class),
+        arguments(PathStrategy.TEMP_DIRECTORIES, TempDirectoryImpl.class)
     );
   }
 }

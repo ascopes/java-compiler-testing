@@ -25,7 +25,7 @@ import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.ModuleHandle;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.workspaces.PathRoot;
-import io.github.ascopes.jct.workspaces.impl.WrappingDirectory;
+import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
@@ -229,7 +229,7 @@ public final class OutputContainerGroupImpl
     var release = getRelease();
 
     var group = new OutputPackageContainerGroupImpl(moduleLocation, release);
-    var pathWrapper = new WrappingDirectory(
+    var pathWrapper = new WrappingDirectoryImpl(
         getPackages().iterator().next().getPathRoot(),
         moduleLocation.getModuleName()
     );

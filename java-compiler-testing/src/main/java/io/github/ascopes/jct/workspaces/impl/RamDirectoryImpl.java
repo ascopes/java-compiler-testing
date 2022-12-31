@@ -49,22 +49,22 @@ import org.slf4j.LoggerFactory;
  * with the file system via this class to prevent potentially confusing behaviour elsewhere.
  *
  * <p>If an underlying system does not support reading files using the NIO path API, you can
- * instead consider using {@link TempDirectory} in place of this class.
+ * instead consider using {@link TempDirectoryImpl} in place of this class.
  *
  * @author Ashley Scopes
- * @see TempDirectory
+ * @see TempDirectoryImpl
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class RamDirectory extends AbstractManagedDirectory {
+public final class RamDirectoryImpl extends AbstractManagedDirectory {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(RamDirectory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(RamDirectoryImpl.class);
 
   private final String name;
   private final Path rootDirectory;
   private final FileSystem fileSystem;
 
-  private RamDirectory(String name, FileSystem fileSystem, Path rootDirectory) {
+  private RamDirectoryImpl(String name, FileSystem fileSystem, Path rootDirectory) {
     super(name, rootDirectory);
     this.name = name;
     this.rootDirectory = rootDirectory;
@@ -84,7 +84,7 @@ public final class RamDirectory extends AbstractManagedDirectory {
    * @return the in-memory path.
    */
   @CheckReturnValue
-  public static RamDirectory newRamDirectory(String name) {
+  public static RamDirectoryImpl newRamDirectory(String name) {
 
     assertValidRootName(name);
 
@@ -103,7 +103,7 @@ public final class RamDirectory extends AbstractManagedDirectory {
     // Ensure the base directory exists.
     uncheckedIo(() -> Files.createDirectories(path));
 
-    var fs = new RamDirectory(name, fileSystem, path);
+    var fs = new RamDirectoryImpl(name, fileSystem, path);
 
     LOGGER.debug("Initialized new root '{}' using RAM disk at {}", name, path.toUri());
 

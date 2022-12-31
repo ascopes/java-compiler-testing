@@ -87,7 +87,7 @@ import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.workspaces.ManagedDirectory;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import io.github.ascopes.jct.workspaces.Workspace;
-import io.github.ascopes.jct.workspaces.impl.WrappingDirectory;
+import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
 import java.io.IOException;
 import java.lang.module.FindException;
 import java.lang.module.ModuleFinder;
@@ -849,7 +849,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     @Mock
     JctFileManagerImpl fileManager;
 
-    MockedConstruction<WrappingDirectory> wrappingDirectory;
+    MockedConstruction<WrappingDirectoryImpl> wrappingDirectory;
 
     @BeforeEach
     void setUp() {
@@ -857,7 +857,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenCallRealMethod();
 
       wrappingDirectory = mockConstruction(
-          WrappingDirectory.class,
+          WrappingDirectoryImpl.class,
           (obj, ctx) -> when(obj.getPath()).thenReturn((Path) ctx.arguments().get(0))
       );
     }
@@ -904,7 +904,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       doConfigureClassPath();
 
       // Then
-      var captor = ArgumentCaptor.forClass(WrappingDirectory.class);
+      var captor = ArgumentCaptor.forClass(WrappingDirectoryImpl.class);
       verify(fileManager, times(5))
           .addPath(same(StandardLocation.CLASS_PATH), captor.capture());
       assertThat(captor.getAllValues())
@@ -944,13 +944,13 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       doConfigureClassPath();
 
       // Then
-      var classPathCaptor = ArgumentCaptor.forClass(WrappingDirectory.class);
+      var classPathCaptor = ArgumentCaptor.forClass(WrappingDirectoryImpl.class);
       verify(fileManager, times(8))
           .addPath(same(StandardLocation.CLASS_PATH), classPathCaptor.capture());
       assertThat(classPathCaptor.getAllValues())
           .allSatisfy(pathRoot -> assertThat(pathRoot.getPath()).isIn(paths));
 
-      var modulePathCaptor = ArgumentCaptor.forClass(WrappingDirectory.class);
+      var modulePathCaptor = ArgumentCaptor.forClass(WrappingDirectoryImpl.class);
       verify(fileManager, times(3))
           .addPath(same(StandardLocation.MODULE_PATH), classPathCaptor.capture());
       assertThat(modulePathCaptor.getAllValues())
@@ -1058,12 +1058,12 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     @Mock
     JctFileManagerImpl fileManager;
 
-    MockedConstruction<WrappingDirectory> wrappingDirectory;
+    MockedConstruction<WrappingDirectoryImpl> wrappingDirectory;
 
     @BeforeEach
     void setUp() {
       wrappingDirectory = mockConstruction(
-          WrappingDirectory.class,
+          WrappingDirectoryImpl.class,
           (obj, ctx) -> when(obj.getPath()).thenReturn((Path) ctx.arguments().get(0))
       );
     }
@@ -1109,8 +1109,8 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       doConfigureModulePath();
 
       // Then
-      var modulePathCaptor = ArgumentCaptor.forClass(WrappingDirectory.class);
-      var classPathCaptor = ArgumentCaptor.forClass(WrappingDirectory.class);
+      var modulePathCaptor = ArgumentCaptor.forClass(WrappingDirectoryImpl.class);
+      var classPathCaptor = ArgumentCaptor.forClass(WrappingDirectoryImpl.class);
 
       verify(fileManager, times(5))
           .addPath(same(StandardLocation.MODULE_PATH), modulePathCaptor.capture());
@@ -1142,12 +1142,12 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     @Mock
     JctFileManagerImpl fileManager;
 
-    MockedConstruction<WrappingDirectory> wrappingDirectory;
+    MockedConstruction<WrappingDirectoryImpl> wrappingDirectory;
 
     @BeforeEach
     void setUp() {
       wrappingDirectory = mockConstruction(
-          WrappingDirectory.class,
+          WrappingDirectoryImpl.class,
           (obj, ctx) -> when(obj.getPath()).thenReturn((Path) ctx.arguments().get(0))
       );
     }
@@ -1193,7 +1193,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       doConfigurePlatformClassPath();
 
       // Then
-      var captor = ArgumentCaptor.forClass(WrappingDirectory.class);
+      var captor = ArgumentCaptor.forClass(WrappingDirectoryImpl.class);
 
       verify(fileManager, times(5))
           .addPath(same(StandardLocation.PLATFORM_CLASS_PATH), captor.capture());
@@ -1221,12 +1221,12 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     @Mock
     JctFileManagerImpl fileManager;
 
-    MockedConstruction<WrappingDirectory> wrappingDirectory;
+    MockedConstruction<WrappingDirectoryImpl> wrappingDirectory;
 
     @BeforeEach
     void setUp() {
       wrappingDirectory = mockConstruction(
-          WrappingDirectory.class,
+          WrappingDirectoryImpl.class,
           (obj, ctx) -> when(obj.getPath()).thenReturn((Path) ctx.arguments().get(0))
       );
     }
@@ -1272,7 +1272,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       doConfigureJvmSystemModules();
 
       // Then
-      var captor = ArgumentCaptor.forClass(WrappingDirectory.class);
+      var captor = ArgumentCaptor.forClass(WrappingDirectoryImpl.class);
 
       verify(fileManager, times(5))
           .addPath(same(StandardLocation.SYSTEM_MODULES), captor.capture());
