@@ -132,7 +132,7 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
   }
 
   @Override
-  public boolean equals(Object other) {
+  public boolean equals(@Nullable Object other) {
     if (!(other instanceof AbstractManagedDirectory)) {
       return false;
     }

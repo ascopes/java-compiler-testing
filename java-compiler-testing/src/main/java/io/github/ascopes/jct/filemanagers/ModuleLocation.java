@@ -17,6 +17,7 @@ package io.github.ascopes.jct.filemanagers;
 
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.Objects;
+import javax.annotation.Nullable;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -94,7 +95,7 @@ public final class ModuleLocation implements Location {
   }
 
   @Override
-  public boolean equals(Object other) {
+  public boolean equals(@Nullable Object other) {
     if (!(other instanceof ModuleLocation)) {
       return false;
     }
