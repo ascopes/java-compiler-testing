@@ -18,7 +18,3 @@ build = "mvn"
 # Use JDK 11 to help Sonatype Lift start the default plugins correctly.
 jdkVersion = "11"
 summaryComments = true
-# Due to complexity internally with integration to Javac, we have "god classes" that are difficult
-# to avoid without further issues. For now, avoid checking for them to prevent spamming warnings
-# on PRs.
-ignore = ["refactor-first"]
