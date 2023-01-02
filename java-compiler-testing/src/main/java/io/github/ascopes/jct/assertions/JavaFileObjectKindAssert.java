@@ -17,6 +17,7 @@ package io.github.ascopes.jct.assertions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import javax.annotation.Nullable;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -37,7 +38,7 @@ public final class JavaFileObjectKindAssert
    *
    * @param value the value to assert on.
    */
-  public JavaFileObjectKindAssert(Kind value) {
+  public JavaFileObjectKindAssert(@Nullable Kind value) {
     super(value, JavaFileObjectKindAssert.class);
   }
 
@@ -45,6 +46,7 @@ public final class JavaFileObjectKindAssert
    * Assert that the kind is a {@link Kind#SOURCE}.
    *
    * @return this assertion object.
+   * @throws AssertionError if the kind is null.
    */
   public JavaFileObjectKindAssert isSource() {
     return isAnyOf(Kind.SOURCE);
@@ -54,6 +56,7 @@ public final class JavaFileObjectKindAssert
    * Assert that the kind is a {@link Kind#CLASS}.
    *
    * @return this assertion object.
+   * @throws AssertionError if the kind is null.
    */
   public JavaFileObjectKindAssert isClass() {
     return isAnyOf(Kind.CLASS);
@@ -63,6 +66,7 @@ public final class JavaFileObjectKindAssert
    * Assert that the kind is an {@link Kind#HTML HTML source}.
    *
    * @return this assertion object.
+   * @throws AssertionError if the kind is null.
    */
   public JavaFileObjectKindAssert isHtml() {
     return isAnyOf(Kind.HTML);
@@ -72,6 +76,7 @@ public final class JavaFileObjectKindAssert
    * Assert that the kind is {@link Kind#OTHER some other unknown kind}.
    *
    * @return this assertion object.
+   * @throws AssertionError if the kind is null.
    */
   public JavaFileObjectKindAssert isOther() {
     return isAnyOf(Kind.OTHER);
@@ -81,8 +86,11 @@ public final class JavaFileObjectKindAssert
    * Perform an assertion on the file extension of the kind.
    *
    * @return the assertions for the file extension of the kind.
+   * @throws AssertionError if the kind is null.
    */
   public AbstractStringAssert<?> extension() {
+    isNotNull();
+
     return assertThat(actual.extension);
   }
 }
