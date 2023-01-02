@@ -21,6 +21,7 @@ import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
 import io.github.ascopes.jct.containers.ContainerGroup;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
@@ -42,6 +43,9 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
 
   /**
    * Default number of matches to show when performing fuzzy matching.
+   *
+   * <p>This is defined here to allow consistent behaviour across various fuzzy matching
+   * operations in all implementations.
    */
   protected static final int FUZZY_CUTOFF = 5;
 
@@ -51,7 +55,7 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
    * @param containerGroup the container group to assert upon.
    * @param selfType       the type of the assertion implementation to use.
    */
-  protected AbstractContainerGroupAssert(C containerGroup, Class<?> selfType) {
+  protected AbstractContainerGroupAssert(@Nullable C containerGroup, Class<?> selfType) {
     super(containerGroup, selfType);
   }
 
@@ -59,8 +63,10 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
    * Get assertions to perform on the location of this container group.
    *
    * @return the assertions to perform.
+   * @throws AssertionError if the object being asserted upon is null.
    */
   public LocationAssert location() {
+    isNotNull();
     return new LocationAssert(actual.getLocation());
   }
 
@@ -70,15 +76,14 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
    * @param clazz the class to look up in the service loader.
    * @param <T>   the service type.
    * @return the assertions across the resultant services that are loaded for the given class.
+   * @throws AssertionError if the object being asserted upon is null.
+   * @throws NullPointerException if the provided class parameter is null.
    */
   public <T> AbstractListAssert<?, List<? extends T>, T, ? extends ObjectAssert<T>> services(
       Class<T> clazz
   ) {
-    // AssertJ currently returns ObjectAssert here, not AbstractObjectAssert. This is problematic
-    // as it causes a compiler error if we do not use the type they provide, due to covariance
-    // voodoo.
-
     requireNonNull(clazz, "class must not be null");
+    isNotNull();
 
     var items = new ArrayList<T>();
     actual.getServiceLoader(clazz).iterator().forEachRemaining(items::add);

@@ -19,6 +19,7 @@ open module io.github.ascopes.jct.testing {
   requires java.compiler;
   requires java.management;
   requires jimfs;
+  requires static jsr305;
   requires net.bytebuddy;         // required for mockito to work with JPMS.
   requires net.bytebuddy.agent;   // required for mockito to work with JPMS.
   requires org.assertj.core;
