@@ -17,6 +17,7 @@ package io.github.ascopes.jct.assertions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
@@ -39,7 +40,7 @@ public final class StackTraceElementAssert
    *
    * @param actual the stacktrace element to assert upon.
    */
-  public StackTraceElementAssert(StackTraceElement actual) {
+  public StackTraceElementAssert(@Nullable StackTraceElement actual) {
     super(actual, StackTraceElementAssert.class);
   }
 
@@ -47,8 +48,11 @@ public final class StackTraceElementAssert
    * Get assertions for the filename of the stack trace frame.
    *
    * @return the assertions for the file name.
+   * @throws AssertionError if the stack trace element is null.
    */
   public AbstractStringAssert<?> fileName() {
+    isNotNull();
+
     return assertThat(actual.getFileName())
         .as("file name");
   }
@@ -60,8 +64,11 @@ public final class StackTraceElementAssert
    * {@link #nativeMethod() native method}.
    *
    * @return the assertions for the line number.
+   * @throws AssertionError if the stack trace element is null.
    */
   public AbstractIntegerAssert<?> lineNumber() {
+    isNotNull();
+
     return assertThat(actual.getLineNumber())
         .as("line number %s", actual.getLineNumber());
   }
@@ -72,8 +79,11 @@ public final class StackTraceElementAssert
    * <p>The value may be null if not present.
    *
    * @return the assertions for the module name.
+   * @throws AssertionError if the stack trace element is null.
    */
   public AbstractStringAssert<?> moduleName() {
+    isNotNull();
+
     return assertThat(actual.getModuleName())
         .as("module name");
   }
@@ -84,8 +94,11 @@ public final class StackTraceElementAssert
    * <p>The value may be null if not present.
    *
    * @return the assertions for the module version.
+   * @throws AssertionError if the stack trace element is null.
    */
   public AbstractStringAssert<?> moduleVersion() {
+    isNotNull();
+
     return assertThat(actual.getModuleVersion())
         .as("module version");
   }
@@ -94,8 +107,11 @@ public final class StackTraceElementAssert
    * Get assertions for the name of the classloader of the class in the stack trace frame.
    *
    * @return the assertions for the classloader name.
+   * @throws AssertionError if the stack trace element is null.
    */
   public AbstractStringAssert<?> classLoaderName() {
+    isNotNull();
+
     return assertThat(actual.getClassLoaderName())
         .as("class loader name");
   }
@@ -104,8 +120,11 @@ public final class StackTraceElementAssert
    * Get assertions for the class name of the stack trace frame.
    *
    * @return the assertions for the class name.
+   * @throws AssertionError if the stack trace element is null.
    */
   public AbstractStringAssert<?> className() {
+    isNotNull();
+
     return assertThat(actual.getClassName())
         .as("class name");
   }
@@ -114,8 +133,11 @@ public final class StackTraceElementAssert
    * Get assertions for the method name of the stack trace frame.
    *
    * @return the assertions for the method name.
+   * @throws AssertionError if the stack trace element is null.
    */
   public AbstractStringAssert<?> methodName() {
+    isNotNull();
+
     return assertThat(actual.getMethodName())
         .as("method name");
   }
@@ -124,8 +146,11 @@ public final class StackTraceElementAssert
    * Get assertions for whether the frame is for a native (JNI) method or not.
    *
    * @return the assertions for the method nativity.
+   * @throws AssertionError if the stack trace element is null.
    */
   public AbstractBooleanAssert<?> nativeMethod() {
+    isNotNull();
+
     return assertThat(actual.isNativeMethod())
         .as("native method");
   }
