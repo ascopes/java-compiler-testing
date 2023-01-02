@@ -194,7 +194,7 @@ public final class TraceDiagnosticListAssert
    * @throws AssertionError if this list is null.
    */
   public TraceDiagnosticListAssert hasNoErrors() {
-    return hasNoKinds(Kind.ERROR);
+    return hasNoDiagnosticsOfKinds(Kind.ERROR);
   }
 
   /**
@@ -205,7 +205,7 @@ public final class TraceDiagnosticListAssert
    * @throws AssertionError if this list is null.
    */
   public TraceDiagnosticListAssert hasNoErrorsOrWarnings() {
-    return hasNoKinds(Kind.ERROR, Kind.WARNING, Kind.MANDATORY_WARNING);
+    return hasNoDiagnosticsOfKinds(Kind.ERROR, Kind.WARNING, Kind.MANDATORY_WARNING);
   }
 
   /**
@@ -216,7 +216,7 @@ public final class TraceDiagnosticListAssert
    * @throws AssertionError if this list is null.
    */
   public TraceDiagnosticListAssert hasNoWarnings() {
-    return hasNoKinds(Kind.WARNING, Kind.MANDATORY_WARNING);
+    return hasNoDiagnosticsOfKinds(Kind.WARNING, Kind.MANDATORY_WARNING);
   }
 
   /**
@@ -226,7 +226,7 @@ public final class TraceDiagnosticListAssert
    * @throws AssertionError if this list is null.
    */
   public TraceDiagnosticListAssert hasNoCustomWarnings() {
-    return hasNoKinds(Kind.WARNING);
+    return hasNoDiagnosticsOfKinds(Kind.WARNING);
   }
 
   /**
@@ -236,7 +236,7 @@ public final class TraceDiagnosticListAssert
    * @throws AssertionError if this list is null.
    */
   public TraceDiagnosticListAssert hasNoMandatoryWarnings() {
-    return hasNoKinds(Kind.MANDATORY_WARNING);
+    return hasNoDiagnosticsOfKinds(Kind.MANDATORY_WARNING);
   }
 
   /**
@@ -246,7 +246,7 @@ public final class TraceDiagnosticListAssert
    * @throws AssertionError if this list is null.
    */
   public TraceDiagnosticListAssert hasNoNotes() {
-    return hasNoKinds(Kind.NOTE);
+    return hasNoDiagnosticsOfKinds(Kind.NOTE);
   }
 
   /**
@@ -256,7 +256,7 @@ public final class TraceDiagnosticListAssert
    * @throws AssertionError if this list is null.
    */
   public TraceDiagnosticListAssert hasNoOtherDiagnostics() {
-    return hasNoKinds(Kind.OTHER);
+    return hasNoDiagnosticsOfKinds(Kind.OTHER);
   }
 
   /**
@@ -268,10 +268,10 @@ public final class TraceDiagnosticListAssert
    * @throws AssertionError       if the diagnostic list is null.
    * @throws NullPointerException if the kind or more kinds are null.
    */
-  public TraceDiagnosticListAssert hasNoKinds(Kind kind, Kind... moreKinds) {
+  public TraceDiagnosticListAssert hasNoDiagnosticsOfKinds(Kind kind, Kind... moreKinds) {
     requireNonNull(kind, "kind must not be null");
     requireNonNullValues(moreKinds, "moreKinds");
-    return hasNoKinds(combineOneOrMore(kind, moreKinds));
+    return hasNoDiagnosticsOfKinds(combineOneOrMore(kind, moreKinds));
   }
 
   /**
@@ -282,7 +282,7 @@ public final class TraceDiagnosticListAssert
    * @throws AssertionError       if the diagnostic list is null.
    * @throws NullPointerException if any of the kinds are null.
    */
-  public TraceDiagnosticListAssert hasNoKinds(Iterable<Kind> kinds) {
+  public TraceDiagnosticListAssert hasNoDiagnosticsOfKinds(Iterable<Kind> kinds) {
     requireNonNullValues(kinds, "kinds");
 
     return filteringBy(kind(kinds))
