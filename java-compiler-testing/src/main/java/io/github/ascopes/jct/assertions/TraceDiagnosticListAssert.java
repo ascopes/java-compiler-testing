@@ -44,90 +44,90 @@ import org.assertj.core.api.AbstractListAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class DiagnosticListAssert
-    extends AbstractListAssert<DiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, TraceDiagnosticAssert> {
+public final class TraceDiagnosticListAssert
+    extends AbstractListAssert<TraceDiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, TraceDiagnosticAssert> {
 
   /**
    * Initialize this assertion.
    *
    * @param traceDiagnostics the diagnostics to perform assertions on.
    */
-  public DiagnosticListAssert(
+  public TraceDiagnosticListAssert(
       @Nullable List<? extends TraceDiagnostic<? extends JavaFileObject>> traceDiagnostics
   ) {
-    super(traceDiagnostics, DiagnosticListAssert.class);
+    super(traceDiagnostics, TraceDiagnosticListAssert.class);
     info.useRepresentation(DiagnosticListRepresentation.getInstance());
   }
 
   /**
-   * Get a {@link DiagnosticListAssert} across all diagnostics that have the {@link Kind#ERROR}
+   * Get a {@link TraceDiagnosticListAssert} across all diagnostics that have the {@link Kind#ERROR}
    * kind.
    *
    * @return the assertion object for {@link Kind#ERROR} diagnostics.
    * @throws AssertionError if the list is null.
    */
-  public DiagnosticListAssert errors() {
+  public TraceDiagnosticListAssert errors() {
     return filteringByKinds(Kind.ERROR);
   }
 
   /**
-   * Get a {@link DiagnosticListAssert} across all diagnostics that have the {@link Kind#WARNING} or
+   * Get a {@link TraceDiagnosticListAssert} across all diagnostics that have the {@link Kind#WARNING} or
    * {@link Kind#MANDATORY_WARNING} kind.
    *
    * @return the assertion object for {@link Kind#WARNING} and {@link Kind#MANDATORY_WARNING}
    *     diagnostics.
    * @throws AssertionError if the list is null.
    */
-  public DiagnosticListAssert warnings() {
+  public TraceDiagnosticListAssert warnings() {
     return filteringByKinds(Kind.WARNING, Kind.MANDATORY_WARNING);
   }
 
   /**
-   * Get a {@link DiagnosticListAssert} across all diagnostics that have the {@link Kind#WARNING}
+   * Get a {@link TraceDiagnosticListAssert} across all diagnostics that have the {@link Kind#WARNING}
    * kind.
    *
    * @return the assertion object for {@link Kind#WARNING} diagnostics.
    * @throws AssertionError if the list is null.
    */
-  public DiagnosticListAssert customWarnings() {
+  public TraceDiagnosticListAssert customWarnings() {
     return filteringByKinds(Kind.WARNING);
   }
 
   /**
-   * Get a {@link DiagnosticListAssert} across all diagnostics that have the
+   * Get a {@link TraceDiagnosticListAssert} across all diagnostics that have the
    * {@link Kind#MANDATORY_WARNING} kind.
    *
    * @return the assertion object for {@link Kind#MANDATORY_WARNING} diagnostics.
    * @throws AssertionError if the list is null.
    */
-  public DiagnosticListAssert mandatoryWarnings() {
+  public TraceDiagnosticListAssert mandatoryWarnings() {
     return filteringByKinds(Kind.MANDATORY_WARNING);
   }
 
   /**
-   * Get a {@link DiagnosticListAssert} across all diagnostics that have the {@link Kind#NOTE}
+   * Get a {@link TraceDiagnosticListAssert} across all diagnostics that have the {@link Kind#NOTE}
    * kind.
    *
    * @return the assertion object for {@link Kind#NOTE} diagnostics.
    * @throws AssertionError if the list is null.
    */
-  public DiagnosticListAssert notes() {
+  public TraceDiagnosticListAssert notes() {
     return filteringByKinds(Kind.NOTE);
   }
 
   /**
-   * Get a {@link DiagnosticListAssert} across all diagnostics that have the {@link Kind#OTHER}
+   * Get a {@link TraceDiagnosticListAssert} across all diagnostics that have the {@link Kind#OTHER}
    * kind.
    *
    * @return the assertion object for {@link Kind#OTHER} diagnostics.
    * @throws AssertionError if the list is null.
    */
-  public DiagnosticListAssert others() {
+  public TraceDiagnosticListAssert others() {
     return filteringByKinds(Kind.OTHER);
   }
 
   /**
-   * Get a {@link DiagnosticListAssert} that contains diagnostics corresponding to any of the given
+   * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to any of the given
    * {@link Kind kinds}.
    *
    * @param kind      the first kind to match.
@@ -136,7 +136,7 @@ public final class DiagnosticListAssert
    * @throws AssertionError       if this list is null.
    * @throws NullPointerException if any of the kinds are null.
    */
-  public DiagnosticListAssert filteringByKinds(Kind kind, Kind... moreKinds) {
+  public TraceDiagnosticListAssert filteringByKinds(Kind kind, Kind... moreKinds) {
     requireNonNull(kind, "kind must not be null");
     requireNonNullValues(moreKinds, "moreKinds");
     return filteringByKinds(combineOneOrMore(kind, moreKinds));
@@ -144,7 +144,7 @@ public final class DiagnosticListAssert
 
 
   /**
-   * Get a {@link DiagnosticListAssert} that contains diagnostics corresponding to any of the given
+   * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to any of the given
    * {@link Kind kinds}.
    *
    * @param kinds the kinds to match.
@@ -152,13 +152,13 @@ public final class DiagnosticListAssert
    * @throws AssertionError       if this list is null.
    * @throws NullPointerException if any of the kinds are null.
    */
-  public DiagnosticListAssert filteringByKinds(Iterable<Kind> kinds) {
+  public TraceDiagnosticListAssert filteringByKinds(Iterable<Kind> kinds) {
     requireNonNullValues(kinds, "kinds");
     return filteringBy(kind(kinds));
   }
 
   /**
-   * Get a {@link DiagnosticListAssert} that contains diagnostics corresponding to none of the given
+   * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to none of the given
    * {@link Kind kinds}.
    *
    * @param kind      the first kind to ensure are not matched.
@@ -167,14 +167,14 @@ public final class DiagnosticListAssert
    * @throws AssertionError       if this list is null.
    * @throws NullPointerException if any of the kinds are null.
    */
-  public DiagnosticListAssert excludingKinds(Kind kind, Kind... moreKinds) {
+  public TraceDiagnosticListAssert excludingKinds(Kind kind, Kind... moreKinds) {
     requireNonNull(kind, "kind must not be null");
     requireNonNullValues(moreKinds, "moreKinds");
     return excludingKinds(combineOneOrMore(kind, moreKinds));
   }
 
   /**
-   * Get a {@link DiagnosticListAssert} that contains diagnostics corresponding to none of the given
+   * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to none of the given
    * {@link Kind kinds}.
    *
    * @param kinds the kinds to filter out.
@@ -182,7 +182,7 @@ public final class DiagnosticListAssert
    * @throws AssertionError       if this list is null.
    * @throws NullPointerException if any of the kinds are null.
    */
-  public DiagnosticListAssert excludingKinds(Iterable<Kind> kinds) {
+  public TraceDiagnosticListAssert excludingKinds(Iterable<Kind> kinds) {
     requireNonNullValues(kinds, "kinds");
     return filteringBy(not(kind(kinds)));
   }
@@ -193,7 +193,7 @@ public final class DiagnosticListAssert
    * @return this assertion object for further call chaining.
    * @throws AssertionError if this list is null.
    */
-  public DiagnosticListAssert hasNoErrors() {
+  public TraceDiagnosticListAssert hasNoErrors() {
     return hasNoKinds(Kind.ERROR);
   }
 
@@ -204,7 +204,7 @@ public final class DiagnosticListAssert
    * @return this assertion object for further call chaining.
    * @throws AssertionError if this list is null.
    */
-  public DiagnosticListAssert hasNoErrorsOrWarnings() {
+  public TraceDiagnosticListAssert hasNoErrorsOrWarnings() {
     return hasNoKinds(Kind.ERROR, Kind.WARNING, Kind.MANDATORY_WARNING);
   }
 
@@ -215,7 +215,7 @@ public final class DiagnosticListAssert
    * @return this assertion object for further call chaining.
    * @throws AssertionError if this list is null.
    */
-  public DiagnosticListAssert hasNoWarnings() {
+  public TraceDiagnosticListAssert hasNoWarnings() {
     return hasNoKinds(Kind.WARNING, Kind.MANDATORY_WARNING);
   }
 
@@ -225,7 +225,7 @@ public final class DiagnosticListAssert
    * @return this assertion object for further call chaining.
    * @throws AssertionError if this list is null.
    */
-  public DiagnosticListAssert hasNoCustomWarnings() {
+  public TraceDiagnosticListAssert hasNoCustomWarnings() {
     return hasNoKinds(Kind.WARNING);
   }
 
@@ -235,7 +235,7 @@ public final class DiagnosticListAssert
    * @return this assertion object for further call chaining.
    * @throws AssertionError if this list is null.
    */
-  public DiagnosticListAssert hasNoMandatoryWarnings() {
+  public TraceDiagnosticListAssert hasNoMandatoryWarnings() {
     return hasNoKinds(Kind.MANDATORY_WARNING);
   }
 
@@ -245,7 +245,7 @@ public final class DiagnosticListAssert
    * @return this assertion object for further call chaining.
    * @throws AssertionError if this list is null.
    */
-  public DiagnosticListAssert hasNoNotes() {
+  public TraceDiagnosticListAssert hasNoNotes() {
     return hasNoKinds(Kind.NOTE);
   }
 
@@ -255,7 +255,7 @@ public final class DiagnosticListAssert
    * @return this assertion object for further call chaining.
    * @throws AssertionError if this list is null.
    */
-  public DiagnosticListAssert hasNoOtherDiagnostics() {
+  public TraceDiagnosticListAssert hasNoOtherDiagnostics() {
     return hasNoKinds(Kind.OTHER);
   }
 
@@ -268,7 +268,7 @@ public final class DiagnosticListAssert
    * @throws AssertionError       if the diagnostic list is null.
    * @throws NullPointerException if the kind or more kinds are null.
    */
-  public DiagnosticListAssert hasNoKinds(Kind kind, Kind... moreKinds) {
+  public TraceDiagnosticListAssert hasNoKinds(Kind kind, Kind... moreKinds) {
     requireNonNull(kind, "kind must not be null");
     requireNonNullValues(moreKinds, "moreKinds");
     return hasNoKinds(combineOneOrMore(kind, moreKinds));
@@ -282,7 +282,7 @@ public final class DiagnosticListAssert
    * @throws AssertionError       if the diagnostic list is null.
    * @throws NullPointerException if any of the kinds are null.
    */
-  public DiagnosticListAssert hasNoKinds(Iterable<Kind> kinds) {
+  public TraceDiagnosticListAssert hasNoKinds(Iterable<Kind> kinds) {
     requireNonNullValues(kinds, "kinds");
 
     return filteringBy(kind(kinds))
@@ -307,7 +307,7 @@ public final class DiagnosticListAssert
    * @throws NullPointerException if the predicate is null.
    * @throws AssertionError       if the diagnostic list is null.
    */
-  public DiagnosticListAssert filteringBy(
+  public TraceDiagnosticListAssert filteringBy(
       Predicate<TraceDiagnostic<? extends JavaFileObject>> predicate
   ) {
     requireNonNull(predicate, "predicate must not be null");
@@ -319,7 +319,7 @@ public final class DiagnosticListAssert
         .filter(predicate)
         .collect(Collectors.collectingAndThen(
             Collectors.toUnmodifiableList(),
-            DiagnosticListAssert::new
+            TraceDiagnosticListAssert::new
         ));
   }
 
@@ -332,12 +332,12 @@ public final class DiagnosticListAssert
   }
 
   @Override
-  protected DiagnosticListAssert newAbstractIterableAssert(
+  protected TraceDiagnosticListAssert newAbstractIterableAssert(
       Iterable<? extends TraceDiagnostic<? extends JavaFileObject>> iterable
   ) {
     var list = new ArrayList<TraceDiagnostic<? extends JavaFileObject>>();
     iterable.forEach(list::add);
-    return new DiagnosticListAssert(list);
+    return new TraceDiagnosticListAssert(list);
   }
 
   private Predicate<TraceDiagnostic<? extends JavaFileObject>> kind(Iterable<Kind> kinds) {

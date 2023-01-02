@@ -140,9 +140,9 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
    * @return assertions for the diagnostics.
    * @throws AssertionError if the compilation was null.
    */
-  public DiagnosticListAssert diagnostics() {
+  public TraceDiagnosticListAssert diagnostics() {
     isNotNull();
-    return new DiagnosticListAssert(actual.getDiagnostics());
+    return new TraceDiagnosticListAssert(actual.getDiagnostics());
   }
 
   /**
