@@ -31,7 +31,8 @@ import org.assertj.core.api.AbstractListAssert;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class StackTraceAssert
-    extends AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
+    extends
+    AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
 
   /**
    * Initialize a new assertions object.

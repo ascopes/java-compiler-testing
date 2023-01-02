@@ -27,7 +27,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 import org.apiguardian.api.API;

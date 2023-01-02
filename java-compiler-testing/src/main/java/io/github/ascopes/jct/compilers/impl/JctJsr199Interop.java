@@ -448,8 +448,8 @@ public final class JctJsr199Interop extends UtilityClass {
    * Find interesting locations for compilation units.
    *
    * <p>If there are any modules in the module source path, these will be returned.
-   * If none are found, this will return the legacy source path instead. This is
-   * done to mimic the behaviour of Javac.
+   * If none are found, this will return the legacy source path instead. This is done to mimic the
+   * behaviour of Javac.
    *
    * @param fileManager the file manager to use.
    * @return the list of locations.

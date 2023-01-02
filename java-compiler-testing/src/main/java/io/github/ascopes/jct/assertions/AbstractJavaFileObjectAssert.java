@@ -96,7 +96,7 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * encoding.
    *
    * @return the string assertion.
-   * @throws AssertionError if the actual value is null.
+   * @throws AssertionError       if the actual value is null.
    * @throws UncheckedIOException if an IO error occurs reading the file content.
    */
   public AbstractStringAssert<?> content() {
@@ -108,7 +108,7 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    *
    * @param charset the charset to decode the file with.
    * @return the string assertion.
-   * @throws AssertionError if the actual value is null.
+   * @throws AssertionError       if the actual value is null.
    * @throws NullPointerException if the charset parameter is null.
    * @throws UncheckedIOException if an IO error occurs reading the file content.
    */
@@ -122,7 +122,7 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    *
    * @param charsetDecoder the charset decoder to use to decode the file to a string.
    * @return the string assertion.
-   * @throws AssertionError if the actual value is null.
+   * @throws AssertionError       if the actual value is null.
    * @throws NullPointerException if the charset decoder parameter is null.
    * @throws UncheckedIOException if an IO error occurs reading the file content.
    */

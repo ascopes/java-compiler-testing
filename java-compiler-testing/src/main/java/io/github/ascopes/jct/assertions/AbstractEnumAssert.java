@@ -42,8 +42,8 @@ public abstract class AbstractEnumAssert<S extends AbstractEnumAssert<S, E>, E e
   /**
    * Initialize this enum assertion.
    *
-   * @param value            the value to assert upon.
-   * @param selfType         the type of this assertion implementation.
+   * @param value    the value to assert upon.
+   * @param selfType the type of this assertion implementation.
    */
   protected AbstractEnumAssert(@Nullable E value, Class<?> selfType) {
     super(value, selfType);
@@ -95,8 +95,8 @@ public abstract class AbstractEnumAssert<S extends AbstractEnumAssert<S, E>, E e
    * @param more  any additional values to check for.
    * @return this assertion object.
    * @throws NullPointerException if any of the elements to test against are null.
-   * @throws AssertionError       if the actual value is null, or if the value is in the given
-   *                              group of acceptable values.
+   * @throws AssertionError       if the actual value is null, or if the value is in the given group
+   *                              of acceptable values.
    */
   @SafeVarargs
   public final S isNoneOf(E first, E... more) {

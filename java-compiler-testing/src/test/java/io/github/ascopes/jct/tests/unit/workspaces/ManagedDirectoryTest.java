@@ -33,6 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("ManagedDirectory tests")
 @ExtendWith(MockitoExtension.class)
 class ManagedDirectoryTest {
+
   @Mock(answer = Answers.CALLS_REAL_METHODS)
   ManagedDirectory managedDirectory;
 

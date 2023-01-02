@@ -60,8 +60,8 @@ public final class FileBuilderImpl implements FileBuilder {
    * Initialise a new file builder.
    *
    * @param parent the parent managed directory to chain calls back onto.
-   * @param first the first part of the file path.
-   * @param rest additional parts of the file path.
+   * @param first  the first part of the file path.
+   * @param rest   additional parts of the file path.
    */
   public FileBuilderImpl(ManagedDirectory parent, String first, String... rest) {
     this.parent = parent;

@@ -45,7 +45,8 @@ import org.assertj.core.api.AbstractListAssert;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class TraceDiagnosticListAssert
-    extends AbstractListAssert<TraceDiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, TraceDiagnosticAssert> {
+    extends
+    AbstractListAssert<TraceDiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, TraceDiagnosticAssert> {
 
   /**
    * Initialize this assertion.
@@ -71,8 +72,8 @@ public final class TraceDiagnosticListAssert
   }
 
   /**
-   * Get a {@link TraceDiagnosticListAssert} across all diagnostics that have the {@link Kind#WARNING} or
-   * {@link Kind#MANDATORY_WARNING} kind.
+   * Get a {@link TraceDiagnosticListAssert} across all diagnostics that have the
+   * {@link Kind#WARNING} or {@link Kind#MANDATORY_WARNING} kind.
    *
    * @return the assertion object for {@link Kind#WARNING} and {@link Kind#MANDATORY_WARNING}
    *     diagnostics.
@@ -83,8 +84,8 @@ public final class TraceDiagnosticListAssert
   }
 
   /**
-   * Get a {@link TraceDiagnosticListAssert} across all diagnostics that have the {@link Kind#WARNING}
-   * kind.
+   * Get a {@link TraceDiagnosticListAssert} across all diagnostics that have the
+   * {@link Kind#WARNING} kind.
    *
    * @return the assertion object for {@link Kind#WARNING} diagnostics.
    * @throws AssertionError if the list is null.
@@ -127,8 +128,8 @@ public final class TraceDiagnosticListAssert
   }
 
   /**
-   * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to any of the given
-   * {@link Kind kinds}.
+   * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to any of the
+   * given {@link Kind kinds}.
    *
    * @param kind      the first kind to match.
    * @param moreKinds additional kinds to match.
@@ -144,8 +145,8 @@ public final class TraceDiagnosticListAssert
 
 
   /**
-   * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to any of the given
-   * {@link Kind kinds}.
+   * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to any of the
+   * given {@link Kind kinds}.
    *
    * @param kinds the kinds to match.
    * @return the assertion object for the filtered diagnostics.
@@ -158,8 +159,8 @@ public final class TraceDiagnosticListAssert
   }
 
   /**
-   * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to none of the given
-   * {@link Kind kinds}.
+   * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to none of the
+   * given {@link Kind kinds}.
    *
    * @param kind      the first kind to ensure are not matched.
    * @param moreKinds additional kinds to ensure are not matched.
@@ -174,8 +175,8 @@ public final class TraceDiagnosticListAssert
   }
 
   /**
-   * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to none of the given
-   * {@link Kind kinds}.
+   * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to none of the
+   * given {@link Kind kinds}.
    *
    * @param kinds the kinds to filter out.
    * @return the assertion object for the filtered diagnostics.

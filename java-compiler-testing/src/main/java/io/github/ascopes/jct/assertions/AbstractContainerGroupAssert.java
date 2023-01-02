@@ -76,7 +76,7 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
    * @param clazz the class to look up in the service loader.
    * @param <T>   the service type.
    * @return the assertions across the resultant services that are loaded for the given class.
-   * @throws AssertionError if the object being asserted upon is null.
+   * @throws AssertionError       if the object being asserted upon is null.
    * @throws NullPointerException if the provided class parameter is null.
    */
   public <T> AbstractListAssert<?, List<? extends T>, T, ? extends ObjectAssert<T>> services(

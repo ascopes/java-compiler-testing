@@ -44,9 +44,11 @@ import org.junit.jupiter.api.Test;
 @DisplayName("AbstractContainerGroupAssert tests")
 @SuppressWarnings({"DataFlowIssue"})
 class AbstractContainerGroupAssertTest {
+
   @DisplayName("AbstractContainerGroupAssert#location tests")
   @Nested
   class LocationTest {
+
     @DisplayName(".location() throws an AssertionError if the container group is null")
     @Test
     void locationThrowsAnAssertionErrorIfTheContainerGroupIsNull() {
@@ -85,6 +87,7 @@ class AbstractContainerGroupAssertTest {
   @DisplayName("AbstractContainerGroupAssert#services tests")
   @Nested
   class ServicesTest {
+
     @DisplayName(".services() throws a NullPointerException if the class parameter is null")
     @Test
     void servicesThrowsNullPointerExceptionIfClassParameterIsNull() {
