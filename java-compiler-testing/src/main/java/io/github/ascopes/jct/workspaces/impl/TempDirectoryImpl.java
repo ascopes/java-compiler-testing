@@ -91,6 +91,7 @@ public final class TempDirectoryImpl extends AbstractManagedDirectory {
    * @return the temporary directory.
    */
   @CheckReturnValue
+  @SuppressWarnings("findsecbugs:PATH_TRAVERSAL_IN")
   public static TempDirectoryImpl newTempDirectory(String name) {
     // TODO(ascopes): are MS-DOS file name length limits a potential issue here?
     assertValidRootName(name);

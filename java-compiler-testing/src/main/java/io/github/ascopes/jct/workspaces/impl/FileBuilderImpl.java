@@ -122,6 +122,7 @@ public final class FileBuilderImpl implements FileBuilder {
   }
 
   @Override
+  @SuppressWarnings("findsecbugs:URLCONNECTION_SSRF_FD")
   public ManagedDirectory copiedFromUrl(URL url) {
     return uncheckedIo(() -> createFile(url.openStream()));
   }
