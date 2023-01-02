@@ -80,11 +80,7 @@ public final class JctAssertions extends UtilityClass {
    * @see Assumptions
    */
   public static CompilationAssert givenCompilation(@Nullable JctCompilation compilation) {
-    return assumeThat(compilation)
-        .extracting(Function.identity(), new InstanceOfAssertFactory<>(
-            JctCompilation.class,
-            JctAssertions::assertThatCompilation
-        ));
+    return assumeThatCompilation(compilation);
   }
 
   /**
