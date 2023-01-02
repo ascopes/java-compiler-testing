@@ -36,16 +36,18 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * {@link Lazy} tests.
@@ -53,19 +55,22 @@ import org.junit.jupiter.params.provider.ValueSource;
  * @author Ashley Scopes
  */
 @DisplayName("Lazy tests")
-@Execution(ExecutionMode.CONCURRENT)
+@Execution(ExecutionMode.SAME_THREAD)
+@Isolated("Time-sensitive tests")
 @SuppressWarnings("unchecked")
 class LazyTest {
 
-  @DisplayName("Initializing with a null supplier throws a NullPointerException")
+  @DisplayName("Initialising with a null supplier throws a NullPointerException")
   @Test
-  void initializingWithNullSupplierThrowsNullPointerException() {
+  @Timeout(15)
+  void initialisingWithNullSupplierThrowsNullPointerException() {
     thenCode(() -> new Lazy<>(null))
         .isInstanceOf(NullPointerException.class);
   }
 
   @DisplayName("access() returns the cached result")
-  @Test
+  @RepeatedTest(5)
+  @Timeout(15)
   void accessReturnsTheCachedResult() {
     // Given
     var value = new Object();
@@ -88,9 +93,9 @@ class LazyTest {
   }
 
   @DisplayName("access() synchronizes correctly on initial accesses")
-  @ValueSource(ints = {2, 4, 10, 100})
+  @MethodSource("concurrentRepeatCases")
   @ParameterizedTest(name = "for {0} concurrent read(s)")
-  @Timeout(30)
+  @Timeout(15)
   void accessSynchronizesCorrectlyOnInitialAccesses(int concurrency) {
     // This is closeable in Java 19, but not before.
     @SuppressWarnings("resource")
@@ -142,9 +147,9 @@ class LazyTest {
   }
 
   @DisplayName("access() synchronizes correctly on subsequent accesses")
-  @ValueSource(ints = {2, 4, 10, 100})
+  @MethodSource("concurrentRepeatCases")
   @ParameterizedTest(name = "for {0} concurrent read(s)")
-  @Timeout(30)
+  @Timeout(15)
   void accessSynchronizesCorrectlyOnSubsequentAccesses(int concurrency) {
     // This is closeable in Java 19, but not before.
     @SuppressWarnings("resource")
@@ -189,8 +194,9 @@ class LazyTest {
     }
   }
 
-  @DisplayName("access returns a new value when the lazy is destroyed")
-  @Test
+  @DisplayName("access() returns a new value when the lazy is destroyed")
+  @RepeatedTest(5)
+  @Timeout(15)
   void accessReturnsNewValueWhenLazyIsDestroyed() {
     // Given
     final var firstValue = new Object();
@@ -217,8 +223,9 @@ class LazyTest {
   }
 
   @DisplayName("toString() returns the expected values when initialized")
-  @MethodSource("toStringInitializedCases")
+  @MethodSource("toStringInitialisedCases")
   @ParameterizedTest(name = "with \"{0}\" expected to return \"{1}\"")
+  @Timeout(15)
   void toStringReturnsExpectedValuesWhenInitialized(Object value, String expected) {
     // Given
     var supplier = (Supplier<Object>) mock(Supplier.class);
@@ -234,7 +241,8 @@ class LazyTest {
   }
 
   @DisplayName("toString() returns the expected values when uninitialized")
-  @Test
+  @RepeatedTest(5)
+  @Timeout(15)
   void toStringReturnsExpectedValuesWhenUninitialized() {
     // Given
     var supplier = (Supplier<Object>) mock(Supplier.class);
@@ -250,7 +258,8 @@ class LazyTest {
   }
 
   @DisplayName("ifInitialized() calls the callable when initialized")
-  @Test
+  @RepeatedTest(5)
+  @Timeout(15)
   void ifInitializedCallsTheCallableWhenInitialized() {
     // Given
     var initializer = (Supplier<Object>) mock(Supplier.class);
@@ -267,9 +276,9 @@ class LazyTest {
   }
 
   @DisplayName("ifInitialized() handles race conditions")
-  @ValueSource(ints = {5, 10, 50, 100})
+  @MethodSource("concurrentRepeatCases")
   @ParameterizedTest(name = "for concurrency = {0}")
-  @Timeout(30)
+  @Timeout(15)
   void ifInitializedHandlesRaceConditionsCorrectly(int concurrency) {
     // Given
     var initializer = (Supplier<Object>) mock(Supplier.class);
@@ -301,7 +310,8 @@ class LazyTest {
   }
 
   @DisplayName("ifInitialized() propagates exceptions when initialized")
-  @Test
+  @RepeatedTest(5)
+  @Timeout(15)
   void ifInitializedPropagatesExceptions() {
     // Given
     var initializer = (Supplier<Object>) mock(Supplier.class);
@@ -321,7 +331,8 @@ class LazyTest {
   }
 
   @DisplayName("ifInitialized() does not call the callable when not initialized")
-  @Test
+  @RepeatedTest(5)
+  @Timeout(15)
   void ifInitializedDoesNotCallTheCallableWhenNotInitialized() {
     // Given
     var initializer = (Supplier<Object>) mock(Supplier.class);
@@ -338,11 +349,15 @@ class LazyTest {
     verifyNoInteractions(callback);
   }
 
-  static Stream<Arguments> toStringInitializedCases() {
+  static Stream<Arguments> toStringInitialisedCases() {
     return Stream.of(
         Arguments.of(new Something(), "Lazy{data=Something{}}"),
         Arguments.of("Hello, World!", "Lazy{data=\"Hello, World!\"}")
     );
+  }
+
+  static IntStream concurrentRepeatCases() {
+    return IntStream.of(2, 3, 5, 10, 20, 30);
   }
 
   static class Something {
