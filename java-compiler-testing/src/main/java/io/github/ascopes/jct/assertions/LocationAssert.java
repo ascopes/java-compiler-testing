@@ -18,6 +18,7 @@ package io.github.ascopes.jct.assertions;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.repr.LocationRepresentation;
+import javax.annotation.Nullable;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -38,7 +39,7 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
    *
    * @param value the value to assert on.
    */
-  public LocationAssert(Location value) {
+  public LocationAssert(@Nullable Location value) {
     super(value, LocationAssert.class);
     info.useRepresentation(LocationRepresentation.getInstance());
   }
@@ -47,8 +48,11 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
    * Assert that the location is module-oriented.
    *
    * @return this assertion object for further call chaining.
+   * @throws AssertionError if the location is null.
    */
   public LocationAssert isModuleOrientedLocation() {
+    isNotNull();
+
     if (!actual.isModuleOrientedLocation()) {
       throw failure(
           "Expected location %s to be module-oriented but it was not", actual.getName()
@@ -62,8 +66,11 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
    * Assert that the location is not module-oriented.
    *
    * @return this assertion object for further call chaining.
+   * @throws AssertionError if the location is null.
    */
   public LocationAssert isNotModuleOrientedLocation() {
+    isNotNull();
+
     if (actual.isModuleOrientedLocation()) {
       throw failure(
           "Expected location %s to not be module-oriented but it was", actual.getName()
@@ -77,8 +84,11 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
    * Assert that the location is an output location.
    *
    * @return this assertion object for further call chaining.
+   * @throws AssertionError if the location is null.
    */
   public LocationAssert isOutputLocation() {
+    isNotNull();
+
     if (!actual.isOutputLocation()) {
       throw failure(
           "Expected location %s to be an output location but it was not", actual.getName()
@@ -92,8 +102,11 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
    * Assert that the location is not an output location.
    *
    * @return this assertion object for further call chaining.
+   * @throws AssertionError if the location is null.
    */
   public LocationAssert isNotOutputLocation() {
+    isNotNull();
+
     if (actual.isOutputLocation()) {
       throw failure(
           "Expected location %s to not be an output location but it was", actual.getName()
@@ -107,8 +120,11 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
    * Perform assertions on the name of the location.
    *
    * @return the string assertions to perform.
+   * @throws AssertionError if the location is null.
    */
   public AbstractStringAssert<?> name() {
+    isNotNull();
+
     return assertThat(actual.getName());
   }
 }
