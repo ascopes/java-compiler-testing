@@ -195,8 +195,8 @@ jobs:
         shell: bash
         run: >-
           scripts/prepare-test-outputs-for-merge.sh
-          ${{ matrix.java-version }}
-          ${{ matrix.os-name }}
+          -j "${{ matrix.java-version }}"
+          -o "${{ matrix.os-name }}"
 
       - name: Archive test and coverage reports
         uses: actions/upload-artifact@v3

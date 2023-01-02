@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #
 # Copyright (C) 2022 - 2023 Ashley Scopes
 #
@@ -18,7 +19,8 @@
 ### Common functions.
 ###
 
-unset undefined > /dev/null 2>&1 || true
+# We use undefined as a placeholder elsewhere.
+unset undefined &> /dev/null || true
 
 function log() {
   printf "\033[3;37m$(date "+%H:%M:%S.%3N") \033[0;37m| \033[0;1;${1}m%s:\033[0;${1}m %s\033[0m\n" \
@@ -31,17 +33,38 @@ function warn()    { log 33 WARNING "${@}"; }
 function info()    { log 35 INFO    "${@}"; }
 
 function in-path() {
-  command -v "${1}" > /dev/null 2>&1
+  command -v "${1}" &> /dev/null
   return "${?}"
 }
 
 function run() {
-  # Run in subshell to enable correct argument requoting.
+  # Run in subshell to enable correct argument re-quoting.
+  local file
+  file="$(mktemp)"
+
+  if [ "$#" -gt 0 ]; then
+    err "Function <run> called incorrectly. Pass script to run via stdin rather than as arguments."
+    err "Invocation: <${*}>"
+    exit 1
+  fi
+
+  {
+    echo "#!/usr/bin/env bash"
+    echo "PS4=$'Running: \e[1;33m$ \e[0;3;33m'"
+    echo "set -euxo pipefail"
+    cat -
+  } >> "${file}"
+
+  set +e
   /usr/bin/env bash \
-       1> >(while IFS=$"\r\n" read -r line; do log 36 "STDOUT" "${line}"; done) \
-       2> >(while IFS=$"\r\n" read -r line; do log 37 "STDERR" "${line}"; done) \
-       <<< "PS4=$'Running: \e[1;33m$ \e[0;3;33m'; set -euxo pipefail; ${@}"
+       1> >(while IFS=$'\r\n' read -r line; do log 36 "STDOUT" "${line}"; done) \
+       2> >(while IFS=$'\r\n' read -r line; do log 37 "STDERR" "${line}"; done) \
+       "${file}"
+  local exit_code="${?}"
+  rm "${file}"
+  set -e
 
   # Wait for stdout and stderr to flush for ~10ms
   sleep 0.01
+  return "${exit_code}"
 }
