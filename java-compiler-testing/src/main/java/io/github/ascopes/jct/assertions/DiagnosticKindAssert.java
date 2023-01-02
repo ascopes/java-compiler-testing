@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import javax.annotation.Nullable;
 import javax.tools.Diagnostic.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -34,7 +35,7 @@ public final class DiagnosticKindAssert
    *
    * @param value the value to assert on.
    */
-  public DiagnosticKindAssert(Kind value) {
+  public DiagnosticKindAssert(@Nullable Kind value) {
     super(value, DiagnosticKindAssert.class);
   }
 
@@ -42,6 +43,7 @@ public final class DiagnosticKindAssert
    * Assert that the kind is {@link Kind#ERROR}.
    *
    * @return this assertion object.
+   * @throws AssertionError if this value is null, or the value is not {@link Kind#ERROR}.
    */
   public DiagnosticKindAssert isError() {
     return isAnyOf(Kind.ERROR);
@@ -51,6 +53,8 @@ public final class DiagnosticKindAssert
    * Assert that the kind is either {@link Kind#WARNING} or {@link Kind#MANDATORY_WARNING}.
    *
    * @return this assertion object.
+   * @throws AssertionError if this value is null, or the value is not either {@link Kind#WARNING}
+   *                        or {@link Kind#MANDATORY_WARNING}.
    */
   public DiagnosticKindAssert isWarning() {
     return isAnyOf(Kind.WARNING, Kind.MANDATORY_WARNING);
@@ -60,6 +64,7 @@ public final class DiagnosticKindAssert
    * Assert that the kind is {@link Kind#WARNING}.
    *
    * @return this assertion object.
+   * @throws AssertionError if this value is null, or the value is not {@link Kind#WARNING}.
    */
   public DiagnosticKindAssert isCustomWarning() {
     return isAnyOf(Kind.WARNING);
@@ -69,6 +74,8 @@ public final class DiagnosticKindAssert
    * Assert that the kind is {@link Kind#MANDATORY_WARNING}.
    *
    * @return this assertion object.
+   * @throws AssertionError if this value is null, or the value is not
+   *                        {@link Kind#MANDATORY_WARNING}.
    */
   public DiagnosticKindAssert isMandatoryWarning() {
     return isAnyOf(Kind.MANDATORY_WARNING);
@@ -78,6 +85,7 @@ public final class DiagnosticKindAssert
    * Assert that the kind is {@link Kind#NOTE}.
    *
    * @return this assertion object.
+   * @throws AssertionError if this value is null, or the value is not {@link Kind#NOTE}.
    */
   public DiagnosticKindAssert isNote() {
     return isAnyOf(Kind.NOTE);
@@ -87,6 +95,7 @@ public final class DiagnosticKindAssert
    * Assert that the kind is {@link Kind#OTHER}.
    *
    * @return this assertion object.
+   * @throws AssertionError if this value is null, or the value is not {@link Kind#OTHER}.
    */
   public DiagnosticKindAssert isOther() {
     return isAnyOf(Kind.OTHER);
