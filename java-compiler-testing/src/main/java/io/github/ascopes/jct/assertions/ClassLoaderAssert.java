@@ -15,12 +15,16 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 
 /**
  * Assertions to perform on a classloader.
+ *
+ * <p>This type is a placeholder and will be replaced when AssertJ releases changes to
+ * support assertions on classloaders.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -33,7 +37,7 @@ public final class ClassLoaderAssert extends AbstractAssert<ClassLoaderAssert, C
    *
    * @param actual the class loader to assert upon.
    */
-  public ClassLoaderAssert(ClassLoader actual) {
+  public ClassLoaderAssert(@Nullable ClassLoader actual) {
     super(actual, ClassLoaderAssert.class);
   }
 }
