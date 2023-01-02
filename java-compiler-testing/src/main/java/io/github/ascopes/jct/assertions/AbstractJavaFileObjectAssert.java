@@ -113,7 +113,7 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * @throws UncheckedIOException if an IO error occurs reading the file content.
    */
   public AbstractStringAssert<?> content(Charset charset) {
-    requireNonNull(charset, "charset");
+    requireNonNull(charset, "charset must not be null");
     return content(charset.newDecoder());
   }
 
@@ -127,7 +127,7 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * @throws UncheckedIOException if an IO error occurs reading the file content.
    */
   public AbstractStringAssert<?> content(CharsetDecoder charsetDecoder) {
-    requireNonNull(charsetDecoder, "charsetDecoder");
+    requireNonNull(charsetDecoder, "charsetDecoder must not be null");
     isNotNull();
 
     var content = uncheckedIo(() -> charsetDecoder
