@@ -18,6 +18,7 @@ package io.github.ascopes.jct.assertions;
 import io.github.ascopes.jct.repr.StackTraceRepresentation;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractListAssert;
@@ -30,15 +31,14 @@ import org.assertj.core.api.AbstractListAssert;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class StackTraceAssert
-    extends
-    AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
+    extends AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
 
   /**
    * Initialize a new assertions object.
    *
    * @param actual the list of stack trace elements to assert upon.
    */
-  public StackTraceAssert(List<? extends StackTraceElement> actual) {
+  public StackTraceAssert(@Nullable List<? extends StackTraceElement> actual) {
     super(actual, StackTraceAssert.class);
     info.useRepresentation(StackTraceRepresentation.getInstance());
   }
