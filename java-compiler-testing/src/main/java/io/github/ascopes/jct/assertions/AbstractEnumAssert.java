@@ -17,9 +17,12 @@ package io.github.ascopes.jct.assertions;
 
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.utils.IterableUtils;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
@@ -36,22 +39,14 @@ import org.assertj.core.api.AbstractAssert;
 public abstract class AbstractEnumAssert<S extends AbstractEnumAssert<S, E>, E extends Enum<E>>
     extends AbstractAssert<S, E> {
 
-  private final String friendlyTypeName;
-
   /**
    * Initialize this enum assertion.
    *
    * @param value            the value to assert upon.
    * @param selfType         the type of this assertion implementation.
-   * @param friendlyTypeName the friendly type name to use.
    */
-  protected AbstractEnumAssert(
-      E value,
-      Class<?> selfType,
-      String friendlyTypeName
-  ) {
+  protected AbstractEnumAssert(@Nullable E value, Class<?> selfType) {
     super(value, selfType);
-    this.friendlyTypeName = requireNonNull(friendlyTypeName, "friendlyTypeName");
   }
 
   /**
@@ -60,42 +55,76 @@ public abstract class AbstractEnumAssert<S extends AbstractEnumAssert<S, E>, E e
    * @param first the first value to check for.
    * @param more  any additional values to check for.
    * @return this assertion object.
+   * @throws NullPointerException if any of the elements to test against are null.
+   * @throws AssertionError       if the actual value is null, or if the value is not in the given
+   *                              group of acceptable values.
    */
   @SafeVarargs
-  public final S isOneOf(E first, E... more) {
+  public final S isAnyOf(E first, E... more) {
     requireNonNull(first, "first");
     requireNonNullValues(more, "more");
 
-    var all = IterableUtils.combineOneOrMore(first, more);
-    if (!all.contains(actual)) { // lgtm [java/type-mismatch-access] -- false positive
-      var actualStr = reprName(actual);
+    return isAnyOfElements(IterableUtils.combineOneOrMore(first, more));
+  }
 
-      String expectedStr;
-      if (all.size() > 1) {
-        expectedStr = "one of " + all
-            .stream()
-            .map(this::reprName)
-            .collect(Collectors.joining(", "));
-      } else {
-        expectedStr = reprName(first);
-      }
+  /**
+   * Assert that the value is one of the given values.
+   *
+   * @param elements the elements to check for.
+   * @return this assertion object.
+   * @throws NullPointerException if any of the elements to test against are null.
+   * @throws AssertionError       if the actual value is null, or if the value is not in the given
+   *                              iterable of acceptable values.
+   */
+  public final S isAnyOfElements(Iterable<E> elements) {
+    requireNonNullValues(elements, "elements");
 
-      throw failureWithActualExpected(
-          actualStr,
-          expectedStr,
-          "Expected %s to be %s, but it was %s",
-          friendlyTypeName,
-          expectedStr,
-          actualStr
-      );
-    }
+    isNotNull();
+
+    assertThat(List.of(actual))
+        .as(description())
+        .containsAnyElementsOf(elements);
 
     return myself;
   }
 
-  private String reprName(E e) {
-    return e == null
-        ? "null"
-        : "<" + e.name() + ">";
+  /**
+   * Assert that the value is none of the given values.
+   *
+   * @param first the first value to check for.
+   * @param more  any additional values to check for.
+   * @return this assertion object.
+   * @throws NullPointerException if any of the elements to test against are null.
+   * @throws AssertionError       if the actual value is null, or if the value is in the given
+   *                              group of acceptable values.
+   */
+  @SafeVarargs
+  public final S isNoneOf(E first, E... more) {
+    return isNoneOfElements(IterableUtils.combineOneOrMore(first, more));
+  }
+
+  /**
+   * Assert that the value is one of the given values.
+   *
+   * @param elements the elements to check for.
+   * @return this assertion object.
+   * @throws NullPointerException if any of the elements to test against are null.
+   * @throws AssertionError       if the actual value is null, or if the value is in the given
+   *                              iterable of acceptable values.
+   */
+  public final S isNoneOfElements(Iterable<E> elements) {
+    requireNonNullValues(elements, "elements");
+
+    isNotNull();
+
+    assertThat(List.of(actual))
+        .as(description())
+        .doesNotContainAnyElementsOf(elements);
+
+    return myself;
+  }
+
+  private Supplier<String> description() {
+    return () -> String.format("%s enum value <%s>", actual.getClass().getSimpleName(), actual);
   }
 }

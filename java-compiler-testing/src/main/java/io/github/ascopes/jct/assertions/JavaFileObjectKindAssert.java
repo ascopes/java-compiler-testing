@@ -38,7 +38,7 @@ public final class JavaFileObjectKindAssert
    * @param value the value to assert on.
    */
   public JavaFileObjectKindAssert(Kind value) {
-    super(value, JavaFileObjectKindAssert.class, "kind");
+    super(value, JavaFileObjectKindAssert.class);
   }
 
   /**
@@ -47,7 +47,7 @@ public final class JavaFileObjectKindAssert
    * @return this assertion object.
    */
   public JavaFileObjectKindAssert isSource() {
-    return isOneOf(Kind.SOURCE);
+    return isAnyOf(Kind.SOURCE);
   }
 
   /**
@@ -56,7 +56,7 @@ public final class JavaFileObjectKindAssert
    * @return this assertion object.
    */
   public JavaFileObjectKindAssert isClass() {
-    return isOneOf(Kind.CLASS);
+    return isAnyOf(Kind.CLASS);
   }
 
   /**
@@ -65,7 +65,7 @@ public final class JavaFileObjectKindAssert
    * @return this assertion object.
    */
   public JavaFileObjectKindAssert isHtml() {
-    return isOneOf(Kind.HTML);
+    return isAnyOf(Kind.HTML);
   }
 
   /**
@@ -74,7 +74,7 @@ public final class JavaFileObjectKindAssert
    * @return this assertion object.
    */
   public JavaFileObjectKindAssert isOther() {
-    return isOneOf(Kind.OTHER);
+    return isAnyOf(Kind.OTHER);
   }
 
   /**

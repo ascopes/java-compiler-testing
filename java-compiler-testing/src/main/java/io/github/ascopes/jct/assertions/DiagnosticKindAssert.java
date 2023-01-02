@@ -35,7 +35,7 @@ public final class DiagnosticKindAssert
    * @param value the value to assert on.
    */
   public DiagnosticKindAssert(Kind value) {
-    super(value, DiagnosticKindAssert.class, "kind");
+    super(value, DiagnosticKindAssert.class);
   }
 
   /**
@@ -44,7 +44,7 @@ public final class DiagnosticKindAssert
    * @return this assertion object.
    */
   public DiagnosticKindAssert isError() {
-    return isOneOf(Kind.ERROR);
+    return isAnyOf(Kind.ERROR);
   }
 
   /**
@@ -53,7 +53,7 @@ public final class DiagnosticKindAssert
    * @return this assertion object.
    */
   public DiagnosticKindAssert isWarning() {
-    return isOneOf(Kind.WARNING, Kind.MANDATORY_WARNING);
+    return isAnyOf(Kind.WARNING, Kind.MANDATORY_WARNING);
   }
 
   /**
@@ -62,7 +62,7 @@ public final class DiagnosticKindAssert
    * @return this assertion object.
    */
   public DiagnosticKindAssert isCustomWarning() {
-    return isOneOf(Kind.WARNING);
+    return isAnyOf(Kind.WARNING);
   }
 
   /**
@@ -71,7 +71,7 @@ public final class DiagnosticKindAssert
    * @return this assertion object.
    */
   public DiagnosticKindAssert isMandatoryWarning() {
-    return isOneOf(Kind.MANDATORY_WARNING);
+    return isAnyOf(Kind.MANDATORY_WARNING);
   }
 
   /**
@@ -80,7 +80,7 @@ public final class DiagnosticKindAssert
    * @return this assertion object.
    */
   public DiagnosticKindAssert isNote() {
-    return isOneOf(Kind.NOTE);
+    return isAnyOf(Kind.NOTE);
   }
 
   /**
@@ -89,6 +89,6 @@ public final class DiagnosticKindAssert
    * @return this assertion object.
    */
   public DiagnosticKindAssert isOther() {
-    return isOneOf(Kind.OTHER);
+    return isAnyOf(Kind.OTHER);
   }
 }
