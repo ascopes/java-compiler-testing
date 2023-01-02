@@ -18,6 +18,7 @@ package io.github.ascopes.jct.assertions;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.filemanagers.PathFileObject;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractPathAssert;
@@ -37,7 +38,7 @@ public final class PathFileObjectAssert
    *
    * @param actual the path file object to assert upon.
    */
-  public PathFileObjectAssert(PathFileObject actual) {
+  public PathFileObjectAssert(@Nullable PathFileObject actual) {
     super(actual, PathFileObjectAssert.class);
   }
 
@@ -45,8 +46,11 @@ public final class PathFileObjectAssert
    * Perform an assertion on the file object's full path.
    *
    * @return the assertions for the path.
+   * @throws AssertionError if the file object is null.
    */
   public AbstractPathAssert<?> relativePath() {
+    isNotNull();
+
     return assertThat(actual.getRelativePath());
   }
 
@@ -54,8 +58,11 @@ public final class PathFileObjectAssert
    * Perform an assertion on the file object's full path.
    *
    * @return the assertions for the path.
+   * @throws AssertionError if the file object is null.
    */
   public AbstractPathAssert<?> fullPath() {
+    isNotNull();
+
     return assertThat(actual.getFullPath());
   }
 }
