@@ -15,15 +15,18 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.ascopes.jct.utils.IoExceptionUtils;
 import java.io.ByteArrayOutputStream;
+import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import javax.annotation.Nullable;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -51,7 +54,7 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * @param actual   the actual value to assert on.
    * @param selfType the type of the assertion implementation.
    */
-  protected AbstractJavaFileObjectAssert(A actual, Class<?> selfType) {
+  protected AbstractJavaFileObjectAssert(@Nullable A actual, Class<?> selfType) {
     super(actual, selfType);
   }
 
@@ -59,8 +62,10 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * Get an assertion object on the URI of the file.
    *
    * @return the URI assertion.
+   * @throws AssertionError if the actual value is null.
    */
   public AbstractUriAssert<?> uri() {
+    isNotNull();
     return assertThat(actual.toUri());
   }
 
@@ -68,8 +73,10 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * Get an assertion object on the name of the file.
    *
    * @return the string assertion.
+   * @throws AssertionError if the actual value is null.
    */
   public AbstractStringAssert<?> name() {
+    isNotNull();
     return assertThat(actual.getName());
   }
 
@@ -77,8 +84,10 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * Get an assertion object on the binary content of the file.
    *
    * @return the byte array assertion.
+   * @throws AssertionError if the actual value is null.
    */
   public AbstractByteArrayAssert<?> binaryContent() {
+    isNotNull();
     return assertThat(rawContent());
   }
 
@@ -87,6 +96,8 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * encoding.
    *
    * @return the string assertion.
+   * @throws AssertionError if the actual value is null.
+   * @throws UncheckedIOException if an IO error occurs reading the file content.
    */
   public AbstractStringAssert<?> content() {
     return content(StandardCharsets.UTF_8);
@@ -97,8 +108,12 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    *
    * @param charset the charset to decode the file with.
    * @return the string assertion.
+   * @throws AssertionError if the actual value is null.
+   * @throws NullPointerException if the charset parameter is null.
+   * @throws UncheckedIOException if an IO error occurs reading the file content.
    */
   public AbstractStringAssert<?> content(Charset charset) {
+    requireNonNull(charset, "charset");
     return content(charset.newDecoder());
   }
 
@@ -107,9 +122,15 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    *
    * @param charsetDecoder the charset decoder to use to decode the file to a string.
    * @return the string assertion.
+   * @throws AssertionError if the actual value is null.
+   * @throws NullPointerException if the charset decoder parameter is null.
+   * @throws UncheckedIOException if an IO error occurs reading the file content.
    */
   public AbstractStringAssert<?> content(CharsetDecoder charsetDecoder) {
-    var content = IoExceptionUtils.uncheckedIo(() -> charsetDecoder
+    requireNonNull(charsetDecoder, "charsetDecoder");
+    isNotNull();
+
+    var content = uncheckedIo(() -> charsetDecoder
         .decode(ByteBuffer.wrap(rawContent()))
         .toString());
 
@@ -119,9 +140,15 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
   /**
    * Get an assertion object on the last modified timestamp.
    *
+   * <p>This will be set to the UNIX epoch ({@code 1970-01-01T00:00:00.000Z}) if an
+   * error occurs reading the file modification time, or if the information is not available.
+   *
    * @return the instant assertion.
+   * @throws AssertionError if the actual value is null.
    */
   public AbstractInstantAssert<?> lastModified() {
+    isNotNull();
+
     var instant = Instant.ofEpochMilli(actual.getLastModified());
     return assertThat(instant);
   }
@@ -130,18 +157,21 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * Perform an assertion on the file object kind.
    *
    * @return the assertions for the kind.
+   * @throws AssertionError if the actual value is null.
    */
   public JavaFileObjectKindAssert kind() {
+    isNotNull();
+
     return new JavaFileObjectKindAssert(actual.getKind());
   }
 
   private byte[] rawContent() {
-    return IoExceptionUtils.uncheckedIo(() -> {
+    return uncheckedIo(() -> {
       var baos = new ByteArrayOutputStream();
       try (var is = actual.openInputStream()) {
         is.transferTo(baos);
+        return baos.toByteArray();
       }
-      return baos.toByteArray();
     });
   }
 }
