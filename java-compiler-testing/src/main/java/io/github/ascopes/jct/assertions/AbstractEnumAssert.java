@@ -61,7 +61,7 @@ public abstract class AbstractEnumAssert<S extends AbstractEnumAssert<S, E>, E e
    */
   @SafeVarargs
   public final S isAnyOf(E first, E... more) {
-    requireNonNull(first, "first");
+    requireNonNull(first, "first must not be null");
     requireNonNullValues(more, "more");
 
     return isAnyOfElements(IterableUtils.combineOneOrMore(first, more));
@@ -100,6 +100,9 @@ public abstract class AbstractEnumAssert<S extends AbstractEnumAssert<S, E>, E e
    */
   @SafeVarargs
   public final S isNoneOf(E first, E... more) {
+    requireNonNull(first, "first must not be null");
+    requireNonNullValues(more, "more");
+
     return isNoneOfElements(IterableUtils.combineOneOrMore(first, more));
   }
 
