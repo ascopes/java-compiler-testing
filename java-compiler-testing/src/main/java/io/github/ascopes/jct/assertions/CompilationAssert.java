@@ -15,6 +15,9 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toUnmodifiableList;
+
 import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.repr.DiagnosticListRepresentation;
@@ -23,6 +26,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
@@ -58,7 +62,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
    *
    * @param value the value to assert on.
    */
-  public CompilationAssert(JctCompilation value) {
+  public CompilationAssert(@Nullable JctCompilation value) {
     super(value, CompilationAssert.class);
   }
 
@@ -66,8 +70,11 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
    * Assert that the compilation was successful.
    *
    * @return this assertion object.
+   * @throws AssertionError if the compilation was null, or if the compilation was not successful.
    */
   public CompilationAssert isSuccessful() {
+    isNotNull();
+
     if (actual.isFailure()) {
       // If we have error diagnostics, add them to the error message to provide helpful debugging
       // information. If we are treating warnings as errors, then we want to include those in this
@@ -80,7 +87,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
           .getDiagnostics()
           .stream()
           .filter(isErrorDiagnostic)
-          .collect(Collectors.toUnmodifiableList());
+          .collect(toUnmodifiableList());
 
       failWithDiagnostics(diagnostics, "Expected a successful compilation, but it failed.");
     }
@@ -95,6 +102,9 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
    * {@link #isSuccessful()}.
    *
    * @return this assertion object.
+   * @throws AssertionError if the compilation was null, if the compilation was not successful, or
+   *                        if the compilation was successful but had one or more warning
+   *                        diagnostics.
    */
   public CompilationAssert isSuccessfulWithoutWarnings() {
     isSuccessful();
@@ -106,14 +116,17 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
    * Assert that the compilation was a failure.
    *
    * @return this assertion object.
+   * @throws AssertionError if the compilation was null, or if the compilation succeeded.
    */
   public CompilationAssert isFailure() {
+    isNotNull();
+
     if (actual.isSuccessful()) {
       var warnings = actual
           .getDiagnostics()
           .stream()
           .filter(kind -> WARNING_DIAGNOSTIC_KINDS.contains(kind.getKind()))
-          .collect(Collectors.toUnmodifiableList());
+          .collect(toUnmodifiableList());
 
       failWithDiagnostics(warnings, "Expected compilation to fail, but it succeeded.");
     }
@@ -125,8 +138,10 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
    * Get assertions for diagnostics.
    *
    * @return assertions for the diagnostics.
+   * @throws AssertionError if the compilation was null.
    */
   public DiagnosticListAssert diagnostics() {
+    isNotNull();
     return new DiagnosticListAssert(actual.getDiagnostics());
   }
 
@@ -137,8 +152,22 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
    *
    * @param location the location to configure.
    * @return the assertions to perform.
+   * @throws AssertionError           if the compilation was null.
+   * @throws IllegalArgumentException if the location was
+   *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
+   * @throws NullPointerException     if the provided location object is null.
    */
   public PackageContainerGroupAssert packageGroup(Location location) {
+    requireNonNull(location, "location must not be null");
+
+    if (location.isModuleOrientedLocation()) {
+      throw new IllegalArgumentException(
+          "Expected location " + location + " to not be module-oriented"
+      );
+    }
+
+    isNotNull();
+
     return new PackageContainerGroupAssert(
         actual.getFileManager().getPackageContainerGroup(location)
     );
@@ -151,8 +180,22 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
    *
    * @param location the location to configure.
    * @return the assertions to perform.
+   * @throws AssertionError           if the compilation was null.
+   * @throws IllegalArgumentException if the location is not
+   *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
+   * @throws NullPointerException     if the provided location object is null.
    */
   public ModuleContainerGroupAssert moduleGroup(Location location) {
+    requireNonNull(location, "location must not be null");
+
+    if (!location.isModuleOrientedLocation()) {
+      throw new IllegalArgumentException(
+          "Expected location " + location + " to be module-oriented"
+      );
+    }
+
+    isNotNull();
+
     return new ModuleContainerGroupAssert(
         actual.getFileManager().getModuleContainerGroup(location)
     );
@@ -165,8 +208,22 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
    *
    * @param location the location to configure.
    * @return the assertions to perform.
+   * @throws AssertionError           if the compilation was null.
+   * @throws IllegalArgumentException if the location is not
+   *                                  {@link Location#isOutputLocation() an output location}.
+   * @throws NullPointerException     if the provided location object is null.
    */
   public OutputContainerGroupAssert outputGroup(Location location) {
+    requireNonNull(location, "location must not be null");
+
+    if (!location.isOutputLocation()) {
+      throw new IllegalArgumentException(
+          "Expected location " + location + " to be an output location"
+      );
+    }
+
+    isNotNull();
+
     return new OutputContainerGroupAssert(
         actual.getFileManager().getOutputContainerGroup(location)
     );
@@ -175,7 +232,10 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
   /**
    * Get assertions on the path containing class outputs, if it exists.
    *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
    * @return the assertions to perform on the class outputs.
+   * @throws AssertionError if the compilation is null.
    */
   public OutputContainerGroupAssert classOutput() {
     return outputGroup(StandardLocation.CLASS_OUTPUT);
@@ -184,7 +244,10 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
   /**
    * Get assertions on the path containing generated source outputs, if it exists.
    *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
    * @return the assertions to perform on the source outputs.
+   * @throws AssertionError if the compilation is null.
    */
   public OutputContainerGroupAssert sourceOutput() {
     return outputGroup(StandardLocation.SOURCE_OUTPUT);
@@ -193,7 +256,10 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
   /**
    * Get assertions on the path containing header outputs, if it exists.
    *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
    * @return the assertions to perform on the header outputs.
+   * @throws AssertionError if the compilation is null.
    */
   public OutputContainerGroupAssert generatedHeaders() {
     return outputGroup(StandardLocation.NATIVE_HEADER_OUTPUT);
@@ -202,7 +268,10 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
   /**
    * Get assertions on the path containing the class path, if it exists.
    *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
    * @return the assertions to perform on the class path.
+   * @throws AssertionError if the compilation is null.
    */
   public PackageContainerGroupAssert classPath() {
     return packageGroup(StandardLocation.CLASS_PATH);
@@ -211,8 +280,10 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
   /**
    * Get assertions on the path containing the source path, if it exists.
    *
-   * @return the assertions to perform on the source path, or assertions on a {@code null} value if
-   *     no group exists for that location.
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
+   * @return the assertions to perform on the source path.
+   * @throws AssertionError if the compilation is null.
    */
   public PackageContainerGroupAssert sourcePath() {
     return packageGroup(StandardLocation.SOURCE_PATH);
@@ -221,8 +292,10 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
   /**
    * Get assertions on the path containing the source path, if it exists.
    *
-   * @return the assertions to perform on the source path, or assertions on a {@code null} value if
-   *     no group exists for that location.
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
+   * @return the assertions to perform on the source path.
+   * @throws AssertionError if the compilation is null.
    */
   public ModuleContainerGroupAssert moduleSourcePath() {
     return moduleGroup(StandardLocation.MODULE_SOURCE_PATH);
@@ -231,8 +304,10 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
   /**
    * Get assertions on the path containing the module path, if it exists.
    *
-   * @return the assertions to perform on the module path, or assertions on a {@code null} value if
-   *     no group exists for that location.
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
+   * @return the assertions to perform on the module path.
+   * @throws AssertionError if the compilation is null.
    */
   public ModuleContainerGroupAssert modulePath() {
     return moduleGroup(StandardLocation.MODULE_PATH);
