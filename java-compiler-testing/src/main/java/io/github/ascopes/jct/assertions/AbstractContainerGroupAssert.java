@@ -71,7 +71,7 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
    * @param <T>   the service type.
    * @return the assertions across the resultant services that are loaded for the given class.
    */
-  public <T> AbstractListAssert<?, List<? extends T>, T, ? extends ObjectAssert<T>> serviceLoader(
+  public <T> AbstractListAssert<?, List<? extends T>, T, ? extends ObjectAssert<T>> services(
       Class<T> clazz
   ) {
     // AssertJ currently returns ObjectAssert here, not AbstractObjectAssert. This is problematic
