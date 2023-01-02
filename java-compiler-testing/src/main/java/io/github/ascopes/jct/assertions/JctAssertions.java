@@ -17,6 +17,7 @@ package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.utils.UtilityClass;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -39,7 +40,7 @@ public final class JctAssertions extends UtilityClass {
    * @param compilation the compilation to assert on.
    * @return the assertion.
    */
-  public static CompilationAssert assertThatCompilation(JctCompilation compilation) {
+  public static CompilationAssert assertThatCompilation(@Nullable JctCompilation compilation) {
     return thenCompilation(compilation);
   }
 
@@ -49,7 +50,7 @@ public final class JctAssertions extends UtilityClass {
    * @param compilation the compilation to assert on.
    * @return the assertion.
    */
-  public static CompilationAssert thenCompilation(JctCompilation compilation) {
+  public static CompilationAssert thenCompilation(@Nullable JctCompilation compilation) {
     return new CompilationAssert(compilation);
   }
 }
