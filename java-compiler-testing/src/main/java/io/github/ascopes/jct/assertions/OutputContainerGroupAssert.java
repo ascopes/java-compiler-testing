@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.containers.OutputContainerGroup;
+import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -33,8 +34,9 @@ public final class OutputContainerGroupAssert
    * Initialize the container group assertions.
    *
    * @param containerGroup the container group to assert upon.
+   * @throws AssertionError if the container group is null.
    */
-  public OutputContainerGroupAssert(OutputContainerGroup containerGroup) {
+  public OutputContainerGroupAssert(@Nullable OutputContainerGroup containerGroup) {
     super(containerGroup, OutputContainerGroupAssert.class);
   }
 
@@ -42,8 +44,11 @@ public final class OutputContainerGroupAssert
    * Get assertions to perform on package-oriented paths within this location.
    *
    * @return the package-oriented assertions.
+   * @throws AssertionError if the container group is null.
    */
   public PackageContainerGroupAssert packages() {
+    isNotNull();
+
     return new PackageContainerGroupAssert(actual);
   }
 
@@ -51,8 +56,11 @@ public final class OutputContainerGroupAssert
    * Get assertions to perform on module-oriented paths within this location.
    *
    * @return the module-oriented assertions.
+   * @throws AssertionError if the container group is null.
    */
   public ModuleContainerGroupAssert modules() {
+    isNotNull();
+
     return new ModuleContainerGroupAssert(actual);
   }
 }
