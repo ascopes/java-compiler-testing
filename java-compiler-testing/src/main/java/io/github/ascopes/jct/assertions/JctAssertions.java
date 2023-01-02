@@ -15,11 +15,16 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import static org.assertj.core.api.Assumptions.assumeThat;
+
 import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.utils.UtilityClass;
+import java.util.function.Function;
 import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.assertj.core.api.Assumptions;
+import org.assertj.core.api.InstanceOfAssertFactory;
 
 /**
  * Helper class to provide fluent creation of assertions for compilations.
@@ -41,7 +46,45 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static CompilationAssert assertThatCompilation(@Nullable JctCompilation compilation) {
-    return thenCompilation(compilation);
+    return new CompilationAssert(compilation);
+  }
+
+  /**
+   * Perform a regular compilation assumption.
+   *
+   * <p>Assumptions work the same as assertions, but will mark the test as skipped if they fail
+   * rather than marking the test as failed. This is useful for skipping tests if specific
+   * conditions are not met.
+   *
+   * @param compilation the compilation to assume on.
+   * @return the assumption.
+   * @see Assumptions
+   */
+  public static CompilationAssert assumeThatCompilation(@Nullable JctCompilation compilation) {
+    return assumeThat(compilation)
+        .extracting(Function.identity(), new InstanceOfAssertFactory<>(
+            JctCompilation.class,
+            JctAssertions::assertThatCompilation
+        ));
+  }
+
+  /**
+   * Perform a BDD-style compilation assumption.
+   *
+   * <p>Assumptions work the same as assertions, but will mark the test as skipped if they fail
+   * rather than marking the test as failed. This is useful for skipping tests if specific
+   * conditions are not met.
+   *
+   * @param compilation the compilation to assume on.
+   * @return the assumption.
+   * @see Assumptions
+   */
+  public static CompilationAssert givenCompilation(@Nullable JctCompilation compilation) {
+    return assumeThat(compilation)
+        .extracting(Function.identity(), new InstanceOfAssertFactory<>(
+            JctCompilation.class,
+            JctAssertions::assertThatCompilation
+        ));
   }
 
   /**
@@ -51,6 +94,6 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static CompilationAssert thenCompilation(@Nullable JctCompilation compilation) {
-    return new CompilationAssert(compilation);
+    return assertThatCompilation(compilation);
   }
 }
