@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import javax.annotation.Nullable;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -34,7 +35,7 @@ public final class JavaFileObjectAssert
    *
    * @param actual the Java file object to assert upon.
    */
-  public JavaFileObjectAssert(JavaFileObject actual) {
+  public JavaFileObjectAssert(@Nullable JavaFileObject actual) {
     super(actual, JavaFileObjectAssert.class);
   }
 }
