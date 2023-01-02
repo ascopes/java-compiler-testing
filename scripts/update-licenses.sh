@@ -25,33 +25,42 @@ set -o pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
-if [ "$#" -gt 0 ] && ("${1}" = "--help" ] || [ "${1}" = "-h" ]); then
-  echo "USAGE: ${0} [-h | --help] [--debug]"
-  echo "Reapply license headers across this repository."
-  echo ""
-  echo "    -h | --help    Show this message and exit."
-  echo "    --debug        Show verbose Maven output."
-  echo
-  exit 0
-fi
-
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 mvn_flags=(-B -e)
 
-if [ "$#" -gt 0 ] && [ "${1}" = "--debug" ]; then
-  mvn_flags+=(-x)
-else
-  mvn_flags+=()
-fi
+function usage() {
+  echo "USAGE: ${BASH_SOURCE[0]} [-d] [-h]"
+  echo "    -d   Show debugging output from Maven."
+  echo "    -h   Show this message and exit."
+}
+
+function help() {
+  usage
+  exit 0
+}
+
+function unknown-option() {
+  err "Unknown option '${1}'"
+  usage
+  exit 1
+}
+
+while getopts "dh" opt; do
+  case "${opt}" in
+    d) mvn_flags+=(-x) ;;
+    h) help ;;
+    *) unknown-option "${opt}" ;;
+  esac
+done
 
 info "Cleaning workspace..."
-run "./mvnw --quiet ${mvn_flags[@]} clean"
+run <<< "./mvnw --quiet ${mvn_flags[*]} clean"
 
 info "Reapplying licenses across workspace..."
-run "./mvnw ${mvn_flags[@]} license:remove license:format"
+run <<< "./mvnw ${mvn_flags[*]} license:remove license:format"
 
 info "Running verification (skipping tests)"
-run "./mvnw ${mvn_flags[@]} verify -DskipTests"
+run <<<  "./mvnw ${mvn_flags[*]} verify -DskipTests"
 
 success "Completed!"
