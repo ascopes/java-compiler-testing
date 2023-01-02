@@ -42,7 +42,7 @@ import org.assertj.core.api.AbstractListAssert;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class DiagnosticListAssert extends
-    AbstractListAssert<DiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, DiagnosticAssert> {
+    AbstractListAssert<DiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, TraceDiagnosticAssert> {
 
   /**
    * Initialize this assertion.
@@ -251,11 +251,11 @@ public final class DiagnosticListAssert extends
   }
 
   @Override
-  protected DiagnosticAssert toAssert(
+  protected TraceDiagnosticAssert toAssert(
       TraceDiagnostic<? extends JavaFileObject> value,
       String description
   ) {
-    return new DiagnosticAssert(value).describedAs(description);
+    return new TraceDiagnosticAssert(value).describedAs(description);
   }
 
   @Override

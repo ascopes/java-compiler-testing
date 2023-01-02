@@ -19,8 +19,9 @@ import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
-import io.github.ascopes.jct.repr.DiagnosticRepresentation;
+import io.github.ascopes.jct.repr.TraceDiagnosticRepresentation;
 import java.util.Locale;
+import javax.annotation.Nullable;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -36,34 +37,42 @@ import org.assertj.core.api.AbstractStringAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public final class DiagnosticAssert
-    extends AbstractAssert<DiagnosticAssert, TraceDiagnostic<? extends JavaFileObject>> {
+public final class TraceDiagnosticAssert
+    extends AbstractAssert<TraceDiagnosticAssert, TraceDiagnostic<? extends JavaFileObject>> {
 
   /**
    * Initialize this assertion type.
    *
    * @param value the value to assert on.
    */
-  public DiagnosticAssert(TraceDiagnostic<? extends JavaFileObject> value) {
-    super(value, DiagnosticAssert.class);
-    info.useRepresentation(DiagnosticRepresentation.getInstance());
+  public TraceDiagnosticAssert(@Nullable TraceDiagnostic<? extends JavaFileObject> value) {
+    super(value, TraceDiagnosticAssert.class);
+    info.useRepresentation(TraceDiagnosticRepresentation.getInstance());
   }
 
   /**
    * Get assertions for the kind of the diagnostic.
    *
    * @return the assertions for the diagnostic kind.
+   * @throws AssertionError if the diagnostic is null.
    */
   public DiagnosticKindAssert kind() {
+    isNotNull();
+
     return new DiagnosticKindAssert(actual.getKind());
   }
 
   /**
    * Get assertions for the source of the diagnostic.
    *
+   * <p>If no source is present, then the value in the returned assertions may be {@code null}.
+   *
    * @return the assertions for the source of the diagnostic.
+   * @throws AssertionError if the diagnostic is null.
    */
   public JavaFileObjectAssert source() {
+    isNotNull();
+
     return new JavaFileObjectAssert(actual.getSource());
   }
 
@@ -73,6 +82,7 @@ public final class DiagnosticAssert
    * <p>The value may be -1 if no information is available.
    *
    * @return the assertions for the position of the diagnostic.
+   * @throws AssertionError if the diagnostic is null.
    */
   public AbstractLongAssert<?> position() {
     return assertPosition(actual.getPosition(), "position");
@@ -84,6 +94,7 @@ public final class DiagnosticAssert
    * <p>The value may be -1 if no information is available.
    *
    * @return the assertions for the start position of the diagnostic.
+   * @throws AssertionError if the diagnostic is null.
    */
   public AbstractLongAssert<?> startPosition() {
     return assertPosition(actual.getPosition(), "startPosition");
@@ -95,6 +106,7 @@ public final class DiagnosticAssert
    * <p>The value may be -1 if no information is available.
    *
    * @return the assertions for the end position of the diagnostic.
+   * @throws AssertionError if the diagnostic is null.
    */
   public AbstractLongAssert<?> endPosition() {
     return assertPosition(actual.getEndPosition(), "endPosition");
@@ -106,6 +118,7 @@ public final class DiagnosticAssert
    * <p>The value may be -1 if no information is available.
    *
    * @return the assertions for the line number of the diagnostic.
+   * @throws AssertionError if the diagnostic is null.
    */
   public AbstractLongAssert<?> lineNumber() {
     return assertPosition(actual.getLineNumber(), "lineNumber");
@@ -117,6 +130,7 @@ public final class DiagnosticAssert
    * <p>The value may be -1 if no information is available.
    *
    * @return the assertions for the column number of the diagnostic.
+   * @throws AssertionError if the diagnostic is null.
    */
   public AbstractLongAssert<?> columnNumber() {
     return assertPosition(actual.getColumnNumber(), "columnNumber");
@@ -126,8 +140,11 @@ public final class DiagnosticAssert
    * Get assertions for the code of the diagnostic.
    *
    * @return the assertions for the code of the diagnostic.
+   * @throws AssertionError if the diagnostic is null.
    */
   public AbstractStringAssert<?> code() {
+    isNotNull();
+
     return assertThat(actual.getCode());
   }
 
@@ -135,8 +152,11 @@ public final class DiagnosticAssert
    * Get assertions for the message of the diagnostic, assuming the default locale.
    *
    * @return the assertions for the message of the diagnostic.
+   * @throws AssertionError if the diagnostic is null.
    */
   public AbstractStringAssert<?> message() {
+    isNotNull();
+
     return assertThat(actual.getMessage(null));
   }
 
@@ -145,9 +165,13 @@ public final class DiagnosticAssert
    *
    * @param locale the locale to use.
    * @return the assertions for the message of the diagnostic.
+   * @throws AssertionError if the diagnostic is null.
    */
   public AbstractStringAssert<?> message(Locale locale) {
-    requireNonNull(locale, "locale");
+    requireNonNull(locale, "locale must not be null");
+
+    isNotNull();
+
     return assertThat(actual.getMessage(locale));
   }
 
@@ -155,8 +179,11 @@ public final class DiagnosticAssert
    * Get assertions for the timestamp of the diagnostic.
    *
    * @return the assertions for the timestamp of the diagnostic.
+   * @throws AssertionError if the diagnostic is null.
    */
   public AbstractInstantAssert<?> timestamp() {
+    isNotNull();
+
     return assertThat(actual.getTimestamp());
   }
 
@@ -164,18 +191,26 @@ public final class DiagnosticAssert
    * Get assertions for the thread ID of the thread that reported the diagnostic to the compiler.
    *
    * @return the assertions for the thread ID.
+   * @throws AssertionError if the diagnostic is null.
    */
   public AbstractLongAssert<?> threadId() {
+    isNotNull();
+
     return assertThat(actual.getThreadId());
   }
 
   /**
-   * Get assertions for the thread name of the thread that reported the diagnostic. This may not be
-   * present in some situations.
+   * Get assertions for the thread name of the thread that reported the diagnostic.
+   *
+   * <p>This may not be present in some situations, in which case the returned assertions will be
+   * performed on a null value instead.
    *
    * @return the assertions for the thread name.
+   * @throws AssertionError if the diagnostic is null.
    */
   public AbstractStringAssert<?> threadName() {
+    isNotNull();
+
     return assertThat(actual.getThreadName());
   }
 
@@ -183,12 +218,16 @@ public final class DiagnosticAssert
    * Get assertions for the stack trace of the location the diagnostic was reported to.
    *
    * @return the assertions for the stack trace.
+   * @throws AssertionError if the diagnostic is null.
    */
   public StackTraceAssert stackTrace() {
+    isNotNull();
+
     return new StackTraceAssert(actual.getStackTrace());
   }
 
   private AbstractLongAssert<?> assertPosition(long position, String name) {
+    isNotNull();
     return assertThat(position).describedAs(name);
   }
 }

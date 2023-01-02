@@ -40,25 +40,25 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class DiagnosticRepresentation implements Representation {
+public final class TraceDiagnosticRepresentation implements Representation {
 
-  private static final DiagnosticRepresentation INSTANCE
-      = new DiagnosticRepresentation();
+  private static final TraceDiagnosticRepresentation INSTANCE
+      = new TraceDiagnosticRepresentation();
 
   /**
    * Get an instance of this diagnostic representation.
    *
    * @return the instance.
    */
-  public static DiagnosticRepresentation getInstance() {
+  public static TraceDiagnosticRepresentation getInstance() {
     return INSTANCE;
   }
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DiagnosticRepresentation.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TraceDiagnosticRepresentation.class);
   private static final int ADDITIONAL_CONTEXT_LINES = 2;
   private static final String PADDING = " ".repeat(4);
 
-  private DiagnosticRepresentation() {
+  private TraceDiagnosticRepresentation() {
     // Nothing to see here, move along now.
   }
 

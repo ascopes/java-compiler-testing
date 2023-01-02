@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
-import io.github.ascopes.jct.repr.DiagnosticRepresentation;
+import io.github.ascopes.jct.repr.TraceDiagnosticRepresentation;
 import io.github.ascopes.jct.tests.helpers.GenericMock;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -40,13 +40,13 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.quality.Strictness;
 
 /**
- * {@link DiagnosticRepresentation} tests.
+ * {@link TraceDiagnosticRepresentation} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("DiagnosticRepresentation tests")
+@DisplayName("TraceDiagnosticRepresentation tests")
 @SuppressWarnings("NullableProblems")
-class DiagnosticRepresentationTest {
+class TraceDiagnosticRepresentationTest {
 
   @TempDir
   Path tempDir;
@@ -55,7 +55,7 @@ class DiagnosticRepresentationTest {
   @Test
   void toStringOfNullReturnsNull() {
     // Given
-    var repr = DiagnosticRepresentation.getInstance();
+    var repr = TraceDiagnosticRepresentation.getInstance();
 
     // When
     var result = repr.toStringOf(null);
@@ -79,7 +79,7 @@ class DiagnosticRepresentationTest {
     when(diag.getCode()).thenReturn("you.done.messed.up");
     when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
 
-    var repr = DiagnosticRepresentation.getInstance();
+    var repr = TraceDiagnosticRepresentation.getInstance();
 
     // When
     var result = repr.toStringOf(diag);
@@ -119,7 +119,7 @@ class DiagnosticRepresentationTest {
     when(diag.getSource()).thenReturn(file);
     when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
 
-    var repr = DiagnosticRepresentation.getInstance();
+    var repr = TraceDiagnosticRepresentation.getInstance();
 
     // When
     var result = repr.toStringOf(diag);
@@ -171,7 +171,7 @@ class DiagnosticRepresentationTest {
     when(diag.getSource()).thenReturn(file);
     when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
 
-    var repr = DiagnosticRepresentation.getInstance();
+    var repr = TraceDiagnosticRepresentation.getInstance();
 
     // When
     var result = repr.toStringOf(diag);
@@ -223,7 +223,7 @@ class DiagnosticRepresentationTest {
     when(diag.getSource()).thenReturn(file);
     when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
 
-    var repr = DiagnosticRepresentation.getInstance();
+    var repr = TraceDiagnosticRepresentation.getInstance();
 
     // When
     var result = repr.toStringOf(diag);
@@ -276,7 +276,7 @@ class DiagnosticRepresentationTest {
     when(diag.getSource()).thenReturn(file);
     when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
 
-    var repr = DiagnosticRepresentation.getInstance();
+    var repr = TraceDiagnosticRepresentation.getInstance();
 
     // When
     var result = repr.toStringOf(diag);
@@ -314,7 +314,7 @@ class DiagnosticRepresentationTest {
     when(diag.getSource()).thenReturn(file);
     when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
 
-    var repr = DiagnosticRepresentation.getInstance();
+    var repr = TraceDiagnosticRepresentation.getInstance();
 
     // When
     var result = repr.toStringOf(diag);
@@ -360,7 +360,7 @@ class DiagnosticRepresentationTest {
     when(diag.getSource()).thenReturn(file);
     when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
 
-    var repr = DiagnosticRepresentation.getInstance();
+    var repr = TraceDiagnosticRepresentation.getInstance();
 
     // When
     var result = repr.toStringOf(diag);
@@ -410,7 +410,7 @@ class DiagnosticRepresentationTest {
     when(diag.getSource()).thenReturn(null);
     when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
 
-    var repr = DiagnosticRepresentation.getInstance();
+    var repr = TraceDiagnosticRepresentation.getInstance();
 
     // When
     var result = repr.toStringOf(diag);
@@ -443,7 +443,7 @@ class DiagnosticRepresentationTest {
     when(diag.getSource()).thenReturn(file);
     when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
 
-    var repr = DiagnosticRepresentation.getInstance();
+    var repr = TraceDiagnosticRepresentation.getInstance();
 
     // When
     var result = repr.toStringOf(diag);
@@ -476,7 +476,7 @@ class DiagnosticRepresentationTest {
     when(diag.getSource()).thenReturn(file);
     when(diag.getMessage(any())).thenReturn("Entrypoint must be a void method.");
 
-    var repr = DiagnosticRepresentation.getInstance();
+    var repr = TraceDiagnosticRepresentation.getInstance();
 
     // When
     var result = repr.toStringOf(diag);

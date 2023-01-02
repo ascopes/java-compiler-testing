@@ -20,7 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.repr.DiagnosticListRepresentation;
-import io.github.ascopes.jct.repr.DiagnosticRepresentation;
+import io.github.ascopes.jct.repr.TraceDiagnosticRepresentation;
 import io.github.ascopes.jct.tests.helpers.Fixtures;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -53,14 +53,14 @@ class DiagnosticListRepresentationTest {
   @Test
   void toStringOfListOutputsDiagnosticsInList() {
     // Given
-    try (var diagnosticReprMock = Mockito.mockStatic(DiagnosticRepresentation.class)) {
+    try (var diagnosticReprMock = Mockito.mockStatic(TraceDiagnosticRepresentation.class)) {
       var diagnostic1 = Fixtures.someTraceDiagnostic();
       var diagnostic2 = Fixtures.someTraceDiagnostic();
       var diagnostic3 = Fixtures.someTraceDiagnostic();
       var diagnosticList = List.of(diagnostic1, diagnostic2, diagnostic3);
 
-      var mockRepr = mock(DiagnosticRepresentation.class);
-      diagnosticReprMock.when(DiagnosticRepresentation::getInstance).thenReturn(mockRepr);
+      var mockRepr = mock(TraceDiagnosticRepresentation.class);
+      diagnosticReprMock.when(TraceDiagnosticRepresentation::getInstance).thenReturn(mockRepr);
 
       when(mockRepr.toStringOf(diagnostic1)).thenReturn("<<diagnostic1>>\n<content>");
       when(mockRepr.toStringOf(diagnostic2)).thenReturn("<<diagnostic2>>\n<content>");

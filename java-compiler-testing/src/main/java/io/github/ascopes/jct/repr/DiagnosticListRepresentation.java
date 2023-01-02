@@ -61,7 +61,7 @@ public final class DiagnosticListRepresentation implements Representation {
 
     return diagnostics
         .stream()
-        .map(DiagnosticRepresentation.getInstance()::toStringOf)
+        .map(TraceDiagnosticRepresentation.getInstance()::toStringOf)
         .map(this::indentAndBullet)
         .collect(joining("\n\n"));
   }
