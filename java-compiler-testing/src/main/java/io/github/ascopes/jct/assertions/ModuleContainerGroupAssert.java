@@ -15,10 +15,13 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import static java.util.Objects.requireNonNull;
+
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.repr.LocationRepresentation;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.apiguardian.api.API;
@@ -39,7 +42,7 @@ public final class ModuleContainerGroupAssert
    *
    * @param containerGroup the container group to assert upon.
    */
-  public ModuleContainerGroupAssert(ModuleContainerGroup containerGroup) {
+  public ModuleContainerGroupAssert(@Nullable ModuleContainerGroup containerGroup) {
     super(containerGroup, ModuleContainerGroupAssert.class);
   }
 
@@ -48,9 +51,13 @@ public final class ModuleContainerGroupAssert
    *
    * @param module the module name.
    * @return this assertion object for further assertion calls.
-   * @throws AssertionError if the module exists.
+   * @throws AssertionError       if the container group is null or if the module exists.
+   * @throws NullPointerException if the module parameter is null.
    */
   public ModuleContainerGroupAssert moduleDoesNotExist(String module) {
+    requireNonNull(module, "module must not be null");
+    isNotNull();
+
     var moduleGroup = actual.getModule(module);
 
     if (moduleGroup == null) {
@@ -71,9 +78,13 @@ public final class ModuleContainerGroupAssert
    *
    * @param module the module name.
    * @return the assertions to perform on the package container group.
-   * @throws AssertionError if the module does not exist.
+   * @throws AssertionError       if the container group is null or if the module does not exist.
+   * @throws NullPointerException if the module parameter is null.
    */
   public PackageContainerGroupAssert moduleExists(String module) {
+    requireNonNull(module, "module must not be null");
+    isNotNull();
+
     var moduleGroup = actual.getModule(module);
 
     if (moduleGroup != null) {
