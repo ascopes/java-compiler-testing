@@ -26,7 +26,7 @@ jobs:
       - name: Initialize Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'
+          distribution: corretto
           java-version: 17
           cache: 'maven'
 
@@ -61,7 +61,7 @@ jobs:
       - name: Initialize Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'
+          distribution: corretto
           java-version: 17
           cache: 'maven'
 
@@ -107,7 +107,7 @@ jobs:
       - name: Initialize Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'
+          distribution: corretto
           # Must use >= JDK 17 for JavaDocs to generate correctly.
           java-version: 17
           cache: 'maven'
@@ -171,8 +171,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           cache: maven
-          check-latest: true
-          distribution: zulu
+          distribution: corretto
           java-version: ${{ matrix.java-version }}
 
       - name: Compile and run tests
@@ -224,7 +223,7 @@ jobs:
       - name: Initialize Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'
+          distribution: corretto
           java-version: 17
           cache: 'maven'
 
