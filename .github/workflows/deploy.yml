@@ -39,9 +39,9 @@ jobs:
       - name: Initialize JDK
         uses: actions/setup-java@v3
         with:
-          distribution: zulu
+          distribution: corretto
           # Must use >= JDK 17 for Javadocs to generate correctly.
-          java-version: 17
+          java-version: 19
 
       - name: Build artifacts and deploy to GitHub packages
         run: >-
