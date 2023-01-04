@@ -56,6 +56,10 @@ import org.slf4j.LoggerFactory;
 /**
  * A very simple {@link JavaFileObject} that points to a path on some {@link FileSystem} somewhere.
  *
+ * <p>This object will always use UTF-8 encoding when obtaining readers or writers.
+ *
+ * <p>No access level or nesting kind information is provided by this implementation.
+ *
  * @author Ashley Scopes
  * @since 0.0.1
  */
@@ -63,7 +67,7 @@ import org.slf4j.LoggerFactory;
 public class PathFileObject implements JavaFileObject {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PathFileObject.class);
-  private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+  private static final Charset CHARSET = StandardCharsets.UTF_8;
   private static final long NOT_MODIFIED = 0L;
 
   private final Location location;
@@ -93,11 +97,9 @@ public class PathFileObject implements JavaFileObject {
     this.location = location;
     this.rootPath = rootPath;
 
-    if (relativePath.isAbsolute()) {
-      this.relativePath = rootPath.relativize(relativePath);
-    } else {
-      this.relativePath = relativePath;
-    }
+    this.relativePath = relativePath.isAbsolute()
+        ? rootPath.relativize(relativePath)
+        : relativePath;
 
     fullPath = rootPath.resolve(relativePath);
     name = relativePath.toString();
@@ -141,8 +143,7 @@ public class PathFileObject implements JavaFileObject {
   @Nullable
   @Override
   public Modifier getAccessLevel() {
-    // Null implies that the access level is unknown.
-    return null;
+    return unknown();
   }
 
   /**
@@ -183,7 +184,7 @@ public class PathFileObject implements JavaFileObject {
     try {
       return Files.getLastModifiedTime(fullPath).toMillis();
     } catch (IOException ex) {
-      LOGGER.debug("Ignoring error reading last modified time for {}", uri, ex);
+      LOGGER.warn("Ignoring error reading last modified time for {}", uri, ex);
       return NOT_MODIFIED;
     }
   }
@@ -224,8 +225,7 @@ public class PathFileObject implements JavaFileObject {
   @Nullable
   @Override
   public NestingKind getNestingKind() {
-    // Null implies that the nesting kind is unknown.
-    return null;
+    return unknown();
   }
 
   /**
@@ -265,7 +265,7 @@ public class PathFileObject implements JavaFileObject {
    */
   @Override
   public boolean isNameCompatible(String simpleName, Kind kind) {
-    // TODO(ascopes): does this need to be case insensitive on Windows?
+    // Note that this behaves case-sensitively, even on Windows.
     var fileName = simpleName + kind.extension;
 
     return relativePath.getFileName().toString().equals(fileName);
@@ -378,16 +378,21 @@ public class PathFileObject implements JavaFileObject {
         ? CodingErrorAction.IGNORE
         : CodingErrorAction.REPORT;
 
-    return DEFAULT_CHARSET
+    return CHARSET
         .newDecoder()
         .onUnmappableCharacter(action)
         .onMalformedInput(action);
   }
 
   private CharsetEncoder encoder() {
-    return DEFAULT_CHARSET
+    return CHARSET
         .newEncoder()
         .onUnmappableCharacter(CodingErrorAction.REPORT)
         .onMalformedInput(CodingErrorAction.REPORT);
+  }
+
+  @Nullable
+  private <T> T unknown() {
+    return null;
   }
 }
