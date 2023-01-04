@@ -95,7 +95,7 @@
     <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
     <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
     <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
-    <pitest-maven.version>1.10.3</pitest-maven.version>
+    <pitest-maven.version>1.10.4</pitest-maven.version>
 
     <!-- Plugin dependencies -->
     <checkstyle.version>10.6.0</checkstyle.version>
