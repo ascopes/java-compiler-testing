@@ -1,9 +1,9 @@
-[![Main branch build](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml)
-[![JavaDoc](https://img.shields.io/badge/JavaDoc-Latest-yellowgreen)](https://ascopes.github.io/java-compiler-testing)
+![Java 11+](https://img.shields.io/badge/Java-11+-yellow?logo=openjdk)
+[![Build Status](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml)
+[![JavaDoc](https://img.shields.io/badge/JavaDoc-Latest-red)](https://ascopes.github.io/java-compiler-testing)
 [![Code Coverage](https://codecov.io/gh/ascopes/java-compiler-testing/branch/main/graph/badge.svg?token=VT74BP2742)](https://codecov.io/gh/ascopes/java-compiler-testing)
-[![Issues](https://img.shields.io/github/issues-raw/ascopes/java-compiler-testing)](https://github.com/ascopes/java-compiler-testing/issues)
-[![Closed Issues](https://img.shields.io/github/issues-closed-raw/ascopes/java-compiler-testing)](https://github.com/ascopes/java-compiler-testing/issues?q=is%3Aissue+is%3Aclosed)
-[![License](https://img.shields.io/github/license/ascopes/java-compiler-testing)](https://github.com/ascopes/java-compiler-testing/blob/main/LICENSE.txt)
+[![Issues](https://img.shields.io/github/issues-raw/ascopes/java-compiler-testing?color=orange)](https://github.com/ascopes/java-compiler-testing/issues)
+[![License](https://img.shields.io/github/license/ascopes/java-compiler-testing?color=blueviolet)](https://github.com/ascopes/java-compiler-testing/blob/main/LICENSE.txt)
 ![Activity](https://img.shields.io/github/commit-activity/y/ascopes/java-compiler-testing)
 
 <!-- [![Releases](https://img.shields.io/github/downloads/ascopes/java-compiler-testing/total)](https://github.com/ascopes/java-compiler-testing/releases) -->
