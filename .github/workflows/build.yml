@@ -48,51 +48,52 @@ jobs:
           -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
           verify
 
-  dependency-check:
-    name: Dependency Check
-    runs-on: ubuntu-22.04
+# https://github.com/jeremylong/DependencyCheck/issues/5220
+#   dependency-check:
+#     name: Dependency Check
+#     runs-on: ubuntu-22.04
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 2
 
-      - name: Initialize Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: 17
-          cache: 'maven'
+#       - name: Initialize Java
+#         uses: actions/setup-java@v3
+#         with:
+#           distribution: 'zulu'
+#           java-version: 17
+#           cache: 'maven'
 
-      - name: Run checks
-        shell: bash
-        run: >-
-          ./mvnw 
-          -B
-          -T4
-          -U
-          -Pdependency-check
-          --no-transfer-progress
-          -DskipTests=true
-          -Dstyle.color=always
-          -Dcheckstyle.skip=true
-          -Dlicense.skip=true
-          -Dmaven.main.skip
-          -Dmaven.jar.skip
-          -Dmaven.resources.skip
-          -Dmaven.test.skip
-          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
-          verify
+#       - name: Run checks
+#         shell: bash
+#         run: >-
+#           ./mvnw 
+#           -B
+#           -T4
+#           -U
+#           -Pdependency-check
+#           --no-transfer-progress
+#           -DskipTests=true
+#           -Dstyle.color=always
+#           -Dcheckstyle.skip=true
+#           -Dlicense.skip=true
+#           -Dmaven.main.skip
+#           -Dmaven.jar.skip
+#           -Dmaven.resources.skip
+#           -Dmaven.test.skip
+#           -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+#           verify
 
-      - name: Archive Dependency Scan reports
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: dependency-scan-report
-          path: |
-            **/target/dependency-check-report.html
-          retention-days: 30
+#       - name: Archive Dependency Scan reports
+#         uses: actions/upload-artifact@v3
+#         if: always()
+#         with:
+#           name: dependency-scan-report
+#           path: |
+#             **/target/dependency-check-report.html
+#           retention-days: 30
 
   javadocs:
     name: JavaDocs
