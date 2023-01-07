@@ -30,12 +30,14 @@ import io.github.ascopes.jct.assertions.OutputContainerGroupAssert;
 import io.github.ascopes.jct.assertions.PackageContainerGroupAssert;
 import io.github.ascopes.jct.assertions.PathFileObjectAssert;
 import io.github.ascopes.jct.assertions.TraceDiagnosticAssert;
+import io.github.ascopes.jct.assertions.TraceDiagnosticListAssert;
 import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
+import java.util.List;
 import java.util.stream.Stream;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileManager.Location;
@@ -96,6 +98,7 @@ class JctAssertionsTest {
         ),
         arg("assertThat", TraceDiagnostic.class, TraceDiagnosticAssert.class),
         arg("assertThatDiagnostic", TraceDiagnostic.class, TraceDiagnosticAssert.class),
+        arg("assertThatDiagnostics", List.class, TraceDiagnosticListAssert.class),
         arg("assertThat", JavaFileObject.class, JavaFileObjectAssert.class),
         arg("assertThatFileObject", JavaFileObject.class, JavaFileObjectAssert.class),
         arg("assertThat", PathFileObject.class, PathFileObjectAssert.class),
