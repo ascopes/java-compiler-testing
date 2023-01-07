@@ -15,6 +15,7 @@
 #
 
 build = "mvn"
+ignoreFiles = "acceptance-tests/**"
 # Use JDK 11 to help Sonatype Lift start the default plugins correctly.
 jdkVersion = "11"
 summaryComments = true
