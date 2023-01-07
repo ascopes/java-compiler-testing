@@ -30,14 +30,14 @@ import org.assertj.core.api.AbstractAssert;
 /**
  * Abstract base class for an assertion on an {@link Enum}.
  *
- * @param <S> the implementation type.
+ * @param <A> the implementation type.
  * @param <E> the enum type.
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
-public abstract class AbstractEnumAssert<S extends AbstractEnumAssert<S, E>, E extends Enum<E>>
-    extends AbstractAssert<S, E> {
+public abstract class AbstractEnumAssert<A extends AbstractEnumAssert<A, E>, E extends Enum<E>>
+    extends AbstractAssert<A, E> {
 
   /**
    * Initialize this enum assertion.
@@ -60,7 +60,7 @@ public abstract class AbstractEnumAssert<S extends AbstractEnumAssert<S, E>, E e
    *                              group of acceptable values.
    */
   @SafeVarargs
-  public final S isAnyOf(E first, E... more) {
+  public final A isAnyOf(E first, E... more) {
     requireNonNull(first, "first must not be null");
     requireNonNullValues(more, "more");
 
@@ -76,7 +76,7 @@ public abstract class AbstractEnumAssert<S extends AbstractEnumAssert<S, E>, E e
    * @throws AssertionError       if the actual value is null, or if the value is not in the given
    *                              iterable of acceptable values.
    */
-  public final S isAnyOfElements(Iterable<E> elements) {
+  public final A isAnyOfElements(Iterable<E> elements) {
     requireNonNullValues(elements, "elements");
 
     isNotNull();
@@ -99,7 +99,7 @@ public abstract class AbstractEnumAssert<S extends AbstractEnumAssert<S, E>, E e
    *                              of acceptable values.
    */
   @SafeVarargs
-  public final S isNoneOf(E first, E... more) {
+  public final A isNoneOf(E first, E... more) {
     requireNonNull(first, "first must not be null");
     requireNonNullValues(more, "more");
 
@@ -115,7 +115,7 @@ public abstract class AbstractEnumAssert<S extends AbstractEnumAssert<S, E>, E e
    * @throws AssertionError       if the actual value is null, or if the value is in the given
    *                              iterable of acceptable values.
    */
-  public final S isNoneOfElements(Iterable<E> elements) {
+  public final A isNoneOfElements(Iterable<E> elements) {
     requireNonNullValues(elements, "elements");
 
     isNotNull();
