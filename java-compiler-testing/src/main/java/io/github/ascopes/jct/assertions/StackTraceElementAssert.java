@@ -28,6 +28,9 @@ import org.assertj.core.api.AbstractStringAssert;
 /**
  * Assertions to perform on a {@link StackTraceElement stack trace frame}.
  *
+ * <p>This type is a placeholder and will be replaced when AssertJ releases changes to
+ * support assertions on stack traces.
+ *
  * @author Ashley Scopes
  * @since 0.0.1
  */

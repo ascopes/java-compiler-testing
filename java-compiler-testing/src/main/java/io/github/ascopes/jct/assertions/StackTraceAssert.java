@@ -26,13 +26,15 @@ import org.assertj.core.api.AbstractListAssert;
 /**
  * Assertions for a list of {@link StackTraceElement stack trace frames}.
  *
+ * <p>This type is a placeholder and will be replaced when AssertJ releases changes to
+ * support assertions on stack traces.
+ *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 public final class StackTraceAssert
-    extends
-    AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
+    extends AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
 
   /**
    * Initialize a new assertions object.

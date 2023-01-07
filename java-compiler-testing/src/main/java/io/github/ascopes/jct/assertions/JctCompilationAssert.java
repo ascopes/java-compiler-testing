@@ -42,7 +42,7 @@ import org.assertj.core.api.AbstractAssert;
  */
 @API(since = "0.0.1", status = Status.EXPERIMENTAL)
 @SuppressWarnings("UnusedReturnValue")
-public final class CompilationAssert extends AbstractAssert<CompilationAssert, JctCompilation> {
+public final class JctCompilationAssert extends AbstractAssert<JctCompilationAssert, JctCompilation> {
 
   private static final Set<Kind> WARNING_DIAGNOSTIC_KINDS = Stream
       .of(Kind.WARNING, Kind.MANDATORY_WARNING)
@@ -62,8 +62,8 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
    *
    * @param value the value to assert on.
    */
-  public CompilationAssert(@Nullable JctCompilation value) {
-    super(value, CompilationAssert.class);
+  public JctCompilationAssert(@Nullable JctCompilation value) {
+    super(value, JctCompilationAssert.class);
   }
 
   /**
@@ -72,7 +72,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
    * @return this assertion object.
    * @throws AssertionError if the compilation was null, or if the compilation was not successful.
    */
-  public CompilationAssert isSuccessful() {
+  public JctCompilationAssert isSuccessful() {
     isNotNull();
 
     if (actual.isFailure()) {
@@ -106,7 +106,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
    *                        if the compilation was successful but had one or more warning
    *                        diagnostics.
    */
-  public CompilationAssert isSuccessfulWithoutWarnings() {
+  public JctCompilationAssert isSuccessfulWithoutWarnings() {
     isSuccessful();
     diagnostics().hasNoErrorsOrWarnings();
     return myself;
@@ -118,7 +118,7 @@ public final class CompilationAssert extends AbstractAssert<CompilationAssert, J
    * @return this assertion object.
    * @throws AssertionError if the compilation was null, or if the compilation succeeded.
    */
-  public CompilationAssert isFailure() {
+  public JctCompilationAssert isFailure() {
     isNotNull();
 
     if (actual.isSuccessful()) {
