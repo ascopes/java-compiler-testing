@@ -181,9 +181,9 @@ public final class JctAssertions extends UtilityClass {
   /**
    * Perform an assertion on a location.
    *
-   * <p>This is a shorthand alias for {@link #assertThatLocation)}. If you are using AssertJ
-   * assertions in your tests with static imports, you may wish to use that instead to prevent name
-   * conflicts.
+   * <p>This is a shorthand alias for {@link #assertThatLocation(Location)}. If you are using
+   * AssertJ assertions in your tests with static imports, you may wish to use that instead to
+   * prevent name conflicts.
    *
    * @param location the location to assert on.
    * @return the assertion.
