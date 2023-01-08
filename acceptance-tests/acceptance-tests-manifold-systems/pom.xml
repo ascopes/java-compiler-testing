@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>acceptance-tests-manifold-systems</artifactId>
+  <name>JCT acceptance tests for Manifold Systems</name>
 
   <properties>
     <manifold.version>2022.1.33</manifold.version>

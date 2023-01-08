@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>acceptance-tests-mapstruct</artifactId>
+  <name>JCT acceptance tests for MapStruct</name>
 
   <properties>
     <mapstruct.version>1.5.3.Final</mapstruct.version>

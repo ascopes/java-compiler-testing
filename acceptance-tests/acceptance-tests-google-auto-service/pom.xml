@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>acceptance-tests-google-auto-service</artifactId>
+  <name>JCT acceptance tests for Google AutoService</name>
 
   <properties>
     <auto-service.version>1.0.1</auto-service.version>

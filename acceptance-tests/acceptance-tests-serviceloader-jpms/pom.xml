@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>acceptance-tests-serviceloader-jpms</artifactId>
+  <name>JCT acceptance tests for a service loader API (JPMS)</name>
 
   <dependencies>
     <dependency>

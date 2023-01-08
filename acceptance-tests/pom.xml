@@ -29,6 +29,8 @@
   <artifactId>acceptance-tests</artifactId>
   <packaging>pom</packaging>
 
+  <name>JCT acceptance test parent project</name>
+
   <modules>
     <module>acceptance-tests-avaje-inject</module>
     <module>acceptance-tests-avaje-jsonb</module>

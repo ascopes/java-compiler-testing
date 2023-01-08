@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>acceptance-tests-serviceloader</artifactId>
+  <name>JCT acceptance tests for a service loader API</name>
 
   <dependencies>
     <dependency>

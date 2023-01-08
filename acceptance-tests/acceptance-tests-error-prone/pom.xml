@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>acceptance-tests-error-prone</artifactId>
+  <name>JCT acceptance tests for Google ErrorProne</name>
 
   <properties>
     <argLine>

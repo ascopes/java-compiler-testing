@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>acceptance-tests-avaje-jsonb</artifactId>
+  <name>JCT acceptance tests for Avaje JSONB</name>
 
   <properties>
     <avaje-jsonb.version>1.0</avaje-jsonb.version>

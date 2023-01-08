@@ -29,7 +29,7 @@
   <artifactId>java-compiler-testing</artifactId>
 
 
-  <name>Java Compiler Testing microframework</name>
+  <name>Java Compiler Testing framework</name>
 
   <description>
     Microframework geared towards writing declarative integration tests against Java compiler

@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>acceptance-tests-checkerframework</artifactId>
+  <name>JCT acceptance tests for CheckerFramework</name>
 
   <properties>
     <argLine>

@@ -24,7 +24,7 @@
   <version>0.0.1-M2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>Java Compiler Testing Parent</name>
+  <name>Java Compiler Testing parent project</name>
 
   <description>
     Parent POM for the java-compiler-testing project. You probably want to be using that instead

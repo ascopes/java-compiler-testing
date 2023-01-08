@@ -27,6 +27,7 @@
   </parent>
 
   <artifactId>acceptance-tests-google-auto-factory</artifactId>
+  <name>JCT acceptance tests for Google AutoFactory</name>
 
   <properties>
     <auto-factory.version>1.0.1</auto-factory.version>
