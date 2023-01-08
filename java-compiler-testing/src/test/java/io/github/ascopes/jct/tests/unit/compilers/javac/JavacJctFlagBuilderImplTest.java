@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.github.ascopes.jct.compilers.javac.JavacJctFlagBuilderImpl;
+import io.github.ascopes.jct.tests.helpers.Fixtures;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -257,7 +258,7 @@ class JavacJctFlagBuilderImplTest {
   void addsAnnotationProcessorOptions() {
     // Given
     var options = Stream
-        .generate(() -> someText())
+        .generate(Fixtures::someText)
         .limit(5)
         .collect(Collectors.toList());
 
@@ -276,7 +277,7 @@ class JavacJctFlagBuilderImplTest {
   void addsCompilerOptions() {
     // Given
     var options = Stream
-        .generate(() -> someText())
+        .generate(Fixtures::someText)
         .limit(5)
         .collect(Collectors.toList());
 
