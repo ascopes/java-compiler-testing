@@ -31,7 +31,7 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 @FunctionalInterface
 public interface JctCompilerConfigurer<T extends Exception> {
 
@@ -50,7 +50,7 @@ public interface JctCompilerConfigurer<T extends Exception> {
    * @author Ashley Scopes
    * @since 0.0.1
    */
-  @API(since = "0.0.1", status = Status.EXPERIMENTAL)
+  @API(since = "0.0.1", status = Status.STABLE)
   @FunctionalInterface
   interface JctSimpleCompilerConfigurer extends JctCompilerConfigurer<RuntimeException> {
 

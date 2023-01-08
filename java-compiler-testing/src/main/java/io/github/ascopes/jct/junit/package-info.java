@@ -16,7 +16,7 @@
 /**
  * Additional functionality to simplify writing tests with Junit.
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 @NonNullApi
 @NonNullImpl
 package io.github.ascopes.jct.junit;

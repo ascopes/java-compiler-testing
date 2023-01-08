@@ -40,7 +40,7 @@ import org.slf4j.event.Level;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 public class TracingDiagnosticListener<S extends JavaFileObject> implements DiagnosticListener<S> {
 
   private final ConcurrentLinkedQueue<TraceDiagnostic<S>> diagnostics;

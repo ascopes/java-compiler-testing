@@ -32,7 +32,7 @@ import org.assertj.core.api.AbstractListAssert;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 public final class StackTraceAssert
     extends AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
 

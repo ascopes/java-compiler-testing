@@ -16,7 +16,7 @@
 /**
  * Compiler frontends that allow invoking compilers easily from tests.
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 @NonNullApi
 @NonNullImpl
 package io.github.ascopes.jct.compilers;

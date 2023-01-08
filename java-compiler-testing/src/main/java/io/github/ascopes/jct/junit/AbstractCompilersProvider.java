@@ -40,7 +40,7 @@ import org.opentest4j.TestAbortedException;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 public abstract class AbstractCompilersProvider implements ArgumentsProvider {
 
   // Configured values by JUnit 5. Volatile in case JUnit ever does this from a different

@@ -36,7 +36,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 @ArgumentsSource(JavacCompilersProvider.class)
 @Documented
 @Inherited

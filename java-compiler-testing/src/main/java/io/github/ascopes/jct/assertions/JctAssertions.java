@@ -37,7 +37,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @SuppressWarnings("unused")
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 public final class JctAssertions extends UtilityClass {
 
   private JctAssertions() {

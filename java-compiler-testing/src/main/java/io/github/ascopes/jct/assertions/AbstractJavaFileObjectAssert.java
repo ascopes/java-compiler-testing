@@ -44,7 +44,7 @@ import org.assertj.core.api.AbstractUriAssert;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObjectAssert<I, A>, A extends JavaFileObject>
     extends AbstractAssert<I, A> {
 
