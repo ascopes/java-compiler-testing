@@ -22,21 +22,63 @@
 # We use undefined as a placeholder elsewhere.
 unset undefined &> /dev/null || true
 
-function log() {
-  printf "\033[3;37m$(date "+%H:%M:%S.%3N") \033[0;37m| \033[0;1;${1}m%s:\033[0;${1}m %s\033[0m\n" \
+# Helper to log a coloured message to stderr with a timestamp.
+# Arg 1 = colour code (e.g. 33)
+# Arg 2 = log level name (e.g. WARNING)
+# Arg 3 = Message to display (e.g. "Something ain't right here")
+function __log() {
+  printf "\033[3;37m$(date "+%H:%M:%S.%3N") \033[0;37m| \033[0;1;${1}m%s:\033[0m %s\033[0m\n" \
       "${2}" "${3}" >&2
 }
 
-function err()     { log 31 ERROR   "${@}"; }
-function success() { log 32 SUCCESS "${@}"; }
-function warn()    { log 33 WARNING "${@}"; }
-function info()    { log 35 INFO    "${@}"; }
-
-function in-path() {
-  command -v "${1}" &> /dev/null
-  return "${?}"
+# Log an error.
+function err() {
+  __log 31 ERROR "${@}"
 }
 
+# Log a success.
+function success() {
+  __log 32 SUCCESS "${@}"
+}
+
+# Log a warning.
+function warn() {
+  __log 33 WARNING "${@}"
+}
+
+# Log an info message.
+function info() {
+  __log 35 INFO "${@}"
+}
+
+# Ensure that each variable name provided is set in the current shell, otherwise print an error
+# and fail at the end.
+# Used by the deployment pipeline.
+function ensure-set() {
+  local return_code=0
+
+  for variable_name; do
+    if [ "${!variable_name}" = "" ]; then
+      err "Variable ${variable_name} was empty or not set"
+      return_code=1
+    fi
+  done
+
+  return "${return_code}"
+}
+
+# Ensure that each provided argument is in the path, or fail.
+function in-path() {
+  for expected; do
+    command -v "${expected}" &> /dev/null || return 1
+  done
+
+  return 0
+}
+
+# Visually run the command, showing the command being run, stdout, and stderr to the user.
+# Pass the commands to run in via a heredoc as stdin. Incorrect usage will dump an error and
+# terminate the current shell.
 function run() {
   # Run in subshell to enable correct argument re-quoting.
   local file
@@ -57,14 +99,14 @@ function run() {
 
   set +e
   /usr/bin/env bash \
-       1> >(while IFS=$'\r\n' read -r line; do log 36 "STDOUT" "${line}"; done) \
-       2> >(while IFS=$'\r\n' read -r line; do log 37 "STDERR" "${line}"; done) \
+       1> >(while IFS=$'\r\n' read -r line; do __log 36 STDOUT "${line}"; done) \
+       2> >(while IFS=$'\r\n' read -r line; do __log 37 STDERR "${line}"; done) \
        "${file}"
-  local exit_code="${?}"
+  local return_code="${?}"
   rm "${file}"
   set -e
 
   # Wait for stdout and stderr to flush for ~10ms
-  sleep 0.01
-  return "${exit_code}"
+  sleep 0.05
+  return "${return_code}"
 }
