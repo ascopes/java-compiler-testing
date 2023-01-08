@@ -15,7 +15,8 @@
  */
 package io.github.ascopes.jct.tests.unit.compilers.javac;
 
-import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someBoolean;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someRelease;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -73,6 +74,14 @@ class JavacJctFlagBuilderImplTest {
       // Then
       assertThat(flagBuilder.build()).doesNotContain("-verbose");
     }
+
+    @DisplayName(".verbose(...) returns the flag builder")
+    @Test
+    void returnsFlagBuilder() {
+      // Then
+      assertThat(flagBuilder.verbose(someBoolean()))
+          .isSameAs(flagBuilder);
+    }
   }
 
   @DisplayName(".previewFeatures(boolean) tests")
@@ -97,6 +106,14 @@ class JavacJctFlagBuilderImplTest {
 
       // Then
       assertThat(flagBuilder.build()).doesNotContain("--enable-preview");
+    }
+
+    @DisplayName(".previewFeatures(...) returns the flag builder")
+    @Test
+    void returnsFlagBuilder() {
+      // Then
+      assertThat(flagBuilder.previewFeatures(someBoolean()))
+          .isSameAs(flagBuilder);
     }
   }
 
@@ -123,6 +140,14 @@ class JavacJctFlagBuilderImplTest {
       // Then
       assertThat(flagBuilder.build()).contains("-nowarn");
     }
+
+    @DisplayName(".showWarnings(...) returns the flag builder")
+    @Test
+    void returnsFlagBuilder() {
+      // Then
+      assertThat(flagBuilder.showWarnings(someBoolean()))
+          .isSameAs(flagBuilder);
+    }
   }
 
   @DisplayName(".failOnWarnings(boolean) tests")
@@ -148,6 +173,14 @@ class JavacJctFlagBuilderImplTest {
       // Then
       assertThat(flagBuilder.build()).doesNotContain("-Werror");
     }
+
+    @DisplayName(".failOnWarnings(...) returns the flag builder")
+    @Test
+    void returnsFlagBuilder() {
+      // Then
+      assertThat(flagBuilder.failOnWarnings(someBoolean()))
+          .isSameAs(flagBuilder);
+    }
   }
 
   @DisplayName(".showDeprecationWarnings(boolean) tests")
@@ -172,6 +205,14 @@ class JavacJctFlagBuilderImplTest {
 
       // Then
       assertThat(flagBuilder.build()).doesNotContain("-deprecation");
+    }
+
+    @DisplayName(".showDeprecationWarnings(...) returns the flag builder")
+    @Test
+    void returnsFlagBuilder() {
+      // Then
+      assertThat(flagBuilder.showDeprecationWarnings(someBoolean()))
+          .isSameAs(flagBuilder);
     }
   }
 
@@ -199,6 +240,14 @@ class JavacJctFlagBuilderImplTest {
       // Then
       assertThat(flagBuilder.build()).doesNotContain("--release");
     }
+
+    @DisplayName(".release(...) returns the flag builder")
+    @Test
+    void returnsFlagBuilder() {
+      // Then
+      assertThat(flagBuilder.release(someRelease()))
+          .isSameAs(flagBuilder);
+    }
   }
 
   @DisplayName(".source(String) tests")
@@ -224,6 +273,15 @@ class JavacJctFlagBuilderImplTest {
 
       // Then
       assertThat(flagBuilder.build()).doesNotContain("-source");
+    }
+
+
+    @DisplayName(".source(...) returns the flag builder")
+    @Test
+    void returnsFlagBuilder() {
+      // Then
+      assertThat(flagBuilder.source(someRelease()))
+          .isSameAs(flagBuilder);
     }
   }
 
@@ -251,42 +309,88 @@ class JavacJctFlagBuilderImplTest {
       // Then
       assertThat(flagBuilder.build()).doesNotContain("-target");
     }
+
+    @DisplayName(".target(...) returns the flag builder")
+    @Test
+    void returnsFlagBuilder() {
+      // Then
+      assertThat(flagBuilder.target(someRelease()))
+          .isSameAs(flagBuilder);
+    }
   }
 
-  @DisplayName("Setting .annotationProcessorOptions(List<String>) adds the options")
-  @Test
-  void addsAnnotationProcessorOptions() {
-    // Given
-    var options = Stream
-        .generate(Fixtures::someText)
-        .limit(5)
-        .collect(Collectors.toList());
+  @DisplayName(".addAnnotationProcessorOptions(List<String>) tests")
+  @Nested
+  class AnnotationProcessorOptionsTest {
 
-    // When
-    flagBuilder.annotationProcessorOptions(options);
+    @DisplayName("Setting .annotationProcessorOptions(List<String>) adds the options")
+    @Test
+    void addsAnnotationProcessorOptions() {
+      // Given
+      var options = Stream
+          .generate(Fixtures::someText)
+          .limit(5)
+          .collect(Collectors.toList());
 
-    // Then
-    assertThat(flagBuilder.build())
-        .containsSequence(options.stream()
-            .map("-A"::concat)
-            .collect(Collectors.toList()));
+      // When
+      flagBuilder.annotationProcessorOptions(options);
+
+      // Then
+      assertThat(flagBuilder.build())
+          .containsSequence(options.stream()
+              .map("-A"::concat)
+              .collect(Collectors.toList()));
+    }
+
+    @DisplayName(".annotationProcessorOptions(...) returns the flag builder")
+    @Test
+    void returnsFlagBuilder() {
+      // Given
+      var options = Stream
+          .generate(Fixtures::someText)
+          .limit(5)
+          .collect(Collectors.toList());
+
+      // Then
+      assertThat(flagBuilder.annotationProcessorOptions(options))
+          .isSameAs(flagBuilder);
+    }
   }
 
-  @DisplayName("Setting .compilerOptions(List<String>) adds the options")
-  @Test
-  void addsCompilerOptions() {
-    // Given
-    var options = Stream
-        .generate(Fixtures::someText)
-        .limit(5)
-        .collect(Collectors.toList());
+  @DisplayName(".compilerOptions(List<String>) tests")
+  @Nested
+  class CompilerOptionsTest {
 
-    // When
-    flagBuilder.compilerOptions(options);
+    @DisplayName("Setting .compilerOptions(List<String>) adds the options")
+    @Test
+    void addsCompilerOptions() {
+      // Given
+      var options = Stream
+          .generate(Fixtures::someText)
+          .limit(5)
+          .collect(Collectors.toList());
 
-    // Then
-    assertThat(flagBuilder.build())
-        .containsSequence(options);
+      // When
+      flagBuilder.compilerOptions(options);
+
+      // Then
+      assertThat(flagBuilder.build())
+          .containsSequence(options);
+    }
+
+    @DisplayName(".compilerOptions(...) returns the flag builder")
+    @Test
+    void returnsFlagBuilder() {
+      // Given
+      var options = Stream
+          .generate(Fixtures::someText)
+          .limit(5)
+          .collect(Collectors.toList());
+
+      // Then
+      assertThat(flagBuilder.compilerOptions(options))
+          .isSameAs(flagBuilder);
+    }
   }
 
   @Order(Integer.MAX_VALUE - 1)
