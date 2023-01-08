@@ -56,14 +56,20 @@ class JavacJctFlagBuilderImplTest {
     @DisplayName("Setting .verbose(true) adds the '-verbose' flag")
     @Test
     void addsFlagIfTrue() {
+      // When
       flagBuilder.verbose(true);
+
+      // Then
       assertThat(flagBuilder.build()).contains("-verbose");
     }
 
     @DisplayName("Setting .verbose(false) does not add the '-verbose' flag")
     @Test
     void doesNotAddFlagIfFalse() {
+      // When
       flagBuilder.verbose(false);
+
+      // Then
       assertThat(flagBuilder.build()).doesNotContain("-verbose");
     }
   }
