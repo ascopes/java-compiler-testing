@@ -98,7 +98,7 @@ jobs:
           fi
           
           build_goals=()
-          if [[ '${{ inputs.skip-deploy }}' ]]; then
+          if [[ '${{ inputs.skip-deploy }}' = 'true' ]]; then
             build_goals+=("clean" "package" "javadoc:jar")
             build_goals+=("${build_args[@]}")
           else
