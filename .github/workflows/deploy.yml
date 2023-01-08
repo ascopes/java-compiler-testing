@@ -35,7 +35,7 @@ on:
 
 jobs:
   maven-central:
-    name: "Maven Central"
+    name: Build and deploy code
     runs-on: ubuntu-22.04
 
     permissions:
