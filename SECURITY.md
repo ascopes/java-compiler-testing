@@ -11,8 +11,9 @@ as I am aware of them.
 
 ## Supported Versions
 
-Right now, no stable version of this project exists, so security support
-will be dealt with on an as-needed basis.
+Right now, this project is under active development, so security support
+will be dealt with on an as-needed basis. Feel free to contact me in an
+issue or discussion to talk about this.
 
 ## Reporting a Vulnerability
 
