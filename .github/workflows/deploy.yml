@@ -8,13 +8,18 @@ on:
         default: true
         type: boolean
 
-      skip-scm:
-        description: "Skip tagging and release version update commits"
+      skip-dependency-scan:
+        description: "Skip dependency scan"
         default: false
         type: boolean
 
-      skip-dependency-scan:
-        description: "Skip dependency scan"
+      skip-deploy:
+        description: "Skip deployment step"
+        default: false
+        type: boolean
+
+      skip-pages:
+        description: "Skip page publishing step"
         default: false
         type: boolean
 
@@ -36,6 +41,7 @@ jobs:
     permissions:
       contents: write
       id-token: write
+      pages: write
 
     steps:
       - name: Checkout repository
@@ -92,12 +98,11 @@ jobs:
           fi
           
           build_goals=()
-          if [[ '${{ inputs.skip-scm }}' = 'true' ]]; then
-            build_goals+=("release:update-versions")
+          if [[ '${{ inputs.skip-deploy }}' ]]; then
+            build_goals+=("clean" "package" "javadoc:jar")
           else
-            build_goals+=("release:prepare")
+            build_goals+=("release:prepare" "release:perform")
           fi
-          build_goals+=("release:perform")
           
           run <<-SCRIPT          
             ./mvnw -B -e \
@@ -125,17 +130,7 @@ jobs:
         with:
           path: java-compiler-testing/target/apidocs
 
-  javadocs:
-    name: "JavaDocs (GitHub Pages)"
-    runs-on: ubuntu-22.04
-    needs:
-      - maven-central
-    permissions:
-      pages: write
-      id-token: write
-
-    steps:
       - name: Deploy JavaDocs build artifact to GitHub Pages
-        if: ${{ ! inputs.dry-run }}
+        if: ${{ ! inputs.dry-run }} && ${{ ! inputs.skip-pages }}
         id: deployment
         uses: actions/deploy-pages@v1
