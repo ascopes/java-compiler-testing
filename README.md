@@ -37,6 +37,31 @@ Full JUnit5 integration is provided to help streamline the development process.
 **This module is still under development.** Any contributions or feedback
 are always welcome!
 
+## Installation
+
+The project can be found on Maven Central.
+
+```xml
+<dependency>
+  <groupId>org.github.ascopes.jct</groupId>
+  <artifactId>java-compiler-testing</artifactId>
+  <version>${java-compiler-testing.version}</version>
+</dependency>
+```
+
+If you are using Gradle, make sure you enable the Maven Central repositories
+first!
+
+```kotlin
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  testImplementation("io.github.ascopes.jct:java-compiler-testing:$jctVersion")
+}
+```
+
 ## Examples
 
 ### In-memory code, using RAM disks for source directories
