@@ -16,7 +16,7 @@
 /**
  * Support for collecting and representing diagnostics from compiler implementations.
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 @NonNullApi
 @NonNullImpl
 package io.github.ascopes.jct.diagnostics;

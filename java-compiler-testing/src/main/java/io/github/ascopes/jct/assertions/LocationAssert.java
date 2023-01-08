@@ -31,7 +31,7 @@ import org.assertj.core.api.AbstractStringAssert;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 public final class LocationAssert extends AbstractAssert<LocationAssert, Location> {
 
   /**

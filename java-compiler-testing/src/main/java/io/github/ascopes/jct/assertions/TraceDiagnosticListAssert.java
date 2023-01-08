@@ -43,7 +43,7 @@ import org.assertj.core.api.AbstractListAssert;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 public final class TraceDiagnosticListAssert
     extends
     AbstractListAssert<TraceDiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, TraceDiagnosticAssert> {

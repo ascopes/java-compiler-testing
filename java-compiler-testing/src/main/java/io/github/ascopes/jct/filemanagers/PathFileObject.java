@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 public class PathFileObject implements JavaFileObject {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PathFileObject.class);

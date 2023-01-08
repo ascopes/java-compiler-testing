@@ -35,7 +35,7 @@ import org.assertj.core.api.AbstractAssert;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 public abstract class AbstractEnumAssert<A extends AbstractEnumAssert<A, E>, E extends Enum<E>>
     extends AbstractAssert<A, E> {
 

@@ -16,7 +16,7 @@
 /**
  * Implementation details for the JSR-199 file manager API.
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 @NonNullApi
 @NonNullImpl
 package io.github.ascopes.jct.filemanagers;

@@ -16,7 +16,7 @@
 /**
  * Workspace components to hold complex source code structures within memory.
  */
-@API(since = "0.0.1", status = Status.EXPERIMENTAL)
+@API(since = "0.0.1", status = Status.STABLE)
 @NonNullApi
 @NonNullImpl
 package io.github.ascopes.jct.workspaces;
