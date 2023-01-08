@@ -21,7 +21,7 @@
 
   <groupId>io.github.ascopes.jct</groupId>
   <artifactId>java-compiler-testing-parent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1-M1</version>
   <packaging>pom</packaging>
 
   <name>Java Compiler Testing Parent</name>
@@ -55,7 +55,7 @@
     </developer>
   </developers>
 
-  <contributors/>
+  <contributors />
 
   <distributionManagement>
     <repository>
