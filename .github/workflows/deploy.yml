@@ -78,7 +78,7 @@ jobs:
           source ./scripts/common.sh
           
           info "Determining release version to use (this may take a moment)..."
-          if [ '${{ inputs.version }}' == "" ]; then
+          if [[ '${{ inputs.version }}' == "" ]]; then
             release_version="$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//g')"
           else
             release_version='${{ inputs.version }}'
@@ -90,15 +90,15 @@ jobs:
           ensure-set OSSRH_USERNAME OSSRH_TOKEN GPG_PASSPHRASE
           
           build_args=()
-          if [[ '${{ inputs.skip-dependency-check }}' = 'false' ]]; then
+          if [[ '${{ inputs.skip-dependency-check }}' == 'false' ]]; then
             build_args+=("-P" "dependency-check")
           fi
-          if [[ '${{ inputs.skip-tests }}' = 'true' ]]; then
+          if [[ '${{ inputs.skip-tests }}' == 'true' ]]; then
             build_args+=("-Dmaven.test.skip" "-DskipTests")
           fi
           
           build_goals=()
-          if [[ '${{ inputs.skip-deploy }}' = 'true' ]]; then
+          if [[ '${{ inputs.skip-deploy }}' == 'true' ]]; then
             build_goals+=("clean" "package" "javadoc:jar")
             build_goals+=("${build_args[@]}")
           else
@@ -107,7 +107,6 @@ jobs:
           
           run <<-SCRIPT          
             ./mvnw -B -e \
-                -P release \
                 --no-transfer-progress \
                 -Darguments='${build_args[@]}' \
                 -DdryRun='${{ inputs.dry-run }}' \
