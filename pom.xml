@@ -16,15 +16,20 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.github.ascopes.jct</groupId>
   <artifactId>java-compiler-testing-parent</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
+
+  <name>Java Compiler Testing Parent</name>
+
+  <description>
+    Parent POM for the java-compiler-testing project. You probably want to be using that instead
+    of including this POM into your projects directly.
+  </description>
 
   <modules>
     <module>java-compiler-testing</module>
@@ -34,20 +39,39 @@
   <inceptionYear>2022</inceptionYear>
   <url>https://github.com/${project-slug}</url>
 
-  <contributors>
-    <contributor>
+  <developers>
+    <developer>
+      <id>ascopes</id>
       <name>Ashley Scopes</name>
-      <url>${project.url}</url>
-    </contributor>
-  </contributors>
+      <email>ashleyscopes@outlook.com</email>
+      <url>https://github.com/ascopes</url>
+      <organization>Ashley Scopes</organization>
+      <organizationUrl>https://github.com/ascopes</organizationUrl>
+      <roles>
+        <role>lead developer</role>
+        <role>architect</role>
+      </roles>
+      <timezone>Europe/London</timezone>
+    </developer>
+  </developers>
+
+  <contributors/>
 
   <distributionManagement>
     <repository>
-      <id>github</id>
-      <name>GitHub Packages</name>
-      <url>https://maven.pkg.github.com/${project-slug}</url>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
   </distributionManagement>
+
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>${project-slug}/issues</url>
+  </issueManagement>
 
   <licenses>
     <license>
@@ -65,7 +89,7 @@
     <url>scm:git:${project.url}</url>
     <connection>scm:git:${project.url}</connection>
     <developerConnection>scm:git:${project.url}</developerConnection>
-    <tag>HEAD</tag>
+    <tag>v0.0.1-M1</tag>
   </scm>
 
   <properties>
@@ -93,8 +117,11 @@
     <maven-install-plugin.version>3.1.0</maven-install-plugin.version>
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
+    <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
     <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
+    <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
     <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+    <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
     <pitest-maven.version>1.10.4</pitest-maven.version>
 
     <!-- Plugin dependencies -->
@@ -265,8 +292,7 @@
               This block is needed to show @DisplayName and @ParameterizedTest
               in reports with the provided names.
             -->
-            <statelessTestsetReporter
-              implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
+            <statelessTestsetReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
               <disable>false</disable>
               <version>3.0</version>
               <usePhrasedFileName>false</usePhrasedFileName>
@@ -277,8 +303,7 @@
             <consoleOutputReporter>
               <disable>${hide-test-logs-in-console}</disable>
             </consoleOutputReporter>
-            <statelessTestsetInfoReporter
-              implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode">
+            <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode">
               <disable>false</disable>
               <usePhrasedFileName>false</usePhrasedFileName>
               <usePhrasedClassNameInRunning>true</usePhrasedClassNameInRunning>
@@ -305,6 +330,12 @@
               </goals>
             </execution>
           </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${maven-gpg-plugin.version}</version>
         </plugin>
 
         <plugin>
@@ -344,7 +375,7 @@
               <option>--override-methods=detail</option>
               <option>--show-packages=exported</option>
             </additionalOptions>
-            <bottom>&#169; ${project.inceptionYear} - ${current-year} &#2013; Ashley Scopes --
+            <bottom>© ${project.inceptionYear} - ${current-year} ߝ Ashley Scopes --
               Apache License V2
             </bottom>
             <defaultSince>0.0.1</defaultSince>
@@ -369,9 +400,17 @@
         </plugin>
 
         <plugin>
+          <!-- Resource file handling -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>${maven-resources-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <!-- Bundles source code into a JAR -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven-source-plugin.version}</version>
         </plugin>
 
         <plugin>
@@ -393,8 +432,7 @@
               This block is needed to show @DisplayName and @ParameterizedTest
               in reports with the provided names.
             -->
-            <statelessTestsetReporter
-              implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
+            <statelessTestsetReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
               <disable>false</disable>
               <version>3.0</version>
               <usePhrasedFileName>false</usePhrasedFileName>
@@ -405,8 +443,7 @@
             <consoleOutputReporter>
               <disable>${hide-test-logs-in-console}</disable>
             </consoleOutputReporter>
-            <statelessTestsetInfoReporter
-              implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode">
+            <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode">
               <disable>false</disable>
               <usePhrasedFileName>false</usePhrasedFileName>
               <usePhrasedClassNameInRunning>true</usePhrasedClassNameInRunning>
@@ -564,6 +601,18 @@
             </execution>
           </executions>
         </plugin>
+
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <version>${nexus-staging-maven-plugin.version}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <serverId>ossrh</serverId>
+            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -658,6 +707,61 @@
           <plugin>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <!-- Enable GPG-signing the release -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <configuration>
+                  <gpgArguments>
+                    <arg>--pinentry-mode</arg>
+                    <arg>loopback</arg>
+                  </gpgArguments>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
