@@ -30,7 +30,7 @@
   <name>JCT acceptance tests for Manifold Systems</name>
 
   <properties>
-    <manifold.version>2022.1.33</manifold.version>
+    <manifold.version>2022.1.34</manifold.version>
   </properties>
 
   <dependencies>
