@@ -30,7 +30,7 @@
   <name>JCT acceptance tests for Avaje Inject</name>
 
   <properties>
-    <avaje-inject.version>8.10</avaje-inject.version>
+    <avaje-inject.version>8.11</avaje-inject.version>
   </properties>
 
   <dependencies>
