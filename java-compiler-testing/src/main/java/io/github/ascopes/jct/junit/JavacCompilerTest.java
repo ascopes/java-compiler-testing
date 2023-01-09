@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.junit;
 
-import io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer;
+import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -67,7 +67,7 @@ public @interface JavacCompilerTest {
    *
    * @return an array of classes to run to configure the compiler. These run in the given order.
    */
-  Class<? extends JctSimpleCompilerConfigurer>[] configurers() default {};
+  Class<? extends JctCompilerConfigurer<?>>[] configurers() default {};
 
   /**
    * Whether we need to support modules or not.
