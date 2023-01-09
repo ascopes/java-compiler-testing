@@ -40,15 +40,15 @@ import org.opentest4j.TestAbortedException;
  * <p>An example annotation would look like the following:
  *
  * <pre><code>
- * @ArgumentsSource(MyCompilersProvider.class)
- * @ParameterizedTest(name = "for {0}")
- * @Retention(RetentionPolicy.RUNTIME)
- * @Target({
+ * {@literal @ArgumentsSource(MyCompilersProvider.class)}
+ * {@literal @ParameterizedTest(name = "for {0}")}
+ * {@literal @Retention(RetentionPolicy.RUNTIME)}
+ * {@literal @Target}({
  *     ElementType.ANNOTATION_TYPE, 
  *     ElementType.METHOD,
  *     ElementType.TYPE,
  * })
- * public @interface MyCompilerTest {
+ * public {@literal @interface} MyCompilerTest {
  *     int minVersion() default Integer.MIN_VALUE;
  *     int maxVersion() default Integer.MAX_VALUE;
  *     Class&lt;? extends JctSimpleCompilerConfigurer&gt;[] configurers() default {};
@@ -62,22 +62,22 @@ import org.opentest4j.TestAbortedException;
  *     extends AbstractCompilersProvider
  *     implements AnnotationConsumer&lt;MyCompilerTest&gt; {
  * 
- *   @Override
+ *   {@literal @Override}
  *   protected JctCompiler&lt;?, ?&gt; compilerForVersion(int release) {
  *     return new MyCompilerImpl().release(release);
  *   }
  *
- *   @Override
+ *   {@literal @Override}
  *   protected int minSupportedVersion(boolean modules) {
  *     return 11;
  *   }
  *
- *   @Override
+ *   {@literal @Override}
  *   protected int maxSupportedVersion(boolean modules) {
  *     return 19;
  *   }
  *
- *   @Override
+ *   {@literal @Override}
  *   public void accept(MyCompilerTest annotation) {
  *     super.configure(
  *         annotation.minVersion(),
@@ -92,18 +92,18 @@ import org.opentest4j.TestAbortedException;
  * This would enable you to define your test cases like so:
  *
  * <code><pre>
- * @MyCompilerTest(minVersion=13, maxVersion=17)
+ * {@literal @MyCompilerTest(minVersion=13, maxVersion=17)}
  * void testSomething(JctCompiler&lt;?, ?&gt; compiler) {
  *   ...
  * }
  *
- * @MyCompilerTest(configurers=WerrorConfigurer.class)
+ * {@literal @MyCompilerTest(configurers=WerrorConfigurer.class)}
  * void testSomethingElse(JctCompiler&lt;?, ?&gt; compiler) {
  *   ...
  * }
  *
  * static class WerrorConfigurer implements JctSimpleCompilerConfigurer {
- *   @Override
+ *   {@literal @Override}
  *   public void configure(JctCompiler&lt;?, ?&gt; compiler) {
  *     compiler.failOnErrors(true);
  *   }
