@@ -18,7 +18,7 @@ package io.github.ascopes.jct.junit;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
-import io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer;
+import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.ex.JctJunitConfigurerException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
