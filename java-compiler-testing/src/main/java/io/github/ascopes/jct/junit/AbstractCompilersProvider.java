@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.junit;
 
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
-import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer;
@@ -51,7 +50,7 @@ import org.opentest4j.TestAbortedException;
  * public @interface MyCompilerTest {
  *     int minVersion() default Integer.MIN_VALUE;
  *     int maxVersion() default Integer.MAX_VALUE;
- *     Class<? extends JctSimpleCompilerConfigurer>[] configurers() default {};
+ *     Class<? extends JctCompilerConfigurer<?>>[] configurers() default {};
  * }
  * </code></pre>
  *
@@ -152,7 +151,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
       int min,
       int max,
       boolean modules,
-      Class<? extends JctSimpleCompilerConfigurer>[] configurerClasses
+      Class<? extends JctCompilerConfigurer<?>>[] configurerClasses
   ) {
     min = Math.max(min, minSupportedVersion(modules));
     max = Math.min(max, maxSupportedVersion(modules));
@@ -198,7 +197,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   protected abstract int maxSupportedVersion(@SuppressWarnings("unused") boolean modules);
 
   private void applyConfigurers(JctCompiler<?, ?> compiler) {
-    var classes = requireNonNull(configurerClasses);
+    var classes = requireNonNullValues(configurerClasses, "configurerClasses");
 
     for (var configurerClass : classes) {
       var configurer = initialiseConfigurer(configurerClass);
@@ -207,7 +206,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
         configurer.configure(compiler);
       } catch (TestAbortedException ex) {
         throw ex;
-      } catch (Exception ex) {
+      } catch (Throwable ex) {
         throw new JctJunitConfigurerException(
             "Failed to configure compiler with configurer class " + configurerClass.getName(),
             ex
@@ -216,10 +215,10 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
     }
   }
 
-  private JctSimpleCompilerConfigurer initialiseConfigurer(
-      Class<? extends JctSimpleCompilerConfigurer> configurerClass
+  private JctCompilerConfigurer<?> initialiseConfigurer(
+      Class<? extends JctCompilerConfigurer<?>> configurerClass
   ) {
-    Constructor<? extends JctSimpleCompilerConfigurer> constructor;
+    Constructor<? extends JctCompilerConfigurer<?>> constructor;
 
     try {
       constructor = configurerClass.getDeclaredConstructor();
