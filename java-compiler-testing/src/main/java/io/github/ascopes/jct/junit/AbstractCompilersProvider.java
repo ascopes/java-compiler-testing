@@ -51,7 +51,7 @@ import org.opentest4j.TestAbortedException;
  * public @interface MyCompilerTest {
  *     int minVersion() default Integer.MIN_VALUE;
  *     int maxVersion() default Integer.MAX_VALUE;
- *     Class<? extends JctSimpleCompilerConfigurer>[] configurers() default {};
+ *     Class&lt;? extends JctSimpleCompilerConfigurer&gt;[] configurers() default {};
  * }
  * </code></pre>
  *
@@ -60,10 +60,10 @@ import org.opentest4j.TestAbortedException;
  * <pre><code>
  * public final class MyCompilersProvider
  *     extends AbstractCompilersProvider
- *     implements AnnotationConsumer<MyCompilerTest> {
+ *     implements AnnotationConsumer&lt;MyCompilerTest&gt; {
  * 
  *   @Override
- *   protected JctCompiler<?, ?> compilerForVersion(int release) {
+ *   protected JctCompiler&lt;?, ?&gt; compilerForVersion(int release) {
  *     return new MyCompilerImpl().release(release);
  *   }
  *
@@ -93,18 +93,18 @@ import org.opentest4j.TestAbortedException;
  *
  * <code><pre>
  * @MyCompilerTest(minVersion=13, maxVersion=17)
- * void testSomething(JctCompiler<?, ?> compiler) {
+ * void testSomething(JctCompiler&lt;?, ?&gt; compiler) {
  *   ...
  * }
  *
  * @MyCompilerTest(configurers=WerrorConfigurer.class)
- * void testSomethingElse(JctCompiler<?, ?> compiler) {
+ * void testSomethingElse(JctCompiler&lt;?, ?&gt; compiler) {
  *   ...
  * }
  *
  * static class WerrorConfigurer implements JctSimpleCompilerConfigurer {
  *   @Override
- *   public void configure(JctCompiler<?, ?> compiler) {
+ *   public void configure(JctCompiler&lt;?, ?&gt; compiler) {
  *     compiler.failOnErrors(true);
  *   }
  * }
