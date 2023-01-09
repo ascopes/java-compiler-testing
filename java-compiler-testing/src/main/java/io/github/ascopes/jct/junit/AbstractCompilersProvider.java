@@ -119,7 +119,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   // AnnotationConsumer.
   private int minVersion;
   private int maxVersion;
-  private Class<? extends JctSimpleCompilerConfigurer>[] configurerClasses;
+  private Class<? extends JctCompilerConfigurer<?>>[] configurerClasses;
 
   /**
    * Initialise this provider.
