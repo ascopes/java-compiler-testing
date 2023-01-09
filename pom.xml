@@ -376,7 +376,7 @@
               <option>--override-methods=detail</option>
               <option>--show-packages=exported</option>
             </additionalOptions>
-            <bottom>© ${project.inceptionYear} - ${current-year} ߝ Ashley Scopes --
+            <bottom>© ${project.inceptionYear} - ${current-year}, Ashley Scopes --
               Apache License V2
             </bottom>
             <defaultSince>0.0.1</defaultSince>
