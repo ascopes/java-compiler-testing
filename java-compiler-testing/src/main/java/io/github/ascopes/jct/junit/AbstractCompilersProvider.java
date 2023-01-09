@@ -39,7 +39,7 @@ import org.opentest4j.TestAbortedException;
  *
  * <p>An example annotation would look like the following:
  *
- * <code><pre>
+ * <pre><code>
  * @ArgumentsSource(MyCompilersProvider.class)
  * @ParameterizedTest(name = "for {0}")
  * @Retention(RetentionPolicy.RUNTIME)
@@ -53,11 +53,11 @@ import org.opentest4j.TestAbortedException;
  *     int maxVersion() default Integer.MAX_VALUE;
  *     Class<? extends JctSimpleCompilerConfigurer>[] configurers() default {};
  * }
- * </pre></code>
+ * </code></pre>
  *
  * <p>...with the JUnit5 annotation provider being implemented as:
  *
- * <code><pre>
+ * <pre><code>
  * public final class MyCompilersProvider
  *     extends AbstractCompilersProvider
  *     implements AnnotationConsumer<MyCompilerTest> {
@@ -87,7 +87,7 @@ import org.opentest4j.TestAbortedException;
  *     );
  *   }
  * }
- * </pre></code>
+ * </code></pre>
  *
  * This would enable you to define your test cases like so:
  *
@@ -108,7 +108,7 @@ import org.opentest4j.TestAbortedException;
  *     compiler.failOnErrors(true);
  *   }
  * }
- * </pre></code>
+ * </code></pre>
  *
  * @author Ashley Scopes
  * @since 0.0.1
