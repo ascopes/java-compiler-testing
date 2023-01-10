@@ -91,7 +91,7 @@ import org.opentest4j.TestAbortedException;
  *
  * This would enable you to define your test cases like so:
  *
- * <code><pre>
+ * <pre><code>
  * {@literal @MyCompilerTest(minVersion=13, maxVersion=17)}
  * void testSomething(JctCompiler&lt;?, ?&gt; compiler) {
  *   ...

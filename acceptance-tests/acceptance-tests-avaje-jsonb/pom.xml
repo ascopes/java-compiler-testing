@@ -30,7 +30,7 @@
   <name>JCT acceptance tests for Avaje JSONB</name>
 
   <properties>
-    <avaje-jsonb.version>1.0</avaje-jsonb.version>
+    <avaje-jsonb.version>1.1</avaje-jsonb.version>
     <jsonassert.version>1.5.1</jsonassert.version>
   </properties>
 
