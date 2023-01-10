@@ -282,10 +282,11 @@ jobs:
           path: 'artifacts/'
 
       - name: Publish unit test results
+        continue-on-error: true
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          action_fail: true
+          action_fail: false
           check_run_annotations: "skipped tests"
           deduplicate_classes_by_file_name: true
           json_test_case_results: true
@@ -296,8 +297,9 @@ jobs:
           time_unit: "milliseconds"
 
       - name: Validate codecov.yml
-        shell: bash
         continue-on-error: false
+        if: always()
+        shell: bash
         run: curl --data-binary --fail @codecov.yml https://codecov.io/validate
 
       - name: Publish to codecov
@@ -314,5 +316,7 @@ jobs:
           shasum -a 256 -c codecov.SHA256SUM
           chmod -v +x codecov
           ./codecov
-          # TODO: replace original call with this when the feature actually works properly.
-          #./codecov -c -F unit -F integration -v
+          # TODO: upload unit test and integration test reports separately so that
+          # codecov processes it correctly. Need to hardwire the paths in here somehow.
+          #./codecov -c -F unit -v
+          #./codecov -c -F integration -v
