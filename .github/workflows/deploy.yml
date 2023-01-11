@@ -80,7 +80,6 @@ jobs:
           run <<-SCRIPT          
             ./mvnw -B -e \
                 -Preleases \
-                '-P!acceptance-tests' \
                 --no-transfer-progress \
                 -Darguments='${build_args[@]}' \
                 -DdryRun='${{ inputs.dry-run }}' \
