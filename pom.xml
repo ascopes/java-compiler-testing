@@ -33,6 +33,7 @@
 
   <modules>
     <module>java-compiler-testing</module>
+    <module>acceptance-tests</module>
   </modules>
 
   <inceptionYear>2022</inceptionYear>
@@ -605,24 +606,6 @@
             </execution>
           </executions>
         </plugin>
-
-        <plugin>
-          <!-- Swaps out the maven deploy steps with Nexus-specific logic that can automate staging
-               checks for us. -->
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>${nexus-staging-maven-plugin.version}</version>
-          <extensions>true</extensions>
-          <configuration>
-            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-            <autoDropAfterRelease>true</autoDropAfterRelease>
-            <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
-            <keepStagingRepositoryOnFailure>true</keepStagingRepositoryOnFailure>
-            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-            <serverId>ossrh</serverId>
-            <updateReleaseInfo>true</updateReleaseInfo>
-          </configuration>
-        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -723,21 +706,6 @@
     </profile>
 
     <profile>
-      <id>acceptance-tests</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-
-      <modules>
-        <!-- 
-          Activate these here so that they do not appear when Nexus is being
-          invoked
-        -->
-        <module>acceptance-tests</module>
-      </modules>
-    </profile>
-
-    <profile>
       <id>releases</id>
 
       <build>
@@ -787,12 +755,6 @@
                 </configuration>
               </execution>
             </executions>
-          </plugin>
-
-          <!-- Swap out the deploy plugin with the Nexus support to skip staging entirely. -->
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
           </plugin>
         </plugins>
       </build>

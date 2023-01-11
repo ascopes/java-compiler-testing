@@ -59,7 +59,6 @@
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <maven.release.skip>true</maven.release.skip>
     <skip-dependency-scan>true</skip-dependency-scan>
-    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
   </properties>
 
   <dependencyManagement>
