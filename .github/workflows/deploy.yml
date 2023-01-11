@@ -94,7 +94,9 @@ jobs:
           SCRIPT
           
           success "Release has been performed successfully"
-          info "Please log onto the Nexus staging site and mark the release as closed to publish it"
+          info "Please login on https://s01.oss.sonatype.org/#stagingRepositories site and mark the"
+          info "release as closed. Once checks pass, click the 'release' option to promote it to"
+          info "Maven Central."
 
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
