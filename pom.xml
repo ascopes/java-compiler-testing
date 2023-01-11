@@ -33,7 +33,6 @@
 
   <modules>
     <module>java-compiler-testing</module>
-    <module>acceptance-tests</module>
   </modules>
 
   <inceptionYear>2022</inceptionYear>
@@ -89,7 +88,7 @@
     <url>scm:git:${project.url}</url>
     <connection>scm:git:${project.url}</connection>
     <developerConnection>scm:git:${project.url}</developerConnection>
-    <tag>v0.0.1-M1</tag>
+    <tag>vHEAD</tag>
   </scm>
 
   <properties>
@@ -621,20 +620,8 @@
             <keepStagingRepositoryOnFailure>true</keepStagingRepositoryOnFailure>
             <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
             <serverId>ossrh</serverId>
-            <skipLocalStaging>true</skipLocalStaging>
-            <skipStaging>true</skipStaging>
             <updateReleaseInfo>true</updateReleaseInfo>
           </configuration>
-
-          <executions>
-            <execution>
-              <id>default-deploy</id>
-              <phase>deploy</phase>
-              <goals>
-                <goal>deploy</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -736,10 +723,25 @@
     </profile>
 
     <profile>
+      <id>acceptance-tests</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <modules>
+        <!-- 
+          Activate these here so that they do not appear when Nexus is being
+          invoked
+        -->
+        <module>acceptance-tests</module>
+      </modules>
+    </profile>
+
+    <profile>
       <id>releases</id>
+
       <build>
         <plugins>
-
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
