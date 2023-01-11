@@ -31,7 +31,7 @@
   <description>Acceptance test components.</description>
 
   <properties>
-    <manifold.version>2022.1.34</manifold.version>
+    <manifold.version>2022.1.35</manifold.version>
   </properties>
 
   <dependencies>
