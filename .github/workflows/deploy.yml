@@ -108,10 +108,10 @@ jobs:
 
           build_goals=()
           if [[ '${{ inputs.skip-deploy }}' == 'true' ]]; then
-            build_goals+=("clean" "package" "javadoc:jar")
+            build_goals+=("clean" "package" "javadoc:jar" "javadoc:javadoc")
             build_goals+=("${build_args[@]}")
           else
-            build_goals+=("release:prepare" "release:perform")
+            build_goals+=("release:prepare" "release:perform" "javadoc:javadoc")
           fi
           
           run <<-SCRIPT          
