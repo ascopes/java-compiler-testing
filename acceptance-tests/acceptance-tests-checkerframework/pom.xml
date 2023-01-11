@@ -28,6 +28,7 @@
 
   <artifactId>acceptance-tests-checkerframework</artifactId>
   <name>JCT acceptance tests for CheckerFramework</name>
+  <description>Acceptance test components.</description>
 
   <properties>
     <argLine>

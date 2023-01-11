@@ -28,6 +28,7 @@
 
   <artifactId>acceptance-tests-google-auto-value</artifactId>
   <name>JCT acceptance tests for Google AutoValue</name>
+  <description>Acceptance test components.</description>
 
   <properties>
     <auto-value.version>1.10.1</auto-value.version>

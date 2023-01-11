@@ -28,6 +28,7 @@
 
   <artifactId>acceptance-tests-dagger</artifactId>
   <name>JCT acceptance tests for Google Dagger</name>
+  <description>Acceptance test components.</description>
 
   <properties>
     <dagger.version>2.44.2</dagger.version>

@@ -28,6 +28,7 @@
 
   <artifactId>acceptance-tests-micronaut</artifactId>
   <name>JCT acceptance tests for Micronaut</name>
+  <description>Acceptance test components.</description>
 
   <properties>
     <micronaut.version>3.8.0</micronaut.version>

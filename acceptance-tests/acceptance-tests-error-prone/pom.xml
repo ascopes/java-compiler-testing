@@ -28,6 +28,7 @@
 
   <artifactId>acceptance-tests-error-prone</artifactId>
   <name>JCT acceptance tests for Google ErrorProne</name>
+  <description>Acceptance test components.</description>
 
   <properties>
     <argLine>

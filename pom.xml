@@ -621,6 +621,7 @@
             <keepStagingRepositoryOnFailure>true</keepStagingRepositoryOnFailure>
             <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
             <serverId>ossrh</serverId>
+            <skipLocalStaging>true</skipLocalStaging>
             <skipStaging>true</skipStaging>
             <updateReleaseInfo>true</updateReleaseInfo>
           </configuration>

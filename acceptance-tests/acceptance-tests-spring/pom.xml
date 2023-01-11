@@ -28,6 +28,7 @@
 
   <artifactId>acceptance-tests-spring</artifactId>
   <name>JCT acceptance tests for Spring Framework 6</name>
+  <description>Acceptance test components.</description>
 
   <properties>
     <spring-boot.version>3.0.1</spring-boot.version>

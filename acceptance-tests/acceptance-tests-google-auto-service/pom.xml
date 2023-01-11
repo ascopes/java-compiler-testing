@@ -28,6 +28,7 @@
 
   <artifactId>acceptance-tests-google-auto-service</artifactId>
   <name>JCT acceptance tests for Google AutoService</name>
+  <description>Acceptance test components.</description>
 
   <properties>
     <auto-service.version>1.0.1</auto-service.version>

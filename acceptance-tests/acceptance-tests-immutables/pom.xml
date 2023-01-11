@@ -28,6 +28,7 @@
 
   <artifactId>acceptance-tests-immutables</artifactId>
   <name>JCT acceptance tests for Immutables</name>
+  <description>Acceptance test components.</description>
 
   <properties>
     <immutables.version>2.9.3</immutables.version>

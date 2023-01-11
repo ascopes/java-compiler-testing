@@ -28,6 +28,7 @@
 
   <artifactId>acceptance-tests-lombok</artifactId>
   <name>JCT acceptance tests for Lombok</name>
+  <description>Acceptance test components.</description>
 
   <properties>
     <lombok.version>1.18.24</lombok.version>
