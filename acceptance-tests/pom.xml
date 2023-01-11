@@ -22,7 +22,7 @@
   <parent>
     <groupId>io.github.ascopes.jct</groupId>
     <artifactId>java-compiler-testing-parent</artifactId>
-    <version>0.0.1-M3-SNAPSHOT</version>
+    <version>0.0.1-M5-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -30,6 +30,7 @@
   <packaging>pom</packaging>
 
   <name>JCT acceptance test parent project</name>
+  <description>Acceptance test components.</description>
 
   <modules>
     <module>acceptance-tests-avaje-inject</module>

@@ -21,7 +21,7 @@
 
   <groupId>io.github.ascopes.jct</groupId>
   <artifactId>java-compiler-testing-parent</artifactId>
-  <version>0.0.1-M3-SNAPSHOT</version>
+  <version>0.0.1-M5-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Java Compiler Testing parent project</name>
@@ -89,7 +89,7 @@
     <url>scm:git:${project.url}</url>
     <connection>scm:git:${project.url}</connection>
     <developerConnection>scm:git:${project.url}</developerConnection>
-    <tag>v0.0.1-M1</tag>
+    <tag>vHEAD</tag>
   </scm>
 
   <properties>
@@ -606,35 +606,6 @@
             </execution>
           </executions>
         </plugin>
-
-        <plugin>
-          <!-- Swaps out the maven deploy steps with Nexus-specific logic that can automate staging
-               checks for us. -->
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>${nexus-staging-maven-plugin.version}</version>
-          <extensions>true</extensions>
-          <configuration>
-            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-            <autoDropAfterRelease>true</autoDropAfterRelease>
-            <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
-            <keepStagingRepositoryOnFailure>true</keepStagingRepositoryOnFailure>
-            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-            <serverId>ossrh</serverId>
-            <skipStaging>true</skipStaging>
-            <updateReleaseInfo>true</updateReleaseInfo>
-          </configuration>
-
-          <executions>
-            <execution>
-              <id>default-deploy</id>
-              <phase>deploy</phase>
-              <goals>
-                <goal>deploy</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -736,9 +707,9 @@
 
     <profile>
       <id>releases</id>
+
       <build>
         <plugins>
-
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
@@ -784,12 +755,6 @@
                 </configuration>
               </execution>
             </executions>
-          </plugin>
-
-          <!-- Swap out the deploy plugin with the Nexus support to skip staging entirely. -->
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
           </plugin>
         </plugins>
       </build>

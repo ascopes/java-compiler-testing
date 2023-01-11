@@ -22,12 +22,13 @@
   <parent>
     <groupId>io.github.ascopes.jct</groupId>
     <artifactId>acceptance-tests</artifactId>
-    <version>0.0.1-M3-SNAPSHOT</version>
+    <version>0.0.1-M5-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>acceptance-tests-lombok</artifactId>
   <name>JCT acceptance tests for Lombok</name>
+  <description>Acceptance test components.</description>
 
   <properties>
     <lombok.version>1.18.24</lombok.version>

@@ -22,12 +22,13 @@
   <parent>
     <groupId>io.github.ascopes.jct</groupId>
     <artifactId>acceptance-tests</artifactId>
-    <version>0.0.1-M3-SNAPSHOT</version>
+    <version>0.0.1-M5-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>acceptance-tests-mapstruct</artifactId>
   <name>JCT acceptance tests for MapStruct</name>
+  <description>Acceptance test components.</description>
 
   <properties>
     <mapstruct.version>1.5.3.Final</mapstruct.version>

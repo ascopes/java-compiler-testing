@@ -8,26 +8,6 @@ on:
         default: true
         type: boolean
 
-      skip-dependency-scan:
-        description: "Skip dependency scan"
-        default: false
-        type: boolean
-
-      skip-deploy:
-        description: "Skip deployment step"
-        default: false
-        type: boolean
-
-      skip-pages:
-        description: "Skip page publishing step"
-        default: false
-        type: boolean
-
-      skip-tests:
-        description: "Skip tests"
-        default: false
-        type: boolean
-
       version:
         description: "Version (leave blank to release non-SNAPSHOT patch)"
         default: ""
@@ -89,24 +69,17 @@ jobs:
           info "Preparing and performing the release"
           ensure-set OSSRH_USERNAME OSSRH_TOKEN GPG_PASSPHRASE
           
-          build_args=()
-          if [[ '${{ inputs.skip-dependency-check }}' == 'false' ]]; then
-            build_args+=("-P" "dependency-check")
-          fi
-          if [[ '${{ inputs.skip-tests }}' == 'true' ]]; then
-            build_args+=("-Dmaven.test.skip" "-DskipTests")
-          fi
-          
-          build_goals=()
-          if [[ '${{ inputs.skip-deploy }}' == 'true' ]]; then
-            build_goals+=("clean" "package" "javadoc:jar")
-            build_goals+=("${build_args[@]}")
-          else
-            build_goals+=("release:prepare" "release:perform")
-          fi
+          build_args=(
+            "-Dmaven.test.skip" 
+            "-DskipTests"
+            "-Dlicense.skip=true"
+            "-Dcheckstyle.skip=true"
+            "-Preleases"
+          )
           
           run <<-SCRIPT          
             ./mvnw -B -e \
+                -Preleases \
                 --no-transfer-progress \
                 -Darguments='${build_args[@]}' \
                 -DdryRun='${{ inputs.dry-run }}' \
@@ -116,21 +89,16 @@ jobs:
                 -DsignTag=false \
                 -Dstyle.color=always \
                 -Dtag='v${release_version}' \
-                ${build_goals[@]}
+                release:prepare release:perform
           SCRIPT
           
           success "Release has been performed successfully"
+          info "Please login on https://s01.oss.sonatype.org/#stagingRepositories site and mark the"
+          info "release as closed. Once checks pass, click the 'release' option to promote it to"
+          info "Maven Central."
+
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
-      - name: Upload JavaDocs as a build artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: java-compiler-testing/target/apidocs
-
-      - name: Deploy JavaDocs build artifact to GitHub Pages
-        if: ${{ ! inputs.dry-run }} && ${{ ! inputs.skip-pages }}
-        id: deployment
-        uses: actions/deploy-pages@v1
