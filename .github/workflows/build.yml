@@ -113,7 +113,7 @@ jobs:
         shell: bash
         run: |-
           set +f -x
-          tar -cvf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz \
+          tar -czvf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz \
               **/target/failsafe-reports/** \
               **/target/surefire-reports/** \
               **/target/site/jacoco/unit/jacoco*.xml \
@@ -176,7 +176,7 @@ jobs:
         shell: bash
         run: |-
           set +f -x
-          tar -cvf reports-mutation-tests.tgz **/target/pit-reports/pit-reports/**
+          tar -czvf reports-mutation-tests.tgz **/target/pit-reports/pit-reports/**
 
       - name: Stash reports tarball
         uses: actions/upload-artifact@v3
@@ -217,7 +217,7 @@ jobs:
 
       - name: Decompress stashed report tarballs
         shell: bash
-        run: find artifacts/ -name "reports-*.tgz" -exec tar -xzv {} \;
+        run: find artifacts/ -name "reports-*.tgz" -exec tar -xzvf {} \;
 
       - name: Publish test results
         continue-on-error: true
