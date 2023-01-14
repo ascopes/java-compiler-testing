@@ -90,8 +90,7 @@ jobs:
         if: always()
         with:
           name: dependency-scan-report
-          path: |
-            **/target/dependency-check-report.html
+          path: '**/target/dependency-check-report.html'
           retention-days: 30
 
   javadocs:
@@ -198,18 +197,27 @@ jobs:
           -j "${{ matrix.java-version }}"
           -o "${{ matrix.os-name }}"
 
-      - name: Archive test and coverage reports
+      # Compress first so that the collection job later takes far less time (order of a few minutes
+      # or so). GitHub does not compress these until after the workflow finishes, meaning when
+      # we unstash them to produce the coverage reports, it will make an HTTP call for every single
+      # file. This can take several minutes and is somewhat painful to have to wait for.
+      - name: Compress test and coverage reports into tarball
+        shell: bash
+        run: >-
+          tar czf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz
+          **/target/failsafe-reports/
+          **/target/surefire-reports/
+          **/target/site/jacoco/unit/jacoco*.xml
+          **/target/site/jacoco/int/jacoco*.xml
+
+      - name: Stash reports tarball
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: reports-java-${{ matrix.java-version }}-${{ matrix.os-name }}
           if-no-files-found: error
-          path: |-
-            **/target/failsafe-reports/
-            **/target/surefire-reports/
-            **/target/site/jacoco/unit/jacoco*.xml
-            **/target/site/jacoco/int/jacoco*.xml
-          retention-days: 5
+          path: reports-java-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz
+          retention-days: 30
 
   mutation-tests:
     name: Mutation tests
@@ -246,16 +254,25 @@ jobs:
           -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
           test
 
-      - name: Archive reports
+      # Compress first so that the collection job later takes far less time (order of a few minutes
+      # or so). GitHub does not compress these until after the workflow finishes, meaning when
+      # we unstash them to produce the coverage reports, it will make an HTTP call for every single
+      # file. This can take several minutes and is somewhat painful to have to wait for.
+      - name: Compress mutation test reports into tarball
+        shell: bash
+        run: >-
+          tar czf reports-mutation-tests.tgz
+          **/target/surefire-reports/
+          **/target/pit-reports/pit-reports/**
+
+      - name: Stash reports tarball
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: reports-mutation
           if-no-files-found: error
-          path: |-
-            **/target/surefire-reports/
-            **/target/pit-reports/pit-reports/**
-          retention-days: 5
+          path: reports-mutation-tests.tgz
+          retention-days: 30
 
   publish-test-reports:
     name: Publish test reports
@@ -276,12 +293,16 @@ jobs:
           # Needed to keep actions working correctly.
           fetch-depth: 2
 
-      - name: Download artifacts
+      - name: Download stashed tarballs
         uses: actions/download-artifact@v3
         with:
-          path: 'artifacts/'
+          path: 'artifacts/reports-*.tgz'
 
-      - name: Publish unit test results
+      - name: Decompress stashed report tarballs
+        shell: bash
+        run: find artifacts/ -name "reports-*.tgz" -exec tar xzv {} \;
+
+      - name: Publish test results
         continue-on-error: true
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
