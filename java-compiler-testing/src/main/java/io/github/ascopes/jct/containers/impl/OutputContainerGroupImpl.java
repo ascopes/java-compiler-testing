@@ -28,7 +28,6 @@ import io.github.ascopes.jct.workspaces.PathRoot;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
 import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -195,8 +194,8 @@ public final class OutputContainerGroupImpl
   }
 
   @Override
-  public List<Set<Location>> getLocationsForModules() {
-    return List.of(Set.copyOf(modules.keySet()));
+  public Set<Location> getLocationsForModules() {
+    return Set.copyOf(modules.keySet());
   }
 
   @Override

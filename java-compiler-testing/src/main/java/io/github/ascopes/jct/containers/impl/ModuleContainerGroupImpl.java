@@ -133,8 +133,8 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   }
 
   @Override
-  public List<Set<Location>> getLocationsForModules() {
-    return List.of(Set.copyOf(modules.keySet()));
+  public Set<Location> getLocationsForModules() {
+    return Set.copyOf(modules.keySet());
   }
 
   @Nullable

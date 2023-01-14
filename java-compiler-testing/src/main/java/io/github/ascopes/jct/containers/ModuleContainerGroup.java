@@ -17,7 +17,6 @@ package io.github.ascopes.jct.containers;
 
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.workspaces.PathRoot;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -88,7 +87,7 @@ public interface ModuleContainerGroup extends ContainerGroup {
    *
    * @return the locations that are modules.
    */
-  List<Set<Location>> getLocationsForModules();
+  Set<Location> getLocationsForModules();
 
   /**
    * Get the module container impl in this group.

@@ -20,6 +20,7 @@ import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
 import javax.annotation.WillCloseWhenClosed;
@@ -152,9 +153,12 @@ public interface PackageContainerGroup extends ContainerGroup {
   /**
    * Get the package containers in this group.
    *
+   * <p>Returned packages are presented in the order that they were registered. This is the
+   * resolution order that the compiler will use.
+   *
    * @return the containers.
    */
-  Collection<Container> getPackages();
+  List<Container> getPackages();
 
   /**
    * Try to infer the binary name of a given file object.

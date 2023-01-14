@@ -453,14 +453,10 @@ public final class JctFileManagerImpl implements JctFileManager {
   @Override
   public Iterable<Set<Location>> listLocationsForModules(Location location) {
     requireOutputOrModuleOrientedLocation(location);
-
     var group = getExistingModuleOrientedOrOutputGroup(location);
-
-    if (group == null) {
-      return List.of();
-    }
-
-    return group.getLocationsForModules();
+    return group == null
+        ? List.of()
+        : List.of(group.getLocationsForModules());
   }
 
   @Override
