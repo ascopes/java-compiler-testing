@@ -129,6 +129,11 @@ jobs:
           -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
           clean compile javadoc:jar
 
+      - name: Upload JavaDocs as a build artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: java-compiler-testing/target/apidocs
+
   build:
     strategy:
       fail-fast: false
@@ -341,3 +346,17 @@ jobs:
           # codecov processes it correctly. Need to hardwire the paths in here somehow.
           #./codecov -c -F unit -v
           #./codecov -c -F integration -v
+
+  publish-javadocs:
+    name: Publish latest JavaDocs to GitHub pages
+    if: ${{ github.ref-name == 'main' && github.event_name != 'pull_request' }}
+    permissions:
+      pages: write
+      id-token: write
+    runs-on: ubuntu-22.04
+    needs:
+      - javadocs
+    steps:
+      - name: Deploy JavaDocs build artifact to GitHub Pages
+        id: javadocs
+        uses: actions/deploy-pages@v1
