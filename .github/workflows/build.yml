@@ -101,9 +101,9 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: reports-java-${{ matrix.java-version }}-${{ matrix.os-name }}
+          name: reports-${{ matrix.java-version }}-${{ matrix.os-name }}
           if-no-files-found: error
-          path: reports-java-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz
+          path: reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz
           retention-days: 30
 
   mutation-tests:
