@@ -91,7 +91,7 @@ jobs:
           set +f -x
           shopt -s globstar
           
-          tar czvf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz \
+          tar cvf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz \
               **/target/failsafe-reports/** \
               **/target/surefire-reports/** \
               **/target/site/jacoco/unit/jacoco*.xml \
@@ -152,7 +152,7 @@ jobs:
           set +f -x
           shopt -s globstar
           
-          tar czvf reports-mutation-tests.tgz \ 
+          tar cvf reports-mutation-tests.tgz \ 
               **/target/surefire-reports/** \
               **/target/pit-reports/pit-reports/**
 
