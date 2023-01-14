@@ -17,10 +17,6 @@ jobs:
     name: Build on JDK ${{ matrix.java-version }} (${{ matrix.os-name }})
     runs-on: ${{ matrix.os-name }}
 
-    concurrency:
-      group: build-build-${{ matrix.java-version }}-${{ matrix.os-name }}-${{ github.head_ref || github.run_id }}
-      cancel-in-progress: true
-
     strategy:
       fail-fast: false
       matrix:
@@ -132,10 +128,6 @@ jobs:
     name: Run mutation tests
     runs-on: ubuntu-22.04
 
-    concurrency:
-      group: build-mutation-tests-${{ github.head_ref || github.run_id }}
-      cancel-in-progress: true
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -194,10 +186,6 @@ jobs:
     needs:
       - build
       - mutation-tests
-
-    concurrency:
-      group: build-publish-test-reports-${{ github.head_ref || github.run_id }}
-      cancel-in-progress: true
 
     permissions:
       checks: write
@@ -263,10 +251,6 @@ jobs:
     name: Check formatting and licenses
     runs-on: ubuntu-22.04
 
-    concurrency:
-      group: build-formatting-${{ github.head_ref || github.run_id }}
-      cancel-in-progress: true
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -301,10 +285,6 @@ jobs:
   dependency-check:
     name: Run dependency check
     runs-on: ubuntu-22.04
-
-    concurrency:
-      group: build-dependency-check-${{ github.head_ref || github.run_id }}
-      cancel-in-progress: true
 
     steps:
       - name: Checkout repository
@@ -352,10 +332,6 @@ jobs:
     name: Generate documentation
     runs-on: ubuntu-22.04
 
-    concurrency:
-      group: build-generate-documentation-${{ github.head_ref || github.run_id }}
-      cancel-in-progress: true
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -397,10 +373,6 @@ jobs:
     name: Publish documentation
     runs-on: ubuntu-22.04
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-
-    concurrency:
-      group: build-publish-documentation-${{ github.head_ref || github.run_id }}
-      cancel-in-progress: true
 
     permissions:
       pages: write
