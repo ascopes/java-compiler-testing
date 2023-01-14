@@ -32,7 +32,7 @@ import org.apiguardian.api.API.Status;
  *
  * <pre><code>
  * class MyAnnotationProcessorConfigurer implements JctCompilerConfigurer&lt;RuntimeException&gt; {
- *   {@literal @Override}
+ *    {@literal @Override}
  *    public void configure(JctCompiler&lt;?, ?&gt; compiler) {
  *      compiler
  *          .addAnnotationProcessors(new MyAnnotationProcessor())
@@ -44,7 +44,7 @@ import org.apiguardian.api.API.Status;
  * ...tests can then make use of this configurer directly:
  *
  * <pre><code>
- *   {@literal @Test}
+ *    {@literal @Test}
  *    void theCompilationSucceedsAsExpected() {
  *      try (var workspace = Workspaces.newWorkspace()) {
  *        // Given
@@ -77,7 +77,7 @@ import org.apiguardian.api.API.Status;
  * will apply the configurer before passing it to the test as a parameter:
  *
  * <pre><code>
- *  {@literal @JavacCompilersTest(configurers = {MyAnnotationProcessorConfigurer.class})}
+ *   {@literal @JavacCompilersTest(configurers = {MyAnnotationProcessorConfigurer.class})}
  *   void theCompilationSucceedsAsExpected(JctCompiler&lt;?, ?&gt; compiler) {
  *     // ...
  *   }
