@@ -38,6 +38,60 @@ Full JUnit5 integration is provided to help streamline the development process.
 **This module is still under development.** Any contributions or feedback
 are always welcome!
 
+## Features
+
+- Implements in-memory file management compatible with the NIO Path and
+  FileSystem API, enabling tests to run without write access to the host
+  system, and without awkward resource-cleanup logic.
+- Ability to run compilation on combinations of real files, class path
+  resources, and in-memory files.
+- Supports Java 9 JPMS modules as intended.
+- Ability to customise a large assortment of configuration parameters
+  to enable you to test exactly what you need to test.
+- Provides support for `javac` out of the box, with the
+  ability to support other JSR-199 implementations if desired --
+  just make use of one of the compiler classes, or make your own!
+- Implements a fully functional JSR-199 Path JavaFileManager.
+- Fluent syntax for creating configurations, executing them, and
+  inspecting the results.
+- Integration with AssertJ for fluent assertions on compilation
+  results.
+- Ability to have multiple source roots, just like when using
+  `javac` normally.
+- Diagnostic reporting includes stacktraces, so you can find out
+  exactly what triggered a diagnostic and begin debugging any
+  issues in your applications quickly.
+- Helpful error messages to assist in annotation processor development
+
+```
+[main] ERROR io.github.ascopes.jct.diagnostics.TracingDiagnosticListener - cannot find symbol
+  symbol:   class Generated
+  location: package javax.annotation
+[main] INFO io.github.ascopes.jct.compilers.CompilationFactory - Compilation with compiler Javac 9 failed after ~332.3ms
+
+java.lang.AssertionError: Expected a successful compilation, but it failed.
+
+Diagnostics:
+
+ - [ERROR] compiler.err.cant.resolve.location /sources-f1728706-5de5-4b89-9a6a-b51233ce67c8/io/github/ascopes/jct/examples/immutables/dataclass/ImmutableAnimal.java (at line 25, col 18)
+
+   23 | @SuppressWarnings({"all"})
+   24 | @ParametersAreNonnullByDefault
+   25 | @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
+      +  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+   26 | @Immutable
+   27 | @CheckReturnValue
+
+  cannot find symbol
+  symbol:   class Generated
+  location: package javax.annotation
+  
+  at io.github.ascopes.jct.acceptancetests.immutables.ImmutablesIntegrationTest.immutablesValueProducesTheExpectedClass(ImmutablesIntegrationTest.java:66)
+  at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+  at java.base/java.lang.reflect.Method.invoke(Method.java:577)
+  ...
+```
+
 ## Installation
 
 The project can be found on Maven Central.
@@ -60,6 +114,19 @@ repositories {
 
 dependencies {
   testImplementation("io.github.ascopes.jct:java-compiler-testing:$jctVersion")
+}
+```
+
+## JPMS
+
+If your tests make use of JPMS (i.e. they have a `module-info.java` somewhere), then you will want
+to add a requirement for this module like so:
+
+```java
+open module my.tests {
+  ...
+  requires io.github.ascopes.jct;
+  ...
 }
 ```
 
@@ -232,60 +299,6 @@ class ExampleTest {
     }
   }
 }
-```
-
-## Features
-
-- Implements in-memory file management compatible with the NIO Path and
-  FileSystem API, enabling tests to run without write access to the host
-  system, and without awkward resource-cleanup logic.
-- Ability to run compilation on combinations of real files, class path
-  resources, and in-memory files.
-- Supports Java 9 JPMS modules as intended.
-- Ability to customise a large assortment of configuration parameters
-  to enable you to test exactly what you need to test.
-- Provides support for `javac` out of the box, with the
-  ability to support other JSR-199 implementations if desired --
-  just make use of one of the compiler classes, or make your own!
-- Implements a fully functional JSR-199 Path JavaFileManager.
-- Fluent syntax for creating configurations, executing them, and
-  inspecting the results.
-- Integration with AssertJ for fluent assertions on compilation
-  results.
-- Ability to have multiple source roots, just like when using
-  `javac` normally.
-- Diagnostic reporting includes stacktraces, so you can find out
-  exactly what triggered a diagnostic and begin debugging any
-  issues in your applications quickly.
-- Helpful error messages to assist in annotation processor development
-
-```
-[main] ERROR io.github.ascopes.jct.diagnostics.TracingDiagnosticListener - cannot find symbol
-  symbol:   class Generated
-  location: package javax.annotation
-[main] INFO io.github.ascopes.jct.compilers.CompilationFactory - Compilation with compiler Javac 9 failed after ~332.3ms
-
-java.lang.AssertionError: Expected a successful compilation, but it failed.
-
-Diagnostics:
-
- - [ERROR] compiler.err.cant.resolve.location /sources-f1728706-5de5-4b89-9a6a-b51233ce67c8/io/github/ascopes/jct/examples/immutables/dataclass/ImmutableAnimal.java (at line 25, col 18)
-
-   23 | @SuppressWarnings({"all"})
-   24 | @ParametersAreNonnullByDefault
-   25 | @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
-      +  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   26 | @Immutable
-   27 | @CheckReturnValue
-
-  cannot find symbol
-  symbol:   class Generated
-  location: package javax.annotation
-  
-  at io.github.ascopes.jct.acceptancetests.immutables.ImmutablesIntegrationTest.immutablesValueProducesTheExpectedClass(ImmutablesIntegrationTest.java:66)
-  at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
-  at java.base/java.lang.reflect.Method.invoke(Method.java:577)
-  ...
 ```
 
 ## ECJ support

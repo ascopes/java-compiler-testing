@@ -45,7 +45,6 @@ import org.mockito.quality.Strictness;
  * @author Ashley Scopes
  */
 @DisplayName("TraceDiagnosticRepresentation tests")
-@SuppressWarnings("NullableProblems")
 class TraceDiagnosticRepresentationTest {
 
   @TempDir
@@ -132,7 +131,7 @@ class TraceDiagnosticRepresentationTest {
             "     4 | ",
             "     5 | public class HelloWorld {",
             "     6 |   public static int main(String[] args) throws Throwable {",
-            "       +   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "       +   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^",
             "     7 |     var scanner = new Scanner(System.in);",
             "     8 |     System.out.print(\"What is your name? \");",
             "",
@@ -184,7 +183,7 @@ class TraceDiagnosticRepresentationTest {
             "     4 | ",
             "     5 | public class HelloWorld {",
             "     6 |   public static int main(String[] args) throws Throwable {",
-            "       +   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "       +   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^",
             "     7 |     var scanner = new Scanner(System.in);",
             "     8 |     System.out.print(\"What is your name? \");",
             "",
@@ -236,7 +235,7 @@ class TraceDiagnosticRepresentationTest {
             "     4 | ",
             "     5 | public class HelloWorld {",
             "     6 |   public static int main(String[] args) throws Throwable {",
-            "       +   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "       +   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^",
             "     7 |     var scanner = new Scanner(System.in);",
             "     8 |     System.out.print(\"What is your name? \");",
             "",
@@ -327,9 +326,9 @@ class TraceDiagnosticRepresentationTest {
             "     4 | ",
             "     5 | public class HelloWorld {",
             "     6 |   public static int main(String[] args) throws Throwable {",
-            "       +   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "       +   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
             "     7 |     var scanner = new Scanner(System.in);",
-            "       + ^^^^^^^^^^^^^^^",
+            "       + ~~~~~~~~~~~~~~^",
             "     8 |     System.out.print(\"What is your name? \");",
             "     9 |     var name = scanner.nextLine();",
             "",
@@ -373,25 +372,26 @@ class TraceDiagnosticRepresentationTest {
             "     4 | ",
             "     5 | public class HelloWorld {",
             "     6 |   public static int main(String[] args) throws Throwable {",
-            "       +   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "       +   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
             "     7 |     var scanner = new Scanner(System.in);",
-            "       + ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "       + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
             "     8 |     System.out.print(\"What is your name? \");",
-            "       + ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "       + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
             "     9 |     var name = scanner.nextLine();",
-            "       + ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "       + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
             "    10 |     System.out.printf(\"Hello, %s!\", name);",
-            "       + ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+            "       + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
             "    11 |   }",
-            "       + ^^^",
+            "       + ~~~",
             "    12 | }",
-            "       + ^",
+            "       + ~",
             "",
             "    Entrypoint must be a void method."
         );
   }
 
   @DisplayName("toStringOf(TraceDiagnostic) renders the diagnostic when source is not present")
+  @SuppressWarnings("DataFlowIssue")
   @Test
   void toStringOfTraceDiagnosticRendersTheDiagnosticWhenSourceIsNotPresent() {
     // Given

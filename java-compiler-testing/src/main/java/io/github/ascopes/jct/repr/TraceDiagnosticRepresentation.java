@@ -260,8 +260,15 @@ public final class TraceDiagnosticRepresentation implements Representation {
           .append(" ".repeat(lineNumberWidth))
           .append(" + ");
 
-      for (int i = startOfLine; i < Math.min(endOfLine, endOffset); ++i) {
-        builder.append(startOffset <= i ? '^' : ' ');
+      var endIndex = Math.min(endOfLine, endOffset);
+      for (int i = startOfLine; i < endIndex; ++i) {
+        if (i < startOffset) {
+          builder.append(' ');
+        } else if (i == startOffset || i == endOffset - 1) {
+          builder.append('^');
+        } else {
+          builder.append('~');
+        }
       }
 
       builder.append('\n');
