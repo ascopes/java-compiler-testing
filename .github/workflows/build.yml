@@ -13,128 +13,6 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  formatting:
-    name: Check formatting
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-
-      - name: Initialize Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: 17
-          cache: 'maven'
-
-      - name: Run checks
-        shell: bash
-        run: >-
-          ./mvnw 
-          -B
-          -e
-          -T1C
-          -U
-          --no-transfer-progress
-          -DskipTests=true
-          -Dstyle.color=always
-          -Dmaven.main.skip
-          -Dmaven.jar.skip
-          -Dmaven.resources.skip
-          -Dmaven.test.skip
-          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
-          verify
-
-  dependency-check:
-    name: Run dependency check
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-
-      - name: Initialize Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: 17
-          cache: 'maven'
-
-      - name: Run checks
-        shell: bash
-        run: >-
-          ./mvnw 
-          -B
-          -e
-          -T1C
-          -U
-          -Pdependency-check
-          --no-transfer-progress
-          -DskipTests=true
-          -Dstyle.color=always
-          -Dcheckstyle.skip=true
-          -Dlicense.skip=true
-          -Dmaven.main.skip
-          -Dmaven.jar.skip
-          -Dmaven.resources.skip
-          -Dmaven.test.skip
-          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
-          verify
-
-      - name: Archive Dependency Scan reports
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: dependency-scan-report
-          path: '**/target/dependency-check-report.html'
-          retention-days: 30
-
-  generate-documentation:
-    name: Generate documentation
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-
-      - name: Initialize Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          # Must use >= JDK 17 for JavaDocs to generate correctly.
-          java-version: 17
-          cache: 'maven'
-
-      - name: Generate JavaDocs
-        shell: bash
-        run: >-
-          ./mvnw 
-          -B
-          -e
-          -T1C
-          -U
-          -pl java-compiler-testing
-          --also-make
-          --no-transfer-progress
-          -Dmaven.test.skip=true
-          -Dcheckstyle.skip=true
-          -Dlicense.skip=true
-          -Dstyle.color=always
-          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
-          clean compile javadoc:jar
-
-      - name: Upload JavaDocs as a build artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: java-compiler-testing/target/apidocs
-
   build:
     strategy:
       fail-fast: false
@@ -354,6 +232,128 @@ jobs:
           # codecov processes it correctly. Need to hardwire the paths in here somehow.
           #./codecov -c -F unit -v
           #./codecov -c -F integration -v
+
+  formatting:
+    name: Check formatting and licenses
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Initialize Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+          cache: 'maven'
+
+      - name: Run checks
+        shell: bash
+        run: >-
+          ./mvnw 
+          -B
+          -e
+          -T1C
+          -U
+          --no-transfer-progress
+          -DskipTests=true
+          -Dstyle.color=always
+          -Dmaven.main.skip
+          -Dmaven.jar.skip
+          -Dmaven.resources.skip
+          -Dmaven.test.skip
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+          verify
+
+  dependency-check:
+    name: Run dependency check
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Initialize Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+          cache: 'maven'
+
+      - name: Run checks
+        shell: bash
+        run: >-
+          ./mvnw 
+          -B
+          -e
+          -T1C
+          -U
+          -Pdependency-check
+          --no-transfer-progress
+          -DskipTests=true
+          -Dstyle.color=always
+          -Dcheckstyle.skip=true
+          -Dlicense.skip=true
+          -Dmaven.main.skip
+          -Dmaven.jar.skip
+          -Dmaven.resources.skip
+          -Dmaven.test.skip
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+          verify
+
+      - name: Archive Dependency Scan reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: dependency-scan-report
+          path: '**/target/dependency-check-report.html'
+          retention-days: 30
+
+  generate-documentation:
+    name: Generate documentation
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Initialize Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          # Must use >= JDK 17 for JavaDocs to generate correctly.
+          java-version: 17
+          cache: 'maven'
+
+      - name: Generate JavaDocs
+        shell: bash
+        run: >-
+          ./mvnw 
+          -B
+          -e
+          -T1C
+          -U
+          -pl java-compiler-testing
+          --also-make
+          --no-transfer-progress
+          -Dmaven.test.skip=true
+          -Dcheckstyle.skip=true
+          -Dlicense.skip=true
+          -Dstyle.color=always
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+          clean compile javadoc:jar
+
+      - name: Upload JavaDocs as a build artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: java-compiler-testing/target/apidocs
 
   publish-documentation:
     name: Publish documentation
