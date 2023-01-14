@@ -18,6 +18,9 @@ jobs:
     name: Build and deploy code
     runs-on: ubuntu-22.04
 
+    # No concurrency groups, as we do not want to risk cancelling this job midway through a
+    # run and producing a tag without pushing to Maven Central at the same time.
+
     permissions:
       contents: write
       id-token: write
@@ -101,4 +104,3 @@ jobs:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-
