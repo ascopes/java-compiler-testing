@@ -153,6 +153,25 @@ public final class Fixtures {
   }
 
   /**
+   * Get some random binary data.
+   *
+   * @return the binary data.
+   */
+  public static byte[] someBinaryData() {
+    var boxed = Stream
+        .generate(() -> RANDOM.nextInt(Byte.MAX_VALUE - Byte.MIN_VALUE) + Byte.MIN_VALUE)
+        .map(Integer::byteValue)
+        .limit(someInt(10, 255))
+        .toArray(Byte[]::new);
+
+    var unboxed = new byte[boxed.length];
+    for (var i = 0; i < boxed.length; ++i) {
+      unboxed[i] = boxed[i];
+    }
+    return unboxed;
+  }
+
+  /**
    * Get some random command line flags.
    *
    * @return some flags.
