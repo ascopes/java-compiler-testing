@@ -14,7 +14,7 @@ on:
 
 jobs:
   formatting:
-    name: Formatting
+    name: Check formatting
     runs-on: ubuntu-22.04
 
     steps:
@@ -36,7 +36,7 @@ jobs:
           ./mvnw 
           -B
           -e
-          -T4
+          -T1C
           -U
           --no-transfer-progress
           -DskipTests=true
@@ -49,7 +49,7 @@ jobs:
           verify
 
   dependency-check:
-    name: Dependency Check
+    name: Run dependency check
     runs-on: ubuntu-22.04
 
     steps:
@@ -70,7 +70,8 @@ jobs:
         run: >-
           ./mvnw 
           -B
-          -T4
+          -e
+          -T1C
           -U
           -Pdependency-check
           --no-transfer-progress
@@ -93,8 +94,8 @@ jobs:
           path: '**/target/dependency-check-report.html'
           retention-days: 30
 
-  javadocs:
-    name: JavaDocs
+  generate-documentation:
+    name: Generate documentation
     runs-on: ubuntu-22.04
 
     steps:
@@ -117,7 +118,7 @@ jobs:
           ./mvnw 
           -B
           -e
-          -T4
+          -T1C
           -U
           -pl java-compiler-testing
           --also-make
@@ -162,7 +163,7 @@ jobs:
           - os-name: windows-2022
             java-version: 19
           
-    name: Build - JDK ${{ matrix.java-version }} - ${{ matrix.os-name }}
+    name: Build on JDK ${{ matrix.java-version }} (${{ matrix.os-name }})
     runs-on: ${{ matrix.os-name }}
 
     steps:
@@ -185,7 +186,7 @@ jobs:
           ./mvnw 
           -B 
           -e
-          -T4
+          -T1C
           -U
           --no-transfer-progress
           -Dcheckstyle.skip=true
@@ -208,12 +209,15 @@ jobs:
       # file. This can take several minutes and is somewhat painful to have to wait for.
       - name: Compress test and coverage reports into tarball
         shell: bash
-        run: >-
-          tar czf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz
-          **/target/failsafe-reports/
-          **/target/surefire-reports/
-          **/target/site/jacoco/unit/jacoco*.xml
-          **/target/site/jacoco/int/jacoco*.xml
+        run: |-
+          set +f -x
+          shopt -s globstar
+          
+          tar czvf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz \
+              **/target/failsafe-reports/** \
+              **/target/surefire-reports/** \
+              **/target/site/jacoco/unit/jacoco*.xml \
+              **/target/site/jacoco/int/jacoco*.xml
 
       - name: Stash reports tarball
         uses: actions/upload-artifact@v3
@@ -225,7 +229,7 @@ jobs:
           retention-days: 30
 
   mutation-tests:
-    name: Mutation tests
+    name: Run mutation tests
     runs-on: ubuntu-22.04
 
     steps:
@@ -248,6 +252,7 @@ jobs:
           ./mvnw 
           -B
           -e
+          -T1
           -U
           --also-make
           -pl java-compiler-testing
@@ -265,10 +270,13 @@ jobs:
       # file. This can take several minutes and is somewhat painful to have to wait for.
       - name: Compress mutation test reports into tarball
         shell: bash
-        run: >-
-          tar czf reports-mutation-tests.tgz
-          **/target/surefire-reports/
-          **/target/pit-reports/pit-reports/**
+        run: |-
+          set +f -x
+          shopt -s globstar
+          
+          tar czvf reports-mutation-tests.tgz \ 
+              **/target/surefire-reports/** \
+              **/target/pit-reports/pit-reports/**
 
       - name: Stash reports tarball
         uses: actions/upload-artifact@v3
@@ -347,15 +355,15 @@ jobs:
           #./codecov -c -F unit -v
           #./codecov -c -F integration -v
 
-  publish-javadocs:
-    name: Publish latest JavaDocs to GitHub pages
+  publish-documentation:
+    name: Publish documentation
     if: ${{ github.ref-name == 'main' && github.event_name != 'pull_request' }}
     permissions:
       pages: write
       id-token: write
     runs-on: ubuntu-22.04
     needs:
-      - javadocs
+      - generate-documentation
     steps:
       - name: Deploy JavaDocs build artifact to GitHub Pages
         id: javadocs
