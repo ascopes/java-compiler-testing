@@ -373,6 +373,7 @@
 
           <configuration>
             <additionalOptions>
+              <option>--allow-script-in-comments</option>
               <option>--override-methods=detail</option>
               <option>--show-packages=exported</option>
             </additionalOptions>
@@ -381,6 +382,27 @@
             </bottom>
             <defaultSince>0.0.1</defaultSince>
             <detectLinks>false</detectLinks>
+            <header>
+              <![CDATA[
+              <link rel="stylesheet"
+                href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/intellij-light.min.css">
+              <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+              <script>
+                "use strict";
+
+                function initSyntaxHighlighting() {
+                  hljs.configure({languages: ["java"]});
+                  hljs.highlightAll();
+                }
+
+                if (document.readyState === "complete" || document.readyState === "interactive") {
+                  setTimeout(initSyntaxHighlighting, 1);
+                } else {
+                  document.addEventListener("DOMContentLoaded", initSyntaxHighlighting);
+                }
+              </script>
+              ]]>
+            </header>
             <keywords>true</keywords>
             <linksource>true</linksource>
             <links>
