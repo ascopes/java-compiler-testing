@@ -396,7 +396,7 @@ jobs:
   publish-documentation:
     name: Publish documentation
     runs-on: ubuntu-22.04
-    if: ${{ github.ref-name == 'main' && github.event_name != 'pull_request' }}
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
 
     concurrency:
       group: build-publish-documentation-${{ github.head_ref || github.run_id }}
