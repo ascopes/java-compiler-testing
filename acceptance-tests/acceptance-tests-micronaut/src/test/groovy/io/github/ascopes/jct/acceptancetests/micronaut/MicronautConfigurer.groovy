@@ -16,15 +16,14 @@
 package io.github.ascopes.jct.acceptancetests.micronaut
 
 import io.github.ascopes.jct.compilers.JctCompiler
+import io.github.ascopes.jct.compilers.JctCompilerConfigurer
 import io.micronaut.annotation.processing.AggregatingTypeElementVisitorProcessor
 import io.micronaut.annotation.processing.BeanDefinitionInjectProcessor
 import io.micronaut.annotation.processing.ConfigurationMetadataProcessor
 import io.micronaut.annotation.processing.PackageConfigurationInjectProcessor
 import io.micronaut.annotation.processing.TypeElementVisitorProcessor
 
-import static io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer
-
-class MicronautConfigurer implements JctSimpleCompilerConfigurer {
+class MicronautConfigurer implements JctCompilerConfigurer<RuntimeException> {
   @Override
   void configure(JctCompiler compiler) {
     compiler.addAnnotationProcessors(

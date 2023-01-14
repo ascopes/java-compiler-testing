@@ -31,7 +31,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import io.github.ascopes.jct.compilers.AbstractJctCompiler;
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
-import io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer;
 import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
 import io.github.ascopes.jct.compilers.impl.JctJsr199Interop;
@@ -357,13 +356,12 @@ class AbstractJctCompilerTest {
     }
 
     @DisplayName(".configure(...) invokes the configurer on the compiler")
-    @ValueSource(classes = {JctCompilerConfigurer.class, JctSimpleCompilerConfigurer.class})
-    @ParameterizedTest(name = "for configurer of type {0}")
-    void configureInvokesConfigurerOnTheCompiler(
-        Class<? extends JctCompilerConfigurer<?>> cls
-    ) throws Throwable {
+    @Test
+    void configureInvokesConfigurerOnTheCompiler() throws Throwable {
       // Given
-      var configurer = mock(cls);
+      var configurer = mockRaw(JctCompilerConfigurer.class)
+          .<JctCompilerConfigurer<?>>upcastedTo()
+          .build();
 
       // When
       compiler.configure(configurer);
@@ -407,13 +405,11 @@ class AbstractJctCompilerTest {
     }
 
     @DisplayName(".configure(...) returns the compiler object")
-    @ValueSource(classes = {JctCompilerConfigurer.class, JctSimpleCompilerConfigurer.class})
-    @ParameterizedTest(name = "for configurer of type {0}")
-    void configureReturnsTheCompiler(
-        Class<? extends JctCompilerConfigurer<?>> cls
-    ) throws Throwable {
+    void configureReturnsTheCompiler() throws Throwable {
       // Given
-      var configurer = mock(cls);
+      var configurer = mockRaw(JctCompilerConfigurer.class)
+          .<JctCompilerConfigurer<?>>upcastedTo()
+          .build();
 
       // When
       var result = compiler.configure(configurer);

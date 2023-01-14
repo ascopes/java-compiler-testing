@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
-import io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer;
+import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.ex.JctJunitConfigurerException;
 import io.github.ascopes.jct.junit.AbstractCompilersProvider;
 import java.lang.reflect.InvocationTargetException;
@@ -45,6 +45,7 @@ import org.opentest4j.TestAbortedException;
  *
  * @author Ashley Scopes
  */
+@SuppressWarnings({"ResultOfMethodCallIgnored", "unused"})
 @DisplayName("AbstractCompilersProvider tests")
 class AbstractCompilersProviderTest {
 
@@ -361,7 +362,7 @@ class AbstractCompilersProviderTest {
     final void configureInternals(
         int min,
         int max,
-        Class<? extends JctSimpleCompilerConfigurer>... configurerClasses
+        Class<? extends JctCompilerConfigurer<?>>... configurerClasses
     ) {
       configure(min, max, false, configurerClasses);
     }
@@ -391,7 +392,7 @@ class AbstractCompilersProviderTest {
   /**
    * A configurer.
    */
-  static class FooConfigurer implements JctSimpleCompilerConfigurer {
+  static class FooConfigurer implements JctCompilerConfigurer<RuntimeException> {
 
     /**
      * Initialise the configurer.
@@ -409,7 +410,7 @@ class AbstractCompilersProviderTest {
   /**
    * A configurer.
    */
-  static class BarConfigurer implements JctSimpleCompilerConfigurer {
+  static class BarConfigurer implements JctCompilerConfigurer<RuntimeException> {
 
     /**
      * Initialise the configurer.
@@ -427,7 +428,7 @@ class AbstractCompilersProviderTest {
   /**
    * A configurer.
    */
-  static class BazConfigurer implements JctSimpleCompilerConfigurer {
+  static class BazConfigurer implements JctCompilerConfigurer<RuntimeException> {
 
     /**
      * Initialise the configurer.
@@ -445,7 +446,7 @@ class AbstractCompilersProviderTest {
   /**
    * A configurer.
    */
-  static class AbortedConstructorConfigurer implements JctSimpleCompilerConfigurer {
+  static class AbortedConstructorConfigurer implements JctCompilerConfigurer<RuntimeException> {
 
     /**
      * Initialise the configurer.
@@ -463,7 +464,7 @@ class AbstractCompilersProviderTest {
   /**
    * A configurer.
    */
-  static class AbortedConfigureConfigurer implements JctSimpleCompilerConfigurer {
+  static class AbortedConfigureConfigurer implements JctCompilerConfigurer<RuntimeException> {
 
     /**
      * Initialise the configurer.
@@ -481,7 +482,7 @@ class AbstractCompilersProviderTest {
   /**
    * A configurer.
    */
-  static class ThrowingConstructorConfigurer implements JctSimpleCompilerConfigurer {
+  static class ThrowingConstructorConfigurer implements JctCompilerConfigurer<RuntimeException> {
 
     /**
      * Initialise the configurer.
@@ -499,7 +500,7 @@ class AbstractCompilersProviderTest {
   /**
    * An abstract configurer.
    */
-  abstract static class AbstractConfigurer implements JctSimpleCompilerConfigurer {
+  abstract static class AbstractConfigurer implements JctCompilerConfigurer<RuntimeException> {
 
     /**
      * Initialise the configurer.
@@ -517,7 +518,7 @@ class AbstractCompilersProviderTest {
   /**
    * A configurer.
    */
-  static class ThrowingConfigureConfigurer implements JctSimpleCompilerConfigurer {
+  static class ThrowingConfigureConfigurer implements JctCompilerConfigurer<RuntimeException> {
 
     /**
      * Initialise the configurer.
@@ -535,12 +536,12 @@ class AbstractCompilersProviderTest {
   /**
    * A configurer.
    */
-  static class NonDefaultConstructorConfigurer implements JctSimpleCompilerConfigurer {
+  static class NonDefaultConstructorConfigurer implements JctCompilerConfigurer<RuntimeException> {
 
     /**
      * Initialise the configurer.
      */
-    NonDefaultConstructorConfigurer(@SuppressWarnings("unused") Object unusedArgument) {
+    NonDefaultConstructorConfigurer(Object unusedArgument) {
       // Need a constructor with a non-default signature for the test.
     }
 

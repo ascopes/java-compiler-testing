@@ -19,19 +19,17 @@ import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
-import io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer;
+import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.ex.JctJunitConfigurerException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
-import org.opentest4j.TestAbortedException;
 
 /**
  * Base for defining a compiler-supplying arguments-provider for JUnit Jupiter parameterised test
@@ -44,7 +42,7 @@ import org.opentest4j.TestAbortedException;
  * {@literal @ParameterizedTest(name = "for {0}")}
  * {@literal @Retention(RetentionPolicy.RUNTIME)}
  * {@literal @Target}({
- *     ElementType.ANNOTATION_TYPE, 
+ *     ElementType.ANNOTATION_TYPE,
  *     ElementType.METHOD,
  *     ElementType.TYPE,
  * })
@@ -61,7 +59,7 @@ import org.opentest4j.TestAbortedException;
  * public final class MyCompilersProvider
  *     extends AbstractCompilersProvider
  *     implements AnnotationConsumer&lt;MyCompilerTest&gt; {
- * 
+ *
  *   {@literal @Override}
  *   protected JctCompiler&lt;?, ?&gt; compilerForVersion(int release) {
  *     return new MyCompilerImpl().release(release);
@@ -88,7 +86,7 @@ import org.opentest4j.TestAbortedException;
  *   }
  * }
  * </code></pre>
- *
+ * <p>
  * This would enable you to define your test cases like so:
  *
  * <pre><code>
@@ -102,7 +100,7 @@ import org.opentest4j.TestAbortedException;
  *   ...
  * }
  *
- * static class WerrorConfigurer implements JctSimpleCompilerConfigurer {
+ * static class WerrorConfigurer implements JctCompilerConfigurer {
  *   {@literal @Override}
  *   public void configure(JctCompiler&lt;?, ?&gt; compiler) {
  *     compiler.failOnErrors(true);
@@ -120,7 +118,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   // AnnotationConsumer.
   private int minVersion;
   private int maxVersion;
-  private Class<? extends JctSimpleCompilerConfigurer>[] configurerClasses;
+  private Class<? extends JctCompilerConfigurer<?>>[] configurerClasses;
 
   /**
    * Initialise this provider.
@@ -152,7 +150,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
       int min,
       int max,
       boolean modules,
-      Class<? extends JctSimpleCompilerConfigurer>[] configurerClasses
+      Class<? extends JctCompilerConfigurer<?>>[] configurerClasses
   ) {
     min = Math.max(min, minSupportedVersion(modules));
     max = Math.min(max, maxSupportedVersion(modules));
@@ -205,9 +203,11 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
 
       try {
         configurer.configure(compiler);
-      } catch (TestAbortedException ex) {
-        throw ex;
       } catch (Exception ex) {
+        if (isTestAbortedException(ex)) {
+          sneakyThrow(ex);
+        }
+
         throw new JctJunitConfigurerException(
             "Failed to configure compiler with configurer class " + configurerClass.getName(),
             ex
@@ -216,10 +216,10 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
     }
   }
 
-  private JctSimpleCompilerConfigurer initialiseConfigurer(
-      Class<? extends JctSimpleCompilerConfigurer> configurerClass
+  private JctCompilerConfigurer<?> initialiseConfigurer(
+      Class<? extends JctCompilerConfigurer<?>> configurerClass
   ) {
-    Constructor<? extends JctSimpleCompilerConfigurer> constructor;
+    Constructor<? extends JctCompilerConfigurer<?>> constructor;
 
     try {
       constructor = configurerClass.getDeclaredConstructor();
@@ -237,15 +237,13 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
     try {
       return constructor.newInstance();
     } catch (ReflectiveOperationException ex) {
-      if (ex instanceof InvocationTargetException
-          && ex.getCause() instanceof TestAbortedException) {
-
-        // Aborting the test from the constructor should be equally valid, so propagate this
-        // exception as a special edge case. Throw a new instance to do this to prevent the
-        // stacktrace getting a circular reference.
-        var newEx = new TestAbortedException(ex.getCause().getMessage());
-        newEx.addSuppressed(ex);
-        throw newEx;
+      if (ex instanceof InvocationTargetException) {
+        var target = ((InvocationTargetException) ex).getTargetException();
+        if (isTestAbortedException(target)) {
+          // XXX: Creates a circular reference, do we care? JVM should handle thisfor us.
+          target.addSuppressed(ex);
+          sneakyThrow(target);
+        }
       }
 
       throw new JctJunitConfigurerException(
@@ -258,5 +256,18 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   @SuppressWarnings("unchecked")
   private static <T> Class<T>[] emptyArray() {
     return (Class<T>[]) new Class[0];
+  }
+
+  private static boolean isTestAbortedException(Throwable ex) {
+    // Use string-based reflective lookup to prevent needing the modules loaded at runtime.
+    // We don't actually need to cover junit4 or testng here since this package specifically deals
+    // with JUnit5 only.
+    return ex.getClass().getName().equals("org.opentest4j.TestAbortedException");
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <T extends Throwable> void sneakyThrow(Throwable t) throws T {
+    // Confuses the compiler into ignoring the unchecked throwing of a checked exception.
+    throw (T) t;
   }
 }

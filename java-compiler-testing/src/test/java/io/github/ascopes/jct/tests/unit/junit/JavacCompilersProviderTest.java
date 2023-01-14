@@ -24,7 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
-import io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer;
+import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilersProvider;
@@ -38,7 +38,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 /**
  * {@link JavacCompilersProvider} tests.
  */
-@SuppressWarnings("unchecked")
 @DisplayName("JavacCompilersProvider tests")
 class JavacCompilersProviderTest {
 
@@ -153,11 +152,12 @@ class JavacCompilersProviderTest {
     }
   }
 
-  JavacCompilerTest someAnnotation(
+  @SafeVarargs
+  final JavacCompilerTest someAnnotation(
       int min,
       int max,
       boolean modules,
-      Class<? extends JctSimpleCompilerConfigurer>... configurers
+      Class<? extends JctCompilerConfigurer<?>>... configurers
   ) {
     var annotation = mock(JavacCompilerTest.class);
     when(annotation.minVersion()).thenReturn(min);

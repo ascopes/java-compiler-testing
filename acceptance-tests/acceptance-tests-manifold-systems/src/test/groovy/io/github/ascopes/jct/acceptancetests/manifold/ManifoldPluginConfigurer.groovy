@@ -16,15 +16,15 @@
 package io.github.ascopes.jct.acceptancetests.manifold
 
 import io.github.ascopes.jct.compilers.JctCompiler
+import io.github.ascopes.jct.compilers.JctCompilerConfigurer
 import org.junit.jupiter.api.condition.JRE
 
-import static io.github.ascopes.jct.compilers.JctCompilerConfigurer.JctSimpleCompilerConfigurer
 import static org.assertj.core.api.Assumptions.assumeThat
 
 /**
  * Configurer that sets up Javac to invoke Manifold processors.
  */
-final class ManifoldPluginConfigurer implements JctSimpleCompilerConfigurer {
+final class ManifoldPluginConfigurer implements JctCompilerConfigurer<RuntimeException> {
   @Override
   void configure(JctCompiler compiler) {
     assumeThat(JRE.currentVersion())
