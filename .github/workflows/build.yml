@@ -56,13 +56,13 @@ jobs:
           # example.
           case "${OSTYPE}" in
             win*|msys*)
-              choco install bash git tar xsltproc            
+              choco install xsltproc            
               ;;
             darwin*)
-              brew install bash git gnu-tar libxslt
+              brew install bash libxslt
               ;;
             linux*)
-              sudo apt-get install bash git tar xsltproc -qy
+              sudo apt-get install xsltproc -qy
               ;;
             *)
               echo "::warning:: Unknown OS type '${OSTYPE}'. Update build.yaml with a new case."
@@ -176,9 +176,7 @@ jobs:
         shell: bash
         run: |-
           set +f -x
-          tar --ignore-failed-read -cvf reports-mutation-tests.tgz \
-              **/target/surefire-reports/** \
-              **/target/pit-reports/pit-reports/**
+          tar -cvf reports-mutation-tests.tgz **/target/pit-reports/pit-reports/**
 
       - name: Stash reports tarball
         uses: actions/upload-artifact@v3
