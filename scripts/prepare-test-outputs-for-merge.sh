@@ -49,36 +49,6 @@ if [ -z "${ci_java_version}" ] || [ -z "${ci_os}" ]; then
   exit 1
 fi
 
-info "Looking for xsltproc binary..."
-
-# If we don't have xsltproc installed, try to resolve it first.
-# If we are in CI, always attempt to install it so we ensure that it
-# is up-to-date first.
-if [[ -z ${CI+undefined} ]] && in-path xsltproc; then
-  info "xsltproc appears to be installed, and this is not a CI run"
-elif [[ "${OSTYPE}" = "darwin"* ]] && in-path brew; then
-  info "Installing xsltproc from homebrew"
-  run <<< "brew install libxslt"
-  info "Giving the brew xsltproc binary precedence over the default MacOS one..."
-  export PATH="/usr/local/opt/libxslt/bin:${PATH}"
-elif [[ "${OSTYPE}" =~ /win.*|mingw|msys|cygwin/ ]] && in-path choco; then
-  info "Installing xsltproc from choco"
-  run <<< "choco install xsltproc"
-elif [[ "${OSTYPE}" = "linux"* ]] && in-path apt-get; then
-  info "Installing xsltproc using apt-get"
-  run <<< "sudo apt-get install -qy xsltproc"
-elif [[ "${OSTYPE}" = "linux"* ]] && in-path dnf; then
-  info "Installing xsltproc using dnf"
-  run <<< "sudo dnf install -qy xsltproc"
-elif [[ "${OSTYPE}" = "linux"* ]] && in-path yum; then
-  info "Installing xsltproc using yum"
-  run <<< "sudo yum install -qy xsltproc"
-else
-  err "Cannot find xsltproc, nor can I find a suitable package manager to install it with."
-  err "Please install xsltproc manually and then try again."
-  exit 2
-fi
-
 success "Found $(command -v xsltproc)"
 run <<< "xsltproc --version"
 

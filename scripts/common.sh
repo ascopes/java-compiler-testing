@@ -67,15 +67,6 @@ function ensure-set() {
   return "${return_code}"
 }
 
-# Ensure that each provided argument is in the path, or fail.
-function in-path() {
-  for expected; do
-    command -v "${expected}" &> /dev/null || return 1
-  done
-
-  return 0
-}
-
 # Visually run the command, showing the command being run, stdout, and stderr to the user.
 # Pass the commands to run in via a heredoc as stdin. Incorrect usage will dump an error and
 # terminate the current shell.

@@ -2,13 +2,13 @@ name: CodeQL analysis
 on:
   pull_request:
     branches:
-      - 'main'
+      - main
     types:
       - opened
       - synchronize
   push:
     branches:
-      - 'main'
+      - main
   workflow_call: {}
   workflow_dispatch: {}
 
@@ -16,6 +16,11 @@ jobs:
   codeql:
     name: CodeQL analysis (${{ matrix.language }})
     runs-on: ubuntu-22.04
+
+    concurrency:
+      group: codeql-codeql-${{ github.head_ref || github.run_id }}
+      cancel-in-progress: true
+
     permissions:
       actions: read
       contents: read
