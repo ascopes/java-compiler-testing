@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.tests.unit.filemanagers;
+package io.github.ascopes.jct.tests.unit.filemanagers.impl;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
@@ -32,7 +32,7 @@ import javax.tools.JavaFileManager.Location;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("JctFileManager Tests")
+@DisplayName("JctFileManagerImpl Tests")
 class JctFileManagerImplTest {
 
   @Test
@@ -62,7 +62,7 @@ class JctFileManagerImplTest {
 
     var jctFileManager = JctFileManagerImpl.forRelease("test");
     jctFileManager.addPath(packageLocation, pathRoot);
-    assertThat(jctFileManager.hasLocation(packageLocation)).isEqualTo(true);
+    assertThat(jctFileManager.hasLocation(packageLocation)).isTrue();
   }
 
   @Test
@@ -78,7 +78,7 @@ class JctFileManagerImplTest {
 
     var jctFileManager = JctFileManagerImpl.forRelease("test");
     jctFileManager.addPath(outputLocation, pathRoot);
-    assertThat(jctFileManager.hasLocation(outputLocation)).isEqualTo(true);
+    assertThat(jctFileManager.hasLocation(outputLocation)).isTrue();
   }
 
 }
