@@ -18,6 +18,7 @@ package io.github.ascopes.jct.assertions;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.filemanagers.PathFileObject;
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
@@ -50,6 +51,7 @@ public final class PathFileObjectAssert
    * @return the assertions for the path.
    * @throws AssertionError if the file object is null.
    */
+  @CheckReturnValue
   public AbstractPathAssert<?> relativePath() {
     isNotNull();
 
@@ -62,6 +64,7 @@ public final class PathFileObjectAssert
    * @return the assertions for the path.
    * @throws AssertionError if the file object is null.
    */
+  @CheckReturnValue
   public AbstractPathAssert<?> fullPath() {
     isNotNull();
 

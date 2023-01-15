@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.assertions;
 
 import io.github.ascopes.jct.containers.OutputContainerGroup;
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
@@ -48,6 +49,7 @@ public final class OutputContainerGroupAssert
    * @return the package-oriented assertions.
    * @throws AssertionError if the container group is null.
    */
+  @CheckReturnValue
   public PackageContainerGroupAssert packages() {
     isNotNull();
 
@@ -60,6 +62,7 @@ public final class OutputContainerGroupAssert
    * @return the module-oriented assertions.
    * @throws AssertionError if the container group is null.
    */
+  @CheckReturnValue
   public ModuleContainerGroupAssert modules() {
     isNotNull();
 

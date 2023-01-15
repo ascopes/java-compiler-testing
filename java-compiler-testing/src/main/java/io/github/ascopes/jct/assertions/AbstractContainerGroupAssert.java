@@ -21,6 +21,7 @@ import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
 import io.github.ascopes.jct.containers.ContainerGroup;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
@@ -67,6 +68,7 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
    * @return the assertions to perform.
    * @throws AssertionError if the object being asserted upon is null.
    */
+  @CheckReturnValue
   public LocationAssert location() {
     isNotNull();
     return new LocationAssert(actual.getLocation());
@@ -81,6 +83,7 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
    * @throws AssertionError       if the object being asserted upon is null.
    * @throws NullPointerException if the provided class parameter is null.
    */
+  @CheckReturnValue
   public <T> AbstractListAssert<?, List<? extends T>, T, ? extends ObjectAssert<T>> services(
       Class<T> clazz
   ) {

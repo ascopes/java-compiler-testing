@@ -28,6 +28,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
@@ -94,6 +95,7 @@ public final class PackageContainerGroupAssert
    * @return the assertions to perform.
    * @throws AssertionError if the container group is null.
    */
+  @CheckReturnValue
   public ClassLoaderAssert classLoader() {
     isNotNull();
 

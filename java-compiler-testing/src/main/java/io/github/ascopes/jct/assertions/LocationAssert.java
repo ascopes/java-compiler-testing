@@ -18,6 +18,7 @@ package io.github.ascopes.jct.assertions;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.repr.LocationRepresentation;
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.tools.JavaFileManager.Location;
@@ -124,6 +125,7 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
    * @return the string assertions to perform.
    * @throws AssertionError if the location is null.
    */
+  @CheckReturnValue
   public AbstractStringAssert<?> name() {
     isNotNull();
 

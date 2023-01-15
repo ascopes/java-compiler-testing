@@ -17,6 +17,7 @@ package io.github.ascopes.jct.assertions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
@@ -55,6 +56,7 @@ public final class StackTraceElementAssert
    * @return the assertions for the file name.
    * @throws AssertionError if the stack trace element is null.
    */
+  @CheckReturnValue
   public AbstractStringAssert<?> fileName() {
     isNotNull();
 
@@ -71,6 +73,7 @@ public final class StackTraceElementAssert
    * @return the assertions for the line number.
    * @throws AssertionError if the stack trace element is null.
    */
+  @CheckReturnValue
   public AbstractIntegerAssert<?> lineNumber() {
     isNotNull();
 
@@ -86,6 +89,7 @@ public final class StackTraceElementAssert
    * @return the assertions for the module name.
    * @throws AssertionError if the stack trace element is null.
    */
+  @CheckReturnValue
   public AbstractStringAssert<?> moduleName() {
     isNotNull();
 
@@ -101,6 +105,7 @@ public final class StackTraceElementAssert
    * @return the assertions for the module version.
    * @throws AssertionError if the stack trace element is null.
    */
+  @CheckReturnValue
   public AbstractStringAssert<?> moduleVersion() {
     isNotNull();
 
@@ -114,6 +119,7 @@ public final class StackTraceElementAssert
    * @return the assertions for the classloader name.
    * @throws AssertionError if the stack trace element is null.
    */
+  @CheckReturnValue
   public AbstractStringAssert<?> classLoaderName() {
     isNotNull();
 
@@ -127,6 +133,7 @@ public final class StackTraceElementAssert
    * @return the assertions for the class name.
    * @throws AssertionError if the stack trace element is null.
    */
+  @CheckReturnValue
   public AbstractStringAssert<?> className() {
     isNotNull();
 
@@ -140,6 +147,7 @@ public final class StackTraceElementAssert
    * @return the assertions for the method name.
    * @throws AssertionError if the stack trace element is null.
    */
+  @CheckReturnValue
   public AbstractStringAssert<?> methodName() {
     isNotNull();
 
@@ -153,6 +161,7 @@ public final class StackTraceElementAssert
    * @return the assertions for the method nativity.
    * @throws AssertionError if the stack trace element is null.
    */
+  @CheckReturnValue
   public AbstractBooleanAssert<?> nativeMethod() {
     isNotNull();
 
