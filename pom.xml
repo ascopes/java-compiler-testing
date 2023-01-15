@@ -21,7 +21,7 @@
 
   <groupId>io.github.ascopes.jct</groupId>
   <artifactId>java-compiler-testing-parent</artifactId>
-  <version>0.0.1-M5-SNAPSHOT</version>
+  <version>0.0.1-M5</version>
   <packaging>pom</packaging>
 
   <name>Java Compiler Testing parent project</name>
@@ -89,7 +89,7 @@
     <url>scm:git:${project.url}</url>
     <connection>scm:git:${project.url}</connection>
     <developerConnection>scm:git:${project.url}</developerConnection>
-    <tag>vHEAD</tag>
+    <tag>v0.0.1-M5</tag>
   </scm>
 
   <properties>
@@ -384,8 +384,7 @@
             <detectLinks>false</detectLinks>
             <header>
               <![CDATA[
-              <link rel="stylesheet"
-                href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/intellij-light.min.css">
+              <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/intellij-light.min.css">
               <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
               <script>
                 "use strict";
