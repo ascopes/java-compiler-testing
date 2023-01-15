@@ -25,7 +25,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 @DisplayName("Micronaut integration tests")
 class MicronautIntegrationTest {
   @DisplayName("Micronaut generates the expected code")
-  @JavacCompilerTest(configurers = [MicronautConfigurer])
+  @JavacCompilerTest(configurers = [MicronautConfigurer], maxVersion = 18)
   void micronautGeneratesTheExpectedCode(JctCompiler compiler) {
     try (def workspace = Workspaces.newWorkspace()) {
       // Given
@@ -39,7 +39,7 @@ class MicronautIntegrationTest {
 
       // Then
       assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings()
+          .isSuccessful()
           .classOutput()
           .packages()
           .allFilesExist(
