@@ -258,8 +258,8 @@ public final class FileUtils extends UtilityClass {
    * Convert a relative class path resource path to a NIO path.
    *
    * @param directory the directory the resource sits within.
-   * @param fragment  the first path fragment.
-   * @param fragments any additional path fragments.
+   * @param fragment  the first part of the path.
+   * @param fragments the rest of the path.
    * @return the path to the resource on the file system.
    */
   public static Path relativeResourceNameToPath(

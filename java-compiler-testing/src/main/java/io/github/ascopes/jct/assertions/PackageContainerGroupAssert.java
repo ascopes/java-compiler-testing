@@ -105,8 +105,16 @@ public final class PackageContainerGroupAssert
   /**
    * Assert that the given file does not exist.
    *
+   * <pre><code>
+   *   // Using platform-specific separators.
+   *   assertions.fileDoesNotExist("foo/bar/baz.txt")...;
+   *
+   *   // Letting JCT infer the correct path separators to use (recommended).
+   *   assertions.fileDoesNotExist("foo", "bar", "baz.txt");
+   * </code></pre>
+   *
    * @param fragment  the first part of the path.
-   * @param fragments additional parts of the path.
+   * @param fragments any additional parts of the path.
    * @return this assertion object for further assertions.
    * @throws AssertionError       if the file exists, or if the container group is null.
    * @throws NullPointerException if any of the fragments are null.
@@ -138,8 +146,16 @@ public final class PackageContainerGroupAssert
   /**
    * Assert that the given file exists.
    *
-   * @param fragment  the path fragment.
-   * @param fragments any additional path fragments.
+   * <pre><code>
+   *   // Using platform-specific separators.
+   *   assertions.fileExists("foo/bar/baz.txt")...;
+   *
+   *   // Letting JCT infer the correct path separators to use (recommended).
+   *   assertions.fileExists("foo", "bar", "baz.txt");
+   * </code></pre>
+   *
+   * @param fragment  the first part of the path.
+   * @param fragments any additional parts of the path.
    * @return assertions to perform on the path of the file that exists.
    * @throws AssertionError       if the file does not exist, or if the container group is null.
    * @throws NullPointerException if any of the fragments are null.

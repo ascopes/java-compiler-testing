@@ -56,8 +56,18 @@ public interface Container extends Closeable {
   /**
    * Find the physical path to a given string file path.
    *
-   * @param fragment  the first fragment to the file to find.
-   * @param fragments any additional fragments to the file to find.
+   * <p>Examples:
+   *
+   * <pre><code>
+   *   // Using platform-specific separators ('/' for in-memory file systems).
+   *   container.getFile("foo/bar/baz.txt");
+   *
+   *   // Letting JCT infer the correct path separators to use.
+   *   container.getFile("foo", "bar", "baz.txt");
+   * </code></pre>
+   *
+   * @param fragment  the first part of the file name.
+   * @param fragments any additional parts of the file name to find.
    * @return the path if the file exists, or null if it does not exist.
    */
   @Nullable
@@ -121,6 +131,8 @@ public interface Container extends Closeable {
   /**
    * Get a module finder for this container.
    *
+   * <p>Note that this will not detect modules that are not yet compiled.
+   *
    * @return the module finder for this container, or {@code null} if not relevant to the
    *     implementation.
    */
@@ -161,8 +173,12 @@ public interface Container extends Closeable {
   /**
    * List all the file objects that match the given criteria in this group.
    *
+   * <p>The results are filled into a given collection, since this call may be made many times
+   * per compliation, and this reduces the memory overhead needed in such cases.
+   *
    * @param packageName the package name to look in.
-   * @param kinds       the kinds of file to look for.
+   * @param kinds       the kinds of file to look for. Set to {@code Set.of(Kind.OTHER)} to find
+   *                    all types of file.
    * @param recurse     {@code true} to recurse subpackages, {@code false} to only consider the
    *                    given package.
    * @param collection  the collection to fill.

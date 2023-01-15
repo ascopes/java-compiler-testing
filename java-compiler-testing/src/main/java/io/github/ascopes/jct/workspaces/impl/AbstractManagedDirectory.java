@@ -104,8 +104,8 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
 
   @CheckReturnValue
   @Override
-  public FileBuilder createFile(String first, String... rest) {
-    return new FileBuilderImpl(this, first, rest);
+  public FileBuilder createFile(String fragment, String... fragments) {
+    return new FileBuilderImpl(this, fragment, fragments);
   }
 
   @CheckReturnValue

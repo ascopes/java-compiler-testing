@@ -84,6 +84,14 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * <p>Modules are treated as subdirectories.
    *
+   * <pre><code>
+   *   // Using platform-specific separators.
+   *   containerGroup.getFile("foo/bar/baz.txt")...;
+   *
+   *   // Letting JCT infer the correct path separators to use (recommended).
+   *   containerGroup.getFile("foo", "bar", "baz.txt");
+   * </code></pre>
+   *
    * @param fragment  the first part of the path.
    * @param fragments any additional parts of the path.
    * @return the first occurrence of the path in this group, or null if not found.

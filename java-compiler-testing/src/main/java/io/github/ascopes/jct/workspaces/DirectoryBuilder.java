@@ -38,8 +38,18 @@ public interface DirectoryBuilder {
    *
    * <p>This uses the default file system.
    *
-   * @param first the first path fragment of the directory to copy from.
-   * @param rest  any additional path fragments to copy from.
+   * <p>Examples:
+   *
+   * <pre><code>
+   *   // Using platform-specific separators.
+   *   directoryBuilder.copyContentsFrom("foo/bar/baz");
+   *
+   *   // Letting JCT infer the correct path separators to use (recommended).
+   *   directoryBuilder.copyContentsFrom("foo", "bar", "baz");
+   * </code></pre>
+   *
+   * @param first the first part of the path to the directory to copy from.
+   * @param rest  any additional parts of the path.
    * @return the root managed directory for further configuration.
    */
   ManagedDirectory copyContentsFrom(String first, String... rest);
