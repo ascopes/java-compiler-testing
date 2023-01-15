@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import java.util.Set;
 import javax.annotation.Nullable;
 import javax.tools.Diagnostic.Kind;
 import org.apiguardian.api.API;
@@ -29,6 +30,30 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.STABLE)
 public final class DiagnosticKindAssert
     extends AbstractEnumAssert<DiagnosticKindAssert, Kind> {
+
+  /**
+   * Kinds that we consider to be types of warnings.
+   */
+  static final Set<Kind> WARNING_DIAGNOSTIC_KINDS = Set.of(
+      Kind.WARNING,
+      Kind.MANDATORY_WARNING
+  );
+
+  /**
+   * Kinds that we consider to be types of error.
+   */
+  static final Set<Kind> ERROR_DIAGNOSTIC_KINDS = Set.of(
+      Kind.ERROR
+  );
+
+  /**
+   * Kinds that we consider to be types of warning or errors.
+   */
+  static final Set<Kind> WARNING_AND_ERROR_DIAGNOSTIC_KINDS = Set.of(
+      Kind.WARNING,
+      Kind.MANDATORY_WARNING,
+      Kind.ERROR
+  );
 
   /**
    * Initialize this assertion type.
@@ -46,7 +71,19 @@ public final class DiagnosticKindAssert
    * @throws AssertionError if this value is null, or the value is not {@link Kind#ERROR}.
    */
   public DiagnosticKindAssert isError() {
-    return isAnyOf(Kind.ERROR);
+    return isAnyOfElements(ERROR_DIAGNOSTIC_KINDS);
+  }
+
+  /**
+   * Assert that the kind is {@link Kind#ERROR}, {@link Kind#WARNING}, or
+   * {@link Kind#MANDATORY_WARNING}.
+   *
+   * @return this assertion object.
+   * @throws AssertionError if this value is null, or the value is not any of {@link Kind#ERROR},
+   *                        {@link Kind#WARNING}, or {@link Kind#MANDATORY_WARNING}.
+   */
+  public DiagnosticKindAssert isWarningOrError() {
+    return isAnyOfElements(WARNING_AND_ERROR_DIAGNOSTIC_KINDS);
   }
 
   /**
@@ -57,7 +94,7 @@ public final class DiagnosticKindAssert
    *                        or {@link Kind#MANDATORY_WARNING}.
    */
   public DiagnosticKindAssert isWarning() {
-    return isAnyOf(Kind.WARNING, Kind.MANDATORY_WARNING);
+    return isAnyOfElements(WARNING_DIAGNOSTIC_KINDS);
   }
 
   /**

@@ -65,6 +65,48 @@ class DiagnosticKindAssertTest {
     }
   }
 
+  @DisplayName("DiagnosticKindAssert#isWarningOrError tests")
+  @Nested
+  class IsWarningOrErrorTest {
+
+    @DisplayName(
+        ".isWarningOrError() fails if the kind is not an error, warning, or mandatory warning"
+    )
+    @NullSource
+    @EnumSource(
+        value = Kind.class, 
+        mode = Mode.EXCLUDE, 
+        names = {"ERROR", "WARNING", "MANDATORY_WARNING"}
+    )
+    @ParameterizedTest(name = "for {0}")
+    void isWarningOrErrorFailsIfKindIsNotWarningOrError(Kind kind) {
+      // Given
+      var assertions = new DiagnosticKindAssert(kind);
+
+      // Then
+      assertThatThrownBy(assertions::isWarningOrError)
+          .isInstanceOf(AssertionError.class);
+    }
+
+    @DisplayName(
+        ".isWarningOrError() succeeds if the kind is an error, warning, or mandatory warning"
+    )
+    @EnumSource(
+        value = Kind.class,
+        mode = Mode.INCLUDE,
+        names = {"ERROR", "WARNING", "MANDATORY_WARNING"}
+    )
+    @ParameterizedTest(name = "for {0}")
+    void isWarningOrErrorSucceedsIfTheKindIsWarningOrError(Kind kind) {
+      // Given
+      var assertions = new DiagnosticKindAssert(kind);
+
+      // Then
+      assertThat(assertions.isWarningOrError())
+          .isSameAs(assertions);
+    }
+  }
+  
   @DisplayName("DiagnosticKindAssert#isWarning tests")
   @Nested
   class IsWarningTest {
