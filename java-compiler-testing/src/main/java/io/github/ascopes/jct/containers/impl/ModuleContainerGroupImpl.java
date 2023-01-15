@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 import javax.annotation.WillCloseWhenClosed;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -47,6 +48,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
+@ThreadSafe
 public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
 
   private final Location location;

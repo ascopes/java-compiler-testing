@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.compilers;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -40,7 +41,7 @@ import org.apiguardian.api.API.Status;
  *    }
  * }
  * </code></pre>
- *
+ * <p>
  * ...tests can then make use of this configurer directly:
  *
  * <pre><code>
@@ -93,6 +94,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.STABLE)
 @FunctionalInterface
+@NotThreadSafe
 @SuppressWarnings("NullableProblems")
 public interface JctCompilerConfigurer<E extends Exception> {
 

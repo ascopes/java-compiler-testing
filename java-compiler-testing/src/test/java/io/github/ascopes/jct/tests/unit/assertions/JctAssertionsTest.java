@@ -22,8 +22,8 @@ import static org.mockito.Mockito.mock;
 import io.github.ascopes.jct.assertions.DiagnosticKindAssert;
 import io.github.ascopes.jct.assertions.JavaFileObjectAssert;
 import io.github.ascopes.jct.assertions.JavaFileObjectKindAssert;
-import io.github.ascopes.jct.assertions.JctCompilationAssert;
 import io.github.ascopes.jct.assertions.JctAssertions;
+import io.github.ascopes.jct.assertions.JctCompilationAssert;
 import io.github.ascopes.jct.assertions.LocationAssert;
 import io.github.ascopes.jct.assertions.ModuleContainerGroupAssert;
 import io.github.ascopes.jct.assertions.OutputContainerGroupAssert;
@@ -133,6 +133,7 @@ class JctAssertionsTest {
 
   @FunctionalInterface
   interface ThrowingFunction<T, R> {
+
     R apply(T t) throws Throwable;
   }
 }

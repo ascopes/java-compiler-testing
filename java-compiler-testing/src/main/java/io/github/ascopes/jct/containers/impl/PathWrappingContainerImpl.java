@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -48,6 +49,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
+@ThreadSafe
 public final class PathWrappingContainerImpl implements Container {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PathWrappingContainerImpl.class);

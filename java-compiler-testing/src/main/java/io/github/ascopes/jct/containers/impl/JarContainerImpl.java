@@ -42,6 +42,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nullable;
 import javax.annotation.WillCloseWhenClosed;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -65,6 +66,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
+@ThreadSafe
 public final class JarContainerImpl implements Container {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JarContainerImpl.class);

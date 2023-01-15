@@ -17,6 +17,7 @@ package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.junit.jupiter.params.support.AnnotationConsumer;
@@ -28,6 +29,7 @@ import org.junit.jupiter.params.support.AnnotationConsumer;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
+@NotThreadSafe
 public final class JavacCompilersProvider extends AbstractCompilersProvider
     implements AnnotationConsumer<JavacCompilerTest> {
 

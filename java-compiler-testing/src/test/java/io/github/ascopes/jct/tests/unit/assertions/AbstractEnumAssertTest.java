@@ -32,6 +32,7 @@ class AbstractEnumAssertTest {
   @DisplayName(".isAnyOf(...) tests")
   @Nested
   class IsAnyOfTest {
+
     @DisplayName("Expect failure when the element is null and we assert against one element")
     @Test
     void failsIfInputIsNullOnSingleElement() {
@@ -144,6 +145,7 @@ class AbstractEnumAssertTest {
   @DisplayName(".isAnyOfElements(...) tests")
   @Nested
   class IsAnyOfElementsTest {
+
     @DisplayName("Expect failure when the element is null")
     @Test
     void failsIfInputIsNull() {
@@ -210,6 +212,7 @@ class AbstractEnumAssertTest {
   @DisplayName(".isNoneOf(...) tests")
   @Nested
   class IsNoneOfTest {
+
     @DisplayName("Expect failure when the element is null and we assert against one element")
     @Test
     void failsIfInputIsNullOnSingleElement() {
@@ -309,6 +312,7 @@ class AbstractEnumAssertTest {
   @DisplayName(".isNoneOfElements(...) tests")
   @Nested
   class IsNoneOfElementsTest {
+
     @DisplayName("Expect failure when the element is null")
     @Test
     void failsIfInputIsNull() {
@@ -373,6 +377,7 @@ class AbstractEnumAssertTest {
   }
 
   static class Impl extends AbstractEnumAssert<Impl, DnbArtist> {
+
     Impl(@Nullable DnbArtist value) {
       super(value, Impl.class);
     }

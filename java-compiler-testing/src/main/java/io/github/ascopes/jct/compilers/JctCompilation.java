@@ -23,6 +23,8 @@ import io.github.ascopes.jct.filemanagers.JctFileManager;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
@@ -35,6 +37,8 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
+@Immutable
+@ThreadSafe
 public interface JctCompilation {
 
   /**

@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.annotation.processing.Processor;
 import javax.tools.JavaCompiler;
 import org.apiguardian.api.API;
@@ -52,6 +53,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
+@NotThreadSafe
 public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     implements JctCompiler<A, JctCompilationImpl> {
 

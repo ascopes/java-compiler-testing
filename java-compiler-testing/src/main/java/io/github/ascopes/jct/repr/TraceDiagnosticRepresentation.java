@@ -24,6 +24,8 @@ import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
@@ -39,7 +41,9 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
+@API(since = "0.0.1", status = Status.STABLE)
+@Immutable
+@ThreadSafe
 public final class TraceDiagnosticRepresentation implements Representation {
 
   private static final TraceDiagnosticRepresentation INSTANCE

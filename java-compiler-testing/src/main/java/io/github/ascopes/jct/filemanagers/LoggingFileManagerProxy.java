@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.annotation.WillCloseWhenClosed;
 import javax.annotation.WillNotClose;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
+@ThreadSafe
 public final class LoggingFileManagerProxy implements InvocationHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFileManagerProxy.class);
@@ -76,7 +78,11 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
     }
 
     var thread = Thread.currentThread();
+
+    // TODO(ascopes): handle Java 19 Loom virtual thread IDs
+    @SuppressWarnings("deprecation")
     var threadId = thread.getId();
+
     var depth = incStackDepth();
     var returnType = method.getReturnType().getSimpleName();
     var methodName = method.getName();

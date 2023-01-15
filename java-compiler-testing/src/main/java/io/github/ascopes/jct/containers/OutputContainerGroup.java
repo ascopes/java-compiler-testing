@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.containers;
 
+import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -29,6 +30,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
+@ThreadSafe
 public interface OutputContainerGroup extends PackageContainerGroup, ModuleContainerGroup {
 
   /**

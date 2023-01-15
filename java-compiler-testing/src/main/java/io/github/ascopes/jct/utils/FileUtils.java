@@ -29,6 +29,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -40,6 +42,8 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
+@Immutable
+@ThreadSafe
 public final class FileUtils extends UtilityClass {
 
   // Exclude any "empty" extensions. At the time of writing, this will just exclude Kind.EMPTY,

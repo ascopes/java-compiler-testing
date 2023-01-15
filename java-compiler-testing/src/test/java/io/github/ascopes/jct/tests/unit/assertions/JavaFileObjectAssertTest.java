@@ -15,8 +15,8 @@
  */
 package io.github.ascopes.jct.tests.unit.assertions;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someJavaFileObject;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.assertions.AbstractJavaFileObjectAssert;
 import io.github.ascopes.jct.assertions.JavaFileObjectAssert;

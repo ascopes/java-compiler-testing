@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
 import org.apiguardian.api.API;
@@ -42,6 +43,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
+@ThreadSafe
 public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilation> {
 
   /**

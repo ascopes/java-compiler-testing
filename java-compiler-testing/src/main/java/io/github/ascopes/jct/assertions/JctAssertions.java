@@ -24,6 +24,8 @@ import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.UtilityClass;
 import java.util.List;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
@@ -36,8 +38,9 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@SuppressWarnings("unused")
 @API(since = "0.0.1", status = Status.STABLE)
+@Immutable
+@ThreadSafe
 public final class JctAssertions extends UtilityClass {
 
   private JctAssertions() {
@@ -312,3 +315,4 @@ public final class JctAssertions extends UtilityClass {
     return new LocationAssert(location);
   }
 }
+

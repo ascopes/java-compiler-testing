@@ -22,6 +22,7 @@ import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.repr.DiagnosticListRepresentation;
 import java.util.Collection;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
@@ -36,6 +37,7 @@ import org.assertj.core.api.AbstractAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
+@NotThreadSafe
 public final class JctCompilationAssert extends
     AbstractAssert<JctCompilationAssert, JctCompilation> {
 

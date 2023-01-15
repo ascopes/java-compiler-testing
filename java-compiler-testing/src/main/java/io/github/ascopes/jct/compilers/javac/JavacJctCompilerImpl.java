@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.compilers.javac;
 
 import io.github.ascopes.jct.compilers.AbstractJctCompiler;
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -29,6 +30,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
+@NotThreadSafe
 public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctCompilerImpl> {
 
   private static final String NAME = "JDK Compiler";

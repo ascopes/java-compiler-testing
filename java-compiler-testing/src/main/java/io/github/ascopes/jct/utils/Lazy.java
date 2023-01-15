@@ -18,6 +18,7 @@ package io.github.ascopes.jct.utils;
 import java.util.Objects;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -39,6 +40,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 @SuppressWarnings("ConstantConditions")
+@ThreadSafe
 public class Lazy<T> {
 
   private final Supplier<T> initializer;

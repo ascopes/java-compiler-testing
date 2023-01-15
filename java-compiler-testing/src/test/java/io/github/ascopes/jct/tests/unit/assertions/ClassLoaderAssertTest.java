@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
  */
 @DisplayName("ClassLoaderAssert tests")
 class ClassLoaderAssertTest {
+
   @DisplayName("Assertions are performed on the classloader")
   @Test
   void assertionsArePerformedOnTheClassLoader() {

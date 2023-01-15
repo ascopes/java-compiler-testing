@@ -33,6 +33,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import javax.annotation.WillCloseWhenClosed;
 import javax.annotation.WillNotClose;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
@@ -48,6 +49,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
+@ThreadSafe
 public final class OutputContainerGroupImpl
     extends AbstractPackageContainerGroup
     implements OutputContainerGroup {

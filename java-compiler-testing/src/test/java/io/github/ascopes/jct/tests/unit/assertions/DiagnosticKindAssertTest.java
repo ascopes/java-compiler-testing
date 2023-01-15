@@ -74,8 +74,8 @@ class DiagnosticKindAssertTest {
     )
     @NullSource
     @EnumSource(
-        value = Kind.class, 
-        mode = Mode.EXCLUDE, 
+        value = Kind.class,
+        mode = Mode.EXCLUDE,
         names = {"ERROR", "WARNING", "MANDATORY_WARNING"}
     )
     @ParameterizedTest(name = "for {0}")
@@ -106,7 +106,7 @@ class DiagnosticKindAssertTest {
           .isSameAs(assertions);
     }
   }
-  
+
   @DisplayName("DiagnosticKindAssert#isWarning tests")
   @Nested
   class IsWarningTest {

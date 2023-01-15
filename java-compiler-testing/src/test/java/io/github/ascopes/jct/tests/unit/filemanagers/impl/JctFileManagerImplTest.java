@@ -15,22 +15,17 @@
  */
 package io.github.ascopes.jct.tests.unit.filemanagers.impl;
 
-import io.github.ascopes.jct.filemanagers.JctFileManager;
-import io.github.ascopes.jct.filemanagers.ModuleLocation;
-import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
-import io.github.ascopes.jct.workspaces.PathRoot;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import java.nio.file.Path;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import javax.tools.JavaFileManager.Location;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
+import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
+import io.github.ascopes.jct.workspaces.PathRoot;
+import java.nio.file.Path;
+import javax.tools.JavaFileManager.Location;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 @DisplayName("JctFileManagerImpl Tests")
 class JctFileManagerImplTest {

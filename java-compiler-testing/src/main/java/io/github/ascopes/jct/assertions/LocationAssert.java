@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.repr.LocationRepresentation;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -32,6 +33,7 @@ import org.assertj.core.api.AbstractStringAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
+@NotThreadSafe
 public final class LocationAssert extends AbstractAssert<LocationAssert, Location> {
 
   /**

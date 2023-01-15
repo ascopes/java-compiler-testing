@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.Set;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -52,6 +53,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
+@ThreadSafe
 public abstract class AbstractPackageContainerGroup implements PackageContainerGroup {
 
   // https://docs.oracle.com/cd/E19830-01/819-4712/ablgz/index.html

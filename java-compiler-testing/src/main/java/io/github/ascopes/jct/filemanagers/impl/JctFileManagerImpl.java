@@ -42,6 +42,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -55,6 +56,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
+@ThreadSafe
 public final class JctFileManagerImpl implements JctFileManager {
 
   private static final int UNSUPPORTED_ARGUMENT = -1;
@@ -66,8 +68,6 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   private JctFileManagerImpl(String release) {
     this.release = requireNonNull(release, "release");
-
-    // TODO(ascopes): does this need to be concurrent-safe, do we only read it concurrently?
     packages = new ConcurrentHashMap<>();
     modules = new ConcurrentHashMap<>();
     outputs = new ConcurrentHashMap<>();

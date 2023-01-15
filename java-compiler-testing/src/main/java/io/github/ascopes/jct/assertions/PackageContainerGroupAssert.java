@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.apiguardian.api.API;
@@ -42,6 +43,7 @@ import org.assertj.core.api.AbstractPathAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
+@NotThreadSafe
 public final class PackageContainerGroupAssert
     extends AbstractContainerGroupAssert<PackageContainerGroupAssert, PackageContainerGroup> {
 

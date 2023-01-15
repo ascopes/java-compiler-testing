@@ -20,6 +20,8 @@ import static java.util.stream.Collectors.joining;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.Collection;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -31,7 +33,9 @@ import org.assertj.core.presentation.Representation;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
+@API(since = "0.0.1", status = Status.STABLE)
+@Immutable
+@ThreadSafe
 public final class DiagnosticListRepresentation implements Representation {
 
   private static final DiagnosticListRepresentation INSTANCE

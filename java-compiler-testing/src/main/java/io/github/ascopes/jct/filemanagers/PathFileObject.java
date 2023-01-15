@@ -43,6 +43,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
 import javax.tools.FileObject;
@@ -64,6 +66,8 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
+@Immutable
+@ThreadSafe
 public class PathFileObject implements JavaFileObject {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PathFileObject.class);

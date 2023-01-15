@@ -18,6 +18,7 @@ package io.github.ascopes.jct.assertions;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
@@ -35,6 +36,7 @@ import org.assertj.core.api.AbstractStringAssert;
  * @since 0.0.1
  */
 @API(status = Status.EXPERIMENTAL)
+@NotThreadSafe
 public final class StackTraceElementAssert
     extends AbstractAssert<StackTraceElementAssert, StackTraceElement> {
 

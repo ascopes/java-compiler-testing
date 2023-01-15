@@ -22,6 +22,7 @@ import io.github.ascopes.jct.containers.ContainerGroup;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
@@ -38,6 +39,7 @@ import org.assertj.core.api.ObjectAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
+@NotThreadSafe
 public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGroupAssert<I, C>, C extends ContainerGroup>
     extends AbstractAssert<I, C> {
 

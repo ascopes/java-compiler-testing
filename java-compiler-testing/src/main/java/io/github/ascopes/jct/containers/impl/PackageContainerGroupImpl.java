@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.containers.impl;
 
 import io.github.ascopes.jct.utils.StringUtils;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -31,6 +32,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
+@ThreadSafe
 public final class PackageContainerGroupImpl extends AbstractPackageContainerGroup {
 
   /**

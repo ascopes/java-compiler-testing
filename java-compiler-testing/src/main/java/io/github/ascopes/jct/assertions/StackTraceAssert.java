@@ -19,6 +19,7 @@ import io.github.ascopes.jct.repr.StackTraceRepresentation;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractListAssert;
@@ -33,8 +34,10 @@ import org.assertj.core.api.AbstractListAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
+@NotThreadSafe
 public final class StackTraceAssert
-    extends AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
+    extends
+    AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
 
   /**
    * Initialize a new assertions object.

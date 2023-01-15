@@ -89,6 +89,7 @@ class AbstractJavaFileObjectAssertTest {
   @DisplayName("AbstractJavaFileObjectAssert#name tests")
   @Nested
   class NameTest {
+
     @DisplayName(".name() fails if the JavaFileObject is null")
     @Test
     void failsIfJavaFileObjectIsNull() {
@@ -121,6 +122,7 @@ class AbstractJavaFileObjectAssertTest {
   @DisplayName("AbstractJavaFileObjectAssert#binaryContent tests")
   @Nested
   class RawContentTest {
+
     @DisplayName(".binaryContent() fails if the JavaFileObject is null")
     @Test
     void failsIfJavaFileObjectIsNull() {
@@ -154,6 +156,7 @@ class AbstractJavaFileObjectAssertTest {
   @DisplayName("AbstractJavaFileObjectAssert#content tests")
   @Nested
   class ContentTest {
+
     @DisplayName(".content() fails if the JavaFileObject is null")
     @Test
     void noArgsFailsIfJavaFileObjectIsNull() {
@@ -279,6 +282,7 @@ class AbstractJavaFileObjectAssertTest {
   @DisplayName("AbstractJavaFileObjectAssert#lastModified tests")
   @Nested
   class LastModifiedTest {
+
     @DisplayName(".lastModified() fails if the JavaFileObject is null")
     @Test
     void failsIfJavaFileObjectIsNull() {
@@ -311,6 +315,7 @@ class AbstractJavaFileObjectAssertTest {
   @DisplayName("AbstractJavaFileObjectAssert#kind tests")
   @Nested
   class KindTest {
+
     @DisplayName(".kind() fails if the JavaFileObject is null")
     @Test
     void failsIfJavaFileObjectIsNull() {
