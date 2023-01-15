@@ -19,7 +19,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
 import io.github.ascopes.jct.compilers.JctCompilation;
-import io.github.ascopes.jct.repr.DiagnosticListRepresentation;
+import io.github.ascopes.jct.repr.TraceDiagnosticListRepresentation;
 import java.util.Collection;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
@@ -100,11 +100,15 @@ public final class JctCompilationAssert extends
   public JctCompilationAssert isFailure() {
     isNotNull();
 
+    // If we fail due to failOnWarnings, we expect the compiler itself to have failed the
+    // build because of this. If the compiler ignores this flag and succeeds, then this method will
+    // follow that behaviour and treat the compilation as a success.
+
     if (actual.isSuccessful()) {
       // If we have any warnings, we should show them in the error message as it might be useful
       // to the user.
       failWithDiagnostics(
-          DiagnosticKindAssert.WARNING_DIAGNOSTIC_KINDS,
+          DiagnosticKindAssert.WARNING_AND_ERROR_DIAGNOSTIC_KINDS,
           "Expected compilation to fail, but it succeeded."
       );
     }
@@ -317,12 +321,13 @@ public final class JctCompilationAssert extends
       failWithMessage(message, args);
     } else {
       var fullMessage = String.join(
-          "\n\n",
+          "\n",
           args.length > 0
               ? String.format(message, args)
               : message,
+          "",
           "Diagnostics:",
-          DiagnosticListRepresentation.getInstance().toStringOf(diagnostics)
+          TraceDiagnosticListRepresentation.getInstance().toStringOf(diagnostics)
       );
 
       failWithMessage(fullMessage);

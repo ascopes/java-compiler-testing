@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import io.github.ascopes.jct.repr.DiagnosticListRepresentation;
+import io.github.ascopes.jct.repr.TraceDiagnosticListRepresentation;
 import io.github.ascopes.jct.repr.TraceDiagnosticRepresentation;
 import io.github.ascopes.jct.tests.helpers.Fixtures;
 import java.util.List;
@@ -28,19 +28,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
- * {@link DiagnosticListRepresentation} tests.
+ * {@link TraceDiagnosticListRepresentation} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("DiagnosticListRepresentation tests")
+@DisplayName("TraceDiagnosticListRepresentation tests")
 @SuppressWarnings({"ResultOfMethodCallIgnored"})
-class DiagnosticListRepresentationTest {
+class TraceDiagnosticListRepresentationTest {
 
   @DisplayName("toStringOf(null) returns \"null\"")
   @Test
   void toStringOfNullReturnsNull() {
     // Given
-    var listRepr = DiagnosticListRepresentation.getInstance();
+    var listRepr = TraceDiagnosticListRepresentation.getInstance();
 
     // When
     var result = listRepr.toStringOf(null);
@@ -66,7 +66,7 @@ class DiagnosticListRepresentationTest {
       when(mockRepr.toStringOf(diagnostic2)).thenReturn("<<diagnostic2>>\n<content>");
       when(mockRepr.toStringOf(diagnostic3)).thenReturn("<<diagnostic3>>\n<content>");
 
-      var listRepr = DiagnosticListRepresentation.getInstance();
+      var listRepr = TraceDiagnosticListRepresentation.getInstance();
 
       // When
       var result = listRepr.toStringOf(diagnosticList);
@@ -74,6 +74,7 @@ class DiagnosticListRepresentationTest {
       // Then
       assertThat(result.lines())
           .containsExactly(
+              "",
               " - <<diagnostic1>>",
               "   <content>",
               "",

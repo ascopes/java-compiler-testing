@@ -36,21 +36,21 @@ import org.assertj.core.presentation.Representation;
 @API(since = "0.0.1", status = Status.STABLE)
 @Immutable
 @ThreadSafe
-public final class DiagnosticListRepresentation implements Representation {
+public final class TraceDiagnosticListRepresentation implements Representation {
 
-  private static final DiagnosticListRepresentation INSTANCE
-      = new DiagnosticListRepresentation();
+  private static final TraceDiagnosticListRepresentation INSTANCE
+      = new TraceDiagnosticListRepresentation();
 
   /**
    * Get an instance of this diagnostic collection representation.
    *
    * @return the instance.
    */
-  public static DiagnosticListRepresentation getInstance() {
+  public static TraceDiagnosticListRepresentation getInstance() {
     return INSTANCE;
   }
 
-  private DiagnosticListRepresentation() {
+  private TraceDiagnosticListRepresentation() {
     // Nothing to see here, move along now.
   }
 
@@ -63,7 +63,7 @@ public final class DiagnosticListRepresentation implements Representation {
     @SuppressWarnings("unchecked")
     var diagnostics = (Collection<? extends TraceDiagnostic<? extends JavaFileObject>>) object;
 
-    return diagnostics
+    return "\n" + diagnostics
         .stream()
         .map(TraceDiagnosticRepresentation.getInstance()::toStringOf)
         .map(this::indentAndBullet)

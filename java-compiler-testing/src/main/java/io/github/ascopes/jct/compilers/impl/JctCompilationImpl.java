@@ -49,7 +49,7 @@ public final class JctCompilationImpl implements JctCompilation {
   private final boolean failOnWarnings;
   private final List<String> outputLines;
   private final Set<JavaFileObject> compilationUnits;
-  private final List<TraceDiagnostic<? extends JavaFileObject>> diagnostics;
+  private final List<TraceDiagnostic<JavaFileObject>> diagnostics;
   private final JctFileManager fileManager;
 
   private JctCompilationImpl(Builder builder) {
@@ -88,7 +88,7 @@ public final class JctCompilationImpl implements JctCompilation {
   }
 
   @Override
-  public List<TraceDiagnostic<? extends JavaFileObject>> getDiagnostics() {
+  public List<TraceDiagnostic<JavaFileObject>> getDiagnostics() {
     return diagnostics;
   }
 
@@ -134,10 +134,10 @@ public final class JctCompilationImpl implements JctCompilation {
     private List<String> outputLines;
 
     @Nullable
-    private Set<? extends JavaFileObject> compilationUnits;
+    private Set<JavaFileObject> compilationUnits;
 
     @Nullable
-    private List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics;
+    private List<TraceDiagnostic<JavaFileObject>> diagnostics;
 
     @Nullable
     @WillNotClose
@@ -192,7 +192,7 @@ public final class JctCompilationImpl implements JctCompilation {
      * @param compilationUnits the compilation units.
      * @return this builder.
      */
-    public Builder compilationUnits(Set<? extends JavaFileObject> compilationUnits) {
+    public Builder compilationUnits(Set<JavaFileObject> compilationUnits) {
       this.compilationUnits = requireNonNull(compilationUnits, "compilationUnits");
       return this;
     }
@@ -204,7 +204,7 @@ public final class JctCompilationImpl implements JctCompilation {
      * @return this builder.
      */
     public Builder diagnostics(
-        List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
+        List<TraceDiagnostic<JavaFileObject>> diagnostics
     ) {
       this.diagnostics = requireNonNull(diagnostics, "diagnostics");
       return this;

@@ -311,11 +311,11 @@ class JctCompilationImplTest {
           .failOnWarnings(RANDOM.nextBoolean())
           .diagnostics(nullableListOf(
               mockRaw(TraceDiagnostic.class)
-                  .<TraceDiagnostic<? extends JavaFileObject>>upcastedTo()
+                  .<TraceDiagnostic<JavaFileObject>>upcastedTo()
                   .build(),
               null,
               mockRaw(TraceDiagnostic.class)
-                  .<TraceDiagnostic<? extends JavaFileObject>>upcastedTo()
+                  .<TraceDiagnostic<JavaFileObject>>upcastedTo()
                   .build()
           ));
 

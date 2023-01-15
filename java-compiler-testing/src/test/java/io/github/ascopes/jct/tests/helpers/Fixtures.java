@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.tests.helpers;
 
 import static io.github.ascopes.jct.tests.helpers.GenericMock.mockRaw;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -35,6 +36,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -44,9 +46,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
 import javax.tools.Diagnostic;
+import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
-import javax.tools.JavaFileObject.Kind;
 import org.mockito.quality.Strictness;
 
 /**
@@ -191,20 +193,43 @@ public final class Fixtures {
    * @return the mock.
    */
   public static Diagnostic<JavaFileObject> someDiagnostic() {
-    return mockRaw(Diagnostic.class)
+    var mock = mockRaw(Diagnostic.class)
         .<Diagnostic<JavaFileObject>>upcastedTo()
-        .build();
+        .build(withSettings().strictness(Strictness.LENIENT));
+
+    createStubMethodsFor(mock);
+    return mock;
   }
 
   /**
-   * Get a tracee diagnostic mock.
+   * Get a trace diagnostic mock.
    *
    * @return the mock.
    */
+  @SuppressWarnings("deprecation")
   public static TraceDiagnostic<JavaFileObject> someTraceDiagnostic() {
-    return mockRaw(TraceDiagnostic.class)
+    var mock = mockRaw(TraceDiagnostic.class)
         .<TraceDiagnostic<JavaFileObject>>upcastedTo()
-        .build();
+        .build(withSettings().strictness(Strictness.LENIENT));
+
+    createStubMethodsFor(mock);
+    when(mock.getTimestamp()).thenReturn(Instant.now());
+    when(mock.getThreadName()).thenReturn(Thread.currentThread().getName());
+    when(mock.getThreadId()).thenReturn(Thread.currentThread().getId());
+    when(mock.getStackTrace()).thenReturn(someStackTraceList());
+    return mock;
+  }
+
+  /**
+   * Get a trace diagnostic mock.
+   *
+   * @param kind the kind of the diagnostic to create.
+   * @return the mock.
+   */
+  public static TraceDiagnostic<JavaFileObject> someTraceDiagnostic(Diagnostic.Kind kind) {
+    var mock = someTraceDiagnostic();
+    when(mock.getKind()).thenReturn(kind);
+    return mock;
   }
 
   /**
@@ -223,7 +248,7 @@ public final class Fixtures {
    *
    * @return some trace diagnostics.
    */
-  public static List<TraceDiagnostic<? extends JavaFileObject>> someTraceDiagnostics() {
+  public static List<TraceDiagnostic<JavaFileObject>> someTraceDiagnostics() {
     return Stream
         .generate(Fixtures::someTraceDiagnostic)
         .limit(someInt(3, 8))
@@ -333,7 +358,7 @@ public final class Fixtures {
         .strictness(Strictness.LENIENT));
 
     when(obj.getName()).thenReturn(name);
-    when(obj.getKind()).thenReturn(Kind.SOURCE);
+    when(obj.getKind()).thenReturn(JavaFileObject.Kind.SOURCE);
     return obj;
   }
 
@@ -440,6 +465,20 @@ public final class Fixtures {
       }
       return iter.next();
     }
+  }
+
+  private static void createStubMethodsFor(Diagnostic<JavaFileObject> diagnostic) {
+    var col = someLong(1, 100);
+    when(diagnostic.getColumnNumber()).thenReturn(col);
+    var line = someLong(1, 2_000);
+    when(diagnostic.getLineNumber()).thenReturn(line);
+    var startPos = 1 + ((line * col) / 2) + someLong(1, 10_000);
+    when(diagnostic.getStartPosition()).thenReturn(startPos);
+    when(diagnostic.getEndPosition()).thenReturn(someLong(startPos, startPos + 10_000));
+    when(diagnostic.getPosition()).thenReturn(startPos);
+    when(diagnostic.getKind()).thenReturn(oneOf(Diagnostic.Kind.class));
+    when(diagnostic.getSource()).thenReturn(null);
+    when(diagnostic.getMessage(any())).thenReturn(someText());
   }
 
   /**

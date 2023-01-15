@@ -118,7 +118,7 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
    *
    * @return the diagnostics in a list.
    */
-  public List<TraceDiagnostic<? extends S>> getDiagnostics() {
+  public List<TraceDiagnostic<S>> getDiagnostics() {
     return List.copyOf(diagnostics);
   }
 

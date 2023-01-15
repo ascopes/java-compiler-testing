@@ -78,14 +78,14 @@ public interface JctCompilation {
    *
    * @return the compilation units.
    */
-  Set<? extends JavaFileObject> getCompilationUnits();
+  Set<JavaFileObject> getCompilationUnits();
 
   /**
    * Get the diagnostics that were reported by the compilation.
    *
    * @return the diagnostics
    */
-  List<? extends TraceDiagnostic<? extends JavaFileObject>> getDiagnostics();
+  List<TraceDiagnostic<JavaFileObject>> getDiagnostics();
 
   /**
    * Get the file manager that was used to store and manage files.
