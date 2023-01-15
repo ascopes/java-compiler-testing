@@ -19,7 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.github.ascopes.jct.assertions.JavaFileObjectKindAssert;
+import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
+import org.assertj.core.api.AbstractStringAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -149,6 +151,35 @@ class JavaFileObjectKindAssertTest {
       // Then
       assertThat(assertions.isOther())
           .isSameAs(assertions);
+    }
+  }
+
+  @DisplayName("JavaFileObjectKindAssert#extension tests")
+  @Nested
+  class ExtensionTest {
+    @DisplayName(".extension() fails if the kind is null")
+    @Test
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    void extensionFailsIfKindIsNull() {
+      // Given
+      var assertions = new JavaFileObjectKindAssert(null);
+
+      // Then
+      assertThatThrownBy(assertions::extension)
+          .isInstanceOf(AssertionError.class);
+    }
+
+    @DisplayName(".extension() returns assertions on the extension")
+    @EnumSource(JavaFileObject.Kind.class)
+    @ParameterizedTest(name = "for {0}")
+    void extensionReturnsAssertionsOnExtension(Kind kind) {
+      // Given
+      var assertions = new JavaFileObjectKindAssert(kind);
+
+      // Then
+      assertThat(assertions.extension())
+          .isInstanceOf(AbstractStringAssert.class)
+          .satisfies(extensionAssertion -> extensionAssertion.isEqualTo(kind.extension));
     }
   }
 }
