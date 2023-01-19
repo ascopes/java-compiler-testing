@@ -119,10 +119,10 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: reports-${{ matrix.java-version }}-${{ matrix.os-name }}
+          name: zzz-reports-${{ matrix.java-version }}-${{ matrix.os-name }}
           if-no-files-found: error
           path: reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz
-          retention-days: 30
+          retention-days: 1
 
   mutation-tests:
     name: Run mutation tests
@@ -174,7 +174,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: reports-mutation
+          name: zzz-reports-mutation
           if-no-files-found: error
           path: reports-mutation-tests.tgz
           retention-days: 30
@@ -205,7 +205,15 @@ jobs:
 
       - name: Decompress stashed report tarballs
         shell: bash
-        run: find artifacts/ -name "reports-*.tgz" -exec tar -xzvf {} \;
+        run: |-
+          find artifacts/ -name "reports-*.tgz" -exec tar -xzvf {} \;
+          find artifacts/ -name "reports-*.tgz" -exec rm -v {} \;
+
+      - name: Delete temporary artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: 'zzz-reports-*'
+          failOnError: false
 
       - name: Publish test results
         continue-on-error: true
@@ -241,11 +249,26 @@ jobs:
           gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
           shasum -a 256 -c codecov.SHA256SUM
           chmod -v +x codecov
-          ./codecov
+          ./codecov -v
           # TODO: upload unit test and integration test reports separately so that
           # codecov processes it correctly. Need to hardwire the paths in here somehow.
           #./codecov -c -F unit -v
           #./codecov -c -F integration -v
+
+      # Now we are finishing, GitHub will compress this properly.
+      - name: Upload all reports in one archive
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-reports
+          if-no-files-found: error
+          path: |-
+            **/target/pit-reports/pit-reports/**
+            **/target/failsafe-reports/**
+            **/target/surefire-reports/**
+            **/target/site/jacoco/unit/jacoco*.xml
+            **/target/site/jacoco/int/jacoco*.xml
+          retention-days: 30
 
   formatting:
     name: Check formatting and licenses
@@ -385,3 +408,10 @@ jobs:
       - name: Deploy JavaDocs build artifact to GitHub Pages
         id: javadocs
         uses: actions/deploy-pages@v1
+
+      - name: Delete temporary artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: github-pages
+          failOnError: false
+
