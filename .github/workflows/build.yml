@@ -168,7 +168,7 @@ jobs:
         shell: bash
         run: |-
           set +f -x
-          tar -czvf zzz-reports-mutation-tests.tgz **/target/pit-reports/pit-reports/**
+          tar -czvf reports-mutation-tests.tgz **/target/pit-reports/pit-reports/**
 
       - name: Stash reports tarball
         uses: actions/upload-artifact@v3
