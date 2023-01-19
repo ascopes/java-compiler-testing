@@ -209,6 +209,12 @@ jobs:
           find artifacts/ -name "reports-*.tgz" -exec tar -xzvf {} \;
           find artifacts/ -name "reports-*.tgz" -exec rm -v {} \;
 
+      - name: Delete temporary artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: 'zzz-reports-*'
+          failOnError: false
+
       - name: Publish test results
         continue-on-error: true
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -402,3 +408,10 @@ jobs:
       - name: Deploy JavaDocs build artifact to GitHub Pages
         id: javadocs
         uses: actions/deploy-pages@v1
+
+      - name: Delete temporary artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: github-pages
+          failOnError: false
+
