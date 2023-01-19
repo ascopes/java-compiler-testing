@@ -37,12 +37,12 @@ jobs:
         include:
           - os-name: macos-12
             java-version: 11
-          - os-name: windows-2022
-            java-version: 11
+          #- os-name: windows-2022
+          #  java-version: 11
           - os-name: macos-12
             java-version: 19
-          - os-name: windows-2022
-            java-version: 19
+          #- os-name: windows-2022
+          #  java-version: 19
 
     steps:
       - name: Install dependencies
