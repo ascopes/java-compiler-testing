@@ -78,21 +78,43 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
   /**
    * Get the minimum version of Javac that is supported.
    *
+   * <p>Note, once Java 8 reaches the end of the EOL support window,
+   * the {@code modules} parameter will be ignored and deprecated in
+   * a future release, instead always defaulting to {@code true}.
+   *
    * @param modules whether modules need to be supported or not.
    * @return the minimum supported version.
    */
+  @SuppressWarnings("ConstantConditions")
   public static int getEarliestSupportedVersionInt(boolean modules) {
-    // Currently we set a hard limit on Java 8 for non-modules and Java 9 for modules.
-    // In future implementations of the JDK, however, this will change to support Java 9 or later
-    // as a minimum version. When this eventually does happen, this return value may need further
-    // logic behind it to calculate the right behaviour.
-    return modules
-        ? SourceVersion.RELEASE_9.ordinal()
-        : SourceVersion.RELEASE_8.ordinal();
+    // Purposely do not hardcode members of the SourceVersion enum here other
+    // than utility methods, as this prevents compilation problems on various
+    // versions of the JDK when certain members are unavailable.
+
+    var latestSupported = SourceVersion.latestSupported().ordinal();
+
+    if (latestSupported >= 20) {
+      // JDK 20 marks source-version 8 as obsolete, and emits compilation
+      // warnings that may break tests using "fail on warnings". To avoid this,
+      // disallow compiling Java 8 sources under Javac in JDK 20 or newer
+      return 9;
+    }
+
+    // Anything below Java 20 allows Java 9 as the minimum for JPMS support,
+    // or Java 8 for non-JPMS compilations.
+    if (modules) {
+      return 9;
+    }
+
+    return 8;
   }
 
   /**
    * Get the maximum version of Javac that is supported.
+   *
+   * <p>Note, once Java 8 reaches the end of the EOL support window,
+   * the {@code modules} parameter will be ignored and deprecated in
+   * a future release, instead always defaulting to {@code true}.
    *
    * @param modules whether to require module support or not. This is currently ignored but exists
    *                for future compatibility purposes.
