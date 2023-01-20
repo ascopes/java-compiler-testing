@@ -33,7 +33,7 @@ jobs:
           - 18
           - 19
           # Mockito currently does not support this distribution.
-          # - 20-ea
+          - 20-ea
         include:
           - os-name: macos-12
             java-version: 11
