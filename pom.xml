@@ -255,12 +255,11 @@
           <version>${maven-compiler-plugin.version}</version>
 
           <configuration>
-            <compilerArgs>
-              <compilerArg>--module-version=${project.version}</compilerArg>
-            </compilerArgs>
             <failOnWarning>true</failOnWarning>
-            <showDeprecation>true</showDeprecation>
+            <parameters>true</parameters>
             <release>${java-release}</release>
+            <showDeprecation>true</showDeprecation>
+            <showWarnings>true</showWarnings>
           </configuration>
         </plugin>
 
