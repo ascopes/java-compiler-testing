@@ -106,6 +106,7 @@ jobs:
       # we unstash them to produce the coverage reports, it will make an HTTP call for every single
       # file. This can take several minutes and is somewhat painful to have to wait for.
       - name: Compress test and coverage reports into tarball
+        if: always()
         shell: bash
         run: |-
           set +f -x
@@ -165,6 +166,7 @@ jobs:
       # we unstash them to produce the coverage reports, it will make an HTTP call for every single
       # file. This can take several minutes and is somewhat painful to have to wait for.
       - name: Compress mutation test reports into tarball
+        if: always()
         shell: bash
         run: |-
           set +f -x
