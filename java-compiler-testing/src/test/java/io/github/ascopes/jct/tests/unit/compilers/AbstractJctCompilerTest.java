@@ -462,6 +462,7 @@ class AbstractJctCompilerTest {
   @DisplayName("AbstractJctCompiler#name tests")
   @Nested
   class NameTest {
+
     @DisplayName(".name(...) sets the name")
     @ValueSource(strings = {"foo", "bar baz", "bork"})
     @ParameterizedTest(name = "for name = {0}")

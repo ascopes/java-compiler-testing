@@ -121,8 +121,8 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param compiler       the compiler to use.
    * @param jsr199Compiler the JSR-199 compiler to use.
    * @param flagBuilder    the flag builder to use.
-   * @param classNames     the class names to compile, or {@code null} to automatically detect
-   *                       all classes.
+   * @param classNames     the class names to compile, or {@code null} to automatically detect all
+   *                       classes.
    * @return the compilation factory.
    */
   @SuppressWarnings("NullableProblems")  // https://youtrack.jetbrains.com/issue/IDEA-311124

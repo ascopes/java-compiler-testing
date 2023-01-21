@@ -29,7 +29,6 @@ import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.workspaces.Workspace;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;

@@ -39,9 +39,11 @@ import org.junit.jupiter.params.provider.ValueSource;
  */
 @DisplayName("JctCompilationAssert tests")
 class JctCompilationAssertTest {
+
   @DisplayName("JctCompilationAssert#isSuccessful tests")
   @Nested
   class IsSuccessfulTest {
+
     @DisplayName(".isSuccessful() fails if the compilation is null")
     @Test
     void isSuccessfulFailsIfCompilationIsNull() {
@@ -180,6 +182,7 @@ class JctCompilationAssertTest {
   @DisplayName("JctCompilationAssert#isSuccessfulWithoutWarnings tests")
   @Nested
   class IsSuccessfulWithoutWarningsTest {
+
     @DisplayName(".isSuccessfulWithoutWarnings() fails if the compilation is null")
     @Test
     void isSuccessfulFailsIfCompilationIsNull() {
@@ -288,6 +291,7 @@ class JctCompilationAssertTest {
   @DisplayName("JctCompilationAssert#isFailure tests")
   @Nested
   class IsFailureTest {
+
     @DisplayName(".isFailure() fails if the compilation is null")
     @Test
     void isFailureFailsIfCompilationIsNull() {

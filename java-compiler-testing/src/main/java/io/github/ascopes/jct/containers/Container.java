@@ -177,8 +177,8 @@ public interface Container extends Closeable {
    * per compliation, and this reduces the memory overhead needed in such cases.
    *
    * @param packageName the package name to look in.
-   * @param kinds       the kinds of file to look for. Set to {@code Set.of(Kind.OTHER)} to find
-   *                    all types of file.
+   * @param kinds       the kinds of file to look for. Set to {@code Set.of(Kind.OTHER)} to find all
+   *                    types of file.
    * @param recurse     {@code true} to recurse subpackages, {@code false} to only consider the
    *                    given package.
    * @param collection  the collection to fill.

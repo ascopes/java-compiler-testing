@@ -21,8 +21,7 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * An enum representing the various types of compilation mode that a compiler can
- * run under.
+ * An enum representing the various types of compilation mode that a compiler can run under.
  *
  * <p>This corresponds to the {@code -proc} flag in the OpenJDK Javac implementation.
  *

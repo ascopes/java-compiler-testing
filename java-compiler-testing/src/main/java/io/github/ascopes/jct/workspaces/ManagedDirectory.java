@@ -103,8 +103,8 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
    *   dir.createFile("foo", "bar", "baz.txt")...;
    * </code></pre>
    *
-   * @param fragment the first part of the path.
-   * @param fragments  any additional parts of the path.
+   * @param fragment  the first part of the path.
+   * @param fragments any additional parts of the path.
    * @return the file builder.
    */
   @CheckReturnValue

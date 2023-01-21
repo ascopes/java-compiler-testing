@@ -18,7 +18,6 @@ package io.github.ascopes.jct.filemanagers;
 import io.github.ascopes.jct.utils.LoomPolyfill;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;

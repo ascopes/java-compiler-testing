@@ -22,7 +22,6 @@ import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.VersionStrategy;
-import io.github.ascopes.jct.tests.helpers.Fixtures;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,12 +34,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * {@link VersionStrategy} tests.
- * 
+ *
  * @author Ashley Scopes
  */
 @DisplayName("VersionStrategy tests")
 @ExtendWith(MockitoExtension.class)
 class VersionStrategyTest {
+
   String baseName;
 
   @Mock(answer = Answers.RETURNS_SELF, strictness = Strictness.LENIENT)
@@ -51,14 +51,14 @@ class VersionStrategyTest {
     baseName = someText();
     when(compiler.getName()).thenReturn(baseName);
   }
-  
+
   @DisplayName("RELEASE sets the release")
   @ValueSource(ints = {10, 15, 20})
   @ParameterizedTest(name = "for version {0}")
   void releaseSetsTheRelease(int version) {
     // When
     VersionStrategy.RELEASE.configureCompiler(compiler, version);
-    
+
     // Then
     verify(compiler).release(version);
     verify(compiler).getName();

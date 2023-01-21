@@ -157,6 +157,7 @@ class JavaFileObjectKindAssertTest {
   @DisplayName("JavaFileObjectKindAssert#extension tests")
   @Nested
   class ExtensionTest {
+
     @DisplayName(".extension() fails if the kind is null")
     @Test
     @SuppressWarnings("ResultOfMethodCallIgnored")

@@ -79,8 +79,8 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
    * Get the minimum version of Javac that is supported.
    *
    * <p>Note, once Java 8 reaches the end of the EOL support window,
-   * the {@code modules} parameter will be ignored and deprecated in
-   * a future release, instead always defaulting to {@code true}.
+   * the {@code modules} parameter will be ignored and deprecated in a future release, instead
+   * always defaulting to {@code true}.
    *
    * @param modules whether modules need to be supported or not.
    * @return the minimum supported version.
@@ -113,8 +113,8 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
    * Get the maximum version of Javac that is supported.
    *
    * <p>Note, once Java 8 reaches the end of the EOL support window,
-   * the {@code modules} parameter will be ignored and deprecated in
-   * a future release, instead always defaulting to {@code true}.
+   * the {@code modules} parameter will be ignored and deprecated in a future release, instead
+   * always defaulting to {@code true}.
    *
    * @param modules whether to require module support or not. This is currently ignored but exists
    *                for future compatibility purposes.

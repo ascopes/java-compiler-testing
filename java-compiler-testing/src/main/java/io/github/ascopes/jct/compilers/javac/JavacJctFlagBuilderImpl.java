@@ -43,7 +43,7 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   private static final String SOURCE = "-source";
   private static final String TARGET = "-target";
   private static final String ANNOTATION_OPT = "-A";
-  
+
   private final List<String> craftedFlags;
 
   /**
