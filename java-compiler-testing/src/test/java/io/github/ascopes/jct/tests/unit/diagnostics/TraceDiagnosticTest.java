@@ -30,6 +30,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.utils.LoomPolyfill;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.util.Locale;
 import java.util.Random;
@@ -237,7 +238,7 @@ class TraceDiagnosticTest {
   @Test
   void getThreadIdReturnsTheThreadId() {
     // Given
-    var expectedThreadId = Thread.currentThread().getId() + someInt(100);
+    var expectedThreadId = LoomPolyfill.getThreadId(Thread.currentThread()) + someInt(100);
     var diagnostic = new TraceDiagnostic<>(
         now(),
         expectedThreadId,

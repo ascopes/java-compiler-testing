@@ -27,6 +27,7 @@ import com.google.common.jimfs.Feature;
 import com.google.common.jimfs.Jimfs;
 import com.google.common.jimfs.PathType;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import io.github.ascopes.jct.utils.LoomPolyfill;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
 import java.lang.module.ModuleReference;
@@ -215,7 +216,7 @@ public final class Fixtures {
     createStubMethodsFor(mock);
     when(mock.getTimestamp()).thenReturn(Instant.now());
     when(mock.getThreadName()).thenReturn(Thread.currentThread().getName());
-    when(mock.getThreadId()).thenReturn(Thread.currentThread().getId());
+    when(mock.getThreadId()).thenReturn(LoomPolyfill.getThreadId(Thread.currentThread()));
     when(mock.getStackTrace()).thenReturn(someStackTraceList());
     return mock;
   }

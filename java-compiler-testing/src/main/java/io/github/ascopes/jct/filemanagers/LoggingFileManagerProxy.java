@@ -15,8 +15,10 @@
  */
 package io.github.ascopes.jct.filemanagers;
 
+import io.github.ascopes.jct.utils.LoomPolyfill;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
@@ -76,10 +78,7 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
     }
 
     var thread = Thread.currentThread();
-
-    // TODO(ascopes): handle Java 19 Loom virtual thread IDs
-    @SuppressWarnings("deprecation")
-    var threadId = thread.getId();
+    var threadId = LoomPolyfill.getThreadId(thread);
 
     var depth = incStackDepth();
     var returnType = method.getReturnType().getSimpleName();
@@ -186,6 +185,17 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
         .toString();
   }
 
+  private int incStackDepth() {
+    var depth = stackDepth.get() + 1;
+    stackDepth.set(depth);
+    return depth;
+  }
+
+  private void decStackDepth() {
+    var depth = stackDepth.get() - 1;
+    stackDepth.set(depth);
+  }
+
   /**
    * Wrap the given {@link JctFileManager} in a proxy that logs any calls.
    *
@@ -204,16 +214,5 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
         new Class<?>[]{JctFileManager.class},
         new LoggingFileManagerProxy(manager, stackTraces)
     );
-  }
-
-  private int incStackDepth() {
-    var depth = stackDepth.get() + 1;
-    stackDepth.set(depth);
-    return depth;
-  }
-
-  private void decStackDepth() {
-    var depth = stackDepth.get() - 1;
-    stackDepth.set(depth);
   }
 }
