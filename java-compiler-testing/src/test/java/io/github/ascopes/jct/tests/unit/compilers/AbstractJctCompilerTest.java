@@ -452,6 +452,48 @@ class AbstractJctCompilerTest {
     }
   }
 
+  @DisplayName(".getName() returns the name")
+  @Test
+  void getNameReturnsName() {
+    // Then
+    assertThat(compiler.getName()).isEqualTo(name);
+  }
+
+  @DisplayName("AbstractJctCompiler#name tests")
+  @Nested
+  class NameTest {
+    @DisplayName(".name(...) sets the name")
+    @ValueSource(strings = {"foo", "bar baz", "bork"})
+    @ParameterizedTest(name = "for name = {0}")
+    void nameSetsTheName(String name) {
+      // When
+      compiler.name(name);
+
+      // Then
+      assertThatCompilerField("name").isEqualTo(name);
+    }
+
+    @DisplayName(".name(...) returns the compiler")
+    @Test
+    void nameReturnsTheCompiler() {
+      // When
+      var result = compiler.name("foo");
+
+      // Then
+      assertThat(result).isSameAs(compiler);
+    }
+
+    @DisplayName(".name(null) throws a NullPointerException")
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    void passingNullToNameThrowsNullPointerException() {
+      // Then
+      assertThatThrownBy(() -> compiler.name(null))
+          .isInstanceOf(NullPointerException.class)
+          .hasMessage("name");
+    }
+  }
+
   @DisplayName(".getFlagBuilder() returns the flag builder")
   @Test
   void getFlagBuilderReturnsFlagBuilder() {
@@ -464,13 +506,6 @@ class AbstractJctCompilerTest {
   void getJsr199CompilerReturnsTheCompiler() {
     // Then
     assertThat(compiler.getJsr199Compiler()).isSameAs(jsr199Compiler);
-  }
-
-  @DisplayName(".getName() returns the name")
-  @Test
-  void getNameReturnsName() {
-    // Then
-    assertThat(compiler.getName()).isSameAs(name);
   }
 
   @DisplayName(".isVerbose() returns the expected values")

@@ -203,6 +203,21 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
   <E extends Exception> C configure(JctCompilerConfigurer<E> configurer) throws E;
 
   /**
+   * Get the friendly printable name of this compiler object.
+   *
+   * @return the name of the compiler.
+   */
+  String getName();
+
+  /**
+   * Set the friendly name of this compiler.
+   *
+   * @param name the name to set.
+   * @return this compiler object for further call chaining.
+   */
+  C name(String name);
+
+  /**
    * Get an <strong>immutable snapshot view</strong> of the current annotation processor options
    * that are set.
    *
