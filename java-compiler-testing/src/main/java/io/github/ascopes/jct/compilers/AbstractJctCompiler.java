@@ -58,12 +58,12 @@ import org.apiguardian.api.API.Status;
 public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     implements JctCompiler<A, JctCompilationImpl> {
 
-  private final String name;
   private final JavaCompiler jsr199Compiler;
   private final JctFlagBuilder flagBuilder;
   private final List<Processor> annotationProcessors;
   private final List<String> annotationProcessorOptions;
   private final List<String> compilerOptions;
+  private String name;
   private boolean showWarnings;
   private boolean showDeprecationWarnings;
   private boolean failOnWarnings;
@@ -87,7 +87,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   /**
    * Initialize this compiler.
    *
-   * @param name           the friendly name of the compiler.
+   * @param name           the friendly name of the compiler to default to.
    * @param jsr199Compiler the JSR-199 compiler implementation to use.
    * @param flagBuilder    the flag builder to use.
    */
@@ -141,6 +141,17 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     return myself();
   }
 
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public A name(String name) {
+    this.name = requireNonNull(name, "name");
+    return myself();
+  }
+
   /**
    * Get the flag builder to use.
    *
@@ -157,15 +168,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
    */
   public JavaCompiler getJsr199Compiler() {
     return jsr199Compiler;
-  }
-
-  /**
-   * Get the friendly name of the compiler implementation.
-   *
-   * @return the friendly name.
-   */
-  public String getName() {
-    return name;
   }
 
   @Override
