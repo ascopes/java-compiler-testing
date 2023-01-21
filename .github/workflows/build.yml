@@ -79,19 +79,7 @@ jobs:
 
       - name: Compile and run tests
         shell: bash
-        run: >-
-          ./mvnw 
-          -B 
-          -e
-          -T1C
-          -U
-          --no-transfer-progress
-          -Dcheckstyle.skip=true
-          -Dlicense.skip=true
-          -Dstyle.color=always
-          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
-          ${{ inputs.maven-opts }}
-          clean verify
+        run: ./mvnw -B -U -Dcheckstyle.skip=true -Dlicense.skip=true clean verify
 
       - name: Annotate test reports with build environment info
         if: always()
@@ -113,8 +101,9 @@ jobs:
           set +f -x
           # Allow globs to not match anything without causing errors.
           shopt -s nullglob
-          
-          tar -czvf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz \
+  
+          # XZ with max compression, more efficient than using GZip.  
+          XZ_OPT=-9 tar -Jcvf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tar.xz \
               **/target/failsafe-reports/** \
               **/target/surefire-reports/** \
               **/target/site/jacoco/unit/jacoco*.xml \
@@ -124,9 +113,9 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: zzz-reports-${{ matrix.java-version }}-${{ matrix.os-name }}
+          name: temp-reports-${{ matrix.java-version }}-${{ matrix.os-name }}
           if-no-files-found: error
-          path: reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz
+          path: reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tar.xz
           retention-days: 1
 
   mutation-tests:
@@ -149,21 +138,7 @@ jobs:
       - name: Run mutation tests
         shell: bash
         # Do not run on multiple threads, the plugin does not support this properly.
-        run: >-
-          ./mvnw 
-          -B
-          -e
-          -T1
-          -U
-          --also-make
-          -pl java-compiler-testing
-          --no-transfer-progress
-          -P mutation
-          -Dstyle.color=always
-          -Dcheckstyle.skip=true
-          -Dlicense.skip=true
-          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
-          test
+        run: ./mvnw -B -U -am -pl java-compiler-testing -P mutation -Dcheckstyle.skip=true -Dlicense.skip=true test
 
       # Compress first so that the collection job later takes far less time (order of a few minutes
       # or so). GitHub does not compress these until after the workflow finishes, meaning when
@@ -177,16 +152,16 @@ jobs:
           set +f -x
           # Allow globs to not match anything without causing errors.
           shopt -s nullglob
-          
-          tar -czvf reports-mutation-tests.tgz **/target/pit-reports/pit-reports/**
+          # XZ with max compression, more efficient than using GZip.
+          XZ_OPT=-9 tar -Jcvf reports-mutation-tests.tar.xz **/target/pit-reports/pit-reports/**
 
       - name: Stash reports tarball
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: zzz-reports-mutation
+          name: temp-reports-mutation
           if-no-files-found: error
-          path: reports-mutation-tests.tgz
+          path: reports-mutation-tests.tar.xz
           retention-days: 30
 
   publish-test-reports:
@@ -211,19 +186,16 @@ jobs:
       - name: Download stashed tarballs
         uses: actions/download-artifact@v3
         with:
-          path: 'artifacts/reports-*.tgz'
+          path: 'artifacts/reports-*.tar.xz'
 
       - name: Decompress stashed report tarballs
         shell: bash
         run: |-
-          find artifacts/ -name "reports-*.tgz" -exec tar -xzvf {} \;
-          find artifacts/ -name "reports-*.tgz" -exec rm -v {} \;
+          find artifacts/ -name "reports-*.tar.xz" -exec \
+              tar --no-same-owner --no-same-permissions -Jxvf {} \;
 
-      - name: Delete temporary artifacts
-        uses: geekyeggo/delete-artifact@v2
-        with:
-          name: 'zzz-reports-*'
-          failOnError: false
+          find artifacts/ -name "reports-*.tar.xz" -exec \
+              rm -v {} \;
 
       - name: Publish test results
         continue-on-error: true
@@ -261,24 +233,40 @@ jobs:
           chmod -v +x codecov
           ./codecov -v
           # TODO: upload unit test and integration test reports separately so that
-          # codecov processes it correctly. Need to hardwire the paths in here somehow.
+          # codecov processes it correctly. Need to hard-wire the paths in here somehow.
           #./codecov -c -F unit -v
           #./codecov -c -F integration -v
 
-      # Now we are finishing, GitHub will compress this properly.
+      # For now, we need to recompress everything to reupload it in one tarball. This
+      # is due to an issue with how GitHub Actions does not handle uploading large numbers
+      # of files in bulk, but is fine uploading one massive file.
+      - name: Recompress reports into one tarball
+        if: always()
+        run: >-
+          set +f -x
+          XZ_OPT=-9 tar -Jcvf test-reports.tar.xz \
+              **/target/pit-reports/pit-reports/**
+              **/target/failsafe-reports/** \
+              **/target/surefire-reports/** \
+              **/target/site/jacoco/unit/jacoco*.xml \
+              **/target/site/jacoco/int/jacoco*.xml
+
+      # TODO(ascopes): upload reports directly when GitHub fixes actions/upload-artifact
+      #   to not take an exponentially increasing amount of time based on the number of uploads.
       - name: Upload all reports in one archive
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: test-reports
           if-no-files-found: error
-          path: |-
-            **/target/pit-reports/pit-reports/**
-            **/target/failsafe-reports/**
-            **/target/surefire-reports/**
-            **/target/site/jacoco/unit/jacoco*.xml
-            **/target/site/jacoco/int/jacoco*.xml
+          path: test-reports.tar.xz
           retention-days: 30
+
+      - name: Delete temporary artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: 'temp-reports-*'
+          failOnError: false
 
   formatting:
     name: Check formatting and licenses
@@ -300,19 +288,12 @@ jobs:
       - name: Run checks
         shell: bash
         run: >-
-          ./mvnw 
-          -B
-          -e
-          -T1C
-          -U
-          --no-transfer-progress
+          ./mvnw -B -U
           -DskipTests=true
-          -Dstyle.color=always
           -Dmaven.main.skip
           -Dmaven.jar.skip
           -Dmaven.resources.skip
           -Dmaven.test.skip
-          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
           verify
 
   dependency-check:
@@ -336,21 +317,15 @@ jobs:
         shell: bash
         run: >-
           ./mvnw 
-          -B
-          -e
-          -T1C
-          -U
-          -Pdependency-check
-          --no-transfer-progress
+          -B -U
+          -P dependency-check
           -DskipTests=true
-          -Dstyle.color=always
           -Dcheckstyle.skip=true
           -Dlicense.skip=true
           -Dmaven.main.skip
           -Dmaven.jar.skip
           -Dmaven.resources.skip
           -Dmaven.test.skip
-          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
           verify
 
       - name: Archive Dependency Scan reports
@@ -382,19 +357,10 @@ jobs:
       - name: Generate JavaDocs
         shell: bash
         run: >-
-          ./mvnw 
-          -B
-          -e
-          -T1C
-          -U
-          -pl java-compiler-testing
-          --also-make
-          --no-transfer-progress
+          ./mvnw  -B -U -am -pl java-compiler-testing
           -Dmaven.test.skip=true
           -Dcheckstyle.skip=true
           -Dlicense.skip=true
-          -Dstyle.color=always
-          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
           clean compile javadoc:jar
 
       - name: Upload JavaDocs as a build artifact
@@ -424,4 +390,3 @@ jobs:
         with:
           name: github-pages
           failOnError: false
-
