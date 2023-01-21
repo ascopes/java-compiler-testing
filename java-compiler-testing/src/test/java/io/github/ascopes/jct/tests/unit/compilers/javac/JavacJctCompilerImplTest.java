@@ -89,11 +89,25 @@ class JavacJctCompilerImplTest {
     assertThat(compiler.getFlagBuilder()).isInstanceOf(JavacJctFlagBuilderImpl.class);
   }
 
-  @DisplayName("compilers have the -implicit:class flag set")
+  @DisplayName("Compilers have no default compiler flags set")
   @Test
-  void compilersHaveTheImplicitClassFlagSet() {
+  void compilersHaveNoDefaultCompilerFlagsSet() {
     // Then
-    assertThat(compiler.getCompilerOptions()).contains("-implicit:class");
+    assertThat(compiler.getCompilerOptions()).isEmpty();
+  }
+
+  @DisplayName("Compilers have no default annotation processor flags set")
+  @Test
+  void compilersHaveNoDefaultAnnotationProcessorFlagsSet() {
+    // Then
+    assertThat(compiler.getAnnotationProcessorOptions()).isEmpty();
+  }
+
+  @DisplayName("Compilers have no default annotation processors set")
+  @Test
+  void compilersHaveNoDefaultAnnotationProcessorsSet() {
+    // Then
+    assertThat(compiler.getAnnotationProcessors()).isEmpty();
   }
 
   @DisplayName("compilers have the expected default release string")

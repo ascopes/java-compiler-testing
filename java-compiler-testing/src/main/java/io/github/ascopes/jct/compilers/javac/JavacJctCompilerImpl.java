@@ -68,7 +68,6 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
    */
   public JavacJctCompilerImpl(String name, JavaCompiler jsr199Compiler) {
     super(name, jsr199Compiler, new JavacJctFlagBuilderImpl());
-    addCompilerOptions("-implicit:class");
   }
 
   @Override
