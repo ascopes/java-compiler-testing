@@ -113,10 +113,10 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: temp-reports-${{ matrix.java-version }}-${{ matrix.os-name }}
+          name: reports-${{ matrix.java-version }}-${{ matrix.os-name }}
           if-no-files-found: error
           path: reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tar.xz
-          retention-days: 1
+          retention-days: 30
 
   mutation-tests:
     name: Run mutation tests
@@ -159,7 +159,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: temp-reports-mutation
+          name: reports-mutation-tests
           if-no-files-found: error
           path: reports-mutation-tests.tar.xz
           retention-days: 30
@@ -191,11 +191,8 @@ jobs:
       - name: Decompress stashed report tarballs
         shell: bash
         run: |-
-          find artifacts/ -name "reports-*.tar.xz" -exec \
-              tar --no-same-owner --no-same-permissions -Jxvf {} \;
-
-          find artifacts/ -name "reports-*.tar.xz" -exec \
-              rm -v {} \;
+          find artifacts/ -name "reports-*.tar.xz" -exec tar -Jxvf {} \;
+          find artifacts/ -name "reports-*.tar.xz" -exec rm -v {} \;
 
       - name: Publish test results
         continue-on-error: true
@@ -236,37 +233,6 @@ jobs:
           # codecov processes it correctly. Need to hard-wire the paths in here somehow.
           #./codecov -c -F unit -v
           #./codecov -c -F integration -v
-
-      # For now, we need to recompress everything to reupload it in one tarball. This
-      # is due to an issue with how GitHub Actions does not handle uploading large numbers
-      # of files in bulk, but is fine uploading one massive file.
-      - name: Recompress reports into one tarball
-        if: always()
-        run: >-
-          set +f -x
-          XZ_OPT=-9 tar -Jcvf test-reports.tar.xz \
-              **/target/pit-reports/pit-reports/**
-              **/target/failsafe-reports/** \
-              **/target/surefire-reports/** \
-              **/target/site/jacoco/unit/jacoco*.xml \
-              **/target/site/jacoco/int/jacoco*.xml
-
-      # TODO(ascopes): upload reports directly when GitHub fixes actions/upload-artifact
-      #   to not take an exponentially increasing amount of time based on the number of uploads.
-      - name: Upload all reports in one archive
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: test-reports
-          if-no-files-found: error
-          path: test-reports.tar.xz
-          retention-days: 30
-
-      - name: Delete temporary artifacts
-        uses: geekyeggo/delete-artifact@v2
-        with:
-          name: 'temp-reports-*'
-          failOnError: false
 
   formatting:
     name: Check formatting and licenses
