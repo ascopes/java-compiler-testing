@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os-name: ubuntu-22.04
+        os-name: [ubuntu-22.04]
         java-version: [11, 12, 13, 14, 15, 16, 17, 18, 19]
         include:
           # Early access builds.
