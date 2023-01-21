@@ -51,4 +51,28 @@ class StackTraceAssertTest {
         .first()
         .isSameAs(stackTraceArray[0]);
   }
+
+  @DisplayName("Assertions are performed on sublists of the stacktrace")
+  @Test
+  void assertionsArePerformedOnTheStackTraceSublists() {
+    // Given
+    var stackTraceArray = new StackTraceElement[]{
+        new StackTraceElement("java.lang.Foo", "doSomething", "Foo.java", 123),
+        new StackTraceElement("java.lang.Foo", "doSomethingElse", "Foo.java", 456),
+        new StackTraceElement("java.lang.Foo", "doSomethingAgain", "Foo.java", 789),
+        new StackTraceElement("java.lang.Foo", "doAnotherThing", "Foo.java", 101112)
+    };
+
+    var stackTrace = Arrays.asList(stackTraceArray);
+
+    // When
+    var assertions = new StackTraceAssert(stackTrace);
+
+    // Then
+    assertions
+        .filteredOn(frame -> frame.getMethodName().startsWith("doSomething"))
+        .containsExactlyElementsOf(stackTrace.subList(0, 3))
+        .first()
+        .isSameAs(stackTraceArray[0]);
+  }
 }
