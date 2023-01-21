@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.tests.unit.compilers.javac;
 
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someInt;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mock;
@@ -64,6 +65,35 @@ class JavacJctCompilerImplTest {
       assertThat(compiler.getJsr199Compiler()).isSameAs(javaCompiler);
       toolProvider.verify(ToolProvider::getSystemJavaCompiler);
     }
+  }
+
+  @DisplayName("initialising a compiler with a string argument uses the platform compiler")
+  @Test
+  void initialisingCompilerWithStringUsesPlatformCompiler() {
+    try (var toolProvider = mockStatic(ToolProvider.class)) {
+      // Given
+      toolProvider.when(ToolProvider::getSystemJavaCompiler).thenReturn(javaCompiler);
+
+      // When
+      var compiler = new JavacJctCompilerImpl("foo");
+
+      // Then
+      assertThat(compiler.getJsr199Compiler()).isSameAs(javaCompiler);
+      toolProvider.verify(ToolProvider::getSystemJavaCompiler);
+    }
+  }
+
+  @DisplayName("initialising a compiler with a string argument uses the string as the name")
+  @Test
+  void initialisingCompilerWithStringUsesTheGivenStringAsTheName() {
+    // Given
+    var name = someText();
+
+    // When
+    var compiler = new JavacJctCompilerImpl(name);
+
+    // Then
+    assertThat(compiler.getName()).isEqualTo(name);
   }
 
   @DisplayName("compilers have the expected default name")
