@@ -25,6 +25,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
+import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
@@ -33,16 +37,30 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
  * {@link JavacJctCompilerImpl} instances with specific configured versions as the  first
  * parameter.
  *
+ * <p>This will also add the {@code "java-compiler-testing-test"} tag and {@code "javac-test"}
+ * tags to your test method, meaning you can instruct your IDE or build system to optionally only
+ * run tests annotated with this method for development purposes. As an example, Maven Surefire
+ * could be instructed to only run these tests by passing {@code -Dgroup="javac-test"} to Maven.
+ *
+ * <p>If your build is running in a GraalVM Native Image, then this test will not execute, as
+ * the <em>Java Compiler Testing</em> API is not yet tested within Native Images.
+ *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
 @ArgumentsSource(JavacCompilersProvider.class)
+@DisabledInNativeImage
 @Documented
 @Inherited
 @ParameterizedTest(name = "for compiler \"{0}\"")
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
+@TestTemplate
+@Tags({
+    @Tag("java-compiler-testing-test"),
+    @Tag("javac-test")
+})
 public @interface JavacCompilerTest {
 
   /**
