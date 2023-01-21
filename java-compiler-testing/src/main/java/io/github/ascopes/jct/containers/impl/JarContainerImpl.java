@@ -329,7 +329,7 @@ public final class JarContainerImpl implements Container {
     private Collection<Path> getAllFiles() throws IOException {
       var allPaths = new ArrayList<Path>();
 
-      // TODO: think of a faster way of doing this without returning a closeable stream.
+      // We have to do this eagerly as the walkers must be closed to prevent resource leakage.
       for (var root : fileSystem.getRootDirectories()) {
         try (var walker = Files.walk(root)) {
           walker.forEach(allPaths::add);
