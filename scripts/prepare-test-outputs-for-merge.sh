@@ -115,8 +115,11 @@ for report in $(find-all-surefire-reports) $(find-all-failsafe-reports); do
   report_count="$((report_count+1))"
   new_report="${report/.xml/-java-${ci_java_version}-${ci_os}.xml}"
   prefix="[Java-${ci_java_version}-${ci_os}]"
-  # Pass --huge to work around some issues with JUnit reports having massive CDATA blocks.
-  run <<< "xsltproc --huge --stringparam prefix '${prefix}' '${surefire_prefix_xslt}' '${report}' > '${new_report}'"
+  if ! run <<< "xsltproc --stringparam prefix '${prefix}' '${surefire_prefix_xslt}' '${report}' > '${new_report}'"; then
+    err "Error invoking xsltproc! Erroneous report was:"
+    dump "${report}"
+    exit 2
+  fi
   run <<< "rm '${report}'"
 done
 success "Updated ${report_count} test reports"
