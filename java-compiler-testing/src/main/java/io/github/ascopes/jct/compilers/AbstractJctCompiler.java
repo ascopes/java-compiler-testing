@@ -437,6 +437,13 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     return myself();
   }
 
+  /**
+   * Get the compiler name.
+   *
+   * @return the compiler name.
+   * @see #getName()
+   * @see #name(String)
+   */
   @Override
   public final String toString() {
     return name;
