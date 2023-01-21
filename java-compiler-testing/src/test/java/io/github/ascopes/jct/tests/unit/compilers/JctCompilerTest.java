@@ -26,7 +26,10 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.workspaces.Workspace;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
@@ -258,6 +261,26 @@ class JctCompilerTest {
     // Then
     then(compiler).should().target(versionString);
     assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName(".compile(Workspace, String, String...) calls .compile(Workspace, Collection)")
+  @Test
+  void compileStringVarargsCallsCompileCollection() {
+    // Given
+    var workspace = mock(Workspace.class);
+
+    given(compiler.compile(any(), any(), any(), any()))
+        .willCallRealMethod();
+
+    var firstClass = "org.example.Foo";
+    var secondClass = "org.example.Bar";
+    var thirdClass = "com.organisation.FooBar";
+
+    // When
+    var result = compiler.compile(workspace, firstClass, secondClass, thirdClass);
+
+    // Then
+    then(compiler).should().compile(workspace, List.of(firstClass, secondClass, thirdClass));
   }
 
   static Stream<Arguments> sourceVersions() {

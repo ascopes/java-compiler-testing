@@ -92,11 +92,13 @@ import java.io.IOException;
 import java.lang.module.FindException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileManager.Location;
@@ -113,6 +115,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
@@ -161,45 +164,54 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
 
     @BeforeEach
     void setUp() {
-      staticMock.when(() -> compile(any(), any(), any(), any()))
+      staticMock.when(() -> compile(any(), any(), any(), any(), any()))
           .thenCallRealMethod();
     }
 
-    JctCompilationImpl doCompile() {
-      return compile(workspace, compiler, jsr199Compiler, flagBuilder);
+    JctCompilationImpl doCompile(@Nullable Collection<String> classNames) {
+      return compile(workspace, compiler, jsr199Compiler, flagBuilder, classNames);
     }
 
     @DisplayName("the writer is built using the compiler")
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
     @SuppressWarnings("resource")
-    @Test
-    void writerIsBuiltUsingCompiler() {
+    void writerIsBuiltUsingCompiler(@Nullable Collection<String> classes) {
       // When
-      doCompile();
+      doCompile(classes);
 
       // Then
       staticMock.verify(() -> buildWriter(compiler));
     }
 
     @DisplayName("errors while building writers get re-raised")
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
     @SuppressWarnings("resource")
-    @Test
-    void errorsBuildingWritersAreReraised() {
+    void errorsBuildingWritersAreReraised(@Nullable Collection<String> classes) {
       // Given
       var ex = someUncheckedException();
       staticMock.when(() -> buildWriter(any()))
           .thenThrow(ex);
 
       // Then
-      assertThatThrownBy(this::doCompile)
+      assertThatThrownBy(() -> doCompile(classes))
           .isInstanceOf(JctCompilerException.class)
           .hasMessage("Failed to compile due to an error: %s", ex)
           .hasCause(ex);
     }
 
     @DisplayName("the writer is NOT closed after usage")
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
     @SuppressWarnings("resource")
-    @Test
-    void writerIsNotClosedAfterUsage() throws IOException {
+    void writerIsNotClosedAfterUsage(@Nullable Collection<String> classes) throws IOException {
       // DO NOT CLOSE THE WRITER, IT IS ATTACHED TO SYSTEM.OUT.
       // Closing SYSTEM.OUT causes IntelliJ to abort the entire test runner.
       //    See https://youtrack.jetbrains.com/issue/IDEA-120628
@@ -210,136 +222,166 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       staticMock.when(() -> buildWriter(any())).thenReturn(writer);
 
       // When
-      doCompile();
+      doCompile(classes);
 
       // Then
       verify(writer, never()).close();
     }
 
     @DisplayName("the file manager is built using the compiler and workspace")
-    @Test
-    void fileManagerIsBuiltUsingCompilerAndWorkspace() {
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
+    void fileManagerIsBuiltUsingCompilerAndWorkspace(@Nullable Collection<String> classes) {
       // When
-      doCompile();
+      doCompile(classes);
 
       // Then
       staticMock.verify(() -> buildFileManager(compiler, workspace));
     }
 
     @DisplayName("errors while building file managers get re-raised")
-    @Test
-    void errorsBuildingFileManagersAreReraised() {
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
+    void errorsBuildingFileManagersAreReraised(@Nullable Collection<String> classes) {
       // Given
       var ex = someUncheckedException();
       staticMock.when(() -> buildFileManager(any(), any()))
           .thenThrow(ex);
 
       // Then
-      assertThatThrownBy(this::doCompile)
+      assertThatThrownBy(() -> doCompile(classes))
           .isInstanceOf(JctCompilerException.class)
           .hasMessage("Failed to compile due to an error: %s", ex)
           .hasCause(ex);
     }
 
     @DisplayName("the file manager is closed after usage")
-    @Test
-    void fileManagerIsClosedAfterUsage() {
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
+    void fileManagerIsClosedAfterUsage(@Nullable Collection<String> classes) {
       // Given
       var fileManager = mock(JctFileManagerImpl.class);
       staticMock.when(() -> buildFileManager(any(), any()))
           .thenReturn(fileManager);
 
       // When
-      doCompile();
+      doCompile(classes);
 
       // Then
       verify(fileManager).close();
     }
 
     @DisplayName("the flags are built using the compiler and flag builder")
-    @Test
-    void flagsAreBuiltUsingCompilerAndFlagBuilder() {
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
+    void flagsAreBuiltUsingCompilerAndFlagBuilder(@Nullable Collection<String> classes) {
       // When
-      doCompile();
+      doCompile(classes);
 
       // Then
       staticMock.verify(() -> buildFlags(compiler, flagBuilder));
     }
 
     @DisplayName("errors while building flags get re-raised")
-    @Test
-    void errorsBuildingFlagsAreReraised() {
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
+    void errorsBuildingFlagsAreReraised(@Nullable Collection<String> classes) {
       // Given
       var ex = someUncheckedException();
       staticMock.when(() -> buildFlags(any(), any()))
           .thenThrow(ex);
 
       // Then
-      assertThatThrownBy(this::doCompile)
+      assertThatThrownBy(() -> doCompile(classes))
           .isInstanceOf(JctCompilerException.class)
           .hasMessage("Failed to compile due to an error: %s", ex)
           .hasCause(ex);
     }
 
     @DisplayName("the diagnostic listener is built using the compiler")
-    @Test
-    void diagnosticListenerIsBuiltUsingCompiler() {
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
+    void diagnosticListenerIsBuiltUsingCompiler(@Nullable Collection<String> classes) {
       // When
-      doCompile();
+      doCompile(classes);
 
       // Then
       staticMock.verify(() -> buildDiagnosticListener(compiler));
     }
 
     @DisplayName("errors while building diagnostic listeners get re-raised")
-    @Test
-    void errorsBuildingDiagnosticListenersAreReraised() {
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
+    void errorsBuildingDiagnosticListenersAreReraised(@Nullable Collection<String> classes) {
       // Given
       var ex = someUncheckedException();
       staticMock.when(() -> buildDiagnosticListener(any()))
           .thenThrow(ex);
 
       // Then
-      assertThatThrownBy(this::doCompile)
+      assertThatThrownBy(() -> doCompile(classes))
           .isInstanceOf(JctCompilerException.class)
           .hasMessage("Failed to compile due to an error: %s", ex)
           .hasCause(ex);
     }
 
     @DisplayName("compilation units are discovered using the file manager")
-    @Test
-    void compilationUnitsAreDiscoveredUsingTheFileManager() {
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
+    void compilationUnitsAreDiscoveredUsingTheFileManager(@Nullable Collection<String> classes) {
       // Given
       var fileManager = mock(JctFileManagerImpl.class);
       staticMock.when(() -> buildFileManager(any(), any()))
           .thenReturn(fileManager);
 
       // When
-      doCompile();
+      doCompile(classes);
 
       // Then
       staticMock.verify(() -> findCompilationUnits(fileManager));
     }
 
     @DisplayName("errors finding compilation units are reraised")
-    @Test
-    void errorsFindingCompilationUnitsAreReraised() {
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
+    void errorsFindingCompilationUnitsAreReraised(@Nullable Collection<String> classes) {
       // Given
       var ex = someIoException();
       staticMock.when(() -> findCompilationUnits(any()))
           .thenThrow(ex);
 
       // Then
-      assertThatThrownBy(this::doCompile)
+      assertThatThrownBy(() -> doCompile(classes))
           .isInstanceOf(JctCompilerException.class)
           .hasMessage("Failed to compile due to an error: %s", ex)
           .hasCause(ex);
     }
 
     @DisplayName("performCompilerPass is called with the expected arguments")
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
     @SuppressWarnings("resource")
-    @Test
-    void performCompilerPassCalledWithExpectedArguments() {
+    void performCompilerPassCalledWithExpectedArguments(@Nullable Collection<String> classes) {
       // Given
       var flags = someFlags();
       staticMock.when(() -> buildFlags(any(), any()))
@@ -364,7 +406,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenReturn(compilationUnits);
 
       // When
-      doCompile();
+      doCompile(classes);
 
       // Then
       staticMock.verify(() -> performCompilerPass(
@@ -374,20 +416,25 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           flags,
           fileManager,
           diagnosticListener,
-          compilationUnits
+          compilationUnits,
+          classes
       ));
     }
 
     @DisplayName("errors performing the compilation pass units are reraised")
-    @Test
-    void errorsPerformingTheCompilationPassAreReraised() {
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
+    void errorsPerformingTheCompilationPassAreReraised(@Nullable Collection<String> classes) {
       // Given
       var ex = someUncheckedException();
-      staticMock.when(() -> performCompilerPass(any(), any(), any(), any(), any(), any(), any()))
+      staticMock
+          .when(() -> performCompilerPass(any(), any(), any(), any(), any(), any(), any(), any()))
           .thenThrow(ex);
 
       // Then
-      assertThatThrownBy(this::doCompile)
+      assertThatThrownBy(() -> doCompile(classes))
           .isInstanceOf(JctCompilerException.class)
           .hasMessage("Failed to compile due to an error: %s", ex)
           .hasCause(ex);
@@ -432,11 +479,12 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       staticMock.when(() -> findCompilationUnits(any()))
           .thenReturn(compilationUnits);
 
-      staticMock.when(() -> performCompilerPass(any(), any(), any(), any(), any(), any(), any()))
+      staticMock
+          .when(() -> performCompilerPass(any(), any(), any(), any(), any(), any(), any(), any()))
           .thenReturn(result);
 
       // When
-      var compilation = doCompile();
+      var compilation = doCompile(null);
 
       // Then
       assertThat(compilation)
@@ -473,8 +521,11 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
 
     @SuppressWarnings("resource")
     @DisplayName("errors extracting the writer lines are reraised")
-    @Test
-    void errorsExtractingWriterLinesAreReraised() {
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
+    void errorsExtractingWriterLinesAreReraised(@Nullable Collection<String> classes) {
       // Given
       var writer = mock(TeeWriter.class);
       staticMock.when(() -> buildWriter(any()))
@@ -485,7 +536,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           .thenThrow(ex);
 
       // Then
-      assertThatThrownBy(this::doCompile)
+      assertThatThrownBy(() -> doCompile(classes))
           .isInstanceOf(JctCompilerException.class)
           .hasMessage("Failed to compile due to an error: %s", ex)
           .hasCause(ex);
@@ -1651,7 +1702,8 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
 
     @BeforeEach
     void setUp() {
-      staticMock.when(() -> performCompilerPass(any(), any(), any(), any(), any(), any(), any()))
+      staticMock
+          .when(() -> performCompilerPass(any(), any(), any(), any(), any(), any(), any(), any()))
           .thenCallRealMethod();
       when(jctJsr199Compiler.getTask(any(), any(), any(), any(), any(), any()))
           .thenReturn(task);
@@ -1659,7 +1711,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       compilationUnits = someCompilationUnits();
     }
 
-    boolean doPerformCompilerPass() {
+    boolean doPerformCompilerPass(@Nullable Collection<String> classes) {
       return performCompilerPass(
           compiler,
           jctJsr199Compiler,
@@ -1667,13 +1719,19 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           flags,
           fileManager,
           tracingDiagnosticListener,
-          compilationUnits
+          compilationUnits,
+          classes
       );
     }
 
     @DisplayName("the compilation task is initialised in the correct order before being called")
-    @Test
-    void theCompilationTaskIsInitialisedInTheCorrectOrderBeforeBeingCalled() {
+    @MethodSource(
+        "io.github.ascopes.jct.tests.unit.compilers.impl.JctJsr199InteropTest#explicitClassesArgs"
+    )
+    @ParameterizedTest(name = "for classes = {0}")
+    void theCompilationTaskIsInitialisedInTheCorrectOrderBeforeBeingCalled(
+        @Nullable Collection<String> classes
+    ) {
       // Given
       var locale = someLocale();
       when(compiler.getLocale()).thenReturn(locale);
@@ -1681,7 +1739,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       var orderedMock = inOrder(jctJsr199Compiler, JctJsr199Interop.class, task);
 
       // When
-      doPerformCompilerPass();
+      doPerformCompilerPass(classes);
 
       // Then
       orderedMock.verify(jctJsr199Compiler).getTask(
@@ -1689,7 +1747,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
           fileManager,
           tracingDiagnosticListener,
           flags,
-          null,
+          classes,
           compilationUnits
       );
       orderedMock.verify(task).setLocale(locale);
@@ -1706,7 +1764,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       when(task.call()).thenReturn(expectedResult);
 
       // When
-      var actualResult = doPerformCompilerPass();
+      var actualResult = doPerformCompilerPass(null);
 
       // Then
       assertThat(actualResult).isEqualTo(expectedResult);
@@ -1720,7 +1778,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       when(task.call()).thenReturn(null);
 
       // Then
-      assertThatThrownBy(this::doPerformCompilerPass)
+      assertThatThrownBy(() -> doPerformCompilerPass(null))
           .isInstanceOf(JctCompilerException.class)
           .hasNoCause()
           .hasMessage(
@@ -1739,7 +1797,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       when(task.call()).thenThrow(cause);
 
       // Then
-      assertThatThrownBy(this::doPerformCompilerPass)
+      assertThatThrownBy(() -> doPerformCompilerPass(null))
           .isInstanceOf(JctCompilerException.class)
           .hasCause(cause)
           .hasMessage(
@@ -1859,5 +1917,12 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       verify(task).setProcessors(List.of());
       verifyNoMoreInteractions(task);
     }
+  }
+
+  static Stream<Collection<String>> explicitClassesArgs() {
+    return Stream.of(
+        null,
+        Set.of("org.example.Foo", "org.example.Bar")
+    );
   }
 }
