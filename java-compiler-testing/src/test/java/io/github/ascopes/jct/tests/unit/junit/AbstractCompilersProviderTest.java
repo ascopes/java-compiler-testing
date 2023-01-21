@@ -18,19 +18,20 @@ package io.github.ascopes.jct.tests.unit.junit;
 import static io.github.ascopes.jct.tests.helpers.GenericMock.mockRaw;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import static org.assertj.core.api.InstanceOfAssertFactories.THROWABLE;
 import static org.assertj.core.api.InstanceOfAssertFactories.array;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.withSettings;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.ex.JctJunitConfigurerException;
 import io.github.ascopes.jct.junit.AbstractCompilersProvider;
+import io.github.ascopes.jct.junit.VersionStrategy;
 import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
@@ -49,64 +50,6 @@ import org.opentest4j.TestAbortedException;
 @DisplayName("AbstractCompilersProvider tests")
 class AbstractCompilersProviderTest {
 
-  @DisplayName("Configuring the provider with a version too low will use the minimum version")
-  @Test
-  void configuringTheProviderWithTooLowVersionWillUseTheMinimumVersion() {
-    // Given
-    var provider = new CompilersProviderImpl(8, 17);
-
-    // When
-    provider.configureInternals(5, 17);
-    var compilers = provider.provideArguments(mock(ExtensionContext.class))
-        .map(args -> (JctCompiler<?, ?>) args.get()[0])
-        .collect(Collectors.toList());
-
-    // Then
-    assertThat(compilers)
-        .as("compilers that were initialised (%s)", compilers)
-        .hasSize(17 - 8 + 1);
-
-    assertSoftly(softly -> {
-      for (var i = 0; i < compilers.size(); ++i) {
-        softly.assertThat(compilers)
-            .as("compilers[%d]", i)
-            .element(i)
-            .as("compilers[%d].getRelease()", i)
-            .extracting(JctCompiler::getRelease, STRING)
-            .isEqualTo("%d", 8 + i);
-      }
-    });
-  }
-
-  @DisplayName("Configuring the provider with a version too high will use the maximum version")
-  @Test
-  void configuringTheProviderWithTooHighVersionWillUseTheMaximumVersion() {
-    // Given
-    var provider = new CompilersProviderImpl(8, 17);
-
-    // When
-    provider.configureInternals(8, 30);
-    var compilers = provider.provideArguments(mock(ExtensionContext.class))
-        .map(args -> (JctCompiler<?, ?>) args.get()[0])
-        .collect(Collectors.toList());
-
-    // Then
-    assertThat(compilers)
-        .as("compilers that were initialised (%s)", compilers)
-        .hasSize(17 - 8 + 1);
-
-    assertSoftly(softly -> {
-      for (var i = 0; i < compilers.size(); ++i) {
-        softly.assertThat(compilers)
-            .as("compilers[%d]", i)
-            .element(i)
-            .as("compilers[%d].getRelease()", i)
-            .extracting(JctCompiler::getRelease, STRING)
-            .isEqualTo("%d", 8 + i);
-      }
-    });
-  }
-
   @DisplayName("Configuring the provider with a version below Java 8 will raise an exception")
   @CsvSource({
       "7, 12",
@@ -118,7 +61,7 @@ class AbstractCompilersProviderTest {
     var provider = new CompilersProviderImpl(3, 17);
 
     // Then
-    assertThatThrownBy(() -> provider.configureInternals(min, max))
+    assertThatThrownBy(() -> provider.configureInternals(min, max, VersionStrategy.RELEASE))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Cannot use a Java version less than Java 8");
   }
@@ -132,38 +75,91 @@ class AbstractCompilersProviderTest {
     var provider = new CompilersProviderImpl(5, 17);
 
     // Then
-    assertThatThrownBy(() -> provider.configureInternals(11, 10))
+    assertThatThrownBy(() -> provider.configureInternals(11, 10, VersionStrategy.RELEASE))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Cannot set min version to a version higher than the max version");
   }
 
-  @DisplayName("Configuring the provider with a valid version range will use that range")
+  @DisplayName("Configuring the provider with a null version strategy will raise an exception")
+  @SuppressWarnings("DataFlowIssue")
   @Test
-  void configuringTheProviderWithValidVersionRangeWillUseThatRange() {
+  void configuringTheProviderWithNullVersionStrategyWillRaiseException() {
     // Given
     var provider = new CompilersProviderImpl(8, 17);
 
+    // Then
+    assertThatThrownBy(() -> provider.configureInternals(10, 15, null))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("versionStrategy");
+  }
+
+  @DisplayName("Configuring the provider with a version strategy uses that strategy")
+  @Test
+  void configuringTheProviderWithVersionStrategyUsesThatStrategy() {
+    // Given
+    var provider = new CompilersProviderImpl(8, 17);
+    var versionStrategy = mock(VersionStrategy.class);
+
     // When
-    provider.configureInternals(10, 15);
+    provider.configureInternals(10, 15, versionStrategy);
     var compilers = provider.provideArguments(mock(ExtensionContext.class))
         .map(args -> (JctCompiler<?, ?>) args.get()[0])
         .collect(Collectors.toList());
 
     // Then
-    assertThat(compilers)
-        .as("compilers that were initialised (%s)", compilers)
-        .hasSize(6);
+    for (var i = 0; i < compilers.size(); ++i) {
+      var compiler = compilers.get(i);
+      var version = 10 + i;
+      verify(versionStrategy).configureCompiler(compiler, version);
+    }
 
-    assertSoftly(softly -> {
-      for (var i = 0; i < compilers.size(); ++i) {
-        softly.assertThat(compilers)
-            .as("compilers[%d]", i)
-            .element(i)
-            .as("compilers[%d].getRelease()", i)
-            .extracting(JctCompiler::getRelease, STRING)
-            .isEqualTo("%d", 10 + i);
-      }
-    });
+    verifyNoMoreInteractions(versionStrategy);
+  }
+
+  @DisplayName("Configuring the provider respects the minimum version bound")
+  @Test
+  void configuringTheProviderRespectsTheMinimumVersionBound() {
+    // Given
+    var provider = new CompilersProviderImpl(15, 17);
+    var versionStrategy = mock(VersionStrategy.class);
+
+    // When
+    provider.configureInternals(10, 17, versionStrategy);
+    var compilers = provider.provideArguments(mock(ExtensionContext.class))
+        .map(args -> (JctCompiler<?, ?>) args.get()[0])
+        .collect(Collectors.toList());
+
+    // Then
+    assertThat(compilers).hasSize(3);
+
+    for (var i = 0; i < compilers.size(); ++i) {
+      var compiler = compilers.get(i);
+      var version = 15 + i;
+      verify(versionStrategy).configureCompiler(compiler, version);
+    }
+  }
+
+  @DisplayName("Configuring the provider respects the maximum version bound")
+  @Test
+  void configuringTheProviderRespectsTheMaximumVersionBound() {
+    // Given
+    var provider = new CompilersProviderImpl(15, 17);
+    var versionStrategy = mock(VersionStrategy.class);
+
+    // When
+    provider.configureInternals(15, 20, versionStrategy);
+    var compilers = provider.provideArguments(mock(ExtensionContext.class))
+        .map(args -> (JctCompiler<?, ?>) args.get()[0])
+        .collect(Collectors.toList());
+
+    // Then
+    assertThat(compilers).hasSize(3);
+
+    for (var i = 0; i < compilers.size(); ++i) {
+      var compiler = compilers.get(i);
+      var version = 15 + i;
+      verify(versionStrategy).configureCompiler(compiler, version);
+    }
   }
 
   @DisplayName("Configuring the provider with configurers will initialise those configurers")
@@ -179,7 +175,8 @@ class AbstractCompilersProviderTest {
 
       // When
       provider.configureInternals(
-          10, 15, FooConfigurer.class, BarConfigurer.class, BazConfigurer.class
+          10, 15, VersionStrategy.RELEASE,
+          FooConfigurer.class, BarConfigurer.class, BazConfigurer.class
       );
       var compilers = provider.provideArguments(mock(ExtensionContext.class))
           .map(args -> (JctCompiler<?, ?>) args.get()[0])
@@ -234,7 +231,9 @@ class AbstractCompilersProviderTest {
     var provider = new CompilersProviderImpl(8, 17);
 
     // When
-    provider.configureInternals(10, 15, AbortedConstructorConfigurer.class);
+    provider.configureInternals(
+        10, 15, VersionStrategy.RELEASE, AbortedConstructorConfigurer.class
+    );
 
     // Then
     assertThatThrownBy(() -> provider.provideArguments(mock(ExtensionContext.class)).toArray())
@@ -255,7 +254,10 @@ class AbstractCompilersProviderTest {
     var provider = new CompilersProviderImpl(8, 17);
 
     // When
-    provider.configureInternals(10, 15, AbortedConfigureConfigurer.class);
+    provider.configureInternals(
+        10, 15, VersionStrategy.RELEASE,
+        AbortedConfigureConfigurer.class
+    );
 
     // Then
     assertThatThrownBy(() -> provider.provideArguments(mock(ExtensionContext.class)).toArray())
@@ -271,7 +273,9 @@ class AbstractCompilersProviderTest {
     var provider = new CompilersProviderImpl(8, 17);
 
     // When
-    provider.configureInternals(10, 15, ThrowingConstructorConfigurer.class);
+    provider.configureInternals(
+        10, 15, VersionStrategy.RELEASE, ThrowingConstructorConfigurer.class
+    );
 
     // Then
     assertThatThrownBy(() -> provider.provideArguments(mock(ExtensionContext.class)).toArray())
@@ -292,7 +296,7 @@ class AbstractCompilersProviderTest {
     var provider = new CompilersProviderImpl(8, 17);
 
     // When
-    provider.configureInternals(10, 15, AbstractConfigurer.class);
+    provider.configureInternals(10, 15, VersionStrategy.RELEASE, AbstractConfigurer.class);
 
     // Then
     assertThatThrownBy(() -> provider.provideArguments(mock(ExtensionContext.class)).toArray())
@@ -311,7 +315,9 @@ class AbstractCompilersProviderTest {
     var provider = new CompilersProviderImpl(8, 17);
 
     // When
-    provider.configureInternals(10, 15, ThrowingConfigureConfigurer.class);
+    provider.configureInternals(
+        10, 15, VersionStrategy.RELEASE, ThrowingConfigureConfigurer.class
+    );
 
     // Then
     assertThatThrownBy(() -> provider.provideArguments(mock(ExtensionContext.class)).toArray())
@@ -332,7 +338,9 @@ class AbstractCompilersProviderTest {
     var provider = new CompilersProviderImpl(8, 17);
 
     // When
-    provider.configureInternals(10, 15, NonDefaultConstructorConfigurer.class);
+    provider.configureInternals(
+        10, 15, VersionStrategy.RELEASE, NonDefaultConstructorConfigurer.class
+    );
 
     // Then
     assertThatThrownBy(() -> provider.provideArguments(mock(ExtensionContext.class)).toArray())
@@ -362,20 +370,17 @@ class AbstractCompilersProviderTest {
     final void configureInternals(
         int min,
         int max,
+        VersionStrategy versionStrategy,
         Class<? extends JctCompilerConfigurer<?>>... configurerClasses
     ) {
-      configure(min, max, false, configurerClasses);
+      configure(min, max, false, configurerClasses, versionStrategy);
     }
 
     @Override
-    protected JctCompiler<?, ?> compilerForVersion(int release) {
-      var mock = mockRaw(JctCompiler.class)
+    protected JctCompiler<?, ?> initializeNewCompiler() {
+      return mockRaw(JctCompiler.class)
           .<JctCompiler<?, ?>>upcastedTo()
-          .build();
-
-      when(mock.getRelease()).thenReturn(Integer.toString(release));
-
-      return mock;
+          .build(withSettings().name("mock compiler"));
     }
 
     @Override

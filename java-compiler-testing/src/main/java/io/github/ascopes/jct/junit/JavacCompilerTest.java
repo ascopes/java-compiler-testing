@@ -79,4 +79,15 @@ public @interface JavacCompilerTest {
    */
   boolean modules() default false;
 
+  /**
+   * The version strategy to use.
+   *
+   * <p>This determines whether the version number being iterated across specifies the
+   * release, source, target, or source and target versions.
+   *
+   * <p>The default is to specify the release.
+   *
+   * @return the version strategy to use.
+   */
+  VersionStrategy versionStrategy() default VersionStrategy.RELEASE;
 }

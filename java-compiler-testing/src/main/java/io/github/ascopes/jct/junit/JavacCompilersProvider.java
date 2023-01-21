@@ -41,8 +41,8 @@ public final class JavacCompilersProvider extends AbstractCompilersProvider
   }
 
   @Override
-  protected JctCompiler<?, ?> compilerForVersion(int release) {
-    return new JavacJctCompilerImpl("javac release " + release).release(release);
+  protected JctCompiler<?, ?> initializeNewCompiler() {
+    return new JavacJctCompilerImpl();
   }
 
   @Override
@@ -62,7 +62,8 @@ public final class JavacCompilersProvider extends AbstractCompilersProvider
         javacCompilers.minVersion(),
         javacCompilers.maxVersion(),
         javacCompilers.modules(),
-        javacCompilers.configurers()
+        javacCompilers.configurers(),
+        javacCompilers.versionStrategy()
     );
   }
 }
