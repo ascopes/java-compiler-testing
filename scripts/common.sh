@@ -55,7 +55,8 @@ function info() {
 # and fail at the end.
 # Used by the deployment pipeline.
 function ensure-set() {
-  local return_code=0
+  local return_code
+  return_code=0
 
   for variable_name; do
     if [ "${!variable_name}" = "" ]; then
@@ -65,6 +66,13 @@ function ensure-set() {
   done
 
   return "${return_code}"
+}
+
+# Dump the contents of a file.
+function dump() {
+  local name
+  name="$(basename "${1?Provide a file to dump as the first argument}}")"
+  while IFS=$'\r\n' read -r line; do __log 37 "${name}" "${line}"; done < "${1}"
 }
 
 # Visually run the command, showing the command being run, stdout, and stderr to the user.
