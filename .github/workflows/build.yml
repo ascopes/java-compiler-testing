@@ -20,27 +20,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os-name:
-          - ubuntu-22.04
-        java-version:
-          - 11
-          - 12
-          - 13
-          - 14
-          - 15
-          - 16
-          - 17
-          - 18
-          - 19
-          # Mockito currently does not support this distribution.
-          - 20-ea
+        java-version: [11, 12, 13, 14, 15, 16, 17, 18, 19]
         include:
+          # Linux builds (all supported versions).
+          - os-name: ubuntu-22.04
+
+          # Early access builds.
+          # - As of 21st January 2023, Jacoco has not yet released their updates to ASM
+          #   to support Java 20 bytecode. Therefore, we have to skip coverage here.
+          - os-name: ubuntu-22.04
+            java-version: 20-ea
+
+          # MacOS builds (only check Java 11 and 19).
           - os-name: macos-12
-            java-version: 11
-          - os-name: windows-2022
             java-version: 11
           - os-name: macos-12
             java-version: 19
+
+          # Windows builds (only check Java 11 and 19).
+          - os-name: windows-2022
+            java-version: 11
           - os-name: windows-2022
             java-version: 19
 
@@ -91,6 +90,7 @@ jobs:
           -Dlicense.skip=true
           -Dstyle.color=always
           -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+          ${{ inputs.maven-opts }}
           clean verify
 
       - name: Annotate test reports with build environment info
