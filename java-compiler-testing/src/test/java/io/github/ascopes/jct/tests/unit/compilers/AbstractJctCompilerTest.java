@@ -405,6 +405,7 @@ class AbstractJctCompilerTest {
     }
 
     @DisplayName(".configure(...) returns the compiler object")
+    @Test
     void configureReturnsTheCompiler() throws Throwable {
       // Given
       var configurer = mockRaw(JctCompilerConfigurer.class)
