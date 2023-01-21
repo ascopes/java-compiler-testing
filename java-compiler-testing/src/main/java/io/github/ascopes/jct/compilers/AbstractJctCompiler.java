@@ -25,6 +25,7 @@ import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.workspaces.Workspace;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import javax.annotation.Nullable;
@@ -125,7 +126,12 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
 
   @Override
   public JctCompilationImpl compile(Workspace workspace) {
-    return JctJsr199Interop.compile(workspace, myself(), jsr199Compiler, flagBuilder);
+    return JctJsr199Interop.compile(workspace, myself(), jsr199Compiler, flagBuilder, null);
+  }
+
+  @Override
+  public JctCompilationImpl compile(Workspace workspace, Collection<String> classNames) {
+    return JctJsr199Interop.compile(workspace, myself(), jsr199Compiler, flagBuilder, classNames);
   }
 
   @Override

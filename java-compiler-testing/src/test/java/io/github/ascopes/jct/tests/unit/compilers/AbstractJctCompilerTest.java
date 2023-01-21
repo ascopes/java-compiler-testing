@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
 import javax.tools.JavaCompiler;
@@ -329,13 +330,13 @@ class AbstractJctCompilerTest {
     }
   }
 
-  @DisplayName(".compile(...) builds the expected compilation object")
+  @DisplayName(".compile(Workspace) builds the expected compilation object")
   @Test
-  void compileReturnsTheExpectedObject() {
+  void compileWorkspaceBuildsTheExpectedCompilationObject() {
     try (var factoryCls = mockStatic(JctJsr199Interop.class)) {
       // Given
       var expectedCompilation = mock(JctCompilationImpl.class);
-      factoryCls.when(() -> JctJsr199Interop.compile(any(), any(), any(), any()))
+      factoryCls.when(() -> JctJsr199Interop.compile(any(), any(), any(), any(), any()))
           .thenReturn(expectedCompilation);
       var expectedWorkspace = mock(Workspace.class);
 
@@ -344,7 +345,29 @@ class AbstractJctCompilerTest {
 
       // Then
       factoryCls.verify(() -> JctJsr199Interop
-          .compile(expectedWorkspace, compiler, jsr199Compiler, flagBuilder));
+          .compile(expectedWorkspace, compiler, jsr199Compiler, flagBuilder, null));
+
+      assertThat(actualCompilation).isSameAs(expectedCompilation);
+    }
+  }
+
+  @DisplayName(".compile(Workspace, Collection) builds the expected compilation object")
+  @Test
+  void compileWorkspaceCollectionBuildsTheExpectedCompilationObject() {
+    try (var factoryCls = mockStatic(JctJsr199Interop.class)) {
+      // Given
+      var expectedCompilation = mock(JctCompilationImpl.class);
+      factoryCls.when(() -> JctJsr199Interop.compile(any(), any(), any(), any(), any()))
+          .thenReturn(expectedCompilation);
+      var expectedWorkspace = mock(Workspace.class);
+      var classes = Set.of("foo.bar", "baz.bork", "qux.quxx");
+
+      // When
+      var actualCompilation = compiler.compile(expectedWorkspace, classes);
+
+      // Then
+      factoryCls.verify(() -> JctJsr199Interop
+          .compile(expectedWorkspace, compiler, jsr199Compiler, flagBuilder, classes));
 
       assertThat(actualCompilation).isSameAs(expectedCompilation);
     }

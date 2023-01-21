@@ -36,10 +36,12 @@ import java.lang.module.FindException;
 import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaCompiler;
@@ -119,13 +121,17 @@ public final class JctJsr199Interop extends UtilityClass {
    * @param compiler       the compiler to use.
    * @param jsr199Compiler the JSR-199 compiler to use.
    * @param flagBuilder    the flag builder to use.
+   * @param classNames     the class names to compile, or {@code null} to automatically detect
+   *                       all classes.
    * @return the compilation factory.
    */
+  @SuppressWarnings("NullableProblems")  // https://youtrack.jetbrains.com/issue/IDEA-311124
   public static JctCompilationImpl compile(
       Workspace workspace,
       JctCompiler<?, ?> compiler,
       JavaCompiler jsr199Compiler,
-      JctFlagBuilder flagBuilder
+      JctFlagBuilder flagBuilder,
+      @Nullable Collection<String> classNames
   ) {
     // This method sucks, I hate it. If there is a nicer way of doing this without a load of
     // additional overhead, additional code, or additional complexity either in this class or the
@@ -149,7 +155,8 @@ public final class JctJsr199Interop extends UtilityClass {
           flags,
           fileManager,
           diagnosticListener,
-          compilationUnits
+          compilationUnits,
+          classNames
       );
 
       var outputLines = writer.toString().lines().collect(Collectors.toList());
@@ -506,7 +513,8 @@ public final class JctJsr199Interop extends UtilityClass {
       List<String> flags,
       JctFileManager fileManager,
       TracingDiagnosticListener<JavaFileObject> diagnosticListener,
-      List<JavaFileObject> compilationUnits
+      List<JavaFileObject> compilationUnits,
+      @Nullable Collection<String> classNames
   ) {
     var name = compiler.toString();
 
@@ -515,9 +523,7 @@ public final class JctJsr199Interop extends UtilityClass {
         fileManager,
         diagnosticListener,
         flags,
-        // TODO(ascopes): in the future, consider adding something here to allow customising
-        //  the classes that get compiled, if desired.
-        null,
+        classNames,
         compilationUnits
     );
 

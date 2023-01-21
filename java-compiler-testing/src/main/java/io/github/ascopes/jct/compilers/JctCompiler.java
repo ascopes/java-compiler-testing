@@ -23,6 +23,7 @@ import io.github.ascopes.jct.workspaces.Workspace;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import javax.annotation.Nullable;
@@ -132,14 +133,64 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
   /**
    * Invoke the compilation and return the compilation result.
    *
+   * <p>The actual classes to compile will be dynamically discovered. If you wish to
+   * specify the specific classes to compile, see {@link #compile(Workspace, String, String...)} or
+   * {@link #compile(Workspace, Collection)}.
+   *
    * @param workspace the workspace to compile.
    * @return the compilation result.
    * @throws JctCompilerException  if the compiler threw an unhandled exception. This should not
    *                               occur for compilation failures generally.
    * @throws IllegalStateException if no compilation units were found.
    * @throws UncheckedIOException  if an IO error occurs.
+   * @see #compile(Workspace, String, String...)
+   * @see #compile(Workspace, Collection)
    */
   R compile(Workspace workspace);
+
+  /**
+   * Invoke the compilation and return the compilation result.
+   *
+   * <p>Only classes matching the given class names will be compiled.
+   *
+   * <p>If you wish to let JCT determine which classes to compile dynamically, see
+   * {@link #compile(Workspace)} instead.
+   *
+   * @param workspace            the workspace to compile.
+   * @param firstClassName       the first class name to compile.
+   * @param additionalClassNames any additional class names to compile.
+   * @return the compilation result.
+   * @throws JctCompilerException  if the compiler threw an unhandled exception. This should not
+   *                               occur for compilation failures generally.
+   * @throws IllegalStateException if no compilation units were found.
+   * @throws UncheckedIOException  if an IO error occurs.
+   * @see #compile(Workspace)
+   * @see #compile(Workspace, Collection)
+   */
+  default R compile(Workspace workspace, String firstClassName, String... additionalClassNames) {
+    return compile(workspace, IterableUtils.combineOneOrMore(firstClassName, additionalClassNames));
+  }
+
+  /**
+   * Invoke the compilation and return the compilation result.
+   *
+   * <p>Only classes matching the given class names will be compiled.
+   *
+   * <p>If you wish to let JCT determine which classes to compile dynamically, see
+   * {@link #compile(Workspace)} instead.
+   *
+   * @param workspace  the workspace to compile.
+   * @param classNames the class names to compile.
+   * @return the compilation result.
+   * @throws JctCompilerException     if the compiler threw an unhandled exception. This should not
+   *                                  occur for compilation failures generally.
+   * @throws IllegalArgumentException if the collection is empty.
+   * @throws IllegalStateException    if no compilation units were found.
+   * @throws UncheckedIOException     if an IO error occurs.
+   * @see #compile(Workspace)
+   * @see #compile(Workspace, String, String...)
+   */
+  R compile(Workspace workspace, Collection<String> classNames);
 
   /**
    * Apply a given configurer to this compiler that can throw a checked exception.
