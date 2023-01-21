@@ -127,7 +127,7 @@ function xsltproc-surefire-report {
 info "Updating test reports..."
 report_count=0
 prefix="[Java-${ci_java_version}-${ci_os}]"
-concurrency="$(($(nproc) * 2))"
+concurrency="$(($(nproc) * 4))"
 
 while read -r report; do
   report_count="$((report_count+1))"
