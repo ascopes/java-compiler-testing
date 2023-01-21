@@ -1,0 +1,4 @@
+# Needed to stop Git Bash in CI accidentally injecting \r into jvm.config and breaking builds.
+*         text=auto     eol=lf
+*.cmd     text=auto     eol=crlf
+*.jar     -text

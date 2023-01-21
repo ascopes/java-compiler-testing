@@ -89,12 +89,12 @@ info "Generated XSLT script at ${surefire_prefix_xslt}"
 
 function find-all-surefire-reports {
   info "Discovering Surefire test reports"
-  find . -wholename '**/target/surefire-reports/TEST-*Test.xml' -print0 | xargs -0
+  find . -wholename '**/target/surefire-reports/TEST-*Test.xml' -print
 }
 
 function find-all-failsafe-reports {
   info "Discovering Failsafe test reports"
-  find . -wholename '**/target/failsafe-reports/TEST-*Test.xml' -print0 | xargs -0
+  find . -wholename '**/target/failsafe-reports/TEST-*Test.xml' -print
 }
 
 function find-all-jacoco-reports {
@@ -109,19 +109,39 @@ function find-all-jacoco-reports {
   fi
 }
 
+function xsltproc-surefire-report {
+  local prefix="${1}"
+  local xslt="${2}"
+  local input_report="${3}"
+  local output_report="${4}"
+
+  if ! run <<< "xsltproc --stringparam prefix '${prefix}' '${xslt}' '${input_report}' > '${output_report}'"; then
+    err "Error invoking xsltproc! Erroneous report was:"
+    dump "${input_report}"
+    return 2
+  fi
+
+  rm "${input_report}"
+}
+
 info "Updating test reports..."
 report_count=0
-for report in $(find-all-surefire-reports) $(find-all-failsafe-reports); do
+prefix="[Java-${ci_java_version}-${ci_os}]"
+concurrency="$(($(nproc) * 4))"
+
+while read -r report; do
   report_count="$((report_count+1))"
   new_report="${report/.xml/-java-${ci_java_version}-${ci_os}.xml}"
-  prefix="[Java-${ci_java_version}-${ci_os}]"
-  if ! run <<< "xsltproc --stringparam prefix '${prefix}' '${surefire_prefix_xslt}' '${report}' > '${new_report}'"; then
-    err "Error invoking xsltproc! Erroneous report was:"
-    dump "${report}"
-    exit 2
+  xsltproc-surefire-report "${prefix}" "${surefire_prefix_xslt}" "${report}" "${new_report}" &
+
+  # Wait if we have the max number of jobs in the window running (cpu-count * 4)
+  if [ "$((report_count % concurrency))" -eq 0 ]; then
+    wait < <(jobs -p)
+    info "Waited for up to ${concurrency} jobs to complete, will now continue..."
   fi
-  run <<< "rm '${report}'"
-done
+done < <(find-all-surefire-reports; find-all-failsafe-reports)
+wait < <(jobs -p)
+
 success "Updated ${report_count} test reports"
 
 info "Updating coverage reports..."

@@ -62,7 +62,7 @@ jobs:
           
           info "Determining release version to use (this may take a moment)..."
           if [[ '${{ inputs.version }}' == "" ]]; then
-            release_version="$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//g')"
+            release_version="$(./mvnw -B help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//g')"
           else
             release_version='${{ inputs.version }}'
           fi
@@ -83,14 +83,11 @@ jobs:
           run <<-SCRIPT          
             ./mvnw -B -e \
                 -Preleases \
-                --no-transfer-progress \
                 -Darguments='${build_args[@]}' \
                 -DdryRun='${{ inputs.dry-run }}' \
-                -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 \
                 -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
                 -DreleaseVersion='${release_version}' \
                 -DsignTag=false \
-                -Dstyle.color=always \
                 -Dtag='v${release_version}' \
                 release:prepare release:perform
           SCRIPT
