@@ -66,6 +66,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   private boolean showWarnings;
   private boolean showDeprecationWarnings;
   private boolean failOnWarnings;
+  private CompilationMode compilationMode;
   private Locale locale;
   private Charset logCharset;
   private boolean verbose;
@@ -104,6 +105,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     showWarnings = JctCompiler.DEFAULT_SHOW_WARNINGS;
     showDeprecationWarnings = JctCompiler.DEFAULT_SHOW_DEPRECATION_WARNINGS;
     failOnWarnings = JctCompiler.DEFAULT_FAIL_ON_WARNINGS;
+    compilationMode = JctCompiler.DEFAULT_COMPILATION_MODE;
     locale = JctCompiler.DEFAULT_LOCALE;
     logCharset = JctCompiler.DEFAULT_LOG_CHARSET;
     previewFeatures = JctCompiler.DEFAULT_PREVIEW_FEATURES;
@@ -212,6 +214,17 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   @Override
   public A failOnWarnings(boolean enabled) {
     failOnWarnings = enabled;
+    return myself();
+  }
+
+  @Override
+  public CompilationMode getCompilationMode() {
+    return compilationMode;
+  }
+
+  @Override
+  public A compilationMode(CompilationMode compilationMode) {
+    this.compilationMode = compilationMode;
     return myself();
   }
 

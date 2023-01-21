@@ -112,6 +112,12 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
   LoggingMode DEFAULT_DIAGNOSTIC_LOGGING_MODE = LoggingMode.ENABLED;
 
   /**
+   * Default setting for the compilation mode to use
+   * ({@link CompilationMode#COMPILATION_AND_ANNOTATION_PROCESSING}).
+   */
+  CompilationMode DEFAULT_COMPILATION_MODE = CompilationMode.COMPILATION_AND_ANNOTATION_PROCESSING;
+
+  /**
    * Default setting for how to apply annotation processor discovery when no processors are
    * explicitly defined ({@link AnnotationProcessorDiscovery#INCLUDE_DEPENDENCIES}).
    */
@@ -357,6 +363,27 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @return this compiler object for further call chaining.
    */
   C failOnWarnings(boolean enabled);
+
+  /**
+   * Get the compilation mode that is in use.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_COMPILATION_MODE}.
+   *
+   * @return the compilation mode.
+   */
+  CompilationMode getCompilationMode();
+
+  /**
+   * Set the compilation mode to use for this compiler.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_COMPILATION_MODE}.
+   *
+   * @param compilationMode the compilation mode to use.
+   * @return this compiler object for further call chaining.
+   */
+  C compilationMode(CompilationMode compilationMode);
 
   /**
    * Get the default release to use if no release or target version is specified.

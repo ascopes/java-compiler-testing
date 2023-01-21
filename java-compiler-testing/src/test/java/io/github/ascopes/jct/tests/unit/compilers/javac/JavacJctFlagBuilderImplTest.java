@@ -20,6 +20,7 @@ import static io.github.ascopes.jct.tests.helpers.Fixtures.someRelease;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import io.github.ascopes.jct.compilers.CompilationMode;
 import io.github.ascopes.jct.compilers.javac.JavacJctFlagBuilderImpl;
 import io.github.ascopes.jct.tests.helpers.Fixtures;
 import java.util.List;
@@ -33,6 +34,8 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 /**
@@ -179,6 +182,50 @@ class JavacJctFlagBuilderImplTest {
     void returnsFlagBuilder() {
       // Then
       assertThat(flagBuilder.failOnWarnings(someBoolean()))
+          .isSameAs(flagBuilder);
+    }
+  }
+
+  @DisplayName(".compilationMode(CompilationMode) tests")
+  @Nested
+  class CompilationModeFlagTest {
+
+    @DisplayName(".compilationMode(COMPILATION_AND_ANNOTATION_PROCESSING) adds no flags")
+    @Test
+    void compilationAndAnnotationProcessingAddsNoFlags() {
+      // When
+      flagBuilder.compilationMode(CompilationMode.COMPILATION_AND_ANNOTATION_PROCESSING);
+
+      // Then
+      assertThat(flagBuilder.build()).isEmpty();
+    }
+
+    @DisplayName(".compilationMode(COMPILATION_ONLY) adds -proc:none")
+    @Test
+    void compilationOnlyAddsProcNone() {
+      // When
+      flagBuilder.compilationMode(CompilationMode.COMPILATION_ONLY);
+
+      // Then
+      assertThat(flagBuilder.build()).containsExactly("-proc:none");
+    }
+
+    @DisplayName(".compilationMode(ANNOTATION_PROCESSING_ONLY) adds -proc:only")
+    @Test
+    void annotationProcessingOnlyAddsProcOnly() {
+      // When
+      flagBuilder.compilationMode(CompilationMode.ANNOTATION_PROCESSING_ONLY);
+
+      // Then
+      assertThat(flagBuilder.build()).containsExactly("-proc:only");
+    }
+
+    @DisplayName(".compilationMode(...) returns the flag builder")
+    @EnumSource(CompilationMode.class)
+    @ParameterizedTest(name = "for compilationMode = {0}")
+    void returnsFlagBuilder(CompilationMode mode) {
+      // Then
+      assertThat(flagBuilder.compilationMode(mode))
           .isSameAs(flagBuilder);
     }
   }
