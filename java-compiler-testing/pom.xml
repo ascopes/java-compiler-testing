@@ -157,7 +157,7 @@
       <id>coverage</id>
       <activation>
         <!-- JDK-20 EA does not support JaCoCo yet due to the use of ASM -->
-        <jdk>[,19]</jdk>
+        <jdk>[,20)</jdk>
       </activation>
 
       <build>
