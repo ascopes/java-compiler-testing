@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.compilers.javac;
 
+import io.github.ascopes.jct.compilers.CompilationMode;
 import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +71,25 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   @Override
   public JavacJctFlagBuilderImpl failOnWarnings(boolean enabled) {
     return addFlagIfTrue(enabled, WERROR);
+  }
+
+  @Override
+  public JctFlagBuilder compilationMode(CompilationMode compilationMode) {
+    switch (compilationMode) {
+      case COMPILATION_ONLY:
+        craftedFlags.add("-proc:none");
+        break;
+
+      case ANNOTATION_PROCESSING_ONLY:
+        craftedFlags.add("-proc:only");
+        break;
+
+      default:
+        // Do nothing. The default behaviour is to allow this.
+        break;
+    }
+
+    return this;
   }
 
   @Override

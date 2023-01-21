@@ -29,6 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import io.github.ascopes.jct.compilers.AbstractJctCompiler;
+import io.github.ascopes.jct.compilers.CompilationMode;
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.compilers.JctFlagBuilder;
@@ -200,6 +201,14 @@ class AbstractJctCompilerTest {
       // Then
       assertThatCompilerField("failOnWarnings")
           .isEqualTo(JctCompiler.DEFAULT_FAIL_ON_WARNINGS);
+    }
+
+    @DisplayName("constructor initialises compilationMode to default value")
+    @Test
+    void constructorInitialisesCompilationModeToDefaultValue() {
+      // Then
+      assertThatCompilerField("compilationMode")
+          .isEqualTo(JctCompiler.DEFAULT_COMPILATION_MODE);
     }
 
     @DisplayName("constructor initialises locale to default value")
@@ -620,6 +629,43 @@ class AbstractJctCompilerTest {
     void failOnWarningsReturnsTheCompiler() {
       // When
       var result = compiler.failOnWarnings(true);
+
+      // Then
+      assertThat(result).isSameAs(compiler);
+    }
+  }
+
+  @DisplayName(".isCompilationMode() returns the expected values")
+  @EnumSource(CompilationMode.class)
+  @ParameterizedTest(name = "for compilationMode = {0}")
+  void isCompilationModeReturnsExpectedValue(CompilationMode expected) {
+    // Given
+    setFieldOnCompiler("compilationMode", expected);
+
+    // Then
+    assertThat(compiler.getCompilationMode()).isEqualTo(expected);
+  }
+
+  @DisplayName("AbstractJctCompiler#compilationMode tests")
+  @Nested
+  class CompilationModeTests {
+
+    @DisplayName(".compilationMode(...) sets the expected values")
+    @EnumSource(CompilationMode.class)
+    @ParameterizedTest(name = "for compilationMode = {0}")
+    void compilationModeSetsExpectedValue(CompilationMode expected) {
+      // When
+      compiler.compilationMode(expected);
+
+      // Then
+      assertThatCompilerField("compilationMode").isEqualTo(expected);
+    }
+
+    @DisplayName(".compilationMode(...) returns the compiler")
+    @Test
+    void compilationModeReturnsTheCompiler() {
+      // When
+      var result = compiler.compilationMode(CompilationMode.COMPILATION_AND_ANNOTATION_PROCESSING);
 
       // Then
       assertThat(result).isSameAs(compiler);

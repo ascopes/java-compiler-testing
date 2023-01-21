@@ -63,6 +63,14 @@ public interface JctFlagBuilder {
   JctFlagBuilder failOnWarnings(boolean enabled);
 
   /**
+   * Set the compilation mode to run under.
+   *
+   * @param compilationMode the compilation mode to run under.
+   * @return this builder.
+   */
+  JctFlagBuilder compilationMode(CompilationMode compilationMode);
+
+  /**
    * Add deprecation warning preferences.
    *
    * @param enabled whether the feature is enabled.
