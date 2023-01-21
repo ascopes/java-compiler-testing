@@ -23,7 +23,9 @@ import static org.mockito.Mockito.mock;
 import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import javax.tools.JavaFileManager.Location;
+import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -76,4 +78,18 @@ class JctFileManagerImplTest {
     assertThat(jctFileManager.hasLocation(outputLocation)).isTrue();
   }
 
+  @Test
+  @DisplayName("Tests addPath method for adding module location")
+  void testAddPathForModuleLocation() {
+    var moduleLocation = StandardLocation.locationFor(StandardLocation.MODULE_PATH.name());
+    var pathRoot = mock(PathRoot.class);
+    var path = Paths.get(".").normalize().toAbsolutePath();
+
+    // we mock path because it is needed by AbstractPackageContainerGroup
+    given(pathRoot.getPath()).willReturn(path);
+
+    JctFileManagerImpl jctFileManager = JctFileManagerImpl.forRelease("test");
+    jctFileManager.addPath(moduleLocation, pathRoot);
+    assertThat(jctFileManager.hasLocation(moduleLocation)).isEqualTo(true);
+  }
 }
