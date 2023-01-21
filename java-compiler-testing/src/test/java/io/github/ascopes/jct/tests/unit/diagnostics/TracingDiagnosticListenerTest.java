@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import io.github.ascopes.jct.tests.helpers.Slf4jLoggerFake;
+import io.github.ascopes.jct.utils.LoomPolyfill;
 import java.time.Instant;
 import java.util.List;
 import java.util.function.Supplier;
@@ -164,26 +165,28 @@ class TracingDiagnosticListenerTest {
   @ParameterizedTest(name = "for logging={0}, stackTraces={1}")
   void diagnosticsAreLoggedWithTheExpectedThreadId(boolean logging, boolean stackTraces) {
     // Given
-    var threadId = someLong(16_000L, 65_536L);
-    var currentThread = mock(Thread.class);
+    try (var loomPolyfill = mockStatic(LoomPolyfill.class)) {
 
-    // Thread#getId deprecated for Thread#threadId in Java 19.
-    when(currentThread.getId()).thenReturn(threadId);
-    when(currentThread.getStackTrace()).thenReturn(new StackTraceElement[0]);
-    var listener = new AccessibleImpl<>(() -> currentThread, logging, stackTraces);
+      var threadId = someLong(16_000L, 65_536L);
+      var currentThread = mock(Thread.class);
+      loomPolyfill.when(() -> LoomPolyfill.getThreadId(currentThread)).thenReturn(threadId);
 
-    var originalDiagnostic = someDiagnostic();
-    when(originalDiagnostic.getKind()).thenReturn(Kind.OTHER);
-    when(originalDiagnostic.getMessage(ROOT)).thenReturn("Testing thread IDs");
+      when(currentThread.getStackTrace()).thenReturn(new StackTraceElement[0]);
+      var listener = new AccessibleImpl<>(() -> currentThread, logging, stackTraces);
 
-    // When
-    listener.report(originalDiagnostic);
+      var originalDiagnostic = someDiagnostic();
+      when(originalDiagnostic.getKind()).thenReturn(Kind.OTHER);
+      when(originalDiagnostic.getMessage(ROOT)).thenReturn("Testing thread IDs");
 
-    // Then
-    assertThat(listener.getDiagnostics())
-        .singleElement()
-        .extracting(TraceDiagnostic::getThreadId)
-        .isEqualTo(threadId);
+      // When
+      listener.report(originalDiagnostic);
+
+      // Then
+      assertThat(listener.getDiagnostics())
+          .singleElement()
+          .extracting(TraceDiagnostic::getThreadId)
+          .isEqualTo(threadId);
+    }
   }
 
   @DisplayName("Diagnostics are logged with the expected thread name")

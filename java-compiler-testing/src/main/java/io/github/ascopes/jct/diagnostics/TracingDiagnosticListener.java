@@ -17,6 +17,7 @@ package io.github.ascopes.jct.diagnostics;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.utils.LoomPolyfill;
 import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
@@ -130,10 +131,7 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
     var thisThread = threadGetter.get();
     var threadName = thisThread.getName();
     var stackTrace = List.of(thisThread.getStackTrace());
-
-    // Thread#getId deprecated for Thread#threadId in Java 19.
-    @SuppressWarnings("deprecation")
-    var threadId = thisThread.getId();
+    var threadId = LoomPolyfill.getThreadId(thisThread);
 
     var wrapped = new TraceDiagnostic<S>(now, threadId, threadName, stackTrace, diagnostic);
 
