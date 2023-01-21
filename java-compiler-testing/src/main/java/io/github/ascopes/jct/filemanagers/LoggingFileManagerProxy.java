@@ -71,8 +71,6 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
    */
   @Override
   public Object invoke(Object proxy, Method method, @Nullable Object[] args) throws Throwable {
-    // TODO(ascopes): does this work with methods that have receiver types?
-    //    e.g.  public @Override String toString(JctFileManager this) { ... }
     if (method.getName().equals("toString") && method.getParameterCount() == 0) {
       return toString();
     }
