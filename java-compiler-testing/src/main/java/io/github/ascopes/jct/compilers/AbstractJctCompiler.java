@@ -440,10 +440,12 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   /**
    * Get the compiler name.
    *
+   * @deprecated Use {@link #getName()} instead.
    * @return the compiler name.
    * @see #getName()
    * @see #name(String)
    */
+  @Deprecated
   @Override
   public final String toString() {
     return name;
