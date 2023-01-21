@@ -28,6 +28,7 @@ import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilersProvider;
+import io.github.ascopes.jct.junit.VersionStrategy;
 import java.lang.reflect.AnnotatedElement;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
@@ -69,7 +70,7 @@ class JavacCompilersProviderTest {
           var compiler = compilers.get(i);
           softly.assertThat(compiler.getName())
               .as("compilers[%d].getName()", i)
-              .isEqualTo("javac release %d", 10 + i);
+              .isEqualTo("JDK Compiler (release = Java %d)", 10 + i);
           softly.assertThat(compiler.getRelease())
               .as("compilers[%d].getRelease()", i)
               .isEqualTo("%d", 10 + i);
@@ -106,7 +107,7 @@ class JavacCompilersProviderTest {
           var compiler = compilers.get(i);
           softly.assertThat(compiler.getName())
               .as("compilers[%d].getName()", i)
-              .isEqualTo("javac release %d", 8 + i);
+              .isEqualTo("JDK Compiler (release = Java %d)", 8 + i);
           softly.assertThat(compiler.getRelease())
               .as("compilers[%d].getRelease()", i)
               .isEqualTo("%d", 8 + i);
@@ -143,7 +144,7 @@ class JavacCompilersProviderTest {
           var compiler = compilers.get(i);
           softly.assertThat(compiler.getName())
               .as("compilers[%d].getName()", i)
-              .isEqualTo("javac release %d", 10 + i);
+              .isEqualTo("JDK Compiler (release = Java %d)", 10 + i);
           softly.assertThat(compiler.getRelease())
               .as("compilers[%d].getRelease()", i)
               .isEqualTo("%d", 10 + i);
@@ -164,6 +165,7 @@ class JavacCompilersProviderTest {
     when(annotation.maxVersion()).thenReturn(max);
     when(annotation.modules()).thenReturn(modules);
     when(annotation.configurers()).thenReturn(configurers);
+    when(annotation.versionStrategy()).thenReturn(VersionStrategy.RELEASE);
     when(annotation.annotationType()).thenAnswer(ctx -> JavacCompilerTest.class);
     return annotation;
   }

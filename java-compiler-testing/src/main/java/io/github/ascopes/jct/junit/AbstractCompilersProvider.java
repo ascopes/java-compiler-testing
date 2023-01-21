@@ -51,6 +51,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
  *     int minVersion() default Integer.MIN_VALUE;
  *     int maxVersion() default Integer.MAX_VALUE;
  *     Class&lt;? extends JctSimpleCompilerConfigurer&gt;[] configurers() default {};
+ *     VersionStrategy versionStrategy() default VersionStrategy.RELEASE;
  * }
  * </code></pre>
  *
@@ -62,18 +63,18 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
  *     implements AnnotationConsumer&lt;MyCompilerTest&gt; {
  *
  *   {@literal @Override}
- *   protected JctCompiler&lt;?, ?&gt; compilerForVersion(int release) {
- *     return new MyCompilerImpl().release(release);
+ *   protected JctCompiler&lt;?, ?&gt; initializeNewCompiler() {
+ *     return new MyCompilerImpl();
  *   }
  *
  *   {@literal @Override}
  *   protected int minSupportedVersion(boolean modules) {
- *     return 11;
+ *     return 11;  // Support Java 11 as the minimum.
  *   }
  *
  *   {@literal @Override}
  *   protected int maxSupportedVersion(boolean modules) {
- *     return 19;
+ *     return 19;  // Support Java 19 as the maximum.
  *   }
  *
  *   {@literal @Override}
@@ -82,7 +83,8 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
  *         annotation.minVersion(),
  *         annotation.maxVersion(),
  *         true,
- *         annotation.configurers()
+ *         annotation.configurers(),
+ *         annotation.versionStrategy(),
  *     );
  *   }
  * }
@@ -121,6 +123,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   private int minVersion;
   private int maxVersion;
   private Class<? extends JctCompilerConfigurer<?>>[] configurerClasses;
+  private VersionStrategy versionStrategy;
 
   /**
    * Initialise this provider.
@@ -129,13 +132,18 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
     minVersion = 0;
     maxVersion = Integer.MAX_VALUE;
     configurerClasses = emptyArray();
+    versionStrategy = VersionStrategy.RELEASE;
   }
 
   @Override
   public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
     return IntStream
         .rangeClosed(minVersion, maxVersion)
-        .mapToObj(this::compilerForVersion)
+        .mapToObj(version -> {
+          var compiler = initializeNewCompiler();
+          versionStrategy.configureCompiler(compiler, version);
+          return compiler;
+        })
         .peek(this::applyConfigurers)
         .map(Arguments::of);
   }
@@ -147,12 +155,14 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
    * @param max               the inclusive maximum compiler version to use.
    * @param modules           whether the compiler version must support modules.
    * @param configurerClasses the configurer classes to apply to each compiler.
+   * @param versionStrategy   the version strategy to use.
    */
   protected final void configure(
       int min,
       int max,
       boolean modules,
-      Class<? extends JctCompilerConfigurer<?>>[] configurerClasses
+      Class<? extends JctCompilerConfigurer<?>>[] configurerClasses,
+      VersionStrategy versionStrategy
   ) {
     min = Math.max(min, minSupportedVersion(modules));
     max = Math.min(max, maxSupportedVersion(modules));
@@ -171,15 +181,15 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
     maxVersion = max;
 
     this.configurerClasses = requireNonNullValues(configurerClasses, "configurerClasses");
+    this.versionStrategy = requireNonNull(versionStrategy, "versionStrategy");
   }
 
   /**
-   * Initialise a new compiler on the given release.
+   * Initialise a new compiler.
    *
-   * @param release the release version to use.
-   * @return the compiler.
+   * @return the compiler object.
    */
-  protected abstract JctCompiler<?, ?> compilerForVersion(int release);
+  protected abstract JctCompiler<?, ?> initializeNewCompiler();
 
   /**
    * Get the minimum supported compiler version.
@@ -201,7 +211,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
     var classes = requireNonNull(configurerClasses);
 
     for (var configurerClass : classes) {
-      var configurer = initialiseConfigurer(configurerClass);
+      var configurer = initializeConfigurer(configurerClass);
 
       try {
         configurer.configure(compiler);
@@ -218,7 +228,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
     }
   }
 
-  private JctCompilerConfigurer<?> initialiseConfigurer(
+  private JctCompilerConfigurer<?> initializeConfigurer(
       Class<? extends JctCompilerConfigurer<?>> configurerClass
   ) {
     Constructor<? extends JctCompilerConfigurer<?>> constructor;
