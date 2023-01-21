@@ -109,7 +109,11 @@ jobs:
         if: always()
         shell: bash
         run: |-
+          # Allow ** globbing
           set +f -x
+          # Allow globs to not match anything without causing errors.
+          shopt -s nullglob
+          
           tar -czvf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tgz \
               **/target/failsafe-reports/** \
               **/target/surefire-reports/** \
@@ -169,7 +173,11 @@ jobs:
         if: always()
         shell: bash
         run: |-
+          # Allow ** globbing
           set +f -x
+          # Allow globs to not match anything without causing errors.
+          shopt -s nullglob
+          
           tar -czvf reports-mutation-tests.tgz **/target/pit-reports/pit-reports/**
 
       - name: Stash reports tarball
