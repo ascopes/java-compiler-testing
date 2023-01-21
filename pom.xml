@@ -21,7 +21,7 @@
 
   <groupId>io.github.ascopes.jct</groupId>
   <artifactId>java-compiler-testing-parent</artifactId>
-  <version>0.0.1-M6-SNAPSHOT</version>
+  <version>0.0.1-M6</version>
   <packaging>pom</packaging>
 
   <name>Java Compiler Testing parent project</name>
@@ -89,7 +89,7 @@
     <url>scm:git:${project.url}</url>
     <connection>scm:git:${project.url}</connection>
     <developerConnection>scm:git:${project.url}</developerConnection>
-    <tag>vHEAD</tag>
+    <tag>v0.0.1-M6</tag>
   </scm>
 
   <properties>
