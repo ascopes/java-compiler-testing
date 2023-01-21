@@ -31,6 +31,7 @@ import org.apiguardian.api.API.Status;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.opentest4j.TestAbortedException;
 
 /**
  * Base for defining a compiler-supplying arguments-provider for JUnit Jupiter parameterised test
@@ -139,11 +140,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
     return IntStream
         .rangeClosed(minVersion, maxVersion)
-        .mapToObj(version -> {
-          var compiler = initializeNewCompiler();
-          versionStrategy.configureCompiler(compiler, version);
-          return compiler;
-        })
+        .mapToObj(this::createCompilerForVersion)
         .peek(this::applyConfigurers)
         .map(Arguments::of);
   }
@@ -207,6 +204,12 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
    */
   protected abstract int maxSupportedVersion(@SuppressWarnings("unused") boolean modules);
 
+  private JctCompiler<?, ?> createCompilerForVersion(int version) {
+    var compiler = initializeNewCompiler();
+    versionStrategy.configureCompiler(compiler, version);
+    return compiler;
+  }
+
   private void applyConfigurers(JctCompiler<?, ?> compiler) {
     var classes = requireNonNull(configurerClasses);
 
@@ -217,7 +220,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
         configurer.configure(compiler);
       } catch (Exception ex) {
         if (isTestAbortedException(ex)) {
-          sneakyThrow(ex);
+          throw (TestAbortedException) ex;
         }
 
         throw new JctJunitConfigurerException(
@@ -254,7 +257,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
         if (isTestAbortedException(target)) {
           // XXX: Creates a circular reference, do we care? JVM should handle thisfor us.
           target.addSuppressed(ex);
-          sneakyThrow(target);
+          throw (TestAbortedException) target;
         }
       }
 
@@ -275,11 +278,5 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
     // We don't actually need to cover junit4 or testng here since this package specifically deals
     // with JUnit5 only.
     return ex.getClass().getName().equals("org.opentest4j.TestAbortedException");
-  }
-
-  @SuppressWarnings("unchecked")
-  private static <T extends Throwable> void sneakyThrow(Throwable t) throws T {
-    // Confuses the compiler into ignoring the unchecked throwing of a checked exception.
-    throw (T) t;
   }
 }
