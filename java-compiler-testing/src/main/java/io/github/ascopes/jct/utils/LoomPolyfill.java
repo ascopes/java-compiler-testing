@@ -40,6 +40,9 @@ public final class LoomPolyfill extends UtilityClass {
    * @return the thread ID (possibly the virtual thread ID).
    */
   public static long getThreadId(Thread thread) {
+    // Note: this test will never get 100% coverage on one JDK, because it totally depends on the
+    // JDK in use as to which code path runs. In CI, it should get covered when reports are merged.
+
     try {
       // If we are on JDK 19, attempt to call the .threadId() method instead of the .getId()
       // method. The former is new to JDK 19 and fetches the virtual thread ID.
