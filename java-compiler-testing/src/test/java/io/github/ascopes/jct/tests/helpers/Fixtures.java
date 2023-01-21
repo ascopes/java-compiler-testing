@@ -38,6 +38,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -231,6 +232,19 @@ public final class Fixtures {
     var mock = someTraceDiagnostic();
     when(mock.getKind()).thenReturn(kind);
     return mock;
+  }
+
+  /**
+   * Get a real stack trace array.
+   *
+   * @return the mock.
+   */
+  public static StackTraceElement[] someRealStackTrace() {
+    var trace = Arrays.asList(Thread.currentThread().getStackTrace());
+    // No need to have 500 stack trace frames in test logs.
+    var shortTrace = trace.subList(2, Math.min(10, trace.size()));
+    return shortTrace.toArray(StackTraceElement[]::new);
+
   }
 
   /**

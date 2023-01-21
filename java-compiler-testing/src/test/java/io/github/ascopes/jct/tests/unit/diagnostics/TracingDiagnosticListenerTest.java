@@ -18,6 +18,7 @@ package io.github.ascopes.jct.tests.unit.diagnostics;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someBoolean;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someDiagnostic;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someLong;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someRealStackTrace;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static java.util.Locale.ROOT;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -243,7 +244,7 @@ class TracingDiagnosticListenerTest {
   @ParameterizedTest(name = "for logging={0}, stackTraces={1}")
   void diagnosticsAreLoggedWithTheExpectedStackTrace(boolean logging, boolean stackTraces) {
     // Given
-    var stackTrace = new StackTraceElement[0];
+    var stackTrace = someRealStackTrace();
     var currentThread = mock(Thread.class);
     when(currentThread.getStackTrace()).thenReturn(stackTrace);
     var listener = new AccessibleImpl<>(() -> currentThread, logging, stackTraces);
@@ -313,7 +314,7 @@ class TracingDiagnosticListenerTest {
     var logger = new Slf4jLoggerFake();
 
     var thread = mock(Thread.class);
-    var stackTrace = new StackTraceElement[0];
+    var stackTrace = someRealStackTrace();
     when(thread.getStackTrace()).thenReturn(stackTrace);
     var listener = new AccessibleImpl<>(logger, () -> thread, true, true);
 
@@ -370,7 +371,7 @@ class TracingDiagnosticListenerTest {
     // Given
     var logger = new Slf4jLoggerFake();
     var thread = mock(Thread.class);
-    var stackTrace = new StackTraceElement[0];
+    var stackTrace = someRealStackTrace();
     when(thread.getStackTrace()).thenReturn(stackTrace);
     var listener = new AccessibleImpl<>(logger, () -> thread, true, true);
 
@@ -428,7 +429,7 @@ class TracingDiagnosticListenerTest {
     var logger = new Slf4jLoggerFake();
 
     var thread = mock(Thread.class);
-    var stackTrace = new StackTraceElement[0];
+    var stackTrace = someRealStackTrace();
     when(thread.getStackTrace()).thenReturn(stackTrace);
     var listener = new AccessibleImpl<>(logger, () -> thread, true, true);
 
