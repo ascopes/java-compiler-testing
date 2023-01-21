@@ -30,6 +30,8 @@ jobs:
           #   to support Java 20 bytecode. Therefore, we have to skip coverage here.
           - os-name: ubuntu-22.04
             java-version: 20-ea
+          - os-name: ubuntu-22.04
+            java-version: 21-ea
 
           # MacOS builds (only check Java 11 and 19).
           - os-name: macos-12
