@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.compilers.impl;
 
+import io.github.ascopes.jct.compilers.CompilationMode;
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import io.github.ascopes.jct.diagnostics.TeeWriter;
@@ -394,6 +395,15 @@ public final class JctJsr199Interop extends UtilityClass {
       JctCompiler<?, ?> compiler,
       JctFileManagerImpl fileManager
   ) {
+    if (compiler.getCompilationMode() == CompilationMode.COMPILATION_ONLY) {
+      LOGGER.debug(
+          "Not configuring annotation processor paths as annotation processing is disabled "
+              + "by this compiler mode"
+      );
+
+      return;
+    }
+
     switch (compiler.getAnnotationProcessorDiscovery()) {
       case INCLUDE_DEPENDENCIES:
         LOGGER.trace("Copying classpath dependencies into the annotation processor path");
@@ -590,8 +600,16 @@ public final class JctJsr199Interop extends UtilityClass {
     var processors = compiler.getAnnotationProcessors();
     var discovery = compiler.getAnnotationProcessorDiscovery();
 
+    if (compiler.getCompilationMode() == CompilationMode.COMPILATION_ONLY) {
+      LOGGER.debug(
+          "Not configuring annotation processor discovery as annotation processing is disabled "
+              + "by this compiler mode"
+      );
+      return;
+    }
+
     if (!processors.isEmpty()) {
-      LOGGER.trace("Annotation processor discovery is disabled (processors explicitly provided)");
+      LOGGER.debug("Annotation processor discovery is disabled (processors explicitly provided)");
       task.setProcessors(processors);
       return;
     }
@@ -600,6 +618,7 @@ public final class JctJsr199Interop extends UtilityClass {
       case INCLUDE_DEPENDENCIES:
         LOGGER.debug("Annotation processor discovery will scan the source paths and dependencies");
         break;
+
       case ENABLED:
         LOGGER.trace("Annotation processor discovery will scan the source paths");
         break;

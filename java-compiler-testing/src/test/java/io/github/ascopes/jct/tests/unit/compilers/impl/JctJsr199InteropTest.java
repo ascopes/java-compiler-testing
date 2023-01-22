@@ -68,6 +68,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
+import io.github.ascopes.jct.compilers.CompilationMode;
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
@@ -1340,7 +1341,7 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
   @Nested
   class ConfigureAnnotationProcessorPathsTest {
 
-    @Mock
+    @Mock(strictness = Mock.Strictness.LENIENT)
     JctCompiler<?, ?> compiler;
 
     @Mock
@@ -1350,10 +1351,33 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       configureAnnotationProcessorPaths(compiler, fileManager);
     }
 
-    @DisplayName("Ensure containers copied when AP discovery included with dependencies")
-    @Test
-    void ensureContainersAreCopiedWhenApDiscoveryIncludedWithDependencies() {
+    @DisplayName("Ensure no containers are copied if annotation processing is disabled")
+    @EnumSource(AnnotationProcessorDiscovery.class)
+    @ParameterizedTest(name = "for discovery mode = {0}")
+    void ensureNoOperationsWhenAnnotationProcessingDisabled(AnnotationProcessorDiscovery discovery) {
       // Given
+      when(compiler.getCompilationMode())
+          .thenReturn(CompilationMode.COMPILATION_ONLY);
+      when(compiler.getAnnotationProcessorDiscovery())
+          .thenReturn(discovery);
+
+      // When
+      doConfigureAnnotationProcessorPaths();
+
+      // Then
+      verify(compiler).getCompilationMode();
+      verifyNoMoreInteractions(compiler);
+      verifyNoInteractions(fileManager);
+    }
+
+    @DisplayName("Ensure containers copied when AP discovery included with dependencies")
+    @EnumSource(value = CompilationMode.class, names = "COMPILATION_ONLY", mode = Mode.EXCLUDE)
+    @ParameterizedTest(name = "for compilation mode = {0}")
+    void ensureContainersAreCopiedWhenApDiscoveryIncludedWithDependencies(CompilationMode mode) {
+      // Given
+      when(compiler.getCompilationMode())
+          .thenReturn(mode);
+
       when(compiler.getAnnotationProcessorDiscovery())
           .thenReturn(AnnotationProcessorDiscovery.INCLUDE_DEPENDENCIES);
 
@@ -1366,12 +1390,20 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     }
 
     @DisplayName("Ensure ANNOTATION_PROCESSOR_PATH exists when AP discovery enabled")
-    @EnumSource(value = AnnotationProcessorDiscovery.class, mode = Mode.EXCLUDE, names = "DISABLED")
-    @ParameterizedTest(name = "when AnnotationProcessorDiscovery set to {0}")
+    @CsvSource({
+        "INCLUDE_DEPENDENCIES, COMPILATION_AND_ANNOTATION_PROCESSING",
+        "INCLUDE_DEPENDENCIES, ANNOTATION_PROCESSING_ONLY",
+        "ENABLED,              COMPILATION_AND_ANNOTATION_PROCESSING",
+        "ENABLED,              ANNOTATION_PROCESSING_ONLY",
+    })
+    @ParameterizedTest(name = "when AnnotationProcessorDiscovery = {0} and compilation mode = {1}")
     void ensureAnnotationProcessorPathExistsWhenApDiscoveryEnabled(
-        AnnotationProcessorDiscovery discovery
+        AnnotationProcessorDiscovery discovery,
+        CompilationMode mode
     ) {
       // Given
+      when(compiler.getCompilationMode())
+          .thenReturn(mode);
       when(compiler.getAnnotationProcessorDiscovery())
           .thenReturn(discovery);
 
@@ -1383,9 +1415,12 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
     }
 
     @DisplayName("Ensure no changes if AP discovery is disabled")
-    @Test
-    void ensureNoChangesIfApDiscoveryDisabled() {
+    @EnumSource(value = CompilationMode.class, names = "COMPILATION_ONLY", mode = Mode.EXCLUDE)
+    @ParameterizedTest(name = "for compilation mode = {0}")
+    void ensureNoChangesIfApDiscoveryDisabled(CompilationMode compilationMode) {
       // Given
+      when(compiler.getCompilationMode())
+          .thenReturn(compilationMode);
       when(compiler.getAnnotationProcessorDiscovery())
           .thenReturn(AnnotationProcessorDiscovery.DISABLED);
 
@@ -1827,42 +1862,54 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       configureAnnotationProcessorDiscovery(compiler, task);
     }
 
-    @DisplayName("Disable AP discovery if any Processors are provided and discovery is ENABLED")
-    @ValueSource(ints = {1, 2, 3, 5, 10})
-    @ParameterizedTest(name = "for {0} explicit processor(s)")
-    void disableApDiscoveryIfAnyProcessorsAreProvidedExplicitlyAndDiscoveryEnabled(int count) {
-      disableApDiscoveryIfAnyProcessorsAreProvided(AnnotationProcessorDiscovery.ENABLED, count);
-    }
-
-    @DisplayName("Disable AP discovery if any Processors are provided and discovery is DISABLED")
-    @ValueSource(ints = {1, 2, 3, 5, 10})
-    @ParameterizedTest(name = "for {0} explicit processor(s)")
-    void disableApDiscoveryIfAnyProcessorsAreProvidedExplicitlyAndDiscoveryDisabled(int count) {
-      disableApDiscoveryIfAnyProcessorsAreProvided(AnnotationProcessorDiscovery.DISABLED, count);
-    }
-
-    @DisplayName(
-        "Disable AP discovery if any Processors are provided and discovery is INCLUDE_DEPENDENCIES"
+    @DisplayName("Disable AP discovery if any Processors are provided")
+    @CsvSource({
+        "ENABLED,              COMPILATION_AND_ANNOTATION_PROCESSING,  1",
+        "ENABLED,              ANNOTATION_PROCESSING_ONLY,             1",
+        "ENABLED,              COMPILATION_AND_ANNOTATION_PROCESSING,  2",
+        "ENABLED,              ANNOTATION_PROCESSING_ONLY,             2",
+        "ENABLED,              COMPILATION_AND_ANNOTATION_PROCESSING,  3",
+        "ENABLED,              ANNOTATION_PROCESSING_ONLY,             3",
+        "ENABLED,              COMPILATION_AND_ANNOTATION_PROCESSING,  5",
+        "ENABLED,              ANNOTATION_PROCESSING_ONLY,             5",
+        "ENABLED,              COMPILATION_AND_ANNOTATION_PROCESSING, 10",
+        "ENABLED,              ANNOTATION_PROCESSING_ONLY,            10",
+        "INCLUDE_DEPENDENCIES, COMPILATION_AND_ANNOTATION_PROCESSING,  1",
+        "INCLUDE_DEPENDENCIES, ANNOTATION_PROCESSING_ONLY,             1",
+        "INCLUDE_DEPENDENCIES, COMPILATION_AND_ANNOTATION_PROCESSING,  2",
+        "INCLUDE_DEPENDENCIES, ANNOTATION_PROCESSING_ONLY,             2",
+        "INCLUDE_DEPENDENCIES, COMPILATION_AND_ANNOTATION_PROCESSING,  3",
+        "INCLUDE_DEPENDENCIES, ANNOTATION_PROCESSING_ONLY,             3",
+        "INCLUDE_DEPENDENCIES, COMPILATION_AND_ANNOTATION_PROCESSING,  5",
+        "INCLUDE_DEPENDENCIES, ANNOTATION_PROCESSING_ONLY,             5",
+        "INCLUDE_DEPENDENCIES, COMPILATION_AND_ANNOTATION_PROCESSING, 10",
+        "INCLUDE_DEPENDENCIES, ANNOTATION_PROCESSING_ONLY,            10",
+        "DISABLED,             COMPILATION_AND_ANNOTATION_PROCESSING,  1",
+        "DISABLED,             ANNOTATION_PROCESSING_ONLY,             1",
+        "DISABLED,             COMPILATION_AND_ANNOTATION_PROCESSING,  2",
+        "DISABLED,             ANNOTATION_PROCESSING_ONLY,             2",
+        "DISABLED,             COMPILATION_AND_ANNOTATION_PROCESSING,  3",
+        "DISABLED,             ANNOTATION_PROCESSING_ONLY,             3",
+        "DISABLED,             COMPILATION_AND_ANNOTATION_PROCESSING,  5",
+        "DISABLED,             ANNOTATION_PROCESSING_ONLY,             5",
+        "DISABLED,             COMPILATION_AND_ANNOTATION_PROCESSING, 10",
+        "DISABLED,             ANNOTATION_PROCESSING_ONLY,            10",
+    })
+    @ParameterizedTest(
+        name = "for {2} explicit processor(s) when compilation mode = {1} and discovery = {0}"
     )
-    @ValueSource(ints = {1, 2, 3, 5, 10})
-    @ParameterizedTest(name = "for {0} explicit processor(s)")
-    void disableApDiscoveryIfAnyProcessorsAreProvidedExplicitlyAndDiscoveryIncludeDependencies(
-        int count
-    ) {
-      disableApDiscoveryIfAnyProcessorsAreProvided(
-          AnnotationProcessorDiscovery.INCLUDE_DEPENDENCIES,
-          count
-      );
-    }
-
-    private void disableApDiscoveryIfAnyProcessorsAreProvided(
+    void disableApDiscoveryIfAnyProcessorsAreProvidedExplicitly(
         AnnotationProcessorDiscovery discovery,
+        CompilationMode compilationMode,
         int processorCount
     ) {
       // Given
       var processors = Stream.generate(Fixtures::someAnnotationProcessor)
           .limit(processorCount)
           .collect(Collectors.toList());
+
+      when(compiler.getCompilationMode())
+          .thenReturn(compilationMode);
 
       when(compiler.getAnnotationProcessorDiscovery())
           .thenReturn(discovery);
@@ -1878,6 +1925,25 @@ class JctJsr199InteropTest implements UtilityClassTestTemplate {
       verify(compiler).getAnnotationProcessorDiscovery();
       verify(compiler).getAnnotationProcessors();
       verifyNoMoreInteractions(compiler);
+    }
+
+    @DisplayName("Do nothing when the compiler mode disables annotation processing")
+    @EnumSource(value = AnnotationProcessorDiscovery.class)
+    @ParameterizedTest(name = "for discovery mode {0}")
+    void ignoreAnnotationProcessing(AnnotationProcessorDiscovery discovery) {
+      // Given
+      when(compiler.getCompilationMode())
+          .thenReturn(CompilationMode.COMPILATION_ONLY);
+      when(compiler.getAnnotationProcessorDiscovery())
+          .thenReturn(discovery);
+      when(compiler.getAnnotationProcessors())
+          .thenReturn(List.of());
+
+      // When
+      doConfigureAnnotationProcessorDiscovery();
+
+      // Then
+      verifyNoInteractions(task);
     }
 
     @DisplayName("Enable AP discovery when no processors are provided and discovery is enabled")
