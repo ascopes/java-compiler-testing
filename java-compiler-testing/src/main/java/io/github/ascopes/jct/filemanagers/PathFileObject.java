@@ -121,7 +121,7 @@ public class PathFileObject implements JavaFileObject {
     try {
       return Files.deleteIfExists(fullPath);
     } catch (IOException ex) {
-      LOGGER.warn("Ignoring error deleting {}", uri, ex);
+      LOGGER.debug("Ignoring error deleting {}", uri, ex);
       return false;
     }
   }
@@ -188,7 +188,7 @@ public class PathFileObject implements JavaFileObject {
     try {
       return Files.getLastModifiedTime(fullPath).toMillis();
     } catch (IOException ex) {
-      LOGGER.warn("Ignoring error reading last modified time for {}", uri, ex);
+      LOGGER.debug("Ignoring error reading last modified time for {}", uri, ex);
       return NOT_MODIFIED;
     }
   }

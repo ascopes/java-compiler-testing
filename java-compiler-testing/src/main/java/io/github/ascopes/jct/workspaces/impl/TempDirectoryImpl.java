@@ -64,8 +64,8 @@ public final class TempDirectoryImpl extends AbstractManagedDirectory {
 
   @Override
   public void close() throws IOException {
-    LOGGER.debug(
-        "Deleting temporary directory ({} @ {})",
+    LOGGER.trace(
+        "Deleting temporary directory ('{}' @ {})",
         rootDirectory.toUri(),
         rootDirectory.getFileSystem()
     );
@@ -74,14 +74,14 @@ public final class TempDirectoryImpl extends AbstractManagedDirectory {
       @Override
       public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         Files.delete(file);
-        LOGGER.trace("Deleted {}", file);
+        LOGGER.trace("Deleted file '{}' from temporary directory '{}'", file, rootDirectory);
         return super.visitFile(file, attrs);
       }
 
       @Override
       public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
         Files.delete(dir);
-        LOGGER.trace("Deleted {}", dir);
+        LOGGER.trace("Deleted directory '{}' within temporary directory '{}'", dir, rootDirectory);
         return super.postVisitDirectory(dir, exc);
       }
     });
@@ -100,7 +100,7 @@ public final class TempDirectoryImpl extends AbstractManagedDirectory {
     // TODO(ascopes): are MS-DOS file name length limits a potential issue here?
     assertValidRootName(name);
     var tempDir = uncheckedIo(() -> Files.createTempDirectory("jct-" + name + "_"));
-    LOGGER.debug("Initialized new root '{}' using temporary path at {}", name, tempDir);
+    LOGGER.debug("Initialized new root '{}' using temporary directory at '{}'", name, tempDir);
     return new TempDirectoryImpl(name, tempDir);
   }
 }

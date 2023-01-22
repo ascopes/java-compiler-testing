@@ -176,7 +176,7 @@ public final class FileBuilderImpl implements FileBuilder {
       case "ram":
         return input;
       default:
-        LOGGER.trace("Decided to wrap input {} in a buffer", input);
+        LOGGER.trace("Decided to wrap input {} in a buffer - scheme was {}", input, scheme);
         return new BufferedInputStream(input);
     }
   }

@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
@@ -187,14 +188,16 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
       // Has to be on the default file system.
       root = Files.createTempDirectory("SpecialLocationsTest_" + UUID.randomUUID());
       Files.createDirectories(root);
-      LOGGER.debug("Created tempdir {}", root);
+      LOGGER.trace("Created temporary directory location at '{}'", root);
 
       paths = new ArrayList<>();
       for (var i = 0; i < 10; ++i) {
         var nextPath = Files
             .createDirectory(root.resolve(someText()))
             .toAbsolutePath();
-        LOGGER.trace("Created dir within temp location {}", nextPath);
+        LOGGER.trace(
+            "Created directory '{}' within temporary directory location '{}'", nextPath, root
+        );
         paths.add(nextPath);
       }
     }
@@ -236,18 +239,17 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
           Files.delete(file);
-          LOGGER.trace("Deleted file for temp location {}", file);
+          LOGGER.trace("Deleted file '{}' within temporary location '{}'", file, root);
           return FileVisitResult.CONTINUE;
         }
 
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
           Files.delete(dir);
-          LOGGER.trace("Deleted dir for temp location {}", dir);
+          LOGGER.trace("Deleted directory '{}' within temporary location '{}'", dir, root);
           return FileVisitResult.CONTINUE;
         }
       });
-      LOGGER.debug("Deleted temp dir {}", root);
     }
   }
 
@@ -271,6 +273,8 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
   private static class MockedSystemProperty implements AutoCloseable {
 
     private final String name;
+
+    @Nullable
     private final String oldValue;
 
     private MockedSystemProperty(String name, String newValue) {

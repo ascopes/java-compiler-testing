@@ -90,7 +90,7 @@ public final class DirectoryBuilderImpl implements DirectoryBuilder {
           // Fix windows-style separators if needed.
           var targetChildDirectory = targetPath.resolve(collapsePath(rootDir.relativize(dir)));
 
-          LOGGER.trace("making directory {} (existing {})", targetChildDirectory, dir);
+          LOGGER.trace("Creating directory from {} to {}", dir, targetChildDirectory);
 
           // Ignore if the directory already exists (will occur for the root).
           Files.createDirectories(targetChildDirectory);
@@ -105,7 +105,7 @@ public final class DirectoryBuilderImpl implements DirectoryBuilder {
           // Fix windows-style separators if needed.
           var targetFile = targetPath.resolve(collapsePath(rootDir.relativize(file)));
 
-          LOGGER.trace("copying {} to {}", file, targetFile);
+          LOGGER.trace("Copying file from {} to {}", file, targetFile);
 
           Files.copy(file, targetFile);
           return FileVisitResult.CONTINUE;

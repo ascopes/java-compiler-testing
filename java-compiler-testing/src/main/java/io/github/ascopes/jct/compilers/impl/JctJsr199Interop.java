@@ -250,16 +250,16 @@ public final class JctJsr199Interop extends UtilityClass {
    */
   public static String determineRelease(JctCompiler<?, ?> compiler) {
     if (compiler.getRelease() != null) {
-      LOGGER.trace("Using explicitly set release as the base release version internally");
+      LOGGER.debug("Using explicitly set release as the base release version internally");
       return compiler.getRelease();
     }
 
     if (compiler.getTarget() != null) {
-      LOGGER.trace("Using explicitly set target as the base release version internally");
+      LOGGER.debug("Using explicitly set target as the base release version internally");
       return compiler.getTarget();
     }
 
-    LOGGER.trace("Using compiler default release as the base release version internally");
+    LOGGER.debug("Using compiler default release as the base release version internally");
     return compiler.getDefaultRelease();
   }
 
@@ -406,19 +406,19 @@ public final class JctJsr199Interop extends UtilityClass {
 
     switch (compiler.getAnnotationProcessorDiscovery()) {
       case INCLUDE_DEPENDENCIES:
-        LOGGER.trace("Copying classpath dependencies into the annotation processor path");
+        LOGGER.debug("Copying classpath dependencies into the annotation processor path");
         INHERITED_AP_PATHS.forEach(fileManager::copyContainers);
         fileManager.ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
         break;
 
       case ENABLED:
-        LOGGER.trace("Annotation processor discovery is enabled, ensuring empty location exists");
+        LOGGER.debug("Annotation processor discovery is enabled, ensuring empty location exists");
         fileManager.ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
         break;
 
       case DISABLED:
       default:
-        LOGGER.trace("Not configuring annotation processor discovery");
+        LOGGER.debug("Not configuring annotation processor discovery");
         // There is nothing to do to the file manager to configure annotation processing at this
         // time.
         break;
@@ -437,7 +437,7 @@ public final class JctJsr199Interop extends UtilityClass {
   ) {
     for (var location : REQUIRED_LOCATIONS) {
       if (!fileManager.hasLocation(location)) {
-        LOGGER.trace("Creating a new package workspace for {}", location);
+        LOGGER.debug("Creating a new package workspace for {}", location);
         fileManager.addPath(location, workspace.createPackage(location));
       }
     }
@@ -620,12 +620,12 @@ public final class JctJsr199Interop extends UtilityClass {
         break;
 
       case ENABLED:
-        LOGGER.trace("Annotation processor discovery will scan the source paths");
+        LOGGER.debug("Annotation processor discovery will scan the source paths");
         break;
 
       case DISABLED:
       default:
-        LOGGER.trace("Annotation processor discovery will be disabled");
+        LOGGER.debug("Annotation processor discovery will be disabled");
         // Set an empty list to avoid discovery being performed.
         task.setProcessors(List.of());
         break;

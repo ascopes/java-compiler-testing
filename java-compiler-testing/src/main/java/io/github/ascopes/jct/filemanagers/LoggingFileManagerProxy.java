@@ -21,9 +21,11 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
-import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 import javax.annotation.WillCloseWhenClosed;
 import javax.annotation.WillNotClose;
@@ -79,68 +81,58 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
     var thread = Thread.currentThread();
     var threadId = LoomPolyfill.getThreadId(thread);
 
-    var depth = incStackDepth();
+    var depth = incrementStackDepth();
     var returnType = method.getReturnType().getSimpleName();
     var methodName = method.getName();
-    var paramStr = Arrays
-        .stream(method.getParameters())
+    var paramStr = Stream
+        .of(method.getParameters())
         .map(Parameter::getType)
         .map(Class::getSimpleName)
         .collect(Collectors.joining(", "));
 
     // When no arguments are passed, the args array is
     // null rather than a zero length array (i.e. Object[0]).
-    var argsStr = args == null ? "" : Arrays
-        .stream(args)
+    var argsStr = args == null ? "" : Stream
+        .of(args)
         .map(Objects::toString)
         .collect(Collectors.joining(", "));
 
-    var extraInfo = "";
-
-    if (stackTraces) {
-      // skip top 2 frames to discard the call to
-      // .getStackTrace(), and this proxy method call.
-      extraInfo = Arrays
-          .stream(thread.getStackTrace())
-          .skip(2)
-          .map(frame -> "\n\tat " + frame)
-          .collect(Collectors.joining(""));
-    }
-
-    LOGGER.info(
-        ">>> [thread={}, depth={}] {} {}({}) called with ({}){}",
-        threadId,
-        depth,
-        returnType,
-        methodName,
-        paramStr,
-        argsStr,
-        extraInfo
-    );
+    LOGGER
+        .atInfo()
+        .setMessage(">>> [thread={}, depth={}] {} {}({}) called with ({}){}")
+        .addArgument(threadId)
+        .addArgument(depth)
+        .addArgument(returnType)
+        .addArgument(methodName)
+        .addArgument(paramStr)
+        .addArgument(argsStr)
+        .addArgument(stackTraceFormatter(thread.getStackTrace()))
+        .log();
 
     try {
       var result = method.invoke(inner, args);
 
       if (method.getReturnType().equals(void.class)) {
-        LOGGER.info(
-            "<<< [thread={}, depth={}] {} {}({}) completed",
-            threadId,
-            depth,
-            returnType,
-            methodName,
-            paramStr
-        );
-
+        LOGGER
+            .atDebug()
+            .setMessage("<<< [thread={}, depth={}] {} {}({}) completed")
+            .addArgument(threadId)
+            .addArgument(depth)
+            .addArgument(returnType)
+            .addArgument(methodName)
+            .addArgument(paramStr)
+            .log();
       } else {
-        LOGGER.info(
-            "<<< [thread={}, depth={}] {} {}({}) returned {}",
-            threadId,
-            depth,
-            returnType,
-            methodName,
-            paramStr,
-            result
-        );
+        LOGGER
+            .atDebug()
+            .setMessage("<<< [thread={}, depth={}] {} {}({}) returned {}")
+            .addArgument(threadId)
+            .addArgument(depth)
+            .addArgument(returnType)
+            .addArgument(methodName)
+            .addArgument(paramStr)
+            .addArgument(result)
+            .log();
       }
 
       return result;
@@ -159,20 +151,21 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
         cause.addSuppressed(ex);
       }
 
-      LOGGER.error(
-          "!!! [thread={}, depth={}] {} {}({}) threw exception",
-          threadId,
-          depth,
-          returnType,
-          methodName,
-          paramStr,
-          cause
-      );
+      LOGGER
+          .atInfo()
+          .setMessage("!!! [thread={}, depth={}] {} {}({}) threw exception")
+          .addArgument(threadId)
+          .addArgument(depth)
+          .addArgument(returnType)
+          .addArgument(methodName)
+          .addArgument(paramStr)
+          .addArgument(cause)
+          .log();
 
       throw cause;
 
     } finally {
-      decStackDepth();
+      decrementStackDepth();
     }
   }
 
@@ -184,15 +177,26 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
         .toString();
   }
 
-  private int incStackDepth() {
+  private int incrementStackDepth() {
     var depth = stackDepth.get() + 1;
     stackDepth.set(depth);
     return depth;
   }
 
-  private void decStackDepth() {
+  private void decrementStackDepth() {
     var depth = stackDepth.get() - 1;
     stackDepth.set(depth);
+  }
+
+  private Supplier<String> stackTraceFormatter(StackTraceElement[] stackTrace) {
+    if (!stackTraces) {
+      return () -> "";
+    }
+
+    return () -> Stream
+        .of(stackTrace)
+        .map(frame -> "\n\t" + frame)
+        .collect(Collectors.joining());
   }
 
   /**
@@ -203,6 +207,7 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
    *                    omit them.
    * @return the proxy {@link JctFileManager} to use.
    */
+  @CheckReturnValue
   @WillNotClose
   public static JctFileManager wrap(
       @WillCloseWhenClosed JctFileManager manager,

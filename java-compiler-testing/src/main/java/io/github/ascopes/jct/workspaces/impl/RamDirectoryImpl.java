@@ -77,7 +77,12 @@ public final class RamDirectoryImpl extends AbstractManagedDirectory {
 
   @Override
   public void close() throws IOException {
-    LOGGER.debug("Closing RAM file system {} ({} @ {})", name, rootDirectory.toUri(), fileSystem);
+    LOGGER.trace(
+        "Closing RAM file system '{}' ('{}' @ {})",
+        name,
+        rootDirectory.toUri(),
+        fileSystem
+    );
     fileSystem.close();
   }
 
@@ -109,7 +114,11 @@ public final class RamDirectoryImpl extends AbstractManagedDirectory {
 
     var fs = new RamDirectoryImpl(name, fileSystem, path);
 
-    LOGGER.debug("Initialized new root '{}' using RAM disk at {}", name, path.toUri());
+    LOGGER.debug(
+        "Initialized new root '{}' using RAM disk at '{}'",
+        name,
+        path.toUri()
+    );
 
     return fs;
   }

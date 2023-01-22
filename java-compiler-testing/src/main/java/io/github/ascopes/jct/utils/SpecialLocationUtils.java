@@ -129,7 +129,7 @@ public final class SpecialLocationUtils extends UtilityClass {
     var mxBean = ManagementFactory.getRuntimeMXBean();
 
     if (mxBean.isBootClassPathSupported()) {
-      LOGGER.debug("Platform (boot) classpath is supported on this JVM, so will be inspected");
+      LOGGER.trace("Platform (boot) classpath is supported on this JVM, so will be inspected");
       return createPaths(mxBean.getBootClassPath());
     }
 
@@ -165,7 +165,7 @@ public final class SpecialLocationUtils extends UtilityClass {
     var fileName = path.getFileName().toString();
 
     if (BLACKLISTED_FILE_NAMES.contains(fileName)) {
-      LOGGER.debug("Excluding {} from classpath as it is a blacklisted file", fileName);
+      LOGGER.trace("Excluding {} from classpath as it is a blacklisted file", fileName);
       return true;
     }
 

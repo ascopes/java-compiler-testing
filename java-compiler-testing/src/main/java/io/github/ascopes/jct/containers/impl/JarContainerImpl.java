@@ -300,7 +300,7 @@ public final class JarContainerImpl implements Container {
     }
 
     private void close() throws IOException {
-      LOGGER.debug(
+      LOGGER.trace(
           "Closing JAR file system handle ({} @ {})",
           jarPath.getUri(),
           fileSystem.getRootDirectories()
