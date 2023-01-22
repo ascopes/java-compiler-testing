@@ -217,19 +217,34 @@ jobs:
         if: always()
         shell: bash
         run: |-
+          # Allow ** globbing
+          set +f -x
+          # Allow globs to not match anything without causing errors.
+          shopt -s nullglob
+          
+          # Download the files we need.
           curl --fail https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring \
               --keyring trustedkeys.gpg --import
+                  
           curl --fail -Os https://uploader.codecov.io/latest/linux/codecov
           curl --fail -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
           curl --fail -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig
+          
+          # Verify the signatures so we know the script is legit.
           gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
           shasum -a 256 -c codecov.SHA256SUM
+          
+          # Make the script executable.
           chmod -v +x codecov
-          ./codecov -v
-          # TODO: upload unit test and integration test reports separately so that
-          # codecov processes it correctly. Need to hard-wire the paths in here somehow.
-          #./codecov -c -F unit -v
-          #./codecov -c -F integration -v
+          
+          # We have to upload these reports separately for codecov to process them correctly
+          # since we have feature flags enabled.
+          
+          # Upload unit test coverage with unit test feature flag. 
+          ./codecov -c -f **/target/site/jacoco/unit/jacoco*.xml -F unit -v
+          
+          # Upload integration test coverage with integration feature flag.
+          ./codecov -c -f **/target/site/jacoco/int/jacoco*.xml -F integration -v
 
   formatting:
     name: Check formatting and licenses

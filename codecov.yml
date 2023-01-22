@@ -16,10 +16,8 @@
 
 # General behaviour.
 codecov:
-  branch: main
   max_report_age: 12
   require_ci_to_pass: true
-  strict_yaml_branch: main
 
 # PR comment format.
 comment:
@@ -32,42 +30,25 @@ comment:
 # Global coverage options.
 coverage:
   precision: 2
-  range: "10...100"
+  range: "50...100"
   round: down
 
 # Feature flags
-# TODO: enable when codecov fix this feature, and then readd flags in uploader for build.yml
-#flag_management:
-#  default_rules:
-#    carryforward: true
-#    statuses:
-#      - type: project
-#        target: auto
-#        threshold: 1%
-#      - type: patch
-#        target: 90%
-#
-#  individual_flags:
-#    # Unit testing coverage
-#    - name: unit
-#      carryforward: true
-#      paths:
-#        - '**/target/site/jacoco/unit/jacoco*.xml'
-#      statuses:
-#        - type: project
-#          target: auto
-#          threshold: 65%
-#        - type: patch
-#          target: 90%
-#
-#    # Integration testing coverage
-#    - name: integration
-#      carryforward: true
-#      paths:
-#        - '**/target/site/jacoco/int/jacoco*.xml'
-#      statuses:
-#        - type: project
-#          target: auto
-#          threshold: 0%
-#        - type: patch
-#          target: 0%
+flags:
+  individual_flags:
+    - name: unit
+      paths: [.]
+      carryforward: true
+      statuses:
+        - type: project
+          target: 50%
+        - type: patch
+          target: 95%
+    - name: integration
+      paths: [.]
+      carryforward: true
+      statuses:
+        - type: project
+          target: 50%
+        - type: patch
+          target: 0%
