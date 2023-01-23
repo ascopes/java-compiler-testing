@@ -33,15 +33,15 @@ class JctFileManagerImplTest {
   @Test
   @DisplayName("generates JctFileManager instance for a release")
   void testGettingJctFileManagerImplInstance() {
-    assertThat(JctFileManagerImpl.forRelease("test")).isInstanceOf(JctFileManagerImpl.class);
+    assertThat(new JctFileManagerImpl("test"))
+        .isInstanceOf(JctFileManagerImpl.class);
   }
 
   @Test
   @DisplayName("null release is disallowed")
   void testIfNullPointerExceptionThrownIfReleaseNull() {
-    assertThatThrownBy(() -> {
-      JctFileManagerImpl.forRelease(null);
-    }).isInstanceOf(NullPointerException.class)
+    assertThatThrownBy(() -> new JctFileManagerImpl(null))
+        .isInstanceOf(NullPointerException.class)
         .hasMessage("release");
   }
 
@@ -55,7 +55,7 @@ class JctFileManagerImplTest {
     // we mock path because it is needed by AbstractPackageContainerGroup
     given(pathRoot.getPath()).willReturn(path);
 
-    var jctFileManager = JctFileManagerImpl.forRelease("test");
+    var jctFileManager = new JctFileManagerImpl("test");
     jctFileManager.addPath(packageLocation, pathRoot);
     assertThat(jctFileManager.hasLocation(packageLocation)).isTrue();
   }
@@ -71,7 +71,7 @@ class JctFileManagerImplTest {
     given(pathRoot.getPath()).willReturn(path);
     given(outputLocation.isOutputLocation()).willReturn(true);
 
-    var jctFileManager = JctFileManagerImpl.forRelease("test");
+    var jctFileManager = new JctFileManagerImpl("test");
     jctFileManager.addPath(outputLocation, pathRoot);
     assertThat(jctFileManager.hasLocation(outputLocation)).isTrue();
   }

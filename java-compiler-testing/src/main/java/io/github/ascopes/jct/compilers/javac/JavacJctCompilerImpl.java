@@ -20,6 +20,8 @@ import static java.util.Objects.requireNonNull;
 import io.github.ascopes.jct.compilers.AbstractJctCompiler;
 import io.github.ascopes.jct.compilers.JctFlagBuilderFactory;
 import io.github.ascopes.jct.compilers.Jsr199CompilerFactory;
+import io.github.ascopes.jct.filemanagers.JctFileManagerFactory;
+import io.github.ascopes.jct.filemanagers.impl.JctFileManagerFactoryImpl;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.lang.model.SourceVersion;
 import javax.tools.ToolProvider;
@@ -51,15 +53,20 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
   }
 
   @Override
-  public JctFlagBuilderFactory getJctFlagBuilderFactory() {
+  public JctFlagBuilderFactory getFlagBuilderFactory() {
     return JavacJctFlagBuilderImpl::new;
   }
 
   @Override
-  public Jsr199CompilerFactory getJsr199CompilerFactory() {
+  public Jsr199CompilerFactory getCompilerFactory() {
     // RequireNonNull to ensure the return result is non-null, since the ToolProvider
     // method is not annotated.
     return () -> requireNonNull(ToolProvider.getSystemJavaCompiler());
+  }
+
+  @Override
+  public JctFileManagerFactory getFileManagerFactory() {
+    return new JctFileManagerFactoryImpl(this);
   }
 
   /**

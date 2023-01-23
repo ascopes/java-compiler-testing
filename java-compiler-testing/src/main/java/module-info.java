@@ -86,6 +86,11 @@
  * </code></pre>
  */
 module io.github.ascopes.jct {
+
+  ////////////////////
+  /// DEPENDENCIES ///
+  ////////////////////
+
   requires java.compiler;
   requires java.management;
   requires jimfs;
@@ -96,27 +101,41 @@ module io.github.ascopes.jct {
   requires static transitive org.junit.jupiter.params;
   requires org.slf4j;
 
+  //////////////////
+  /// PUBLIC API ///
+  //////////////////
+
   exports io.github.ascopes.jct.assertions;
   exports io.github.ascopes.jct.containers;
   exports io.github.ascopes.jct.compilers;
   exports io.github.ascopes.jct.diagnostics;
   exports io.github.ascopes.jct.ex;
   exports io.github.ascopes.jct.filemanagers;
+  exports io.github.ascopes.jct.filemanagers.config;
   exports io.github.ascopes.jct.junit;
   exports io.github.ascopes.jct.repr;
   exports io.github.ascopes.jct.workspaces;
+
+  ////////////////////////////////////////////////////////////////////////
+  /// EXPOSURE OF JUNIT ANNOTATIONS TO JUNIT COMPONENTS FOR REFLECTION ///
+  ////////////////////////////////////////////////////////////////////////
 
   opens io.github.ascopes.jct.junit;
 
   //////////////////////////////////////////////////////
   /// EXPOSURE OF INTERNALS TO THE TESTING NAMESPACE ///
   //////////////////////////////////////////////////////
+
   exports io.github.ascopes.jct.compilers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.filemanagers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.workspaces.impl to io.github.ascopes.jct.testing;
+
+  //////////////////////////////////////////////////////////////////////////
+  /// EXPOSURE OF ALL COMPONENTS TO THE TESTING NAMESPACE FOR REFLECTION ///
+  //////////////////////////////////////////////////////////////////////////
 
   opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers to io.github.ascopes.jct.testing;
@@ -127,6 +146,7 @@ module io.github.ascopes.jct {
   opens io.github.ascopes.jct.diagnostics to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.ex to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.filemanagers to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.filemanagers.config to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.filemanagers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.repr to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;

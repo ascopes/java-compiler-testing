@@ -50,7 +50,7 @@ public final class TeeWriter extends Writer {
   // and the delegated output writer at the same time.
   private final StringBuilder builder;
 
-  private TeeWriter(@WillCloseWhenClosed Writer writer) {
+  public TeeWriter(@WillCloseWhenClosed Writer writer) {
     lock = new Object();
     closed = false;
 
@@ -115,6 +115,7 @@ public final class TeeWriter extends Writer {
    * @param outputStream the output stream to delegate to.
    * @return the tee writer.
    */
+  @Deprecated(forRemoval = true)
   public static TeeWriter wrap(
       Charset charset,
       @WillCloseWhenClosed OutputStream outputStream
@@ -134,6 +135,7 @@ public final class TeeWriter extends Writer {
    * @param writer the writer to wrap.
    * @return the tee writer.
    */
+  @Deprecated(forRemoval = true)
   public static TeeWriter wrap(@WillCloseWhenClosed Writer writer) {
     return new TeeWriter(writer);
   }

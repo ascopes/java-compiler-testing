@@ -59,7 +59,7 @@ class JavacJctCompilerImplTest {
       toolProviderMock.when(ToolProvider::getSystemJavaCompiler).thenReturn(jsr199Compiler);
 
       // When
-      var actualCompiler = compiler.getJsr199CompilerFactory().createCompiler();
+      var actualCompiler = compiler.getCompilerFactory().createCompiler();
 
       // Then
       toolProviderMock.verify(ToolProvider::getSystemJavaCompiler);
@@ -73,7 +73,7 @@ class JavacJctCompilerImplTest {
     // Given
     try (var flagBuilderMock = mockConstruction(JavacJctFlagBuilderImpl.class)) {
       // When
-      var flagBuilder = compiler.getJctFlagBuilderFactory().createFlagBuilder();
+      var flagBuilder = compiler.getFlagBuilderFactory().createFlagBuilder();
 
       // Then
       assertThat(flagBuilderMock.constructed()).hasSize(1);
