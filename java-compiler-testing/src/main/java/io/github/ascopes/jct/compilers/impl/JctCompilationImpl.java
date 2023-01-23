@@ -52,9 +52,14 @@ public final class JctCompilationImpl implements JctCompilation {
   private final List<TraceDiagnostic<JavaFileObject>> diagnostics;
   private final JctFileManager fileManager;
 
+  @SuppressWarnings("ConstantConditions")
   private JctCompilationImpl(Builder builder) {
-    success = requireNonNull(builder.success, "success");
-    failOnWarnings = requireNonNull(builder.failOnWarnings, "failOnWarnings");
+    success = requireNonNull(
+        builder.success, "success"
+    );
+    failOnWarnings = requireNonNull(
+        builder.failOnWarnings, "failOnWarnings"
+    );
     outputLines = unmodifiableList(
         requireNonNullValues(builder.outputLines, "outputLines")
     );
@@ -64,7 +69,9 @@ public final class JctCompilationImpl implements JctCompilation {
     diagnostics = unmodifiableList(
         requireNonNullValues(builder.diagnostics, "diagnostics")
     );
-    fileManager = requireNonNull(builder.fileManager, "fileManager");
+    fileManager = requireNonNull(
+        builder.fileManager, "fileManager"
+    );
   }
 
   @Override

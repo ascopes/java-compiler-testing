@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -33,6 +34,8 @@ import io.github.ascopes.jct.compilers.CompilationMode;
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.compilers.JctFlagBuilder;
+import io.github.ascopes.jct.compilers.JctFlagBuilderFactory;
+import io.github.ascopes.jct.compilers.Jsr199CompilerFactory;
 import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
 import io.github.ascopes.jct.compilers.impl.JctJsr199Interop;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
@@ -93,7 +96,7 @@ class AbstractJctCompilerTest {
   void setUp() {
     name = someText();
     defaultRelease = Integer.toString(someInt(11, 21));
-    compiler = new CompilerImpl(name, jsr199Compiler, flagBuilder, defaultRelease);
+    compiler = spy(new CompilerImpl(name, defaultRelease));
   }
 
   @DisplayName("AbstractJctCompiler constructor tests")
@@ -106,27 +109,9 @@ class AbstractJctCompilerTest {
     @Test
     void constructorRaisesNullPointerExceptionIfNameIsNull() {
       // Then
-      assertThatThrownBy(() -> new CompilerImpl(null, jsr199Compiler, flagBuilder, defaultRelease))
+      assertThatThrownBy(() -> new CompilerImpl(null, defaultRelease))
           .isInstanceOf(NullPointerException.class)
           .hasMessage("name");
-    }
-
-    @DisplayName("constructor raises a NullPointerException if jsr199Compiler is null")
-    @Test
-    void constructorRaisesNullPointerExceptionIfJsr199CompilerIsNull() {
-      // Then
-      assertThatThrownBy(() -> new CompilerImpl(name, null, flagBuilder, defaultRelease))
-          .isInstanceOf(NullPointerException.class)
-          .hasMessage("jsr199Compiler");
-    }
-
-    @DisplayName("constructor raises a NullPointerException if flagBuilder is null")
-    @Test
-    void constructorRaisesNullPointerExceptionIfFlagBuilderIsNull() {
-      // Then
-      assertThatThrownBy(() -> new CompilerImpl(name, jsr199Compiler, null, defaultRelease))
-          .isInstanceOf(NullPointerException.class)
-          .hasMessage("flagBuilder");
     }
 
     @DisplayName("constructor initialises name correctly")
@@ -135,22 +120,6 @@ class AbstractJctCompilerTest {
       // Then
       assertThatCompilerField("name")
           .isSameAs(name);
-    }
-
-    @DisplayName("constructor initialises jsr199Compiler correctly")
-    @Test
-    void constructorInitialisesJsr199CompilerCorrectly() {
-      // Then
-      assertThatCompilerField("jsr199Compiler")
-          .isSameAs(jsr199Compiler);
-    }
-
-    @DisplayName("constructor initialises flag builder correctly")
-    @Test
-    void constructorInitialisesFlagBuilderCorrectly() {
-      // Then
-      assertThatCompilerField("flagBuilder")
-          .isSameAs(flagBuilder);
     }
 
     @DisplayName("constructor initialises annotationProcessors to empty list")
@@ -333,10 +302,10 @@ class AbstractJctCompilerTest {
   @DisplayName(".compile(Workspace) builds the expected compilation object")
   @Test
   void compileWorkspaceBuildsTheExpectedCompilationObject() {
-    try (var factoryCls = mockStatic(JctJsr199Interop.class)) {
+    try (var interopCls = mockStatic(JctJsr199Interop.class)) {
       // Given
       var expectedCompilation = mock(JctCompilationImpl.class);
-      factoryCls.when(() -> JctJsr199Interop.compile(any(), any(), any(), any(), any()))
+      interopCls.when(() -> JctJsr199Interop.compile(any(), any(), any(), any(), any()))
           .thenReturn(expectedCompilation);
       var expectedWorkspace = mock(Workspace.class);
 
@@ -344,8 +313,10 @@ class AbstractJctCompilerTest {
       var actualCompilation = compiler.compile(expectedWorkspace);
 
       // Then
-      factoryCls.verify(() -> JctJsr199Interop
+      interopCls.verify(() -> JctJsr199Interop
           .compile(expectedWorkspace, compiler, jsr199Compiler, flagBuilder, null));
+      verify(compiler).getJsr199CompilerFactory();
+      verify(compiler).getJctFlagBuilderFactory();
 
       assertThat(actualCompilation).isSameAs(expectedCompilation);
     }
@@ -485,7 +456,7 @@ class AbstractJctCompilerTest {
     }
 
     @DisplayName(".name(null) throws a NullPointerException")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings("ConstantConditions")
     @Test
     void passingNullToNameThrowsNullPointerException() {
       // Then
@@ -493,20 +464,6 @@ class AbstractJctCompilerTest {
           .isInstanceOf(NullPointerException.class)
           .hasMessage("name");
     }
-  }
-
-  @DisplayName(".getFlagBuilder() returns the flag builder")
-  @Test
-  void getFlagBuilderReturnsFlagBuilder() {
-    // Then
-    assertThat(compiler.getFlagBuilder()).isSameAs(flagBuilder);
-  }
-
-  @DisplayName(".getJsr199Compiler() returns the compiler")
-  @Test
-  void getJsr199CompilerReturnsTheCompiler() {
-    // Then
-    assertThat(compiler.getJsr199Compiler()).isSameAs(jsr199Compiler);
   }
 
   @DisplayName(".isVerbose() returns the expected values")
@@ -1286,7 +1243,7 @@ class AbstractJctCompilerTest {
     }
 
     @DisplayName(".locale(...) throws a NullPointerException if the locale is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings("ConstantConditions")
     @Test
     void localeThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1333,7 +1290,7 @@ class AbstractJctCompilerTest {
     }
 
     @DisplayName(".logCharset(...) throws a NullPointerException if the logCharset is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings("ConstantConditions")
     @Test
     void logCharsetThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1381,7 +1338,7 @@ class AbstractJctCompilerTest {
 
     @DisplayName(".fileManagerLoggingMode(...) throws a NullPointerException if "
         + "fileManagerLoggingMode is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings("ConstantConditions")
     @Test
     void fileManagerLoggingModeThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1429,7 +1386,7 @@ class AbstractJctCompilerTest {
 
     @DisplayName(".diagnosticLoggingMode(...) throws a NullPointerException "
         + "if diagnosticLoggingMode is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings("ConstantConditions")
     @Test
     void diagnosticLoggingModeThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1477,7 +1434,7 @@ class AbstractJctCompilerTest {
 
     @DisplayName(".annotationProcessorDiscovery(...) throws a NullPointerException "
         + "if annotationProcessorDiscovery is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings("ConstantConditions")
     @Test
     void annotationProcessorDiscoveryThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1532,23 +1489,28 @@ class AbstractJctCompilerTest {
   /// Helper methods and types ///
   ////////////////////////////////
 
-  static class CompilerImpl extends AbstractJctCompiler<CompilerImpl> {
+  class CompilerImpl extends AbstractJctCompiler<CompilerImpl> {
 
     private final String defaultRelease;
 
-    CompilerImpl(
-        String name,
-        JavaCompiler jsr199Compiler,
-        JctFlagBuilder flagBuilder,
-        String defaultRelease
-    ) {
-      super(name, jsr199Compiler, flagBuilder);
+    CompilerImpl(String name, String defaultRelease) {
+      super(name);
       this.defaultRelease = defaultRelease;
     }
 
     @Override
     public String getDefaultRelease() {
       return defaultRelease;
+    }
+
+    @Override
+    public JctFlagBuilderFactory getJctFlagBuilderFactory() {
+      return () -> flagBuilder;
+    }
+
+    @Override
+    public Jsr199CompilerFactory getJsr199CompilerFactory() {
+      return () -> jsr199Compiler;
     }
   }
 

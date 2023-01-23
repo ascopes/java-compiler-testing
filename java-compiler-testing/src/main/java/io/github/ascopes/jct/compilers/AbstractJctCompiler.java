@@ -31,7 +31,6 @@ import java.util.Locale;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.annotation.processing.Processor;
-import javax.tools.JavaCompiler;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -58,8 +57,6 @@ import org.apiguardian.api.API.Status;
 public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     implements JctCompiler<A, JctCompilationImpl> {
 
-  private final JavaCompiler jsr199Compiler;
-  private final JctFlagBuilder flagBuilder;
   private final List<Processor> annotationProcessors;
   private final List<String> annotationProcessorOptions;
   private final List<String> compilerOptions;
@@ -87,19 +84,10 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   /**
    * Initialize this compiler.
    *
-   * @param name           the friendly name of the compiler to default to.
-   * @param jsr199Compiler the JSR-199 compiler implementation to use.
-   * @param flagBuilder    the flag builder to use.
+   * @param defaultName the printable default name to use for the compiler.
    */
-  protected AbstractJctCompiler(
-      String name,
-      JavaCompiler jsr199Compiler,
-      JctFlagBuilder flagBuilder
-  ) {
-    this.name = requireNonNull(name, "name");
-    this.jsr199Compiler = requireNonNull(jsr199Compiler, "jsr199Compiler");
-    this.flagBuilder = requireNonNull(flagBuilder, "flagBuilder");
-
+  protected AbstractJctCompiler(String defaultName) {
+    name = requireNonNull(defaultName, "name");
     annotationProcessors = new ArrayList<>();
     annotationProcessorOptions = new ArrayList<>();
     compilerOptions = new ArrayList<>();
@@ -126,12 +114,18 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
 
   @Override
   public JctCompilationImpl compile(Workspace workspace) {
-    return JctJsr199Interop.compile(workspace, myself(), jsr199Compiler, flagBuilder, null);
+    var flagBuilder = getJctFlagBuilderFactory().createFlagBuilder();
+    var compiler = getJsr199CompilerFactory().createCompiler();
+
+    return JctJsr199Interop.compile(workspace, myself(), compiler, flagBuilder, null);
   }
 
   @Override
   public JctCompilationImpl compile(Workspace workspace, Collection<String> classNames) {
-    return JctJsr199Interop.compile(workspace, myself(), jsr199Compiler, flagBuilder, classNames);
+    var flagBuilder = getJctFlagBuilderFactory().createFlagBuilder();
+    var compiler = getJsr199CompilerFactory().createCompiler();
+
+    return JctJsr199Interop.compile(workspace, myself(), compiler, flagBuilder, classNames);
   }
 
   @Override
@@ -150,24 +144,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   public A name(String name) {
     this.name = requireNonNull(name, "name");
     return myself();
-  }
-
-  /**
-   * Get the flag builder to use.
-   *
-   * @return the flag builder.
-   */
-  public JctFlagBuilder getFlagBuilder() {
-    return flagBuilder;
-  }
-
-  /**
-   * Get the JSR-199 compiler to use.
-   *
-   * @return the JSR-199 compiler.
-   */
-  public JavaCompiler getJsr199Compiler() {
-    return jsr199Compiler;
   }
 
   @Override
@@ -450,6 +426,28 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   public final String toString() {
     return name;
   }
+
+  /**
+   * Get the flag builder factory to use for building flags.
+   *
+   * @return the factory.
+   */
+  public abstract JctFlagBuilderFactory getJctFlagBuilderFactory();
+
+  /**
+   * Get the JSR-199 compiler factory to use for initialising an internal compiler.
+   *
+   * @return the factory.
+   */
+  public abstract Jsr199CompilerFactory getJsr199CompilerFactory();
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return the default release version to use when no version is specified by the user.
+   */
+  @Override
+  public abstract String getDefaultRelease();
 
   /**
    * Get this implementation of {@link AbstractJctCompiler}, cast to the type parameter {@link A}.
