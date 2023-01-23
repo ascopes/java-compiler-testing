@@ -15,10 +15,13 @@
  */
 package io.github.ascopes.jct.compilers.javac;
 
+import static java.util.Objects.requireNonNull;
+
 import io.github.ascopes.jct.compilers.AbstractJctCompiler;
+import io.github.ascopes.jct.compilers.JctFlagBuilderFactory;
+import io.github.ascopes.jct.compilers.Jsr199CompilerFactory;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.lang.model.SourceVersion;
-import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -39,40 +42,24 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
    * Initialize a new Java compiler.
    */
   public JavacJctCompilerImpl() {
-    this(ToolProvider.getSystemJavaCompiler());
-  }
-
-  /**
-   * Initialize a new Java compiler.
-   *
-   * @param jsr199Compiler the JSR-199 compiler backend to use.
-   */
-  public JavacJctCompilerImpl(JavaCompiler jsr199Compiler) {
-    this(NAME, jsr199Compiler);
-  }
-
-  /**
-   * Initialize a new Java compiler.
-   *
-   * @param name the name to give the compiler.
-   */
-  public JavacJctCompilerImpl(String name) {
-    this(name, ToolProvider.getSystemJavaCompiler());
-  }
-
-  /**
-   * Initialize a new Java compiler.
-   *
-   * @param name           the name to give the compiler.
-   * @param jsr199Compiler the JSR-199 compiler backend to use.
-   */
-  public JavacJctCompilerImpl(String name, JavaCompiler jsr199Compiler) {
-    super(name, jsr199Compiler, new JavacJctFlagBuilderImpl());
+    super(NAME);
   }
 
   @Override
   public String getDefaultRelease() {
     return Integer.toString(getLatestSupportedVersionInt(false));
+  }
+
+  @Override
+  public JctFlagBuilderFactory getJctFlagBuilderFactory() {
+    return JavacJctFlagBuilderImpl::new;
+  }
+
+  @Override
+  public Jsr199CompilerFactory getJsr199CompilerFactory() {
+    // RequireNonNull to ensure the return result is non-null, since the ToolProvider
+    // method is not annotated.
+    return () -> requireNonNull(ToolProvider.getSystemJavaCompiler());
   }
 
   /**

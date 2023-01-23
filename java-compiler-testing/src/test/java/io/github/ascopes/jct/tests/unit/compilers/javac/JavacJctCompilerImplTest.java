@@ -16,10 +16,10 @@
 package io.github.ascopes.jct.tests.unit.compilers.javac;
 
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someInt;
-import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
@@ -39,82 +39,75 @@ import org.junit.jupiter.params.provider.CsvSource;
  *
  * @author Ashley Scopes
  */
+@SuppressWarnings("ResultOfMethodCallIgnored")
 @DisplayName("JavacJctCompilerImpl tests")
 class JavacJctCompilerImplTest {
 
-  JavaCompiler javaCompiler;
   JavacJctCompilerImpl compiler;
 
   @BeforeEach
   void setUp() {
-    javaCompiler = mock(JavaCompiler.class);
-    compiler = new JavacJctCompilerImpl(javaCompiler);
+    compiler = new JavacJctCompilerImpl();
   }
-
-  @DisplayName("initialising a compiler with no arguments uses the platform compiler")
+  
+  @DisplayName("Compilers have the expected JSR-199 compiler factory")
   @Test
-  void initialisingCompilerWithNoArgumentsUsesPlatformCompiler() {
-    try (var toolProvider = mockStatic(ToolProvider.class)) {
-      // Given
-      toolProvider.when(ToolProvider::getSystemJavaCompiler).thenReturn(javaCompiler);
-
-      // When
-      var compiler = new JavacJctCompilerImpl();
-
-      // Then
-      assertThat(compiler.getJsr199Compiler()).isSameAs(javaCompiler);
-      toolProvider.verify(ToolProvider::getSystemJavaCompiler);
-    }
-  }
-
-  @DisplayName("initialising a compiler with a string argument uses the platform compiler")
-  @Test
-  void initialisingCompilerWithStringUsesPlatformCompiler() {
-    try (var toolProvider = mockStatic(ToolProvider.class)) {
-      // Given
-      toolProvider.when(ToolProvider::getSystemJavaCompiler).thenReturn(javaCompiler);
-
-      // When
-      var compiler = new JavacJctCompilerImpl("foo");
-
-      // Then
-      assertThat(compiler.getJsr199Compiler()).isSameAs(javaCompiler);
-      toolProvider.verify(ToolProvider::getSystemJavaCompiler);
-    }
-  }
-
-  @DisplayName("initialising a compiler with a string argument uses the string as the name")
-  @Test
-  void initialisingCompilerWithStringUsesTheGivenStringAsTheName() {
+  void compilersHaveTheExpectedCompilerFactory() {
     // Given
-    var name = someText();
+    try (var toolProviderMock = mockStatic(ToolProvider.class)) {
+      var jsr199Compiler = mock(JavaCompiler.class);
+      toolProviderMock.when(ToolProvider::getSystemJavaCompiler).thenReturn(jsr199Compiler);
 
-    // When
-    var compiler = new JavacJctCompilerImpl(name);
+      // When
+      var actualCompiler = compiler.getJsr199CompilerFactory().createCompiler();
 
-    // Then
-    assertThat(compiler.getName()).isEqualTo(name);
+      // Then
+      toolProviderMock.verify(ToolProvider::getSystemJavaCompiler);
+      assertThat(actualCompiler).isSameAs(jsr199Compiler);
+    }
   }
 
-  @DisplayName("compilers have the expected default name")
+  @DisplayName("Compilers have the expected flag builder factory")
+  @Test
+  void compilersHaveTheExpectedFlagBuilderFactory() {
+    // Given
+    try (var flagBuilderMock = mockConstruction(JavacJctFlagBuilderImpl.class)) {
+      // When
+      var flagBuilder = compiler.getJctFlagBuilderFactory().createFlagBuilder();
+
+      // Then
+      assertThat(flagBuilderMock.constructed()).hasSize(1);
+      assertThat(flagBuilder).isSameAs(flagBuilderMock.constructed().get(0));
+    }
+  }
+
+  @DisplayName("Compilers have the expected default release string")
+  @Test
+  void compilersHaveTheExpectedDefaultRelease() {
+    // Given
+    try (var compilerClassMock = mockStatic(JavacJctCompilerImpl.class)) {
+      var latestSupportedInt = someInt(11, 21);
+      compilerClassMock
+          .when(() -> JavacJctCompilerImpl.getLatestSupportedVersionInt(anyBoolean()))
+          .thenReturn(latestSupportedInt);
+
+      // When
+      var defaultRelease = compiler.getDefaultRelease();
+
+      // Then
+      compilerClassMock
+          .verify(() -> JavacJctCompilerImpl.getLatestSupportedVersionInt(false));
+
+      assertThat(defaultRelease)
+          .isEqualTo("%d", latestSupportedInt);
+    }
+  }
+
+  @DisplayName("Compilers have the expected default name")
   @Test
   void compilersHaveTheExpectedDefaultName() {
     // Then
     assertThat(compiler.getName()).isEqualTo("JDK Compiler");
-  }
-
-  @DisplayName("compilers have the expected JSR-199 compiler implementation")
-  @Test
-  void compilersHaveTheExpectedCompilerImplementation() {
-    // Then
-    assertThat(compiler.getJsr199Compiler()).isSameAs(javaCompiler);
-  }
-
-  @DisplayName("compilers have the expected flag builder")
-  @Test
-  void compilersHaveTheExpectedFlagBuilder() {
-    // Then
-    assertThat(compiler.getFlagBuilder()).isInstanceOf(JavacJctFlagBuilderImpl.class);
   }
 
   @DisplayName("Compilers have no default compiler flags set")
@@ -136,28 +129,6 @@ class JavacJctCompilerImplTest {
   void compilersHaveNoDefaultAnnotationProcessorsSet() {
     // Then
     assertThat(compiler.getAnnotationProcessors()).isEmpty();
-  }
-
-  @DisplayName("compilers have the expected default release string")
-  @Test
-  void compilersHaveTheExpectedDefaultRelease() {
-    // Given
-    try (var compilerClassMock = mockStatic(JavacJctCompilerImpl.class)) {
-      var latestSupportedInt = someInt(11, 21);
-      compilerClassMock
-          .when(() -> JavacJctCompilerImpl.getLatestSupportedVersionInt(anyBoolean()))
-          .thenReturn(latestSupportedInt);
-
-      // When
-      var defaultRelease = compiler.getDefaultRelease();
-
-      // Then
-      compilerClassMock
-          .verify(() -> JavacJctCompilerImpl.getLatestSupportedVersionInt(false));
-
-      assertThat(defaultRelease)
-          .isEqualTo("%d", latestSupportedInt);
-    }
   }
 
   @DisplayName("the earliest supported version int has the expected value")
