@@ -570,16 +570,4 @@ public final class JctFileManagerImpl implements JctFileManager {
       );
     }
   }
-
-  /**
-   * Initialize this file manager.
-   *
-   * @param release the release to use for multi-release JARs internally.
-   * @deprecated remove as part of internal restructuring.
-   */
-  @Deprecated(forRemoval = true)
-  public static JctFileManagerImpl forRelease(String release) {
-    // Easier to stub and verify than a constructor elsewhere.
-    return new JctFileManagerImpl(release);
-  }
 }
