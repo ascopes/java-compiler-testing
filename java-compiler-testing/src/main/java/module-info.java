@@ -120,13 +120,16 @@ module io.github.ascopes.jct {
   /// EXPOSURE OF JUNIT ANNOTATIONS TO JUNIT COMPONENTS FOR REFLECTION ///
   ////////////////////////////////////////////////////////////////////////
 
-  opens io.github.ascopes.jct.junit;
+  opens io.github.ascopes.jct.junit to
+      io.github.ascopes.jct.testing,
+      org.junit.jupiter.engine,
+      org.junit.jupiter.params,
+      org.junit.platform.engine;
 
-  //////////////////////////////////////////////////////
-  /// EXPOSURE OF INTERNALS TO THE TESTING NAMESPACE ///
-  //////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////
+  /// EXPOSURE OF INTERNAL NAMESPACES FOR TESTING ///
+  ///////////////////////////////////////////////////
 
-  exports io.github.ascopes.jct.compilers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.filemanagers.impl to io.github.ascopes.jct.testing;
