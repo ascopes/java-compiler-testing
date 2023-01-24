@@ -18,17 +18,22 @@ package io.github.ascopes.jct.compilers;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.compilers.impl.JctCompilationFactoryImpl;
 import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
-import io.github.ascopes.jct.compilers.impl.JctJsr199Interop;
+import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
+import io.github.ascopes.jct.ex.JctCompilerException;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
+import io.github.ascopes.jct.filemanagers.JctFileManagerFactory;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.workspaces.Workspace;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.annotation.processing.Processor;
 import org.apiguardian.api.API;
@@ -55,7 +60,7 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.STABLE)
 @NotThreadSafe
 public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
-    implements JctCompiler<A, JctCompilationImpl> {
+    implements JctCompiler<A, JctCompilation> {
 
   private final List<Processor> annotationProcessors;
   private final List<String> annotationProcessorOptions;
@@ -113,19 +118,13 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public JctCompilationImpl compile(Workspace workspace) {
-    var flagBuilder = getJctFlagBuilderFactory().createFlagBuilder();
-    var compiler = getJsr199CompilerFactory().createCompiler();
-
-    return JctJsr199Interop.compile(workspace, myself(), compiler, flagBuilder, null);
+  public JctCompilation compile(Workspace workspace) {
+    return compileInternal(workspace, null);
   }
 
   @Override
-  public JctCompilationImpl compile(Workspace workspace, Collection<String> classNames) {
-    var flagBuilder = getJctFlagBuilderFactory().createFlagBuilder();
-    var compiler = getJsr199CompilerFactory().createCompiler();
-
-    return JctJsr199Interop.compile(workspace, myself(), compiler, flagBuilder, classNames);
+  public JctCompilation compile(Workspace workspace, Collection<String> classNames) {
+    return compileInternal(workspace, classNames);
   }
 
   @Override
@@ -247,6 +246,19 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     requireNonNullValues(compilerOptions, "compilerOptions");
     compilerOptions.forEach(this.compilerOptions::add);
     return myself();
+  }
+
+  @Override
+  public String getEffectiveRelease() {
+    if (release != null) {
+      return release;
+    }
+
+    if (target != null) {
+      return target;
+    }
+
+    return getDefaultRelease();
   }
 
   @Nullable
@@ -432,14 +444,37 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
    *
    * @return the factory.
    */
-  public abstract JctFlagBuilderFactory getJctFlagBuilderFactory();
+  public abstract JctFlagBuilderFactory getFlagBuilderFactory();
 
   /**
    * Get the JSR-199 compiler factory to use for initialising an internal compiler.
    *
    * @return the factory.
    */
-  public abstract Jsr199CompilerFactory getJsr199CompilerFactory();
+  public abstract Jsr199CompilerFactory getCompilerFactory();
+
+  /**
+   * Get the file manager factory to use for building a file manager during compilation.
+   *
+   * @return the factory.
+   */
+  public abstract JctFileManagerFactory getFileManagerFactory();
+
+  /**
+   * Get the compilation factory to use for building a compilation.
+   *
+   * <p>By default, this uses a common internal implementation that is designed to work with
+   * compilers that have interfaces the same as, and behave the same as Javac.
+   *
+   * <p>Some obscure compiler implementations with potentially satanic rituals for initialising
+   * and configuring components correctly may need to provide a custom implementation here instead.
+   * In this case, this method should be overridden.
+   *
+   * @return the compilation factory.
+   */
+  public JctCompilationFactory getCompilationFactory() {
+    return new JctCompilationFactoryImpl(this);
+  }
 
   /**
    * {@inheritDoc}
@@ -459,5 +494,48 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     var me = (A) this;
 
     return me;
+  }
+
+  /**
+   * Build the list of flags from this compiler object using the flag builder.
+   *
+   * <p>Implementations should not need to override this unless there is a special edge case
+   * that needs configuring differently. This is exposed to assist in these kinds of cases.
+   *
+   * @param flagBuilder the flag builder to apply the flag configuration to.
+   * @return the string flags to use.
+   */
+  protected List<String> buildFlags(JctFlagBuilder flagBuilder) {
+    return flagBuilder
+        .annotationProcessorOptions(getAnnotationProcessorOptions())
+        .showDeprecationWarnings(isShowDeprecationWarnings())
+        .failOnWarnings(isFailOnWarnings())
+        .compilerOptions(getCompilerOptions())
+        .previewFeatures(isPreviewFeatures())
+        .release(getRelease())
+        .source(getSource())
+        .target(getTarget())
+        .verbose(isVerbose())
+        .showWarnings(isShowWarnings())
+        .build();
+  }
+
+  @SuppressWarnings("NullableProblems")  // https://youtrack.jetbrains.com/issue/IDEA-311124
+  private JctCompilation compileInternal(
+      @WillNotClose Workspace workspace,
+      @Nullable Collection<String> classNames
+  ) {
+    var fileManagerFactory = getFileManagerFactory();
+    var flagBuilderFactory = getFlagBuilderFactory();
+    var compilerFactory = getCompilerFactory();
+    var compilationFactory = getCompilationFactory();
+
+    try (var fileManager = fileManagerFactory.createFileManager(workspace)) {
+      var flags = buildFlags(flagBuilderFactory.createFlagBuilder());
+      var compiler = compilerFactory.createCompiler();
+      return compilationFactory.createCompilation(flags, fileManager, compiler, classNames);
+    } catch (IOException ex) {
+      throw new JctCompilerException("Failed to close file manager", ex);
+    }
   }
 }

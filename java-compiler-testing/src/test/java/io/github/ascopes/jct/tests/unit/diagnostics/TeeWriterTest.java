@@ -25,12 +25,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 import io.github.ascopes.jct.diagnostics.TeeWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -40,27 +37,13 @@ import org.junit.jupiter.api.Test;
  * @author Ashley Scopes
  */
 @DisplayName("TeeWriter tests")
-@SuppressWarnings("resource")
+@SuppressWarnings({"resource", "ConstantConditions"})
 class TeeWriterTest {
-
-  @DisplayName("Null charsets are disallowed")
-  @Test
-  void nullCharsetsAreDisallowed() {
-    assertThatCode(() -> TeeWriter.wrap(null, new ByteArrayOutputStream()))
-        .isInstanceOf(NullPointerException.class);
-  }
-
-  @DisplayName("Null output streams are disallowed")
-  @Test
-  void nullOutputStreamsAreDisallowed() {
-    assertThatCode(() -> TeeWriter.wrap(StandardCharsets.UTF_8, null))
-        .isInstanceOf(NullPointerException.class);
-  }
 
   @DisplayName("Null writers are disallowed")
   @Test
   void nullWritersAreDisallowed() {
-    assertThatCode(() -> TeeWriter.wrap(null))
+    assertThatCode(() -> new TeeWriter(null))
         .isInstanceOf(NullPointerException.class);
   }
 
@@ -69,7 +52,7 @@ class TeeWriterTest {
   void writeFailsIfWriterIsClosed() throws IOException {
     // Given
     var writer = new StringWriter();
-    var tee = TeeWriter.wrap(writer);
+    var tee = new TeeWriter(writer);
     var text = someText();
     tee.close();
 
@@ -89,7 +72,7 @@ class TeeWriterTest {
   void writeDelegatesToTheWriter() throws IOException {
     // Given
     var writer = new StringWriter();
-    var tee = TeeWriter.wrap(writer);
+    var tee = new TeeWriter(writer);
     var text = someText();
 
     // When
@@ -104,7 +87,7 @@ class TeeWriterTest {
   void flushFailsIfTheWriterIsClosed() throws IOException {
     // Given
     var writer = mock(Writer.class);
-    var tee = TeeWriter.wrap(writer);
+    var tee = new TeeWriter(writer);
     tee.close();
     clearInvocations(writer);
 
@@ -120,8 +103,8 @@ class TeeWriterTest {
   @Test
   void flushDelegatesToTheWriter() throws IOException {
     // Given
-    var writer = mock(OutputStream.class);
-    var tee = TeeWriter.wrap(StandardCharsets.UTF_8, writer);
+    var writer = mock(Writer.class);
+    var tee = new TeeWriter(writer);
 
     // When
     tee.flush();
@@ -138,7 +121,7 @@ class TeeWriterTest {
     // Given
     var writer = mock(Writer.class);
 
-    try (var ignoredTee = TeeWriter.wrap(writer)) {
+    try (var ignoredTee = new TeeWriter(writer)) {
       // Do nothing
     }
 
@@ -152,7 +135,7 @@ class TeeWriterTest {
   @Test
   void closeIsIdempotent() throws IOException {
     var writer = mock(Writer.class);
-    var tee = TeeWriter.wrap(writer);
+    var tee = new TeeWriter(writer);
 
     for (var i = 0; i < 10; ++i) {
       tee.close();
@@ -166,8 +149,8 @@ class TeeWriterTest {
   @Test
   void toStringShouldReturnTheBufferContent() throws IOException {
     // Given
-    var writer = mock(OutputStream.class);
-    var tee = TeeWriter.wrap(StandardCharsets.UTF_8, writer);
+    var writer = mock(Writer.class);
+    var tee = new TeeWriter(writer);
 
     // When
     tee.write("Hello, ");

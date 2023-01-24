@@ -50,7 +50,7 @@ public final class TeeWriter extends Writer {
   // and the delegated output writer at the same time.
   private final StringBuilder builder;
 
-  private TeeWriter(@WillCloseWhenClosed Writer writer) {
+  public TeeWriter(@WillCloseWhenClosed Writer writer) {
     lock = new Object();
     closed = false;
 
@@ -104,37 +104,5 @@ public final class TeeWriter extends Writer {
     if (closed) {
       throw new IllegalStateException("TeeWriter is closed");
     }
-  }
-
-  /**
-   * Initialize this writer by wrapping an output stream in an internally-held writer.
-   *
-   * <p>Note that this will not buffer the output stream itself. That is up to you to do.
-   *
-   * @param charset      the charset to write with.
-   * @param outputStream the output stream to delegate to.
-   * @return the tee writer.
-   */
-  public static TeeWriter wrap(
-      Charset charset,
-      @WillCloseWhenClosed OutputStream outputStream
-  ) {
-    var writer = new OutputStreamWriter(
-        requireNonNull(outputStream, "outputStream"),
-        requireNonNull(charset, "charset")
-    );
-    return wrap(writer);
-  }
-
-  /**
-   * Initialize this writer by wrapping an output stream in an internally-held writer.
-   *
-   * <p>Note that this will not buffer the output stream itself. That is up to you to do.
-   *
-   * @param writer the writer to wrap.
-   * @return the tee writer.
-   */
-  public static TeeWriter wrap(@WillCloseWhenClosed Writer writer) {
-    return new TeeWriter(writer);
   }
 }

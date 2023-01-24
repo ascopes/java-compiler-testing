@@ -461,6 +461,17 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
   String getDefaultRelease();
 
   /**
+   * Get the effective release to use for the actual compilation.
+   *
+   * <p>This may be determined from the {@link #getSource() source},
+   * {@link #getTarget() target}, {@link #getRelease() release}, and
+   * {@link #getDefaultRelease() default release.}
+   *
+   * @return the effective release.
+   */
+  String getEffectiveRelease();
+
+  /**
    * Get the current release version that is set, or {@code null} if left to the compiler to decide.
    * default.
    *

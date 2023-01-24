@@ -30,6 +30,7 @@ import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
+import java.lang.module.FindException;
 import java.lang.module.ModuleFinder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,6 +49,8 @@ import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple implementation of a {@link JctFileManager}.
@@ -59,6 +62,7 @@ import org.apiguardian.api.API.Status;
 @ThreadSafe
 public final class JctFileManagerImpl implements JctFileManager {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(JctFileManagerImpl.class);
   private static final int UNSUPPORTED_ARGUMENT = -1;
 
   private final String release;
@@ -66,7 +70,7 @@ public final class JctFileManagerImpl implements JctFileManager {
   private final Map<Location, ModuleContainerGroup> modules;
   private final Map<Location, OutputContainerGroup> outputs;
 
-  private JctFileManagerImpl(String release) {
+  public JctFileManagerImpl(String release) {
     this.release = requireNonNull(release, "release");
     packages = new ConcurrentHashMap<>();
     modules = new ConcurrentHashMap<>();
@@ -94,15 +98,19 @@ public final class JctFileManagerImpl implements JctFileManager {
       // Attempt to find modules.
       var moduleGroup = getOrCreateModule(location);
 
-      for (var ref : ModuleFinder.of(path.getPath()).findAll()) {
-        var module = ref.descriptor().name();
+      try {
+        for (var ref : ModuleFinder.of(path.getPath()).findAll()) {
+          var module = ref.descriptor().name();
 
-        // Right now, assume the module is not in a nested directory. Not sure if there are
-        // cases where this isn't true, but I spotted some weird errors with paths being appended
-        // to the end of JAR paths if I uncomment the following line.
-        moduleGroup.getOrCreateModule(module)
-            //.addPackage(new BasicPathWrapperImpl(pathWrapper, module));
-            .addPackage(path);
+          // Right now, assume the module is not in a nested directory. Not sure if there are
+          // cases where this isn't true, but I spotted some weird errors with paths being appended
+          // to the end of JAR paths if I uncomment the following line.
+          moduleGroup.getOrCreateModule(module)
+              //.addPackage(new BasicPathWrapperImpl(pathWrapper, module));
+              .addPackage(path);
+        }
+      } catch (FindException ex) {
+        LOGGER.trace("Dropping {} from module path as no modules were resolved", path, ex);
       }
 
     } else {
@@ -561,15 +569,5 @@ public final class JctFileManagerImpl implements JctFileManager {
           "Location " + location.getName() + " must be package-oriented"
       );
     }
-  }
-
-  /**
-   * Initialize this file manager.
-   *
-   * @param release the release to use for multi-release JARs internally.
-   */
-  public static JctFileManagerImpl forRelease(String release) {
-    // Easier to stub and verify than a constructor elsewhere.
-    return new JctFileManagerImpl(release);
   }
 }
