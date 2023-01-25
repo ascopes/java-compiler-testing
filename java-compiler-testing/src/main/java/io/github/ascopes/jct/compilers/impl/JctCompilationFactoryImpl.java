@@ -38,9 +38,9 @@ import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaCompiler;
+import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
-import javax.tools.Location;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 @Immutable
 @ThreadSafe
 public final class JctCompilationFactoryImpl implements JctCompilationFactory {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilationFactoryImpl.class);
 
   private final JctCompiler<?, ?> compiler;
@@ -143,14 +144,14 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
   }
 
   private Set<JavaFileObject> findCompilationUnits(JctFileManager fileManager) throws IOException {
-    var locations = IterableUtils
+    Collection<Location> locations = IterableUtils
         .flatten(fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH));
 
     if (locations.isEmpty()) {
       LOGGER.info(
           "No multi-module sources found, will use the source path to find classes to compile"
       );
-      locations = Set.of(StandardLocation.SOURCE_PATH);
+      locations = List.of(StandardLocation.SOURCE_PATH);
     } else {
       LOGGER.info(
           "Multi-module sources found, will use the module source path to find classes to compile"
