@@ -44,20 +44,23 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |-
+          source "./scripts/common.sh"
+          
           # Ensure consistent versions of tools we use. MacOS uses an outdated version of bash, for
           # example.
           case "${OSTYPE}" in
             win*|msys*)
-              choco install xsltproc            
+              run <<< "choco install xsltproc"            
               ;;
             darwin*)
-              brew install bash libxslt
+              run <<< "brew install bash libxslt"
               ;;
             linux*)
-              sudo apt-get install xsltproc -qy
+              run <<< "sudo apt-get update -q"
+              run <<< "sudo apt-get install xsltproc -qy"
               ;;
             *)
-              echo "::warning:: Unknown OS type '${OSTYPE}'. Update build.yaml with a new case."
+              warn "Unknown OS type '${OSTYPE}'. Update build.yaml with a new case."
               ;;
           esac
 
