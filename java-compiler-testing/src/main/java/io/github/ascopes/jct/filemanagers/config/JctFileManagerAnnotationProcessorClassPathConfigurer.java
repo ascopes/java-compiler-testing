@@ -75,7 +75,7 @@ public final class JctFileManagerAnnotationProcessorClassPathConfigurer implemen
       case ENABLED:
         LOGGER.trace("Annotation processor discovery is enabled, ensuring empty location exists");
 
-        INHERITED_AP_PATHS.values().forEach(fileManager::ensureEmptyLocationExists);
+        INHERITED_AP_PATHS.values().forEach(fileManager::createEmptyLocation);
 
         return fileManager;
 
@@ -84,7 +84,7 @@ public final class JctFileManagerAnnotationProcessorClassPathConfigurer implemen
             + "into the annotation processor path");
 
         INHERITED_AP_PATHS.forEach(fileManager::copyContainers);
-        INHERITED_AP_PATHS.values().forEach(fileManager::ensureEmptyLocationExists);
+        INHERITED_AP_PATHS.values().forEach(fileManager::createEmptyLocation);
 
         return fileManager;
 
