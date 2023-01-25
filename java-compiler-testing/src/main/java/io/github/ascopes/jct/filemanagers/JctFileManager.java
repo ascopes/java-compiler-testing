@@ -75,7 +75,7 @@ public interface JctFileManager extends JavaFileManager {
    *
    * @param location the location to apply an empty container for.
    */
-  void ensureEmptyLocationExists(Location location);
+  void createEmptyLocation(Location location);
 
   /**
    * Get the container group for the given package-oriented location.

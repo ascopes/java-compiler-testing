@@ -65,7 +65,7 @@ class JctFileManagerAnnotationProcessorClassPathConfigurerTest {
     configurer.configure(fileManager);
 
     // Then
-    verify(fileManager).ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
+    verify(fileManager).createEmptyLocation(StandardLocation.ANNOTATION_PROCESSOR_PATH);
     verifyNoMoreInteractions(fileManager);
   }
 
@@ -101,7 +101,7 @@ class JctFileManagerAnnotationProcessorClassPathConfigurerTest {
     ordered.verify(fileManager)
         .copyContainers(StandardLocation.CLASS_PATH, StandardLocation.ANNOTATION_PROCESSOR_PATH);
     ordered.verify(fileManager)
-        .ensureEmptyLocationExists(StandardLocation.ANNOTATION_PROCESSOR_PATH);
+        .createEmptyLocation(StandardLocation.ANNOTATION_PROCESSOR_PATH);
     ordered.verifyNoMoreInteractions();
   }
 

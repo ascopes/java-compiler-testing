@@ -15,65 +15,59 @@
  */
 package io.github.ascopes.jct.tests.unit.filemanagers.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someLocation;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.verify;
 
+import io.github.ascopes.jct.containers.impl.ContainerGroupRepositoryImpl;
 import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
 import io.github.ascopes.jct.workspaces.PathRoot;
-import java.nio.file.Path;
-import javax.tools.JavaFileManager.Location;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @DisplayName("JctFileManagerImpl Tests")
+@ExtendWith(MockitoExtension.class)
 class JctFileManagerImplTest {
 
-  @Test
-  @DisplayName("generates JctFileManager instance for a release")
-  void testGettingJctFileManagerImplInstance() {
-    assertThat(new JctFileManagerImpl("test"))
-        .isInstanceOf(JctFileManagerImpl.class);
+  JctFileManagerImpl fileManager;
+  ContainerGroupRepositoryImpl repository;
+
+  @BeforeEach
+  void setUp() {
+    // Mock the construction so that we can access the internally created container group repository
+    // object.
+    try (var construction = mockConstruction(ContainerGroupRepositoryImpl.class)) {
+      fileManager = new JctFileManagerImpl("some-release");
+      repository = construction.constructed().iterator().next();
+    }
   }
 
+  @DisplayName("null releases are disallowed")
+  @SuppressWarnings({"resource", "ConstantConditions"})
   @Test
-  @DisplayName("null release is disallowed")
   void testIfNullPointerExceptionThrownIfReleaseNull() {
+    // Then
     assertThatThrownBy(() -> new JctFileManagerImpl(null))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("release");
   }
 
+  @DisplayName(".addPath(Location, PathRoot) adds the path to the repository")
   @Test
-  @DisplayName("adds package location to JctFileManager")
-  void testAddPathForPackageLocation() {
-    var packageLocation = mock(Location.class);
+  void addPathAddsThePathToTheRepository() {
+    // Given
+    var location = someLocation();
     var pathRoot = mock(PathRoot.class);
-    var path = mock(Path.class);
 
-    // we mock path because it is needed by AbstractPackageContainerGroup
-    given(pathRoot.getPath()).willReturn(path);
+    // When
+    fileManager.addPath(location, pathRoot);
 
-    var jctFileManager = new JctFileManagerImpl("test");
-    jctFileManager.addPath(packageLocation, pathRoot);
-    assertThat(jctFileManager.hasLocation(packageLocation)).isTrue();
+    // Then
+    verify(repository).addPath(location, pathRoot);
   }
-
-  @Test
-  @DisplayName("adds output location to JctFileManager")
-  void testAddPathForOutputLocation() {
-    var outputLocation = mock(Location.class);
-    var pathRoot = mock(PathRoot.class);
-    var path = mock(Path.class);
-
-    // we mock path because it is needed by AbstractPackageContainerGroup
-    given(pathRoot.getPath()).willReturn(path);
-    given(outputLocation.isOutputLocation()).willReturn(true);
-
-    var jctFileManager = new JctFileManagerImpl("test");
-    jctFileManager.addPath(outputLocation, pathRoot);
-    assertThat(jctFileManager.hasLocation(outputLocation)).isTrue();
-  }
-
 }

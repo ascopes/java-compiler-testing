@@ -50,6 +50,11 @@ public final class TeeWriter extends Writer {
   // and the delegated output writer at the same time.
   private final StringBuilder builder;
 
+  /**
+   * Initialise the writer.
+   *
+   * @param writer the underlying writer to "tee" to.
+   */
   public TeeWriter(@WillCloseWhenClosed Writer writer) {
     lock = new Object();
     closed = false;
