@@ -18,10 +18,7 @@ package io.github.ascopes.jct.diagnostics;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.charset.Charset;
 import javax.annotation.WillCloseWhenClosed;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;

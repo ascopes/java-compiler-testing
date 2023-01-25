@@ -23,7 +23,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
@@ -39,7 +38,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@Immutable
 @ThreadSafe
 public class TraceDiagnostic<S extends JavaFileObject> implements Diagnostic<S> {
 

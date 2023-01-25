@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.repr;
 
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
@@ -30,7 +29,6 @@ import org.assertj.core.presentation.Representation;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@Immutable
 @ThreadSafe
 public final class LocationRepresentation implements Representation {
 

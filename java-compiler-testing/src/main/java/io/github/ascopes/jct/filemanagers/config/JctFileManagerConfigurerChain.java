@@ -81,9 +81,8 @@ public final class JctFileManagerConfigurerChain {
    * Apply each configurer to the given file manager in order.
    *
    * @param fileManager the file manager to configure.
-   * @return the configured file manager to use. This may or may not be the same
-   *         object as the input parameter, depending on how the configurers manipulate
-   *         the input object.
+   * @return the configured file manager to use. This may or may not be the same object as the input
+   *     parameter, depending on how the configurers manipulate the input object.
    */
   public JctFileManager configure(JctFileManager fileManager) {
     for (var configurer : configurers) {

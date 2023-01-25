@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.compilers;
 
-import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -29,7 +28,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1 (0.0.1-M6)
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@Immutable
 @ThreadSafe
 public enum CompilationMode {
 

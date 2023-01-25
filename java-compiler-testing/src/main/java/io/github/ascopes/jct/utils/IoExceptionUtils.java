@@ -17,7 +17,6 @@ package io.github.ascopes.jct.utils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -29,7 +28,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@Immutable
 @ThreadSafe
 public final class IoExceptionUtils extends UtilityClass {
 

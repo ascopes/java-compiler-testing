@@ -17,7 +17,6 @@ package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import java.util.function.BiConsumer;
-import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -29,7 +28,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1 (0.0.1-M7)
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@Immutable
 @ThreadSafe
 public enum VersionStrategy {
 

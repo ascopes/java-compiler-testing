@@ -17,7 +17,6 @@ package io.github.ascopes.jct.repr;
 
 import java.util.List;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -30,7 +29,6 @@ import org.assertj.core.presentation.Representation;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@Immutable
 @ThreadSafe
 public final class StackTraceRepresentation implements Representation {
 

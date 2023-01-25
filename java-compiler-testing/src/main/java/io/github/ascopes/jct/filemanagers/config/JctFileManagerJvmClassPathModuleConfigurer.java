@@ -20,7 +20,6 @@ import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
 import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
@@ -29,8 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Configurer for a file manager that detects and applies classpath paths that contain JPMS
- * modules to the module path.
+ * Configurer for a file manager that detects and applies classpath paths that contain JPMS modules
+ * to the module path.
  *
  * <p>If classpath inheritance or module fixing is disabled in the compiler,
  * this will not run.
@@ -41,7 +40,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1 (0.0.1-M7)
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@Immutable
 @ThreadSafe
 public final class JctFileManagerJvmClassPathModuleConfigurer implements JctFileManagerConfigurer {
 
@@ -68,7 +66,8 @@ public final class JctFileManagerJvmClassPathModuleConfigurer implements JctFile
     SpecialLocationUtils
         .currentClassPathLocations()
         .stream()
-        .peek(loc -> LOGGER.trace("Adding {} to file manager module path (inherited from JVM)", loc))
+        .peek(
+            loc -> LOGGER.trace("Adding {} to file manager module path (inherited from JVM)", loc))
         .map(WrappingDirectoryImpl::new)
         // File manager will pull out the actual modules automatically.
         .forEach(dir -> fileManager.addPath(StandardLocation.MODULE_PATH, dir));

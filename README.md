@@ -77,7 +77,7 @@ Diagnostics:
    24 | @ParametersAreNonnullByDefault
    25 | @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
       +  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-   26 | @Immutable
+   26 | @Immutable    
    27 | @CheckReturnValue
 
   cannot find symbol

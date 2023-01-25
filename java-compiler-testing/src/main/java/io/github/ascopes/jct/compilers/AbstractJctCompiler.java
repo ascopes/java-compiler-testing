@@ -20,7 +20,6 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.compilers.impl.JctCompilationFactoryImpl;
 import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
-import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import io.github.ascopes.jct.ex.JctCompilerException;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.JctFileManagerFactory;

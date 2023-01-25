@@ -25,7 +25,6 @@ import io.github.ascopes.jct.utils.UtilityClass;
 import java.util.List;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileManager.Location;
@@ -40,7 +39,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@Immutable
 @ThreadSafe
 public final class JctAssertions extends UtilityClass {
 

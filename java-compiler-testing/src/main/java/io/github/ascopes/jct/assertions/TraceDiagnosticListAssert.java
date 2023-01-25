@@ -48,7 +48,8 @@ import org.assertj.core.api.AbstractListAssert;
 @API(since = "0.0.1", status = Status.STABLE)
 @NotThreadSafe
 public final class TraceDiagnosticListAssert
-    extends AbstractListAssert<TraceDiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, TraceDiagnosticAssert> {
+    extends
+    AbstractListAssert<TraceDiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, TraceDiagnosticAssert> {
 
   /**
    * Initialize this assertion.

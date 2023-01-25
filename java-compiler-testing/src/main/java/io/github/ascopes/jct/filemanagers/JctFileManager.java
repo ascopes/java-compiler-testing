@@ -131,8 +131,8 @@ public interface JctFileManager extends JavaFileManager {
    * @param location    the location to search in.
    * @param packageName the package name to search in, or {@code ""} to search in the root
    *                    location.
-   * @param kinds       the kinds of file to return, or
-   *                    {@link Set#of} {@code (} {@link Kind#OTHER} {@code )} to find all files.
+   * @param kinds       the kinds of file to return, or {@link Set#of} {@code (} {@link Kind#OTHER}
+   *                    {@code )} to find all files.
    * @param recurse     {@code true} to recurse into subpackages, {@code false} to only check the
    *                    current package.
    * @return a collection of unique file objects that were found.

@@ -18,7 +18,6 @@ package io.github.ascopes.jct.workspaces;
 import java.io.Closeable;
 import java.io.IOException;
 import javax.annotation.CheckReturnValue;
-import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -31,7 +30,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@Immutable
 @ThreadSafe
 public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
 

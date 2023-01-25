@@ -30,7 +30,6 @@ import io.github.ascopes.jct.filemanagers.config.JctFileManagerRequiredLocations
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerWorkspaceConfigurer;
 import io.github.ascopes.jct.workspaces.Workspace;
 import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -46,7 +45,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1 (0.0.1-M7)
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@Immutable
 @ThreadSafe
 public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
 

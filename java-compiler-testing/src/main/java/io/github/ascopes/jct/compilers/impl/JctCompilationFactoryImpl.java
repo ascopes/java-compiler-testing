@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager.Location;
@@ -55,7 +54,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1 (0.0.1-M7)
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@Immutable
 @ThreadSafe
 public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
