@@ -19,7 +19,6 @@ import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -193,6 +192,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    * @param kinds       the kinds of file to look for.
    * @param recurse     {@code true} to recurse subpackages, {@code false} to only consider the
    *                    given package.
+   * @return thr file objects that were found.
    * @throws IOException if the file lookup fails due to an IO exception.
    */
   Set<JavaFileObject> listFileObjects(
