@@ -19,10 +19,14 @@ import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.workspaces.PathRoot;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Set;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager;
+import javax.tools.JavaFileObject;
+import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -120,4 +124,25 @@ public interface JctFileManager extends JavaFileManager {
    * @return the output container impl.
    */
   Collection<OutputContainerGroup> getOutputContainerGroups();
+
+  /**
+   * List all file objects in the given location matching the given criteria.
+   *
+   * @param location    the location to search in.
+   * @param packageName the package name to search in, or {@code ""} to search in the root
+   *                    location.
+   * @param kinds       the kinds of file to return, or
+   *                    {@link Set#of} {@code (} {@link Kind#OTHER} {@code )} to find all files.
+   * @param recurse     {@code true} to recurse into subpackages, {@code false} to only check the
+   *                    current package.
+   * @return a collection of unique file objects that were found.
+   * @throws IOException if an IO error occurs reading the file system.
+   */
+  @Override
+  Set<JavaFileObject> list(
+      Location location,
+      String packageName,
+      Set<Kind> kinds,
+      boolean recurse
+  ) throws IOException;
 }

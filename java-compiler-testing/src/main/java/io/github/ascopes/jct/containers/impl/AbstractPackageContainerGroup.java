@@ -28,7 +28,7 @@ import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -259,15 +259,17 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
   }
 
   @Override
-  public void listFileObjects(
+  public Set<JavaFileObject> listFileObjects(
       String packageName,
       Set<? extends Kind> kinds,
-      boolean recurse,
-      Collection<JavaFileObject> collection
+      boolean recurse
   ) throws IOException {
+    // XXX: could this be run in parallel?
+    var collection = new HashSet<JavaFileObject>();
     for (var container : containers) {
       container.listFileObjects(packageName, kinds, recurse, collection);
     }
+    return collection;
   }
 
   /**

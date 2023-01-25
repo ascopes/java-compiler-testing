@@ -34,6 +34,7 @@ import java.lang.module.FindException;
 import java.lang.module.ModuleFinder;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -440,7 +441,7 @@ public final class JctFileManagerImpl implements JctFileManager {
   }
 
   @Override
-  public Iterable<JavaFileObject> list(
+  public Set<JavaFileObject> list(
       Location location,
       String packageName,
       Set<Kind> kinds,
@@ -449,13 +450,9 @@ public final class JctFileManagerImpl implements JctFileManager {
 
     var group = getExistingPackageOrientedOrOutputGroup(location);
 
-    if (group == null) {
-      return List.of();
-    }
-
-    var files = new ArrayList<JavaFileObject>();
-    group.listFileObjects(packageName, kinds, recurse, files);
-    return files;
+    return group == null
+        ? Set.of()
+        : group.listFileObjects(packageName, kinds, recurse);
   }
 
   @Override

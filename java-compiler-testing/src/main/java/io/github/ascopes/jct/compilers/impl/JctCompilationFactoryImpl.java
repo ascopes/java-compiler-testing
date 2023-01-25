@@ -30,7 +30,7 @@ import io.github.ascopes.jct.utils.IterableUtils;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -158,13 +158,10 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       );
     }
 
-    var objects = new LinkedHashSet<JavaFileObject>();
+    var objects = new HashSet<JavaFileObject>();
 
     for (var location : locations) {
-      var items = fileManager.list(location, "", Set.of(Kind.SOURCE), true);
-      for (var fileObject : items) {
-        objects.add(fileObject);
-      }
+      objects.addAll(fileManager.list(location, "", Set.of(Kind.SOURCE), true));
     }
 
     if (objects.isEmpty()) {

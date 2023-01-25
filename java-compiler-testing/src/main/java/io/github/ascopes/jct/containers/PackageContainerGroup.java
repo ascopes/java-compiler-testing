@@ -193,13 +193,11 @@ public interface PackageContainerGroup extends ContainerGroup {
    * @param kinds       the kinds of file to look for.
    * @param recurse     {@code true} to recurse subpackages, {@code false} to only consider the
    *                    given package.
-   * @param collection  the collection to fill.
    * @throws IOException if the file lookup fails due to an IO exception.
    */
-  void listFileObjects(
+  Set<JavaFileObject> listFileObjects(
       String packageName,
       Set<? extends Kind> kinds,
-      boolean recurse,
-      Collection<JavaFileObject> collection
+      boolean recurse
   ) throws IOException;
 }
