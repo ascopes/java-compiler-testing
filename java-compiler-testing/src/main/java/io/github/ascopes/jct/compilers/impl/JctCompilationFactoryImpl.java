@@ -40,6 +40,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
+import javax.tools.Location;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -74,6 +75,9 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
   ) {
     try {
       return createCheckedCompilation(flags, fileManager, jsr199Compiler, classNames);
+    } catch (JctCompilerException ex) {
+      // Fall through, do not rewrap these.
+      throw ex;
     } catch (Exception ex) {
       throw new JctCompilerException(
           "Failed to perform compilation, an unexpected exception was raised", ex
@@ -139,12 +143,19 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
   }
 
   private Set<JavaFileObject> findCompilationUnits(JctFileManager fileManager) throws IOException {
-    var modules = IterableUtils
+    var locations = IterableUtils
         .flatten(fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH));
 
-    var locations = modules.isEmpty()
-        ? Set.of(StandardLocation.SOURCE_PATH)
-        : modules;
+    if (locations.isEmpty()) {
+      LOGGER.info(
+          "No multi-module sources found, will use the source path to find classes to compile"
+      );
+      locations = Set.of(StandardLocation.SOURCE_PATH);
+    } else {
+      LOGGER.info(
+          "Multi-module sources found, will use the module source path to find classes to compile"
+      );
+    }
 
     var objects = new LinkedHashSet<JavaFileObject>();
 
@@ -153,6 +164,12 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       for (var fileObject : items) {
         objects.add(fileObject);
       }
+    }
+
+    if (objects.isEmpty()) {
+      throw new JctCompilerException(
+          "No compilation units were found. Did you forget to add something?"
+      );
     }
 
     return objects;
