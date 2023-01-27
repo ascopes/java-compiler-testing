@@ -16,7 +16,7 @@
 /**
  * File manager configuration rules.
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
+@API(since = "0.0.1", status = Status.Stable)
 @NonNullApi
 @NonNullImpl
 package io.github.ascopes.jct.filemanagers.config;
