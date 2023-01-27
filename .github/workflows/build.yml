@@ -77,6 +77,22 @@ jobs:
               ;;
           esac
 
+      - name: Dump system and JDK info
+        shell: bash
+        run: |-
+            source "./scripts/common.sh"
+
+            function report() {
+              info "${1}:"
+              run <<< "${2}"
+              echo
+            }
+
+            report "System" "uname -a"
+            report "JRE/JVM" "java -version"
+            report "JDK" "javac -version"
+            report "Maven" "./mvnw -V"
+
       - name: Compile and run tests
         shell: bash
         run: ./mvnw -B -U -Dcheckstyle.skip=true -Dlicense.skip=true clean verify
