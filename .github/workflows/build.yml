@@ -137,6 +137,7 @@ jobs:
   mutation-tests:
     name: Run mutation tests
     runs-on: ubuntu-22.04
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
 
     steps:
       - name: Checkout repository
