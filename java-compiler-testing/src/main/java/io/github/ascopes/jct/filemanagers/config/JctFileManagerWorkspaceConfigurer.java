@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1 (0.0.1-M7)
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
+@API(since = "0.0.1", status = Status.STABLE)
 @ThreadSafe
 public final class JctFileManagerWorkspaceConfigurer implements JctFileManagerConfigurer {
 
