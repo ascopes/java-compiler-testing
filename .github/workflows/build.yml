@@ -91,7 +91,7 @@ jobs:
             report "System" "uname -a"
             report "JRE/JVM" "java -version"
             report "JDK" "javac -version"
-            report "Maven" "./mvnw -V"
+            report "Maven" "./mvnw -v"
 
       - name: Compile and run tests
         shell: bash
