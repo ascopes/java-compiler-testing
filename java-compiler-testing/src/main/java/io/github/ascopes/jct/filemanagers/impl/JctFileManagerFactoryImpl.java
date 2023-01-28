@@ -28,6 +28,7 @@ import io.github.ascopes.jct.filemanagers.config.JctFileManagerJvmSystemModulesC
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerLoggingProxyConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerRequiredLocationsConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerWorkspaceConfigurer;
+import io.github.ascopes.jct.utils.VisibleForTestingOnly;
 import io.github.ascopes.jct.workspaces.Workspace;
 import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.ThreadSafe;
@@ -76,7 +77,9 @@ public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
    * @param workspace the workspace to configure with.
    * @return the chain to use.
    */
+  @VisibleForTestingOnly
   public JctFileManagerConfigurerChain createConfigurerChain(@WillNotClose Workspace workspace) {
+    // The order here is important. Do not adjust it without testing extensively first!
     return new JctFileManagerConfigurerChain()
         .addLast(new JctFileManagerWorkspaceConfigurer(workspace))
         .addLast(new JctFileManagerJvmClassPathConfigurer(compiler))

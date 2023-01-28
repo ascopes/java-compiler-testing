@@ -17,6 +17,7 @@ package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
+import io.github.ascopes.jct.utils.VisibleForTestingOnly;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -35,7 +36,11 @@ public final class JavacCompilersProvider extends AbstractCompilersProvider
 
   /**
    * Initialise the provider.
+   *
+   * <p>This is only visible for testing purposes, users should have no need to
+   * initialise this class directly.
    */
+  @VisibleForTestingOnly
   public JavacCompilersProvider() {
     // Visible for testing only.
   }

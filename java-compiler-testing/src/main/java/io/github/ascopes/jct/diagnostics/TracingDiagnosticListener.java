@@ -18,6 +18,7 @@ package io.github.ascopes.jct.diagnostics;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.utils.LoomPolyfill;
+import io.github.ascopes.jct.utils.VisibleForTestingOnly;
 import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
@@ -80,6 +81,7 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
    * @param stackTraces  whether to enable stack traces in the logging.
    */
   @API(since = "0.0.1", status = Status.INTERNAL)
+  @VisibleForTestingOnly
   protected TracingDiagnosticListener(
       Logger logger,
       Supplier<? extends Thread> threadGetter,
