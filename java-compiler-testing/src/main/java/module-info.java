@@ -116,12 +116,6 @@ module io.github.ascopes.jct {
   exports io.github.ascopes.jct.repr;
   exports io.github.ascopes.jct.workspaces;
 
-  ////////////////////////////////////////////////////////////////////////
-  /// EXPOSURE OF JUNIT ANNOTATIONS TO JUNIT COMPONENTS FOR REFLECTION ///
-  ////////////////////////////////////////////////////////////////////////
-
-  opens io.github.ascopes.jct.junit;
-
   //////////////////////////////////////////////////////
   /// EXPOSURE OF INTERNALS TO THE TESTING NAMESPACE ///
   //////////////////////////////////////////////////////
@@ -148,6 +142,7 @@ module io.github.ascopes.jct {
   opens io.github.ascopes.jct.filemanagers to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.filemanagers.config to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.filemanagers.impl to io.github.ascopes.jct.testing;
+  opens io.github.ascopes.jct.junit to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.repr to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.workspaces to io.github.ascopes.jct.testing;
