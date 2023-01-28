@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.tests.unit.utils;
 
+import static io.github.ascopes.jct.utils.LoomPolyfill.getCurrentThread;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -78,5 +79,13 @@ class LoomPolyfillTest implements UtilityClassTestTemplate {
     assertThat(actualThreadId).isEqualTo(expectedThreadId);
     threadIdMethod.invoke(verify(thread));
     verifyNoMoreInteractions(thread);
+  }
+
+  @DisplayName(".getCurrentThread() returns the current thread")
+  @Test
+  void getCurrentThreadReturnsTheCurrentThread() {
+    // Then
+    assertThat(getCurrentThread())
+        .isSameAs(Thread.currentThread());
   }
 }

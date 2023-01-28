@@ -54,4 +54,13 @@ public final class LoomPolyfill extends UtilityClass {
       return tid;
     }
   }
+
+  /**
+   * Get the current thread.
+   *
+   * @return the current thread.
+   */
+  public static Thread getCurrentThread() {
+    return Thread.currentThread();
+  }
 }

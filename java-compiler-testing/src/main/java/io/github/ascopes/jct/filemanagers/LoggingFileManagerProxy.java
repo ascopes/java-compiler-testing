@@ -51,13 +51,14 @@ import org.slf4j.LoggerFactory;
 @ThreadSafe
 public final class LoggingFileManagerProxy implements InvocationHandler {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFileManagerProxy.class);
-
+  private final Logger logger;
   private final JctFileManager inner;
   private final boolean stackTraces;
   private final ThreadLocal<Integer> stackDepth;
 
   private LoggingFileManagerProxy(JctFileManager inner, boolean stackTraces) {
+    // Instance scoped for testing purposes.
+    logger = LoggerFactory.getLogger(LoggingFileManagerProxy.class);
     this.inner = inner;
     this.stackTraces = stackTraces;
     stackDepth = ThreadLocal.withInitial(() -> 0);
@@ -78,7 +79,7 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
       return toString();
     }
 
-    var thread = Thread.currentThread();
+    var thread = LoomPolyfill.getCurrentThread();
     var threadId = LoomPolyfill.getThreadId(thread);
 
     var depth = incrementStackDepth();
@@ -97,8 +98,8 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
         .map(Objects::toString)
         .collect(Collectors.joining(", "));
 
-    LOGGER
-        .atInfo()
+    logger
+        .atDebug()
         .setMessage(">>> [thread={}, depth={}] {} {}({}) called with ({}){}")
         .addArgument(threadId)
         .addArgument(depth)
@@ -113,7 +114,7 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
       var result = method.invoke(inner, args);
 
       if (method.getReturnType().equals(void.class)) {
-        LOGGER
+        logger
             .atDebug()
             .setMessage("<<< [thread={}, depth={}] {} {}({}) completed")
             .addArgument(threadId)
@@ -123,7 +124,7 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
             .addArgument(paramStr)
             .log();
       } else {
-        LOGGER
+        logger
             .atDebug()
             .setMessage("<<< [thread={}, depth={}] {} {}({}) returned {}")
             .addArgument(threadId)
@@ -142,17 +143,10 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
       // If, however, for any reason it is not present, then
       // it probably means something else went wrong, so report
       // it directly.
-      Throwable cause;
+      Throwable cause = ex.getCause() == null ? ex : ex.getCause();
 
-      if (ex.getCause() == null) {
-        cause = ex;
-      } else {
-        cause = ex.getCause();
-        cause.addSuppressed(ex);
-      }
-
-      LOGGER
-          .atInfo()
+      logger
+          .atDebug()
           .setMessage("!!! [thread={}, depth={}] {} {}({}) threw exception")
           .addArgument(threadId)
           .addArgument(depth)

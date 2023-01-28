@@ -94,7 +94,8 @@ public final class Fixtures {
    * @return some int value.
    */
   public static int someInt(int min, int max) {
-    return RANDOM.nextInt(max - min) + min;
+    // Use longs internally to deal with problems with negative values.
+    return (int) someLong((long) max - min) + min;
   }
 
   /**
@@ -104,23 +105,10 @@ public final class Fixtures {
    * @return some long value.
    */
   public static long someLong(long max) {
-    // nextLong(long) is not on older JDKs, so let's compute this manually.
-    // This uses the same algorithm used in /java.base/jdk/internal/util/random/RandomSupport.java
-    // as of JDK 19 in Amazon Corretto.
-    var m = max - 1;
-    var r = RANDOM.nextLong();
-    if ((max & m) == 0L) {
-      r &= m;
-    } else {
-      // This discards over-represented values for subsequent calls.
-      var u = r >>> 1;
-      while (u + m - (u % max) < 0L) {
-        r = u % max;
-        u = RANDOM.nextLong() >>> 1;
-      }
-    }
-
-    return r;
+    var nextLong = RANDOM.nextLong();
+    // Remove sign
+    nextLong &= Long.MAX_VALUE;
+    return nextLong % max;
   }
 
   /**

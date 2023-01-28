@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
 import org.slf4j.helpers.AbstractLogger;
@@ -43,7 +44,7 @@ public final class Slf4jLoggerFake extends AbstractLogger {
   }
 
   /**
-   * Assert that a log entry wit the given contents is logged once.
+   * Assert that a log entry with the given contents is logged once.
    *
    * @param level   the logger level.
    * @param ex      any exception, or {@code null} if no throwable is provided.
@@ -66,7 +67,15 @@ public final class Slf4jLoggerFake extends AbstractLogger {
         .withFailMessage("Expected at least one %s entry to be logged", level)
         .hasSizeGreaterThan(0)
         .extracting(Entry::getValue)
-        .withFailMessage("No log entry at level %s matching %s found", level, expect)
+        .withFailMessage(
+            "No log entry at level %s found that matches\n - %s\nAll invocations:\n%s",
+            level,
+            expect,
+            entries.stream()
+                .map(Objects::toString)
+                .map(" - "::concat)
+                .collect(Collectors.joining("\n"))
+        )
         .containsOnlyOnce(expect);
   }
 
