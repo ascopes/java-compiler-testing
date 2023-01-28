@@ -78,6 +78,14 @@ public interface JctFileManager extends JavaFileManager {
   void createEmptyLocation(Location location);
 
   /**
+   * Get the associated effective release.
+   *
+   * @return the effective release.
+   * @since 0.0.1 (0.0.1-M8)
+   */
+  String getEffectiveRelease();
+
+  /**
    * Get the container group for the given package-oriented location.
    *
    * @param location the package oriented location.

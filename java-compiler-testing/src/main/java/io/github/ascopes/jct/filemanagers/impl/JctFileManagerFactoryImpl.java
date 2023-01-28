@@ -79,6 +79,7 @@ public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
    */
   @VisibleForTestingOnly
   public JctFileManagerConfigurerChain createConfigurerChain(@WillNotClose Workspace workspace) {
+    // The order here is important. Do not adjust it without testing extensively first!
     return new JctFileManagerConfigurerChain()
         .addLast(new JctFileManagerWorkspaceConfigurer(workspace))
         .addLast(new JctFileManagerJvmClassPathConfigurer(compiler))

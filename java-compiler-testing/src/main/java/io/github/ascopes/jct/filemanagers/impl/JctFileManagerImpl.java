@@ -54,10 +54,11 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   private static final int UNSUPPORTED_ARGUMENT = -1;
 
+  private final String effectiveRelease;
   private final ContainerGroupRepositoryImpl repository;
 
   public JctFileManagerImpl(String release) {
-    requireNonNull(release, "release");
+    effectiveRelease = requireNonNull(release, "release");
     repository = new ContainerGroupRepositoryImpl(release);
   }
 
@@ -112,6 +113,11 @@ public final class JctFileManagerImpl implements JctFileManager {
     return group == null
         ? null
         : group.getClassLoader();
+  }
+
+  @Override
+  public String getEffectiveRelease() {
+    return effectiveRelease;
   }
 
   @Nullable
