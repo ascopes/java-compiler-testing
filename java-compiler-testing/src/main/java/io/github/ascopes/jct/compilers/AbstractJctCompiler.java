@@ -506,20 +506,21 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
    */
   protected List<String> buildFlags(JctFlagBuilder flagBuilder) {
     return flagBuilder
-        .annotationProcessorOptions(getAnnotationProcessorOptions())
-        .showDeprecationWarnings(isShowDeprecationWarnings())
-        .failOnWarnings(isFailOnWarnings())
-        .compilerOptions(getCompilerOptions())
-        .previewFeatures(isPreviewFeatures())
-        .release(getRelease())
-        .source(getSource())
-        .target(getTarget())
-        .verbose(isVerbose())
-        .showWarnings(isShowWarnings())
+        .annotationProcessorOptions(annotationProcessorOptions)
+        .showDeprecationWarnings(showDeprecationWarnings)
+        .failOnWarnings(failOnWarnings)
+        .compilerOptions(compilerOptions)
+        .previewFeatures(previewFeatures)
+        .release(release)
+        .source(source)
+        .target(target)
+        .verbose(verbose)
+        .showWarnings(showWarnings)
         .build();
   }
 
-  @SuppressWarnings("NullableProblems")  // https://youtrack.jetbrains.com/issue/IDEA-311124
+  @SuppressWarnings({"NullableProblems", "ThrowFromFinallyBlock"})
+  // NullableProblems is needed due to https://youtrack.jetbrains.com/issue/IDEA-311124
   private JctCompilation compileInternal(
       @WillNotClose Workspace workspace,
       @Nullable Collection<String> classNames
@@ -528,13 +529,27 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     var flagBuilderFactory = getFlagBuilderFactory();
     var compilerFactory = getCompilerFactory();
     var compilationFactory = getCompilationFactory();
+    var flags = buildFlags(flagBuilderFactory.createFlagBuilder());
+    var compiler = compilerFactory.createCompiler();
+    var fileManager = fileManagerFactory.createFileManager(workspace);
 
-    try (var fileManager = fileManagerFactory.createFileManager(workspace)) {
-      var flags = buildFlags(flagBuilderFactory.createFlagBuilder());
-      var compiler = compilerFactory.createCompiler();
+    // Any internal exceptions should be rethrown as a JctCompilerException by the
+    // compilation factory, so there is nothing else to worry about here.
+    // Likewise, do not catch IOException on the compilation process, as it may hide
+    // bugs. Hence, we have to use a try-finally-try-catch-rethrow manually rather than a nice
+    // try-with-resources. This is kinda crap code, but it prevents reporting errors incorrectly.
+
+    try {
       return compilationFactory.createCompilation(flags, fileManager, compiler, classNames);
-    } catch (IOException ex) {
-      throw new JctCompilerException("Failed to close file manager", ex);
+    } finally {
+      try {
+        fileManager.close();
+      } catch (IOException ex) {
+        throw new JctCompilerException(
+            "Failed to close file manager. This is probably a bug, so please report it.",
+            ex
+        );
+      }
     }
   }
 }
