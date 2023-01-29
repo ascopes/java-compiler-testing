@@ -75,7 +75,7 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
    */
   @Override
   public Object invoke(Object proxy, Method method, @Nullable Object[] args) throws Throwable {
-    if (method.getName().equals("toString") && method.getParameterCount() == 0) {
+    if (method.getName().equals("toString")) {
       return toString();
     }
 
@@ -139,11 +139,6 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
       return result;
 
     } catch (ReflectiveOperationException ex) {
-      // We always want the cause to get the real exception.
-      // If, however, for any reason it is not present, then
-      // it probably means something else went wrong, so report
-      // it directly.
-      Throwable cause = ex.getCause() == null ? ex : ex.getCause();
 
       logger
           .atDebug()
@@ -153,7 +148,7 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
           .addArgument(returnType)
           .addArgument(methodName)
           .addArgument(paramStr)
-          .addArgument(cause)
+          .addArgument(ex.getCause())
           .log();
 
       throw cause;
