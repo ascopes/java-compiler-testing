@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.tests.helpers;
 
 import static io.github.ascopes.jct.tests.helpers.GenericMock.mockRaw;
+import static java.util.stream.Collectors.joining;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -38,13 +39,16 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
 import javax.tools.Diagnostic;
@@ -141,7 +145,7 @@ public final class Fixtures {
         .generate(UUID::randomUUID)
         .map(UUID::toString)
         .limit(someInt(5, 15))
-        .collect(Collectors.joining("\n"));
+        .collect(joining("\n"));
   }
 
   /**
@@ -281,7 +285,7 @@ public final class Fixtures {
         .generate(UUID::randomUUID)
         .map(UUID::toString)
         .limit(someInt(1, 4))
-        .collect(Collectors.joining(" blah blah "));
+        .collect(joining(" blah blah "));
     return new RuntimeException(message)
         .fillInStackTrace();
   }
@@ -296,7 +300,7 @@ public final class Fixtures {
         .generate(UUID::randomUUID)
         .map(UUID::toString)
         .limit(someInt(1, 4))
-        .collect(Collectors.joining(" blah blah "));
+        .collect(joining(" blah blah "));
     return new IOException(message)
         .fillInStackTrace();
   }
@@ -346,6 +350,22 @@ public final class Fixtures {
    */
   public static String someRelease() {
     return Integer.toString(RANDOM.nextInt(11) + 11);
+  }
+
+  /**
+   * Get a valid random module name.
+   *
+   * @return the valid module name.
+   */
+  public static String someModuleName() {
+    return Stream
+        .generate(() -> Stream
+            .generate(() -> (char) someInt('a', 'z'))
+            .map(Objects::toString)
+            .limit(someInt(1, 10))
+            .collect(joining()))
+        .limit(someInt(1, 5))
+        .collect(joining("."));
   }
 
   /**
