@@ -655,10 +655,10 @@ class AbstractJctCompilerTest {
     }
   }
 
-  @DisplayName(".isCompilationMode() returns the expected values")
+  @DisplayName(".getCompilationMode() returns the expected values")
   @EnumSource(CompilationMode.class)
   @ParameterizedTest(name = "for compilationMode = {0}")
-  void isCompilationModeReturnsExpectedValue(CompilationMode expected) {
+  void getCompilationModeReturnsExpectedValue(CompilationMode expected) {
     // Given
     setFieldOnCompiler("compilationMode", expected);
 
