@@ -151,7 +151,7 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
           .addArgument(ex.getCause())
           .log();
 
-      throw cause;
+      throw ex.getCause();
 
     } finally {
       decrementStackDepth();
