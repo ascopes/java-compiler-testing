@@ -419,6 +419,31 @@ public final class Fixtures {
   }
 
   /**
+   * Get some dummy absolute path.
+   *
+   * @return some dummy absolute path.
+   */
+  public static Path someAbsolutePath() {
+    return somePath().resolve("some-absolute-path").toAbsolutePath();
+  }
+
+  /**
+   * Get some relative path.
+   *
+   * @return some dummy relative path.
+   */
+  public static Path someRelativePath() {
+    var absolutePath = someAbsolutePath();
+    var relativePath = absolutePath;
+
+    for (var i = 0; i < someInt(1, 4); ++i) {
+      relativePath = absolutePath.resolve(someText());
+    }
+
+    return absolutePath.relativize(relativePath.resolve("some-relative-path"));
+  }
+
+  /**
    * Get some module reference.
    *
    * @return the module reference.
@@ -521,7 +546,6 @@ public final class Fixtures {
           .setAttributeViews("basic", "posix")
           .setRoots("/")
           .setWorkingDirectory("/")
-          .setPathEqualityUsesCanonicalForm(true)
           .build();
 
       fs = Jimfs.newFileSystem(name, config);
