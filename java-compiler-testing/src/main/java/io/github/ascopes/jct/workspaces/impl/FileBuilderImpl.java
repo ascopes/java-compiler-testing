@@ -22,13 +22,13 @@ import io.github.ascopes.jct.workspaces.ManagedDirectory;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -101,7 +101,7 @@ public final class FileBuilderImpl implements FileBuilder {
     return uncheckedIo(() -> {
       try (var input = classLoader.getResourceAsStream(resource)) {
         if (input == null) {
-          throw new FileNotFoundException("classpath:" + resource);
+          throw new NoSuchFileException("classpath:" + resource);
         }
 
         return createFile(input);
