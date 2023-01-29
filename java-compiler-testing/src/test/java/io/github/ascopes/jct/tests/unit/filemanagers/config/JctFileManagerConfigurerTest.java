@@ -33,6 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("JctFileManagerConfigurer tests")
 @ExtendWith(MockitoExtension.class)
 class JctFileManagerConfigurerTest {
+
   @Mock(answer = Answers.CALLS_REAL_METHODS)
   JctFileManagerConfigurer configurer;
 

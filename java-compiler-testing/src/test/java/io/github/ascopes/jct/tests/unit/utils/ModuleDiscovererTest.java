@@ -15,8 +15,8 @@
  */
 package io.github.ascopes.jct.tests.unit.utils;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.somePath;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;

@@ -21,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerWorkspaceConfigurer;
+import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import io.github.ascopes.jct.workspaces.Workspace;
 import java.util.List;

@@ -23,8 +23,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
-import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerJvmClassPathConfigurer;
+import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
 import java.util.List;

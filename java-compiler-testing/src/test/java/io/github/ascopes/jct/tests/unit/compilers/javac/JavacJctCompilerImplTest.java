@@ -49,7 +49,7 @@ class JavacJctCompilerImplTest {
   void setUp() {
     compiler = new JavacJctCompilerImpl();
   }
-  
+
   @DisplayName("Compilers have the expected JSR-199 compiler factory")
   @Test
   void compilersHaveTheExpectedCompilerFactory() {
