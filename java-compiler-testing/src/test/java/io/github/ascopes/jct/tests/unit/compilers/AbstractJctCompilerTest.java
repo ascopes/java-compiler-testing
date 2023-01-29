@@ -50,12 +50,12 @@ import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.JctFileManagerFactory;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.workspaces.Workspace;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystemException;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -511,7 +511,7 @@ class AbstractJctCompilerTest {
         RuntimeException.class,
         IOException.class,
         FileSystemException.class,
-        FileNotFoundException.class,
+        NoSuchFileException.class,
         UnsupportedEncodingException.class,
         IndexOutOfBoundsException.class,
         SecurityException.class,
