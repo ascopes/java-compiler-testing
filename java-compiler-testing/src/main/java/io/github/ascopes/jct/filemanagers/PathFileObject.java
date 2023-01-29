@@ -23,7 +23,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,6 +36,7 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
@@ -90,7 +90,7 @@ public final class PathFileObject implements JavaFileObject {
     requireNonNull(relativePath, "relativePath");
 
     if (!rootPath.isAbsolute()) {
-      throw new IllegalArgumentException("rootPath must be absolute");
+      throw new IllegalArgumentException("Expected rootPath to be absolute, but got " + rootPath);
     }
 
     this.location = location;
@@ -101,7 +101,7 @@ public final class PathFileObject implements JavaFileObject {
         : relativePath;
 
     fullPath = rootPath.resolve(relativePath);
-    name = relativePath.toString();
+    name = this.relativePath.toString();
     uri = fullPath.toUri();
     kind = FileUtils.pathToKind(relativePath);
   }
@@ -138,8 +138,8 @@ public final class PathFileObject implements JavaFileObject {
    * Get the class access level, where appropriate.
    *
    * <p>In this implementation, this class will always return {@code null}, since this
-   * information is not readily available without preloading the file in question and
-   * parsing it first.
+   * information is not readily available without preloading the file in question and parsing it
+   * first.
    *
    * <p>At the time of writing, the OpenJDK implementations of the JavaFileObject class
    * do not provide an implementation for this method either.
@@ -227,8 +227,8 @@ public final class PathFileObject implements JavaFileObject {
    * Determine the class nesting kind, where appropriate.
    *
    * <p>In this implementation, this class will always return {@code null}, since this
-   * information is not readily available without preloading the file in question and
-   * parsing it first.
+   * information is not readily available without preloading the file in question and parsing it
+   * first.
    *
    * <p>At the time of writing, the OpenJDK implementations of the JavaFileObject class
    * do not provide an implementation for this method either.
@@ -255,7 +255,7 @@ public final class PathFileObject implements JavaFileObject {
    *
    * @return the root path.
    */
-  public Path getRoot() {
+  public Path getRootPath() {
     return rootPath;
   }
 
@@ -295,8 +295,8 @@ public final class PathFileObject implements JavaFileObject {
    * <p>The returned implementation will always be buffered.
    *
    * @return a buffered input stream.
-   * @throws FileNotFoundException if the file does not exist.
-   * @throws IOException           if an IO error occurs.
+   * @throws NoSuchFileException if the file does not exist.
+   * @throws IOException         if an IO error occurs.
    */
   @Override
   @WillNotClose
@@ -314,7 +314,6 @@ public final class PathFileObject implements JavaFileObject {
    * resources will be leaked.
    *
    * <p>The returned implementation will always be buffered.
-   *
    *
    * @return a buffered output stream.
    * @throws IOException if an IO error occurs.
@@ -336,8 +335,8 @@ public final class PathFileObject implements JavaFileObject {
    * @param ignoreEncodingErrors {@code true} to suppress encoding errors, or {@code false} to throw
    *                             them to the caller.
    * @return a buffered reader.
-   * @throws FileNotFoundException if the file does not exist.
-   * @throws IOException           if an IO error occurs.
+   * @throws NoSuchFileException if the file does not exist.
+   * @throws IOException         if an IO error occurs.
    */
   @Override
   @WillNotClose
@@ -351,7 +350,7 @@ public final class PathFileObject implements JavaFileObject {
   /**
    * Open a writer to this file using the default charset (UTF-8).
    *
-   * <p>This will Ccreate the file first if it does not already exist. If it does exist,
+   * <p>This will create the file first if it does not already exist. If it does exist,
    * this will first overwrite the file and truncate it.
    *
    * <p>This input stream must be closed once finished with, otherwise
