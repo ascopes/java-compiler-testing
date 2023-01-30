@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * <p>This is useful for diagnosing difficult-to-find errors being produced by {@code javac}
  * during testing, however, it may produce a hefty performance overhead when in use.
  *
- * <p>All logs are emitted with the {@code INFO} logging level.
+ * <p>All logs are emitted with the {@code DEBUG} logging level.
  *
  * @author Ashley Scopes
  * @since 0.0.1
