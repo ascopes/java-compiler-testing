@@ -102,7 +102,7 @@
     <jimfs.version>1.2</jimfs.version>
     <jsr305.version>3.0.2</jsr305.version>
     <junit.version>5.9.2</junit.version>
-    <mockito.version>5.0.0</mockito.version>
+    <mockito.version>5.1.0</mockito.version>
     <slf4j.version>2.0.6</slf4j.version>
 
     <!-- Plugins -->
