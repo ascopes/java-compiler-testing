@@ -1,4 +1,4 @@
-![Java 11+](https://img.shields.io/badge/Java-11--20-brown?logo=openjdk)
+![Java 11+](https://img.shields.io/badge/Java-11--21-brown?logo=openjdk)
 [![Build Status](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.ascopes.jct/java-compiler-testing)](https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing)
 [![Code Coverage](https://codecov.io/gh/ascopes/java-compiler-testing/branch/main/graph/badge.svg?token=VT74BP2742)](https://codecov.io/gh/ascopes/java-compiler-testing)

@@ -21,11 +21,8 @@ jobs:
       fail-fast: false
       matrix:
         os-name: [ubuntu-22.04]
-        java-version: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+        java-version: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21-ea]
         include:
-          # Mockito doesn't yet support Java 21, so let's comment it out for now.
-          # - os-name: ubuntu-22.04
-          #   java-version: 21-ea
 
           # MacOS builds (only check Java 17).
           - os-name: macos-12

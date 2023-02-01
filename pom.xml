@@ -141,8 +141,12 @@
 
       Tired compilation is modified to reduce the amount of time the JVM wastes JITing
       code during tests.
+
+      Byte Buddy experimental support enables running ByteBuddy (used by Mockito) in JDK
+      experimental builds.
     -->
     <argLine>
+      -Dnet.bytebuddy.experimental=true
       -Dorg.slf4j.simpleLogger.log=INFO
       -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=TRACE
       -Xshare:off
