@@ -85,6 +85,6 @@ public enum VersionStrategy {
 
   @FunctionalInterface
   private interface VersionConsumer {
-    void apply(JctCompiler<?, ?> compiler, int version;
+    void apply(JctCompiler<?, ?> compiler, int version);
   }
 }
