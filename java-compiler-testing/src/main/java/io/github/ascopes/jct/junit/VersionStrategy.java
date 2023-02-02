@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
-import java.util.function.BiConsumer;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -35,8 +34,8 @@ public enum VersionStrategy {
    * Set the {@link JctCompiler#release release}.
    */
   RELEASE(
-      JctCompiler::release,
       (compiler, version) -> compiler
+          .release(version)
           .name(compiler.getName() + " (release = Java " + version + ")")
   ),
 
@@ -44,8 +43,8 @@ public enum VersionStrategy {
    * Set the {@link JctCompiler#source} source}.
    */
   SOURCE(
-      JctCompiler::source,
       (compiler, version) -> compiler
+          .source(version)
           .name(compiler.getName() + " (source = Java " + version + ")")
   ),
 
@@ -53,8 +52,8 @@ public enum VersionStrategy {
    * Set the {@link JctCompiler#target} target}.
    */
   TARGET(
-      JctCompiler::target,
       (compiler, version) -> compiler
+          .target(version)
           .name(compiler.getName() + " (target = Java " + version + ")")
   ),
 
@@ -64,20 +63,14 @@ public enum VersionStrategy {
   SOURCE_AND_TARGET(
       (compiler, version) -> compiler
           .source(version)
-          .target(version),
-      (compiler, version) -> compiler
+          .target(version)
           .name(compiler.getName() + " (source and target = Java " + version + ")")
   );
 
-  private final BiConsumer<JctCompiler<?, ?>, Integer> versionSetter;
-  private final BiConsumer<JctCompiler<?, ?>, Integer> descriptionFormatter;
+  private final VersionConsumer versionSetter;
 
-  VersionStrategy(
-      BiConsumer<JctCompiler<?, ?>, Integer> versionSetter,
-      BiConsumer<JctCompiler<?, ?>, Integer> descriptionFormatter
-  ) {
+  VersionStrategy(VersionConsumer versionSetter) {
     this.versionSetter = versionSetter;
-    this.descriptionFormatter = descriptionFormatter;
   }
 
   /**
@@ -87,7 +80,11 @@ public enum VersionStrategy {
    * @param version  the version to set.
    */
   public void configureCompiler(JctCompiler<?, ?> compiler, int version) {
-    versionSetter.accept(compiler, version);
-    descriptionFormatter.accept(compiler, version);
+    versionSetter.apply(compiler, version);
+  }
+
+  @FunctionalInterface
+  private interface VersionConsumer {
+    void apply(JctCompiler<?, ?> compiler, int version;
   }
 }
