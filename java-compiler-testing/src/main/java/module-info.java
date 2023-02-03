@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import io.github.ascopes.jct.workspaces.RamFileSystemProvider;
+
 /**
  * A framework for performing exhaustive integration testing against Java compilers in modern Java
  * libraries, with a focus on full JPMS support.
@@ -115,6 +118,12 @@ module io.github.ascopes.jct {
   exports io.github.ascopes.jct.junit;
   exports io.github.ascopes.jct.repr;
   exports io.github.ascopes.jct.workspaces;
+
+  ///////////////////////////////////
+  /// SERVICE PROVIDER INTERFACES ///
+  ///////////////////////////////////
+
+  uses RamFileSystemProvider;
 
   //////////////////////////////////////////////////////
   /// EXPOSURE OF INTERNALS TO THE TESTING NAMESPACE ///
