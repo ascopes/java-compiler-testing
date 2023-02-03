@@ -39,6 +39,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Answers;
 import org.opentest4j.TestAbortedException;
 
 /**
@@ -380,7 +381,9 @@ class AbstractCompilersProviderTest {
     protected JctCompiler<?, ?> initializeNewCompiler() {
       return mockRaw(JctCompiler.class)
           .<JctCompiler<?, ?>>upcastedTo()
-          .build(withSettings().name("mock compiler"));
+          .build(withSettings()
+              .name("mock compiler")
+              .defaultAnswer(Answers.RETURNS_SELF));
     }
 
     @Override
