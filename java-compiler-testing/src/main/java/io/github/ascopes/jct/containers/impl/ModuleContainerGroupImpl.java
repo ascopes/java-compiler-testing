@@ -52,7 +52,7 @@ import org.apiguardian.api.API.Status;
 public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
 
   private final Location location;
-  private final Map<ModuleLocation, ModulePackageContainerGroupImpl> modules;
+  private final Map<ModuleLocation, PackageContainerGroup> modules;
   private final String release;
 
   /**
@@ -171,7 +171,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
     var finders = modules
         .values()
         .stream()
-        .map(ModulePackageContainerGroupImpl::getPackages)
+        .map(PackageContainerGroup::getPackages)
         .flatMap(List::stream)
         .map(Container::getModuleFinder)
         .toArray(ModuleFinder[]::new);
@@ -201,24 +201,9 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
         .toString();
   }
 
-  private ModulePackageContainerGroupImpl newPackageGroup(ModuleLocation location) {
-    return new ModulePackageContainerGroupImpl(location, release);
-  }
-
-  /**
-   * Unlike {@link PackageContainerGroupImpl}, this implementation does not reject output-oriented
-   * locations in the constructor.
-   */
-  private static final class ModulePackageContainerGroupImpl
-      extends AbstractPackageContainerGroup {
-
-    private ModulePackageContainerGroupImpl(ModuleLocation location, String release) {
-      super(location, release);
-    }
-
-    @Override
-    protected ClassLoader createClassLoader() {
-      return new PackageContainerGroupUrlClassLoader(this);
-    }
+  private PackageContainerGroup newPackageGroup(ModuleLocation location) {
+    // Use an anonymous class here to avoid the constraints that the PackageContainerGroupImpl
+    // imposes on us.
+    return new AbstractPackageContainerGroup(location, release) {};
   }
 }

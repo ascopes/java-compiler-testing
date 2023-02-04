@@ -53,7 +53,7 @@ public final class OutputContainerGroupImpl
     extends AbstractPackageContainerGroup
     implements OutputContainerGroup {
 
-  private final Map<ModuleLocation, OutputPackageContainerGroupImpl> modules;
+  private final Map<ModuleLocation, PackageContainerGroup> modules;
 
   /**
    * Initialize this container group.
@@ -219,20 +219,17 @@ public final class OutputContainerGroupImpl
     return modules.containsKey(location);
   }
 
-  @Override
-  protected ClassLoader createClassLoader() {
-    return new PackageContainerGroupUrlClassLoader(this);
-  }
-
   @SuppressWarnings("resource")
   @WillNotClose
-  private OutputPackageContainerGroupImpl newPackageGroup(ModuleLocation moduleLocation) {
+  private PackageContainerGroup newPackageGroup(ModuleLocation moduleLocation) {
     // For output locations, we only need the first root. We then just put a subdirectory
     // in there, as it reduces the complexity of this tenfold and means we don't have to
     // worry about creating more in-memory locations on the fly.
     var release = getRelease();
 
-    var group = new OutputPackageContainerGroupImpl(moduleLocation, release);
+    // Use an anonymous class here to avoid the constraints that the PackageContainerGroupImpl
+    // imposes on us.
+    var group = new AbstractPackageContainerGroup(moduleLocation, release) {};
     var pathWrapper = new WrappingDirectoryImpl(
         getPackages().iterator().next().getPathRoot(),
         moduleLocation.getModuleName()
@@ -255,24 +252,5 @@ public final class OutputContainerGroupImpl
     // extractPackageName("some.module/foo.bar.Baz") -> "foo.bar.Baz"
     var separatorIndex = binaryName.indexOf('/');
     return separatorIndex == -1 ? binaryName : binaryName.substring(separatorIndex + 1);
-  }
-
-  /**
-   * Unlike {@link PackageContainerGroupImpl}, this implementation does not reject output-oriented
-   * locations in the constructor.
-   *
-   * <p>This implementation is only ever expected to hold one of each container in it.
-   */
-  private static final class OutputPackageContainerGroupImpl
-      extends AbstractPackageContainerGroup {
-
-    private OutputPackageContainerGroupImpl(Location location, String release) {
-      super(location, release);
-    }
-
-    @Override
-    protected ClassLoader createClassLoader() {
-      return new PackageContainerGroupUrlClassLoader(this);
-    }
   }
 }

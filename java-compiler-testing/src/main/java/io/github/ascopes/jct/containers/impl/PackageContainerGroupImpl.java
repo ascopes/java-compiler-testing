@@ -61,9 +61,4 @@ public final class PackageContainerGroupImpl extends AbstractPackageContainerGro
       );
     }
   }
-
-  @Override
-  protected ClassLoader createClassLoader() {
-    return new PackageContainerGroupUrlClassLoader(this);
-  }
 }
