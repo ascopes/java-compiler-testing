@@ -140,11 +140,16 @@
 
       We also disable code sharing to prevent some other warnings during test runs, and
       force the SLF4J simple logger defaults to use in tests here.
+
+      Tired compilation is modified to reduce the amount of time the JVM wastes JITing
+      code during tests.
     -->
     <argLine>
       -Dorg.slf4j.simpleLogger.log=INFO
       -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=DEBUG
       -Xshare:off
+      -XX:+TieredCompilation
+      -XX:TieredStopAtLevel=1
     </argLine>
 
     <!-- Scanning -->
