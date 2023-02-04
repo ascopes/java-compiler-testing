@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 @API(since = "0.0.1", status = Status.STABLE)
 @ThreadSafe
-public class ContainerGroupRepositoryImpl {
+public final class ContainerGroupRepositoryImpl implements AutoCloseable {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ContainerGroupRepositoryImpl.class);
 
@@ -88,14 +88,10 @@ public class ContainerGroupRepositoryImpl {
     }
   }
 
-  /**
-   * A bulk-style call for {@link #addPath(Location, PathRoot)}.
-   *
-   * @param location  the location to add.
-   * @param pathRoots the path roots to register with the location.
-   */
-  public void addPaths(Location location, Iterable<? extends PathRoot> pathRoots) {
-    pathRoots.forEach(pathRoot -> addPath(location, pathRoot));
+  @Override
+  public void close() {
+    // Nothing to do here. This is a placeholder in case we ever need to allow closing logic
+    // in the future.
   }
 
   /**
@@ -156,6 +152,14 @@ public class ContainerGroupRepositoryImpl {
     } else {
       getOrCreatePackageContainerGroup(location);
     }
+  }
+
+  /**
+   * Perform any flushing operation, if needed.
+   */
+  public void flush() {
+    // Nothing to do here. This is a placeholder for a future implementation if we ever need to
+    // enable flushing.
   }
 
   /**
@@ -421,5 +425,4 @@ public class ContainerGroupRepositoryImpl {
         outputLocation -> new OutputContainerGroupImpl(outputLocation, release)
     );
   }
-
 }

@@ -26,6 +26,10 @@ import org.apiguardian.api.API.Status;
  * <p>These can behave as if they are module-oriented, or non-module-oriented.
  * It is down to the implementation to mediate access between modules and their files.
  *
+ * <p>Operations on modules should first {@link #getModule(String) get} or
+ * {@link #getOrCreateModule(String) create} the module, and then operate on that sub-container
+ * group. Operations on non-module packages should operate on this container group directly.
+ *
  * @author Ashley Scopes
  * @since 0.0.1
  */
