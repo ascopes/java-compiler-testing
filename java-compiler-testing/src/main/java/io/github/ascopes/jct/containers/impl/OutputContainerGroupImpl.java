@@ -29,12 +29,10 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
 import javax.annotation.WillCloseWhenClosed;
 import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
-import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -43,6 +41,10 @@ import org.apiguardian.api.API.Status;
  *
  * <p>These can contain packages <strong>and</strong> modules of packages together, and thus
  * are slightly more complicated internally as a result.
+ *
+ * <p>Operations on modules should first {@link #getModule(String) get} or
+ * {@link #getOrCreateModule(String) create} the module, and then operate on that sub-container
+ * group. Operations on non-module packages should operate on this container group directly.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -121,84 +123,6 @@ public final class OutputContainerGroupImpl
   }
 
   @Override
-  @Nullable
-  public PathFileObject getFileForInput(String packageName, String relativeName) {
-    var moduleName = extractModuleName(packageName);
-
-    if (moduleName != null) {
-      var module = getModule(moduleName);
-
-      if (module != null) {
-        var realPackageName = extractPackageName(packageName);
-        var file = module.getFileForInput(realPackageName, relativeName);
-
-        if (file != null) {
-          return file;
-        }
-      }
-    }
-
-    return super.getFileForInput(packageName, relativeName);
-  }
-
-  @Override
-  @Nullable
-  public PathFileObject getFileForOutput(String packageName, String relativeName) {
-    var moduleName = extractModuleName(packageName);
-
-    if (moduleName != null) {
-      var module = getOrCreateModule(moduleName);
-      var realPackageName = extractPackageName(packageName);
-      var file = module.getFileForOutput(realPackageName, relativeName);
-
-      if (file != null) {
-        return file;
-      }
-    }
-
-    return super.getFileForOutput(packageName, relativeName);
-  }
-
-  @Override
-  @Nullable
-  public PathFileObject getJavaFileForInput(String className, Kind kind) {
-    var moduleName = extractModuleName(className);
-
-    if (moduleName != null) {
-      var module = getModule(moduleName);
-
-      if (module != null) {
-        var realClassName = extractPackageName(className);
-        var file = module.getJavaFileForInput(realClassName, kind);
-
-        if (file != null) {
-          return file;
-        }
-      }
-    }
-
-    return super.getJavaFileForInput(className, kind);
-  }
-
-  @Override
-  @Nullable
-  public PathFileObject getJavaFileForOutput(String className, Kind kind) {
-    var moduleName = extractModuleName(className);
-
-    if (moduleName != null) {
-      var module = getOrCreateModule(moduleName);
-      var realClassName = extractPackageName(className);
-      var file = module.getJavaFileForOutput(realClassName, kind);
-
-      if (file != null) {
-        return file;
-      }
-    }
-
-    return super.getJavaFileForOutput(className, kind);
-  }
-
-  @Override
   public Set<Location> getLocationsForModules() {
     return Set.copyOf(modules.keySet());
   }
@@ -237,20 +161,5 @@ public final class OutputContainerGroupImpl
     uncheckedIo(() -> Files.createDirectories(pathWrapper.getPath()));
     group.addPackage(pathWrapper);
     return group;
-  }
-
-  @Nullable
-  private static String extractModuleName(String binaryName) {
-    // extractModuleName("foo.bar.Baz") -> null
-    // extractModuleName("some.module/foo.bar.Baz") -> "some.module"
-    var separatorIndex = binaryName.indexOf('/');
-    return separatorIndex == -1 ? null : binaryName.substring(0, separatorIndex);
-  }
-
-  private static String extractPackageName(String binaryName) {
-    // extractPackageName("foo.bar.Baz") -> "foo.bar.Baz"
-    // extractPackageName("some.module/foo.bar.Baz") -> "foo.bar.Baz"
-    var separatorIndex = binaryName.indexOf('/');
-    return separatorIndex == -1 ? binaryName : binaryName.substring(separatorIndex + 1);
   }
 }
