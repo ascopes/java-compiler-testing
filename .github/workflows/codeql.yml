@@ -33,18 +33,21 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3.3.0
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
+        # Do not freeze. Enables automatic updates to how CodeQL scans
         uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
 
       - name: Autobuild
+        # Do not freeze. Enables automatic updates to how CodeQL scans
         uses: github/codeql-action/autobuild@v2
 
       - name: Perform CodeQL Analysis
+        # Do not freeze. Enables automatic updates to how CodeQL scans
         uses: github/codeql-action/analyze@v2
         with:
           category: "/language:${{matrix.language}}"
