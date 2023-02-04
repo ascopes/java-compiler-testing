@@ -34,13 +34,12 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.Set;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Simple implementation of a {@link JctFileManager}.
@@ -49,7 +48,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@ThreadSafe
 public final class JctFileManagerImpl implements JctFileManager {
 
   private static final int UNSUPPORTED_ARGUMENT = -1;
@@ -102,7 +100,6 @@ public final class JctFileManagerImpl implements JctFileManager {
     repository.flush();
   }
 
-  @Nullable
   @Override
   public ClassLoader getClassLoader(Location location) {
     // While we would normally enforce that we cannot get a classloader for a closed
@@ -120,7 +117,6 @@ public final class JctFileManagerImpl implements JctFileManager {
     return effectiveRelease;
   }
 
-  @Nullable
   @Override
   public FileObject getFileForInput(
       Location location,
@@ -134,7 +130,6 @@ public final class JctFileManagerImpl implements JctFileManager {
         : group.getFileForInput(packageName, relativeName);
   }
 
-  @Nullable
   @Override
   public FileObject getFileForOutput(
       Location location,
@@ -163,7 +158,6 @@ public final class JctFileManagerImpl implements JctFileManager {
         : group.getFileForOutput(packageName, relativeName);
   }
 
-  @Nullable
   @Override
   public JavaFileObject getJavaFileForInput(
       Location location,
@@ -177,7 +171,6 @@ public final class JctFileManagerImpl implements JctFileManager {
         : group.getJavaFileForInput(className, kind);
   }
 
-  @Nullable
   @Override
   public JavaFileObject getJavaFileForOutput(
       Location location,
@@ -215,7 +208,6 @@ public final class JctFileManagerImpl implements JctFileManager {
     return new ModuleLocation(location, moduleName);
   }
 
-  @Nullable
   @Override
   public ModuleLocation getLocationForModule(Location location, JavaFileObject fo) {
     requireOutputOrModuleOrientedLocation(location);
@@ -241,7 +233,6 @@ public final class JctFileManagerImpl implements JctFileManager {
 
 
   @Override
-  @Nullable
   public ModuleContainerGroup getModuleContainerGroup(Location location) {
     requireModuleOrientedLocation(location);
     return repository.getModuleContainerGroup(location);
@@ -253,7 +244,6 @@ public final class JctFileManagerImpl implements JctFileManager {
   }
 
   @Override
-  @Nullable
   public OutputContainerGroup getOutputContainerGroup(Location location) {
     requireOutputLocation(location);
     return repository.getOutputContainerGroup(location);
@@ -265,7 +255,6 @@ public final class JctFileManagerImpl implements JctFileManager {
   }
 
   @Override
-  @Nullable
   public PackageContainerGroup getPackageContainerGroup(Location location) {
     requirePackageLocation(location);
     return repository.getPackageContainerGroup(location);
@@ -300,7 +289,6 @@ public final class JctFileManagerImpl implements JctFileManager {
     return repository.hasLocation(location);
   }
 
-  @Nullable
   @Override
   public String inferBinaryName(Location location, JavaFileObject file) {
     requirePackageOrientedLocation(location);
@@ -316,7 +304,6 @@ public final class JctFileManagerImpl implements JctFileManager {
         : group.inferBinaryName((PathFileObject) file);
   }
 
-  @Nullable
   @Override
   public String inferModuleName(Location location) {
     requirePackageOrientedLocation(location);

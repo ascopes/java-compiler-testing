@@ -21,15 +21,13 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.repr.TraceDiagnosticListRepresentation;
 import java.util.Collection;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Assertions that apply to a {@link JctCompilation}.
@@ -38,7 +36,6 @@ import org.assertj.core.api.AbstractAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NotThreadSafe
 public final class JctCompilationAssert extends
     AbstractAssert<JctCompilationAssert, JctCompilation> {
 
@@ -122,7 +119,6 @@ public final class JctCompilationAssert extends
    * @return assertions for the diagnostics.
    * @throws AssertionError if the compilation was null.
    */
-  @CheckReturnValue
   public TraceDiagnosticListAssert diagnostics() {
     isNotNull();
     return new TraceDiagnosticListAssert(actual.getDiagnostics());
@@ -140,7 +136,6 @@ public final class JctCompilationAssert extends
    *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
    * @throws NullPointerException     if the provided location object is null.
    */
-  @CheckReturnValue
   public PackageContainerGroupAssert packageGroup(Location location) {
     requireNonNull(location, "location must not be null");
 
@@ -169,7 +164,6 @@ public final class JctCompilationAssert extends
    *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
    * @throws NullPointerException     if the provided location object is null.
    */
-  @CheckReturnValue
   public ModuleContainerGroupAssert moduleGroup(Location location) {
     requireNonNull(location, "location must not be null");
 
@@ -198,7 +192,6 @@ public final class JctCompilationAssert extends
    *                                  {@link Location#isOutputLocation() an output location}.
    * @throws NullPointerException     if the provided location object is null.
    */
-  @CheckReturnValue
   public OutputContainerGroupAssert outputGroup(Location location) {
     requireNonNull(location, "location must not be null");
 
@@ -223,7 +216,6 @@ public final class JctCompilationAssert extends
    * @return the assertions to perform on the class outputs.
    * @throws AssertionError if the compilation is null.
    */
-  @CheckReturnValue
   public OutputContainerGroupAssert classOutput() {
     return outputGroup(StandardLocation.CLASS_OUTPUT);
   }
@@ -236,7 +228,6 @@ public final class JctCompilationAssert extends
    * @return the assertions to perform on the source outputs.
    * @throws AssertionError if the compilation is null.
    */
-  @CheckReturnValue
   public OutputContainerGroupAssert sourceOutput() {
     return outputGroup(StandardLocation.SOURCE_OUTPUT);
   }
@@ -249,7 +240,6 @@ public final class JctCompilationAssert extends
    * @return the assertions to perform on the header outputs.
    * @throws AssertionError if the compilation is null.
    */
-  @CheckReturnValue
   public OutputContainerGroupAssert generatedHeaders() {
     return outputGroup(StandardLocation.NATIVE_HEADER_OUTPUT);
   }
@@ -262,7 +252,6 @@ public final class JctCompilationAssert extends
    * @return the assertions to perform on the class path.
    * @throws AssertionError if the compilation is null.
    */
-  @CheckReturnValue
   public PackageContainerGroupAssert classPath() {
     return packageGroup(StandardLocation.CLASS_PATH);
   }
@@ -275,7 +264,6 @@ public final class JctCompilationAssert extends
    * @return the assertions to perform on the source path.
    * @throws AssertionError if the compilation is null.
    */
-  @CheckReturnValue
   public PackageContainerGroupAssert sourcePath() {
     return packageGroup(StandardLocation.SOURCE_PATH);
   }
@@ -288,7 +276,6 @@ public final class JctCompilationAssert extends
    * @return the assertions to perform on the source path.
    * @throws AssertionError if the compilation is null.
    */
-  @CheckReturnValue
   public ModuleContainerGroupAssert moduleSourcePath() {
     return moduleGroup(StandardLocation.MODULE_SOURCE_PATH);
   }
@@ -301,7 +288,6 @@ public final class JctCompilationAssert extends
    * @return the assertions to perform on the module path.
    * @throws AssertionError if the compilation is null.
    */
-  @CheckReturnValue
   public ModuleContainerGroupAssert modulePath() {
     return moduleGroup(StandardLocation.MODULE_PATH);
   }

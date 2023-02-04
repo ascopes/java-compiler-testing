@@ -23,8 +23,6 @@ import java.lang.module.ModuleFinder;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
@@ -42,7 +40,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public interface Container extends Closeable {
 
   /**
@@ -70,7 +67,6 @@ public interface Container extends Closeable {
    * @param fragments any additional parts of the file name to find.
    * @return the path if the file exists, or null if it does not exist.
    */
-  @Nullable
   Path getFile(String fragment, String... fragments);
 
   /**
@@ -82,7 +78,6 @@ public interface Container extends Closeable {
    * @param relativeName the relative name of the file in the package.
    * @return the file object, or null if it does not exist.
    */
-  @Nullable
   PathFileObject getFileForInput(String packageName, String relativeName);
 
   /**
@@ -94,7 +89,6 @@ public interface Container extends Closeable {
    * @param relativeName the relative name of the file in the package.
    * @return the file object, or null if this container is read-only.
    */
-  @Nullable
   PathFileObject getFileForOutput(String packageName, String relativeName);
 
   /**
@@ -106,7 +100,6 @@ public interface Container extends Closeable {
    * @param kind      the kind of file to open.
    * @return the file object, or null if it does not exist.
    */
-  @Nullable
   PathFileObject getJavaFileForInput(String className, Kind kind);
 
   /**
@@ -118,7 +111,6 @@ public interface Container extends Closeable {
    * @param kind      the kind of file to open.
    * @return the file object, or null if this container is read-only.
    */
-  @Nullable
   PathFileObject getJavaFileForOutput(String className, Kind kind);
 
   /**
@@ -136,7 +128,6 @@ public interface Container extends Closeable {
    * @return the module finder for this container, or {@code null} if not relevant to the
    *     implementation.
    */
-  @Nullable
   ModuleFinder getModuleFinder();
 
   /**
@@ -159,7 +150,6 @@ public interface Container extends Closeable {
    * @param javaFileObject the Java file object to infer the binary name of.
    * @return the name, or null if the file does not exist in this container.
    */
-  @Nullable
   String inferBinaryName(PathFileObject javaFileObject);
 
   /**

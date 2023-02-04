@@ -41,8 +41,8 @@ are always welcome!
 - Implements in-memory file management compatible with the NIO Path and
   FileSystem API, enabling tests to run without write access to the host
   system, and without awkward resource-cleanup logic.
-- Ability to run compilation on combinations of real files, class path
-  resources, and in-memory files.
+- Enables running compilations on combinations of real files, class path
+  resources, in-memory files, JARs, WARs, EARs, ZIP files, etc.
 - Supports Java 9 JPMS modules as intended.
 - Ability to customise a large assortment of configuration parameters
   to enable you to test exactly what you need to test.
@@ -52,14 +52,15 @@ are always welcome!
 - Implements a fully functional JSR-199 Path JavaFileManager.
 - Fluent syntax for creating configurations, executing them, and
   inspecting the results.
-- Integration with AssertJ for fluent assertions on compilation
-  results.
+- Integration with [AssertJ](https://joel-costigliola.github.io/assertj/)
+  for fluent assertions on compilation results.
 - Ability to have multiple source roots, just like when using
   `javac` normally.
-- Diagnostic reporting includes stacktraces, so you can find out
+- Diagnostic reporting includes stack traces, so you can find out
   exactly what triggered a diagnostic and begin debugging any
   issues in your applications quickly.
 - Helpful error messages to assist in annotation processor development
+- Null-safe API (using [JSpecify](https://jspecify.dev/))
 
 ```
 [main] ERROR io.github.ascopes.jct.diagnostics.TracingDiagnosticListener - cannot find symbol

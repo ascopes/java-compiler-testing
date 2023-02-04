@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.filemanagers;
 
 import io.github.ascopes.jct.workspaces.Workspace;
-import javax.annotation.WillNotClose;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -36,6 +35,5 @@ public interface JctFileManagerFactory {
    * @param workspace the workspace to access files in.
    * @return the file manager.
    */
-  @WillNotClose
-  JctFileManager createFileManager(@WillNotClose Workspace workspace);
+  JctFileManager createFileManager(Workspace workspace);
 }

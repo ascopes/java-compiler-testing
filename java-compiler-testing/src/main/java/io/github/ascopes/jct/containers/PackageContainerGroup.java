@@ -21,10 +21,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
-import javax.annotation.WillCloseWhenClosed;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
@@ -39,7 +35,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public interface PackageContainerGroup extends ContainerGroup {
 
   /**
@@ -49,7 +44,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * @param container the container to add.
    */
-  void addPackage(@WillCloseWhenClosed Container container);
+  void addPackage(Container container);
 
   /**
    * Add a path to this group.
@@ -66,7 +61,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * @param path the path to add.
    */
-  void addPackage(@WillNotClose PathRoot path);
+  void addPackage(PathRoot path);
 
   /**
    * Get a class loader for this group of containers.
@@ -96,7 +91,6 @@ public interface PackageContainerGroup extends ContainerGroup {
    * @return the first occurrence of the path in this group, or null if not found.
    * @throws IllegalArgumentException if the provided path is absolute.
    */
-  @Nullable
   Path getFile(String fragment, String... fragments);
 
   /**
@@ -108,7 +102,6 @@ public interface PackageContainerGroup extends ContainerGroup {
    * @param relativeName the relative name of the file to read.
    * @return the file object, or null if the file is not found.
    */
-  @Nullable
   PathFileObject getFileForInput(String packageName, String relativeName);
 
   /**
@@ -122,7 +115,6 @@ public interface PackageContainerGroup extends ContainerGroup {
    * @return the {@link FileObject} to write to, or null if this group has no paths that can be
    *     written to.
    */
-  @Nullable
   PathFileObject getFileForOutput(String packageName, String relativeName);
 
   /**
@@ -135,7 +127,6 @@ public interface PackageContainerGroup extends ContainerGroup {
    * @return the {@link JavaFileObject} to write to, or null if this group has no paths that can be
    *     written to.
    */
-  @Nullable
   PathFileObject getJavaFileForInput(String className, Kind kind);
 
   /**
@@ -149,7 +140,6 @@ public interface PackageContainerGroup extends ContainerGroup {
    * @return the {@link JavaFileObject} to write to, or null if this group has no paths that can be
    *     written to.
    */
-  @Nullable
   PathFileObject getJavaFileForOutput(String className, Kind kind);
 
   /**
@@ -175,7 +165,6 @@ public interface PackageContainerGroup extends ContainerGroup {
    * @param fileObject the file object to infer the binary name for.
    * @return the binary name if known, or null otherwise.
    */
-  @Nullable
   String inferBinaryName(PathFileObject fileObject);
 
   /**

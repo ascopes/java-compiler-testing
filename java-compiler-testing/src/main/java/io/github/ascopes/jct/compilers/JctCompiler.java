@@ -26,8 +26,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
 import org.apiguardian.api.API;
@@ -44,7 +42,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilation> {
 
   /**
@@ -480,7 +477,6 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    *
    * @return the release version string, if set.
    */
-  @Nullable
   String getRelease();
 
   /**
@@ -539,7 +535,6 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    *
    * @return the source version string, if set.
    */
-  @Nullable
   String getSource();
 
   /**
@@ -597,7 +592,6 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    *
    * @return the target version string, if set.
    */
-  @Nullable
   String getTarget();
 
   /**

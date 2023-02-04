@@ -27,11 +27,9 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Abstract base for implementing a reusable managed wrapper around a directory of some sort.
@@ -43,7 +41,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@ThreadSafe
 public abstract class AbstractManagedDirectory implements ManagedDirectory {
 
   private final String name;
@@ -69,44 +66,36 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
    *
    * @return {@code null} in all cases. This implementation cannot have a parent path.
    */
-  @CheckReturnValue
-  @Nullable
   @Override
   public PathRoot getParent() {
     return null;
   }
 
-  @CheckReturnValue
   @Override
   public Path getPath() {
     return rootDirectory;
   }
 
-  @CheckReturnValue
   @Override
   public URI getUri() {
     return uri;
   }
 
-  @CheckReturnValue
   @Override
   public URL getUrl() {
     return url;
   }
 
-  @CheckReturnValue
   @Override
   public String getName() {
     return name;
   }
 
-  @CheckReturnValue
   @Override
   public FileBuilder createFile(String fragment, String... fragments) {
     return new FileBuilderImpl(this, fragment, fragments);
   }
 
-  @CheckReturnValue
   @Override
   public DirectoryBuilder createDirectory(String first, String... rest) {
     return new DirectoryBuilderImpl(this, first, rest);

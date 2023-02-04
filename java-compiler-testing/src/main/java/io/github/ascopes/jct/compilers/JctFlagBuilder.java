@@ -16,10 +16,9 @@
 package io.github.ascopes.jct.compilers;
 
 import java.util.List;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface for defining a common flag builder for compilers.
@@ -27,7 +26,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NotThreadSafe
 public interface JctFlagBuilder {
 
   /**

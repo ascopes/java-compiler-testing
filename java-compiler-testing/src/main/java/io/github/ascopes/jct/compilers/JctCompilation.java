@@ -22,8 +22,6 @@ import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
@@ -36,7 +34,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public interface JctCompilation {
 
   /**
@@ -97,7 +94,6 @@ public interface JctCompilation {
    *
    * @return the output container group, or {@code null} if it does not exist.
    */
-  @Nullable
   default OutputContainerGroup getClassOutputs() {
     return getFileManager().getOutputContainerGroup(StandardLocation.CLASS_OUTPUT);
   }
@@ -107,7 +103,6 @@ public interface JctCompilation {
    *
    * @return the output container group, or {@code null} if it does not exist.
    */
-  @Nullable
   default OutputContainerGroup getSourceOutputs() {
     return getFileManager().getOutputContainerGroup(StandardLocation.SOURCE_OUTPUT);
   }
@@ -117,7 +112,6 @@ public interface JctCompilation {
    *
    * @return the package container group, or {@code null} if it does not exist.
    */
-  @Nullable
   default PackageContainerGroup getClassPath() {
     return getFileManager().getPackageContainerGroup(StandardLocation.CLASS_PATH);
   }
@@ -127,7 +121,6 @@ public interface JctCompilation {
    *
    * @return the package container group, or {@code null} if it does not exist.
    */
-  @Nullable
   default PackageContainerGroup getSourcePath() {
     return getFileManager().getPackageContainerGroup(StandardLocation.SOURCE_PATH);
   }
@@ -137,7 +130,6 @@ public interface JctCompilation {
    *
    * @return the package container group, or {@code null} if it does not exist.
    */
-  @Nullable
   default PackageContainerGroup getAnnotationProcessorPath() {
     return getFileManager().getPackageContainerGroup(StandardLocation.ANNOTATION_PROCESSOR_PATH);
   }
@@ -147,7 +139,6 @@ public interface JctCompilation {
    *
    * @return the module container group, or {@code null} if it does not exist.
    */
-  @Nullable
   default ModuleContainerGroup getAnnotationProcessorModulePath() {
     return getFileManager()
         .getModuleContainerGroup(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH);
@@ -158,7 +149,6 @@ public interface JctCompilation {
    *
    * @return the package container group, or {@code null} if it does not exist.
    */
-  @Nullable
   default PackageContainerGroup getPlatformClassPath() {
     return getFileManager().getPackageContainerGroup(StandardLocation.PLATFORM_CLASS_PATH);
   }
@@ -168,7 +158,6 @@ public interface JctCompilation {
    *
    * @return the output container group, or {@code null} if it does not exist.
    */
-  @Nullable
   default OutputContainerGroup getNativeHeaderOutputs() {
     return getFileManager().getOutputContainerGroup(StandardLocation.NATIVE_HEADER_OUTPUT);
   }
@@ -178,7 +167,6 @@ public interface JctCompilation {
    *
    * @return the module container group, or {@code null} if it does not exist.
    */
-  @Nullable
   default ModuleContainerGroup getModuleSourcePath() {
     return getFileManager().getModuleContainerGroup(StandardLocation.MODULE_SOURCE_PATH);
   }
@@ -188,7 +176,6 @@ public interface JctCompilation {
    *
    * @return the module container group, or {@code null} if it does not exist.
    */
-  @Nullable
   default ModuleContainerGroup getUpgradeModulePath() {
     return getFileManager().getModuleContainerGroup(StandardLocation.UPGRADE_MODULE_PATH);
   }
@@ -198,7 +185,6 @@ public interface JctCompilation {
    *
    * @return the module container group, or {@code null} if it does not exist.
    */
-  @Nullable
   default ModuleContainerGroup getSystemModules() {
     return getFileManager().getModuleContainerGroup(StandardLocation.SYSTEM_MODULES);
   }
@@ -208,7 +194,6 @@ public interface JctCompilation {
    *
    * @return the module container group, or {@code null} if it does not exist.
    */
-  @Nullable
   default ModuleContainerGroup getModulePath() {
     return getFileManager().getModuleContainerGroup(StandardLocation.MODULE_PATH);
   }
@@ -218,7 +203,6 @@ public interface JctCompilation {
    *
    * @return the module container group, or {@code null} if it does not exist.
    */
-  @Nullable
   default ModuleContainerGroup getPatchModulePath() {
     return getFileManager().getModuleContainerGroup(StandardLocation.PATCH_MODULE_PATH);
   }

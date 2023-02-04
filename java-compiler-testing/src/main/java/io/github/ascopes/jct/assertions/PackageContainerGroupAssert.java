@@ -28,14 +28,12 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractPathAssert;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Assertions for package container groups.
@@ -44,7 +42,6 @@ import org.assertj.core.api.AbstractPathAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NotThreadSafe
 public final class PackageContainerGroupAssert
     extends AbstractContainerGroupAssert<PackageContainerGroupAssert, PackageContainerGroup> {
 
@@ -95,7 +92,6 @@ public final class PackageContainerGroupAssert
    * @return the assertions to perform.
    * @throws AssertionError if the container group is null.
    */
-  @CheckReturnValue
   public ClassLoaderAssert classLoader() {
     isNotNull();
 

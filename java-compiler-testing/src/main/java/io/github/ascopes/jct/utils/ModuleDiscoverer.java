@@ -23,7 +23,6 @@ import java.lang.module.ModuleReference;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Function;
-import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -37,7 +36,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1 (0.0.1-M7)
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@ThreadSafe
 public final class ModuleDiscoverer extends UtilityClass {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ModuleDiscoverer.class);

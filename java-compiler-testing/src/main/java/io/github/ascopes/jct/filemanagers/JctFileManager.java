@@ -22,8 +22,6 @@ import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -38,7 +36,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public interface JctFileManager extends JavaFileManager {
 
   /**
@@ -91,7 +88,6 @@ public interface JctFileManager extends JavaFileManager {
    * @param location the package oriented location.
    * @return the container group, or null if one does not exist.
    */
-  @Nullable
   PackageContainerGroup getPackageContainerGroup(Location location);
 
   /**
@@ -107,7 +103,6 @@ public interface JctFileManager extends JavaFileManager {
    * @param location the module oriented location.
    * @return the container group, or null if one does not exist.
    */
-  @Nullable
   ModuleContainerGroup getModuleContainerGroup(Location location);
 
   /**
@@ -123,7 +118,6 @@ public interface JctFileManager extends JavaFileManager {
    * @param location the output oriented location.
    * @return the container group, or null if one does not exist.
    */
-  @Nullable
   OutputContainerGroup getOutputContainerGroup(Location location);
 
   /**

@@ -19,10 +19,9 @@ import io.github.ascopes.jct.compilers.CompilationMode;
 import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Helper to build flags for a standard Javac implementation for the OpenJDK.
@@ -31,7 +30,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@NotThreadSafe
 public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
 
   private static final String VERBOSE = "-verbose";

@@ -19,8 +19,6 @@ import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import java.util.Map;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -37,7 +35,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1 (0.0.1-M7)
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public final class JctFileManagerAnnotationProcessorClassPathConfigurer implements
     JctFileManagerConfigurer {
 
@@ -66,7 +63,7 @@ public final class JctFileManagerAnnotationProcessorClassPathConfigurer implemen
   }
 
   @Override
-  public JctFileManager configure(@WillNotClose JctFileManager fileManager) {
+  public JctFileManager configure(JctFileManager fileManager) {
     LOGGER.debug("Configuring annotation processor discovery mechanism");
 
     switch (compiler.getAnnotationProcessorDiscovery()) {

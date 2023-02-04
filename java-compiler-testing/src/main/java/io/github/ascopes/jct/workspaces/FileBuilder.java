@@ -20,8 +20,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
-import javax.annotation.WillClose;
-import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -32,7 +30,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public interface FileBuilder {
 
   /**
@@ -116,5 +113,5 @@ public interface FileBuilder {
    * @param inputStream the input stream to read.
    * @return the root managed directory for further configuration.
    */
-  ManagedDirectory fromInputStream(@WillClose InputStream inputStream);
+  ManagedDirectory fromInputStream(InputStream inputStream);
 }

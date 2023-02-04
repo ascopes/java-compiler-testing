@@ -25,7 +25,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -38,7 +37,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@ThreadSafe
 public final class SpecialLocationUtils extends UtilityClass {
 
   // Files we don't want to propagate by default as they may clash with the environment.

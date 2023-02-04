@@ -22,11 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.util.List;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Abstract base class for an assertion on an {@link Enum}.
@@ -37,7 +36,6 @@ import org.assertj.core.api.AbstractAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NotThreadSafe
 public abstract class AbstractEnumAssert<A extends AbstractEnumAssert<A, E>, E extends Enum<E>>
     extends AbstractAssert<A, E> {
 

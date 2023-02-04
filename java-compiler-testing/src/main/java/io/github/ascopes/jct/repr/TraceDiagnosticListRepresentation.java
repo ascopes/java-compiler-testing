@@ -19,12 +19,11 @@ import static java.util.stream.Collectors.joining;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.Collection;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.presentation.Representation;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Representation of a collection of diagnostics.
@@ -33,7 +32,6 @@ import org.assertj.core.presentation.Representation;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public final class TraceDiagnosticListRepresentation implements Representation {
 
   private static final TraceDiagnosticListRepresentation INSTANCE

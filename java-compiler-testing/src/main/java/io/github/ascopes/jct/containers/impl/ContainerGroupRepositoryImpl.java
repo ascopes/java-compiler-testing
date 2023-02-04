@@ -27,9 +27,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -43,7 +40,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1 (0.0.1-M7)
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public final class ContainerGroupRepositoryImpl implements AutoCloseable {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ContainerGroupRepositoryImpl.class);
@@ -168,7 +164,6 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    * @param location the location to get the container group for.
    * @return the container group, or {@code null} if no group is associated with the location.
    */
-  @Nullable
   public ContainerGroup getContainerGroup(Location location) {
     ContainerGroup group = outputs.get(location);
     if (group == null) {
@@ -187,7 +182,6 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    * @param location the location associated with the group to get.
    * @return the container group, or {@code null} if no group is associated with the location.
    */
-  @Nullable
   public PackageContainerGroup getPackageContainerGroup(Location location) {
     return packageInputs.get(location);
   }
@@ -210,7 +204,6 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    * @param location the location associated with the group to get.
    * @return the container group, or {@code null} if no group is associated with the location.
    */
-  @Nullable
   public PackageContainerGroup getPackageOrientedContainerGroup(Location location) {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
@@ -232,7 +225,6 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    * @param location the location associated with the group to get.
    * @return the container group, or {@code null} if no group is associated with the location.
    */
-  @Nullable
   public ModuleContainerGroup getModuleContainerGroup(Location location) {
     return moduleInputs.get(location);
   }
@@ -252,7 +244,6 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    * @param location the location associated with the group to get.
    * @return the container group, or {@code null} if no group is associated with the location.
    */
-  @Nullable
   public ModuleContainerGroup getModuleOrientedContainerGroup(Location location) {
     var group = moduleInputs.get(location);
     return group == null ? outputs.get(location) : group;
@@ -264,7 +255,6 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    * @param location the location associated with the group to get.
    * @return the container group, or {@code null} if no group is associated with the location.
    */
-  @Nullable
   public OutputContainerGroup getOutputContainerGroup(Location location) {
     return outputs.get(location);
   }
@@ -402,7 +392,6 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
         .forEach(container -> target.addModule(moduleLocation.getModuleName(), container)));
   }
 
-  @WillNotClose
   private PackageContainerGroup getOrCreatePackageContainerGroup(Location location) {
     return packageInputs.computeIfAbsent(
         location,
@@ -410,7 +399,6 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
     );
   }
 
-  @WillNotClose
   private ModuleContainerGroup getOrCreateModuleContainerGroup(Location location) {
     return moduleInputs.computeIfAbsent(
         location,
@@ -418,7 +406,6 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
     );
   }
 
-  @WillNotClose
   private OutputContainerGroup getOrCreateOutputContainerGroup(Location location) {
     return outputs.computeIfAbsent(
         location,

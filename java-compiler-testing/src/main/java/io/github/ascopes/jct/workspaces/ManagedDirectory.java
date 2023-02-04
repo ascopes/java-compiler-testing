@@ -17,8 +17,6 @@ package io.github.ascopes.jct.workspaces;
 
 import java.io.Closeable;
 import java.io.IOException;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -30,7 +28,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
 
   /**
@@ -40,7 +37,6 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
    * @see #and
    * @see #then
    */
-  @CheckReturnValue
   default ManagedDirectory also() {
     return this;
   }
@@ -52,7 +48,6 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
    * @see #also
    * @see #then
    */
-  @CheckReturnValue
   default ManagedDirectory and() {
     return this;
   }
@@ -87,7 +82,6 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
    * @param rest  any additional parts of the path.
    * @return the directory builder.
    */
-  @CheckReturnValue
   DirectoryBuilder createDirectory(String first, String... rest);
 
   /**
@@ -105,7 +99,6 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
    * @param fragments any additional parts of the path.
    * @return the file builder.
    */
-  @CheckReturnValue
   FileBuilder createFile(String fragment, String... fragments);
 
   /**
@@ -113,7 +106,6 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
    *
    * @return the identifier string.
    */
-  @CheckReturnValue
   String getName();
 
   /**
@@ -123,7 +115,6 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
    * @see #and
    * @see #also
    */
-  @CheckReturnValue
   default ManagedDirectory then() {
     return this;
   }

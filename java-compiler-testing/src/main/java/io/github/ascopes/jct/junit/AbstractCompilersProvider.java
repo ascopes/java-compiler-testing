@@ -25,7 +25,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -116,7 +115,6 @@ import org.opentest4j.TestAbortedException;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NotThreadSafe
 public abstract class AbstractCompilersProvider implements ArgumentsProvider {
 
   // Values that are late-bound when configure() is called from the
