@@ -69,16 +69,16 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   @Override
   public void addPaths(Location location, Collection<? extends PathRoot> pathRoots) {
-    repository.addPaths(location, pathRoots);
+    pathRoots.forEach(pathRoot -> addPath(location, pathRoot));
   }
 
   @Override
   public void close() {
-    // Nothing to close here.
+    repository.close();
   }
 
   @Override
-  public boolean contains(Location location, FileObject fo) throws IOException {
+  public boolean contains(Location location, FileObject fo) {
     if (!(fo instanceof PathFileObject)) {
       return false;
     }
@@ -99,7 +99,7 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   @Override
   public void flush() {
-    // Don't do anything else for now.
+    repository.flush();
   }
 
   @Nullable
@@ -144,25 +144,23 @@ public final class JctFileManagerImpl implements JctFileManager {
   ) {
     requireOutputLocation(location);
 
-    // If we have a module, we may need to create a brand new location for it.
+    PackageContainerGroup group = null;
+
+    // If we have a module, we may need to create a brand-new location for it.
     if (location instanceof ModuleLocation) {
       var moduleLocation = ((ModuleLocation) location);
-      var group = repository.getOutputContainerGroup(moduleLocation.getParent());
+      var parentGroup = repository.getOutputContainerGroup(moduleLocation.getParent());
 
-      if (group != null) {
-        return group
-            .getOrCreateModule(moduleLocation.getModuleName())
-            .getFileForOutput(packageName, relativeName);
+      if (parentGroup != null) {
+        group = parentGroup.getOrCreateModule(moduleLocation.getModuleName());
       }
     } else {
-      var group = repository.getOutputContainerGroup(location);
-
-      if (group != null) {
-        return group.getFileForOutput(packageName, relativeName);
-      }
+      group = repository.getOutputContainerGroup(location);
     }
 
-    return null;
+    return group == null
+        ? null
+        : group.getFileForOutput(packageName, relativeName);
   }
 
   @Nullable
@@ -189,37 +187,37 @@ public final class JctFileManagerImpl implements JctFileManager {
   ) {
     requireOutputLocation(location);
 
-    // If we have a module, we may need to create a brand new location for it.
+    PackageContainerGroup group = null;
+
+    // If we have a module, we may need to create a brand-new location for it.
     if (location instanceof ModuleLocation) {
       var moduleLocation = ((ModuleLocation) location);
-      var group = repository.getOutputContainerGroup(moduleLocation.getParent());
+      var parentGroup = repository.getOutputContainerGroup(moduleLocation.getParent());
 
-      if (group != null) {
-        return group
-            .getOrCreateModule(moduleLocation.getModuleName())
-            .getJavaFileForOutput(className, kind);
+      if (parentGroup != null) {
+        group = parentGroup.getOrCreateModule(moduleLocation.getModuleName());
       }
     } else {
-      var group = repository.getOutputContainerGroup(location);
-
-      if (group != null) {
-        return group.getJavaFileForOutput(className, kind);
-      }
+      group = repository.getOutputContainerGroup(location);
     }
 
-    return null;
+    return group == null
+        ? null
+        : group.getJavaFileForOutput(className, kind);
   }
 
   @Override
-  public Location getLocationForModule(Location location, String moduleName) {
-    // This checks that the input location is module/output oriented within the constructor,
-    // so we don't need to do it here as well.
+  public ModuleLocation getLocationForModule(Location location, String moduleName) {
+    // ModuleLocation will also validate this, but we do this to keep consistent
+    // error messages.
+    requireOutputOrModuleOrientedLocation(location);
+
     return new ModuleLocation(location, moduleName);
   }
 
   @Nullable
   @Override
-  public Location getLocationForModule(Location location, JavaFileObject fo) {
+  public ModuleLocation getLocationForModule(Location location, JavaFileObject fo) {
     requireOutputOrModuleOrientedLocation(location);
 
     if (fo instanceof PathFileObject) {
@@ -227,7 +225,7 @@ public final class JctFileManagerImpl implements JctFileManager {
       var moduleLocation = pathFileObject.getLocation();
 
       if (moduleLocation instanceof ModuleLocation) {
-        return moduleLocation;
+        return (ModuleLocation) moduleLocation;
       }
 
       // The expectation is to return null if this is not for a module. Certain frameworks like
@@ -237,7 +235,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     }
 
     throw new IllegalArgumentException(
-        "File object " + fo + " does not appear to be registered to a module"
+        "File object " + fo + " is not compatible with this file manager"
     );
   }
 
@@ -284,7 +282,7 @@ public final class JctFileManagerImpl implements JctFileManager {
 
     if (group == null) {
       throw new NoSuchElementException(
-          "No container group for location " + location.getName() + " exists"
+          "No container group for location " + location.getName() + " exists in this file manager"
       );
     }
 
@@ -310,12 +308,12 @@ public final class JctFileManagerImpl implements JctFileManager {
     if (!(file instanceof PathFileObject)) {
       return null;
     }
-    var pathFileObject = (PathFileObject) file;
+
     var group = repository.getPackageOrientedContainerGroup(location);
 
     return group == null
         ? null
-        : group.inferBinaryName(pathFileObject);
+        : group.inferBinaryName((PathFileObject) file);
   }
 
   @Nullable
@@ -331,11 +329,7 @@ public final class JctFileManagerImpl implements JctFileManager {
   @Override
   public boolean isSameFile(@Nullable FileObject a, @Nullable FileObject b) {
     // Some annotation processors provide null values here for some reason.
-    if (a == null || b == null) {
-      return false;
-    }
-
-    return Objects.equals(a.toUri(), b.toUri());
+    return a != null && b != null && Objects.equals(a.toUri(), b.toUri());
   }
 
   @Override
@@ -367,7 +361,9 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).toString();
+    return new ToStringBuilder(this)
+        .attribute("repository", repository)
+        .toString();
   }
 
   private static void requireOutputOrModuleOrientedLocation(Location location) {
