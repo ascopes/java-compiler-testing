@@ -22,7 +22,6 @@ import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.utils.ModuleHandle;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
@@ -124,13 +123,14 @@ public final class OutputContainerGroupImpl
   @Override
   @Nullable
   public PathFileObject getFileForInput(String packageName, String relativeName) {
-    var moduleHandle = ModuleHandle.tryExtract(packageName);
+    var moduleName = extractModuleName(packageName);
 
-    if (moduleHandle != null) {
-      var module = getModule(moduleHandle.getModuleName());
+    if (moduleName != null) {
+      var module = getModule(moduleName);
 
       if (module != null) {
-        var file = module.getFileForInput(moduleHandle.getRest(), relativeName);
+        var realPackageName = extractPackageName(packageName);
+        var file = module.getFileForInput(realPackageName, relativeName);
 
         if (file != null) {
           return file;
@@ -144,11 +144,12 @@ public final class OutputContainerGroupImpl
   @Override
   @Nullable
   public PathFileObject getFileForOutput(String packageName, String relativeName) {
-    var moduleHandle = ModuleHandle.tryExtract(packageName);
+    var moduleName = extractModuleName(packageName);
 
-    if (moduleHandle != null) {
-      var module = getOrCreateModule(moduleHandle.getModuleName());
-      var file = module.getFileForOutput(moduleHandle.getRest(), relativeName);
+    if (moduleName != null) {
+      var module = getOrCreateModule(moduleName);
+      var realPackageName = extractPackageName(packageName);
+      var file = module.getFileForOutput(realPackageName, relativeName);
 
       if (file != null) {
         return file;
@@ -161,13 +162,14 @@ public final class OutputContainerGroupImpl
   @Override
   @Nullable
   public PathFileObject getJavaFileForInput(String className, Kind kind) {
-    var moduleHandle = ModuleHandle.tryExtract(className);
+    var moduleName = extractModuleName(className);
 
-    if (moduleHandle != null) {
-      var module = getModule(moduleHandle.getModuleName());
+    if (moduleName != null) {
+      var module = getModule(moduleName);
 
       if (module != null) {
-        var file = module.getJavaFileForInput(moduleHandle.getRest(), kind);
+        var realClassName = extractPackageName(className);
+        var file = module.getJavaFileForInput(realClassName, kind);
 
         if (file != null) {
           return file;
@@ -181,11 +183,12 @@ public final class OutputContainerGroupImpl
   @Override
   @Nullable
   public PathFileObject getJavaFileForOutput(String className, Kind kind) {
-    var moduleHandle = ModuleHandle.tryExtract(className);
+    var moduleName = extractModuleName(className);
 
-    if (moduleHandle != null) {
-      var module = getOrCreateModule(moduleHandle.getModuleName());
-      var file = module.getJavaFileForOutput(moduleHandle.getRest(), kind);
+    if (moduleName != null) {
+      var module = getOrCreateModule(moduleName);
+      var realClassName = extractPackageName(className);
+      var file = module.getJavaFileForOutput(realClassName, kind);
 
       if (file != null) {
         return file;
@@ -237,6 +240,21 @@ public final class OutputContainerGroupImpl
     uncheckedIo(() -> Files.createDirectories(pathWrapper.getPath()));
     group.addPackage(pathWrapper);
     return group;
+  }
+
+  @Nullable
+  private static String extractModuleName(String binaryName) {
+    // extractModuleName("foo.bar.Baz") -> null
+    // extractModuleName("some.module/foo.bar.Baz") -> "some.module"
+    var separatorIndex = binaryName.indexOf('/');
+    return separatorIndex == -1 ? null : binaryName.substring(0, separatorIndex);
+  }
+
+  private static String extractPackageName(String binaryName) {
+    // extractPackageName("foo.bar.Baz") -> "foo.bar.Baz"
+    // extractPackageName("some.module/foo.bar.Baz") -> "foo.bar.Baz"
+    var separatorIndex = binaryName.indexOf('/');
+    return separatorIndex == -1 ? binaryName : binaryName.substring(separatorIndex + 1);
   }
 
   /**
