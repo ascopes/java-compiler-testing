@@ -19,8 +19,6 @@ import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -40,7 +38,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1 (0.0.1-M7)
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public final class JctFileManagerJvmClassPathModuleConfigurer implements JctFileManagerConfigurer {
 
   private static final Logger LOGGER = LoggerFactory
@@ -58,7 +55,7 @@ public final class JctFileManagerJvmClassPathModuleConfigurer implements JctFile
   }
 
   @Override
-  public JctFileManager configure(@WillNotClose JctFileManager fileManager) {
+  public JctFileManager configure(JctFileManager fileManager) {
     LOGGER.debug(
         "Copying any misplaced modules that exist within the class path onto the module path"
     );

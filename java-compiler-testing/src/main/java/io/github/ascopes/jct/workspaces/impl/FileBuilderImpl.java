@@ -33,12 +33,9 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Locale;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.WillClose;
-import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +46,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@ThreadSafe
 public final class FileBuilderImpl implements FileBuilder {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(FileBuilderImpl.class);
@@ -135,11 +131,10 @@ public final class FileBuilderImpl implements FileBuilder {
   }
 
   @Override
-  public ManagedDirectory fromInputStream(@WillClose InputStream inputStream) {
+  public ManagedDirectory fromInputStream(InputStream inputStream) {
     return uncheckedIo(() -> createFile(inputStream));
   }
 
-  @CheckReturnValue
   private ManagedDirectory createFile(InputStream input) throws IOException {
     Files.createDirectories(targetPath.getParent());
 
@@ -157,7 +152,6 @@ public final class FileBuilderImpl implements FileBuilder {
     }
   }
 
-  @CheckReturnValue
   private static InputStream maybeBuffer(InputStream input, @Nullable String scheme) {
     if (input instanceof BufferedInputStream || input instanceof ByteArrayInputStream) {
       return input;
@@ -179,7 +173,6 @@ public final class FileBuilderImpl implements FileBuilder {
     }
   }
 
-  @CheckReturnValue
   private static ClassLoader currentCallerClassLoader() {
     return Thread.currentThread().getContextClassLoader();
   }

@@ -20,8 +20,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
@@ -38,7 +36,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NotThreadSafe
 public interface Workspace extends AutoCloseable {
 
   /**
@@ -300,7 +297,6 @@ public interface Workspace extends AutoCloseable {
    * @return the test directory that was created.
    * @throws IllegalArgumentException if the inputs are invalid.
    */
-  @CheckReturnValue
   ManagedDirectory createPackage(Location location);
 
   /**
@@ -327,7 +323,6 @@ public interface Workspace extends AutoCloseable {
    * @return the test directory that was created.
    * @throws IllegalArgumentException if the inputs are invalid.
    */
-  @CheckReturnValue
   ManagedDirectory createModule(Location location, String moduleName);
 
   /**
@@ -335,7 +330,6 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createClassOutputPackage() {
     return createPackage(StandardLocation.CLASS_OUTPUT);
   }
@@ -346,7 +340,6 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createClassOutputModule(String moduleName) {
     return createModule(StandardLocation.CLASS_OUTPUT, moduleName);
   }
@@ -356,7 +349,6 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createSourceOutputPackage() {
     return createPackage(StandardLocation.SOURCE_OUTPUT);
   }
@@ -367,7 +359,6 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createSourceOutputModule(String moduleName) {
     return createModule(StandardLocation.SOURCE_OUTPUT, moduleName);
   }
@@ -377,7 +368,6 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createClassPathPackage() {
     return createPackage(StandardLocation.CLASS_PATH);
   }
@@ -388,7 +378,6 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createModulePathModule(String moduleName) {
     return createModule(StandardLocation.MODULE_PATH, moduleName);
   }
@@ -398,7 +387,6 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createSourcePathPackage() {
     return createPackage(StandardLocation.SOURCE_PATH);
   }
@@ -417,7 +405,6 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createSourcePathModule(String moduleName) {
     return createModule(StandardLocation.MODULE_SOURCE_PATH, moduleName);
   }
@@ -430,7 +417,6 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createAnnotationProcessorPathPackage() {
     return createPackage(StandardLocation.ANNOTATION_PROCESSOR_PATH);
   }
@@ -444,7 +430,6 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createAnnotationProcessorPathModule(String moduleName) {
     return createModule(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, moduleName);
   }
@@ -454,7 +439,6 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createPlatformClassPathPackage() {
     return createPackage(StandardLocation.PLATFORM_CLASS_PATH);
   }
@@ -464,7 +448,6 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createNativeHeaderOutputPackage() {
     return createPackage(StandardLocation.NATIVE_HEADER_OUTPUT);
   }
@@ -475,7 +458,6 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createNativeHeaderOutputModule(String moduleName) {
     return createModule(StandardLocation.NATIVE_HEADER_OUTPUT, moduleName);
   }
@@ -486,7 +468,6 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createUpgradeModulePathModule(String moduleName) {
     return createModule(StandardLocation.UPGRADE_MODULE_PATH, moduleName);
   }
@@ -497,7 +478,6 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createSystemModulePathModule(String moduleName) {
     return createModule(StandardLocation.SYSTEM_MODULES, moduleName);
   }
@@ -508,7 +488,6 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the created test directory.
    */
-  @CheckReturnValue
   default ManagedDirectory createPatchModulePathModule(String moduleName) {
     return createModule(StandardLocation.PATCH_MODULE_PATH, moduleName);
   }
@@ -518,7 +497,6 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the paths.
    */
-  @CheckReturnValue
   Map<Location, List<? extends PathRoot>> getAllPaths();
 
   /**
@@ -526,6 +504,5 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the path strategy.
    */
-  @CheckReturnValue
   PathStrategy getPathStrategy();
 }

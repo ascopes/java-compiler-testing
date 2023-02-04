@@ -23,14 +23,12 @@ import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.UtilityClass;
 import java.util.List;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Helper class to provide fluent creation of assertions for compilations.
@@ -39,7 +37,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public final class JctAssertions extends UtilityClass {
 
   private JctAssertions() {
@@ -56,7 +53,6 @@ public final class JctAssertions extends UtilityClass {
    * @param compilation the compilation to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static JctCompilationAssert assertThat(@Nullable JctCompilation compilation) {
     return assertThatCompilation(compilation);
   }
@@ -71,9 +67,8 @@ public final class JctAssertions extends UtilityClass {
    * @param moduleContainerGroup the module container group to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static ModuleContainerGroupAssert assertThat(
-      @Nullable ModuleContainerGroup moduleContainerGroup
+      ModuleContainerGroup moduleContainerGroup
   ) {
     return assertThatContainerGroup(moduleContainerGroup);
   }
@@ -88,9 +83,8 @@ public final class JctAssertions extends UtilityClass {
    * @param outputContainerGroup the output container group to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static OutputContainerGroupAssert assertThat(
-      @Nullable OutputContainerGroup outputContainerGroup
+      OutputContainerGroup outputContainerGroup
   ) {
     return assertThatContainerGroup(outputContainerGroup);
   }
@@ -105,9 +99,8 @@ public final class JctAssertions extends UtilityClass {
    * @param packageContainerGroup the package container group to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static PackageContainerGroupAssert assertThat(
-      @Nullable PackageContainerGroup packageContainerGroup
+      PackageContainerGroup packageContainerGroup
   ) {
     return assertThatContainerGroup(packageContainerGroup);
   }
@@ -122,9 +115,8 @@ public final class JctAssertions extends UtilityClass {
    * @param diagnostic the diagnostic to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static TraceDiagnosticAssert assertThat(
-      @Nullable TraceDiagnostic<? extends JavaFileObject> diagnostic
+      TraceDiagnostic<? extends JavaFileObject> diagnostic
   ) {
     return assertThatDiagnostic(diagnostic);
   }
@@ -139,7 +131,6 @@ public final class JctAssertions extends UtilityClass {
    * @param fileObject the file object to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static JavaFileObjectAssert assertThat(@Nullable JavaFileObject fileObject) {
     return assertThatFileObject(fileObject);
   }
@@ -154,7 +145,6 @@ public final class JctAssertions extends UtilityClass {
    * @param fileObject the file object to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static PathFileObjectAssert assertThat(@Nullable PathFileObject fileObject) {
     return assertThatFileObject(fileObject);
   }
@@ -169,8 +159,7 @@ public final class JctAssertions extends UtilityClass {
    * @param kind the diagnostic kind to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
-  public static DiagnosticKindAssert assertThat(@Nullable Diagnostic.Kind kind) {
+  public static DiagnosticKindAssert assertThat(Diagnostic.@Nullable Kind kind) {
     return assertThatKind(kind);
   }
 
@@ -184,8 +173,7 @@ public final class JctAssertions extends UtilityClass {
    * @param kind the Java file object kind to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
-  public static JavaFileObjectKindAssert assertThat(@Nullable JavaFileObject.Kind kind) {
+  public static JavaFileObjectKindAssert assertThat(JavaFileObject.@Nullable Kind kind) {
     return assertThatKind(kind);
   }
 
@@ -199,7 +187,6 @@ public final class JctAssertions extends UtilityClass {
    * @param location the location to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static LocationAssert assertThat(@Nullable Location location) {
     return assertThatLocation(location);
   }
@@ -210,7 +197,6 @@ public final class JctAssertions extends UtilityClass {
    * @param compilation the compilation to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static JctCompilationAssert assertThatCompilation(@Nullable JctCompilation compilation) {
     return new JctCompilationAssert(compilation);
   }
@@ -221,9 +207,8 @@ public final class JctAssertions extends UtilityClass {
    * @param moduleContainerGroup the module container group to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static ModuleContainerGroupAssert assertThatContainerGroup(
-      @Nullable ModuleContainerGroup moduleContainerGroup
+      ModuleContainerGroup moduleContainerGroup
   ) {
     return new ModuleContainerGroupAssert(moduleContainerGroup);
   }
@@ -234,9 +219,8 @@ public final class JctAssertions extends UtilityClass {
    * @param outputContainerGroup the output container group to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static OutputContainerGroupAssert assertThatContainerGroup(
-      @Nullable OutputContainerGroup outputContainerGroup
+      OutputContainerGroup outputContainerGroup
   ) {
     return new OutputContainerGroupAssert(outputContainerGroup);
   }
@@ -247,9 +231,8 @@ public final class JctAssertions extends UtilityClass {
    * @param packageContainerGroup the package container group to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static PackageContainerGroupAssert assertThatContainerGroup(
-      @Nullable PackageContainerGroup packageContainerGroup
+      PackageContainerGroup packageContainerGroup
   ) {
     return new PackageContainerGroupAssert(packageContainerGroup);
   }
@@ -260,9 +243,8 @@ public final class JctAssertions extends UtilityClass {
    * @param diagnostic the diagnostic to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static TraceDiagnosticAssert assertThatDiagnostic(
-      @Nullable TraceDiagnostic<? extends JavaFileObject> diagnostic
+      TraceDiagnostic<? extends JavaFileObject> diagnostic
   ) {
     return new TraceDiagnosticAssert(diagnostic);
   }
@@ -273,9 +255,8 @@ public final class JctAssertions extends UtilityClass {
    * @param diagnostics the diagnostics to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static TraceDiagnosticListAssert assertThatDiagnostics(
-      @Nullable List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
+      List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
   ) {
     return new TraceDiagnosticListAssert(diagnostics);
   }
@@ -286,7 +267,6 @@ public final class JctAssertions extends UtilityClass {
    * @param fileObject the file object to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static JavaFileObjectAssert assertThatFileObject(@Nullable JavaFileObject fileObject) {
     return new JavaFileObjectAssert(fileObject);
   }
@@ -297,7 +277,6 @@ public final class JctAssertions extends UtilityClass {
    * @param fileObject the file object to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static PathFileObjectAssert assertThatFileObject(@Nullable PathFileObject fileObject) {
     return new PathFileObjectAssert(fileObject);
   }
@@ -308,8 +287,7 @@ public final class JctAssertions extends UtilityClass {
    * @param kind the diagnostic kind to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
-  public static DiagnosticKindAssert assertThatKind(@Nullable Diagnostic.Kind kind) {
+  public static DiagnosticKindAssert assertThatKind(Diagnostic.@Nullable Kind kind) {
     return new DiagnosticKindAssert(kind);
   }
 
@@ -319,8 +297,7 @@ public final class JctAssertions extends UtilityClass {
    * @param kind the Java file object kind to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
-  public static JavaFileObjectKindAssert assertThatKind(@Nullable JavaFileObject.Kind kind) {
+  public static JavaFileObjectKindAssert assertThatKind(JavaFileObject.@Nullable Kind kind) {
     return new JavaFileObjectKindAssert(kind);
   }
 
@@ -330,7 +307,6 @@ public final class JctAssertions extends UtilityClass {
    * @param location the location to assert on.
    * @return the assertion.
    */
-  @CheckReturnValue
   public static LocationAssert assertThatLocation(@Nullable Location location) {
     return new LocationAssert(location);
   }

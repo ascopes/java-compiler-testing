@@ -25,7 +25,6 @@ import java.util.Locale;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticListener;
 import javax.tools.JavaFileObject;
@@ -44,7 +43,6 @@ import org.slf4j.event.Level;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public class TracingDiagnosticListener<S extends JavaFileObject> implements DiagnosticListener<S> {
 
   private final ConcurrentLinkedQueue<TraceDiagnostic<S>> diagnostics;

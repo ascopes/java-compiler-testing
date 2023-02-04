@@ -38,9 +38,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
 import javax.tools.FileObject;
@@ -48,6 +45,7 @@ import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +60,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public final class PathFileObject implements JavaFileObject {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PathFileObject.class);
@@ -146,7 +143,6 @@ public final class PathFileObject implements JavaFileObject {
    *
    * @return {@code null}, always. This implementation does not provide this functionality.
    */
-  @Nullable
   @Override
   public Modifier getAccessLevel() {
     return unknown();
@@ -235,7 +231,6 @@ public final class PathFileObject implements JavaFileObject {
    *
    * @return {@code null} in all cases, this operation is not implemented.
    */
-  @Nullable
   @Override
   public NestingKind getNestingKind() {
     return unknown();
@@ -299,7 +294,6 @@ public final class PathFileObject implements JavaFileObject {
    * @throws IOException         if an IO error occurs.
    */
   @Override
-  @WillNotClose
   public BufferedInputStream openInputStream() throws IOException {
     return new BufferedInputStream(openUnbufferedInputStream());
   }
@@ -319,7 +313,6 @@ public final class PathFileObject implements JavaFileObject {
    * @throws IOException if an IO error occurs.
    */
   @Override
-  @WillNotClose
   public BufferedOutputStream openOutputStream() throws IOException {
     return new BufferedOutputStream(openUnbufferedOutputStream());
   }
@@ -339,7 +332,6 @@ public final class PathFileObject implements JavaFileObject {
    * @throws IOException         if an IO error occurs.
    */
   @Override
-  @WillNotClose
   public BufferedReader openReader(boolean ignoreEncodingErrors) throws IOException {
     var inputStream = openUnbufferedInputStream();
     var decoder = decoder(ignoreEncodingErrors);
@@ -362,7 +354,6 @@ public final class PathFileObject implements JavaFileObject {
    * @throws IOException if an IO error occurs.
    */
   @Override
-  @WillNotClose
   public BufferedWriter openWriter() throws IOException {
     var outputStream = openUnbufferedOutputStream();
     var encoder = CHARSET
@@ -395,12 +386,10 @@ public final class PathFileObject implements JavaFileObject {
         .toString();
   }
 
-  @WillNotClose
   private InputStream openUnbufferedInputStream() throws IOException {
     return Files.newInputStream(fullPath);
   }
 
-  @WillNotClose
   private OutputStream openUnbufferedOutputStream() throws IOException {
     // Ensure parent directories exist first.
     Files.createDirectories(fullPath.getParent());
@@ -418,7 +407,6 @@ public final class PathFileObject implements JavaFileObject {
         .onMalformedInput(action);
   }
 
-  @Nullable
   private <T> T unknown() {
     return null;
   }

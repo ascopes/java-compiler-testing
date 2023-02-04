@@ -26,9 +26,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -37,6 +34,7 @@ import org.assertj.core.api.AbstractByteArrayAssert;
 import org.assertj.core.api.AbstractInstantAssert;
 import org.assertj.core.api.AbstractStringAssert;
 import org.assertj.core.api.AbstractUriAssert;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Abstract assertions for {@link JavaFileObject Java file objects}.
@@ -47,7 +45,6 @@ import org.assertj.core.api.AbstractUriAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NotThreadSafe
 public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObjectAssert<I, A>, A extends JavaFileObject>
     extends AbstractAssert<I, A> {
 
@@ -67,7 +64,6 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * @return the URI assertion.
    * @throws AssertionError if the actual value is null.
    */
-  @CheckReturnValue
   public AbstractUriAssert<?> uri() {
     isNotNull();
     return assertThat(actual.toUri());
@@ -79,7 +75,6 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * @return the string assertion.
    * @throws AssertionError if the actual value is null.
    */
-  @CheckReturnValue
   public AbstractStringAssert<?> name() {
     isNotNull();
     return assertThat(actual.getName());
@@ -91,7 +86,6 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * @return the byte array assertion.
    * @throws AssertionError if the actual value is null.
    */
-  @CheckReturnValue
   public AbstractByteArrayAssert<?> binaryContent() {
     isNotNull();
     return assertThat(rawContent());
@@ -105,7 +99,6 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * @throws AssertionError       if the actual value is null.
    * @throws UncheckedIOException if an IO error occurs reading the file content.
    */
-  @CheckReturnValue
   public AbstractStringAssert<?> content() {
     return content(StandardCharsets.UTF_8);
   }
@@ -119,7 +112,6 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * @throws NullPointerException if the charset parameter is null.
    * @throws UncheckedIOException if an IO error occurs reading the file content.
    */
-  @CheckReturnValue
   public AbstractStringAssert<?> content(Charset charset) {
     requireNonNull(charset, "charset must not be null");
     return content(charset.newDecoder());
@@ -134,7 +126,6 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * @throws NullPointerException if the charset decoder parameter is null.
    * @throws UncheckedIOException if an IO error occurs reading the file content.
    */
-  @CheckReturnValue
   public AbstractStringAssert<?> content(CharsetDecoder charsetDecoder) {
     requireNonNull(charsetDecoder, "charsetDecoder must not be null");
     isNotNull();
@@ -155,7 +146,6 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * @return the instant assertion.
    * @throws AssertionError if the actual value is null.
    */
-  @CheckReturnValue
   public AbstractInstantAssert<?> lastModified() {
     isNotNull();
 
@@ -169,7 +159,6 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * @return the assertions for the kind.
    * @throws AssertionError if the actual value is null.
    */
-  @CheckReturnValue
   public JavaFileObjectKindAssert kind() {
     isNotNull();
 

@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -54,7 +52,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@ThreadSafe
 public final class RamDirectoryImpl extends AbstractManagedDirectory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RamDirectoryImpl.class);
@@ -87,7 +84,6 @@ public final class RamDirectoryImpl extends AbstractManagedDirectory {
    * @param name a symbolic name to give the path. This must be a valid POSIX directory name.
    * @return the in-memory path.
    */
-  @CheckReturnValue
   public static RamDirectoryImpl newRamDirectory(String name) {
 
     assertValidRootName(name);

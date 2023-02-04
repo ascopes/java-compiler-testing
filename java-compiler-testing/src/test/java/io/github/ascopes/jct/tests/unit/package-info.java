@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@NonNullApi
-@NonNullImpl
+@NullMarked
 package io.github.ascopes.jct.tests.unit;
 
-import io.github.ascopes.jct.utils.NonNullApi;
-import io.github.ascopes.jct.utils.NonNullImpl;
+import org.jspecify.annotations.NullMarked;

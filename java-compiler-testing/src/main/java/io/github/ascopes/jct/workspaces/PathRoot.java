@@ -20,10 +20,9 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A path-like object that can provide a {@link Path Java NIO Path}.
@@ -41,7 +40,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public interface PathRoot {
 
   /**
@@ -89,6 +87,5 @@ public interface PathRoot {
    *
    * @return the parent path root, or {@code null} if no parent root exists.
    */
-  @Nullable
   PathRoot getParent();
 }

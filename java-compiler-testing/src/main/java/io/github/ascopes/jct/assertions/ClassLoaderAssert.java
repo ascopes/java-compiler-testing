@@ -15,11 +15,10 @@
  */
 package io.github.ascopes.jct.assertions;
 
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Assertions to perform on a classloader.
@@ -31,7 +30,6 @@ import org.assertj.core.api.AbstractAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NotThreadSafe
 public final class ClassLoaderAssert extends AbstractAssert<ClassLoaderAssert, ClassLoader> {
 
   /**

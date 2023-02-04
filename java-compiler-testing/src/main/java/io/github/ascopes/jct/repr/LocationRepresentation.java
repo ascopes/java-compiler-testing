@@ -15,12 +15,11 @@
  */
 package io.github.ascopes.jct.repr;
 
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.presentation.Representation;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Representation for a {@link Location location}.
@@ -29,7 +28,6 @@ import org.assertj.core.presentation.Representation;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public final class LocationRepresentation implements Representation {
 
   private static final LocationRepresentation INSTANCE

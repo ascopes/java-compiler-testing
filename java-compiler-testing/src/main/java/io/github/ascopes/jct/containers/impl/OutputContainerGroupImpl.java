@@ -29,12 +29,10 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.WillCloseWhenClosed;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A group of containers that relate to a specific output location.
@@ -50,7 +48,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@ThreadSafe
 public final class OutputContainerGroupImpl
     extends AbstractPackageContainerGroup
     implements OutputContainerGroup {
@@ -85,7 +82,7 @@ public final class OutputContainerGroupImpl
   }
 
   @Override
-  public void addModule(String module, @WillCloseWhenClosed Container container) {
+  public void addModule(String module, Container container) {
     getOrCreateModule(module).addPackage(container);
   }
 
@@ -106,6 +103,7 @@ public final class OutputContainerGroupImpl
     return super.contains(fileObject);
   }
 
+  @Nullable
   @Override
   public PackageContainerGroup getModule(String module) {
     if (module.isEmpty()) {
@@ -144,7 +142,6 @@ public final class OutputContainerGroupImpl
   }
 
   @SuppressWarnings("resource")
-  @WillNotClose
   private PackageContainerGroup newPackageGroup(ModuleLocation moduleLocation) {
     // For output locations, we only need the first root. We then just put a subdirectory
     // in there, as it reduces the complexity of this tenfold and means we don't have to

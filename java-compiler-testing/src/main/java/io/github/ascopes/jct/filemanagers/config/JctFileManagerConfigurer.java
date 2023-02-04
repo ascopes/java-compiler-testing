@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.filemanagers.config;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
-import javax.annotation.WillNotClose;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -36,7 +35,7 @@ public interface JctFileManagerConfigurer {
    * @param fileManager the file manager implementation.
    * @return the new file manager (this may be the same as the input file manager).
    */
-  JctFileManager configure(@WillNotClose JctFileManager fileManager);
+  JctFileManager configure(JctFileManager fileManager);
 
   /**
    * Determine if this configurer is enabled or not.

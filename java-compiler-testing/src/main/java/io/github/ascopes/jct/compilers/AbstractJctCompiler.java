@@ -31,12 +31,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.annotation.processing.Processor;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Common functionality for a compiler that can be overridden and that produces a
@@ -57,7 +55,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NotThreadSafe
 public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     implements JctCompiler<A, JctCompilation> {
 
@@ -260,7 +257,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     return getDefaultRelease();
   }
 
-  @Nullable
   @Override
   public String getRelease() {
     return release;
@@ -278,7 +274,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     return myself();
   }
 
-  @Nullable
   @Override
   public String getSource() {
     return source;
@@ -293,7 +288,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     return myself();
   }
 
-  @Nullable
   @Override
   public String getTarget() {
     return target;
@@ -522,8 +516,8 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   @SuppressWarnings({"NullableProblems", "ThrowFromFinallyBlock"})
   // NullableProblems is needed due to https://youtrack.jetbrains.com/issue/IDEA-311124
   private JctCompilation compileInternal(
-      @WillNotClose Workspace workspace,
-      @Nullable Collection<String> classNames
+      Workspace workspace,
+      Collection<String> classNames
   ) {
     var fileManagerFactory = getFileManagerFactory();
     var flagBuilderFactory = getFlagBuilderFactory();

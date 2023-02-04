@@ -100,7 +100,7 @@
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <groovy.version>4.0.8</groovy.version>
     <jimfs.version>1.2</jimfs.version>
-    <jsr305.version>3.0.2</jsr305.version>
+    <jspecify.version>0.3.0</jspecify.version>
     <junit.version>5.9.2</junit.version>
     <mockito.version>5.1.1</mockito.version>
     <slf4j.version>2.0.6</slf4j.version>
@@ -169,12 +169,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.google.code.findbugs</groupId>
-        <artifactId>jsr305</artifactId>
-        <version>${jsr305.version}</version>
-      </dependency>
-
-      <dependency>
         <!-- In-memory file system -->
         <groupId>com.google.jimfs</groupId>
         <artifactId>jimfs</artifactId>
@@ -214,6 +208,12 @@
         <groupId>org.apache.groovy</groupId>
         <artifactId>groovy</artifactId>
         <version>${groovy.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jspecify</groupId>
+        <artifactId>jspecify</artifactId>
+        <version>${jspecify.version}</version>
       </dependency>
 
       <dependency>
@@ -410,8 +410,8 @@
             <linksource>true</linksource>
             <links>
               <link>https://docs.oracle.com/en/java/javase/17/docs/api</link>
-              <link>https://javadoc.io/doc/com.google.code.findbugs/jsr305/${jsr305.version}</link>
               <link>https://javadoc.io/doc/org.assertj/assertj-core/${assertj.version}</link>
+              <link>https://javadoc.io/doc/org.jspecify/jspecify/${jspecify.version}</link>
               <link>https://www.slf4j.org/apidocs</link>
               <link>https://junit.org/junit5/docs/${junit.version}/api</link>
             </links>

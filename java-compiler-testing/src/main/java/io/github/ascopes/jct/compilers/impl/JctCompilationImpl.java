@@ -26,9 +26,6 @@ import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -40,7 +37,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@ThreadSafe
 public final class JctCompilationImpl implements JctCompilation {
 
   private final boolean success;
@@ -129,23 +125,11 @@ public final class JctCompilationImpl implements JctCompilation {
   @API(since = "0.0.1", status = Status.INTERNAL)
   public static final class Builder {
 
-    @Nullable
     private Boolean failOnWarnings;
-
-    @Nullable
     private Boolean success;
-
-    @Nullable
     private List<String> outputLines;
-
-    @Nullable
     private Set<JavaFileObject> compilationUnits;
-
-    @Nullable
     private List<TraceDiagnostic<JavaFileObject>> diagnostics;
-
-    @Nullable
-    @WillNotClose
     private JctFileManager fileManager;
 
     private Builder() {
@@ -218,10 +202,12 @@ public final class JctCompilationImpl implements JctCompilation {
     /**
      * Set the file manager.
      *
+     * <p>The file manager will not be closed once finshed with.
+     *
      * @param fileManager the file manager.
      * @return this builder.
      */
-    public Builder fileManager(@WillNotClose JctFileManager fileManager) {
+    public Builder fileManager(JctFileManager fileManager) {
       this.fileManager = requireNonNull(fileManager, "fileManager");
       return this;
     }

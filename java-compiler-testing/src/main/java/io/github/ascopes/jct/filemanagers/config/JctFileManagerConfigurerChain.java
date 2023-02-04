@@ -19,7 +19,6 @@ import io.github.ascopes.jct.filemanagers.JctFileManager;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1 (0.0.1-M7)
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NotThreadSafe
 public final class JctFileManagerConfigurerChain {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctFileManagerConfigurerChain.class);

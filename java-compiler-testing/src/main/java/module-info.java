@@ -97,10 +97,10 @@ module io.github.ascopes.jct {
   requires java.compiler;
   requires java.management;
   requires jimfs;
-  requires static jsr305;
   requires me.xdrop.fuzzywuzzy;
   requires static transitive org.apiguardian.api;
   requires org.assertj.core;
+  requires static org.jspecify;
   requires static transitive org.junit.jupiter.params;
   requires org.slf4j;
 

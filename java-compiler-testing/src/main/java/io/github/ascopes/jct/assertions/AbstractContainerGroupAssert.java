@@ -21,15 +21,13 @@ import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
 import io.github.ascopes.jct.containers.ContainerGroup;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractListAssert;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ObjectAssert;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base assertions that can be performed on a container group.
@@ -40,7 +38,6 @@ import org.assertj.core.api.ObjectAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NotThreadSafe
 public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGroupAssert<I, C>, C extends ContainerGroup>
     extends AbstractAssert<I, C> {
 
@@ -68,7 +65,6 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
    * @return the assertions to perform.
    * @throws AssertionError if the object being asserted upon is null.
    */
-  @CheckReturnValue
   public LocationAssert location() {
     isNotNull();
     return new LocationAssert(actual.getLocation());
@@ -83,7 +79,6 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
    * @throws AssertionError       if the object being asserted upon is null.
    * @throws NullPointerException if the provided class parameter is null.
    */
-  @CheckReturnValue
   public <T> AbstractListAssert<?, List<? extends T>, T, ? extends ObjectAssert<T>> services(
       Class<T> clazz
   ) {

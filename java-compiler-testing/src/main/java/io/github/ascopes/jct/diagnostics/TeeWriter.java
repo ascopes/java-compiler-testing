@@ -19,8 +19,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.Writer;
-import javax.annotation.WillCloseWhenClosed;
-import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -33,14 +31,13 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public final class TeeWriter extends Writer {
 
   private final Object lock;
 
   private volatile boolean closed;
 
-  private final @WillCloseWhenClosed Writer writer;
+  private final Writer writer;
 
   // We use a StringBuilder and manually synchronise it rather than
   // a string buffer, as we want to manually synchronise the builder
@@ -52,7 +49,7 @@ public final class TeeWriter extends Writer {
    *
    * @param writer the underlying writer to "tee" to.
    */
-  public TeeWriter(@WillCloseWhenClosed Writer writer) {
+  public TeeWriter(Writer writer) {
     lock = new Object();
     closed = false;
 

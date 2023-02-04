@@ -28,10 +28,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Builder of {@link Object#toString()} representations for POJO objects.
@@ -40,7 +39,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(status = Status.INTERNAL, since = "0.0.1")
-@NotThreadSafe
 public final class ToStringBuilder {
 
   private static final String LSQUARE = "[";

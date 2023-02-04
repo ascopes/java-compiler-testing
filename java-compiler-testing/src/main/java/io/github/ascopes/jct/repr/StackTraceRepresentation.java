@@ -16,11 +16,10 @@
 package io.github.ascopes.jct.repr;
 
 import java.util.List;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.presentation.Representation;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Representation of a {@link List list} of {@link StackTraceElement stack trace frames}.
@@ -29,7 +28,6 @@ import org.assertj.core.presentation.Representation;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public final class StackTraceRepresentation implements Representation {
 
   private static final StackTraceRepresentation INSTANCE = new StackTraceRepresentation();

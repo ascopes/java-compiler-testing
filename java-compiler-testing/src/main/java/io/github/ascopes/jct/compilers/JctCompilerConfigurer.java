@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.compilers;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -94,7 +93,6 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.STABLE)
 @FunctionalInterface
-@NotThreadSafe
 @SuppressWarnings("NullableProblems")
 public interface JctCompilerConfigurer<E extends Exception> {
 

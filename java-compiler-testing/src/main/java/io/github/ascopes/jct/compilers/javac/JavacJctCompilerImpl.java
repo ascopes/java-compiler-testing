@@ -22,7 +22,6 @@ import io.github.ascopes.jct.compilers.JctFlagBuilderFactory;
 import io.github.ascopes.jct.compilers.Jsr199CompilerFactory;
 import io.github.ascopes.jct.filemanagers.JctFileManagerFactory;
 import io.github.ascopes.jct.filemanagers.impl.JctFileManagerFactoryImpl;
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.lang.model.SourceVersion;
 import javax.tools.ToolProvider;
 import org.apiguardian.api.API;
@@ -35,7 +34,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@NotThreadSafe
 public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctCompilerImpl> {
 
   private static final String NAME = "JDK Compiler";
@@ -87,6 +85,7 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
 
     var latestSupported = SourceVersion.latestSupported().ordinal();
 
+    //noinspection NonStrictComparisonCanBeEquality
     if (latestSupported >= 20) {
       // JDK 20 marks source-version 8 as obsolete, and emits compilation
       // warnings that may break tests using "fail on warnings". To avoid this,

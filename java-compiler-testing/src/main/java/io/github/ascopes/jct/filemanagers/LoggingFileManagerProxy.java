@@ -25,13 +25,9 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.WillCloseWhenClosed;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +44,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public final class LoggingFileManagerProxy implements InvocationHandler {
 
   private final Logger logger;
@@ -74,7 +69,7 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
    * @throws Throwable any exception that is thrown.
    */
   @Override
-  public Object invoke(Object proxy, Method method, @Nullable Object[] args) throws Throwable {
+  public Object invoke(Object proxy, Method method, Object @Nullable ... args) throws Throwable {
     if (method.getName().equals("toString")) {
       return toString();
     }
@@ -196,12 +191,7 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
    *                    omit them.
    * @return the proxy {@link JctFileManager} to use.
    */
-  @CheckReturnValue
-  @WillNotClose
-  public static JctFileManager wrap(
-      @WillCloseWhenClosed JctFileManager manager,
-      boolean stackTraces
-  ) {
+  public static JctFileManager wrap(JctFileManager manager, boolean stackTraces) {
     return (JctFileManager) Proxy.newProxyInstance(
         JctFileManager.class.getClassLoader(),
         new Class<?>[]{JctFileManager.class},

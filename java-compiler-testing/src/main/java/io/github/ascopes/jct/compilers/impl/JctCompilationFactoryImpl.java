@@ -33,9 +33,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
@@ -54,7 +51,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1 (0.0.1-M7)
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@ThreadSafe
 public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilationFactoryImpl.class);
@@ -70,7 +66,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       List<String> flags,
       JctFileManager fileManager,
       JavaCompiler jsr199Compiler,
-      @Nullable Collection<String> classNames
+      Collection<String> classNames
   ) {
     try {
       return createCheckedCompilation(flags, fileManager, jsr199Compiler, classNames);
@@ -88,12 +84,11 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       List<String> flags,
       JctFileManager fileManager,
       JavaCompiler jsr199Compiler,
-      @Nullable Collection<String> classNames
+      Collection<String> classNames
   ) throws Exception {
     var compilationUnits = findCompilationUnits(fileManager);
 
     // Do not close stdout, it breaks test engines, especially IntellIJ.
-    @WillNotClose
     var writer = new TeeWriter(new OutputStreamWriter(System.out, compiler.getLogCharset()));
 
     var diagnosticListener = new TracingDiagnosticListener<>(

@@ -17,11 +17,9 @@
  * Internal Javac compiler integrations.
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@NonNullApi
-@NonNullImpl
+@NullMarked
 package io.github.ascopes.jct.compilers.javac;
 
-import io.github.ascopes.jct.utils.NonNullApi;
-import io.github.ascopes.jct.utils.NonNullImpl;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.NullMarked;

@@ -17,8 +17,6 @@ package io.github.ascopes.jct.filemanagers.config;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.workspaces.Workspace;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -31,7 +29,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1 (0.0.1-M7)
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@ThreadSafe
 public final class JctFileManagerWorkspaceConfigurer implements JctFileManagerConfigurer {
 
   private static final Logger LOGGER
@@ -44,12 +41,12 @@ public final class JctFileManagerWorkspaceConfigurer implements JctFileManagerCo
    *
    * @param workspace the workspace to wrap.
    */
-  public JctFileManagerWorkspaceConfigurer(@WillNotClose Workspace workspace) {
+  public JctFileManagerWorkspaceConfigurer(Workspace workspace) {
     this.workspace = workspace;
   }
 
   @Override
-  public JctFileManager configure(@WillNotClose JctFileManager fileManager) {
+  public JctFileManager configure(JctFileManager fileManager) {
     var paths = workspace.getAllPaths();
     LOGGER.debug("Copying user-defined paths from workspace ({})", paths);
     workspace.getAllPaths().forEach(fileManager::addPaths);

@@ -25,8 +25,8 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Annotation that marks the annotated method or constructor as only being visible
- * for testing purposes.
+ * Annotation that marks the annotated method or constructor as only being visible for testing
+ * purposes.
  *
  * <p>This means any API should not be using this element directly.
  *

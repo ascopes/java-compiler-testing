@@ -19,7 +19,6 @@ import io.github.ascopes.jct.ex.JctCompilerException;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.Nullable;
 import javax.tools.JavaCompiler;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -50,6 +49,6 @@ public interface JctCompilationFactory {
       List<String> flags,
       JctFileManager fileManager,
       JavaCompiler jsr199Compiler,
-      @Nullable Collection<String> classNames
+      Collection<String> classNames
   );
 }

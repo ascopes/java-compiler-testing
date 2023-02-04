@@ -31,9 +31,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -49,13 +46,12 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@ThreadSafe
 public final class PathWrappingContainerImpl implements Container {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PathWrappingContainerImpl.class);
 
   private final Location location;
-  private final @WillNotClose PathRoot root;
+  private final PathRoot root;
   private final String name;
 
   /**
@@ -64,7 +60,7 @@ public final class PathWrappingContainerImpl implements Container {
    * @param location the location.
    * @param root     the root directory to hold.
    */
-  public PathWrappingContainerImpl(Location location, @WillNotClose PathRoot root) {
+  public PathWrappingContainerImpl(Location location, PathRoot root) {
     this.location = requireNonNull(location, "location");
     this.root = requireNonNull(root, "root");
     name = root.toString();
@@ -83,7 +79,6 @@ public final class PathWrappingContainerImpl implements Container {
   }
 
   @Override
-  @Nullable
   public Path getFile(String fragment, String... fragments) {
     var realPath = FileUtils.relativeResourceNameToPath(root.getPath(), fragment, fragments);
 
@@ -93,7 +88,6 @@ public final class PathWrappingContainerImpl implements Container {
   }
 
   @Override
-  @Nullable
   public PathFileObject getFileForInput(String packageName, String relativeName) {
     var path = FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName);
 
@@ -109,7 +103,6 @@ public final class PathWrappingContainerImpl implements Container {
   }
 
   @Override
-  @Nullable
   public PathFileObject getJavaFileForInput(String binaryName, Kind kind) {
     var path = FileUtils.binaryNameToPath(root.getPath(), binaryName, kind);
     return Files.isRegularFile(path)
@@ -144,7 +137,6 @@ public final class PathWrappingContainerImpl implements Container {
   }
 
   @Override
-  @Nullable
   public String inferBinaryName(PathFileObject javaFileObject) {
     return javaFileObject.getFullPath().startsWith(root.getPath())
         ? FileUtils.pathToBinaryName(javaFileObject.getRelativePath())

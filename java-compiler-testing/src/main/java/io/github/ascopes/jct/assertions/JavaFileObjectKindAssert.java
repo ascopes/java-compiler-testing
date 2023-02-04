@@ -17,13 +17,11 @@ package io.github.ascopes.jct.assertions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractStringAssert;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Assertions for an individual {@link Kind Java file object kind}.
@@ -32,7 +30,6 @@ import org.assertj.core.api.AbstractStringAssert;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NotThreadSafe
 public final class JavaFileObjectKindAssert
     extends AbstractEnumAssert<JavaFileObjectKindAssert, Kind> {
 
@@ -91,7 +88,6 @@ public final class JavaFileObjectKindAssert
    * @return the assertions for the file extension of the kind.
    * @throws AssertionError if the kind is null.
    */
-  @CheckReturnValue
   public AbstractStringAssert<?> extension() {
     isNotNull();
 

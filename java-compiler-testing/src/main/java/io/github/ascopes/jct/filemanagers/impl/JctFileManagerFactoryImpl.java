@@ -30,8 +30,6 @@ import io.github.ascopes.jct.filemanagers.config.JctFileManagerRequiredLocations
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerWorkspaceConfigurer;
 import io.github.ascopes.jct.utils.VisibleForTestingOnly;
 import io.github.ascopes.jct.workspaces.Workspace;
-import javax.annotation.WillNotClose;
-import javax.annotation.concurrent.ThreadSafe;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -46,7 +44,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1 (0.0.1-M7)
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@ThreadSafe
 public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
 
   private final JctCompiler<?, ?> compiler;
@@ -61,8 +58,7 @@ public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
   }
 
   @Override
-  @WillNotClose
-  public JctFileManager createFileManager(@WillNotClose Workspace workspace) {
+  public JctFileManager createFileManager(Workspace workspace) {
     var release = compiler.getEffectiveRelease();
     var fileManager = new JctFileManagerImpl(release);
     return createConfigurerChain(workspace)
@@ -78,7 +74,7 @@ public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
    * @return the chain to use.
    */
   @VisibleForTestingOnly
-  public JctFileManagerConfigurerChain createConfigurerChain(@WillNotClose Workspace workspace) {
+  public JctFileManagerConfigurerChain createConfigurerChain(Workspace workspace) {
     // The order here is important. Do not adjust it without testing extensively first!
     return new JctFileManagerConfigurerChain()
         .addLast(new JctFileManagerWorkspaceConfigurer(workspace))

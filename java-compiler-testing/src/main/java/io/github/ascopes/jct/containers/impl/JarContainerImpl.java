@@ -40,9 +40,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import javax.annotation.Nullable;
-import javax.annotation.WillCloseWhenClosed;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -66,7 +63,6 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@ThreadSafe
 public final class JarContainerImpl implements Container {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JarContainerImpl.class);
@@ -120,7 +116,6 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
-  @Nullable
   public PathFileObject getFileForInput(String packageName, String relativeName) {
     var packageObj = holder.access().getPackage(packageName);
 
@@ -138,13 +133,11 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
-  @Nullable
   public PathFileObject getFileForOutput(String packageName, String relativeName) {
     throw new UnsupportedOperationException("Cannot handle output files in JARs");
   }
 
   @Override
-  @Nullable
   public PathFileObject getJavaFileForInput(String binaryName, Kind kind) {
     var packageName = FileUtils.binaryNameToPackageName(binaryName);
     var className = FileUtils.binaryNameToSimpleClassName(binaryName);
@@ -165,7 +158,6 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
-  @Nullable
   public PathFileObject getJavaFileForOutput(String className, Kind kind) {
     throw new UnsupportedOperationException("Cannot handle output source files in JARs");
   }
@@ -195,7 +187,6 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
-  @Nullable
   public String inferBinaryName(PathFileObject javaFileObject) {
     // For some reason, converting a zip entry to a URI gives us a scheme of `jar://file://`, but
     // we cannot then parse the URI back to a path without removing the `file://` bit first. Since
@@ -255,7 +246,7 @@ public final class JarContainerImpl implements Container {
   private final class PackageFileSystemHolder {
 
     private final Map<String, PathRoot> packages;
-    private final @WillCloseWhenClosed FileSystem fileSystem;
+    private final FileSystem fileSystem;
 
     private PackageFileSystemHolder() throws IOException {
       // It turns out that we can open more than one ZIP file system pointing to the
@@ -313,7 +304,6 @@ public final class JarContainerImpl implements Container {
       return packages;
     }
 
-    @Nullable
     private PathRoot getPackage(String name) {
       return packages.get(name);
     }

@@ -34,9 +34,6 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Nullable;
-import javax.annotation.WillCloseWhenClosed;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -48,7 +45,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@ThreadSafe
 public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
 
   private final Location location;
@@ -87,7 +83,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   }
 
   @Override
-  public void addModule(String module, @WillCloseWhenClosed Container container) {
+  public void addModule(String module, Container container) {
     getOrCreateModule(module).addPackage(container);
   }
 
@@ -139,7 +135,6 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
     return Set.copyOf(modules.keySet());
   }
 
-  @Nullable
   @Override
   public PackageContainerGroup getModule(String name) {
     if (name.isEmpty()) {
