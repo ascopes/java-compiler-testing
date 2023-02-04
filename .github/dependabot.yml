@@ -2,20 +2,30 @@ version: 2
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 20
     schedule:
+      day: "saturday"
+      time: "15:00"
+      timezone: "Europe/London"
       interval: "weekly"
     assignees:
       - "ascopes"
     labels:
       - "ci"
+      - "tiny"
+      - "housekeeping"
 
   - package-ecosystem: "maven"
     directory: "/"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 20
     schedule:
+      day: "saturday"
+      time: "15:00"
+      timezone: "Europe/London"
       interval: "weekly"
     assignees:
       - "ascopes"
     labels:
       - "maven"
+      - "tiny"
+      - "housekeeping"
