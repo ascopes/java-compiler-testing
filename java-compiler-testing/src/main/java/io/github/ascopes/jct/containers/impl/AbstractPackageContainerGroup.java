@@ -277,5 +277,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
    *
    * @return the classloader.
    */
-  protected abstract ClassLoader createClassLoader();
+  protected ClassLoader createClassLoader() {
+    return new PackageContainerGroupUrlClassLoader(this);
+  }
 }
