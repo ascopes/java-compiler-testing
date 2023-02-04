@@ -31,7 +31,6 @@ import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.utils.LoomPolyfill;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
-import java.lang.module.ModuleReference;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
@@ -39,18 +38,14 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import javax.annotation.processing.Processor;
 import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileManager.Location;
@@ -200,7 +195,6 @@ public final class Fixtures {
    *
    * @return the mock.
    */
-  @SuppressWarnings("deprecation")
   public static TraceDiagnostic<JavaFileObject> someTraceDiagnostic() {
     var mock = mockRaw(TraceDiagnostic.class)
         .<TraceDiagnostic<JavaFileObject>>upcastedTo()
@@ -251,61 +245,6 @@ public final class Fixtures {
   }
 
   /**
-   * Get a list of some trace diagnostics.
-   *
-   * @return some trace diagnostics.
-   */
-  public static List<TraceDiagnostic<JavaFileObject>> someTraceDiagnostics() {
-    return Stream
-        .generate(Fixtures::someTraceDiagnostic)
-        .limit(someInt(3, 8))
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * Get some compilation units.
-   *
-   * @return some compilation units.
-   */
-  public static List<JavaFileObject> someCompilationUnits() {
-    return Stream
-        .generate(() -> mock(JavaFileObject.class, withSettings().strictness(Strictness.LENIENT)))
-        .peek(mock -> when(mock.getName()).thenReturn(someText()))
-        .limit(someInt(3, 8))
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * Get some unchecked exception with a stacktrace.
-   *
-   * @return some exception.
-   */
-  public static Throwable someUncheckedException() {
-    var message = Stream
-        .generate(UUID::randomUUID)
-        .map(UUID::toString)
-        .limit(someInt(1, 4))
-        .collect(joining(" blah blah "));
-    return new RuntimeException(message)
-        .fillInStackTrace();
-  }
-
-  /**
-   * Get some IO exception with a stacktrace.
-   *
-   * @return some exception.
-   */
-  public static Throwable someIoException() {
-    var message = Stream
-        .generate(UUID::randomUUID)
-        .map(UUID::toString)
-        .limit(someInt(1, 4))
-        .collect(joining(" blah blah "));
-    return new IOException(message)
-        .fillInStackTrace();
-  }
-
-  /**
    * Get some charset.
    *
    * @return some charset.
@@ -318,28 +257,6 @@ public final class Fixtures {
         StandardCharsets.UTF_16,
         StandardCharsets.ISO_8859_1,
         StandardCharsets.US_ASCII
-    );
-  }
-
-  /**
-   * Get some locale.
-   *
-   * @return some locale.
-   */
-  public static Locale someLocale() {
-    return oneOf(
-        Locale.ROOT,
-        Locale.US,
-        Locale.UK,
-        Locale.ENGLISH,
-        Locale.GERMAN,
-        Locale.JAPAN,
-        Locale.GERMANY,
-        Locale.JAPANESE,
-        Locale.SIMPLIFIED_CHINESE,
-        Locale.TRADITIONAL_CHINESE,
-        Locale.CHINESE,
-        Locale.CHINA
     );
   }
 
@@ -369,6 +286,49 @@ public final class Fixtures {
   }
 
   /**
+   * Get a valid random package name.
+   *
+   * @return the valid package name.
+   */
+  public static String somePackageName() {
+    return Stream
+        .generate(() -> Stream
+            .generate(() -> (char) someInt('a', 'z'))
+            .map(Objects::toString)
+            .limit(someInt(1, 10))
+            .collect(joining()))
+        .limit(someInt(1, 5))
+        .collect(joining("."));
+  }
+
+  /**
+   * Get a valid random class name.
+   *
+   * @return the valid class name.
+   */
+  public static String someClassName() {
+    var firstChar = (char) someInt('A', 'Z');
+    var restOfClassName = Stream
+        .generate(() -> (char) someInt('a', 'z'))
+        .map(Objects::toString)
+        .limit(someInt(1, 10))
+        .collect(joining());
+
+    return somePackageName() + "." + firstChar + restOfClassName;
+  }
+
+  /**
+   * Get some valid binary name. It may or may not be for a module.
+   *
+   * @return the binary name.
+   */
+  public static String someBinaryName() {
+    return someBoolean()
+        ? someModuleName() + "/" + someClassName()
+        : someClassName();
+  }
+
+  /**
    * Get some mock Java file object with a dummy name and some assigned {@link Kind}.
    *
    * @return some mock Java file object.
@@ -391,7 +351,16 @@ public final class Fixtures {
    * @return some mock location.
    */
   public static Location someLocation() {
-    return mock(Location.class, "Location-" + someText());
+    var name = "Location-" + someText();
+
+    Location location = mock(withSettings()
+        .strictness(Strictness.LENIENT)
+        .name(name));
+
+    when(location.getName()).thenReturn(name);
+    when(location.isOutputLocation()).thenReturn(someBoolean());
+    when(location.isModuleOrientedLocation()).thenReturn(someBoolean());
+    return location;
   }
 
   /**
@@ -444,15 +413,6 @@ public final class Fixtures {
   }
 
   /**
-   * Get some module reference.
-   *
-   * @return the module reference.
-   */
-  public static ModuleReference someModuleReference() {
-    return mock(ModuleReference.class);
-  }
-
-  /**
    * Get some temporary file system.
    *
    * <p>This must be explicitly closed at the end of each test.
@@ -461,15 +421,6 @@ public final class Fixtures {
    */
   public static TempFileSystem someTemporaryFileSystem() {
     return new TempFileSystem();
-  }
-
-  /**
-   * Get some annotation processor.
-   *
-   * @return some annotation processor.
-   */
-  public static Processor someAnnotationProcessor() {
-    return mock(Processor.class, someText() + " processor");
   }
 
   /**
