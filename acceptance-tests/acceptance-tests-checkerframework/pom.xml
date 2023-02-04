@@ -43,7 +43,7 @@
       --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
       --add-opens=jdk.compiler/com.sun.source.util=ALL-UNNAMED
     </argLine>
-    <checkerframework.version>3.29.0</checkerframework.version>
+    <checkerframework.version>3.30.0</checkerframework.version>
   </properties>
 
   <dependencies>
