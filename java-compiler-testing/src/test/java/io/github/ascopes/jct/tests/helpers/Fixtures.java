@@ -57,7 +57,6 @@ import org.mockito.quality.Strictness;
  *
  * @author Ashley Scopes
  */
-@SuppressWarnings("NullableProblems")
 public final class Fixtures {
 
   private static final Random RANDOM = new Random();
@@ -369,7 +368,22 @@ public final class Fixtures {
    * @return some mock path root object.
    */
   public static PathRoot somePathRoot() {
-    return mock(PathRoot.class, "PathRoot-" + someText());
+    var name = "PathRoot-" + someText();
+    var path = someRelativePath().resolve(name);
+    PathRoot pathRoot = mock(withSettings()
+        .strictness(Strictness.LENIENT)
+        .name(path.toString()));
+    when(pathRoot.getPath()).thenReturn(path);
+    when(pathRoot.getUri()).thenReturn(path.toUri());
+
+    try {
+      when(pathRoot.getUrl()).thenReturn(path.toUri().toURL());
+    } catch (Exception ex) {
+      throw new IllegalStateException("unreachable", ex);
+    }
+
+    when(pathRoot.getParent()).thenReturn(null);
+    return pathRoot;
   }
 
   /**

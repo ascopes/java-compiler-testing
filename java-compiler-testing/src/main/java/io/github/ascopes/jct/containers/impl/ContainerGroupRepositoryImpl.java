@@ -354,9 +354,8 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
 
     if (modules.isEmpty()) {
       LOGGER.warn(
-          "There were no valid modules present in {}, so nothing has been registered. "
-              + "If you are sure that there are files, this is probably a bug.",
-          modules
+          "There were no valid modules present in {}, so nothing has been registered.",
+          pathRoot.getPath()
       );
     } else {
       var moduleGroup = getOrCreateModuleContainerGroup(location);
