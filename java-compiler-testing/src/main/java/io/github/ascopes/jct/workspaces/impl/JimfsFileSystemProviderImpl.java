@@ -31,20 +31,24 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1 (0.0.1-M9)
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class DefaultFileSystemProviderImpl implements RamFileSystemProvider {
+public final class JimfsFileSystemProviderImpl implements RamFileSystemProvider {
 
-  private static final DefaultFileSystemProviderImpl INSTANCE = new DefaultFileSystemProviderImpl();
+  // We could initialise this lazily, but this class has fewer fields and initialisation
+  // overhead than a lazy-loaded object would, so it doesn't really make sense to do it
+  // here.
+  private static final JimfsFileSystemProviderImpl INSTANCE
+      = new JimfsFileSystemProviderImpl();
 
   /**
    * Get the singleton instance of this provider.
    *
    * @return the singleton instance.
    */
-  public static DefaultFileSystemProviderImpl getInstance() {
+  public static JimfsFileSystemProviderImpl getInstance() {
     return INSTANCE;
   }
 
-  private DefaultFileSystemProviderImpl() {
+  private JimfsFileSystemProviderImpl() {
     // Singleton object.
   }
 
@@ -52,7 +56,12 @@ public final class DefaultFileSystemProviderImpl implements RamFileSystemProvide
   public FileSystem createFileSystem(String name) {
     var config = Configuration
         .builder(PathType.unix())
-        .setSupportedFeatures(Feature.LINKS, Feature.SYMBOLIC_LINKS, Feature.FILE_CHANNEL)
+        .setSupportedFeatures(
+            Feature.LINKS,
+            Feature.SYMBOLIC_LINKS,
+            Feature.FILE_CHANNEL,
+            Feature.SECURE_DIRECTORY_STREAM
+        )
         .setAttributeViews("basic", "posix")
         .setRoots("/")
         .setWorkingDirectory("/")
