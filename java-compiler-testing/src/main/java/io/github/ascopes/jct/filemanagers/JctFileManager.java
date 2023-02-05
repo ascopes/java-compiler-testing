@@ -39,18 +39,26 @@ import org.apiguardian.api.API.Status;
 public interface JctFileManager extends JavaFileManager {
 
   /**
-   * Add a path to a given location.
+   * Add a package-oriented path to a given location.
+   *
+   * <p>To add a module, first obtain the module location using
+   * {@link #getLocationForModule(Location, String)}, and pass that result to this call.
    *
    * @param location the location to use.
    * @param path     the path to add.
+   * @see #getLocationForModule(Location, String)
    */
   void addPath(Location location, PathRoot path);
 
   /**
-   * Add a collection of paths to a given location.
+   * Add a collection of package-oriented paths to a given location.
+   *
+   * <p>To add a module, first obtain the module location using
+   * {@link #getLocationForModule(Location, String)}, and pass that result to this call.
    *
    * @param location the location to use.
    * @param paths    the paths to add.
+   * @see #getLocationForModule(Location, String)
    */
   void addPaths(Location location, Collection<? extends PathRoot> paths);
 
@@ -70,7 +78,15 @@ public interface JctFileManager extends JavaFileManager {
    *
    * <p>If the location already exists, then do not do anything.
    *
+   * <p>If the location is an output location, then this operation does not make any sense, since
+   * an empty location cannot have files output to it. In this case, you will likely get an
+   * exception.
+   *
+   * <p>Likewise, this operation does not make sense for module locations within a module-oriented
+   * location group, so this operation will fail with an error for those inputs as well.
+   *
    * @param location the location to apply an empty container for.
+   * @throws IllegalArgumentException if the location is an output location or a module location.
    */
   void createEmptyLocation(Location location);
 

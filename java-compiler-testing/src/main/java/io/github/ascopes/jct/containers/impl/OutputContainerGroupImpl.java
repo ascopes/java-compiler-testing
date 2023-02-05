@@ -146,7 +146,21 @@ public final class OutputContainerGroupImpl
     // For output locations, we only need the first root. We then just put a subdirectory
     // in there, as it reduces the complexity of this tenfold and means we don't have to
     // worry about creating more in-memory locations on the fly.
+    //
+    // The reason we have to do this relates to the fact that we will be provided an output
+    // directory to write to regardless of whether we want to write out modules or normal
+    // packages.
     var release = getRelease();
+    var packages = getPackages();
+
+    if (packages.isEmpty()) {
+      // This *shouldn't* be reachable in most cases.
+      throw new IllegalStateException(
+          "Cannot add module " + moduleLocation + " to outputs. No output path has been "
+              + "provided for this location! Please register a package path to output generated "
+              + "modules to first before running the compiler."
+      );
+    }
 
     // Use an anonymous class here to avoid the constraints that the PackageContainerGroupImpl
     // imposes on us.
