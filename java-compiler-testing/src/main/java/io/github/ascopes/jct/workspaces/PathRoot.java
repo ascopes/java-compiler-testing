@@ -15,10 +15,8 @@
  */
 package io.github.ascopes.jct.workspaces;
 
-import io.github.ascopes.jct.workspaces.impl.RamDirectoryImpl;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -27,14 +25,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * A path-like object that can provide a {@link Path Java NIO Path}.
  *
- * <p>Not only does this enable us to have different types of path with varying behaviour, but
- * we can also use this to enforce that other references related to the internal path are kept alive
- * for as long as the path-like object itself is kept alive.
- *
- * <p>This becomes very useful for {@link RamDirectoryImpl}, which keeps a RAM-based
- * {@link FileSystem} alive until it is garbage collected, or the {@link RamDirectoryImpl#close()}
- * operation is called. The mechanism enables cleaning up of resources implicitly without
- * resource-tidying logic polluting the user's test cases.
+ * <p>This enables wrapping various implementations and providers of {@link Path} objects
+ * in a translucent façade that enables representing paths in a hierarchical format.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -65,6 +57,8 @@ public interface PathRoot {
    * Get the {@link Path Java NIO Path} for this path-like object.
    *
    * @return the path.
+   * @see #getUri()
+   * @see #getUrl()
    */
   Path getPath();
 
@@ -72,6 +66,8 @@ public interface PathRoot {
    * Get a URI representation of this path-like object.
    *
    * @return the URI.
+   * @see #getUrl()
+   * @see #getPath()
    */
   URI getUri();
 
@@ -79,6 +75,8 @@ public interface PathRoot {
    * Get a URL representation of this path-like object.
    *
    * @return the URL.
+   * @see #getUri()
+   * @see #getPath()
    */
   URL getUrl();
 
