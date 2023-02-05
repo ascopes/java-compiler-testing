@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,8 +65,13 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    * have all modules extracted from them and registered individually rather than the provided path
    * being stored.
    *
+   * <p>Adding modules to an output location <strong>must</strong> ensure that the output location
+   * has a file system path associated with it as a package path already, otherwise the operation
+   * will likely fail
+   *
    * @param location the location to add.
    * @param pathRoot the path root to register with the location.
+   * @throws IllegalStateException if the location is an output location and is misconfigured.
    */
   public void addPath(Location location, PathRoot pathRoot) {
     if (location instanceof ModuleLocation) {
@@ -139,10 +145,11 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
   public void createEmptyLocation(Location location) {
     if (location instanceof ModuleLocation) {
       throw new IllegalArgumentException("Cannot ensure a module location exists");
-    }
-
-    if (location.isOutputLocation()) {
-      getOrCreateOutputContainerGroup(location);
+    } else if (location.isOutputLocation()) {
+      throw new IllegalArgumentException(
+          "Cannot create an empty output location. It must be created by "
+              + "registering at least one file system path to enable output to."
+      );
     } else if (location.isModuleOrientedLocation()) {
       getOrCreateModuleContainerGroup(location);
     } else {
@@ -164,6 +171,7 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    * @param location the location to get the container group for.
    * @return the container group, or {@code null} if no group is associated with the location.
    */
+  @Nullable
   public ContainerGroup getContainerGroup(Location location) {
     ContainerGroup group = outputs.get(location);
     if (group == null) {
@@ -172,8 +180,59 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
         group = packageInputs.get(location);
       }
     }
-
     return group;
+  }
+
+  /**
+   * Get a module container group.
+   *
+   * @param location the location associated with the group to get.
+   * @return the container group, or {@code null} if no group is associated with the location.
+   */
+  @Nullable
+  public ModuleContainerGroup getModuleContainerGroup(Location location) {
+    return moduleInputs.get(location);
+  }
+
+  /**
+   * Get a snapshot of all the module container groups for inputs.
+   *
+   * @return the module container groups.
+   */
+  public Collection<ModuleContainerGroup> getModuleContainerGroups() {
+    return Set.copyOf(moduleInputs.values());
+  }
+
+  /**
+   * Get a module-oriented container group from the input modules or the outputs.
+   *
+   * @param location the location associated with the group to get.
+   * @return the container group, or {@code null} if no group is associated with the location.
+   */
+  @Nullable
+  public ModuleContainerGroup getModuleOrientedContainerGroup(Location location) {
+    var group = moduleInputs.get(location);
+    return group == null ? outputs.get(location) : group;
+  }
+
+  /**
+   * Get an output container group.
+   *
+   * @param location the location associated with the group to get.
+   * @return the container group, or {@code null} if no group is associated with the location.
+   */
+  @Nullable
+  public OutputContainerGroup getOutputContainerGroup(Location location) {
+    return outputs.get(location);
+  }
+
+  /**
+   * Get a snapshot of all the output container groups.
+   *
+   * @return the output container groups.
+   */
+  public Collection<OutputContainerGroup> getOutputContainerGroups() {
+    return Set.copyOf(outputs.values());
   }
 
   /**
@@ -182,6 +241,7 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    * @param location the location associated with the group to get.
    * @return the container group, or {@code null} if no group is associated with the location.
    */
+  @Nullable
   public PackageContainerGroup getPackageContainerGroup(Location location) {
     return packageInputs.get(location);
   }
@@ -204,6 +264,7 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    * @param location the location associated with the group to get.
    * @return the container group, or {@code null} if no group is associated with the location.
    */
+  @Nullable
   public PackageContainerGroup getPackageOrientedContainerGroup(Location location) {
     if (location instanceof ModuleLocation) {
       var moduleLocation = (ModuleLocation) location;
@@ -220,52 +281,12 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
   }
 
   /**
-   * Get a module container group.
+   * Get the release.
    *
-   * @param location the location associated with the group to get.
-   * @return the container group, or {@code null} if no group is associated with the location.
+   * @return the release.
    */
-  public ModuleContainerGroup getModuleContainerGroup(Location location) {
-    return moduleInputs.get(location);
-  }
-
-  /**
-   * Get a snapshot of all the module container groups for inputs.
-   *
-   * @return the module container groups.
-   */
-  public Collection<ModuleContainerGroup> getModuleContainerGroups() {
-    return Set.copyOf(moduleInputs.values());
-  }
-
-  /**
-   * Get a module-oriented container group from the input modules or the outputs.
-   *
-   * @param location the location associated with the group to get.
-   * @return the container group, or {@code null} if no group is associated with the location.
-   */
-  public ModuleContainerGroup getModuleOrientedContainerGroup(Location location) {
-    var group = moduleInputs.get(location);
-    return group == null ? outputs.get(location) : group;
-  }
-
-  /**
-   * Get an output container group.
-   *
-   * @param location the location associated with the group to get.
-   * @return the container group, or {@code null} if no group is associated with the location.
-   */
-  public OutputContainerGroup getOutputContainerGroup(Location location) {
-    return outputs.get(location);
-  }
-
-  /**
-   * Get a snapshot of all the output container groups.
-   *
-   * @return the output container groups.
-   */
-  public Collection<OutputContainerGroup> getOutputContainerGroups() {
-    return Set.copyOf(outputs.values());
+  public String getRelease() {
+    return release;
   }
 
   /**
@@ -338,12 +359,10 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
           modules
       );
     } else {
-      var group = location.isOutputLocation()
-          ? getOrCreateOutputContainerGroup(location)
-          : getOrCreateModuleContainerGroup(location);
+      var moduleGroup = getOrCreateModuleContainerGroup(location);
 
       modules.forEach((moduleName, modulePath) -> {
-        group.addModule(moduleName, new WrappingDirectoryImpl(modulePath));
+        moduleGroup.addModule(moduleName, new WrappingDirectoryImpl(modulePath));
       });
     }
   }
@@ -406,6 +425,11 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
     );
   }
 
+  // Note that by itself, this method should be considered unsafe. The caller MUST
+  // ensure at least one package root (which is not a module) gets registered upon
+  // creation to enable writing out files correctly to this location. If this is not
+  // done, then attempting to create a new module output will likely fail with errors
+  // since we will have no place to put the module on the file systems we manage.
   private OutputContainerGroup getOrCreateOutputContainerGroup(Location location) {
     return outputs.computeIfAbsent(
         location,
