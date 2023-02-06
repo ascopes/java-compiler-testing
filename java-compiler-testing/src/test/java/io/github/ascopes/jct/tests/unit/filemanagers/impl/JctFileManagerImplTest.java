@@ -82,7 +82,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  *
  * @author Ashley Scopes
  */
-@DisplayName("JctFileManagerImpl Tests")
+@DisplayName("JctFileManagerImpl tests")
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings({"DataFlowIssue", "resource"})
 class JctFileManagerImplTest {
