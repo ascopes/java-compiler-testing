@@ -123,7 +123,7 @@ public final class PathWrappingContainerImpl implements Container {
 
   @Override
   public ModuleFinder getModuleFinder() {
-    return null;
+    return ModuleFinder.of(getPathRoot().getPath());
   }
 
   @Override

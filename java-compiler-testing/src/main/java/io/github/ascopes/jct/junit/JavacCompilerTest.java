@@ -81,7 +81,16 @@ public @interface JavacCompilerTest {
    * Get an array of compiler configurers to apply in-order before starting the test.
    *
    * <p>Each configurer must have a public no-args constructor, and their package must be
-   * open to this module if JPMS modules are in-use.
+   * open to this module if JPMS modules are in-use, for example:
+   * <p>
+   * <pre><code>
+   * module mytests {
+   *   requires io.github.ascopes.jct;
+   *   requires org.junit.jupiter.api;
+   *
+   *   opens org.example.mytests to io.github.ascopes.jct;
+   * }
+   * </code></pre>
    *
    * @return an array of classes to run to configure the compiler. These run in the given order.
    */

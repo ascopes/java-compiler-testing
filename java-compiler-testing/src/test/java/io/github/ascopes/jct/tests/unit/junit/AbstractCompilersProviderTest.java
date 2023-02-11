@@ -29,15 +29,26 @@ import static org.mockito.Mockito.withSettings;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
+import io.github.ascopes.jct.compilers.JctCompilers;
+import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.ex.JctJunitConfigurerException;
 import io.github.ascopes.jct.junit.AbstractCompilersProvider;
 import io.github.ascopes.jct.junit.VersionStrategy;
+import io.github.ascopes.jct.workspaces.Workspaces;
+import java.lang.module.Configuration;
+import java.lang.module.ModuleFinder;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Answers;
 import org.opentest4j.TestAbortedException;
@@ -353,6 +364,93 @@ class AbstractCompilersProviderTest {
         .hasCauseInstanceOf(NoSuchMethodException.class);
   }
 
+  // TODO(ascopes): fix this so it works on Windows. Not sure right now what is causing it, and I
+  //   lack a development environment on Windows to investigate this with.
+  @DisplayName("Configurers that do not open packages to the JCT module will produce exceptions")
+  @Test
+  @DisabledOnOs(value = OS.WINDOWS, disabledReason = "Seems to fail on a path issue")
+  void configurersThatDoNotOpenPackagesToJctModuleWillProduceExceptions()
+      throws ClassNotFoundException {
+    // Simulating this case is difficult as we have to make a new module that isn't yet opened
+    // to JCT. We can't use this module because everything else will not work properly if we don't
+    // open it reflectively.
+    //
+    // Quickest way to make a module is, in fact, to just use JCT's testing compiler facilities
+    // to do this for us. So this kind of acts as an integration test to some extent as well.
+
+    // Given
+    var provider = new CompilersProviderImpl(8, 17);
+
+    try (var workspace = Workspaces.newWorkspace()) {
+      workspace.createSourcePathPackage()
+          .createFile("module-info.java").withContents(
+              "module org.example {",
+              "  requires " + JctCompilerConfigurer.class.getModule().getName() + ";",
+              "}"
+          )
+          .and()
+          .createFile("org", "example", "SomeConfigurer.java").withContents(
+              "package org.example;",
+              "public class SomeConfigurer implements " + JctCompilerConfigurer.class.getName()
+                  + "<" + RuntimeException.class.getName() + "> {",
+              "  @Override",
+              "  public void configure(" + JctCompiler.class.getName() + "<?, ?> compiler) {",
+              "    return;",
+              "  }",
+              "}"
+          );
+
+      var compilation = JctCompilers
+          .createPlatformCompiler()
+          .release(11)
+          .compile(workspace);
+
+      var bootLayer = ModuleLayer.boot();
+
+      var compiledCodeModuleConfig = Configuration.resolveAndBind(
+          ModuleFinder.compose(
+              compilation.getFileManager()
+                  .getOutputContainerGroup(StandardLocation.CLASS_OUTPUT)
+                  .getPackages()
+                  .stream()
+                  .map(Container::getModuleFinder)
+                  .toArray(ModuleFinder[]::new)),
+          List.of(bootLayer.configuration()),
+          ModuleFinder.of(),
+          List.of("org.example")
+      );
+
+      var compiledCodeController = ModuleLayer.defineModulesWithOneLoader(
+          compiledCodeModuleConfig,
+          List.of(bootLayer),
+          getClass().getClassLoader()
+      );
+
+      @SuppressWarnings("unchecked")
+      var someConfigurerCls = (Class<? extends JctCompilerConfigurer<?>>) compiledCodeController
+          .layer()
+          .findLoader("org.example")
+          .loadClass("org.example.SomeConfigurer");
+
+      // When
+      provider.configureInternals(10, 15, VersionStrategy.RELEASE, someConfigurerCls);
+
+      // Then
+      ExtensionContext ctx = mock();
+      assertThatThrownBy(() -> provider.provideArguments(ctx).toArray())
+          .isInstanceOf(JctJunitConfigurerException.class)
+          .hasMessage(String.join(
+              "",
+              "The constructor in SomeConfigurer cannot be called from JCT.\n",
+              "This is likely because JPMS modules are in use and you have not granted ",
+              "permission for JCT to access your classes reflectively.\n",
+              "To fix this, add the following line into your module-info.java within the ",
+              "'module' block:\n\n",
+              "    opens org.example to io.github.ascopes.jct.testing;"
+          ));
+    }
+  }
+
   ///
   /// Test data and classes to operate upon.
   ///
@@ -361,6 +459,7 @@ class AbstractCompilersProviderTest {
 
     private final int minSupportedVersion;
     private final int maxSupportedVersion;
+    private volatile boolean configureInternalsCalled;
 
     public CompilersProviderImpl(int minSupportedVersion, int maxSupportedVersion) {
       this.minSupportedVersion = minSupportedVersion;
@@ -374,7 +473,21 @@ class AbstractCompilersProviderTest {
         VersionStrategy versionStrategy,
         Class<? extends JctCompilerConfigurer<?>>... configurerClasses
     ) {
+      configureInternalsCalled = false;
       configure(min, max, false, configurerClasses, versionStrategy);
+      configureInternalsCalled = true;
+    }
+
+    @Override
+    public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+      if (!configureInternalsCalled) {
+        // Without .configureInternals being called, use of mocks can result in an out-of-memory
+        // due to internal iteration bounds being undefined. This is a pain in the backside
+        // when debugging tests, so abort early in this situation to prevent confusing future me.
+        throw new IllegalStateException(".configureInternals not called in test first.");
+      }
+
+      return super.provideArguments(context);
     }
 
     @Override
