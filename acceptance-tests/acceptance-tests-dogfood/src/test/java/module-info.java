@@ -16,6 +16,7 @@
 open module io.github.ascopes.jct.acceptancetests.dogfood {
   requires io.github.ascopes.jct;
   requires java.compiler;
+  requires org.assertj.core;
   requires transitive org.junit.jupiter.api;
   requires transitive org.junit.jupiter.engine;
   requires transitive org.junit.jupiter.params;

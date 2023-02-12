@@ -23,6 +23,8 @@ import io.github.ascopes.jct.workspaces.Workspaces;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 
@@ -33,6 +35,9 @@ import org.junit.jupiter.api.DisplayName;
  */
 @DisplayName("JCT dogfood acceptance tests")
 class JctDogfoodTest {
+
+  static final String MAIN_MODULE = "io.github.ascopes.jct";
+  static final String TEST_MODULE = "io.github.ascopes.jct.testing";
 
   static final Path PROJECT_ROOT = Path.of(System.getProperty("user.dir"))
       .getParent()
@@ -46,9 +51,18 @@ class JctDogfoodTest {
       .resolve("main")
       .resolve("java");
 
+  static final Path SRC_TEST_JAVA = PROJECT_ROOT
+      .resolve("src")
+      .resolve("test")
+      .resolve("java");
+
   static final Path TARGET_CLASSES = PROJECT_ROOT
       .resolve("target")
       .resolve("classes");
+
+  static final Path TARGET_TEST_CLASSES = PROJECT_ROOT
+      .resolve("target")
+      .resolve("test-classes");
 
   @DisplayName("JCT can compile itself as a legacy module source")
   @JavacCompilerTest(minVersion = 11, configurers = JctCompilationConfigurer.class)
@@ -63,62 +77,96 @@ class JctDogfoodTest {
       var compilation = compiler.compile(workspace);
 
       // Then
-      try (var walker = Files.walk(TARGET_CLASSES)) {
-        var expectedFiles = walker
-            .filter(Files::isRegularFile)
-            .filter(file -> file.getFileName().endsWith(".class"))
-            .map(TARGET_CLASSES::relativize)
-            .map(Path::toString)
-            .collect(Collectors.toSet());
+      assertThat(compilation)
+          .isSuccessful();
 
-        assertThat(compilation)
-            .isSuccessful();
-
-        assertThat(compilation)
-            .classOutput()
-            .packages()
-            .allFilesExist(expectedFiles);
-      }
+      assertThat(compilation)
+          .classOutput()
+          .packages()
+          .allFilesExist(getClassesFrom(TARGET_CLASSES, null));
     }
   }
 
-  @DisplayName("JCT can compile itself as a multiple-module source")
+  @DisplayName("JCT can compile its unit tests as a legacy module source")
   @JavacCompilerTest(minVersion = 11, configurers = JctCompilationConfigurer.class)
-  void jctCanCompileItselfAsMultiModule(JctCompiler<?, ?> compiler) throws IOException {
+  void jctCanCompileUnitTestsAsLegacyModule(JctCompiler<?, ?> compiler) throws IOException {
     // Given
     try (var workspace = Workspaces.newWorkspace()) {
       workspace
-          .createSourcePathModule("io.github.ascopes.jct")
-          .copyContentsFrom(SRC_MAIN_JAVA);
+          .createSourcePathPackage()
+          .copyContentsFrom(SRC_TEST_JAVA);
 
       // When
       var compilation = compiler.compile(workspace);
 
       // Then
-      try (var walker = Files.walk(TARGET_CLASSES)) {
-        var expectedFiles = walker
-            .filter(Files::isRegularFile)
-            .filter(file -> file.getFileName().endsWith(".class"))
-            .map(TARGET_CLASSES::relativize)
-            .map(Path::toString)
-            .map("io.github.ascopes.jct/"::concat)
-            .collect(Collectors.toSet());
+      assertThat(compilation)
+          .isSuccessful();
 
-        assertThat(compilation)
-            .isSuccessful();
+      assertThat(compilation)
+          .classOutput()
+          .packages()
+          .allFilesExist(getClassesFrom(TARGET_TEST_CLASSES, null));
+    }
+  }
 
-        assertThat(compilation)
-            .diagnostics()
-            .warnings()
-            .filteredOn(diag -> !diag.getCode().equals("compiler.warn.module.not.found"))
-            .withFailMessage("Expected no warnings (other than module.not.found)")
-            .isEmpty();
+  @DisplayName("JCT can compile itself and its unit tests as a multiple-module source")
+  @JavacCompilerTest(minVersion = 11, configurers = JctCompilationConfigurer.class)
+  void jctCanCompileItselfAndUnitTestsAsMultiModule(JctCompiler<?, ?> compiler) throws IOException {
+    // Given
+    try (var workspace = Workspaces.newWorkspace()) {
+      workspace
+          .createSourcePathModule(MAIN_MODULE)
+          .copyContentsFrom(SRC_MAIN_JAVA);
+      workspace
+          .createSourcePathModule(TEST_MODULE)
+          .copyContentsFrom(SRC_TEST_JAVA);
 
-        assertThat(compilation)
-            .classOutput()
-            .packages()
-            .allFilesExist(expectedFiles);
-      }
+      // When
+      var compilation = compiler.compile(workspace);
+
+      // Then
+      var expectedMainFiles = getClassesFrom(TARGET_CLASSES, MAIN_MODULE);
+      var expectedTestFiles = getClassesFrom(TARGET_TEST_CLASSES, TEST_MODULE);
+
+      assertThat(compilation)
+          .isSuccessful();
+
+      assertThat(compilation)
+          .diagnostics()
+          .warnings()
+          .filteredOn(diag -> !diag.getCode().equals("compiler.warn.module.not.found"))
+          .withFailMessage("Expected no warnings (other than module.not.found)")
+          .isEmpty();
+
+      assertThat(compilation)
+          .classOutput()
+          .packages()
+          .satisfies(
+              packages -> assertThat(packages)
+                  .withFailMessage("Missing classes from main source root")
+                  .allFilesExist(expectedMainFiles),
+              packages -> assertThat(packages)
+                  .withFailMessage("Missing classes from test source root")
+                  .allFilesExist(expectedTestFiles)
+          );
+    }
+  }
+
+  private static Set<String> getClassesFrom(
+      Path location,
+      /* Nullable */ String moduleNamePrefix
+  ) throws IOException {
+    try (var walker = Files.walk(location)) {
+      return walker
+          .filter(Files::isRegularFile)
+          .filter(file -> file.getFileName().endsWith(".class"))
+          .map(location::relativize)
+          .map(Path::toString)
+          .map(moduleNamePrefix == null
+              ? Function.identity()
+              : (moduleNamePrefix + "/")::concat)
+          .collect(Collectors.toSet());
     }
   }
 }

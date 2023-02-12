@@ -33,6 +33,7 @@ public class JctCompilationConfigurer implements JctCompilerConfigurer<RuntimeEx
         .failOnWarnings(false)
         .inheritClassPath(true)
         .inheritModulePath(true)
+        .addCompilerOptions("-implicit:class")
         .showWarnings(false)  // ignore spam about the testing module being hidden
         .locale(Locale.ENGLISH);
   }
