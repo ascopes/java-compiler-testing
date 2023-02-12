@@ -25,8 +25,10 @@ import java.util.Set;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
+import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Extension around a {@link JavaFileManager} that allows adding of {@link PathRoot} objects to the
@@ -163,4 +165,155 @@ public interface JctFileManager extends JavaFileManager {
       Set<Kind> kinds,
       boolean recurse
   ) throws IOException;
+
+  ///
+  /// Default helper overrides
+  ///
+
+  /**
+   * Get the location holding the {@link StandardLocation#CLASS_OUTPUT class outputs}.
+   *
+   * @return the location, or {@code null} if the location is not present in the file manager.
+   * @since 0.1.0
+   */
+  @Nullable
+  default OutputContainerGroup getClassOutputGroup() {
+    return getOutputContainerGroup(StandardLocation.CLASS_OUTPUT);
+  }
+
+  /**
+   * Get the location holding the {@link StandardLocation#SOURCE_OUTPUT source outputs}.
+   *
+   * @return the location, or {@code null} if the location is not present in the file manager.
+   * @since 0.1.0
+   */
+  @Nullable
+  default OutputContainerGroup getSourceOutputGroup() {
+    return getOutputContainerGroup(StandardLocation.SOURCE_OUTPUT);
+  }
+
+  /**
+   * Get the location holding the {@link StandardLocation#CLASS_PATH class path}.
+   *
+   * @return the location, or {@code null} if the location is not present in the file manager.
+   * @since 0.1.0
+   */
+  @Nullable
+  default PackageContainerGroup getClassPathGroup() {
+    return getPackageContainerGroup(StandardLocation.CLASS_PATH);
+  }
+
+  /**
+   * Get the location holding the {@link StandardLocation#SOURCE_PATH source path}.
+   *
+   * @return the location, or {@code null} if the location is not present in the file manager.
+   * @since 0.1.0
+   */
+  @Nullable
+  default PackageContainerGroup getSourcePathGroup() {
+    return getPackageContainerGroup(StandardLocation.SOURCE_PATH);
+  }
+
+  /**
+   * Get the location holding the
+   * {@link StandardLocation#ANNOTATION_PROCESSOR_PATH annotation processor path}.
+   *
+   * @return the location, or {@code null} if the location is not present in the file manager.
+   * @since 0.1.0
+   */
+  @Nullable
+  default PackageContainerGroup getAnnotationProcessorPathGroup() {
+    return getPackageContainerGroup(StandardLocation.ANNOTATION_PROCESSOR_PATH);
+  }
+
+  /**
+   * Get the location holding the
+   * {@link StandardLocation#ANNOTATION_PROCESSOR_MODULE_PATH annotation processor module path}.
+   *
+   * @return the location, or {@code null} if the location is not present in the file manager.
+   * @since 0.1.0
+   */
+  @Nullable
+  default ModuleContainerGroup getAnnotationProcessorModulePathGroup() {
+    return getModuleContainerGroup(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH);
+  }
+
+  /**
+   * Get the location holding the {@link StandardLocation#PLATFORM_CLASS_PATH platform class path}
+   * (also known as the boot class path).
+   *
+   * @return the location, or {@code null} if the location is not present in the file manager.
+   * @since 0.1.0
+   */
+  @Nullable
+  default PackageContainerGroup getPlatformClassPathGroup() {
+    return getPackageContainerGroup(StandardLocation.PLATFORM_CLASS_PATH);
+  }
+
+  /**
+   * Get the location holding the
+   * {@link StandardLocation#NATIVE_HEADER_OUTPUT native header outputs}.
+   *
+   * @return the location, or {@code null} if the location is not present in the file manager.
+   * @since 0.1.0
+   */
+  @Nullable
+  default OutputContainerGroup getNativeHeaderOutputGroup() {
+    return getOutputContainerGroup(StandardLocation.NATIVE_HEADER_OUTPUT);
+  }
+
+  /**
+   * Get the location holding the {@link StandardLocation#MODULE_SOURCE_PATH module source path}.
+   *
+   * @return the location, or {@code null} if the location is not present in the file manager.
+   * @since 0.1.0
+   */
+  @Nullable
+  default ModuleContainerGroup getModuleSourcePathGroup() {
+    return getModuleContainerGroup(StandardLocation.MODULE_SOURCE_PATH);
+  }
+
+  /**
+   * Get the location holding the {@link StandardLocation#UPGRADE_MODULE_PATH upgrade module path}.
+   *
+   * @return the location, or {@code null} if the location is not present in the file manager.
+   * @since 0.1.0
+   */
+  @Nullable
+  default ModuleContainerGroup getUpgradeModulePathGroup() {
+    return getModuleContainerGroup(StandardLocation.UPGRADE_MODULE_PATH);
+  }
+
+  /**
+   * Get the location holding the {@link StandardLocation#SYSTEM_MODULES system modules}.
+   *
+   * @return the location, or {@code null} if the location is not present in the file manager.
+   * @since 0.1.0
+   */
+  @Nullable
+  default ModuleContainerGroup getSystemModulesGroup() {
+    return getModuleContainerGroup(StandardLocation.SYSTEM_MODULES);
+  }
+
+  /**
+   * Get the location holding the {@link StandardLocation#MODULE_PATH module path}.
+   *
+   * @return the location, or {@code null} if the location is not present in the file manager.
+   * @since 0.1.0
+   */
+  @Nullable
+  default ModuleContainerGroup getModulePathGroup() {
+    return getModuleContainerGroup(StandardLocation.MODULE_PATH);
+  }
+
+  /**
+   * Get the location holding the {@link StandardLocation#PATCH_MODULE_PATH patch module path}.
+   *
+   * @return the location, or {@code null} if the location is not present in the file manager.
+   * @since 0.1.0
+   */
+  @Nullable
+  default ModuleContainerGroup getPatchModulePathGroup() {
+    return getModuleContainerGroup(StandardLocation.PATCH_MODULE_PATH);
+  }
 }
