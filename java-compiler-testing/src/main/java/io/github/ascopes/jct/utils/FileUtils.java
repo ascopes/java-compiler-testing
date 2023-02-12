@@ -95,10 +95,7 @@ public final class FileUtils extends UtilityClass {
    * @return the resolved path.
    */
   public static Path resolvePathRecursively(Path root, String... parts) {
-    for (var part : parts) {
-      root = root.resolve(part);
-    }
-    return root.normalize();
+    return resolve(root, parts);
   }
 
   /**
