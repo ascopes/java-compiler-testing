@@ -28,6 +28,9 @@ import org.apiguardian.api.API.Status;
 /**
  * Strategy to use for creating new test directories.
  *
+ * <p>This is used to define whether to use a totally isolated in-memory file system,
+ * or whether to use temporary directories on the default file system.
+ *
  * @author Ashley Scopes
  * @since 0.0.1
  */

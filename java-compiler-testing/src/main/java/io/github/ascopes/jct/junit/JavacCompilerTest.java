@@ -82,7 +82,7 @@ public @interface JavacCompilerTest {
    *
    * <p>Each configurer must have a public no-args constructor, and their package must be
    * open to this module if JPMS modules are in-use, for example:
-   * <p>
+   *
    * <pre><code>
    * module mytests {
    *   requires io.github.ascopes.jct;

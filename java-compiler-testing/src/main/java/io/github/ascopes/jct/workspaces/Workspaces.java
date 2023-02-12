@@ -15,8 +15,10 @@
  */
 package io.github.ascopes.jct.workspaces;
 
+import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.utils.UtilityClass;
 import io.github.ascopes.jct.workspaces.impl.WorkspaceImpl;
+import java.util.Collection;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -36,6 +38,27 @@ public final class Workspaces extends UtilityClass {
   /**
    * Create a new default workspace instance using the default path strategy.
    *
+   * <p>This workspace must be closed after use. Ideally, you should use a try-with-resources
+   * to achieve this. Failing to do this will lead to resources being leaked and tests not being
+   * cleared up correctly.
+   *
+   * <p>The workspace can be passed to {@link JctCompiler#compile(Workspace)} to run the compiler
+   * across this workspace of code.
+   *
+   * <p>For example:
+   *
+   * <pre><code>
+   *   try (var workspace = Workspaces.newWorkspace()) {
+   *     workspace
+   *        .createSourcePathPackage()
+   *        .copyContentsFrom("src", "test", "resources", "test-data");
+   *
+   *     var compilation = someCompiler.compile(workspace);
+   *
+   *     assertThat(compilation).isSuccessful();
+   *   }
+   * </code></pre>
+   *
    * @return the workspace.
    */
   public static Workspace newWorkspace() {
@@ -44,6 +67,27 @@ public final class Workspaces extends UtilityClass {
 
   /**
    * Create a new default workspace instance using the given path strategy.
+   *
+   * <p>This workspace must be closed after use. Ideally, you should use a try-with-resources
+   * to achieve this. Failing to do this will lead to resources being leaked and tests not being
+   * cleared up correctly.
+   *
+   * <p>The workspace can be passed to {@link JctCompiler#compile(Workspace)} to run the compiler
+   * across this workspace of code.
+   *
+   * <p>For example:
+   *
+   * <pre><code>
+   *   try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+   *     workspace
+   *        .createSourcePathPackage()
+   *        .copyContentsFrom("src", "test", "resources", "test-data");
+   *
+   *     var compilation = someCompiler.compile(workspace);
+   *
+   *     assertThat(compilation).isSuccessful();
+   *   }
+   * </code></pre>
    *
    * @param pathStrategy the path strategy to use.
    * @return the workspace.
