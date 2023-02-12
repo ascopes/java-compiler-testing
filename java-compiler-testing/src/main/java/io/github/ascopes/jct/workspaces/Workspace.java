@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.workspaces;
 
+import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -31,6 +32,61 @@ import org.apiguardian.api.API.Status;
  * <p>This acts as a nexus for managing the lifetime of test sources and directories,
  * and should be used within a try-with-resources block to ensure temporary files get released after
  * the test completes.
+ *
+ * <p>While this interface may seem somewhat intimidating due to the number of methods it provides,
+ * you will usually only ever need to use a small subset of them. The main ones you probably will
+ * want to use are:
+ *
+ * <ul>
+ *   <li>
+ *     {@link #addSourcePathPackage(Path)} - for copying a source path tree from your file system.
+ *   </li>
+ *   <li>
+ *     {@link #createSourcePathPackage()} - for creating a new source path tree.
+ *   </li>
+ *   <li>
+ *    {@link #addClassPathPackage(Path)} - for adding a class path resource (usually a JAR or a
+ *    directory of packages of classes).
+ *   </li>
+ *   <li>
+ *    {@link #addModulePathModule(String, Path)} - for adding a module path resource (usually a JAR
+ *    or a directory of packages of classes).
+ *   </li>
+ *   <li>
+ *     {@link #getClassPathPackages()} - for fetching all class path resources.
+ *   </li>
+ *   <li>
+ *     {@link #getModulePathModules()} - for fetching all module path resources.
+ *   </li>
+ *   <li>
+ *     {@link #getSourceOutputPackages()} - for fetching all generated source packages.
+ *   </li>
+ *   <li>
+ *     {@link #getSourceOutputModules()} - for fetching all generated source modules.
+ *   </li>
+ *   <li>
+ *     {@link #close()} - to close any resources in the temporary file system.
+ *   </li>
+ * </ul>
+ *
+ * <p>A simple example of usage of this interface would be the following:
+ *
+ * <pre><code>
+ *   try (Workspace workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+ *     workspace
+ *        .createSourcePathPackage()
+ *        .copyContentsFrom("src", "test", "resources", "test-data");
+ *
+ *     var compilation = someCompiler.compile(workspace);
+ *
+ *     assertThat(compilation).isSuccessful();
+ *   }
+ * </code></pre>
+ *
+ * <p>Remember that files that are created as the result of a compilation can be queried via
+ * {@link JctFileManager}, which is accessible on the {@code compilation} result object. This may
+ * more accurately represent the logical project structure that is the result of various
+ * processing operations during compilation.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -59,11 +115,65 @@ public interface Workspace extends AutoCloseable {
   Map<Location, List<? extends PathRoot>> getAllPaths();
 
   /**
+   * Get the collection of path roots associated with the given module.
+   *
+   * <p>Usually this should only ever contain one path root at a maximum, although
+   * {@link Workspace} does not explicitly enforce this constraint.
+   *
+   * <p>If no results were found, then an empty collection is returned.
+   *
+   * @param location   the module-oriented or output location.
+   * @param moduleName the module name within the location.
+   * @return the collection of paths.
+   * @throws IllegalArgumentException if the location is neither
+   *                                  {@link Location#isModuleOrientedLocation() module-oriented} or
+   *                                  an {@link Location#isOutputLocation() output location}. This
+   *                                  will also be raised if this method is called with an instance
+   *                                  of {@link ModuleLocation} (you should use
+   *                                  {@link #getPackages(Location)} instead for this).
+   * @see #getPackages(Location)
+   * @see #getModules(Location)
+   * @since 0.1.0
+   */
+  List<? extends PathRoot> getModule(Location location, String moduleName);
+
+  /**
+   * Get the collection of modules associated with the given location.
+   *
+   * <p>If no results were found, then an empty map is returned.
+   *
+   * @param location the location to get the modules for.
+   * @return the map of module names to lists of associated paths.
+   * @throws IllegalArgumentException if the location is neither
+   *                                  {@link Location#isModuleOrientedLocation() module-oriented} or
+   *                                  an {@link Location#isOutputLocation() output location}. This
+   *                                  will also be raised if this method is called with an instance
+   *                                  of {@link ModuleLocation}.
+   * @see #getModule(Location, String)
+   * @since 0.1.0
+   */
+  Map<String, List<? extends PathRoot>> getModules(Location location);
+
+  /**
    * Get the path strategy in use.
    *
    * @return the path strategy.
    */
   PathStrategy getPathStrategy();
+
+  /**
+   * Get the collection of path roots associated with the given location.
+   *
+   * <p>If no results were found, then an empty collection is returned.
+   *
+   * @param location the location to get.
+   * @return the collection of paths.
+   * @throws IllegalArgumentException if the location is
+   *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
+   * @see #getModule(Location, String)
+   * @since 0.1.0
+   */
+  List<? extends PathRoot> getPackages(Location location);
 
   ///
   /// Mutative operations
@@ -311,9 +421,9 @@ public interface Workspace extends AutoCloseable {
    *
    * <p>If you wish to define multiple JPMS modules in your source code tree to compile together,
    * you will want to consider using {@link #addSourcePathModule(String, Path)} instead. For most
-   * purposes, however, this method is the one you will want to be using if your code is not in
-   * a <strong>named</strong> module directory
-   * (so not something like {@code src/my.module/org/example/...}).
+   * purposes, however, this method is the one you will want to be using if your code is not in a
+   * <strong>named</strong> module directory (so not something like
+   * {@code src/my.module/org/example/...}).
    *
    * @param path the path to add.
    * @throws IllegalArgumentException if the path does not exist.
@@ -387,8 +497,8 @@ public interface Workspace extends AutoCloseable {
   }
 
   /**
-   * Add a package to the {@link StandardLocation#PLATFORM_CLASS_PATH platform class path}
-   * (also known as the boot class path).
+   * Add a package to the {@link StandardLocation#PLATFORM_CLASS_PATH platform class path} (also
+   * known as the boot class path).
    *
    * @param path the path to add.
    * @throws IllegalArgumentException if the path does not exist.
@@ -559,9 +669,9 @@ public interface Workspace extends AutoCloseable {
    *
    * <p>If you wish to define multiple JPMS modules in your source code tree to compile together,
    * you will want to consider using {@link #createSourcePathModule(String)} instead. For most
-   * purposes, however, this method is the one you will want to be using if your code is not in
-   * a <strong>named</strong> module directory
-   * (so not something like {@code src/my.module/org/example/...}).
+   * purposes, however, this method is the one you will want to be using if your code is not in a
+   * <strong>named</strong> module directory (so not something like
+   * {@code src/my.module/org/example/...}).
    *
    * @return the created test directory.
    * @see #createPackage(Location)
@@ -631,8 +741,8 @@ public interface Workspace extends AutoCloseable {
   }
 
   /**
-   * Create a package in the {@link StandardLocation#PLATFORM_CLASS_PATH platform class path}
-   * (also known as the boot class path).
+   * Create a package in the {@link StandardLocation#PLATFORM_CLASS_PATH platform class path} (also
+   * known as the boot class path).
    *
    * @return the created test directory.
    * @see #createPackage(Location)
@@ -703,5 +813,286 @@ public interface Workspace extends AutoCloseable {
    */
   default ManagedDirectory createPatchModulePathModule(String moduleName) {
     return createModule(StandardLocation.PATCH_MODULE_PATH, moduleName);
+  }
+
+  /**
+   * Get the non-module path roots for {@link StandardLocation#CLASS_OUTPUT class outputs}.
+   *
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getClassOutputPackages() {
+    return getPackages(StandardLocation.CLASS_OUTPUT);
+  }
+
+  /**
+   * Get the module path roots for {@link StandardLocation#CLASS_OUTPUT class outputs} for the given
+   * module name.
+   *
+   * @param moduleName the module name.
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getClassOutputModule(String moduleName) {
+    return getModule(StandardLocation.CLASS_OUTPUT, moduleName);
+  }
+
+  /**
+   * Get the module path roots for {@link StandardLocation#CLASS_OUTPUT class outputs}.
+   *
+   * @return the roots in a map of module names to lists of roots, or an empty map if none were
+   *     found.
+   * @since 0.1.0
+   */
+  default Map<String, List<? extends PathRoot>> getClassOutputModules() {
+    return getModules(StandardLocation.CLASS_OUTPUT);
+  }
+
+  /**
+   * Get the non-module path roots for {@link StandardLocation#SOURCE_OUTPUT source outputs}.
+   *
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getSourceOutputPackages() {
+    return getPackages(StandardLocation.SOURCE_OUTPUT);
+  }
+
+  /**
+   * Get the module path roots for {@link StandardLocation#SOURCE_OUTPUT source outputs} for the
+   * given module name.
+   *
+   * @param moduleName the module name.
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getSourceOutputModule(String moduleName) {
+    return getModule(StandardLocation.SOURCE_OUTPUT, moduleName);
+  }
+
+
+  /**
+   * Get the module path roots for {@link StandardLocation#SOURCE_OUTPUT source outputs}.
+   *
+   * @return the roots in a map of module names to lists of roots, or an empty map if none were
+   *     found.
+   * @since 0.1.0
+   */
+  default Map<String, List<? extends PathRoot>> getSourceOutputModules() {
+    return getModules(StandardLocation.SOURCE_OUTPUT);
+  }
+
+  /**
+   * Get the path roots for the {@link StandardLocation#CLASS_PATH class path}.
+   *
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getClassPathPackages() {
+    return getPackages(StandardLocation.CLASS_PATH);
+  }
+
+  /**
+   * Get the path roots for the {@link StandardLocation#SOURCE_PATH source path}.
+   *
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getSourcePathPackages() {
+    return getPackages(StandardLocation.SOURCE_PATH);
+  }
+
+  /**
+   * Get the path roots for the
+   * {@link StandardLocation#ANNOTATION_PROCESSOR_PATH annotation processor path}.
+   *
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getAnnotationProcessorPathPackages() {
+    return getPackages(StandardLocation.ANNOTATION_PROCESSOR_PATH);
+  }
+
+  /**
+   * Get the path roots for the
+   * {@link StandardLocation#ANNOTATION_PROCESSOR_MODULE_PATH annotation processor module path}.
+   *
+   * @param moduleName the module name to get.
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getAnnotationProcessorPathModule(String moduleName) {
+    return getModule(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, moduleName);
+  }
+
+  /**
+   * Get the module path roots for the
+   * {@link StandardLocation#ANNOTATION_PROCESSOR_MODULE_PATH annotation processor module path}.
+   *
+   * @return the roots in a map of module names to lists of roots, or an empty map if none were
+   *     found.
+   * @since 0.1.0
+   */
+  default Map<String, List<? extends PathRoot>> getAnnotationProcessorPathModules() {
+    return getModules(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH);
+  }
+
+  /**
+   * Get the path roots for the {@link StandardLocation#PLATFORM_CLASS_PATH platform class path}
+   * (also known as the boot class path).
+   *
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getPlatformClassPathPackages() {
+    return getPackages(StandardLocation.PLATFORM_CLASS_PATH);
+  }
+
+  /**
+   * Get the non-module path roots for
+   * {@link StandardLocation#NATIVE_HEADER_OUTPUT native header outputs}.
+   *
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getNativeHeaderOutputPackages() {
+    return getPackages(StandardLocation.NATIVE_HEADER_OUTPUT);
+  }
+
+  /**
+   * Get the module path roots for
+   * {@link StandardLocation#NATIVE_HEADER_OUTPUT native header outputs} for the given module name.
+   *
+   * @param moduleName the module name.
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getNativeHeaderOutputModule(String moduleName) {
+    return getModule(StandardLocation.NATIVE_HEADER_OUTPUT, moduleName);
+  }
+
+  /**
+   * Get the module path roots for
+   * {@link StandardLocation#NATIVE_HEADER_OUTPUT native header outputs}.
+   *
+   * @return the roots in a map of module names to lists of roots, or an empty map if none were
+   *     found.
+   * @since 0.1.0
+   */
+  default Map<String, List<? extends PathRoot>> getNativeHeaderOutputModules() {
+    return getModules(StandardLocation.NATIVE_HEADER_OUTPUT);
+  }
+
+  /**
+   * Get the path roots for the {@link StandardLocation#MODULE_SOURCE_PATH module source path}.
+   *
+   * @param moduleName the module name to get.
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getSourcePathModule(String moduleName) {
+    return getModule(StandardLocation.MODULE_SOURCE_PATH, moduleName);
+  }
+
+  /**
+   * Get the module path roots for the
+   * {@link StandardLocation#MODULE_SOURCE_PATH module source paths}.
+   *
+   * @return the roots in a map of module names to lists of roots, or an empty map if none were
+   *     found.
+   * @since 0.1.0
+   */
+  default Map<String, List<? extends PathRoot>> getSourcePathModules() {
+    return getModules(StandardLocation.MODULE_SOURCE_PATH);
+  }
+
+  /**
+   * Get the path roots for the {@link StandardLocation#UPGRADE_MODULE_PATH upgrade module path}.
+   *
+   * @param moduleName the module name to get.
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getUpgradeModulePathModule(String moduleName) {
+    return getModule(StandardLocation.UPGRADE_MODULE_PATH, moduleName);
+  }
+
+  /**
+   * Get the module path roots for the
+   * {@link StandardLocation#UPGRADE_MODULE_PATH upgrade module paths}.
+   *
+   * @return the roots in a map of module names to lists of roots, or an empty map if none were
+   *     found.
+   * @since 0.1.0
+   */
+  default Map<String, List<? extends PathRoot>> getUpgradeModulePathModules() {
+    return getModules(StandardLocation.UPGRADE_MODULE_PATH);
+  }
+
+  /**
+   * Get the path roots for the {@link StandardLocation#SYSTEM_MODULES system modules}.
+   *
+   * @param moduleName the module name to get.
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getSystemModulePathModule(String moduleName) {
+    return getModule(StandardLocation.SYSTEM_MODULES, moduleName);
+  }
+
+  /**
+   * Get the module path roots for the {@link StandardLocation#SYSTEM_MODULES system modules}.
+   *
+   * @return the roots in a map of module names to lists of roots, or an empty map if none were
+   *     found.
+   * @since 0.1.0
+   */
+  default Map<String, List<? extends PathRoot>> getSystemModulePathModules() {
+    return getModules(StandardLocation.SYSTEM_MODULES);
+  }
+
+  /**
+   * Get the path roots for the {@link StandardLocation#MODULE_PATH module path}.
+   *
+   * @param moduleName the module name to get.
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getModulePathModule(String moduleName) {
+    return getModule(StandardLocation.MODULE_PATH, moduleName);
+  }
+
+  /**
+   * Get the module path roots for the {@link StandardLocation#MODULE_PATH module paths}.
+   *
+   * @return the roots in a map of module names to lists of roots, or an empty map if none were
+   *     found.
+   * @since 0.1.0
+   */
+  default Map<String, List<? extends PathRoot>> getModulePathModules() {
+    return getModules(StandardLocation.MODULE_PATH);
+  }
+
+  /**
+   * Get the path roots for the {@link StandardLocation#PATCH_MODULE_PATH patch module path}.
+   *
+   * @param moduleName the module name to get.
+   * @return the roots in a collection, or an empty collection if none were found.
+   * @since 0.1.0
+   */
+  default List<? extends PathRoot> getPatchModulePathModule(String moduleName) {
+    return getModule(StandardLocation.PATCH_MODULE_PATH, moduleName);
+  }
+
+  /**
+   * Get the module path roots for the
+   * {@link StandardLocation#PATCH_MODULE_PATH patch module paths}.
+   *
+   * @return the roots in a map of module names to lists of roots, or an empty map if none were
+   *     found.
+   * @since 0.1.0
+   */
+  default Map<String, List<? extends PathRoot>> getPatchModulePathModules() {
+    return getModules(StandardLocation.PATCH_MODULE_PATH);
   }
 }
