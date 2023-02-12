@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.workspaces.impl;
 
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
@@ -25,7 +26,6 @@ import io.github.ascopes.jct.workspaces.Workspace;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,11 +152,71 @@ public final class WorkspaceImpl implements Workspace {
     // Create an immutable copy.
     var pathsCopy = new HashMap<Location, List<PathRoot>>();
     paths.forEach((location, list) -> pathsCopy.put(location, List.copyOf(list)));
-    return Collections.unmodifiableMap(pathsCopy);
+    return unmodifiableMap(pathsCopy);
+  }
+
+  @Override
+  public List<? extends PathRoot> getModule(Location location, String moduleName) {
+    if (location instanceof ModuleLocation) {
+      throw new IllegalArgumentException("Use .getPackages(ModuleLocation) for module locations");
+    }
+
+    if (!location.isOutputLocation() && !location.isModuleOrientedLocation()) {
+      throw new IllegalArgumentException(
+          "Location " + location.getName() + " must be module-oriented or an output location"
+      );
+    }
+
+    var moduleLocation = new ModuleLocation(location, moduleName);
+    return getPackages(moduleLocation);
+  }
+
+  @Override
+  public Map<String, List<? extends PathRoot>> getModules(Location location) {
+    if (location instanceof ModuleLocation) {
+      throw new IllegalArgumentException("Cannot pass a ModuleLocation to this method");
+    }
+
+    if (!location.isOutputLocation() && !location.isModuleOrientedLocation()) {
+      throw new IllegalArgumentException(
+          "Location " + location.getName() + " must be module-oriented or an output location"
+      );
+    }
+
+    var results = new HashMap<String, List<PathRoot>>();
+
+    paths.forEach((pathLocation, pathRoots) -> {
+      if (pathLocation instanceof ModuleLocation) {
+        var modulePathLocation = (ModuleLocation) pathLocation;
+        if (modulePathLocation.getParent().equals(location)) {
+          results.computeIfAbsent(modulePathLocation.getModuleName(), name -> new ArrayList<>())
+              .addAll(pathRoots);
+        }
+      }
+    });
+
+    // Create an immutable view of both dimensions.
+    var resultsCopy = new HashMap<String, List<? extends PathRoot>>();
+    results.forEach((loc, roots) -> resultsCopy.put(loc, List.copyOf(roots)));
+    return Map.copyOf(resultsCopy);
   }
 
   @Override
   public PathStrategy getPathStrategy() {
     return pathStrategy;
+  }
+
+  @Override
+  public List<? extends PathRoot> getPackages(Location location) {
+    if (location.isModuleOrientedLocation()) {
+      throw new IllegalArgumentException(
+          "Location " + location.getName() + " must not be module-oriented"
+      );
+    }
+
+    var roots = paths.get(location);
+    return roots == null
+        ? List.of()
+        : List.copyOf(roots);
   }
 }
