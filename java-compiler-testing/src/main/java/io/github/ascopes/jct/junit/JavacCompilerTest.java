@@ -169,7 +169,7 @@ public @interface JavacCompilerTest {
    * @return {@code true} if we need to support modules, or {@code false} if we do not.
    * @deprecated this will be removed in a future release, since Java 8 is reaching end-of-life.
    */
-  @Deprecated(forRemoval = true, since = "0.0.2")
+  @Deprecated(forRemoval = true, since = "0.1.0")
   boolean modules() default false;
 
   /**
