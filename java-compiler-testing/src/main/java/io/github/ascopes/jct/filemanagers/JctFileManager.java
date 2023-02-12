@@ -19,6 +19,7 @@ import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.workspaces.PathRoot;
+import io.github.ascopes.jct.workspaces.Workspace;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
@@ -33,6 +34,12 @@ import org.jspecify.annotations.Nullable;
 /**
  * Extension around a {@link JavaFileManager} that allows adding of {@link PathRoot} objects to the
  * manager.
+ *
+ * <p>This component is responsible for bridging the gap between a {@link Workspace} and
+ * a {@link javax.tools.JavaCompiler} when performing a compilation, and thus includes a number of
+ * required operations that the compiler will query the file system with. In addition, this
+ * interface also defines a number of additional functionalities that are useful for querying and
+ * verifying the outcome of compilations within tests.
  *
  * @author Ashley Scopes
  * @since 0.0.1
