@@ -59,6 +59,7 @@ public final class JavacCompilersProvider extends AbstractCompilersProvider
   }
 
   @Override
+  @SuppressWarnings("removal")
   public void accept(JavacCompilerTest javacCompilers) {
     // Super is needed here to prevent IntelliJ getting confused.
     super.configure(

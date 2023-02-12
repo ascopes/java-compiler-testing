@@ -33,6 +33,15 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
   /**
    * Method that returns the object it is called upon to enable creating fluent-language builders.
    *
+   * <p>For example:
+   *
+   * <pre><code>
+   *   thisDirectory
+   *       .createFile("foo", "bar", "baz.txt").withContents(...)
+   *       .and().also()
+   *       .createFile("foo", "bar", "bork.txt").withContents(...);
+   * </code></pre>
+   *
    * @return this object.
    * @see #and
    * @see #then
@@ -43,6 +52,15 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
 
   /**
    * Method that returns the object it is called upon to enable creating fluent-language builders.
+   *
+   * <p>For example:
+   *
+   * <pre><code>
+   *   thisDirectory
+   *       .createFile("foo", "bar", "baz.txt").withContents(...)
+   *       .and()
+   *       .createFile("foo", "bar", "bork.txt").withContents(...);
+   * </code></pre>
    *
    * @return this object.
    * @see #also
@@ -110,6 +128,15 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
 
   /**
    * Method that returns the object it is called upon to enable creating fluent-language builders.
+   *
+   * <p>For example:
+   *
+   * <pre><code>
+   *   thisDirectory
+   *       .createFile("foo", "bar", "baz.txt").withContents(...)
+   *       .and().then()
+   *       .createFile("foo", "bar", "bork.txt").withContents(...);
+   * </code></pre>
    *
    * @return this object.
    * @see #and

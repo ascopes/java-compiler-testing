@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.workspaces;
 
 import java.io.File;
+import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -32,26 +33,39 @@ public interface DirectoryBuilder {
   /**
    * Copy the contents of the directory at the given path recursively into this directory.
    *
-   * <p>This uses the default file system.
+   * <p>Symbolic links will not be followed.
+   *
+   * <p>This uses the default file system. If you want to use a different {@link FileSystem}
+   * as your source, then use {@link #copyContentsFrom(Path)} instead.
    *
    * <p>Examples:
    *
    * <pre><code>
-   *   // Using platform-specific separators.
-   *   directoryBuilder.copyContentsFrom("foo/bar/baz");
-   *
    *   // Letting JCT infer the correct path separators to use (recommended).
    *   directoryBuilder.copyContentsFrom("foo", "bar", "baz");
+   *
+   *   // Using POSIX platform-specific separators (may cause issues if your tests run on Windows)
+   *   directoryBuilder.copyContentsFrom("foo/bar/baz");
+   *
+   *   // Using Windows platform-specific separators (may cause issues if your tests run on POSIX)
+   *   directoryBuilder.copyContentsFrom("foo\\bar\\baz");
    * </code></pre>
    *
    * @param first the first part of the path to the directory to copy from.
    * @param rest  any additional parts of the path.
    * @return the root managed directory for further configuration.
+   * @see #copyContentsFrom(Path)
    */
   ManagedDirectory copyContentsFrom(String first, String... rest);
 
   /**
    * Copy the contents of the directory at the given path recursively into this directory.
+   *
+   * <p>Symbolic links will not be followed.
+   *
+   * <pre><code>
+   *  directory.copyContentsFrom(new File("code/examples"));
+   * </code></pre>
    *
    * @param dir the directory to copy the contents from.
    * @return the root managed directory for further configuration.
@@ -61,6 +75,12 @@ public interface DirectoryBuilder {
   /**
    * Copy the contents of the directory at the given path recursively into this directory.
    *
+   * <p>Symbolic links will not be followed.
+   *
+   * <pre><code>
+   *   directory.copyContentsFrom(Path.of("code", "examples"));
+   * </code></pre>
+   *
    * @param rootDir the directory to copy the contents from.
    * @return the root managed directory for further configuration.
    */
@@ -68,6 +88,10 @@ public interface DirectoryBuilder {
 
   /**
    * Create an empty directory.
+   *
+   * <pre><code>
+   *   directory.thatIsEmpty();
+   * </code></pre>
    *
    * @return the root managed directory for further configuration.
    */
