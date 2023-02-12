@@ -161,6 +161,7 @@
 
     <!-- JavaDocs -->
     <current-year>2023</current-year>
+    <newest-java-version>19</newest-java-version>
 
     <!-- Other configuration -->
     <project-slug>ascopes/java-compiler-testing</project-slug>
@@ -409,7 +410,7 @@
             <keywords>true</keywords>
             <linksource>true</linksource>
             <links>
-              <link>https://docs.oracle.com/en/java/javase/17/docs/api</link>
+              <link>https://docs.oracle.com/en/java/javase/${newest-java-version}/docs/api</link>
               <link>https://javadoc.io/doc/org.assertj/assertj-core/${assertj.version}</link>
               <link>https://javadoc.io/doc/org.jspecify/jspecify/${jspecify.version}</link>
               <link>https://www.slf4j.org/apidocs</link>
