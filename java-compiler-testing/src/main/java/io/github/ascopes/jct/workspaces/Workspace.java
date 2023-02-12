@@ -200,7 +200,7 @@ public interface Workspace extends AutoCloseable {
    *
    * <pre><code>
    *   var path = Path.of("src", "test", "resources", "packages");
-   *   workspace.addLocation(StandardLocation.SOURCE_PATH, path);
+   *   workspace.addPackage(StandardLocation.SOURCE_PATH, path);
    * </code></pre>
    *
    * @param location the location to associate with.
