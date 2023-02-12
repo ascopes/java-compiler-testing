@@ -34,7 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.tools.JavaCompiler;
-import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardLocation;
@@ -110,19 +109,38 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       task.setProcessors(processors);
     }
 
-    LOGGER.info("Starting compilation");
+    LOGGER
+        .atInfo()
+        .setMessage(
+            "Starting compilation with {} (found {} compilation units, {} user-provided class names)"
+        )
+        .addArgument(compiler::getName)
+        .addArgument(compilationUnits::size)
+        .addArgument(classNames == null
+            ? () -> "no"
+            : classNames::size
+        )
+        .log();
 
     var start = System.nanoTime();
     var success = requireNonNull(
-        task.call(), "Compiler task .call() method returned null unexpectedly!"
+        task.call(),
+        () -> "Compiler " + compiler.getName() + " task .call() method returned null unexpectedly!"
     );
     var delta = (System.nanoTime() - start) / 1_000_000L;
 
     LOGGER
         .atInfo()
-        .setMessage("Compilation {} after approximately {}ms")
+        .setMessage("Compilation with {} {} after approximately {}ms (roughly {} classes/sec)")
+        .addArgument(compiler::getName)
         .addArgument(() -> success ? "completed successfully" : "failed")
         .addArgument(delta)
+        .addArgument(() -> String.format(
+            "%.2f",
+            classNames == null
+                ? 1000.0 * compilationUnits.size() / delta
+                : 1000.0 * classNames.size() / delta
+        ))
         .log();
 
     return JctCompilationImpl
@@ -137,7 +155,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
   }
 
   private Set<JavaFileObject> findCompilationUnits(JctFileManager fileManager) throws IOException {
-    Collection<Location> locations = IterableUtils
+    var locations = IterableUtils
         .flatten(fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH));
 
     if (locations.isEmpty()) {
