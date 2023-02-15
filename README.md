@@ -302,6 +302,46 @@ class ExampleTest {
 }
 ```
 
+## Tips to improve build speeds
+
+Running a Java Compiler and maintaining a virtual file system is not the simplest
+thing to achieve internally. As a result, some tests may take a few hundred milliseconds
+to execute in some cases, especially when the JVM is warming up. There are a few things
+you can do to ensure that tests are as snappy as possible, however.
+
+### Parallel test runners
+
+JUnit5 has the ability to configure tests to run in parallel.
+
+You can configure this by creating a file in your test resources named
+`junit-platform.properties` and add the following content to it.
+
+```properties
+junit.jupiter.execution.parallel.enabled=true
+junit.jupiter.execution.parallel.mode.classes.default=SAME_THREAD
+junit.jupiter.execution.parallel.mode.default=CONCURRENT
+```
+
+Within build systems like Maven, you can also enable your builds to run
+in parallel where desired. In the case of Maven, you can pass `-T1C` on the
+command line to make it run one parallel operation on each CPU core.
+
+### JVM flags
+
+You can provide JVM flags to the runtime that executes your test packs. For Maven Surefire,
+you do this by defining an `<argLine/>` attribute in your `<properties/>` with a string value
+holding the flags you wish to use.
+
+1. Enforce level-1 tiered compilation - this will prevent the JVM wasting time performing
+   more complicated JIT compilation passes over your code when it usually does not provide
+   much benefit on short-lived code. You can pass 
+   `-XX:+TieredCompilation -XX:TieredStopAtLevel=1` to set this up. Enabling this in the JCT
+   builds reduced the overall build time by around 20 seconds.
+2. Use the ZGC - the ZGC will reduce lag when performing garbage collection on code that
+   has a high churn of objects. On Java 11, the ZGC is an experimental feature, which needs
+   to be enabled with `-XX:+UnlockExperimentalOptions -XX:+UseZGC`. On Java 17, you just
+   need to pass `-XX:+UseZGC` alone.
+  
 ## ECJ support
 
 While this module initially supported ECJ, there were a number of problems relating to bugs
