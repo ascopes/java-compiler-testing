@@ -43,7 +43,10 @@ are always welcome!
   system, and without awkward resource-cleanup logic.
 - Enables running compilations on combinations of real files, class path
   resources, in-memory files, JARs, WARs, EARs, ZIP files, etc.
-- Supports Java 9 JPMS modules as intended.
+- Null-safe API (using [JSpecify](https://jspecify.dev/))
+- [Tested on multiple existing frameworks](acceptance-tests/) including 
+  Avaje, Spring, Lombok, MapStruct, ErrorProne, and CheckerFramework.
+- Supports Java 9 JPMS modules.
 - Ability to customise a large assortment of configuration parameters
   to enable you to test exactly what you need to test.
 - Provides support for `javac` out of the box, with the
@@ -59,8 +62,7 @@ are always welcome!
 - Diagnostic reporting includes stack traces, so you can find out
   exactly what triggered a diagnostic and begin debugging any
   issues in your applications quickly.
-- Helpful error messages to assist in annotation processor development
-- Null-safe API (using [JSpecify](https://jspecify.dev/))
+- Helpful error messages to assist in annotation processor development:
 
 ```
 [main] ERROR io.github.ascopes.jct.diagnostics.TracingDiagnosticListener - cannot find symbol
