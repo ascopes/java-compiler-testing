@@ -93,6 +93,8 @@ public final class PathFileObject implements JavaFileObject {
     this.location = location;
     this.rootPath = rootPath;
 
+    // TODO(ascopes): should we allow absolute paths here? Not sure that it makes a lot of sense
+    // here. 
     this.relativePath = relativePath.isAbsolute()
         ? rootPath.relativize(relativePath)
         : relativePath;
@@ -302,7 +304,8 @@ public final class PathFileObject implements JavaFileObject {
    * Open an output stream to this file.
    *
    * <p>This will create the file first if it does not already exist. If it does
-   * exist, then this will overwrite the file and truncate it.
+   * exist, then this will overwrite the file and truncate it. The parent directories
+   * will also be created if they do not exist.
    *
    * <p>This output stream must be closed once finished with, otherwise
    * resources will be leaked.
@@ -343,7 +346,8 @@ public final class PathFileObject implements JavaFileObject {
    * Open a writer to this file using the default charset (UTF-8).
    *
    * <p>This will create the file first if it does not already exist. If it does exist,
-   * this will first overwrite the file and truncate it.
+   * this will first overwrite the file and truncate it. The parent directories
+   * will also be created if they do not exist.
    *
    * <p>This input stream must be closed once finished with, otherwise
    * resources will be leaked.
