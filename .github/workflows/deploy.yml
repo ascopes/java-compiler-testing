@@ -75,7 +75,7 @@ jobs:
           group_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.groupId")"
           
           info "Determining (root) artifact ID..."
-          artifact_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.groupId")"
+          artifact_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.artifactId")"
           
           info "Determining release version to use..."
           if [[ '${{ inputs.version }}' == "" ]]; then
