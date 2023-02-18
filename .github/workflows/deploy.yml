@@ -8,10 +8,20 @@ on:
         default: true
         type: boolean
 
-      version:
+      release:
         description: "Version (leave blank to release non-SNAPSHOT patch)"
         default: ""
         type: string
+
+      deploy-to-staging:
+        description: "Should I deploy the code to Nexus (staging)?"
+        default: true
+        type: boolean
+
+      promote-to-release:
+        description: "Should I promote the Nexus (staging) repository to release (Maven Central)?"
+        default: true
+        type: boolean
 
 jobs:
   maven-central:
@@ -78,41 +88,45 @@ jobs:
           info "Preparing and performing the release"
           ensure-set OSSRH_USERNAME OSSRH_TOKEN GPG_PASSPHRASE
           
-          build_args=(
-            "-Dmaven.test.skip" 
-            "-DskipTests"
-            "-Dlicense.skip=true"
-            "-Dcheckstyle.skip=true"
-            "-Preleases"
-          )
+          if [ '${{ inputs.deploy-to-staging }}' == "true" ]; then
+            build_args=(
+              "-Dmaven.test.skip" 
+              "-DskipTests"
+              "-Dlicense.skip=true"
+              "-Dcheckstyle.skip=true"
+              "-Preleases"
+            )
+            
+            run <<-SCRIPT          
+              ./mvnw -B -e \
+                  -Preleases \
+                  -Darguments='${build_args[@]}' \
+                  -DdryRun='${{ inputs.dry-run }}' \
+                  -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
+                  -DreleaseVersion='${release_version}' \
+                  -DsignTag=false \
+                  -Dtag='v${release_version}' \
+                  release:prepare release:perform
+            SCRIPT
+            
+            success "Release has been promoted to Nexus Staging successfully"
+          fi
           
-          run <<-SCRIPT          
-            ./mvnw -B -e \
-                -Preleases \
-                -Darguments='${build_args[@]}' \
-                -DdryRun='${{ inputs.dry-run }}' \
-                -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
-                -DreleaseVersion='${release_version}' \
-                -DsignTag=false \
-                -Dtag='v${release_version}' \
-                release:prepare release:perform
-          SCRIPT
-          
-          success "Release has been promoted to Nexus Staging successfully"
-          
-          info "Will now promote ${group_id}/${artifact_id}/${release_version} to Maven Central"
-          
-          run <<<-SCRIPT
-            ./scripts/close-nexus-repository.sh \
-                -u "${OSSRH_USERNAME} \
-                -p "${OSSRH_PASSWORD} \
-                -g "${group_id}" \
-                -a "${artifact_id} \
-                -v "${release_version} \
-                -s "https://s01.oss.sonatype.org/" 
-          SCRIPT
-          
-          success "Released ${group_id}/${artifact_id}/${release_version} to Maven Central successfully"
+          if [ "${{ inputs.promote-to-release }}" == "true" ] && [ "${{ inputs.dry-run }}" == "false" ]; then
+            info "Will now promote ${group_id}/${artifact_id}/${release_version} to Maven Central"
+            
+            run <<-SCRIPT
+              ./scripts/close-nexus-repository.sh \
+                  -u "${OSSRH_USERNAME} \
+                  -p "${OSSRH_PASSWORD} \
+                  -g "${group_id}" \
+                  -a "${artifact_id} \
+                  -v "${release_version} \
+                  -s "https://s01.oss.sonatype.org/" 
+            SCRIPT
+            
+            success "Released ${group_id}/${artifact_id}/${release_version} to Maven Central successfully"
+          fi
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
