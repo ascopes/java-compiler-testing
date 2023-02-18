@@ -4,24 +4,25 @@ on:
   workflow_dispatch:
     inputs:
       dry-run:
-        description: "Dry run the deployment"
+        description: "Dry run"
         default: true
         type: boolean
 
-      release:
-        description: "Version (leave blank to release non-SNAPSHOT patch)"
-        default: ""
-        type: string
-
       deploy-to-staging:
-        description: "Should I deploy the code to Nexus (staging)?"
+        description: "Deploy to staging"
         default: true
         type: boolean
 
       promote-to-release:
-        description: "Should I promote the Nexus (staging) repository to release (Maven Central)?"
+        description: "Promote staging -> release"
         default: true
         type: boolean
+
+      version:
+        description: "Explicit version (optional)"
+        default: ""
+        type: string
+
 
 jobs:
   maven-central:
@@ -118,7 +119,7 @@ jobs:
             run <<-SCRIPT
               ./scripts/close-nexus-repository.sh \
                   -u "${OSSRH_USERNAME} \
-                  -p "${OSSRH_PASSWORD} \
+                  -p "${OSSRH_TOKEN} \
                   -g "${group_id}" \
                   -a "${artifact_id} \
                   -v "${release_version} \
