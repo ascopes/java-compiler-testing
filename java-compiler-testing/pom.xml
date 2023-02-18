@@ -29,6 +29,8 @@
   <artifactId>java-compiler-testing</artifactId>
 
   <name>Java Compiler Testing framework</name>
+  <!-- Need to override this as Maven injects the wrong URL otherwise -->
+  <url>https://github.com/${project-slug}</url>
 
   <description>
     Microframework geared towards writing declarative integration tests against Java compiler
