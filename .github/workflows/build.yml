@@ -134,60 +134,12 @@ jobs:
           path: reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tar.xz
           retention-days: 30
 
-  mutation-tests:
-    name: Run mutation tests
-    runs-on: ubuntu-22.04
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3.3.0
-        with:
-          fetch-depth: 2
-
-      - name: Initialize Java
-        uses: actions/setup-java@v3.10.0
-        with:
-          distribution: 'zulu'
-          java-version: 17
-          cache: 'maven'
-
-      - name: Run mutation tests
-        shell: bash
-        # Do not run on multiple threads, the plugin does not support this properly.
-        run: ./mvnw -B -U -am -pl java-compiler-testing -P mutation -Dcheckstyle.skip=true -Dlicense.skip=true test
-
-      # Compress first so that the collection job later takes far less time (order of a few minutes
-      # or so). GitHub does not compress these until after the workflow finishes, meaning when
-      # we unstash them to produce the coverage reports, it will make an HTTP call for every single
-      # file. This can take several minutes and is somewhat painful to have to wait for.
-      - name: Compress mutation test reports into tarball
-        if: always()
-        shell: bash
-        run: |-
-          # Allow ** globbing
-          set +f -x
-          # Allow globs to not match anything without causing errors.
-          shopt -s nullglob
-          # XZ with max compression, more efficient than using GZip.
-          XZ_OPT=-9 tar -Jcvf reports-mutation-tests.tar.xz **/target/pit-reports/pit-reports/**
-
-      - name: Stash reports tarball
-        uses: actions/upload-artifact@v3.1.2
-        if: always()
-        with:
-          name: reports-mutation-tests
-          if-no-files-found: error
-          path: reports-mutation-tests.tar.xz
-          retention-days: 30
-
   publish-test-reports:
     name: Publish test reports
     runs-on: ubuntu-22.04
     if: always()
     needs:
       - build
-      - mutation-tests
 
     permissions:
       checks: write
@@ -251,8 +203,8 @@ jobs:
           #./codecov -c -F unit -v
           #./codecov -c -F integration -v
 
-  formatting:
-    name: Check formatting and licenses
+  linting:
+    name: Linting
     runs-on: ubuntu-22.04
 
     steps:
@@ -278,46 +230,6 @@ jobs:
           -Dmaven.resources.skip
           -Dmaven.test.skip
           verify
-
-  dependency-check:
-    name: Run dependency check
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3.3.0
-        with:
-          fetch-depth: 2
-
-      - name: Initialize Java
-        uses: actions/setup-java@v3.10.0
-        with:
-          distribution: 'zulu'
-          java-version: 17
-          cache: 'maven'
-
-      - name: Run checks
-        shell: bash
-        run: >-
-          ./mvnw 
-          -B -U
-          -P dependency-check
-          -DskipTests=true
-          -Dcheckstyle.skip=true
-          -Dlicense.skip=true
-          -Dmaven.main.skip
-          -Dmaven.jar.skip
-          -Dmaven.resources.skip
-          -Dmaven.test.skip
-          verify
-
-      - name: Archive Dependency Scan reports
-        uses: actions/upload-artifact@v3.1.2
-        if: always()
-        with:
-          name: dependency-scan-report
-          path: '**/target/dependency-check-report.html'
-          retention-days: 30
 
   generate-documentation:
     name: Generate documentation

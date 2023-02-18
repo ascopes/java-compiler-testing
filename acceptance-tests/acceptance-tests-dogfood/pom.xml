@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>acceptance-tests-dogfood</artifactId>
-  <name>JCT dogfooding acceptance tests</name>
+  <name>JCT-within-JCT acceptance tests (dogfood)</name>
   <description>Acceptance test that tests JCT can compile itself.</description>
 
   <dependencies>
