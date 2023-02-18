@@ -118,11 +118,11 @@ jobs:
             
             run <<-SCRIPT
               ./scripts/close-nexus-repository.sh \
-                  -u "${OSSRH_USERNAME} \
-                  -p "${OSSRH_TOKEN} \
+                  -u "${OSSRH_USERNAME}" \
+                  -p "${OSSRH_TOKEN}" \
                   -g "${group_id}" \
-                  -a "${artifact_id} \
-                  -v "${release_version} \
+                  -a "${artifact_id}" \
+                  -v "${release_version}" \
                   -s "https://s01.oss.sonatype.org/" 
           SCRIPT
             
