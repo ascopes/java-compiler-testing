@@ -107,7 +107,7 @@ jobs:
                   -DsignTag=false \
                   -Dtag='v${release_version}' \
                   release:prepare release:perform
-            SCRIPT
+          SCRIPT
             
             success "Release has been promoted to Nexus Staging successfully"
           fi
@@ -123,7 +123,7 @@ jobs:
                   -a "${artifact_id} \
                   -v "${release_version} \
                   -s "https://s01.oss.sonatype.org/" 
-            SCRIPT
+          SCRIPT
             
             success "Released ${group_id}/${artifact_id}/${release_version} to Maven Central successfully"
           fi
