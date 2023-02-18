@@ -42,7 +42,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 class ModuleLocationTest {
 
   @DisplayName("Passing a null parent to the constructor raises an exception")
-  @SuppressWarnings("DataFlowIssue")
   @Test
   void passingNullParentToConstructorRaisesException() {
     // Then
@@ -52,7 +51,6 @@ class ModuleLocationTest {
   }
 
   @DisplayName("Passing a null module name to the constructor raises an exception")
-  @SuppressWarnings("DataFlowIssue")
   @Test
   void passingNullNameToConstructorRaisesException() {
     // Then

@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("AbstractEnumAssert tests")
-@SuppressWarnings("DataFlowIssue")
 class AbstractEnumAssertTest {
 
   @DisplayName(".isAnyOf(...) tests")

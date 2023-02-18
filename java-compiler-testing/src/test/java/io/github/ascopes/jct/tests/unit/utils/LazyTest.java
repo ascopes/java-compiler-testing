@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.tests.unit.utils;
 
-import static io.github.ascopes.jct.tests.helpers.GenericMock.mockRaw;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.BDDAssertions.then;
@@ -105,9 +104,7 @@ class LazyTest {
       // Given
       var value = new Object();
 
-      var supplier = mockRaw(Supplier.class)
-          .<Supplier<Object>>upcastedTo()
-          .build();
+      Supplier<Object> supplier = mock();
 
       when(supplier.get()).then(ctx -> {
         // Lagging here should make the inner condition in the acquire block hit both control
@@ -159,9 +156,7 @@ class LazyTest {
       // Given
       var value = new Object();
 
-      var supplier = mockRaw(Supplier.class)
-          .<Supplier<Object>>upcastedTo()
-          .build();
+      Supplier<Object> supplier = mock();
 
       when(supplier.get()).thenReturn(value);
 

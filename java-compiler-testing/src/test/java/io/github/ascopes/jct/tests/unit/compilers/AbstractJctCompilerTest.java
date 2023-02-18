@@ -20,7 +20,6 @@ import static io.github.ascopes.jct.tests.helpers.Fixtures.someFlags;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someInt;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someRelease;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
-import static io.github.ascopes.jct.tests.helpers.GenericMock.mockRaw;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
@@ -120,7 +119,6 @@ class AbstractJctCompilerTest {
 
   @DisplayName("AbstractJctCompiler constructor tests")
   @Nested
-  @SuppressWarnings("ConstantConditions")
   @Order(Integer.MIN_VALUE)
   class ConstructorTest {
 
@@ -319,7 +317,7 @@ class AbstractJctCompilerTest {
   }
 
   @ExtendWith(MockitoExtension.class)
-  @SuppressWarnings({"unused", "NotNullFieldNotInitialized"})
+  @SuppressWarnings("unused")
   abstract class AbstractCompileTestTemplate {
 
     @Mock
@@ -482,7 +480,6 @@ class AbstractJctCompilerTest {
 
     @DisplayName(".configure(...) raises a NullPointerException if the input is null")
     @Test
-    @SuppressWarnings("ConstantConditions")
     void configureRaisesNullPointerExceptionOnNullInput() {
       // Then
       assertThatThrownBy(() -> compiler.configure(null))
@@ -494,9 +491,7 @@ class AbstractJctCompilerTest {
     @Test
     void configureInvokesConfigurerOnTheCompiler() throws Throwable {
       // Given
-      var configurer = mockRaw(JctCompilerConfigurer.class)
-          .<JctCompilerConfigurer<?>>upcastedTo()
-          .build();
+      JctCompilerConfigurer<?> configurer = mock();
 
       // When
       compiler.configure(configurer);
@@ -528,9 +523,7 @@ class AbstractJctCompilerTest {
     @ParameterizedTest(name = "for exception of type {0}")
     void configurePropagatesAnyException(Class<? extends Exception> exceptionCls) throws Throwable {
       // Given
-      var configurer = mockRaw(JctCompilerConfigurer.class)
-          .<JctCompilerConfigurer<?>>upcastedTo()
-          .build();
+      JctCompilerConfigurer<?> configurer = mock(JctCompilerConfigurer.class);
 
       doThrow(exceptionCls).when(configurer).configure(any());
 
@@ -543,9 +536,7 @@ class AbstractJctCompilerTest {
     @Test
     void configureReturnsTheCompiler() throws Throwable {
       // Given
-      var configurer = mockRaw(JctCompilerConfigurer.class)
-          .<JctCompilerConfigurer<?>>upcastedTo()
-          .build();
+      JctCompilerConfigurer<?> configurer = mock();
 
       // When
       var result = compiler.configure(configurer);
@@ -588,7 +579,6 @@ class AbstractJctCompilerTest {
     }
 
     @DisplayName(".name(null) throws a NullPointerException")
-    @SuppressWarnings("ConstantConditions")
     @Test
     void passingNullToNameThrowsNullPointerException() {
       // Then
@@ -1400,7 +1390,6 @@ class AbstractJctCompilerTest {
     }
 
     @DisplayName(".locale(...) throws a NullPointerException if the locale is null")
-    @SuppressWarnings("ConstantConditions")
     @Test
     void localeThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1447,7 +1436,6 @@ class AbstractJctCompilerTest {
     }
 
     @DisplayName(".logCharset(...) throws a NullPointerException if the logCharset is null")
-    @SuppressWarnings("ConstantConditions")
     @Test
     void logCharsetThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1495,7 +1483,6 @@ class AbstractJctCompilerTest {
 
     @DisplayName(".fileManagerLoggingMode(...) throws a NullPointerException if "
         + "fileManagerLoggingMode is null")
-    @SuppressWarnings("ConstantConditions")
     @Test
     void fileManagerLoggingModeThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1543,7 +1530,6 @@ class AbstractJctCompilerTest {
 
     @DisplayName(".diagnosticLoggingMode(...) throws a NullPointerException "
         + "if diagnosticLoggingMode is null")
-    @SuppressWarnings("ConstantConditions")
     @Test
     void diagnosticLoggingModeThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1591,7 +1577,6 @@ class AbstractJctCompilerTest {
 
     @DisplayName(".annotationProcessorDiscovery(...) throws a NullPointerException "
         + "if annotationProcessorDiscovery is null")
-    @SuppressWarnings("ConstantConditions")
     @Test
     void annotationProcessorDiscoveryThrowsNullPointerExceptionIfNull() {
       // Then

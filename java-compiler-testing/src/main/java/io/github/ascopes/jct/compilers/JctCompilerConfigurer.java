@@ -93,7 +93,6 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.STABLE)
 @FunctionalInterface
-@SuppressWarnings("NullableProblems")
 public interface JctCompilerConfigurer<E extends Exception> {
 
   /**

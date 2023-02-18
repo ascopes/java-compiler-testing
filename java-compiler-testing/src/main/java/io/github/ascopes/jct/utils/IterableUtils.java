@@ -122,7 +122,6 @@ public final class IterableUtils extends UtilityClass {
    * @param <T>       the input collection type.
    * @return the input array.
    */
-  @SuppressWarnings("NullableProblems")
   public static <T> T[] requireNonNullValues(
       T[] array,
       String arrayName

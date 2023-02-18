@@ -457,7 +457,6 @@ class JavacJctFlagBuilderImplTest {
 
   @Order(Integer.MAX_VALUE)
   @DisplayName("The flag builder produces an immutable list as the result")
-  @SuppressWarnings("ConstantConditions")
   @Test
   void resultIsImmutable() {
     // When

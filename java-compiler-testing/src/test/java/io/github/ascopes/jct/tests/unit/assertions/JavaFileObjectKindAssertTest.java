@@ -160,7 +160,6 @@ class JavaFileObjectKindAssertTest {
 
     @DisplayName(".extension() fails if the kind is null")
     @Test
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     void extensionFailsIfKindIsNull() {
       // Given
       var assertions = new JavaFileObjectKindAssert(null);

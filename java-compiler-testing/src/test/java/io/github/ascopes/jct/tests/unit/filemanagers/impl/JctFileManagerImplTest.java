@@ -84,7 +84,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  */
 @DisplayName("JctFileManagerImpl tests")
 @ExtendWith(MockitoExtension.class)
-@SuppressWarnings({"DataFlowIssue", "resource"})
+@SuppressWarnings("resource")
 class JctFileManagerImplTest {
 
   JctFileManagerImpl fileManager;
@@ -103,7 +103,7 @@ class JctFileManagerImplTest {
   }
 
   @DisplayName("Constructor disallows null releases")
-  @SuppressWarnings({"resource", "ConstantConditions"})
+  @SuppressWarnings("resource")
   @Test
   void constructorDisallowsNullReleases() {
     // Then

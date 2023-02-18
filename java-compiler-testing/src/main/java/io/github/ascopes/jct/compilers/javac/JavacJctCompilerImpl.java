@@ -77,7 +77,6 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
    * @param modules whether modules need to be supported or not.
    * @return the minimum supported version.
    */
-  @SuppressWarnings("ConstantConditions")
   public static int getEarliestSupportedVersionInt(boolean modules) {
     // Purposely do not hardcode members of the SourceVersion enum here other
     // than utility methods, as this prevents compilation problems on various
