@@ -51,7 +51,7 @@ import org.apiguardian.api.API.Status;
  *        ...
  *
  *        var compiler = JctCompilers
- *            .createPlatformCompiler()
+ *            .newPlatformCompiler()
  *            .release(17)
  *            .configure(new MyAnnotationProcessorConfigurer());
  *

@@ -20,7 +20,8 @@
 ### that the test applies to, and to rename the jacoco.xml files to match the Java version in use.
 ###
 
-set -euo pipefail
+set -o errexit
+set -o nounset
 
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 

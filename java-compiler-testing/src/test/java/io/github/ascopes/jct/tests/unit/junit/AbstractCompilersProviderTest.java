@@ -399,7 +399,7 @@ class AbstractCompilersProviderTest {
           );
 
       var compilation = JctCompilers
-          .createPlatformCompiler()
+          .newPlatformCompiler()
           .release(11)
           .compile(workspace);
 

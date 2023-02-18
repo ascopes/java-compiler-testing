@@ -27,7 +27,7 @@ unset undefined &> /dev/null || true
 # Arg 2 = log level name (e.g. WARNING)
 # Arg 3 = Message to display (e.g. "Something ain't right here")
 function __log() {
-  printf "\033[3;37m$(date "+%H:%M:%S.%3N") \033[0;37m| \033[0;1;${1}m%s:\033[0m %s\033[0m\n" \
+  printf "\033[3;37m$(date "+%H:%M:%S.%3N") \033[0;37m| \033[0;1;${1}m%7s:\033[0m %s\033[0m\n" \
       "${2}" "${3}" >&2
 }
 
@@ -92,7 +92,9 @@ function run() {
   {
     echo "#!/usr/bin/env bash"
     echo "PS4=$'Running: \e[1;33m$ \e[0;3;33m'"
-    echo "set -euxo pipefail"
+    echo "set -o errexit"
+    echo "set -o nounset"
+    echo "set -o xtrace"
     cat -
   } >> "${file}"
 
