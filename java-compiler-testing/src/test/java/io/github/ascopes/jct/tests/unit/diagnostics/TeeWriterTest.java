@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  * @author Ashley Scopes
  */
 @DisplayName("TeeWriter tests")
-@SuppressWarnings({"resource", "ConstantConditions"})
+@SuppressWarnings("resource")
 class TeeWriterTest {
 
   @DisplayName("Null writers are disallowed")

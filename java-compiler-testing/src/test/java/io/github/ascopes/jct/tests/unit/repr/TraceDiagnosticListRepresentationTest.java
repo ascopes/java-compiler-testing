@@ -33,7 +33,7 @@ import org.mockito.Mockito;
  * @author Ashley Scopes
  */
 @DisplayName("TraceDiagnosticListRepresentation tests")
-@SuppressWarnings({"ResultOfMethodCallIgnored"})
+@SuppressWarnings("ResultOfMethodCallIgnored")
 class TraceDiagnosticListRepresentationTest {
 
   @DisplayName("toStringOf(null) returns \"null\"")

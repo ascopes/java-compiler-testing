@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.tests.helpers;
 
-import static io.github.ascopes.jct.tests.helpers.GenericMock.mockRaw;
 import static java.util.stream.Collectors.joining;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -181,10 +180,7 @@ public final class Fixtures {
    * @return the mock.
    */
   public static Diagnostic<JavaFileObject> someDiagnostic() {
-    var mock = mockRaw(Diagnostic.class)
-        .<Diagnostic<JavaFileObject>>upcastedTo()
-        .build(withSettings().strictness(Strictness.LENIENT));
-
+    Diagnostic<JavaFileObject> mock = mock(withSettings().strictness(Strictness.LENIENT));
     createStubMethodsFor(mock);
     return mock;
   }
@@ -195,10 +191,7 @@ public final class Fixtures {
    * @return the mock.
    */
   public static TraceDiagnostic<JavaFileObject> someTraceDiagnostic() {
-    var mock = mockRaw(TraceDiagnostic.class)
-        .<TraceDiagnostic<JavaFileObject>>upcastedTo()
-        .build(withSettings().strictness(Strictness.LENIENT));
-
+    TraceDiagnostic<JavaFileObject> mock = mock(withSettings().strictness(Strictness.LENIENT));
     createStubMethodsFor(mock);
     when(mock.getTimestamp()).thenReturn(Instant.now());
     when(mock.getThreadName()).thenReturn(Thread.currentThread().getName());
@@ -229,7 +222,6 @@ public final class Fixtures {
     // No need to have 500 stack trace frames in test logs.
     var shortTrace = trace.subList(2, Math.min(10, trace.size()));
     return shortTrace.toArray(StackTraceElement[]::new);
-
   }
 
   /**
@@ -238,9 +230,7 @@ public final class Fixtures {
    * @return the mock.
    */
   public static List<StackTraceElement> someStackTraceList() {
-    return mockRaw(List.class)
-        .<List<StackTraceElement>>upcastedTo()
-        .build();
+    return List.of(someRealStackTrace());
   }
 
   /**

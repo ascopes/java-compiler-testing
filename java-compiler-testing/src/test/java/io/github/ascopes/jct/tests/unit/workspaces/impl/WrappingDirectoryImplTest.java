@@ -106,7 +106,6 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("Null paths are disallowed for parentless instances")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void nullPathsAreDisallowedForParentlessInstances() {
       // Then
@@ -116,7 +115,6 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("Null parents are disallowed for instances with parents")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void nullParentsAreDisallowedForInstancesWithParents() {
       // Then
@@ -126,7 +124,6 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("Null parts arrays are disallowed for instances with parents")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void nullPartsArraysAreDisallowedForInstancesWithParents() {
       // Then
@@ -136,7 +133,6 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("Null parts are disallowed for instances with parents")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void nullPartsAreDisallowedForInstancesWithParents() {
       // Then

@@ -46,7 +46,6 @@ public final class JctCompilationImpl implements JctCompilation {
   private final List<TraceDiagnostic<JavaFileObject>> diagnostics;
   private final JctFileManager fileManager;
 
-  @SuppressWarnings("ConstantConditions")
   private JctCompilationImpl(Builder builder) {
     success = requireNonNull(
         builder.success, "success"

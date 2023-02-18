@@ -35,7 +35,6 @@ import org.junit.jupiter.api.Test;
  *
  * @author Ashley Scopes
  */
-@SuppressWarnings("DataFlowIssue")
 class IterableUtilsTest implements UtilityClassTestTemplate {
 
   @Override

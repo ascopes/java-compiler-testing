@@ -50,7 +50,6 @@ import org.junit.jupiter.params.provider.ValueSource;
  * @author Ashley Scopes
  */
 @DisplayName("TraceDiagnostic tests")
-@SuppressWarnings("DataFlowIssue")
 class TraceDiagnosticTest {
 
   @DisplayName("null original diagnostics are rejected")
@@ -234,7 +233,6 @@ class TraceDiagnosticTest {
   }
 
   @DisplayName("getThreadId() returns the thread ID")
-  @SuppressWarnings("deprecation")
   @Test
   void getThreadIdReturnsTheThreadId() {
     // Given

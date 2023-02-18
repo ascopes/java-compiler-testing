@@ -52,7 +52,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 class PathFileObjectTest {
 
   @DisplayName("Passing a null location to the constructor raises an exception")
-  @SuppressWarnings("DataFlowIssue")
   @Test
   void passingNullLocationToConstructorRaisesException() {
     // Then
@@ -62,7 +61,6 @@ class PathFileObjectTest {
   }
 
   @DisplayName("Passing a null root path to the constructor raises an exception")
-  @SuppressWarnings("DataFlowIssue")
   @Test
   void passingNullRootPathToConstructorRaisesException() {
     // Then
@@ -72,7 +70,6 @@ class PathFileObjectTest {
   }
 
   @DisplayName("Passing a null relative path to the constructor raises an exception")
-  @SuppressWarnings("DataFlowIssue")
   @Test
   void passingNullRelativePathToConstructorRaisesException() {
     // Then
@@ -218,7 +215,6 @@ class PathFileObjectTest {
   }
 
   @DisplayName(".getAccessLevel() returns null")
-  @SuppressWarnings("DataFlowIssue")
   @Test
   void getAccessLevelReturnsNull() {
     // Given
@@ -410,7 +406,6 @@ class PathFileObjectTest {
   }
 
   @DisplayName(".getNestingKind() returns null")
-  @SuppressWarnings("DataFlowIssue")
   @Test
   void getNestingKindReturnsNull() {
     // Given

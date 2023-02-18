@@ -108,7 +108,6 @@ public final class TraceDiagnosticRepresentation implements Representation {
     return builder.toString();
   }
 
-  @SuppressWarnings("ConstantConditions")
   private Snippet extractSnippet(Diagnostic<? extends JavaFileObject> diagnostic) {
     var source = diagnostic.getSource();
 

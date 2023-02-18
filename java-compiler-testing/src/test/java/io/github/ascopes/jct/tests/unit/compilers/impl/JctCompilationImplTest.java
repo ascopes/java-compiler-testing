@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.tests.unit.compilers.impl;
 
-import static io.github.ascopes.jct.tests.helpers.GenericMock.mockRaw;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.iterable;
@@ -210,7 +209,6 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Setting null compilation units raises a NullPointerException")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void settingNullCompilationUnitsRaisesNullPointerException() {
       // Given
@@ -241,7 +239,6 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Building with null compilation units raises a NullPointerException")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void buildingWithNullCompilationUnitsRaisesNullPointerException() {
       // Given
@@ -267,7 +264,6 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Setting null diagnostics raises a NullPointerException")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void settingNullDiagnosticsRaisesNullPointerException() {
       // Given
@@ -298,7 +294,6 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Building with null diagnostics raises a NullPointerException")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void buildingWithNullDiagnosticsRaisesNullPointerException() {
       // Given
@@ -310,13 +305,9 @@ class JctCompilationImplTest {
           .success(RANDOM.nextBoolean())
           .failOnWarnings(RANDOM.nextBoolean())
           .diagnostics(nullableListOf(
-              mockRaw(TraceDiagnostic.class)
-                  .<TraceDiagnostic<JavaFileObject>>upcastedTo()
-                  .build(),
+              mock(),
               null,
-              mockRaw(TraceDiagnostic.class)
-                  .<TraceDiagnostic<JavaFileObject>>upcastedTo()
-                  .build()
+              mock()
           ));
 
       // Then
@@ -326,7 +317,6 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Setting null file managers raises a NullPointerException")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void settingNullFileManagerRaisesNullPointerException() {
       // Given
@@ -357,7 +347,6 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Setting null output lines raises a NullPointerException")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void settingNullOutputLinesRaisesNullPointerException() {
       // Given
@@ -388,7 +377,6 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Building with null output lines raises a NullPointerException")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void buildingWithNullOutputLinesRaisesNullPointerException() {
       // Given

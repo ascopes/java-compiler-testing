@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.tests.unit.junit;
 
-import static io.github.ascopes.jct.tests.helpers.GenericMock.mockRaw;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.THROWABLE;
@@ -93,7 +92,6 @@ class AbstractCompilersProviderTest {
   }
 
   @DisplayName("Configuring the provider with a null version strategy will raise an exception")
-  @SuppressWarnings("DataFlowIssue")
   @Test
   void configuringTheProviderWithNullVersionStrategyWillRaiseException() {
     // Given
@@ -492,9 +490,7 @@ class AbstractCompilersProviderTest {
 
     @Override
     protected JctCompiler<?, ?> initializeNewCompiler() {
-      return mockRaw(JctCompiler.class)
-          .<JctCompiler<?, ?>>upcastedTo()
-          .build(withSettings()
+      return mock(withSettings()
               .name("mock compiler")
               .defaultAnswer(Answers.RETURNS_SELF));
     }
