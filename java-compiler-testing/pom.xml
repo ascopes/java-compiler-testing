@@ -167,45 +167,5 @@
         </plugins>
       </build>
     </profile>
-
-    <profile>
-      <id>mutation</id>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-
-            <configuration>
-              <!-- Don't run normal tests alongside pitest -->
-              <skip>true</skip>
-            </configuration>
-          </plugin>
-
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-
-            <configuration>
-              <!-- Don't run normal tests alongside pitest -->
-              <skip>true</skip>
-            </configuration>
-          </plugin>
-
-
-          <plugin>
-            <groupId>org.pitest</groupId>
-            <artifactId>pitest-maven</artifactId>
-
-            <configuration>
-              <excludedGroups>
-                <excludedGroup>no-mutation</excludedGroup>
-              </excludedGroups>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 </project>

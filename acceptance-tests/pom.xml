@@ -33,11 +33,15 @@
   <description>Acceptance test components.</description>
 
   <modules>
+    <!-- Custom code proof-of-concept tests -->
+    <module>acceptance-tests-serviceloader</module>
+    <module>acceptance-tests-serviceloader-jpms</module>
+
+    <!-- Third-party library tests -->
     <module>acceptance-tests-avaje-inject</module>
     <module>acceptance-tests-avaje-jsonb</module>
     <module>acceptance-tests-checkerframework</module>
     <module>acceptance-tests-dagger</module>
-    <module>acceptance-tests-dogfood</module>
     <module>acceptance-tests-error-prone</module>
     <module>acceptance-tests-google-auto-factory</module>
     <module>acceptance-tests-google-auto-service</module>
@@ -46,9 +50,10 @@
     <module>acceptance-tests-lombok</module>
     <module>acceptance-tests-mapstruct</module>
     <module>acceptance-tests-micronaut</module>
-    <module>acceptance-tests-serviceloader</module>
-    <module>acceptance-tests-serviceloader-jpms</module>
     <module>acceptance-tests-spring</module>
+
+    <!-- Dogfood tests -->
+    <module>acceptance-tests-dogfood</module>
   </modules>
 
   <properties>
