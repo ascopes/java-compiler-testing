@@ -514,7 +514,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @SuppressWarnings("ThrowFromFinallyBlock")
-  // NullableProblems is needed due to https://youtrack.jetbrains.com/issue/IDEA-311124
   private JctCompilation compileInternal(
       Workspace workspace,
       Collection<String> classNames
