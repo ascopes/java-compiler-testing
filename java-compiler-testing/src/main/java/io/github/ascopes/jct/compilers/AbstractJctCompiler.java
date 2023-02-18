@@ -514,10 +514,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @SuppressWarnings("ThrowFromFinallyBlock")
-  private JctCompilation compileInternal(
-      Workspace workspace,
-      Collection<String> classNames
-  ) {
+  private JctCompilation compileInternal(Workspace workspace, Collection<String> classNames) {
     var fileManagerFactory = getFileManagerFactory();
     var flagBuilderFactory = getFlagBuilderFactory();
     var compilerFactory = getCompilerFactory();
