@@ -31,7 +31,7 @@
   <description>Acceptance test components.</description>
 
   <properties>
-    <avaje-inject.version>8.11</avaje-inject.version>
+    <avaje-inject.version>8.12</avaje-inject.version>
   </properties>
 
   <dependencies>
