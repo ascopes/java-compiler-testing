@@ -162,6 +162,8 @@
     <!-- JavaDocs -->
     <current-year>2023</current-year>
     <newest-java-version>19</newest-java-version>
+    <github-fork-ribbon.version>0.2.3</github-fork-ribbon.version>
+    <highlight-js.version>11.7.0</highlight-js.version>
 
     <!-- Other configuration -->
     <project-slug>ascopes/java-compiler-testing</project-slug>
@@ -389,8 +391,19 @@
             <detectLinks>false</detectLinks>
             <header>
               <![CDATA[
-              <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/stackoverflow-light.min.css">
-              <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
+              <!-- GitHub Ribbon -->
+              <link rel="stylesheet"
+                    href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/${github-fork-ribbon.version}/gh-fork-ribbon.min.css" />
+              <a class="github-fork-ribbon right-bottom fixed"
+                 href="${project.url}"
+                 data-ribbon="Fork me on GitHub"
+                 title="Fork me on GitHub">Fork me on GitHub</a>
+
+              <!-- Highlight.js -->
+              <link rel="stylesheet"
+                    href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/${highlight-js.version}/styles/stackoverflow-light.min.css">
+              <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/${highlight-js.version}/highlight.min.js"></script>
               <script>
                 "use strict";
 
