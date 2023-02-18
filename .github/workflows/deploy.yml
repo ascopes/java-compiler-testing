@@ -60,14 +60,20 @@ jobs:
         run: |-
           source ./scripts/common.sh
           
-          info "Determining release version to use (this may take a moment)..."
+          info "Determining group ID..."
+          group_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.groupId")"
+          
+          info "Determining (root) artifact ID..."
+          artifact_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.groupId")"
+          
+          info "Determining release version to use..."
           if [[ '${{ inputs.version }}' == "" ]]; then
             release_version="$(./mvnw -B help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//g')"
           else
             release_version='${{ inputs.version }}'
           fi
           
-          success "Will use version ${release_version} for this release"
+          info "Will release ${group_id}/${artifact_id}/${release_version} to Nexus staging"
           
           info "Preparing and performing the release"
           ensure-set OSSRH_USERNAME OSSRH_TOKEN GPG_PASSPHRASE
@@ -92,11 +98,21 @@ jobs:
                 release:prepare release:perform
           SCRIPT
           
-          success "Release has been performed successfully"
-          info "Please login on https://s01.oss.sonatype.org/#stagingRepositories site and mark the"
-          info "release as closed. Once checks pass, click the 'release' option to promote it to"
-          info "Maven Central."
-
+          success "Release has been promoted to Nexus Staging successfully"
+          
+          info "Will now promote ${group_id}/${artifact_id}/${release_version} to Maven Central"
+          
+          run <<<-SCRIPT
+            ./scripts/close-nexus-repository.sh \
+                -u "${OSSRH_USERNAME} \
+                -p "${OSSRH_PASSWORD} \
+                -g "${group_id}" \
+                -a "${artifact_id} \
+                -v "${release_version} \
+                -s "https://s01.oss.sonatype.org/" 
+          SCRIPT
+          
+          success "Released ${group_id}/${artifact_id}/${release_version} to Maven Central successfully"
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
