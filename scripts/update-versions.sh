@@ -16,50 +16,38 @@
 #
 
 ###
-### Reapplies the license headers globally.
+### Sets a new version in all POMs.
 ###
 
 set -o errexit
 set -o nounset
 
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
-
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-mvn_flags=(-B -e)
-
 function usage() {
-  echo "USAGE: ${BASH_SOURCE[0]} [-d] [-h]"
-  echo "    -d   Show debugging output from Maven."
-  echo "    -h   Show this message and exit."
+  echo "USAGE: ${BASH_SOURCE[0]} [-h] -v <version>"
+  echo "    -h             Show this message and exit."
+  echo "    -v <version>   Set the version to apply."
+  echo
 }
 
-function help() {
-  usage
-  exit 0
-}
+version=""
 
-function unknown-option() {
-  err "Unknown option '${1}'"
-  usage
-  exit 1
-}
-
-while getopts "dh" opt; do
+while getopts "hv:" opt; do
   case "${opt}" in
-    d) mvn_flags+=(-x) ;;
-    h) help ;;
-    *) unknown-option "${opt}" ;;
+    h) usage; exit 0;;
+    v) version="${OPTARG}";;
+    ?|*) err "Unrecognised argument"; usage; exit 1;;
   esac
 done
 
-info "Cleaning workspace..."
-run <<< "./mvnw --quiet ${mvn_flags[*]} clean"
+if [ -z "${version}" ]; then err "Missing required argument"; usage; exit 1; fi
 
-info "Reapplying licenses across workspace..."
-run <<< "./mvnw ${mvn_flags[*]} license:remove license:format"
+info "Updating versions"
+run <<< "./mvnw -B -e versions:set -DnewVersion='${version}'"
 
-info "Running verification (skipping tests)"
-run <<<  "./mvnw ${mvn_flags[*]} verify -DskipTests"
+info "Tracking all 'pom.xml' files with Git"
+run <<< "find . -name 'pom.xml' -type f -exec git add -v {} \;"
 
-success "Completed!"
+success 'Complete!'

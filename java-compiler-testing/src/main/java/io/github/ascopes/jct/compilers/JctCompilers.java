@@ -19,6 +19,8 @@ import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
 import io.github.ascopes.jct.utils.UtilityClass;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helpers to create new compiler instances.
@@ -28,6 +30,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "0.0.1", status = Status.STABLE)
 public final class JctCompilers extends UtilityClass {
+  private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilers.class);
 
   private JctCompilers() {
     // Disallow initialisation.
@@ -39,7 +42,22 @@ public final class JctCompilers extends UtilityClass {
    *
    * @return the compiler instance.
    */
-  public static JctCompiler<?, ?> createPlatformCompiler() {
+  @API(status = Status.STABLE, since = "0.2.0")
+  public static JctCompiler<?, ?> newPlatformCompiler() {
     return new JavacJctCompilerImpl();
+  }
+
+  /**
+   * Create a new instance of the default platform compiler that is part of the JDK ({@code javac}
+   * on OpenJDK-derived implementations).
+   *
+   * @return the compiler instance.
+   * @deprecated Renamed in 0.2.0 for consistency, use {@link #newPlatformCompiler instead}.
+   */
+  @Deprecated(forRemoval = true, since = "0.2.0")
+  public static JctCompiler<?, ?> createPlatformCompiler() {
+    LOGGER.warn("JctCompilers.createPlatformCompiler() is deprecated for removal. "
+        + "Use JctCompilers.newPlatformCompiler() instead");
+    return newPlatformCompiler();
   }
 }
