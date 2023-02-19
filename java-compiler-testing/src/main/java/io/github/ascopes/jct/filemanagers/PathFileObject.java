@@ -151,6 +151,17 @@ public final class PathFileObject implements JavaFileObject {
   }
 
   /**
+   * Get the inferred binary name of the file object.
+   *
+   * @return the inferred binary name.
+   * @since 0.2.1
+   */
+  @API(since = "0.2.1", status = Status.STABLE)
+  public String getBinaryName() {
+    return FileUtils.pathToBinaryName(relativePath);
+  }
+
+  /**
    * Read the character content of the file into memory and decode it using the default character
    * set.
    *
