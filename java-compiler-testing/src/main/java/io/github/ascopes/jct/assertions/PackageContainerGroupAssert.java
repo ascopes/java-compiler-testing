@@ -59,31 +59,34 @@ public final class PackageContainerGroupAssert
    *
    * @param path  the first path to check for
    * @param paths additional paths to check for.
+   * @return this object for further call chaining.
    * @throws AssertionError       if the container group is null, or if any of the files do not
    *                              exist.
    * @throws NullPointerException if any of the paths are null.
    */
-  public void allFilesExist(String path, String... paths) {
+  public PackageContainerGroupAssert allFilesExist(String path, String... paths) {
     requireNonNull(path, "path must not be null");
     requireNonNullValues(paths, "paths");
 
-    allFilesExist(combineOneOrMore(path, paths));
+    return allFilesExist(combineOneOrMore(path, paths));
   }
 
   /**
    * Assert that all given files exist.
    *
    * @param paths paths to check for.
+   * @return this object for further call chaining.
    * @throws AssertionError       if the container group is null, or if any of the files do not
    *                              exist.
    * @throws NullPointerException if any of the paths are null.
    */
-  public void allFilesExist(Iterable<String> paths) {
+  public PackageContainerGroupAssert allFilesExist(Iterable<String> paths) {
     requireNonNullValues(paths, "paths");
 
     isNotNull();
 
     assertThat(paths).allSatisfy(this::fileExists);
+    return this;
   }
 
   /**
