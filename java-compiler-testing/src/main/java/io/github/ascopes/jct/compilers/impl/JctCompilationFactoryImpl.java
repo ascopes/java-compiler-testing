@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.compilers.impl;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 
 import io.github.ascopes.jct.compilers.JctCompilation;
@@ -30,7 +29,6 @@ import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -73,9 +71,11 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
   ) {
     try {
       return createCheckedCompilation(flags, fileManager, jsr199Compiler, classNames);
+
     } catch (JctCompilerException ex) {
-      // Fall through, do not rewrap these.
+      // Rethrow JctCompilerExceptions -- we don't want to wrap these again.
       throw ex;
+
     } catch (Exception ex) {
       throw new JctCompilerException(
           "Failed to perform compilation, an unexpected exception was raised", ex
@@ -92,13 +92,11 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
     var compilationUnits = findFilteredCompilationUnits(fileManager, classNames);
 
     if (compilationUnits.isEmpty()) {
-      throw classNames == null
-          ? new JctCompilerException("No compilation units were found in the given workspace")
-          : new JctCompilerException("No compilation units were found for the given class names");
+      throw new JctCompilerException("No compilation units were found in the given workspace");
     }
 
     // Do not close stdout, it breaks test engines, especially IntellIJ.
-    var writer = new TeeWriter(new OutputStreamWriter(System.out, compiler.getLogCharset()));
+    var writer = TeeWriter.wrapOutputStream(System.out, compiler.getLogCharset());
 
     var diagnosticListener = new TracingDiagnosticListener<>(
         compiler.getDiagnosticLoggingMode() != LoggingMode.DISABLED,
@@ -119,6 +117,8 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       task.setProcessors(processors);
     }
 
+    task.setLocale(compiler.getLocale());
+
     LOGGER
         .atInfo()
         .setMessage("Starting compilation with {} (found {} compilation units)")
@@ -132,6 +132,9 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
         () -> "Compiler " + compiler.getName() + " task .call() method returned null unexpectedly!"
     );
     var delta = (System.nanoTime() - start) / 1_000_000L;
+
+    // Ensure we commit the writer contents to the wrapped output stream in full.
+    writer.flush();
 
     LOGGER
         .atInfo()
@@ -149,16 +152,16 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
     return JctCompilationImpl
         .builder()
-        .compilationUnits(compilationUnits)
+        .compilationUnits(Set.copyOf(compilationUnits))
         .fileManager(fileManager)
-        .outputLines(writer.toString().lines().collect(toList()))
+        .outputLines(writer.getContent().lines().collect(toList()))
         .diagnostics(diagnosticListener.getDiagnostics())
         .success(success)
         .failOnWarnings(compiler.isFailOnWarnings())
         .build();
   }
 
-  private Set<JavaFileObject> findFilteredCompilationUnits(
+  private Collection<JavaFileObject> findFilteredCompilationUnits(
       JctFileManager fileManager,
       @Nullable Collection<String> classNames
   ) throws IOException {
@@ -175,7 +178,9 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
     return filterCompilationUnitsByBinaryNames(compilationUnits, classNames);
   }
 
-  private Set<JavaFileObject> findCompilationUnits(JctFileManager fileManager) throws IOException {
+  private Collection<JavaFileObject> findCompilationUnits(
+      JctFileManager fileManager
+  ) throws IOException {
     var locations = IterableUtils
         .flatten(fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH));
 
@@ -199,8 +204,8 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
     return objects;
   }
 
-  private Set<JavaFileObject> filterCompilationUnitsByBinaryNames(
-      Set<JavaFileObject> compilationUnits,
+  private Collection<JavaFileObject> filterCompilationUnitsByBinaryNames(
+      Collection<JavaFileObject> compilationUnits,
       Collection<String> classNames
   ) {
     var binaryNamesToCompilationUnits = compilationUnits
@@ -209,12 +214,11 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
         // care too much as the implementation should conform to this anyway. We just cannot enforce
         // it due to covariance rules.
         .map(PathFileObject.class::cast)
+        .filter(fo -> classNames.contains(fo.getBinaryName()))
         .collect(Collectors.toMap(
             PathFileObject::getBinaryName,
-            identity()
+            JavaFileObject.class::cast
         ));
-
-    var filteredCompilationUnits = new HashSet<JavaFileObject>();
 
     for (var className : classNames) {
       var compilationUnit = binaryNamesToCompilationUnits.get(className);
@@ -223,16 +227,14 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
             "No compilation unit matching " + className + " found in the provided sources"
         );
       }
-
-      filteredCompilationUnits.add(compilationUnit);
     }
 
     LOGGER.atDebug()
         .setMessage("Filtered {} candidate compilation units down to {} final compilation units")
         .addArgument(compilationUnits::size)
-        .addArgument(filteredCompilationUnits::size)
+        .addArgument(binaryNamesToCompilationUnits::size)
         .log();
 
-    return filteredCompilationUnits;
+    return binaryNamesToCompilationUnits.values();
   }
 }

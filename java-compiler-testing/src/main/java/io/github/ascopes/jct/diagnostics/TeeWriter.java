@@ -16,9 +16,13 @@
 package io.github.ascopes.jct.diagnostics;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -80,11 +84,29 @@ public final class TeeWriter extends Writer {
     }
   }
 
-  @Override
-  public String toString() {
+  /**
+   * Get the content of the internal buffer.
+   *
+   * @return the content.
+   * @since 0.2.1
+   */
+  @API(since = "0.2.1", status = Status.STABLE)
+  public String getContent() {
     synchronized (lock) {
       return builder.toString();
     }
+  }
+
+  /**
+   * Get the content of the internal buffer.
+   *
+   * <p>This calls {@link #getContent()} internally as of 0.2.1.
+   *
+   * @return the content.
+   */
+  @Override
+  public String toString() {
+    return getContent();
   }
 
   @Override
@@ -103,5 +125,24 @@ public final class TeeWriter extends Writer {
     if (closed) {
       throw new IllegalStateException("TeeWriter is closed");
     }
+  }
+
+  /**
+   * Create a tee writer for the given output stream.
+   *
+   * <p>Remember you may need to manually flush the tee writer for all contents to be committed to
+   * the output stream.
+   *
+   * @param outputStream the output stream.
+   * @param charset the charset.
+   * @return the Tee Writer.
+   * @since 0.2.1
+   */
+  @API(since = "0.2.1", status = Status.STABLE)
+  public static TeeWriter wrapOutputStream(OutputStream outputStream, Charset charset) {
+    requireNonNull(outputStream, "outputStream");
+    requireNonNull(charset, "charset");
+    var writer = new OutputStreamWriter(outputStream, charset);
+    return new TeeWriter(writer);
   }
 }
