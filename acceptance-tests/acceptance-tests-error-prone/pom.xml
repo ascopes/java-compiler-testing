@@ -95,4 +95,17 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <!-- https://github.com/google/error-prone/issues/3710 -->
+      <id>${project.artifactId}::ignore-tests-before-jdk12</id>
+      <activation>
+        <jdk>[,11]</jdk>
+      </activation>
+      <properties>
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
+    </profile>
+  </profiles>
 </project>
