@@ -26,6 +26,8 @@ import io.github.ascopes.jct.diagnostics.TracingDiagnosticListener;
 import io.github.ascopes.jct.ex.JctCompilerException;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
+import io.github.ascopes.jct.filemanagers.PathFileObject;
+import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -33,12 +35,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +90,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       JavaCompiler jsr199Compiler,
       Collection<String> classNames
   ) throws Exception {
-    var compilationUnits = findCompilationUnits(fileManager);
+    var compilationUnits = findFilteredCompilationUnits(fileManager, classNames);
 
     // Do not close stdout, it breaks test engines, especially IntellIJ.
     var writer = new TeeWriter(new OutputStreamWriter(System.out, compiler.getLogCharset()));
@@ -100,7 +105,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
         fileManager,
         diagnosticListener,
         flags,
-        classNames,
+        null,
         compilationUnits
     );
 
@@ -111,15 +116,9 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
     LOGGER
         .atInfo()
-        .setMessage(
-            "Starting compilation with {} (found {} compilation units, {} user-provided class names)"
-        )
+        .setMessage("Starting compilation with {} (found {} compilation units)")
         .addArgument(compiler::getName)
         .addArgument(compilationUnits::size)
-        .addArgument(classNames == null
-            ? () -> "no"
-            : classNames::size
-        )
         .log();
 
     var start = System.nanoTime();
@@ -154,6 +153,22 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
         .build();
   }
 
+  private Set<JavaFileObject> findFilteredCompilationUnits(
+      JctFileManager fileManager,
+      @Nullable Collection<String> classNames
+  ) throws IOException {
+    var compilationUnits = findCompilationUnits(fileManager);
+
+    if (classNames == null) {
+      return compilationUnits;
+    }
+
+    return compilationUnits
+        .stream()
+        .filter(pathFileObjectIn(classNames))
+        .collect(Collectors.toSet());
+  }
+
   private Set<JavaFileObject> findCompilationUnits(JctFileManager fileManager) throws IOException {
     var locations = IterableUtils
         .flatten(fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH));
@@ -182,5 +197,13 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
     }
 
     return objects;
+  }
+
+  private Predicate<JavaFileObject> pathFileObjectIn(Collection<String> classNames) {
+    return fileObject -> {
+      var pathFileObject = (PathFileObject) fileObject;
+      var binaryName = FileUtils.pathToBinaryName(pathFileObject.getRelativePath());
+      return classNames.contains(binaryName);
+    };
   }
 }
