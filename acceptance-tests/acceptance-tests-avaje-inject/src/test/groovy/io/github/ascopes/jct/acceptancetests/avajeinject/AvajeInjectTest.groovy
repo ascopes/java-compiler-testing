@@ -26,7 +26,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 @DisplayName("Avaje Inject acceptance tests")
 class AvajeInjectTest {
   @DisplayName("Dependency injection code gets generated as expected")
-  @JavacCompilerTest(modules = true)
+  @JavacCompilerTest(minVersion = 11)
   void dependencyInjectionCodeGetsGeneratedAsExpected(JctCompiler compiler) {
     // Given
     try (def workspace = Workspaces.newWorkspace()) {
