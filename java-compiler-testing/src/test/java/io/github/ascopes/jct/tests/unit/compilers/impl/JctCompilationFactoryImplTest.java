@@ -20,6 +20,7 @@ import static io.github.ascopes.jct.tests.helpers.Fixtures.oneOf;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someBinaryName;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someFlags;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someLinesOfText;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someTraceDiagnostic;
 import static io.github.ascopes.jct.utils.IterableUtils.flatten;
 import static java.util.stream.Collectors.toList;
@@ -653,6 +654,35 @@ class JctCompilationFactoryImplTest {
         .isInstanceOf(JctCompilerException.class)
         .hasMessage("Failed to perform compilation, an unexpected exception was raised")
         .hasCause(cause);
+  }
+
+  @DisplayName("Compilers returning null outcomes will be raised as an exception")
+  @Test
+  void compilersReturningNullOutcomesWillBeRaisedAsAnException() throws IOException {
+    // Given
+    var task = mock(CompilationTask.class);
+    var name = someText();
+
+    when(jctCompiler.getName())
+        .thenReturn(name);
+
+    when(javaCompiler.getTask(any(), any(), any(), any(), any(), any()))
+        .thenReturn(task);
+    when(task.call())
+        .thenReturn(null);
+
+    // Do not inline this, it will break in Mockito's stubber backend.
+    var fileObjects = Set.of(somePathFileObject(someBinaryName()));
+    when(fileManager.list(any(), any(), any(), anyBoolean()))
+        .thenReturn(fileObjects);
+
+    // Then
+    assertThatThrownBy(() -> doCompile(null))
+        .isInstanceOf(JctCompilerException.class)
+        .hasMessage("Failed to perform compilation, an unexpected exception was raised")
+        .cause()
+        .hasMessage("Compiler %s task .call() method returned null unexpectedly!", name)
+        .isInstanceOf(NullPointerException.class);
   }
 
   @DisplayName("The compilation result holds the failOnWarnings flag from the compiler")
