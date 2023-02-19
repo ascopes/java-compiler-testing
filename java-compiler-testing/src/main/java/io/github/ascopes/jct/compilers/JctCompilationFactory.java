@@ -43,7 +43,9 @@ public interface JctCompilationFactory {
    *                       should be discovered automatically.
    * @return the compilation result that contains whether the compiler succeeded or failed, amongst
    *     other information.
-   * @throws JctCompilerException if compiler raises an unhandled exception and cannot complete.
+   * @throws JctCompilerException if any prerequisites fail, such as no compilation units being
+   *    found, or if the underlying JSR-199 compiler raises an unhandled exception and cannot
+   *    complete when invoked.
    */
   JctCompilation createCompilation(
       List<String> flags,

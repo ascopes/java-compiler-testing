@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.compilers.impl;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 
 import io.github.ascopes.jct.compilers.JctCompilation;
@@ -27,7 +28,6 @@ import io.github.ascopes.jct.ex.JctCompilerException;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -91,6 +90,12 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       Collection<String> classNames
   ) throws Exception {
     var compilationUnits = findFilteredCompilationUnits(fileManager, classNames);
+
+    if (compilationUnits.isEmpty()) {
+      throw classNames == null
+          ? new JctCompilerException("No compilation units were found in the given workspace")
+          : new JctCompilerException("No compilation units were found for the given class names");
+    }
 
     // Do not close stdout, it breaks test engines, especially IntellIJ.
     var writer = new TeeWriter(new OutputStreamWriter(System.out, compiler.getLogCharset()));
@@ -163,10 +168,11 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       return compilationUnits;
     }
 
-    return compilationUnits
-        .stream()
-        .filter(pathFileObjectIn(classNames))
-        .collect(Collectors.toSet());
+    if (classNames.isEmpty()) {
+      throw new JctCompilerException("The list of explicit class names to compile is empty");
+    }
+
+    return filterCompilationUnitsByBinaryNames(compilationUnits, classNames);
   }
 
   private Set<JavaFileObject> findCompilationUnits(JctFileManager fileManager) throws IOException {
@@ -190,20 +196,43 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       objects.addAll(fileManager.list(location, "", Set.of(Kind.SOURCE), true));
     }
 
-    if (objects.isEmpty()) {
-      throw new JctCompilerException(
-          "No compilation units were found. Did you forget to add something?"
-      );
-    }
-
     return objects;
   }
 
-  private Predicate<JavaFileObject> pathFileObjectIn(Collection<String> classNames) {
-    return fileObject -> {
-      var pathFileObject = (PathFileObject) fileObject;
-      var binaryName = FileUtils.pathToBinaryName(pathFileObject.getRelativePath());
-      return classNames.contains(binaryName);
-    };
+  private Set<JavaFileObject> filterCompilationUnitsByBinaryNames(
+      Set<JavaFileObject> compilationUnits,
+      Collection<String> classNames
+  ) {
+    var binaryNamesToCompilationUnits = compilationUnits
+        .stream()
+        // Assumption that we always use this class internally. Technically unsafe, but we don't
+        // care too much as the implementation should conform to this anyway. We just cannot enforce
+        // it due to covariance rules.
+        .map(PathFileObject.class::cast)
+        .collect(Collectors.toMap(
+            PathFileObject::getBinaryName,
+            identity()
+        ));
+
+    var filteredCompilationUnits = new HashSet<JavaFileObject>();
+
+    for (var className : classNames) {
+      var compilationUnit = binaryNamesToCompilationUnits.get(className);
+      if (compilationUnit == null) {
+        throw new JctCompilerException(
+            "No compilation unit matching " + className + " found in the provided sources"
+        );
+      }
+
+      filteredCompilationUnits.add(compilationUnit);
+    }
+
+    LOGGER.atDebug()
+        .setMessage("Filtered {} candidate compilation units down to {} final compilation units")
+        .addArgument(compilationUnits::size)
+        .addArgument(filteredCompilationUnits::size)
+        .log();
+
+    return filteredCompilationUnits;
   }
 }
