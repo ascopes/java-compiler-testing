@@ -265,6 +265,10 @@ jobs:
 
   publish-documentation:
     name: Publish documentation
+    # Do not run multiple builds at once, as it can fail.
+    concurrency: 
+      cancel-in-progress: true
+      group: snapshot-javadocs
     runs-on: ubuntu-22.04
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
 
@@ -277,7 +281,7 @@ jobs:
 
     steps:
       - name: Deploy JavaDocs build artifact to GitHub Pages
-        id: javadocs
+        id: snapshot-javadocs
         uses: actions/deploy-pages@v1.2.4
 
       - name: Delete temporary artifacts
