@@ -79,11 +79,18 @@ function dump() {
 # Pass the commands to run in via a heredoc as stdin. Incorrect usage will dump an error and
 # terminate the current shell.
 function run() {
+  local echo_groups="false"
+  if [[ "${1:-nothing}" = "--no-group" ]]; then
+    shift 1
+  elif [[ ! -z ${CI+undefined} ]]; then
+    echo_groups="true"
+  fi
+
   # Run in subshell to enable correct argument re-quoting.
   local file
   file="$(mktemp)"
 
-  if [ "$#" -gt 0 ]; then
+  if [[ "$#" -gt 0 ]]; then
     err "Function <run> called incorrectly. Pass script to run via stdin rather than as arguments."
     err "Invocation: <${*}>"
     exit 1
@@ -98,7 +105,8 @@ function run() {
     cat -
   } >> "${file}"
 
-  if [[ ! -z ${CI+undefined} ]]; then echo "::group::$(tail -n +6 "${file}" | head -n 1)"; fi
+  # Use the first line of the command as the group name.
+  if [[ "${echo_groups}" = "true" ]]; then echo "::group::$(tail -n +6 "${file}" | head -n 1)"; fi
 
   set +e
   /usr/bin/env bash \
@@ -109,10 +117,10 @@ function run() {
   rm "${file}"
   set -e
 
-  # Wait for stdout and stderr to flush for ~10ms
+  # Wait for stdout and stderr to flush for ~50ms
   sleep 0.05
 
-  if [[ ! -z ${CI+undefined} ]]; then echo "::endgroup::"; fi
+  if [[ "${echo_groups}" = "true" ]]; then echo "::endgroup::"; fi
 
   return "${return_code}"
 }
