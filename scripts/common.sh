@@ -79,8 +79,6 @@ function dump() {
 # Pass the commands to run in via a heredoc as stdin. Incorrect usage will dump an error and
 # terminate the current shell.
 function run() {
-  if [[ ! -z ${CI+undefined} ]]; then echo "::group::${*}"; fi
-
   # Run in subshell to enable correct argument re-quoting.
   local file
   file="$(mktemp)"
@@ -99,6 +97,8 @@ function run() {
     echo "set -o xtrace"
     cat -
   } >> "${file}"
+
+  if [[ ! -z ${CI+undefined} ]]; then echo "::group::$(head -n "${file}")"; fi
 
   set +e
   /usr/bin/env bash \
