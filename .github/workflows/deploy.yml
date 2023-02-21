@@ -101,7 +101,7 @@ jobs:
             ./mvnw -B -e \
                 -Preleases \
                 -Darguments='${build_args[@]}' \
-                -DdryRun='${{ inputs.dry-run }}' \
+                -DdryRun='false' \
                 -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
                 -DreleaseVersion='${release_version}' \
                 -DsignTag=false \
