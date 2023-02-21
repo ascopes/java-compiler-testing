@@ -122,19 +122,6 @@ jobs:
         run: |-
           source ./scripts/common.sh
           
-          info "Determining group ID..."
-          group_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.groupId")"
-          
-          info "Determining (root) artifact ID..."
-          artifact_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.artifactId")"
-          
-          info "Determining release version to use..."
-          if [[ '${{ inputs.version }}' == "" ]]; then
-            release_version="$(./mvnw -B help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//g')"
-          else
-            release_version='${{ inputs.version }}'
-          fi
-          
           ensure-set OSSRH_USERNAME OSSRH_TOKEN GPG_PASSPHRASE
           info "Will now promote ${group_id}/${artifact_id}/${release_version} to Maven Central"
             
