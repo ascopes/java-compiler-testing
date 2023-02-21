@@ -79,6 +79,8 @@ function dump() {
 # Pass the commands to run in via a heredoc as stdin. Incorrect usage will dump an error and
 # terminate the current shell.
 function run() {
+  if [[ ! -z ${CI+undef} ]]; then echo "::group::${*}"; fi
+
   # Run in subshell to enable correct argument re-quoting.
   local file
   file="$(mktemp)"
@@ -109,5 +111,8 @@ function run() {
 
   # Wait for stdout and stderr to flush for ~10ms
   sleep 0.05
+
+  if [[ ! -z ${CI+undef} ]]; then echo "::endgroup::"; fi
+
   return "${return_code}"
 }
