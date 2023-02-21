@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 import io.github.ascopes.jct.filemanagers.PathFileObject;
+import io.github.ascopes.jct.utils.FileUtils;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.MalformedInputException;
@@ -222,6 +223,19 @@ class PathFileObjectTest {
 
     // Then
     assertThat(fileObject.getAccessLevel()).isNull();
+  }
+
+  @DisplayName(".getBinaryName() gets the binary name of the relative path")
+  @Test
+  void getBinaryNameGetsTheBinaryNameOfTheRelativePath() {
+    // Given
+    var relativePath = someRelativePath().resolve("Cat.java");
+    var expectedBinaryName = FileUtils.pathToBinaryName(relativePath);
+    var fileObject = new PathFileObject(someLocation(), someAbsolutePath(), relativePath);
+
+    // Then
+    assertThat(fileObject.getBinaryName())
+        .isEqualTo(expectedBinaryName);
   }
 
   @DisplayName(".getCharContent(...) returns the character content")

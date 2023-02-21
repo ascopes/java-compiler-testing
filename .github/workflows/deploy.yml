@@ -3,11 +3,6 @@ name: Deploy a branch
 on:
   workflow_dispatch:
     inputs:
-      dry-run:
-        description: "Dry run"
-        default: true
-        type: boolean
-
       deploy-to-staging:
         description: "Deploy to staging"
         default: true
@@ -29,13 +24,9 @@ jobs:
     name: Build and deploy code
     runs-on: ubuntu-22.04
 
-    # No concurrency groups, as we do not want to risk cancelling this job midway through a
-    # run and producing a tag without pushing to Maven Central at the same time.
-
     permissions:
       contents: write
       id-token: write
-      pages: write
 
     steps:
       - name: Checkout repository
@@ -59,75 +50,92 @@ jobs:
         shell: bash
         run: |-
           source ./scripts/common.sh
-          
-          info "Applying Git user configuration"
           run <<SCRIPT
             git config user.name '${{ github.actor }}'
             git config user.email '${{ github.actor }}@users.noreply.github.com'
           SCRIPT
 
-      - name: Perform release to Maven Central
+      - name: Determine groupId
         shell: bash
         run: |-
-          source ./scripts/common.sh
-          
-          info "Determining group ID..."
           group_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.groupId")"
+          echo "group_id=${group_id}" >> "${GITHUB_ENV}"
           
-          info "Determining (root) artifact ID..."
+      - name: Determine artifactId
+        shell: bash
+        run: |-
           artifact_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.artifactId")"
+          echo "artifact_id=${artifact_id}" >> "${GITHUB_ENV}"
           
-          info "Determining release version to use..."
+      - name: Determine final release version number
+        shell: bash
+        run: |-
           if [[ '${{ inputs.version }}' == "" ]]; then
             release_version="$(./mvnw -B help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//g')"
           else
             release_version='${{ inputs.version }}'
           fi
+          echo "release_version=${release_version}" >> "${GITHUB_ENV}"
+
+      - name: Perform release to Staging
+        id: maven-central-staging
+        if: inputs.deploy-to-staging
+        shell: bash
+        run: |-
+          source ./scripts/common.sh
           
           info "Will release ${group_id}/${artifact_id}/${release_version} to Nexus staging"
           
-          info "Preparing and performing the release"
           ensure-set OSSRH_USERNAME OSSRH_TOKEN GPG_PASSPHRASE
-          
-          if [ '${{ inputs.deploy-to-staging }}' == "true" ]; then
-            build_args=(
-              "-Dmaven.test.skip" 
-              "-DskipTests"
-              "-Dlicense.skip=true"
-              "-Dcheckstyle.skip=true"
-              "-Preleases"
-            )
-            
-            run <<-SCRIPT          
-              ./mvnw -B -e \
-                  -Preleases \
-                  -Darguments='${build_args[@]}' \
-                  -DdryRun='${{ inputs.dry-run }}' \
-                  -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
-                  -DreleaseVersion='${release_version}' \
-                  -DsignTag=false \
-                  -Dtag='v${release_version}' \
-                  release:prepare release:perform
+          info "Preparing and performing the release"
+         
+          build_args=(
+            "-Dmaven.test.skip" 
+            "-DskipTests"
+            "-Dlicense.skip=true"
+            "-Dcheckstyle.skip=true"
+            "-Preleases"
+          )
+
+          run <<-SCRIPT          
+            ./mvnw -B -e \
+                -Preleases \
+                -Darguments='${build_args[@]}' \
+                -DdryRun='false' \
+                -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
+                -DreleaseVersion='${release_version}' \
+                -DsignTag=false \
+                -Dtag='v${release_version}' \
+                release:prepare release:perform
           SCRIPT
             
-            success "Release has been promoted to Nexus Staging successfully"
-          fi
+          success "Release has been promoted to Nexus Staging successfully"
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Promote Nexus staging to releases repo
+        id: maven-central-releases
+        if: inputs.promote-to-release && !inputs.dry-run
+        shell: bash
+        run: |-
+          source ./scripts/common.sh
           
-          if [ "${{ inputs.promote-to-release }}" == "true" ] && [ "${{ inputs.dry-run }}" == "false" ]; then
-            info "Will now promote ${group_id}/${artifact_id}/${release_version} to Maven Central"
+          ensure-set OSSRH_USERNAME OSSRH_TOKEN GPG_PASSPHRASE
+          info "Will now promote ${group_id}/${artifact_id}/${release_version} to Maven Central"
             
-            run <<-SCRIPT
-              ./scripts/close-nexus-repository.sh \
-                  -u "${OSSRH_USERNAME}" \
-                  -p "${OSSRH_TOKEN}" \
-                  -g "${group_id}" \
-                  -a "${artifact_id}" \
-                  -v "${release_version}" \
-                  -s "https://s01.oss.sonatype.org/" 
+          run <<-SCRIPT
+            ./scripts/close-nexus-repository.sh \
+                -u "${OSSRH_USERNAME}" \
+                -p "${OSSRH_TOKEN}" \
+                -g "${group_id}" \
+                -a "${artifact_id}" \
+                -v "${release_version}" \
+                -s "https://s01.oss.sonatype.org/" 
           SCRIPT
             
-            success "Released ${group_id}/${artifact_id}/${release_version} to Maven Central successfully"
-          fi
+          success "Released ${group_id}/${artifact_id}/${release_version} to Maven Central successfully"
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}

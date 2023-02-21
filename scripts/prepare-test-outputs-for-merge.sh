@@ -116,7 +116,7 @@ function xsltproc-surefire-report {
   local input_report="${3}"
   local output_report="${4}"
 
-  if ! run <<< "xsltproc --stringparam prefix '${prefix}' '${xslt}' '${input_report}' > '${output_report}'"; then
+  if ! run --no-group <<< "xsltproc --stringparam prefix '${prefix}' '${xslt}' '${input_report}' > '${output_report}'"; then
     err "Error invoking xsltproc! Erroneous report was:"
     dump "${input_report}"
     return 2
@@ -150,7 +150,7 @@ jacoco_count=0
 for jacoco_report in $(find-all-jacoco-reports); do
   jacoco_count="$((jacoco_count+1))"
   new_jacoco_report="${jacoco_report/.xml/-java-${ci_java_version}-${ci_os}.xml}"
-  run <<< "mv '${jacoco_report}' '${new_jacoco_report}'"
+  run --no-group <<< "mv '${jacoco_report}' '${new_jacoco_report}'"
 done
 
 success "Updated ${jacoco_count} coverage reports"

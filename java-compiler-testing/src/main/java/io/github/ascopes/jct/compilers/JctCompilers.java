@@ -41,6 +41,7 @@ public final class JctCompilers extends UtilityClass {
    * on OpenJDK-derived implementations).
    *
    * @return the compiler instance.
+   * @since 0.2.0
    */
   @API(status = Status.STABLE, since = "0.2.0")
   public static JctCompiler<?, ?> newPlatformCompiler() {
@@ -52,7 +53,7 @@ public final class JctCompilers extends UtilityClass {
    * on OpenJDK-derived implementations).
    *
    * @return the compiler instance.
-   * @deprecated Renamed in 0.2.0 for consistency, use {@link #newPlatformCompiler instead}.
+   * @deprecated Renamed in 0.2.0 for consistency, use {@link #newPlatformCompiler} instead.
    */
   @Deprecated(forRemoval = true, since = "0.2.0")
   public static JctCompiler<?, ?> createPlatformCompiler() {
