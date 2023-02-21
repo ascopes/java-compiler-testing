@@ -98,7 +98,7 @@ function run() {
     cat -
   } >> "${file}"
 
-  if [[ ! -z ${CI+undefined} ]]; then echo "::group::$(head -n 1 "${file}")"; fi
+  if [[ ! -z ${CI+undefined} ]]; then echo "::group::$(tail +6 "${file}" | head -n 1)"; fi
 
   set +e
   /usr/bin/env bash \
