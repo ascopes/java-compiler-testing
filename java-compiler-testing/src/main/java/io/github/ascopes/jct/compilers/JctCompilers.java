@@ -41,6 +41,7 @@ public final class JctCompilers extends UtilityClass {
    * on OpenJDK-derived implementations).
    *
    * @return the compiler instance.
+   * @since 0.2.0
    */
   @API(status = Status.STABLE, since = "0.2.0")
   public static JctCompiler<?, ?> newPlatformCompiler() {
