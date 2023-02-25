@@ -165,7 +165,7 @@ jobs:
 
       - name: Publish test results
         continue-on-error: true
-        uses: EnricoMi/publish-unit-test-result-action@v2.4.1
+        uses: EnricoMi/publish-unit-test-result-action@v2.4.2
         if: always()
         with:
           action_fail: false
