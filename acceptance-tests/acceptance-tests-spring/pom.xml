@@ -31,7 +31,7 @@
   <description>Acceptance test components.</description>
 
   <properties>
-    <spring-boot.version>3.0.2</spring-boot.version>
+    <spring-boot.version>3.0.3</spring-boot.version>
   </properties>
 
   <dependencyManagement>
