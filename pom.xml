@@ -599,24 +599,27 @@
         <version>${license-maven-plugin.version}</version>
 
         <configuration>
-          <!-- Useful flags: https://mycila.carbou.me/license-maven-plugin/ -->
-          <header>.mvn/license/license-header.txt</header>
-
+          <licenseSets>
+            <licenseSet>
+              <header>.mvn/license/license-header.txt</header>
+              <!-- Useful flags: https://mycila.carbou.me/license-maven-plugin/ -->
+              <includes>
+                <include>**.toml</include>
+                <include>**.yml</include>
+                <include>**.yaml</include>
+                <include>pom.xml</include>
+                <include>security-suppressions.xml</include>
+                <include>src/**/*.groovy</include>
+                <include>src/**/*.java</include>
+                <include>scripts/**/*.sh</include>
+              </includes>
+            </licenseSet>
+          </licenseSets>
           <mapping>
             <groovy>SLASHSTAR_STYLE</groovy>
             <java>SLASHSTAR_STYLE</java>
             <toml>SCRIPT_STYLE</toml>
           </mapping>
-          <includes>
-            <include>**.toml</include>
-            <include>**.yml</include>
-            <include>**.yaml</include>
-            <include>pom.xml</include>
-            <include>security-suppressions.xml</include>
-            <include>src/**/*.groovy</include>
-            <include>src/**/*.java</include>
-            <include>scripts/**/*.sh</include>
-          </includes>
           <properties>
             <currentYear>${current-year}</currentYear>
             <inceptionYear>${project.inceptionYear}</inceptionYear>
