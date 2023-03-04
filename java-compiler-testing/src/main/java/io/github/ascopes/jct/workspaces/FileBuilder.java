@@ -34,8 +34,8 @@ import org.apiguardian.api.API.Status;
 public interface FileBuilder {
 
   /**
-   * Take the managed directory that is given as a parameter, and convert it into a JAR
-   * file that will be written to this file being created.
+   * Take the directory, represented by the given {@link ManagedDirectory}, and convert it into a
+   * JAR file, that will be written to the file being created.
    *
    * <pre><code>
    *   // Compile some files first.
@@ -60,8 +60,8 @@ public interface FileBuilder {
   ManagedDirectory asJarFrom(ManagedDirectory directory);
 
   /**
-   * Take the directory represented by the given path that is given as a parameter, and
-   * convert it into a JAR file that will be written to this file being created.
+   * Take the directory, represented by the given path, and convert it into a JAR file, that will be
+   * written to the file being created.
    *
    * <pre><code>
    *   ManagedDirectory someDirectory = ...;
@@ -246,8 +246,8 @@ public interface FileBuilder {
    * </code></pre>
    *
    * <p>If the Java language level of your tests does not support multi-line strings, you can
-   * alternatively pass each line of text to write as a separate string. These will be written
-   * to the file using line-feed {@code '\n'} separators. For example:
+   * alternatively pass each line of text to write as a separate string. These will be written to
+   * the file using line-feed {@code '\n'} separators. For example:
    *
    * <pre><code>
    *   directory
@@ -292,8 +292,8 @@ public interface FileBuilder {
    * </code></pre>
    *
    * <p>If the Java language level of your tests does not support multi-line strings, you can
-   * alternatively pass each line of text to write as a separate string. These will be written
-   * to the file using line-feed {@code '\n'} separators. For example:
+   * alternatively pass each line of text to write as a separate string. These will be written to
+   * the file using line-feed {@code '\n'} separators. For example:
    *
    * <pre><code>
    *   directory
