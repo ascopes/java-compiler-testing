@@ -4,8 +4,8 @@ updates:
     directory: "/"
     open-pull-requests-limit: 20
     schedule:
-      day: "saturday"
-      time: "15:00"
+      day: "friday"
+      time: "17:00"
       timezone: "Europe/London"
       interval: "weekly"
     assignees:
@@ -19,8 +19,8 @@ updates:
     directory: "/"
     open-pull-requests-limit: 20
     schedule:
-      day: "saturday"
-      time: "15:00"
+      day: "friday"
+      time: "17:00"
       timezone: "Europe/London"
       interval: "weekly"
     assignees:
