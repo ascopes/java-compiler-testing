@@ -112,6 +112,7 @@
     <maven-checkstyle-plugin.version>3.2.1</maven-checkstyle-plugin.version>
     <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     <maven-deploy-plugin.version>3.1.0</maven-deploy-plugin.version>
+    <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
     <maven-failsafe-plugin.version>3.0.0-M9</maven-failsafe-plugin.version>
     <maven-install-plugin.version>3.1.0</maven-install-plugin.version>
     <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
@@ -573,6 +574,23 @@
     </pluginManagement>
 
     <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${maven-enforcer-plugin.version}</version>
+        <configuration>
+          <rules>
+            <requireMavenVersion>
+              <!--
+                  Expect this Maven version or crash the build. This ensures people are using
+                  ./mvnw or .\mvnw.cmd to build things.
+              -->
+              <version>3.9.0</version>
+            </requireMavenVersion>
+          </rules>
+        </configuration>
+      </plugin>
 
       <plugin>
         <!-- Enforces our license header and allows adding it automatically to code. -->
