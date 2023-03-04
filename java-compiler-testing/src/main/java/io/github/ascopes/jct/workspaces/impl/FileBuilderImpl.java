@@ -73,23 +73,14 @@ public final class FileBuilderImpl implements FileBuilder {
   }
 
   @Override
-  public ManagedDirectory withContents(String... lines) {
-    return withContents(DEFAULT_CHARSET, lines);
+  public ManagedDirectory asJarFrom(ManagedDirectory directory) {
+    return asJarFrom(directory.getPath());
   }
 
   @Override
-  public ManagedDirectory withContents(Charset charset, String... lines) {
-    return withContents(String.join("\n", lines).getBytes(charset));
-  }
-
-  @Override
-  public ManagedDirectory withContents(byte[] contents) {
-    return uncheckedIo(() -> createFile(new ByteArrayInputStream(contents)));
-  }
-
-  @Override
-  public ManagedDirectory copiedFromClassPath(String resource) {
-    return copiedFromClassPath(currentCallerClassLoader(), resource);
+  public ManagedDirectory asJarFrom(Path directory) {
+    uncheckedIo(() -> JarFactoryImpl.getInstance().createJarFrom(targetPath, directory));
+    return parent;
   }
 
   @Override
@@ -103,6 +94,11 @@ public final class FileBuilderImpl implements FileBuilder {
         return createFile(input);
       }
     });
+  }
+
+  @Override
+  public ManagedDirectory copiedFromClassPath(String resource) {
+    return copiedFromClassPath(currentCallerClassLoader(), resource);
   }
 
   @Override
@@ -126,13 +122,28 @@ public final class FileBuilderImpl implements FileBuilder {
   }
 
   @Override
+  public ManagedDirectory fromInputStream(InputStream inputStream) {
+    return uncheckedIo(() -> createFile(inputStream));
+  }
+
+  @Override
   public ManagedDirectory thatIsEmpty() {
     return fromInputStream(InputStream.nullInputStream());
   }
 
   @Override
-  public ManagedDirectory fromInputStream(InputStream inputStream) {
-    return uncheckedIo(() -> createFile(inputStream));
+  public ManagedDirectory withContents(byte[] contents) {
+    return uncheckedIo(() -> createFile(new ByteArrayInputStream(contents)));
+  }
+
+  @Override
+  public ManagedDirectory withContents(Charset charset, String... lines) {
+    return withContents(String.join("\n", lines).getBytes(charset));
+  }
+
+  @Override
+  public ManagedDirectory withContents(String... lines) {
+    return withContents(DEFAULT_CHARSET, lines);
   }
 
   private ManagedDirectory createFile(InputStream input) throws IOException {
