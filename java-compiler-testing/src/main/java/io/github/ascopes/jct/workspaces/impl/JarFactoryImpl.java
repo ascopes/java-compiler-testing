@@ -70,8 +70,15 @@ public final class JarFactoryImpl {
       Files.walkFileTree(sourceDirectory, new SimpleFileVisitor<>() {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-          var entry = fileToZipEntry(sourceDirectory, file);
-          jarStream.putNextEntry(entry);
+
+          // File names should be forward-slash delimited in ZIP files.
+          var fileName = StreamSupport
+              .stream(sourceDirectory.relativize(file).spliterator(), false)
+              .map(Path::getFileName)
+              .map(Path::toString)
+              .collect(Collectors.joining("/"));
+
+          jarStream.putNextEntry(new ZipEntry(fileName));
           jarStream.write(Files.readAllBytes(file));
           jarStream.closeEntry();
           return FileVisitResult.CONTINUE;
@@ -80,15 +87,5 @@ public final class JarFactoryImpl {
 
       jarStream.finish();
     }
-  }
-
-  private ZipEntry fileToZipEntry(Path sourceDirectory, Path file) {
-    // Calculate the file name to use in the zip (forward-slash separated)
-    var fileName = StreamSupport
-        .stream(sourceDirectory.relativize(file).spliterator(), false)
-        .map(Path::getFileName)
-        .map(Path::toString)
-        .collect(Collectors.joining("/"));
-    return new ZipEntry(fileName);
   }
 }
