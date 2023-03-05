@@ -55,6 +55,7 @@ public interface FileBuilder {
    *
    * @param directory the managed directory to use.
    * @return the root managed directory for further configuration.
+   * @since 0.3.0
    */
   @API(since = "0.3.0", status = Status.STABLE)
   ManagedDirectory asJarFrom(ManagedDirectory directory);
@@ -74,6 +75,7 @@ public interface FileBuilder {
    *
    * @param directory the directory to use.
    * @return the root managed directory for further configuration.
+   * @since 0.3.0
    */
   @API(since = "0.3.0", status = Status.STABLE)
   ManagedDirectory asJarFrom(Path directory);
