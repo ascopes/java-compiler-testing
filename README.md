@@ -3,7 +3,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.ascopes.jct/java-compiler-testing)](https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing)
 [![Code Coverage](https://codecov.io/gh/ascopes/java-compiler-testing/branch/main/graph/badge.svg?token=VT74BP2742)](https://codecov.io/gh/ascopes/java-compiler-testing)
 [![javadoc (latest release)](https://javadoc.io/badge2/io.github.ascopes.jct/java-compiler-testing/javadoc.svg)](https://javadoc.io/doc/io.github.ascopes.jct/java-compiler-testing)
-[![javadoc (main branch)](https://img.shields.io/badge/javadoc-snapshot-darkgreen)](https://ascopes.github.io/java-compiler-testing)
+[![javadoc (main branch)](https://img.shields.io/badge/javadoc-latest--snapshot-darkgreen)](https://ascopes.github.io/java-compiler-testing)
 [![Issues](https://img.shields.io/github/issues-raw/ascopes/java-compiler-testing?color=red)](https://github.com/ascopes/java-compiler-testing/issues)
 [![License](https://img.shields.io/github/license/ascopes/java-compiler-testing?color=blueviolet)](https://github.com/ascopes/java-compiler-testing/blob/main/LICENSE.txt)
 ![Activity](https://img.shields.io/github/commit-activity/y/ascopes/java-compiler-testing)
