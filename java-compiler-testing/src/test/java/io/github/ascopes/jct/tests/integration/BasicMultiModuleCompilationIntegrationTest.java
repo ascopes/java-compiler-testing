@@ -32,7 +32,7 @@ import org.junit.jupiter.api.DisplayName;
 class BasicMultiModuleCompilationIntegrationTest {
 
   @DisplayName("I can compile a single module using multi-module layout using a RAM disk")
-  @JavacCompilerTest(modules = true)
+  @JavacCompilerTest(minVersion = 9)
   void singleModuleInMultiModuleLayoutRamDisk(JctCompiler<?, ?> compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
       // Given
@@ -72,7 +72,7 @@ class BasicMultiModuleCompilationIntegrationTest {
   }
 
   @DisplayName("I can compile a single module using multi-module layout using a temp directory")
-  @JavacCompilerTest(modules = true)
+  @JavacCompilerTest(minVersion = 9)
   void singleModuleInMultiModuleLayoutTempDirectory(JctCompiler<?, ?> compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       // Given
@@ -112,7 +112,7 @@ class BasicMultiModuleCompilationIntegrationTest {
   }
 
   @DisplayName("I can compile multiple modules using multi-module layout using a RAM disk")
-  @JavacCompilerTest(modules = true)
+  @JavacCompilerTest(minVersion = 9)
   void multipleModulesInMultiModuleLayoutRamDisk(JctCompiler<?, ?> compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
       // Given
@@ -180,7 +180,7 @@ class BasicMultiModuleCompilationIntegrationTest {
   }
 
   @DisplayName("I can compile multiple modules using multi-module layout using a temp directory")
-  @JavacCompilerTest(modules = true)
+  @JavacCompilerTest(minVersion = 9)
   void multipleModulesInMultiModuleLayoutTempDirectory(JctCompiler<?, ?> compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       // Given
