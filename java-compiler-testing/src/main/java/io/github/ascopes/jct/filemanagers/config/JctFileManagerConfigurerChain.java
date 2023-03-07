@@ -27,6 +27,10 @@ import org.slf4j.LoggerFactory;
 /**
  * A chain of configurers to apply to a file manager.
  *
+ * <p>Note that modifications to instances of this class are not
+ * threadsafe (e.g. adding new configurers to the chain). Invoking
+ * the configurer chain is also not threadsafe by design.
+ *
  * @author Ashley Scopes
  * @since 0.0.1 (0.0.1-M7)
  */
