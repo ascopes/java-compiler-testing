@@ -40,6 +40,9 @@ public interface JctFileManagerConfigurer {
   /**
    * Determine if this configurer is enabled or not.
    *
+   * <p>Default implementations are enabled automatically unless otherwise
+   * specified.
+   *
    * @return {@code true} if enabled, {@code false} if disabled.
    */
   default boolean isEnabled() {
