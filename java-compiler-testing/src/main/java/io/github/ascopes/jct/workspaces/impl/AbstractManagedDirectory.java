@@ -66,6 +66,7 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
    *
    * @return {@code null} in all cases. This implementation cannot have a parent path.
    */
+  @Nullable
   @Override
   public PathRoot getParent() {
     return null;
