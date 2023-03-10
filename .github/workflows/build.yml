@@ -282,7 +282,7 @@ jobs:
     steps:
       - name: Deploy JavaDocs build artifact to GitHub Pages
         id: snapshot-javadocs
-        uses: actions/deploy-pages@v1.2.4
+        uses: actions/deploy-pages@v1.2.5
 
       - name: Delete temporary artifacts
         uses: geekyeggo/delete-artifact@v2.0.0
