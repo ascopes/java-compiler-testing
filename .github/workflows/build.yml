@@ -113,21 +113,14 @@ jobs:
         if: always()
         shell: bash
         run: |-
-          find . -name failsafe-reports
-        
-          # Allow ** globbing
-          set +f -x
+          set -x
           # Allow globs to not match anything without causing errors.
           shopt -s nullglob
   
           # XZ with max compression, more efficient than using GZip.  
           XZ_OPT=-9 tar -Jcvf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tar.xz \
-              java-compiler-testing/target/failsafe-reports/** \
-              java-compiler-testing/target/surefire-reports/** \
-              acceptance-tests/*/target/failsafe-reports/** \
-              acceptance-tests/*/target/surefire-reports/** \
-              java-compiler-testing/target/site/jacoco/unit/jacoco*.xml \
-              java-compiler-testing/target/site/jacoco/int/jacoco*.xml
+              $(find . -name surefire-reports -o -name failsafe-reports) \
+              $(find . -name 'jacoco*.xml')
 
       - name: Stash reports tarball
         uses: actions/upload-artifact@v3.1.2
