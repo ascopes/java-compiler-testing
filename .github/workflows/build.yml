@@ -113,6 +113,8 @@ jobs:
         if: always()
         shell: bash
         run: |-
+          find . -name failsafe-reports
+        
           # Allow ** globbing
           set +f -x
           # Allow globs to not match anything without causing errors.
