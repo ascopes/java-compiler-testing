@@ -88,15 +88,15 @@ EOF
 
 info "Generated XSLT script at ${surefire_prefix_xslt}"
 
-function find-all-surefire-reports {
-  info "Discovering Surefire test reports"
-  find . -wholename '**/target/surefire-reports/TEST-*Test.xml' -print
+function find-all-test-reports {
+  info "Discovering test reports"
+  find . -name 'TEST*.xml' -print
 }
 
-function find-all-failsafe-reports {
-  info "Discovering Failsafe test reports"
-  find . -wholename '**/target/failsafe-reports/TEST-*Test.xml' -print
-}
+#function find-all-failsafe-reports {
+#  info "Discovering Failsafe test reports"
+#  find . -wholename '**/target/failsafe-reports/TEST-*Test.xml' -print
+#}
 
 function find-all-jacoco-reports {
   info "Discovering JaCoCo coverage reports"
@@ -140,7 +140,7 @@ while read -r report; do
     wait < <(jobs -p)
     info "Waited for up to ${concurrency} jobs to complete, will now continue..."
   fi
-done < <(find-all-surefire-reports; find-all-failsafe-reports)
+done < <(find-all-test-reports)
 wait < <(jobs -p)
 
 success "Updated ${report_count} test reports"
