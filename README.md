@@ -251,7 +251,7 @@ class ExampleTest {
     try (var workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
-          .createSourcePathPackage("hello.world")
+          .createSourcePathModule("hello.world")
           .createFile("org/example/Message.java").withContents("""
                 package org.example;
 
