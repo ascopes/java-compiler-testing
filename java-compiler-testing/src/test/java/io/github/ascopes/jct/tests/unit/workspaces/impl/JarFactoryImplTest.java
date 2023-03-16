@@ -21,7 +21,9 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.github.ascopes.jct.tests.helpers.Fixtures;
 import io.github.ascopes.jct.workspaces.impl.JarFactoryImpl;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;

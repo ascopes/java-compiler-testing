@@ -15,6 +15,11 @@
  */
 package io.github.ascopes.jct.workspaces;
 
+import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
+
+import io.github.ascopes.jct.workspaces.impl.JarFactoryImpl;
+import java.io.ByteArrayOutputStream;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
@@ -33,6 +38,23 @@ import org.jspecify.annotations.Nullable;
  */
 @API(since = "0.0.1", status = Status.STABLE)
 public interface PathRoot {
+
+  /**
+   * Convert the given path root into a JAR and return the byte contents of the JAR.
+   *
+   * @return the byte contents of the JAR.
+   * @throws UncheckedIOException if the JAR cannot be created.
+   * @since 0.4.0
+   */
+  @API(since = "0.4.0", status = Status.STABLE)
+  default byte[] asJar() {
+    return uncheckedIo(() -> {
+      try (var baos = new ByteArrayOutputStream()) {
+        JarFactoryImpl.getInstance().createJarFrom(baos, getPath());
+        return baos.toByteArray();
+      }
+    });
+  }
 
   /**
    * Determine if two path roots are equivalent. If the provided object is {@code null} or not an

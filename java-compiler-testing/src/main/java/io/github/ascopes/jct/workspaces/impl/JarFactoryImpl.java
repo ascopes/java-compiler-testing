@@ -17,6 +17,7 @@ package io.github.ascopes.jct.workspaces.impl;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,8 +65,21 @@ public final class JarFactoryImpl {
    * @throws IOException if an IO exception occurs anywhere.
    */
   public void createJarFrom(Path outputFile, Path sourceDirectory) throws IOException {
-    var outputStream = new BufferedOutputStream(Files.newOutputStream(outputFile));
+    try (var outputStream = new BufferedOutputStream(Files.newOutputStream(outputFile))) {
+      createJarFrom(outputStream, sourceDirectory);
+    }
+  }
 
+  /**
+   * Create a JAR and stream it into the given output stream, using a given source directory.
+   *
+   * <p>This JAR will not be compressed in a special way.
+   *
+   * @param outputStream    the output stream to write to.
+   * @param sourceDirectory the source directory to read from recursively.
+   * @throws IOException if an IO exception occurs anywhere.
+   */
+  public void createJarFrom(OutputStream outputStream, Path sourceDirectory) throws IOException {
     try (var jarStream = new JarOutputStream(outputStream)) {
       Files.walkFileTree(sourceDirectory, new SimpleFileVisitor<>() {
         @Override
