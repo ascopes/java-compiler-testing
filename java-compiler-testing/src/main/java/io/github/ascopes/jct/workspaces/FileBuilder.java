@@ -42,7 +42,7 @@ public interface FileBuilder {
    * @since 0.3.0
    */
   @API(since = "0.3.0", status = Status.STABLE)
-  ManagedDirectory asJarFrom(ManagedDirectory directory);
+  ManagedDirectory asJarFrom(PathRoot directory);
 
   /**
    * Take the directory, represented by the given path, and convert it into a JAR file, that will be

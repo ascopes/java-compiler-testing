@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
 import io.github.ascopes.jct.workspaces.FileBuilder;
 import io.github.ascopes.jct.workspaces.ManagedDirectory;
+import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -73,7 +74,7 @@ public final class FileBuilderImpl implements FileBuilder {
   }
 
   @Override
-  public ManagedDirectory asJarFrom(ManagedDirectory directory) {
+  public ManagedDirectory asJarFrom(PathRoot directory) {
     return asJarFrom(directory.getPath());
   }
 
