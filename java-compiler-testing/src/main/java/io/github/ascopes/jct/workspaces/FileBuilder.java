@@ -37,22 +37,6 @@ public interface FileBuilder {
    * Take the directory, represented by the given {@link ManagedDirectory}, and convert it into a
    * JAR file, that will be written to the file being created.
    *
-   * <pre><code>
-   *   // Compile some files first.
-   *   Workspace firstWorkspace = ...;
-   *   JctCompilation firstCompilation = firstCompiler.compile(firstWorkspace);
-   *   ManagedDirectory firstClassOutputs = firstWorkspace.getClassOutputPackage();
-   *
-   *   // Wrap the first compilation outputs in a JAR and add as a class path dependency
-   *   // to the second compilation.
-   *   Workspace secondWorkspace = ...;
-   *   secondWorkspace
-   *       .createFile("first.jar")
-   *       .asJarFrom(firstClassOutputs);
-   *   JctCompilation secondCompilation = secondCompiler.compile(secondWorkspace);
-   *   ...
-   * </code></pre>
-   *
    * @param directory the managed directory to use.
    * @return the root managed directory for further configuration.
    * @since 0.3.0
