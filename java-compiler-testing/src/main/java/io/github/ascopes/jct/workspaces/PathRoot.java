@@ -42,12 +42,16 @@ public interface PathRoot {
   /**
    * Convert the given path root into a JAR and return the byte contents of the JAR.
    *
+   * <p>You can use this to create JAR files from existing path roots, if you want to package
+   * some compiled outputs into a JAR to use them as inputs to another build.
+   *
    * @return the byte contents of the JAR.
    * @throws UncheckedIOException if the JAR cannot be created.
    * @since 0.4.0
    */
   @API(since = "0.4.0", status = Status.STABLE)
   default byte[] asJar() {
+    // TODO(ascopes): move this to impl level before 1.0.0 ideally.
     return uncheckedIo(() -> {
       try (var baos = new ByteArrayOutputStream()) {
         JarFactoryImpl.getInstance().createJarFrom(baos, getPath());
