@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+import io.github.ascopes.jct.junit.JctExtension;
 import io.github.ascopes.jct.workspaces.RamFileSystemProvider;
+import org.junit.jupiter.api.extension.Extension;
 
 /**
  * A framework for performing exhaustive integration testing against Java compilers in modern Java
@@ -101,6 +103,7 @@ module io.github.ascopes.jct {
   requires static transitive org.apiguardian.api;
   requires org.assertj.core;
   requires static org.jspecify;
+  requires static transitive org.junit.jupiter.api;
   requires static transitive org.junit.jupiter.params;
   requires org.slf4j;
 
@@ -123,6 +126,7 @@ module io.github.ascopes.jct {
   /// SERVICE PROVIDER INTERFACES ///
   ///////////////////////////////////
 
+  provides Extension with JctExtension;
   uses RamFileSystemProvider;
 
   //////////////////////////////////////////////////////

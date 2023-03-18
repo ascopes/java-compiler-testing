@@ -103,6 +103,15 @@ public interface Workspace extends AutoCloseable {
   @Override
   void close();
 
+  /**
+   * Determine if the workspace is closed or not.
+   *
+   * @return {@code true} if closed, {@code false} if open.
+   * @since 0.4.0
+   */
+  @API(since = "0.4.0", status = Status.STABLE)
+  boolean isClosed();
+
   ///
   /// Accessor operations
   ///
