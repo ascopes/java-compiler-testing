@@ -4,10 +4,7 @@ updates:
     directory: "/"
     open-pull-requests-limit: 20
     schedule:
-      day: "friday"
-      time: "17:00"
-      timezone: "Europe/London"
-      interval: "weekly"
+      interval: "monthly"
     assignees:
       - "ascopes"
     labels:
@@ -19,10 +16,7 @@ updates:
     directory: "/"
     open-pull-requests-limit: 20
     schedule:
-      day: "friday"
-      time: "17:00"
-      timezone: "Europe/London"
-      interval: "weekly"
+      interval: "monthly"
     assignees:
       - "ascopes"
     labels:
