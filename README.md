@@ -138,45 +138,47 @@ open module my.tests {
 ```java
 
 @DisplayName("Example tests")
+@ExtendWith(JctExtension.class)
 class ExampleTest {
+  
+  @Managed
+  Workspace workspace;
 
   @DisplayName("I can compile a Hello World application")
   @JavacCompilerTest
   void canCompileHelloWorld(JctCompiler<?, ?> compiler) {
-    try (var workspace = Workspaces.newWorkspace()) {
-      // Given
-      workspace
-          .createSourcePathPackage()
-          .createFile("org/example/Message.java").withContents("""
-              package org.example;
-                  
-              import lombok.Data;
-              import lombok.NonNull;
-                  
-              @Data
-              public class Message {
-                private String content;
-                  
-                public static void main(String[] args) {
-                  Message message = new Message("Hello, World!");
-                  System.out.println(message);
-                }
+    // Given
+    workspace
+        .createSourcePathPackage()
+        .createFile("org/example/Message.java").withContents("""
+            package org.example;
+                
+            import lombok.Data;
+            import lombok.NonNull;
+                
+            @Data
+            public class Message {
+              private String content;
+                
+              public static void main(String[] args) {
+                Message message = new Message("Hello, World!");
+                System.out.println(message);
               }
-              """
-          );
+            }
+            """
+        );
 
-      // When
-      var compilation = compiler.compile(workspace);
+    // When
+    var compilation = compiler.compile(workspace);
 
-      // Then
-      assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings();
+    // Then
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings();
 
-      assertThatCompilation(compilation)
-          .classOutput().packages()
-          .fileExists("com/example/Message.class")
-          .isNotEmptyFile();
-    }
+    assertThatCompilation(compilation)
+        .classOutput().packages()
+        .fileExists("com/example/Message.class")
+        .isNotEmptyFile();
   }
 }
 ```
@@ -192,42 +194,44 @@ import io.github.ascopes.jct.workspaces.Workspaces;
 import org.example.processor.JsonSchemaAnnotationProcessor;
 import org.skyscreamer.jsonassert.JSONAssert;
 
+@ExtendWith(JctExtension.class)
 class JsonSchemaAnnotationProcessorTest {
+  
+  @Managed
+  Workspace workspace;
 
   @JavacCompilerTest(minVersion = 11, maxVersion = 19)
   void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler<?, ?> compiler) {
-    try (var workspace = Workspaces.newWorkspace()) {
-      // Given
-      workspace
-          .createSourcePathPackage()
-          .createDirectory("org", "example", "tests")
-          .copyContentsFrom("src", "test", "resources", "code", "schematest");
+    // Given
+    workspace
+        .createSourcePathPackage()
+        .createDirectory("org", "example", "tests")
+        .copyContentsFrom("src", "test", "resources", "code", "schematest");
 
-      // When
-      var compilation = compiler
-          .addAnnotationProcessors(new JsonSchemaAnnotationProcessor())
-          .addAnnotationProcessorOptions("jsonschema.verbose=true")
-          .failOnWarnings(true)
-          .showDeprecationWarnings(true)
-          .compile(workspace);
+    // When
+    var compilation = compiler
+        .addAnnotationProcessors(new JsonSchemaAnnotationProcessor())
+        .addAnnotationProcessorOptions("jsonschema.verbose=true")
+        .failOnWarnings(true)
+        .showDeprecationWarnings(true)
+        .compile(workspace);
 
-      // Then
-      assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings();
+    // Then
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings();
 
-      assertThatCompilation(compilation)
-          .diagnostics().notes().singleElement()
-          .message().isEqualTo(
-              "Creating JSON schema in Java %s for package org.example.tests",
-              compiler.getRelease()
-          );
+    assertThatCompilation(compilation)
+        .diagnostics().notes().singleElement()
+        .message().isEqualTo(
+            "Creating JSON schema in Java %s for package org.example.tests",
+            compiler.getRelease()
+        );
 
-      assertThatCompilation(compilation)
-          .classOutputs().packages()
-          .fileExists("json-schemas", "UserSchema.json").contents()
-          .isNotEmpty()
-          .satisfies(contents -> JSONAssert.assertEquals(...));
-    }
+    assertThatCompilation(compilation)
+        .classOutputs().packages()
+        .fileExists("json-schemas", "UserSchema.json").contents()
+        .isNotEmpty()
+        .satisfies(contents -> JSONAssert.assertEquals(...));
   }
 }
 ```

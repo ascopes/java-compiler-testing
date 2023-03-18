@@ -27,8 +27,9 @@ open module io.github.ascopes.jct.testing {
   requires transitive org.junit.jupiter.api;
   requires transitive org.junit.jupiter.engine;
   requires transitive org.junit.jupiter.params;
-  requires transitive org.junit.platform.commons;  // required to make IntelliJ happy.
-  requires transitive org.junit.platform.engine;   // required to make IntelliJ happy.
+  requires transitive org.junit.platform.commons;
+  requires transitive org.junit.platform.engine;
+  requires transitive org.junit.platform.testkit;
   requires org.mockito;
   requires org.mockito.junit.jupiter;
   requires org.slf4j;

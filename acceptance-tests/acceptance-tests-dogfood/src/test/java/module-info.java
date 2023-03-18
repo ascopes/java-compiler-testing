@@ -20,6 +20,7 @@ open module io.github.ascopes.jct.acceptancetests.dogfood {
   requires transitive org.junit.jupiter.api;
   requires transitive org.junit.jupiter.engine;
   requires transitive org.junit.jupiter.params;
-  requires transitive org.junit.platform.commons;  // required to make IntelliJ happy.
-  requires transitive org.junit.platform.engine;   // required to make IntelliJ happy.
+  requires transitive org.junit.platform.commons;    // required to make IntelliJ happy.
+  requires transitive org.junit.platform.engine;     // required to make IntelliJ happy.
+  requires transitive org.junit.platform.launcher;   // required to make IntelliJ happy.
 }

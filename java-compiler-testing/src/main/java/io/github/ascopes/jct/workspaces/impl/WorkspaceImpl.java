@@ -47,37 +47,48 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class WorkspaceImpl implements Workspace {
 
+  private volatile boolean closed;
   private final PathStrategy pathStrategy;
   private final Map<Location, List<PathRoot>> paths;
 
   public WorkspaceImpl(PathStrategy pathStrategy) {
+    closed = false;
     this.pathStrategy = requireNonNull(pathStrategy, "pathStrategy");
     paths = new HashMap<>();
   }
 
   @Override
   public void close() {
-    // Close everything in a best-effort fashion.
-    var exceptions = new ArrayList<Throwable>();
+    try {
+      // Close everything in a best-effort fashion.
+      var exceptions = new ArrayList<Throwable>();
 
-    for (var list : paths.values()) {
-      for (var path : list) {
-        if (path instanceof AbstractManagedDirectory) {
-          try {
-            ((AbstractManagedDirectory) path).close();
+      for (var list : paths.values()) {
+        for (var path : list) {
+          if (path instanceof AbstractManagedDirectory) {
+            try {
+              ((AbstractManagedDirectory) path).close();
 
-          } catch (Exception ex) {
-            exceptions.add(ex);
+            } catch (Exception ex) {
+              exceptions.add(ex);
+            }
           }
         }
       }
-    }
 
-    if (exceptions.size() > 0) {
-      var newEx = new IllegalStateException("One or more components failed to close");
-      exceptions.forEach(newEx::addSuppressed);
-      throw newEx;
+      if (exceptions.size() > 0) {
+        var newEx = new IllegalStateException("One or more components failed to close");
+        exceptions.forEach(newEx::addSuppressed);
+        throw newEx;
+      }
+    } finally {
+      closed = true;
     }
+  }
+
+  @Override
+  public boolean isClosed() {
+    return closed;
   }
 
   @Override

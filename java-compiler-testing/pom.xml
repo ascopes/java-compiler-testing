@@ -91,6 +91,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-testkit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
@@ -138,6 +144,7 @@
           <excludePackageNames>
             io.github.ascopes.jct.compilers.javac;
             io.github.ascopes.jct.**.impl;
+            io.github.ascopes.jct.junit.ext;
             io.github.ascopes.jct.utils;
           </excludePackageNames>
         </configuration>
