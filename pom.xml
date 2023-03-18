@@ -103,7 +103,7 @@
     <jspecify.version>0.3.0</jspecify.version>
     <junit.version>5.9.2</junit.version>
     <mockito.version>5.2.0</mockito.version>
-    <slf4j.version>2.0.6</slf4j.version>
+    <slf4j.version>2.0.7</slf4j.version>
 
     <!-- Plugins -->
     <gmaven-plugin.version>2.1.0</gmaven-plugin.version>
