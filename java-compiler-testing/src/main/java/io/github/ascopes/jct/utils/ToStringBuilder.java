@@ -15,6 +15,8 @@
  */
 package io.github.ascopes.jct.utils;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.File;
 import java.lang.reflect.Array;
 import java.net.URI;
@@ -25,7 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import org.apiguardian.api.API;
@@ -70,7 +71,7 @@ public final class ToStringBuilder {
    * @param owner the object that is being converted to a string.
    */
   public ToStringBuilder(Object owner) {
-    this.owner = Objects.requireNonNull(owner, "owner must not be null");
+    this.owner = requireNonNull(owner, "owner must not be null");
     attributes = new LinkedHashMap<>();
   }
 
