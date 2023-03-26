@@ -70,7 +70,7 @@ class MapStructIntegrationTest {
   }
 
   @DisplayName("MapStruct generates expected mapping code for modules")
-  @JavacCompilerTest(modules = true)
+  @JavacCompilerTest(minVersion = 9)
   void mapStructGeneratesExpectedMappingCodeForModules(JctCompiler compiler) {
     // Given
     try (def workspace = Workspaces.newWorkspace()) {
