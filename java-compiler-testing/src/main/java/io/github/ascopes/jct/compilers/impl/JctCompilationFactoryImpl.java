@@ -152,6 +152,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
     return JctCompilationImpl
         .builder()
+        .arguments(flags)
         .compilationUnits(Set.copyOf(compilationUnits))
         .fileManager(fileManager)
         .outputLines(writer.getContent().lines().collect(toList()))
