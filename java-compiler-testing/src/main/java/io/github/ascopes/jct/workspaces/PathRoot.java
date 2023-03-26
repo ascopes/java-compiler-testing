@@ -15,10 +15,6 @@
  */
 package io.github.ascopes.jct.workspaces;
 
-import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
-
-import io.github.ascopes.jct.workspaces.impl.JarFactoryImpl;
-import java.io.ByteArrayOutputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URL;
@@ -47,18 +43,11 @@ public interface PathRoot {
    *
    * @return the byte contents of the JAR.
    * @throws UncheckedIOException if the JAR cannot be created.
+   * @throws UnsupportedOperationException if the operation is not supported.
    * @since 0.4.0
    */
   @API(since = "0.4.0", status = Status.STABLE)
-  default byte[] asJar() {
-    // TODO(ascopes): move this to impl level before 1.0.0 ideally.
-    return uncheckedIo(() -> {
-      try (var baos = new ByteArrayOutputStream()) {
-        JarFactoryImpl.getInstance().createJarFrom(baos, getPath());
-        return baos.toByteArray();
-      }
-    });
-  }
+  byte[] asJar();
 
   /**
    * Determine if two path roots are equivalent. If the provided object is {@code null} or not an

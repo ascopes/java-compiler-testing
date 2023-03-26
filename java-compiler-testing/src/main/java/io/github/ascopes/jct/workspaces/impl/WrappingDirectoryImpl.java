@@ -17,11 +17,13 @@ package io.github.ascopes.jct.workspaces.impl;
 
 import static io.github.ascopes.jct.utils.FileUtils.resolvePathRecursively;
 import static io.github.ascopes.jct.utils.FileUtils.retrieveRequiredUrl;
+import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import io.github.ascopes.jct.workspaces.PathRoot;
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
@@ -82,6 +84,21 @@ public final class WrappingDirectoryImpl implements PathRoot {
     this.path = requireNonNull(path, "path");
     uri = path.toUri();
     url = retrieveRequiredUrl(this.path);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return the bytes that make up the JAR that was created from this wrapped directory.
+   */
+  @Override
+  public byte[] asJar() {
+    return uncheckedIo(() -> {
+      try (var baos = new ByteArrayOutputStream()) {
+        JarFactoryImpl.getInstance().createJarFrom(baos, getPath());
+        return baos.toByteArray();
+      }
+    });
   }
 
   @Override
