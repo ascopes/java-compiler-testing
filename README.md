@@ -33,9 +33,6 @@ these assertions comes with specially-developed human-readable error messages an
 
 Full JUnit5 integration is provided to help streamline the development process.
 
-**This module is still under development.** Any contributions or feedback
-are always welcome!
-
 ## Features
 
 - Implements in-memory file management compatible with the NIO Path and
