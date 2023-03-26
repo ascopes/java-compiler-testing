@@ -20,13 +20,21 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 
 import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.repr.TraceDiagnosticListRepresentation;
+import io.github.ascopes.jct.utils.StringUtils;
 import java.util.Collection;
+import java.util.List;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
+import org.assertj.core.api.AbstractListAssert;
+import org.assertj.core.api.AbstractStringAssert;
+import org.assertj.core.api.AssertFactory;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.FactoryBasedNavigableListAssert;
+import org.assertj.core.api.StringAssert;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -46,6 +54,23 @@ public final class JctCompilationAssert extends
    */
   public JctCompilationAssert(@Nullable JctCompilation value) {
     super(value, JctCompilationAssert.class);
+  }
+
+  /**
+   * Assert that the arguments passed to the compiler were the expected values.
+   *
+   * @return a list assertion object to perform assertions on the arguments with.
+   * @throws AssertionError if the compilation was null.
+   */
+  public AbstractListAssert<?, List<? extends String>, String, ? extends AbstractStringAssert<?>> arguments() {
+    isNotNull();
+
+    var arguments = actual.getArguments();
+
+    // TODO(ascopes): find a way to use Assertions::assertThat here instead of passing the
+    //   StringAssert constructor around.
+    return FactoryBasedNavigableListAssert.assertThat(arguments, StringAssert::new)
+        .as("Compiler arguments %s", StringUtils.quotedIterable(arguments));
   }
 
   /**

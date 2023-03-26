@@ -161,15 +161,22 @@ public final class Fixtures {
   }
 
   /**
+   * Get a random command line flag.
+   *
+   * @return a flag.
+   */
+  public static String someFlag() {
+    return "--" + UUID.randomUUID();
+  }
+
+  /**
    * Get some random command line flags.
    *
    * @return some flags.
    */
   public static List<String> someFlags() {
     return Stream
-        .generate(UUID::randomUUID)
-        .map(UUID::toString)
-        .map("--"::concat)
+        .generate(Fixtures::someFlag)
         .limit(someInt(2, 4))
         .collect(Collectors.toList());
   }

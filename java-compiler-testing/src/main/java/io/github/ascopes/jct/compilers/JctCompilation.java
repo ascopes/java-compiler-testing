@@ -37,6 +37,23 @@ import org.apiguardian.api.API.Status;
 public interface JctCompilation {
 
   /**
+   * Get the command line arguments that were passed to the compiler.
+   *
+   * <p>Note that this throws an unsupported operation exception by default
+   * to prevent breaking existing functionality. In v1.0.0, this will become
+   * required behaviour.
+   *
+   * @return the command line arguments.
+   * @since 0.5.0
+   */
+  @API(since = "0.5.0", status = Status.STABLE)
+  default List<String> getArguments() {
+    throw new UnsupportedOperationException(
+        "This operation is not implemented, but will be mandatory in v1.0.0"
+    );
+  }
+
+  /**
    * Determine if warnings were treated as errors.
    *
    * @return {@code true} if warnings were treated as errors, or {@code false} otherwise.

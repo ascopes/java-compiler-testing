@@ -24,17 +24,16 @@ import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.tests.helpers.Fixtures;
+import io.github.ascopes.jct.utils.StringUtils;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.tools.JavaFileObject;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,10 +47,28 @@ import org.junit.jupiter.params.provider.ValueSource;
  */
 @DisplayName("JctCompilationImpl tests")
 class JctCompilationImplTest {
+  
+  @DisplayName(".getArguments() returns the expected value")
+  @ValueSource(ints = {0, 1, 2, 3, 5, 10, 100})
+  @ParameterizedTest(name = "for argumentCount = {0}")
+  void getArgumentsReturnsExpectedValue(int argumentCount) {
+    // Given
+    var arguments = Stream
+        .generate(Fixtures::someFlag)
+        .limit(argumentCount)
+        .collect(Collectors.toList());
 
-  static Random RANDOM = new Random();
+    var compilation = filledBuilder()
+        .arguments(arguments)
+        .build();
 
-  @DisplayName("isSuccessful returns expected value")
+    // Then
+    assertThat(compilation.getArguments())
+        .asInstanceOf(iterable(String.class))
+        .containsExactlyElementsOf(arguments);
+  }
+  
+  @DisplayName(".isSuccessful() returns the expected value")
   @ValueSource(booleans = {true, false})
   @ParameterizedTest(name = "for success = {0}")
   void isSuccessfulReturnsExpectedValue(boolean expected) {
@@ -64,7 +81,7 @@ class JctCompilationImplTest {
     assertThat(compilation.isSuccessful()).isEqualTo(expected);
   }
 
-  @DisplayName("isFailOnWarnings returns expected value")
+  @DisplayName(".isFailOnWarnings() returns the expected value")
   @ValueSource(booleans = {true, false})
   @ParameterizedTest(name = "for failOnWarnings = {0}")
   void isFailOnWarningsReturnsExpectedValue(boolean expected) {
@@ -77,7 +94,7 @@ class JctCompilationImplTest {
     assertThat(compilation.isFailOnWarnings()).isEqualTo(expected);
   }
 
-  @DisplayName("getOutputLines returns expected value")
+  @DisplayName(".getOutputLines() returns the expected value")
   @ValueSource(ints = {0, 1, 2, 3, 5, 10, 100})
   @ParameterizedTest(name = "for lineCount = {0}")
   void getOutputLinesReturnsExpectedValue(int lineCount) {
@@ -97,7 +114,7 @@ class JctCompilationImplTest {
         .containsExactlyElementsOf(lines);
   }
 
-  @DisplayName("getCompilationUnits returns expected value")
+  @DisplayName(".getCompilationUnits() returns the expected value")
   @ValueSource(ints = {0, 1, 2, 3, 5, 10, 100})
   @ParameterizedTest(name = "for compilationUnitCount = {0}")
   void getCompilationUnitsReturnsExpectedValue(int compilationUnitCount) {
@@ -117,7 +134,7 @@ class JctCompilationImplTest {
         .containsExactlyElementsOf(compilationUnits);
   }
 
-  @DisplayName("getDiagnostics returns expected value")
+  @DisplayName(".getDiagnostics() returns the expected value")
   @ValueSource(ints = {0, 1, 2, 3, 5, 10, 100})
   @ParameterizedTest(name = "for diagnosticCount = {0}")
   void getDiagnosticsReturnsExpectedValue(int diagnosticCount) {
@@ -137,7 +154,7 @@ class JctCompilationImplTest {
         .containsExactlyElementsOf(diagnostics);
   }
 
-  @DisplayName("getFileManager returns expected value")
+  @DisplayName(".getFileManager() returns the expected value")
   @Test
   void getFileManagerReturnsExpectedValue() {
     // Given
@@ -147,24 +164,35 @@ class JctCompilationImplTest {
         .build();
 
     // Then
-    Assertions.assertThat(compilation.getFileManager()).isEqualTo(fileManager);
+    assertThat(compilation.getFileManager()).isEqualTo(fileManager);
   }
 
-  @DisplayName("toString returns the expected value")
+  @DisplayName(".toString() returns the expected value")
   @Test
   void toStringReturnsExpectedValue() {
     // Given
-    var compilation = filledBuilder().build();
+    var success = Fixtures.someBoolean();
+    var failOnWarnings = Fixtures.someBoolean();
+    var fileManager = mock(JctFileManager.class);
+    var arguments = Fixtures.someFlags();
+
+    var compilation = filledBuilder()
+        .success(success)
+        .failOnWarnings(failOnWarnings)
+        .fileManager(fileManager)
+        .arguments(arguments)
+        .build();
 
     // Then
     assertThat(compilation)
         .asString()
         .as("compilation.toString()")
         .isEqualTo(
-            "JctCompilationImpl{success=%s, failOnWarnings=%s, fileManager=%s}",
-            compilation.isSuccessful(),
-            compilation.isFailOnWarnings(),
-            compilation.getFileManager()
+            "JctCompilationImpl{success=%s, failOnWarnings=%s, fileManager=%s, arguments=%s}",
+            success,
+            failOnWarnings,
+            fileManager,
+            StringUtils.quotedIterable(arguments)
         );
   }
 
@@ -172,17 +200,57 @@ class JctCompilationImplTest {
   @Nested
   class BuilderTest {
 
+    @DisplayName("Building without arguments raises a NullPointerException")
+    @Test
+    void buildingWithoutArgumentsRaisesNullPointerException() {
+      // Given
+      var builder = JctCompilationImpl
+          .builder()
+          .diagnostics(List.of())
+          .fileManager(mock(JctFileManager.class))
+          .outputLines(List.of())
+          .compilationUnits(Set.of())
+          .success(Fixtures.someBoolean())
+          .failOnWarnings(Fixtures.someBoolean());
+
+      // Then
+      assertThatThrownBy(builder::build)
+          .isInstanceOf(NullPointerException.class)
+          .hasMessage("arguments");
+    }
+
+    @DisplayName("Building with null arguments raises a NullPointerException")
+    @Test
+    void buildingWithNullArgumentsRaisesNullPointerException() {
+      // Given
+      var builder = JctCompilationImpl
+          .builder()
+          .arguments(nullableListOf(Fixtures.someFlag(), null, Fixtures.someFlag()))
+          .fileManager(mock(JctFileManager.class))
+          .outputLines(List.of())
+          .compilationUnits(Set.of())
+          .success(Fixtures.someBoolean())
+          .failOnWarnings(Fixtures.someBoolean())
+          .diagnostics(List.of());
+
+      // Then
+      assertThatThrownBy(builder::build)
+          .isInstanceOf(NullPointerException.class)
+          .hasMessage("arguments[1]");
+    }
+
     @DisplayName("Building without success set raises a NullPointerException")
     @Test
     void buildingWithoutSuccessSetRaisesNullPointerException() {
       // Given
       var builder = JctCompilationImpl
           .builder()
+          .arguments(List.of())
           .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .compilationUnits(Set.of())
-          .failOnWarnings(RANDOM.nextBoolean());
+          .failOnWarnings(Fixtures.someBoolean());
 
       // Then
       assertThatThrownBy(builder::build)
@@ -196,11 +264,12 @@ class JctCompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
+          .arguments(List.of())
           .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
           .compilationUnits(Set.of())
-          .success(RANDOM.nextBoolean());
+          .success(Fixtures.someBoolean());
 
       // Then
       assertThatThrownBy(builder::build)
@@ -226,11 +295,12 @@ class JctCompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
+          .arguments(List.of())
           .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
-          .success(RANDOM.nextBoolean())
-          .failOnWarnings(RANDOM.nextBoolean());
+          .success(Fixtures.someBoolean())
+          .failOnWarnings(Fixtures.someBoolean());
 
       // Then
       assertThatThrownBy(builder::build)
@@ -244,11 +314,12 @@ class JctCompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
+          .arguments(List.of())
           .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
-          .success(RANDOM.nextBoolean())
-          .failOnWarnings(RANDOM.nextBoolean())
+          .success(Fixtures.someBoolean())
+          .failOnWarnings(Fixtures.someBoolean())
           .compilationUnits(nullableSetOf(
               mock(JavaFileObject.class),
               mock(JavaFileObject.class),
@@ -281,11 +352,12 @@ class JctCompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
+          .arguments(List.of())
           .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .compilationUnits(Set.of())
-          .success(RANDOM.nextBoolean())
-          .failOnWarnings(RANDOM.nextBoolean());
+          .success(Fixtures.someBoolean())
+          .failOnWarnings(Fixtures.someBoolean());
 
       // Then
       assertThatThrownBy(builder::build)
@@ -299,11 +371,12 @@ class JctCompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
+          .arguments(List.of())
           .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .compilationUnits(Set.of())
-          .success(RANDOM.nextBoolean())
-          .failOnWarnings(RANDOM.nextBoolean())
+          .success(Fixtures.someBoolean())
+          .failOnWarnings(Fixtures.someBoolean())
           .diagnostics(nullableListOf(
               mock(),
               null,
@@ -334,11 +407,12 @@ class JctCompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
+          .arguments(List.of())
           .diagnostics(List.of())
           .compilationUnits(Set.of())
           .outputLines(List.of())
-          .success(RANDOM.nextBoolean())
-          .failOnWarnings(RANDOM.nextBoolean());
+          .success(Fixtures.someBoolean())
+          .failOnWarnings(Fixtures.someBoolean());
 
       // Then
       assertThatThrownBy(builder::build)
@@ -364,11 +438,12 @@ class JctCompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
+          .arguments(List.of())
           .fileManager(mock(JctFileManager.class))
           .diagnostics(List.of())
           .compilationUnits(Set.of())
-          .success(RANDOM.nextBoolean())
-          .failOnWarnings(RANDOM.nextBoolean());
+          .success(Fixtures.someBoolean())
+          .failOnWarnings(Fixtures.someBoolean());
 
       // Then
       assertThatThrownBy(builder::build)
@@ -382,11 +457,12 @@ class JctCompilationImplTest {
       // Given
       var builder = JctCompilationImpl
           .builder()
+          .arguments(List.of())
           .fileManager(mock(JctFileManager.class))
           .outputLines(List.of())
           .diagnostics(List.of())
-          .success(RANDOM.nextBoolean())
-          .failOnWarnings(RANDOM.nextBoolean())
+          .success(Fixtures.someBoolean())
+          .failOnWarnings(Fixtures.someBoolean())
           .outputLines(nullableListOf("foo", "bar", "baz", "bork", null, "qux"));
 
       // Then
@@ -409,11 +485,12 @@ class JctCompilationImplTest {
   static JctCompilationImpl.Builder filledBuilder() {
     return JctCompilationImpl
         .builder()
+        .arguments(List.of())
         .compilationUnits(Set.of())
         .diagnostics(List.of())
-        .failOnWarnings(RANDOM.nextBoolean())
+        .failOnWarnings(Fixtures.someBoolean())
         .fileManager(mock(JctFileManager.class))
         .outputLines(List.of())
-        .success(RANDOM.nextBoolean());
+        .success(Fixtures.someBoolean());
   }
 }

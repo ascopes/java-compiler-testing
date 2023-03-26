@@ -16,6 +16,8 @@
 package io.github.ascopes.jct.tests.unit.compilers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,9 +27,14 @@ import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
+import java.lang.module.ModuleDescriptor.Version;
 import java.util.stream.Stream;
 import javax.tools.StandardLocation;
+import org.assertj.core.api.ComparableAssert;
+import org.assertj.core.api.GenericComparableAssert;
+import org.assertj.core.api.InstanceOfAssertFactory;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -47,6 +54,29 @@ class JctCompilationTest {
 
   @Mock
   JctCompilation compilation;
+
+  @DisplayName("getArguments throws UnsupportedOperationException by default")
+  @Test
+  void getArgumentsThrowsUnsupportedOperationExceptionByDefault() {
+    // Given
+    when(compilation.getArguments()).thenCallRealMethod();
+
+    // Then
+    var version = JctCompilation.class.getModule().getDescriptor().version();
+
+    if (version.isPresent()) {
+      // We check this conditionally since IDEs won't always build the version in unless Maven
+      // has been called first.
+      assertThat(version)
+          .get(new InstanceOfAssertFactory<>(Version.class, GenericComparableAssert::new))
+          .isLessThan(Version.parse("1.0.0"));
+    }
+
+    assertThatThrownBy(compilation::getArguments)
+        .isInstanceOf(UnsupportedOperationException.class)
+        .hasMessage("This operation is not implemented, but will be mandatory in v1.0.0");
+  }
+
 
   @DisplayName("isFailure() returns opposite of isSuccessful()")
   @ValueSource(booleans = {true, false})

@@ -39,6 +39,7 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class JctCompilationImpl implements JctCompilation {
 
+  private final List<String> arguments;
   private final boolean success;
   private final boolean failOnWarnings;
   private final List<String> outputLines;
@@ -47,6 +48,10 @@ public final class JctCompilationImpl implements JctCompilation {
   private final JctFileManager fileManager;
 
   private JctCompilationImpl(Builder builder) {
+    arguments = unmodifiableList(
+        requireNonNullValues(builder.arguments, "arguments")
+    );
+
     success = requireNonNull(
         builder.success, "success"
     );
@@ -65,6 +70,11 @@ public final class JctCompilationImpl implements JctCompilation {
     fileManager = requireNonNull(
         builder.fileManager, "fileManager"
     );
+  }
+
+  @Override
+  public List<String> getArguments() {
+    return arguments;
   }
 
   @Override
@@ -103,6 +113,7 @@ public final class JctCompilationImpl implements JctCompilation {
         .attribute("success", success)
         .attribute("failOnWarnings", failOnWarnings)
         .attribute("fileManager", fileManager)
+        .attribute("arguments", arguments)
         .toString();
   }
 
@@ -124,6 +135,7 @@ public final class JctCompilationImpl implements JctCompilation {
   @API(since = "0.0.1", status = Status.INTERNAL)
   public static final class Builder {
 
+    private List<String> arguments;
     private Boolean failOnWarnings;
     private Boolean success;
     private List<String> outputLines;
@@ -133,12 +145,24 @@ public final class JctCompilationImpl implements JctCompilation {
 
     private Builder() {
       // Only initialized in this file.
+      arguments = null;
       failOnWarnings = null;
       success = null;
       outputLines = null;
       compilationUnits = null;
       diagnostics = null;
       fileManager = null;
+    }
+
+    /**
+     * Set the command-line arguments that were passed to the compiler.
+     *
+     * @param arguments the command-line arguments that were passed to the compiler.
+     * @return this builder.
+     */
+    public Builder arguments(List<String> arguments) {
+      this.arguments = arguments;
+      return this;
     }
 
     /**

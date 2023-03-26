@@ -445,6 +445,25 @@ class JctCompilationFactoryImplTest {
     }
   }
 
+  @DisplayName("Arguments get placed in the compilation result")
+  @Test
+  void argumentsGetPlacedInTheCompilationResult() throws IOException {
+    // Given
+    var fileObjects = Set.of(
+        somePathFileObject("foo.bar.Baz"),
+        somePathFileObject("do.ray.Me"),
+        somePathFileObject("a.b.C")
+    );
+    when(fileManager.list(any(), any(), any(), anyBoolean()))
+        .thenReturn(fileObjects);
+
+    // When
+    var result = doCompile(null);
+
+    // Then
+    assertThat(result.getArguments()).isEqualTo(flags);
+  }
+
   @DisplayName("Diagnostics get placed in the compilation result")
   @Test
   @SuppressWarnings("rawtypes")

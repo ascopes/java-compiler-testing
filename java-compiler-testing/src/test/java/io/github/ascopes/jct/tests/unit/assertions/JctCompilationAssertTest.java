@@ -15,7 +15,9 @@
  */
 package io.github.ascopes.jct.tests.unit.assertions;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someFlags;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -39,6 +41,42 @@ import org.junit.jupiter.params.provider.ValueSource;
  */
 @DisplayName("JctCompilationAssert tests")
 class JctCompilationAssertTest {
+
+  @DisplayName("JctCompilationAssert#arguments tests")
+  @Nested
+  class ArgumentsTest {
+
+    @DisplayName(".arguments() fails if the compilation is null")
+    @Test
+    void argumentsFailsIfCompilationIsNull() {
+      // Given
+      var assertions = new JctCompilationAssert(null);
+
+      // Then
+      assertThatThrownBy(assertions::arguments)
+          .isInstanceOf(AssertionError.class);
+    }
+
+    @DisplayName(".arguments() returns assertions on the arguments")
+    @Test
+    void argumentsReturnsAssertionsOnArguments() {
+      // Given
+      var compilation = mock(JctCompilation.class);
+      var arguments = someFlags();
+      when(compilation.getArguments())
+          .thenReturn(arguments);
+
+      // When
+      var assertions = new JctCompilationAssert(compilation).arguments();
+
+      // Then
+      assertThatCode(() -> assertions.containsExactlyElementsOf(arguments))
+          .doesNotThrowAnyException();
+
+      assertThatCode(() -> assertions.containsExactly("foo", "bar", "baz"))
+          .isInstanceOf(AssertionError.class);
+    }
+  }
 
   @DisplayName("JctCompilationAssert#isSuccessful tests")
   @Nested
