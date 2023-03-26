@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
+import io.github.ascopes.jct.tests.integration.AbstractIntegrationTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
 
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.DisplayName;
  * @author Ashley Scopes
  */
 @DisplayName("Multi-tiered compilation integration tests")
-class MultiTieredCompilationIntegrationTest {
+class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
 
   @DisplayName(
       "I can compile sources to classes and provide them in the classpath to a second compilation"
@@ -44,16 +45,8 @@ class MultiTieredCompilationIntegrationTest {
     ) {
       firstWorkspace
           .createSourcePathPackage()
-          .createFile("org", "example", "first", "Adder.java")
-          .withContents(
-              "package org.example.first;",
-              "",
-              "public class Adder {",
-              "  public int add(int a, int b) {",
-              "    return a + b;",
-              "  }",
-              "}"
-          );
+          .createDirectory("org", "example", "first")
+          .copyContentsFrom(resourcesDirectory().resolve("first"));
 
       var firstCompilation = compiler.compile(firstWorkspace);
       assertThatCompilation(firstCompilation)
@@ -66,19 +59,8 @@ class MultiTieredCompilationIntegrationTest {
 
       secondWorkspace.addClassPathPackage(firstWorkspace.getClassOutputPackages().get(0).getPath());
       secondWorkspace.createSourcePathPackage()
-          .createFile("org", "example", "second", "Main.java")
-          .withContents(
-              "package org.example.second;",
-              "",
-              "import org.example.first.Adder;",
-              "",
-              "public class Main {",
-              "  public static int addTogether(int a, int b) {",
-              "    Adder adder = new Adder();",
-              "    return adder.add(a, b);",
-              "  }",
-              "}"
-          );
+          .createDirectory("org", "example", "second")
+          .copyContentsFrom(resourcesDirectory().resolve("second"));
 
       var secondCompilation = compiler.compile(secondWorkspace);
       assertThatCompilation(secondCompilation)
@@ -105,16 +87,7 @@ class MultiTieredCompilationIntegrationTest {
     ) {
       firstWorkspace
           .createSourcePathPackage()
-          .createFile("org", "example", "first", "Adder.java")
-          .withContents(
-              "package org.example.first;",
-              "",
-              "public class Adder {",
-              "  public int add(int a, int b) {",
-              "    return a + b;",
-              "  }",
-              "}"
-          );
+          .copyContentsFrom(resourcesDirectory().resolve("first"));
 
       var firstCompilation = compiler.compile(firstWorkspace);
       assertThatCompilation(firstCompilation)
@@ -132,20 +105,9 @@ class MultiTieredCompilationIntegrationTest {
 
       var firstJar = firstWorkspace.getClassOutputPackages().get(1).getPath().resolve("first.jar");
       secondWorkspace.addClassPathPackage(firstJar);
-      secondWorkspace.createSourcePathPackage()
-          .createFile("org", "example", "second", "Main.java")
-          .withContents(
-              "package org.example.second;",
-              "",
-              "import org.example.first.Adder;",
-              "",
-              "public class Main {",
-              "  public static int addTogether(int a, int b) {",
-              "    Adder adder = new Adder();",
-              "    return adder.add(a, b);",
-              "  }",
-              "}"
-          );
+      secondWorkspace
+          .createSourcePathPackage()
+          .copyContentsFrom(resourcesDirectory().resolve("second"));
 
       var secondCompilation = compiler.compile(secondWorkspace);
       assertThatCompilation(secondCompilation)

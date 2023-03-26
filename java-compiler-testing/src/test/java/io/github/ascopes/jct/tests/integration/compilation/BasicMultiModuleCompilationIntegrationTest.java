@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
+import io.github.ascopes.jct.tests.integration.AbstractIntegrationTest;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.DisplayName;
  * @author Ashley Scopes
  */
 @DisplayName("Basic multi-module compilation integration tests")
-class BasicMultiModuleCompilationIntegrationTest {
+class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest {
 
   @DisplayName("I can compile a single module using multi-module layout using a RAM disk")
   @JavacCompilerTest(minVersion = 9)
@@ -37,20 +38,8 @@ class BasicMultiModuleCompilationIntegrationTest {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
       // Given
       workspace
-          .createSourcePathModule("hello.world")
-          .createFile("com", "example", "HelloWorld.java").withContents(
-              "package com.example;",
-              "public class HelloWorld {",
-              "  public static void main(String[] args) {",
-              "    System.out.println(\"Hello, World\");",
-              "  }",
-              "}"
-          )
-          .and().createFile("module-info.java").withContents(
-              "module hello.world {",
-              "  exports com.example;",
-              "}"
-          );
+          .createSourcePathModule("hello.world.singlemodule")
+          .copyContentsFrom(resourcesDirectory().resolve("hello.world.singlemodule"));
 
       // When
       var compilation = compiler.compile(workspace);
@@ -61,12 +50,12 @@ class BasicMultiModuleCompilationIntegrationTest {
 
       assertThatCompilation(compilation)
           .classOutput().modules()
-          .moduleExists("hello.world")
+          .moduleExists("hello.world.singlemodule")
           .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
 
       assertThatCompilation(compilation)
           .classOutput().modules()
-          .moduleExists("hello.world")
+          .moduleExists("hello.world.singlemodule")
           .fileExists("module-info.class").isNotEmptyFile();
     }
   }
@@ -77,20 +66,8 @@ class BasicMultiModuleCompilationIntegrationTest {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       // Given
       workspace
-          .createSourcePathModule("hello.world")
-          .createFile("com", "example", "HelloWorld.java").withContents(
-              "package com.example;",
-              "public class HelloWorld {",
-              "  public static void main(String[] args) {",
-              "    System.out.println(\"Hello, World\");",
-              "  }",
-              "}"
-          )
-          .and().createFile("module-info.java").withContents(
-              "module hello.world {",
-              "  exports com.example;",
-              "}"
-          );
+          .createSourcePathModule("hello.world.singlemodule")
+          .copyContentsFrom(resourcesDirectory().resolve("hello.world.singlemodule"));
 
       // When
       var compilation = compiler.compile(workspace);
@@ -101,12 +78,12 @@ class BasicMultiModuleCompilationIntegrationTest {
 
       assertThatCompilation(compilation)
           .classOutput().modules()
-          .moduleExists("hello.world")
+          .moduleExists("hello.world.singlemodule")
           .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
 
       assertThatCompilation(compilation)
           .classOutput().modules()
-          .moduleExists("hello.world")
+          .moduleExists("hello.world.singlemodule")
           .fileExists("module-info.class").isNotEmptyFile();
     }
   }
@@ -117,38 +94,12 @@ class BasicMultiModuleCompilationIntegrationTest {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
       // Given
       workspace
-          .createSourcePathModule("hello.world")
-          .createFile("com", "example", "HelloWorld.java").withContents(
-              "package com.example;",
-              "import com.example.greeter.Greeter;",
-              "public class HelloWorld {",
-              "  public static void main(String[] args) {",
-              "    System.out.println(Greeter.greet(\"World\"));",
-              "  }",
-              "}"
-          )
-          .and().createFile("module-info.java").withContents(
-              "module hello.world {",
-              "  requires greeter;",
-              "  exports com.example;",
-              "}"
-          );
+          .createSourcePathModule("hello.world.crossmodule")
+          .copyContentsFrom(resourcesDirectory().resolve("hello.world.crossmodule"));
 
       workspace
           .createSourcePathModule("greeter")
-          .createFile("com", "example", "greeter", "Greeter.java").withContents(
-              "package com.example.greeter;",
-              "public class Greeter {",
-              "  public static String greet(String name) {",
-              "    return \"Hello, \" + name + \"!\";",
-              "  }",
-              "}"
-          )
-          .and().createFile("module-info.java").withContents(
-              "module greeter {",
-              "  exports com.example.greeter;",
-              "}"
-          );
+          .copyContentsFrom(resourcesDirectory().resolve("greeter"));
 
       // When
       var compilation = compiler.compile(workspace);
@@ -159,12 +110,12 @@ class BasicMultiModuleCompilationIntegrationTest {
 
       assertThatCompilation(compilation)
           .classOutput().modules()
-          .moduleExists("hello.world")
+          .moduleExists("hello.world.crossmodule")
           .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
 
       assertThatCompilation(compilation)
           .classOutput().modules()
-          .moduleExists("hello.world")
+          .moduleExists("hello.world.crossmodule")
           .fileExists("module-info.class").isNotEmptyFile();
 
       assertThatCompilation(compilation)
@@ -185,38 +136,12 @@ class BasicMultiModuleCompilationIntegrationTest {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       // Given
       workspace
-          .createSourcePathModule("hello.world")
-          .createFile("com", "example", "HelloWorld.java").withContents(
-              "package com.example;",
-              "import com.example.greeter.Greeter;",
-              "public class HelloWorld {",
-              "  public static void main(String[] args) {",
-              "    System.out.println(Greeter.greet(\"World\"));",
-              "  }",
-              "}"
-          )
-          .and().createFile("module-info.java").withContents(
-              "module hello.world {",
-              "  requires greeter;",
-              "  exports com.example;",
-              "}"
-          );
+          .createSourcePathModule("hello.world.crossmodule")
+          .copyContentsFrom(resourcesDirectory().resolve("hello.world.crossmodule"));
 
       workspace
           .createSourcePathModule("greeter")
-          .createFile("com", "example", "greeter", "Greeter.java").withContents(
-              "package com.example.greeter;",
-              "public class Greeter {",
-              "  public static String greet(String name) {",
-              "    return \"Hello, \" + name + \"!\";",
-              "  }",
-              "}"
-          )
-          .and().createFile("module-info.java").withContents(
-              "module greeter {",
-              "  exports com.example.greeter;",
-              "}"
-          );
+          .copyContentsFrom(resourcesDirectory().resolve("greeter"));
 
       // When
       var compilation = compiler.compile(workspace);
@@ -226,12 +151,12 @@ class BasicMultiModuleCompilationIntegrationTest {
 
       assertThatCompilation(compilation)
           .classOutput().modules()
-          .moduleExists("hello.world")
+          .moduleExists("hello.world.crossmodule")
           .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
 
       assertThatCompilation(compilation)
           .classOutput().modules()
-          .moduleExists("hello.world")
+          .moduleExists("hello.world.crossmodule")
           .fileExists("module-info.class").isNotEmptyFile();
 
       assertThatCompilation(compilation)

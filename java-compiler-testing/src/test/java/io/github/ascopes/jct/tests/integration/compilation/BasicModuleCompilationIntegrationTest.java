@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
+import io.github.ascopes.jct.tests.integration.AbstractIntegrationTest;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.DisplayName;
  * @author Ashley Scopes
  */
 @DisplayName("Basic module compilation integration tests")
-class BasicModuleCompilationIntegrationTest {
+class BasicModuleCompilationIntegrationTest extends AbstractIntegrationTest {
 
   @DisplayName("I can compile a 'Hello, World!' module program using a RAM disk")
   @JavacCompilerTest(minVersion = 9)
@@ -38,20 +39,7 @@ class BasicModuleCompilationIntegrationTest {
       // Given
       workspace
           .createSourcePathPackage()
-          .createFile("com", "example", "HelloWorld.java").withContents(
-              "package com.example;",
-              "public class HelloWorld {",
-              "  public static void main(String[] args) {",
-              "    System.out.println(\"Hello, World\");",
-              "  }",
-              "}"
-          )
-          .and().createFile("module-info.java").withContents(
-              "module hello.world {",
-              "  requires java.base;",
-              "  exports com.example;",
-              "}"
-          );
+          .copyContentsFrom(resourcesDirectory());
 
       // When
       var compilation = compiler.compile(workspace);
@@ -81,20 +69,7 @@ class BasicModuleCompilationIntegrationTest {
       // Given
       workspace
           .createSourcePathPackage()
-          .createFile("com", "example", "HelloWorld.java").withContents(
-              "package com.example;",
-              "public class HelloWorld {",
-              "  public static void main(String[] args) {",
-              "    System.out.println(\"Hello, World\");",
-              "  }",
-              "}"
-          )
-          .and().createFile("module-info.java").withContents(
-              "module hello.world {",
-              "  requires java.base;",
-              "  exports com.example;",
-              "}"
-          );
+          .copyContentsFrom(resourcesDirectory());
 
       // When
       var compilation = compiler.compile(workspace);

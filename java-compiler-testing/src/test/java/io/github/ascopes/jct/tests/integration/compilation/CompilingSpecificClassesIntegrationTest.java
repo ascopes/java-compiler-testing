@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThat;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
+import io.github.ascopes.jct.tests.integration.AbstractIntegrationTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
 
@@ -28,14 +29,15 @@ import org.junit.jupiter.api.DisplayName;
  * @author Ashley Scopes
  */
 @DisplayName("Compiling specific classes integration tests")
-class CompilingSpecificClassesIntegrationTest {
+class CompilingSpecificClassesIntegrationTest extends AbstractIntegrationTest {
+
   @DisplayName("Only the classes that I specify get compiled")
   @JavacCompilerTest
   void onlyTheClassesSpecifiedGetCompiled(JctCompiler<?, ?> compiler) {
     try (var workspace = Workspaces.newWorkspace()) {
       workspace
           .createSourcePathPackage()
-          .copyContentsFrom("src", "test", "resources", "integration", "specificclasses");
+          .copyContentsFrom(resourcesDirectory());
 
       var compilation = compiler.compile(workspace, "Fibonacci", "HelloWorld");
 

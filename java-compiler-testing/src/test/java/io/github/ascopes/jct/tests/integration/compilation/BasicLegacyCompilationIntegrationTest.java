@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
+import io.github.ascopes.jct.tests.integration.AbstractIntegrationTest;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import javax.tools.StandardLocation;
@@ -30,7 +31,7 @@ import org.junit.jupiter.api.DisplayName;
  * @author Ashley Scopes
  */
 @DisplayName("Basic legacy compilation integration tests")
-class BasicLegacyCompilationIntegrationTest {
+class BasicLegacyCompilationIntegrationTest extends AbstractIntegrationTest {
 
   @DisplayName("I can compile a 'Hello, World!' program using a RAM directory")
   @JavacCompilerTest
@@ -38,15 +39,8 @@ class BasicLegacyCompilationIntegrationTest {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
       workspace
           .createPackage(StandardLocation.SOURCE_PATH)
-          .createFile("com", "example", "HelloWorld.java").withContents(
-              "package com.example;",
-              "public class HelloWorld {",
-              "  public static void main(String[] args) {",
-              "    System.out.println(\"Hello, World\");",
-              "  }",
-              "}"
-          );
-
+          .createDirectory("com", "example")
+          .copyContentsFrom(resourcesDirectory());
       var compilation = compiler.compile(workspace);
 
       assertThatCompilation(compilation)
@@ -65,14 +59,8 @@ class BasicLegacyCompilationIntegrationTest {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       workspace
           .createPackage(StandardLocation.SOURCE_PATH)
-          .createFile("com", "example", "HelloWorld.java").withContents(
-              "package com.example;",
-              "public class HelloWorld {",
-              "  public static void main(String[] args) {",
-              "    System.out.println(\"Hello, World\");",
-              "  }",
-              "}"
-          );
+          .createDirectory("com", "example")
+          .copyContentsFrom(resourcesDirectory());
 
       var compilation = compiler.compile(workspace);
 
