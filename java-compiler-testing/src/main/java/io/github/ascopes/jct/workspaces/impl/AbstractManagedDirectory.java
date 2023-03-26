@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.workspaces.impl;
 
 import static io.github.ascopes.jct.utils.FileUtils.retrieveRequiredUrl;
+import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.utils.ToStringBuilder;
@@ -23,6 +24,7 @@ import io.github.ascopes.jct.workspaces.DirectoryBuilder;
 import io.github.ascopes.jct.workspaces.FileBuilder;
 import io.github.ascopes.jct.workspaces.ManagedDirectory;
 import io.github.ascopes.jct.workspaces.PathRoot;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -35,7 +37,7 @@ import org.jspecify.annotations.Nullable;
  * Abstract base for implementing a reusable managed wrapper around a directory of some sort.
  *
  * <p>This is designed to simplify the creation of file and directory trees, and manage the release
- * of resources once no longer needed automatically, helping to keep test logic simple and clean.
+ * of resources once no longer needed automatkeep test logic simple and clean.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -59,6 +61,21 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
     this.rootDirectory = requireNonNull(rootDirectory, "rootDirectory");
     uri = this.rootDirectory.toUri();
     url = retrieveRequiredUrl(this.rootDirectory);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   * @return the bytes that make up the JAR that was created from this directory.
+   */
+  @Override
+  public final byte[] asJar() {
+    return uncheckedIo(() -> {
+      try (var baos = new ByteArrayOutputStream()) {
+        JarFactoryImpl.getInstance().createJarFrom(baos, getPath());
+        return baos.toByteArray();
+      }
+    });
   }
 
   /**
