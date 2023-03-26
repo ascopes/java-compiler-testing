@@ -70,7 +70,7 @@ class ImmutablesIntegrationTest {
   }
 
   @DisplayName("Immutables @Value produces the expected class for modules")
-  @JavacCompilerTest(modules = true)
+  @JavacCompilerTest(minVersion = 9)
   void immutablesValueProducesTheExpectedClassForModules(JctCompiler compiler) {
     try (def workspace = Workspaces.newWorkspace()) {
       // Given

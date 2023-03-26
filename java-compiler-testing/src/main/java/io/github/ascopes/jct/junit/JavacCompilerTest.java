@@ -97,9 +97,9 @@ public @interface JavacCompilerTest {
    * varies between versions of the JDK that are in use.
    *
    * <p>If the version is lower than the minimum supported version, then the minimum supported
-   * version of the compiler will be used instead. This enables writing tests that will work on
-   * a range of JDKs during builds without needing to duplicate the test to satisfy different
-   * JDK supported version ranges.
+   * version of the compiler will be used instead. This enables writing tests that will work on a
+   * range of JDKs during builds without needing to duplicate the test to satisfy different JDK
+   * supported version ranges.
    *
    * @return the minimum version.
    */
@@ -112,9 +112,9 @@ public @interface JavacCompilerTest {
    * varies between versions of the JDK that are in use.
    *
    * <p>If the version is higher than the maximum supported version, then the maximum supported
-   * version of the compiler will be used instead. This enables writing tests that will work on
-   * a range of JDKs during builds without needing to duplicate the test to satisfy different
-   * JDK supported version ranges.
+   * version of the compiler will be used instead. This enables writing tests that will work on a
+   * range of JDKs during builds without needing to duplicate the test to satisfy different JDK
+   * supported version ranges.
    *
    * @return the maximum version.
    */
@@ -134,7 +134,7 @@ public @interface JavacCompilerTest {
    *   opens org.example.mytests to io.github.ascopes.jct;
    * }
    * </code></pre>
-   *
+   * <p>
    * An example of usage:
    *
    * <pre><code>

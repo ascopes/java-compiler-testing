@@ -79,7 +79,7 @@ class LombokIntegrationTest {
   }
 
   @DisplayName("Lombok @Data compiles the expected data class with module support")
-  @JavacCompilerTest(modules = true)
+  @JavacCompilerTest(minVersion = 9)
   void lombokDataCompilesTheExpectedDataClassWithModuleSupport(JctCompiler compiler) {
     try (def workspace = Workspaces.newWorkspace()) {
       // Given
