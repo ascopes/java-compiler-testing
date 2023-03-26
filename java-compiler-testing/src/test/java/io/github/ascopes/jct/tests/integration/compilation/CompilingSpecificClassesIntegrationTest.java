@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.tests.integration;
+package io.github.ascopes.jct.tests.integration.compilation;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThat;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.tests.integration;
+package io.github.ascopes.jct.tests.integration.compilation;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 
@@ -56,7 +56,13 @@ class MultiTieredCompilationIntegrationTest {
           );
 
       var firstCompilation = compiler.compile(firstWorkspace);
-      assertThatCompilation(firstCompilation).isSuccessfulWithoutWarnings();
+      assertThatCompilation(firstCompilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutput()
+          .packages()
+          .fileExists("org", "example", "first", "Adder.class")
+          .isRegularFile()
+          .isNotEmptyFile();
 
       secondWorkspace.addClassPathPackage(firstWorkspace.getClassOutputPackages().get(0).getPath());
       secondWorkspace.createSourcePathPackage()
@@ -75,7 +81,13 @@ class MultiTieredCompilationIntegrationTest {
           );
 
       var secondCompilation = compiler.compile(secondWorkspace);
-      assertThatCompilation(secondCompilation).isSuccessfulWithoutWarnings();
+      assertThatCompilation(secondCompilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutput()
+          .packages()
+          .fileExists("org", "example", "second", "Main.class")
+          .isRegularFile()
+          .isNotEmptyFile();
     }
   }
 
@@ -105,7 +117,14 @@ class MultiTieredCompilationIntegrationTest {
           );
 
       var firstCompilation = compiler.compile(firstWorkspace);
-      assertThatCompilation(firstCompilation).isSuccessfulWithoutWarnings();
+      assertThatCompilation(firstCompilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutput()
+          .packages()
+          .fileExists("org", "example", "first", "Adder.class")
+          .isRegularFile()
+          .isNotEmptyFile();
+
       firstWorkspace
           .createClassOutputPackage()
           .createFile("first.jar")
@@ -129,7 +148,13 @@ class MultiTieredCompilationIntegrationTest {
           );
 
       var secondCompilation = compiler.compile(secondWorkspace);
-      assertThatCompilation(secondCompilation).isSuccessfulWithoutWarnings();
+      assertThatCompilation(secondCompilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutput()
+          .packages()
+          .fileExists("org", "example", "second", "Main.class")
+          .isRegularFile()
+          .isNotEmptyFile();
     }
   }
 }
