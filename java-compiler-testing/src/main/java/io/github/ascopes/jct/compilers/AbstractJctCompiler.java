@@ -428,16 +428,14 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   /**
-   * Get the compiler name.
+   * Get the string representation of the compiler.
    *
-   * @return the compiler name.
-   * @see #getName()
-   * @see #name(String)
-   * @deprecated Use {@link #getName()} instead.
+   * @return the string representation of the compiler.
    */
-  @Deprecated
   @Override
   public final String toString() {
+    // This returns the compiler name to simplify parameterization naming in @JavacCompilerTest
+    // parameterized tests.
     return name;
   }
 

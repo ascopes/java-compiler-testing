@@ -15,8 +15,6 @@
  */
 package io.github.ascopes.jct.tests.unit.junit;
 
-import static io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl.getEarliestSupportedVersionInt;
-import static io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl.getLatestSupportedVersionInt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.params.support.AnnotationConsumerInitializer.initialize;
@@ -32,9 +30,8 @@ import io.github.ascopes.jct.junit.VersionStrategy;
 import java.lang.reflect.AnnotatedElement;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * {@link JavacCompilersProvider} tests.
@@ -43,14 +40,13 @@ import org.junit.jupiter.params.provider.ValueSource;
 class JavacCompilersProviderTest {
 
   @DisplayName("Provider uses the user-provided compiler version bounds when valid")
-  @ValueSource(booleans = {true, false})
-  @ParameterizedTest(name = "when modules = {0}")
-  void providerUsesTheUserProvidedVersionRangesWhenValid(boolean modules) {
+  @Test
+  void providerUsesTheUserProvidedVersionRangesWhenValid() {
     // Given
     try (var javacMock = mockStatic(JavacJctCompilerImpl.class)) {
-      javacMock.when(() -> getEarliestSupportedVersionInt(modules)).thenReturn(8);
-      javacMock.when(() -> getLatestSupportedVersionInt(modules)).thenReturn(17);
-      var annotation = someAnnotation(10, 15, modules);
+      javacMock.when(JavacJctCompilerImpl::getEarliestSupportedVersionInt).thenReturn(8);
+      javacMock.when(JavacJctCompilerImpl::getLatestSupportedVersionInt).thenReturn(17);
+      var annotation = someAnnotation(10, 15);
       var test = someAnnotatedElement(annotation);
       var context = mock(ExtensionContext.class);
 
@@ -80,14 +76,13 @@ class JavacCompilersProviderTest {
   }
 
   @DisplayName("Provider uses the minimum compiler version that is allowed if exceeded")
-  @ValueSource(booleans = {true, false})
-  @ParameterizedTest(name = "when modules = {0}")
-  void providerUsesTheMinCompilerVersionAllowedIfExceeded(boolean modules) {
+  @Test
+  void providerUsesTheMinCompilerVersionAllowedIfExceeded() {
     // Given
     try (var javacMock = mockStatic(JavacJctCompilerImpl.class)) {
-      javacMock.when(() -> getEarliestSupportedVersionInt(modules)).thenReturn(8);
-      javacMock.when(() -> getLatestSupportedVersionInt(modules)).thenReturn(17);
-      var annotation = someAnnotation(1, 15, modules);
+      javacMock.when(JavacJctCompilerImpl::getEarliestSupportedVersionInt).thenReturn(8);
+      javacMock.when(JavacJctCompilerImpl::getLatestSupportedVersionInt).thenReturn(17);
+      var annotation = someAnnotation(1, 15);
       var test = someAnnotatedElement(annotation);
       var context = mock(ExtensionContext.class);
 
@@ -117,14 +112,13 @@ class JavacCompilersProviderTest {
   }
 
   @DisplayName("Provider uses the maximum compiler version that is allowed if exceeded")
-  @ValueSource(booleans = {true, false})
-  @ParameterizedTest(name = "when modules = {0}")
-  void providerUsesTheMaxCompilerVersionAllowedIfExceeded(boolean modules) {
+  @Test
+  void providerUsesTheMaxCompilerVersionAllowedIfExceeded() {
     // Given
     try (var javacMock = mockStatic(JavacJctCompilerImpl.class)) {
-      javacMock.when(() -> getEarliestSupportedVersionInt(modules)).thenReturn(8);
-      javacMock.when(() -> getLatestSupportedVersionInt(modules)).thenReturn(17);
-      var annotation = someAnnotation(10, 17, modules);
+      javacMock.when(JavacJctCompilerImpl::getEarliestSupportedVersionInt).thenReturn(8);
+      javacMock.when(JavacJctCompilerImpl::getLatestSupportedVersionInt).thenReturn(17);
+      var annotation = someAnnotation(10, 17);
       var test = someAnnotatedElement(annotation);
       var context = mock(ExtensionContext.class);
 
@@ -154,17 +148,14 @@ class JavacCompilersProviderTest {
   }
 
   @SafeVarargs
-  @SuppressWarnings("removal")
   final JavacCompilerTest someAnnotation(
       int min,
       int max,
-      boolean modules,
       Class<? extends JctCompilerConfigurer<?>>... configurers
   ) {
     var annotation = mock(JavacCompilerTest.class);
     when(annotation.minVersion()).thenReturn(min);
     when(annotation.maxVersion()).thenReturn(max);
-    when(annotation.modules()).thenReturn(modules);
     when(annotation.configurers()).thenReturn(configurers);
     when(annotation.versionStrategy()).thenReturn(VersionStrategy.RELEASE);
     when(annotation.annotationType()).thenAnswer(ctx -> JavacCompilerTest.class);
