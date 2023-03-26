@@ -160,18 +160,6 @@ public @interface JavacCompilerTest {
   Class<? extends JctCompilerConfigurer<?>>[] configurers() default {};
 
   /**
-   * Whether we need to support modules or not.
-   *
-   * <p>Setting this to true will skip any versions of the compiler that do not support JPMS
-   * modules.
-   *
-   * @return {@code true} if we need to support modules, or {@code false} if we do not.
-   * @deprecated this will be removed in a future release, since Java 8 is reaching end-of-life.
-   */
-  @Deprecated(forRemoval = true, since = "0.1.0")
-  boolean modules() default false;
-
-  /**
    * The version strategy to use.
    *
    * <p>This determines whether the version number being iterated across specifies the

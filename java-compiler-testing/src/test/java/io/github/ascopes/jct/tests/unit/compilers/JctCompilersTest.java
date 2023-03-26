@@ -37,27 +37,6 @@ class JctCompilersTest implements UtilityClassTestTemplate {
     return JctCompilers.class;
   }
 
-  // TODO: remove me.
-  @DisplayName(".createPlatformCompiler() creates a JavacJctCompilerImpl instance")
-  @Deprecated(forRemoval = true)
-  @Test
-  void createPlatformCompilerReturnsTheExpectedInstance() {
-    try (var javacJctCompilerImplMock = Mockito.mockConstruction(JavacJctCompilerImpl.class)) {
-      // When
-      @SuppressWarnings("removal")
-      var compiler = JctCompilers.createPlatformCompiler();
-
-      // Then
-      assertThat(compiler)
-          .isInstanceOf(JavacJctCompilerImpl.class);
-
-      assertThat(javacJctCompilerImplMock.constructed())
-          .singleElement()
-          // Nested assertion to swap expected/actual args.
-          .satisfies(constructed -> assertThat(compiler).isSameAs(constructed));
-    }
-  }
-
   @DisplayName(".newPlatformCompiler() creates a JavacJctCompilerImpl instance")
   @Test
   void newPlatformCompilerReturnsTheExpectedInstance() {

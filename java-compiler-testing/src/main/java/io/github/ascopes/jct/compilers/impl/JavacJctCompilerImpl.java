@@ -47,7 +47,7 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
 
   @Override
   public String getDefaultRelease() {
-    return Integer.toString(getLatestSupportedVersionInt(false));
+    return Integer.toString(getLatestSupportedVersionInt());
   }
 
   @Override
@@ -70,14 +70,11 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
   /**
    * Get the minimum version of Javac that is supported.
    *
-   * <p>Note, once Java 8 reaches the end of the EOL support window,
-   * the {@code modules} parameter will be ignored and deprecated in a future release, instead
-   * always defaulting to {@code true}.
-   *
-   * @param modules whether modules need to be supported or not.
    * @return the minimum supported version.
+   * @since 1.0.0
    */
-  public static int getEarliestSupportedVersionInt(boolean modules) {
+  @API(since = "1.0.0", status = Status.STABLE)
+  public static int getEarliestSupportedVersionInt() {
     // Purposely do not hardcode members of the SourceVersion enum here other
     // than utility methods, as this prevents compilation problems on various
     // versions of the JDK when certain members are unavailable.
@@ -92,27 +89,16 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctComp
       return 9;
     }
 
-    // Anything below Java 20 allows Java 9 as the minimum for JPMS support,
-    // or Java 8 for non-JPMS compilations.
-    if (modules) {
-      return 9;
-    }
-
     return 8;
   }
 
   /**
    * Get the maximum version of Javac that is supported.
    *
-   * <p>Note, once Java 8 reaches the end of the EOL support window,
-   * the {@code modules} parameter will be ignored and deprecated in a future release, instead
-   * always defaulting to {@code true}.
-   *
-   * @param modules whether to require module support or not. This is currently ignored but exists
-   *                for future compatibility purposes.
    * @return the maximum supported version.
    */
-  public static int getLatestSupportedVersionInt(@SuppressWarnings("unused") boolean modules) {
+  @API(since = "1.0.0", status = Status.STABLE)
+  public static int getLatestSupportedVersionInt() {
     return SourceVersion.latestSupported().ordinal();
   }
 }

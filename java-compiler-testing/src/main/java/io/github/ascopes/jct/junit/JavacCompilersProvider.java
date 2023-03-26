@@ -49,25 +49,21 @@ public final class JavacCompilersProvider extends AbstractCompilersProvider
   }
 
   @Override
-  protected int minSupportedVersion(boolean modules) {
-    return JavacJctCompilerImpl.getEarliestSupportedVersionInt(modules);
+  protected int minSupportedVersion() {
+    return JavacJctCompilerImpl.getEarliestSupportedVersionInt();
   }
 
   @Override
-  protected int maxSupportedVersion(boolean modules) {
-    return JavacJctCompilerImpl.getLatestSupportedVersionInt(modules);
+  protected int maxSupportedVersion() {
+    return JavacJctCompilerImpl.getLatestSupportedVersionInt();
   }
 
   @Override
-  @SuppressWarnings("removal")
-  public void accept(JavacCompilerTest javacCompilers) {
-    // Super is needed here to prevent IntelliJ getting confused.
-    super.configure(
-        javacCompilers.minVersion(),
-        javacCompilers.maxVersion(),
-        javacCompilers.modules(),
-        javacCompilers.configurers(),
-        javacCompilers.versionStrategy()
-    );
+  public void accept(JavacCompilerTest annotation) {
+    var min = annotation.minVersion();
+    var max = annotation.maxVersion();
+    var configurers = annotation.configurers();
+    var versioning = annotation.versionStrategy();
+    configure(min, max, configurers, versioning);
   }
 }

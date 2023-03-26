@@ -154,19 +154,17 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
    *
    * @param min               the inclusive minimum compiler version to use.
    * @param max               the inclusive maximum compiler version to use.
-   * @param modules           whether the compiler version must support modules.
    * @param configurerClasses the configurer classes to apply to each compiler.
    * @param versionStrategy   the version strategy to use.
    */
   protected final void configure(
       int min,
       int max,
-      boolean modules,
       Class<? extends JctCompilerConfigurer<?>>[] configurerClasses,
       VersionStrategy versionStrategy
   ) {
-    min = Math.max(min, minSupportedVersion(modules));
-    max = Math.min(max, maxSupportedVersion(modules));
+    min = Math.max(min, minSupportedVersion());
+    max = Math.min(max, maxSupportedVersion());
 
     if (max < 8 || min < 8) {
       throw new IllegalArgumentException("Cannot use a Java version less than Java 8");
@@ -195,18 +193,20 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   /**
    * Get the minimum supported compiler version.
    *
-   * @param modules whether to require module support or not.
    * @return the minimum supported compiler version.
+   * @since 1.0.0
    */
-  protected abstract int minSupportedVersion(boolean modules);
+  @API(since = "1.0.0", status = Status.STABLE)
+  protected abstract int minSupportedVersion();
 
   /**
    * Get the maximum supported compiler version.
    *
-   * @param modules whether to require module support or not.
    * @return the minimum supported compiler version.
+   * @since 1.0.0
    */
-  protected abstract int maxSupportedVersion(@SuppressWarnings("unused") boolean modules);
+  @API(since = "1.0.0", status = Status.STABLE)
+  protected abstract int maxSupportedVersion();
 
   private JctCompiler<?, ?> createCompilerForVersion(int version) {
     var compiler = initializeNewCompiler();

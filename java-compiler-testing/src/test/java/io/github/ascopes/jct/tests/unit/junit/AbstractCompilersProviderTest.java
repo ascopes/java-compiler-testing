@@ -472,7 +472,7 @@ class AbstractCompilersProviderTest {
         Class<? extends JctCompilerConfigurer<?>>... configurerClasses
     ) {
       configureInternalsCalled = false;
-      configure(min, max, false, configurerClasses, versionStrategy);
+      configure(min, max, configurerClasses, versionStrategy);
       configureInternalsCalled = true;
     }
 
@@ -496,12 +496,12 @@ class AbstractCompilersProviderTest {
     }
 
     @Override
-    protected int minSupportedVersion(boolean modules) {
+    protected int minSupportedVersion() {
       return minSupportedVersion;
     }
 
     @Override
-    protected int maxSupportedVersion(boolean modules) {
+    protected int maxSupportedVersion() {
       return maxSupportedVersion;
     }
   }
