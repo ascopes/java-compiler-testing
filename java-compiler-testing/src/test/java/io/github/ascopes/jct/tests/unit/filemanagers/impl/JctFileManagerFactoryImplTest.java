@@ -119,6 +119,7 @@ class JctFileManagerFactoryImplTest {
 
   @DisplayName("The configurer chain uses the expected configurers")
   @Test
+  @SuppressWarnings("removal")
   void createdFileManagersAreReturnedAsTheResultFromTheConfigurerChain() {
     // When
     var configurerChain = factory.createConfigurerChain(workspace);

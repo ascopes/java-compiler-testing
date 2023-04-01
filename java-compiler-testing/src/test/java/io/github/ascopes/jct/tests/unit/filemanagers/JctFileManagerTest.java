@@ -152,6 +152,7 @@ class JctFileManagerTest {
   @DisplayName(".getPlatformClassPathGroup() makes the expected call")
   @MethodSource("outputContainerGroupResults")
   @ParameterizedTest(name = "when internal getter returns {0}")
+  @SuppressWarnings("removal")
   void getPlatformClassPathGroupMakesTheExpectedCall(PackageContainerGroup expected) {
     // Given
     when(fileManager.getPlatformClassPathGroup()).thenCallRealMethod();

@@ -513,7 +513,11 @@ public interface Workspace extends AutoCloseable {
    * @throws IllegalArgumentException if the path does not exist.
    * @see #addPackage(Location, Path)
    * @see #createPlatformClassPathPackage()
+   * @deprecated The platform class path has been mostly replaced by the use of system modules, so
+   * should not be used. This will be removed in v1.0.0.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default void addPlatformClassPathPackage(Path path) {
     addPackage(StandardLocation.PLATFORM_CLASS_PATH, path);
   }
@@ -756,7 +760,11 @@ public interface Workspace extends AutoCloseable {
    * @return the created test directory.
    * @see #createPackage(Location)
    * @see #addPlatformClassPathPackage(Path)
+   * @deprecated The platform class path has been mostly replaced by the use of system modules, so
+   * should not be used. This will be removed in v1.0.0.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default ManagedDirectory createPlatformClassPathPackage() {
     return createPackage(StandardLocation.PLATFORM_CLASS_PATH);
   }
@@ -850,7 +858,7 @@ public interface Workspace extends AutoCloseable {
    * Get the module path roots for {@link StandardLocation#CLASS_OUTPUT class outputs}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   *     found.
+   * found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getClassOutputModules() {
@@ -884,7 +892,7 @@ public interface Workspace extends AutoCloseable {
    * Get the module path roots for {@link StandardLocation#SOURCE_OUTPUT source outputs}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   *     found.
+   * found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getSourceOutputModules() {
@@ -939,7 +947,7 @@ public interface Workspace extends AutoCloseable {
    * {@link StandardLocation#ANNOTATION_PROCESSOR_MODULE_PATH annotation processor module path}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   *     found.
+   * found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getAnnotationProcessorPathModules() {
@@ -985,7 +993,7 @@ public interface Workspace extends AutoCloseable {
    * {@link StandardLocation#NATIVE_HEADER_OUTPUT native header outputs}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   *     found.
+   * found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getNativeHeaderOutputModules() {
@@ -1008,7 +1016,7 @@ public interface Workspace extends AutoCloseable {
    * {@link StandardLocation#MODULE_SOURCE_PATH module source paths}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   *     found.
+   * found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getSourcePathModules() {
@@ -1031,7 +1039,7 @@ public interface Workspace extends AutoCloseable {
    * {@link StandardLocation#UPGRADE_MODULE_PATH upgrade module paths}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   *     found.
+   * found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getUpgradeModulePathModules() {
@@ -1053,7 +1061,7 @@ public interface Workspace extends AutoCloseable {
    * Get the module path roots for the {@link StandardLocation#SYSTEM_MODULES system modules}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   *     found.
+   * found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getSystemModulePathModules() {
@@ -1075,7 +1083,7 @@ public interface Workspace extends AutoCloseable {
    * Get the module path roots for the {@link StandardLocation#MODULE_PATH module paths}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   *     found.
+   * found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getModulePathModules() {
@@ -1098,7 +1106,7 @@ public interface Workspace extends AutoCloseable {
    * {@link StandardLocation#PATCH_MODULE_PATH patch module paths}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   *     found.
+   * found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getPatchModulePathModules() {

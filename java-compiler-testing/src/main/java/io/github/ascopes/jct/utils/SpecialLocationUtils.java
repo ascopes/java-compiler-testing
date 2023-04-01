@@ -121,11 +121,18 @@ public final class SpecialLocationUtils extends UtilityClass {
    *
    * @return a list across the paths.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   public static List<Path> currentPlatformClassPathLocations() {
     var mxBean = ManagementFactory.getRuntimeMXBean();
 
     if (mxBean.isBootClassPathSupported()) {
-      LOGGER.trace("Platform (boot) classpath is supported on this JVM, so will be inspected");
+      LOGGER.warn(
+          "Warning: platform (boot) class path locations were found on this JVM, but this "
+              + "feature is deprecated for removal in v1.0.0 of the java-compiler-testing API. "
+              + "Consider disabling platform classpath discovery explicitly to prevent tests "
+              + "having differing behaviour for v1.0.0."
+      );
       return createPaths(mxBean.getBootClassPath());
     }
 

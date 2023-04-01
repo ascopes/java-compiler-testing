@@ -140,6 +140,7 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
 
   @DisplayName("currentPlatformClassPathLocations() returns the class path locations that exist")
   @Test
+  @SuppressWarnings("removal")
   void currentPlatformClassPathLocationsReturnsTheClassPathLocationsThatExist() throws IOException {
     // Given
     try (
@@ -163,6 +164,7 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
 
   @DisplayName("currentPlatformClassPathLocations() returns empty when boot path not supported")
   @Test
+  @SuppressWarnings("removal")
   void currentPlatformClassPathLocationsReturnsEmptyWhenBootPathNotSupported() {
     // Given
     try (var mx = new MockedMxBean<>(ManagementFactory::getRuntimeMXBean, RuntimeMXBean.class)) {

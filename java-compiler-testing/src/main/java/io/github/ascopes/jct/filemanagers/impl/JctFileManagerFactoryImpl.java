@@ -74,6 +74,7 @@ public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
    * @return the chain to use.
    */
   @VisibleForTestingOnly
+  @SuppressWarnings("removal")
   public JctFileManagerConfigurerChain createConfigurerChain(Workspace workspace) {
     // The order here is important. Do not adjust it without testing extensively first!
     return new JctFileManagerConfigurerChain()

@@ -215,6 +215,7 @@ class WorkspaceTest {
 
   @DisplayName(".addPlatformClassPathPackage(Path) calls addPackage(PLATFORM_CLASS_PATH, Path)")
   @Test
+  @SuppressWarnings("removal")
   void addPlatformClassPathPackageCallsAddPackage() {
     // Given
     doCallRealMethod().when(workspace).addPlatformClassPathPackage(any());
@@ -470,6 +471,7 @@ class WorkspaceTest {
 
   @DisplayName(".createPlatformClassPathPackage() calls createPackage(PLATFORM_CLASS_PATH)")
   @Test
+  @SuppressWarnings("removal")
   void createPlatformClassPathPackageCallsCreatePackage() {
     // Given
     doCallRealMethod().when(workspace).createPlatformClassPathPackage();

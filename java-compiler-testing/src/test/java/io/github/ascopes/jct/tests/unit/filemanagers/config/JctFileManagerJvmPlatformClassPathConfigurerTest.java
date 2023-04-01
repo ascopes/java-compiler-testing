@@ -47,6 +47,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  */
 @DisplayName("JctFileManagerJvmPlatformClassPathConfigurer tests")
 @ExtendWith(MockitoExtension.class)
+@SuppressWarnings("removal")
 class JctFileManagerJvmPlatformClassPathConfigurerTest {
 
   @Mock
