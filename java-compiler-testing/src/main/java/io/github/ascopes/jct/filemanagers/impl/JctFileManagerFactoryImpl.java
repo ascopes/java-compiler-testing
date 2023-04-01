@@ -23,7 +23,6 @@ import io.github.ascopes.jct.filemanagers.config.JctFileManagerConfigurerChain;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerJvmClassPathConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerJvmClassPathModuleConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerJvmModulePathConfigurer;
-import io.github.ascopes.jct.filemanagers.config.JctFileManagerJvmPlatformClassPathConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerJvmSystemModulesConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerLoggingProxyConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerRequiredLocationsConfigurer;
@@ -74,7 +73,6 @@ public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
    * @return the chain to use.
    */
   @VisibleForTestingOnly
-  @SuppressWarnings("removal")
   public JctFileManagerConfigurerChain createConfigurerChain(Workspace workspace) {
     // The order here is important. Do not adjust it without testing extensively first!
     return new JctFileManagerConfigurerChain()
@@ -82,7 +80,6 @@ public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
         .addLast(new JctFileManagerJvmClassPathConfigurer(compiler))
         .addLast(new JctFileManagerJvmClassPathModuleConfigurer(compiler))
         .addLast(new JctFileManagerJvmModulePathConfigurer(compiler))
-        .addLast(new JctFileManagerJvmPlatformClassPathConfigurer(compiler))
         .addLast(new JctFileManagerJvmSystemModulesConfigurer(compiler))
         .addLast(new JctFileManagerAnnotationProcessorClassPathConfigurer(compiler))
         .addLast(new JctFileManagerRequiredLocationsConfigurer(workspace))

@@ -283,15 +283,6 @@ class AbstractJctCompilerTest {
           .isEqualTo(JctCompiler.DEFAULT_INHERIT_MODULE_PATH);
     }
 
-    @DisplayName("constructor initialises inheritPlatformClassPath to default value")
-    @Test
-    @SuppressWarnings("removal")
-    void constructorInitialisesInheritPlatformClassPathToDefaultValue() {
-      // Then
-      assertThatCompilerField("inheritPlatformClassPath")
-          .isEqualTo(JctCompiler.DEFAULT_INHERIT_PLATFORM_CLASS_PATH);
-    }
-
     @DisplayName("constructor initialises inheritSystemModulePath to default value")
     @Test
     void constructorInitialisesInheritSystemModulePathToDefaultValue() {
@@ -1284,46 +1275,6 @@ class AbstractJctCompilerTest {
     void inheritModulePathReturnsTheCompiler() {
       // When
       var result = compiler.inheritModulePath(true);
-
-      // Then
-      assertThat(result).isSameAs(compiler);
-    }
-  }
-
-  @DisplayName(".isInheritPlatformClassPath() returns the expected values")
-  @ValueSource(booleans = {true, false})
-  @ParameterizedTest(name = "for inheritPlatformClassPath = {0}")
-  @SuppressWarnings("removal")
-  void isInheritPlatformClassPathReturnsExpectedValue(boolean expected) {
-    // Given
-    setFieldOnCompiler("inheritPlatformClassPath", expected);
-
-    // Then
-    assertThat(compiler.isInheritPlatformClassPath()).isEqualTo(expected);
-  }
-
-  @DisplayName("AbstractJctCompiler#inheritPlatformClassPath tests")
-  @Nested
-  class InheritPlatformClassPathTests {
-
-    @DisplayName(".inheritPlatformClassPath(...) sets the expected values")
-    @ValueSource(booleans = {true, false})
-    @ParameterizedTest(name = "for inheritPlatformClassPath = {0}")
-    @SuppressWarnings("removal")
-    void inheritPlatformClassPathSetsExpectedValue(boolean expected) {
-      // When
-      compiler.inheritPlatformClassPath(expected);
-
-      // Then
-      assertThatCompilerField("inheritPlatformClassPath").isEqualTo(expected);
-    }
-
-    @DisplayName(".inheritPlatformClassPath(...) returns the compiler")
-    @Test
-    @SuppressWarnings("removal")
-    void inheritPlatformClassPathReturnsTheCompiler() {
-      // When
-      var result = compiler.inheritPlatformClassPath(true);
 
       // Then
       assertThat(result).isSameAs(compiler);

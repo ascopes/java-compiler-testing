@@ -213,22 +213,6 @@ class WorkspaceTest {
     verifyNoMoreInteractions(workspace);
   }
 
-  @DisplayName(".addPlatformClassPathPackage(Path) calls addPackage(PLATFORM_CLASS_PATH, Path)")
-  @Test
-  @SuppressWarnings("removal")
-  void addPlatformClassPathPackageCallsAddPackage() {
-    // Given
-    doCallRealMethod().when(workspace).addPlatformClassPathPackage(any());
-    var path = mock(Path.class);
-
-    // When
-    workspace.addPlatformClassPathPackage(path);
-
-    // Then
-    verify(workspace).addPackage(StandardLocation.PLATFORM_CLASS_PATH, path);
-    verifyNoMoreInteractions(workspace);
-  }
-
   @DisplayName(".addNativeHeaderOutputPackage(Path) calls addPackage(NATIVE_HEADER_OUTPUT, Path)")
   @Test
   @SuppressWarnings("removal")
@@ -471,21 +455,6 @@ class WorkspaceTest {
 
     // Then
     verify(workspace).createModule(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, module);
-    verifyNoMoreInteractions(workspace);
-  }
-
-  @DisplayName(".createPlatformClassPathPackage() calls createPackage(PLATFORM_CLASS_PATH)")
-  @Test
-  @SuppressWarnings("removal")
-  void createPlatformClassPathPackageCallsCreatePackage() {
-    // Given
-    doCallRealMethod().when(workspace).createPlatformClassPathPackage();
-
-    // When
-    workspace.createPlatformClassPathPackage();
-
-    // Then
-    verify(workspace).createPackage(StandardLocation.PLATFORM_CLASS_PATH);
     verifyNoMoreInteractions(workspace);
   }
 

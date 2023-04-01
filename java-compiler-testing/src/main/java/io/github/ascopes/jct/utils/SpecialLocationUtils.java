@@ -109,37 +109,6 @@ public final class SpecialLocationUtils extends UtilityClass {
     return createPaths(System.getProperty(JDK_MODULE_PROPERTY, NO_PATH));
   }
 
-  /**
-   * Get the boot classpath of the current JVM. This will usually include any dependencies you may
-   * have loaded into memory, and may refer to directories of {@code *.class} files, {@code *.war}
-   * files, or {@code *.jar} files.
-   *
-   * <p>This corresponds to the {@link javax.tools.StandardLocation#PLATFORM_CLASS_PATH} location.
-   *
-   * <p>Most OpenJDK implementations do not appear to support this. In this case, an empty list
-   * will be returned here.
-   *
-   * @return a list across the paths.
-   */
-  @Deprecated(forRemoval = true, since = "0.6.0")
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  public static List<Path> currentPlatformClassPathLocations() {
-    var mxBean = ManagementFactory.getRuntimeMXBean();
-
-    if (mxBean.isBootClassPathSupported()) {
-      LOGGER.warn(
-          "Warning: platform (boot) class path locations were found on this JVM, but this "
-              + "feature is deprecated for removal in v1.0.0 of the java-compiler-testing API. "
-              + "Consider disabling platform classpath discovery explicitly to prevent tests "
-              + "having differing behaviour for v1.0.0."
-      );
-      return createPaths(mxBean.getBootClassPath());
-    }
-
-    LOGGER.trace("Platform (boot) classpath is not supported on this JVM, so will be ignored");
-    return List.of();
-  }
-
   private static List<Path> createPaths(String raw) {
     return SEPARATOR
         .splitToStream(raw)

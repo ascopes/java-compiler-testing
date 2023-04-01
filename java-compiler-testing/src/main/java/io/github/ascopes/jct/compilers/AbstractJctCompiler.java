@@ -77,11 +77,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   private boolean fixJvmModulePathMismatch;
   private boolean inheritClassPath;
   private boolean inheritModulePath;
-
-  @Deprecated(forRemoval = true, since = "0.6.0")
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  private boolean inheritPlatformClassPath;
-
   private boolean inheritSystemModulePath;
   private LoggingMode fileManagerLoggingMode;
   private AnnotationProcessorDiscovery annotationProcessorDiscovery;
@@ -91,7 +86,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
    *
    * @param defaultName the printable default name to use for the compiler.
    */
-  @SuppressWarnings("removal")
   protected AbstractJctCompiler(String defaultName) {
     name = requireNonNull(defaultName, "name");
     annotationProcessors = new ArrayList<>();
@@ -112,7 +106,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     fixJvmModulePathMismatch = JctCompiler.DEFAULT_FIX_JVM_MODULE_PATH_MISMATCH;
     inheritClassPath = JctCompiler.DEFAULT_INHERIT_CLASS_PATH;
     inheritModulePath = JctCompiler.DEFAULT_INHERIT_MODULE_PATH;
-    inheritPlatformClassPath = JctCompiler.DEFAULT_INHERIT_PLATFORM_CLASS_PATH;
     inheritSystemModulePath = JctCompiler.DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
     fileManagerLoggingMode = JctCompiler.DEFAULT_FILE_MANAGER_LOGGING_MODE;
     annotationProcessorDiscovery = JctCompiler.DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
@@ -337,21 +330,6 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   @Override
   public A inheritModulePath(boolean inheritModulePath) {
     this.inheritModulePath = inheritModulePath;
-    return myself();
-  }
-
-  @Deprecated(forRemoval = true, since = "0.6.0")
-  @Override
-  @SuppressWarnings({"removal", "DeprecatedIsStillUsed"})
-  public boolean isInheritPlatformClassPath() {
-    return inheritPlatformClassPath;
-  }
-
-  @Deprecated(forRemoval = true, since = "0.6.0")
-  @Override
-  @SuppressWarnings({"removal", "DeprecatedIsStillUsed"})
-  public A inheritPlatformClassPath(boolean inheritPlatformClassPath) {
-    this.inheritPlatformClassPath = inheritPlatformClassPath;
     return myself();
   }
 
