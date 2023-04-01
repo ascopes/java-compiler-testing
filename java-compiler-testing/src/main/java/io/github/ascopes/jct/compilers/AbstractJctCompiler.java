@@ -77,7 +77,11 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   private boolean fixJvmModulePathMismatch;
   private boolean inheritClassPath;
   private boolean inheritModulePath;
+
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   private boolean inheritPlatformClassPath;
+
   private boolean inheritSystemModulePath;
   private LoggingMode fileManagerLoggingMode;
   private AnnotationProcessorDiscovery annotationProcessorDiscovery;
@@ -87,6 +91,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
    *
    * @param defaultName the printable default name to use for the compiler.
    */
+  @SuppressWarnings("removal")
   protected AbstractJctCompiler(String defaultName) {
     name = requireNonNull(defaultName, "name");
     annotationProcessors = new ArrayList<>();
@@ -335,12 +340,16 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
     return myself();
   }
 
+  @Deprecated(forRemoval = true, since = "0.6.0")
   @Override
+  @SuppressWarnings({"removal", "DeprecatedIsStillUsed"})
   public boolean isInheritPlatformClassPath() {
     return inheritPlatformClassPath;
   }
 
+  @Deprecated(forRemoval = true, since = "0.6.0")
   @Override
+  @SuppressWarnings({"removal", "DeprecatedIsStillUsed"})
   public A inheritPlatformClassPath(boolean inheritPlatformClassPath) {
     this.inheritPlatformClassPath = inheritPlatformClassPath;
     return myself();

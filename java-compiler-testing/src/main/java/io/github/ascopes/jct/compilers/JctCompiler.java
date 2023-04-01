@@ -90,9 +90,15 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
   boolean DEFAULT_INHERIT_MODULE_PATH = true;
 
   /**
-   * Default setting for inclusion of the current platform class path ({@code true}).
+   * Default setting for inclusion of the current platform class path ({@code false}).
+   *
+   * @deprecated The platform class path has been mostly replaced by the use of system modules, so
+   *    should not be used. This will be removed in v1.0.0, and has been changed to default to
+   *    {@code false} as of v0.6.0
    */
-  boolean DEFAULT_INHERIT_PLATFORM_CLASS_PATH = true;
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
+  boolean DEFAULT_INHERIT_PLATFORM_CLASS_PATH = false;
 
   /**
    * Default setting for inclusion of the system module path ({@code true}).
@@ -727,7 +733,11 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * {@link #DEFAULT_INHERIT_PLATFORM_CLASS_PATH}.
    *
    * @return whether the platform class path is being inherited or not.
+   * @deprecated The platform class path has been mostly replaced by the use of system modules, so
+   * should not be used. This will be removed in v1.0.0.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   boolean isInheritPlatformClassPath();
 
   /**
@@ -740,7 +750,10 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    *
    * @param inheritPlatformClassPath {@code true} to include it, or {@code false} to exclude it.
    * @return this compiler object for further call chaining.
+   * @deprecated The platform class path has been mostly replaced by the use of system modules, so
+   * should not be used. This will be removed in v1.0.0.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
   C inheritPlatformClassPath(boolean inheritPlatformClassPath);
 
   /**

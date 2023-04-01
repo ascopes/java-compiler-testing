@@ -33,10 +33,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Ashley Scopes
  * @since 0.0.1 (0.0.1-M7)
+ * @deprecated The platform class path has been mostly replaced by the use of system modules, so
+ * should not be used. This will be removed in v1.0.0.
  */
 @API(since = "0.0.1", status = Status.STABLE)
-public final class JctFileManagerJvmPlatformClassPathConfigurer implements
-    JctFileManagerConfigurer {
+@Deprecated(forRemoval = true, since = "0.6.0")
+@SuppressWarnings("DeprecatedIsStillUsed")
+public final class JctFileManagerJvmPlatformClassPathConfigurer
+    implements JctFileManagerConfigurer {
 
   private static final Logger LOGGER = LoggerFactory
       .getLogger(JctFileManagerJvmPlatformClassPathConfigurer.class);
@@ -53,6 +57,7 @@ public final class JctFileManagerJvmPlatformClassPathConfigurer implements
   }
 
   @Override
+  @SuppressWarnings("removal")
   public JctFileManager configure(JctFileManager fileManager) {
     LOGGER.debug("Configuring JVM platform class path");
 
@@ -69,6 +74,7 @@ public final class JctFileManagerJvmPlatformClassPathConfigurer implements
   }
 
   @Override
+  @SuppressWarnings("removal")
   public boolean isEnabled() {
     return compiler.isInheritPlatformClassPath();
   }

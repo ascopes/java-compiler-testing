@@ -251,8 +251,12 @@ public interface JctFileManager extends JavaFileManager {
    *
    * @return the location, or {@code null} if the location is not present in the file manager.
    * @since 0.1.0
+   * @deprecated The platform class path has been mostly replaced by the use of system modules, so
+   *    should not be used. This will be removed in v1.0.0.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
   @Nullable
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default PackageContainerGroup getPlatformClassPathGroup() {
     return getPackageContainerGroup(StandardLocation.PLATFORM_CLASS_PATH);
   }

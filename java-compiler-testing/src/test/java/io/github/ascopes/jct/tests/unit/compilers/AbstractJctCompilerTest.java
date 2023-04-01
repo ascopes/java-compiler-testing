@@ -285,6 +285,7 @@ class AbstractJctCompilerTest {
 
     @DisplayName("constructor initialises inheritPlatformClassPath to default value")
     @Test
+    @SuppressWarnings("removal")
     void constructorInitialisesInheritPlatformClassPathToDefaultValue() {
       // Then
       assertThatCompilerField("inheritPlatformClassPath")
@@ -1292,6 +1293,7 @@ class AbstractJctCompilerTest {
   @DisplayName(".isInheritPlatformClassPath() returns the expected values")
   @ValueSource(booleans = {true, false})
   @ParameterizedTest(name = "for inheritPlatformClassPath = {0}")
+  @SuppressWarnings("removal")
   void isInheritPlatformClassPathReturnsExpectedValue(boolean expected) {
     // Given
     setFieldOnCompiler("inheritPlatformClassPath", expected);
@@ -1307,6 +1309,7 @@ class AbstractJctCompilerTest {
     @DisplayName(".inheritPlatformClassPath(...) sets the expected values")
     @ValueSource(booleans = {true, false})
     @ParameterizedTest(name = "for inheritPlatformClassPath = {0}")
+    @SuppressWarnings("removal")
     void inheritPlatformClassPathSetsExpectedValue(boolean expected) {
       // When
       compiler.inheritPlatformClassPath(expected);
@@ -1317,6 +1320,7 @@ class AbstractJctCompilerTest {
 
     @DisplayName(".inheritPlatformClassPath(...) returns the compiler")
     @Test
+    @SuppressWarnings("removal")
     void inheritPlatformClassPathReturnsTheCompiler() {
       // When
       var result = compiler.inheritPlatformClassPath(true);
