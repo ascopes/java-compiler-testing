@@ -92,6 +92,21 @@ public interface Container extends Closeable {
   PathFileObject getFileForOutput(String packageName, String relativeName);
 
   /**
+   * Get the inner path root of the container.
+   *
+   * <p>This will usually be the same as the {@link #getPathRoot() path root}, but for archives,
+   * this will point to the root directory of the archive for the virtual file system it is loaded
+   * in, rather than the location of the archive on the original file system.
+   *
+   * <p>It is worth noting that this operation may result in the archive being loaded into memory
+   * eagerly if it uses lazy loading, due to the need to load the archive to be able to determine
+   * an accurate handle to the inner root directory.
+   *
+   * @return the path root.
+   */
+  PathRoot getInnerPathRoot();
+
+  /**
    * Get a {@link JavaFileObject} for reading, if it exists.
    *
    * <p>If the file does not exist, {@code null} is returned.

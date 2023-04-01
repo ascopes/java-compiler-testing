@@ -103,6 +103,11 @@ public final class PathWrappingContainerImpl implements Container {
   }
 
   @Override
+  public PathRoot getInnerPathRoot() {
+    return root;
+  }
+
+  @Override
   public PathFileObject getJavaFileForInput(String binaryName, Kind kind) {
     var path = FileUtils.binaryNameToPath(root.getPath(), binaryName, kind);
     return Files.isRegularFile(path)
