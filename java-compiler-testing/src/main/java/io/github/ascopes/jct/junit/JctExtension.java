@@ -34,8 +34,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implicit extension that will manage the lifecycle of {@link Managed}-annotated {@link Workspace}
+ * JUnit5 extension that will manage the lifecycle of {@link Managed}-annotated {@link Workspace}
  * fields within JUnit5 test classes.
+ *
+ * <pre><code>
+ * {@literal @ExtendWith(JctExtension.class)}
+ * class MyTest {
+ *   {@literal @Managed}
+ *   Workspace workspace;
+ *
+ *   {@literal @JavacCompilerTest}
+ *   void myTest(JctCompiler&lt;?, ?&gt; compiler) {
+ *     // Given
+ *     workspace
+ *        .createSourcePathPackage()
+ *        ...;
+ *
+ *     // When
+ *     var compilation = compiler.compile(workspace);
+ *
+ *     // Then
+ *     ...
+ *   }
+ * }
+ * </code></pre>
  *
  * @author Ashley Scopes
  * @since 0.4.0
@@ -45,6 +67,16 @@ public final class JctExtension implements
     Extension, BeforeEachCallback, BeforeAllCallback, AfterEachCallback, AfterAllCallback {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctExtension.class);
+
+  /**
+   * Initialise this extension.
+   *
+   * <p>You shouldn't ever need to call this directly. See the class description for an example
+   * of how to use this.
+   */
+  public JctExtension() {
+    // Nothing to do.
+  }
 
   @Override
   public void beforeAll(ExtensionContext context) throws Exception {
