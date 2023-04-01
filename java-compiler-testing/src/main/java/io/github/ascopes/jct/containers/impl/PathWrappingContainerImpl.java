@@ -146,7 +146,7 @@ public final class PathWrappingContainerImpl implements Container {
   @Override
   public Collection<Path> listAllFiles() throws IOException {
     try (var walker = Files.walk(root.getPath(), FileVisitOption.FOLLOW_LINKS)) {
-      return walker.collect(Collectors.toList());
+      return walker.collect(Collectors.toUnmodifiableList());
     }
   }
 

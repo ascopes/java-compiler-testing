@@ -27,13 +27,7 @@ import io.github.ascopes.jct.utils.ToStringBuilder;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.*;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -261,6 +255,16 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
       container.listFileObjects(packageName, kinds, recurse, collection);
     }
     return collection;
+  }
+
+  @API(since = "0.6.0", status = Status.STABLE)
+  @Override
+  public Map<Container, Collection<Path>> listAllFiles() throws IOException {
+    var multimap = new LinkedHashMap<Container, Collection<Path>>();
+    for (var container : getPackages()) {
+      multimap.put(container, container.listAllFiles());
+    }
+    return Collections.unmodifiableMap(multimap);
   }
 
   /**
