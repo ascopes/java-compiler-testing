@@ -42,7 +42,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * {@link JctFileManagerJvmPlatformClassPathConfigurer} tests.
+ * {@link JctFileManagerJvmSystemModulesConfigurer} tests.
  *
  * @author Ashley Scopes
  */
