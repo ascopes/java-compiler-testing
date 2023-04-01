@@ -24,10 +24,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.repr.LocationRepresentation;
-import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.apiguardian.api.API;
@@ -124,23 +124,19 @@ public final class PackageContainerGroupAssert
 
     isNotNull();
 
-    var expectedFile = fragmentPathToString(fragment, fragments);
     var actualFile = actual.getFile(fragment, fragments);
 
     if (actualFile == null) {
       return this;
     }
 
-    var locationName = LocationRepresentation.getInstance().toStringOf(actual.getLocation());
-
     throw failure(
         "Expected path \"%s\" to not exist in \"%s\" but it was found at \"%s\"",
-        expectedFile,
-        locationName,
+        userProvidedPath(fragment, fragments),
+        LocationRepresentation.getInstance().toStringOf(actual.getLocation()),
         actualFile
     );
   }
-
 
   /**
    * Assert that the given file exists.
@@ -153,66 +149,107 @@ public final class PackageContainerGroupAssert
    *   assertions.fileExists("foo", "bar", "baz.txt");
    * </code></pre>
    *
+   * <p>If the file does not exist, then this object will attempt to find the
+   * closest matches and list them in an error message along with the assertion
+   * error.
+   *
    * @param fragment  the first part of the path.
    * @param fragments any additional parts of the path.
    * @return assertions to perform on the path of the file that exists.
    * @throws AssertionError       if the file does not exist, or if the container group is null.
    * @throws NullPointerException if any of the fragments are null.
    */
+
   public AbstractPathAssert<?> fileExists(String fragment, String... fragments) {
     requireNonNull(fragment, "fragment must not be null");
     requireNonNullValues(fragments, "fragments");
 
     isNotNull();
 
-    var expectedFile = fragmentPathToString(fragment, fragments);
     var actualFile = actual.getFile(fragment, fragments);
 
     if (actualFile != null) {
+      // File exists with this path. Hooray, lets return assertions on it.
       return assertThat(actualFile);
     }
 
-    var closestMatches = FuzzySearch
-        .extractSorted(
-            expectedFile,
-            actual
-                .getPackages()
-                .stream()
-                .flatMap(container -> uncheckedIo(() -> container
-                    .listAllFiles()
-                    .stream()
-                    .filter(not(Files::isDirectory))
-                    .map(container.getPathRoot().getPath()::relativize)
-                ))
-                .collect(Collectors.toList()),
-            Path::toString
-        )
+    throw createNoFileFoundFuzzyError(fragment, fragments);
+  }
+
+  private AssertionError createNoFileFoundFuzzyError(String fragment, String... fragments) {
+    var userInput = userProvidedPath(fragment, fragments);
+
+    var matchesString = uncheckedIo(actual::listAllFiles)
+        .entrySet()
         .stream()
-        .limit(FUZZY_CUTOFF)
-        .map(BoundExtractedResult::getReferent)
-        .sorted()
-        .collect(Collectors.toList());
+        .flatMap(entry -> findFuzzyMatchesForContainer(
+            fuzzySafePath(combineOneOrMore(fragment, fragments)),
+            entry.getKey().getInnerPathRoot().getPath(),
+            entry.getValue()
+        ))
+        .map(Path::toString)
+        .map("\n  - "::concat)
+        .collect(Collectors.joining());
 
     var locationName = LocationRepresentation.getInstance().toStringOf(actual.getLocation());
 
-    if (closestMatches.isEmpty()) {
-      throw failure("No file in %s files found named \"%s\"", locationName, expectedFile);
-    } else {
-      throw failure(
-          "No file named \"%s\" found in %s. Did you mean...%s",
-          expectedFile,
-          locationName,
-          closestMatches
-              .stream()
-              .map(Path::toString)
-              .map("\n\t - "::concat)
-              .collect(Collectors.joining())
+    if (matchesString.isBlank()) {
+      return failure(
+          "No file named \"%s\" found in %s. No similar results found.",
+          userInput,
+          locationName
       );
     }
+
+    return failure(
+        "No file named \"%s\" found in %s. Found similar results:\n%s",
+        userInput,
+        locationName,
+        matchesString
+    );
   }
 
-  private static String fragmentPathToString(String fragment, String... fragments) {
-    // Path#toString uses the default separator if we use Path#of
-    return String.join(File.separator, combineOneOrMore(fragment, fragments));
+  private Stream<Path> findFuzzyMatchesForContainer(
+      String query,
+      Path rootPath,
+      Collection<Path> files
+  ) {
+    var relativeFiles = files.stream()
+        .map(rootPath::relativize)
+        // Filter out the root directory itself.
+        .filter(not(path -> path.toString().isBlank()))
+        .collect(Collectors.toSet());
+
+    return FuzzySearch
+        .extractSorted(query, relativeFiles, this::fuzzySafePath, FUZZY_MIN_SCORE)
+        .stream()
+        .limit(FUZZY_MAX_RESULTS)
+        .map(BoundExtractedResult::getReferent);
+  }
+
+  private String fuzzySafePath(Iterable<?> fragments) {
+    // We use the null byte to separate chunks of paths here to reduce the risk of ambiguity between
+    // file systems that use different naming systems and path separators. For the actual resultant
+    // representation, we just use the default path representation instead. This prevents
+    // the user inputting 'foo/bar' and it being considered totally different to 'bar\\foo' on
+    // the default file system on a Windows machine, for example.
+
+    var iterator = fragments.iterator();
+    if (!iterator.hasNext()) {
+      return "";
+    }
+
+    var builder = new StringBuilder();
+    builder.append(iterator.next());
+
+    while (iterator.hasNext()) {
+      builder.append('\0').append(iterator.next());
+    }
+
+    return builder.toString();
+  }
+
+  private String userProvidedPath(String fragment, String... fragments) {
+    return String.join("/", combineOneOrMore(fragment, fragments));
   }
 }
