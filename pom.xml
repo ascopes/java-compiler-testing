@@ -98,7 +98,7 @@
     <assertj.version>3.24.2</assertj.version>
     <awaitility.version>4.2.0</awaitility.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
-    <groovy.version>4.0.10</groovy.version>
+    <groovy.version>4.0.11</groovy.version>
     <jimfs.version>1.2</jimfs.version>
     <jspecify.version>0.3.0</jspecify.version>
     <junit.version>5.9.2</junit.version>
