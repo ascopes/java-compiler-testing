@@ -125,7 +125,7 @@
     <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
 
     <!-- Plugin dependencies -->
-    <checkstyle.version>10.9.1</checkstyle.version>
+    <checkstyle.version>10.9.3</checkstyle.version>
     <maven-surefire-junit5-tree-reporter.version>1.1.0</maven-surefire-junit5-tree-reporter.version>
 
     <!-- Log verbosity -->
