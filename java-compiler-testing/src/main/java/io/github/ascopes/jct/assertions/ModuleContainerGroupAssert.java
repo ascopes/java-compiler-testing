@@ -91,14 +91,11 @@ public final class ModuleContainerGroupAssert
       return new PackageContainerGroupAssert(moduleGroup);
     }
 
+    var actualModules = actual.getModules().keySet();
     var closestMatches = FuzzySearch
-        .extractSorted(
-            module,
-            actual.getModules().keySet(),
-            ModuleLocation::getModuleName
-        )
+        .extractSorted(module, actualModules,ModuleLocation::getModuleName, FUZZY_MIN_SCORE)
         .stream()
-        .limit(FUZZY_CUTOFF)
+        .limit(FUZZY_MAX_RESULTS)
         .map(BoundExtractedResult::getReferent)
         .sorted()
         .collect(Collectors.toList());
