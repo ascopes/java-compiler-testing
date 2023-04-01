@@ -34,8 +34,6 @@ import java.nio.file.Path;
 import java.nio.file.ProviderNotFoundException;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.*;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -93,21 +91,17 @@ public final class JarContainerImpl implements Container {
   @Override
   public boolean contains(PathFileObject fileObject) {
     var path = fileObject.getFullPath();
-    for (var root : holder.access().getRootDirectories()) {
-      return path.startsWith(root) && Files.isRegularFile(path);
-    }
-    return false;
+    var root = holder.access().getPathRoot().getPath();
+    return path.startsWith(root) && Files.isRegularFile(path);
   }
 
   @Override
   public Path getFile(String fragment, String... fragments) {
-    for (var root : holder.access().getRootDirectories()) {
-      var fullPath = FileUtils.relativeResourceNameToPath(root, fragment, fragments);
-      if (Files.isRegularFile(fullPath)) {
-        return fullPath;
-      }
+    var root = holder.access().getPathRoot().getPath();
+    var fullPath = FileUtils.relativeResourceNameToPath(root, fragment, fragments);
+    if (Files.isRegularFile(fullPath)) {
+      return fullPath;
     }
-
     return null;
   }
 
@@ -131,6 +125,11 @@ public final class JarContainerImpl implements Container {
   @Override
   public PathFileObject getFileForOutput(String packageName, String relativeName) {
     throw new UnsupportedOperationException("Cannot handle output files in JARs");
+  }
+
+  @Override
+  public PathRoot getInnerPathRoot() {
+    return holder.access().getPathRoot();
   }
 
   @Override
@@ -165,11 +164,7 @@ public final class JarContainerImpl implements Container {
 
   @Override
   public ModuleFinder getModuleFinder() {
-    var paths = holder
-        .access()
-        .getRootDirectoriesStream()
-        .toArray(Path[]::new);
-    return ModuleFinder.of(paths);
+    return ModuleFinder.of(holder.access().getPathRoot().getPath());
   }
 
   @Override
@@ -190,10 +185,8 @@ public final class JarContainerImpl implements Container {
     // get the correct path immediately.
     var fullPath = javaFileObject.getFullPath();
 
-    for (var root : holder.access().getRootDirectories()) {
-      if (fullPath.startsWith(root)) {
-        return FileUtils.pathToBinaryName(javaFileObject.getRelativePath());
-      }
+    if (fullPath.startsWith( holder.access().getPathRoot().getPath())) {
+      return FileUtils.pathToBinaryName(javaFileObject.getRelativePath());
     }
 
     return null;
@@ -243,6 +236,7 @@ public final class JarContainerImpl implements Container {
 
     private final Map<String, PathRoot> packages;
     private final FileSystem fileSystem;
+    private final PathRoot rootDirectoryPathRoot;
 
     private PackageFileSystemHolder() throws IOException {
       // It turns out that we can open more than one ZIP file system pointing to the
@@ -272,17 +266,19 @@ public final class JarContainerImpl implements Container {
       // safely. While in Rome, I guess.
       fileSystem = getJarFileSystemProvider().newFileSystem(actualJarPath, env);
 
+      // Always expect just one root directory in a ZIP archive.
+      var rootDirectory = fileSystem.getRootDirectories().iterator().next();
+      rootDirectoryPathRoot = new WrappingDirectoryImpl(rootDirectory);
+
       // Index packages ahead-of-time to improve performance.
-      for (var root : fileSystem.getRootDirectories()) {
-        try (var walker = Files.walk(root)) {
-          walker
-              .filter(Files::isDirectory)
-              .map(root::relativize)
-              .forEach(path -> packages.put(
-                  FileUtils.pathToBinaryName(path),
-                  new WrappingDirectoryImpl(root.resolve(path))
-              ));
-        }
+      try (var walker = Files.walk(rootDirectory)) {
+        walker
+            .filter(Files::isDirectory)
+            .map(rootDirectory::relativize)
+            .forEach(path -> packages.put(
+                FileUtils.pathToBinaryName(path),
+                new WrappingDirectoryImpl(rootDirectory.resolve(path))
+            ));
       }
     }
 
@@ -304,12 +300,8 @@ public final class JarContainerImpl implements Container {
       return packages.get(name);
     }
 
-    private Iterable<? extends Path> getRootDirectories() {
-      return fileSystem.getRootDirectories();
-    }
-
-    private Stream<? extends Path> getRootDirectoriesStream() {
-      return StreamSupport.stream(fileSystem.getRootDirectories().spliterator(), false);
+    private PathRoot getPathRoot() {
+      return rootDirectoryPathRoot;
     }
 
     private Collection<Path> getAllFiles() throws IOException {
