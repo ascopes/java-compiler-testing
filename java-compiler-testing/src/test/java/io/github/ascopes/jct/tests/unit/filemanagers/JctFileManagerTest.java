@@ -149,24 +149,6 @@ class JctFileManagerTest {
     assertThat(actual).isSameAs(expected);
   }
 
-  @DisplayName(".getPlatformClassPathGroup() makes the expected call")
-  @MethodSource("outputContainerGroupResults")
-  @ParameterizedTest(name = "when internal getter returns {0}")
-  @SuppressWarnings("removal")
-  void getPlatformClassPathGroupMakesTheExpectedCall(PackageContainerGroup expected) {
-    // Given
-    when(fileManager.getPlatformClassPathGroup()).thenCallRealMethod();
-    when(fileManager.getPackageContainerGroup(any())).thenReturn(expected);
-
-    // When
-    var actual = fileManager.getPlatformClassPathGroup();
-
-    // Then
-    verify(fileManager).getPackageContainerGroup(StandardLocation.PLATFORM_CLASS_PATH);
-    verifyNoMoreInteractions(fileManager);
-    assertThat(actual).isSameAs(expected);
-  }
-
   @DisplayName(".getNativeHeaderOutputGroup() makes the expected call")
   @MethodSource("outputContainerGroupResults")
   @ParameterizedTest(name = "when internal getter returns {0}")

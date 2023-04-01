@@ -32,7 +32,6 @@ import io.github.ascopes.jct.filemanagers.config.JctFileManagerConfigurerChain;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerJvmClassPathConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerJvmClassPathModuleConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerJvmModulePathConfigurer;
-import io.github.ascopes.jct.filemanagers.config.JctFileManagerJvmPlatformClassPathConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerJvmSystemModulesConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerLoggingProxyConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerRequiredLocationsConfigurer;
@@ -119,7 +118,6 @@ class JctFileManagerFactoryImplTest {
 
   @DisplayName("The configurer chain uses the expected configurers")
   @Test
-  @SuppressWarnings("removal")
   void createdFileManagersAreReturnedAsTheResultFromTheConfigurerChain() {
     // When
     var configurerChain = factory.createConfigurerChain(workspace);
@@ -133,7 +131,6 @@ class JctFileManagerFactoryImplTest {
             JctFileManagerJvmClassPathConfigurer.class,
             JctFileManagerJvmClassPathModuleConfigurer.class,
             JctFileManagerJvmModulePathConfigurer.class,
-            JctFileManagerJvmPlatformClassPathConfigurer.class,
             JctFileManagerJvmSystemModulesConfigurer.class,
             JctFileManagerAnnotationProcessorClassPathConfigurer.class,
             JctFileManagerRequiredLocationsConfigurer.class,

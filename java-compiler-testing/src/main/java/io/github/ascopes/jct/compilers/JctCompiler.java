@@ -90,17 +90,6 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
   boolean DEFAULT_INHERIT_MODULE_PATH = true;
 
   /**
-   * Default setting for inclusion of the current platform class path ({@code false}).
-   *
-   * @deprecated The platform class path has been mostly replaced by the use of system modules, so
-   *    should not be used. This will be removed in v1.0.0, and has been changed to default to
-   *    {@code false} as of v0.6.0
-   */
-  @Deprecated(forRemoval = true, since = "0.6.0")
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  boolean DEFAULT_INHERIT_PLATFORM_CLASS_PATH = false;
-
-  /**
    * Default setting for inclusion of the system module path ({@code true}).
    */
   boolean DEFAULT_INHERIT_SYSTEM_MODULE_PATH = true;
@@ -720,41 +709,6 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @return this compiler object for further call chaining.
    */
   C inheritModulePath(boolean inheritModulePath);
-
-  /**
-   * Get whether the current platform class path is being inherited from the caller JVM or not.
-   *
-   * <p>This may also be known as the "bootstrap class path".
-   *
-   * <p>Default environments probably will not provide this functionality, in which case it will be
-   * ignored.
-   *
-   * <p>Unless otherwise changed or specified, implementations should default to
-   * {@link #DEFAULT_INHERIT_PLATFORM_CLASS_PATH}.
-   *
-   * @return whether the platform class path is being inherited or not.
-   * @deprecated The platform class path has been mostly replaced by the use of system modules, so
-   * should not be used. This will be removed in v1.0.0.
-   */
-  @Deprecated(forRemoval = true, since = "0.6.0")
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  boolean isInheritPlatformClassPath();
-
-  /**
-   * Set whether the current platform class path is being inherited from the caller JVM or not.
-   *
-   * <p>This may also be known as the "bootstrap class path".
-   *
-   * <p>Default environments probably will not provide this functionality, in which case it will be
-   * ignored.
-   *
-   * @param inheritPlatformClassPath {@code true} to include it, or {@code false} to exclude it.
-   * @return this compiler object for further call chaining.
-   * @deprecated The platform class path has been mostly replaced by the use of system modules, so
-   * should not be used. This will be removed in v1.0.0.
-   */
-  @Deprecated(forRemoval = true, since = "0.6.0")
-  C inheritPlatformClassPath(boolean inheritPlatformClassPath);
 
   /**
    * Get whether the system module path is inherited from the caller JVM or not.

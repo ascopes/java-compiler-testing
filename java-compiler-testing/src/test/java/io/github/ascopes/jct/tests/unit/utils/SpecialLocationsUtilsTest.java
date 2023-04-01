@@ -20,7 +20,6 @@ import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 
 import io.github.ascopes.jct.tests.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
@@ -135,48 +134,6 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
       // Then
       var expected = tempPaths.allExcept(deletedPath, ideaRt);
       assertThat(actual).containsExactlyElementsOf(expected);
-    }
-  }
-
-  @DisplayName("currentPlatformClassPathLocations() returns the class path locations that exist")
-  @Test
-  @SuppressWarnings("removal")
-  void currentPlatformClassPathLocationsReturnsTheClassPathLocationsThatExist() throws IOException {
-    // Given
-    try (
-        var tempPaths = new TempPaths();
-        var mx = new MockedMxBean<>(ManagementFactory::getRuntimeMXBean, RuntimeMXBean.class)
-    ) {
-      given(mx.mock.getBootClassPath()).willReturn(tempPaths.toPathString());
-      given(mx.mock.isBootClassPathSupported()).willReturn(true);
-
-      // We don't want to include non-existent paths in this, so test it by deleting one of them.
-      var deletedPath = tempPaths.deleteRandomPath();
-
-      // When
-      var actual = SpecialLocationUtils.currentPlatformClassPathLocations();
-
-      // Then
-      var expected = tempPaths.allExcept(deletedPath);
-      assertThat(actual).containsExactlyElementsOf(expected);
-    }
-  }
-
-  @DisplayName("currentPlatformClassPathLocations() returns empty when boot path not supported")
-  @Test
-  @SuppressWarnings("removal")
-  void currentPlatformClassPathLocationsReturnsEmptyWhenBootPathNotSupported() {
-    // Given
-    try (var mx = new MockedMxBean<>(ManagementFactory::getRuntimeMXBean, RuntimeMXBean.class)) {
-      given(mx.mock.isBootClassPathSupported()).willReturn(false);
-
-      // When
-      var actual = SpecialLocationUtils.currentPlatformClassPathLocations();
-
-      // Then
-      assertThat(actual).isEmpty();
-      then(mx.mock).should().isBootClassPathSupported();
-      then(mx.mock).shouldHaveNoMoreInteractions();
     }
   }
 

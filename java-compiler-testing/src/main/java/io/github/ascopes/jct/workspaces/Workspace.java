@@ -506,23 +506,6 @@ public interface Workspace extends AutoCloseable {
   }
 
   /**
-   * Add a package to the {@link StandardLocation#PLATFORM_CLASS_PATH platform class path} (also
-   * known as the boot class path).
-   *
-   * @param path the path to add.
-   * @throws IllegalArgumentException if the path does not exist.
-   * @see #addPackage(Location, Path)
-   * @see #createPlatformClassPathPackage()
-   * @deprecated The platform class path has been mostly replaced by the use of system modules, so
-   * should not be used. This will be removed in v1.0.0.
-   */
-  @Deprecated(forRemoval = true, since = "0.6.0")
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  default void addPlatformClassPathPackage(Path path) {
-    addPackage(StandardLocation.PLATFORM_CLASS_PATH, path);
-  }
-
-  /**
    * Add a package to the {@link StandardLocation#NATIVE_HEADER_OUTPUT native header outputs}.
    *
    * @param path the path to add.
@@ -775,22 +758,6 @@ public interface Workspace extends AutoCloseable {
    */
   default ManagedDirectory createAnnotationProcessorPathModule(String moduleName) {
     return createModule(StandardLocation.ANNOTATION_PROCESSOR_MODULE_PATH, moduleName);
-  }
-
-  /**
-   * Create a package in the {@link StandardLocation#PLATFORM_CLASS_PATH platform class path} (also
-   * known as the boot class path).
-   *
-   * @return the created test directory.
-   * @see #createPackage(Location)
-   * @see #addPlatformClassPathPackage(Path)
-   * @deprecated The platform class path has been mostly replaced by the use of system modules, so
-   * should not be used. This will be removed in v1.0.0.
-   */
-  @Deprecated(forRemoval = true, since = "0.6.0")
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  default ManagedDirectory createPlatformClassPathPackage() {
-    return createPackage(StandardLocation.PLATFORM_CLASS_PATH);
   }
 
   /**
