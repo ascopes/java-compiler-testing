@@ -33,11 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.ProviderNotFoundException;
 import java.nio.file.spi.FileSystemProvider;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.tools.JavaFileManager.Location;
@@ -326,7 +322,7 @@ public final class JarContainerImpl implements Container {
         }
       }
 
-      return allPaths;
+      return Collections.unmodifiableList(allPaths);
     }
   }
 
