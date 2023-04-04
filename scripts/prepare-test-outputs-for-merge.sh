@@ -35,16 +35,17 @@ function usage() {
 ci_java_version=""
 ci_os=""
 
-while getopts "hj:o:" opt; do
+while getopts ":hj:o:" opt; do
   case "${opt}" in
     h) usage; exit 0 ;;
     j) ci_java_version="${OPTARG}" ;;
     o) ci_os="${OPTARG}" ;;
-    ?|*) usage; exit 1 ;;
+    :) err "Missing required argument for option '-${OPTARG}'"; usage; exit 1 ;;
+    ?) err "Unknown option '-${opt}'"; usage; exit 1 ;;
   esac
 done
 
-if [ -z "${ci_java_version}" ] || [ -z "${ci_os}" ]; then
+if [[ -z "${ci_java_version}" ]] || [[ -z "${ci_os}" ]]; then
   err "Missing required arguments"
   usage
   exit 1
@@ -88,29 +89,17 @@ EOF
 
 info "Generated XSLT script at ${surefire_prefix_xslt}"
 
-function find-all-test-reports {
+function find_all_test_reports() {
   info "Discovering test reports"
   find . -name 'TEST*.xml' -print
 }
 
-#function find-all-failsafe-reports {
-#  info "Discovering Failsafe test reports"
-#  find . -wholename '**/target/failsafe-reports/TEST-*Test.xml' -print
-#}
-
-function find-all-jacoco-reports {
+function find_all_jacoco_reports() {
   info "Discovering JaCoCo coverage reports"
-  local desired_jacoco_unit_file="java-compiler-testing/target/site/jacoco/unit/jacoco.xml"
-  if [ -f "${desired_jacoco_unit_file}" ]; then
-    echo "${desired_jacoco_unit_file}"
-  fi
-  local desired_jacoco_int_file="java-compiler-testing/target/site/jacoco/int/jacoco.xml"
-  if [ -f "${desired_jacoco_int_file}" ]; then
-    echo "${desired_jacoco_int_file}"
-  fi
+  find . -path '*/target/site/jacoco/*/*.xml' -print
 }
 
-function xsltproc-surefire-report {
+function xsltproc_surefire_report() {
   local prefix="${1}"
   local xslt="${2}"
   local input_report="${3}"
@@ -133,25 +122,35 @@ concurrency="$(($(nproc || echo 2) * 4))"
 while read -r report; do
   report_count="$((report_count+1))"
   new_report="${report/.xml/-java-${ci_java_version}-${ci_os}.xml}"
-  xsltproc-surefire-report "${prefix}" "${surefire_prefix_xslt}" "${report}" "${new_report}" &
+  xsltproc_surefire_report "${prefix}" "${surefire_prefix_xslt}" "${report}" "${new_report}" &
 
   # Wait if we have the max number of jobs in the window running (cpu-count * 4)
-  if [ "$((report_count % concurrency))" -eq 0 ]; then
+  if [[ "$((report_count % concurrency))" -eq 0 ]]; then
     wait < <(jobs -p)
     info "Waited for up to ${concurrency} jobs to complete, will now continue..."
   fi
-done < <(find-all-test-reports)
+done < <(find_all_test_reports)
 wait < <(jobs -p)
+
+if [[ "${report_count}" -eq 0 ]]; then
+  err "No test reports found..."
+  exit 3
+fi
 
 success "Updated ${report_count} test reports"
 
 info "Updating coverage reports..."
 jacoco_count=0
-for jacoco_report in $(find-all-jacoco-reports); do
+for jacoco_report in $(find_all_jacoco_reports); do
   jacoco_count="$((jacoco_count+1))"
   new_jacoco_report="${jacoco_report/.xml/-java-${ci_java_version}-${ci_os}.xml}"
   run --no-group <<< "mv '${jacoco_report}' '${new_jacoco_report}'"
 done
+
+if [[ "${jacoco_count}" -eq 0 ]]; then
+  err "No JaCoCo reports found..."
+  exit 4
+fi
 
 success "Updated ${jacoco_count} coverage reports"
 
