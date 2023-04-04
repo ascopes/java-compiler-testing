@@ -18,10 +18,10 @@ on:
         default: ""
         type: string
 
-
 jobs:
   maven-central:
-    name: Build and deploy code
+    name: Deploy to Maven Central
+    environment: maven-central
     runs-on: ubuntu-22.04
 
     permissions:
