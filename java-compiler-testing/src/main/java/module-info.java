@@ -89,6 +89,7 @@ import org.junit.jupiter.api.extension.Extension;
  *    }
  * </code></pre>
  */
+@SuppressWarnings("removal")
 module io.github.ascopes.jct {
 
   ////////////////////

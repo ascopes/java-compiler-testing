@@ -31,6 +31,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1 (0.0.1-M9)
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
+@SuppressWarnings("removal")
 public final class JimfsFileSystemProviderImpl implements RamFileSystemProvider {
 
   // We could initialise this lazily, but this class has fewer fields and initialisation

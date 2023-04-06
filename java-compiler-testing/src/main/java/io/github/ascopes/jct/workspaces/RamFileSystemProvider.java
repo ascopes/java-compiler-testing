@@ -29,8 +29,11 @@ import org.apiguardian.api.API.Status;
  *
  * @author Ashley Scopes
  * @since 0.0.1 (0.0.1-M9)
+ * @deprecated this feature should never be needed by users of this library, and so has been
+ * deprecated for removal in v1.0.0.
  */
 @API(since = "0.0.1", status = Status.STABLE)
+@Deprecated(since = "0.6.0", forRemoval = true)
 public interface RamFileSystemProvider {
 
   /**
