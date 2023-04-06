@@ -160,6 +160,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       "foo/bar, Invalid file name provided",
       "foo\\bar, Invalid file name provided",
       "foo\\../bar, Invalid file name provided",
+      "foo_bar, Invalid file name provided",
   })
   @ParameterizedTest(name = "\"{0}\" is not a valid root name and raises \"{1}\"")
   void assertValidRootNameFailsForInvalidRootNames(String rootName, String expectedError) {

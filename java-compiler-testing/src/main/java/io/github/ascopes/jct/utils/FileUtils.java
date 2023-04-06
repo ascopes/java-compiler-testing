@@ -122,7 +122,7 @@ public final class FileUtils extends UtilityClass {
       );
     }
 
-    if (name.contains("/") || name.contains("\\") || name.contains("..")) {
+    if (name.contains("/") || name.contains("\\") || name.contains("..") || name.contains("_")) {
       throw new IllegalArgumentException(
           "Invalid file name provided: " + StringUtils.quoted(name)
       );
