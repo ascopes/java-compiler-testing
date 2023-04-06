@@ -149,24 +149,6 @@ class JctFileManagerTest {
     assertThat(actual).isSameAs(expected);
   }
 
-  @DisplayName(".getNativeHeaderOutputGroup() makes the expected call")
-  @MethodSource("outputContainerGroupResults")
-  @ParameterizedTest(name = "when internal getter returns {0}")
-  @SuppressWarnings("removal")
-  void getNativeHeaderOutputGroupMakesTheExpectedCall(OutputContainerGroup expected) {
-    // Given
-    when(fileManager.getNativeHeaderOutputGroup()).thenCallRealMethod();
-    when(fileManager.getOutputContainerGroup(any())).thenReturn(expected);
-
-    // When
-    var actual = fileManager.getNativeHeaderOutputGroup();
-
-    // Then
-    verify(fileManager).getOutputContainerGroup(StandardLocation.NATIVE_HEADER_OUTPUT);
-    verifyNoMoreInteractions(fileManager);
-    assertThat(actual).isSameAs(expected);
-  }
-
   @DisplayName(".getModuleSourcePathGroup() makes the expected call")
   @MethodSource("moduleContainerGroupResults")
   @ParameterizedTest(name = "when internal getter returns {0}")
@@ -180,42 +162,6 @@ class JctFileManagerTest {
 
     // Then
     verify(fileManager).getModuleContainerGroup(StandardLocation.MODULE_SOURCE_PATH);
-    verifyNoMoreInteractions(fileManager);
-    assertThat(actual).isSameAs(expected);
-  }
-
-  @DisplayName(".getUpgradeModulePathGroup() makes the expected call")
-  @MethodSource("moduleContainerGroupResults")
-  @ParameterizedTest(name = "when internal getter returns {0}")
-  @SuppressWarnings("removal")
-  void getUpgradeModulePathGroupMakesTheExpectedCall(ModuleContainerGroup expected) {
-    // Given
-    when(fileManager.getUpgradeModulePathGroup()).thenCallRealMethod();
-    when(fileManager.getModuleContainerGroup(any())).thenReturn(expected);
-
-    // When
-    var actual = fileManager.getUpgradeModulePathGroup();
-
-    // Then
-    verify(fileManager).getModuleContainerGroup(StandardLocation.UPGRADE_MODULE_PATH);
-    verifyNoMoreInteractions(fileManager);
-    assertThat(actual).isSameAs(expected);
-  }
-
-  @DisplayName(".getSystemModulesGroup() makes the expected call")
-  @MethodSource("moduleContainerGroupResults")
-  @ParameterizedTest(name = "when internal getter returns {0}")
-  @SuppressWarnings("removal")
-  void getSystemModulesGroupMakesTheExpectedCall(ModuleContainerGroup expected) {
-    // Given
-    when(fileManager.getSystemModulesGroup()).thenCallRealMethod();
-    when(fileManager.getModuleContainerGroup(any())).thenReturn(expected);
-
-    // When
-    var actual = fileManager.getSystemModulesGroup();
-
-    // Then
-    verify(fileManager).getModuleContainerGroup(StandardLocation.SYSTEM_MODULES);
     verifyNoMoreInteractions(fileManager);
     assertThat(actual).isSameAs(expected);
   }
@@ -236,25 +182,6 @@ class JctFileManagerTest {
     verifyNoMoreInteractions(fileManager);
     assertThat(actual).isSameAs(expected);
   }
-
-  @DisplayName(".getPatchModulePathGroup() makes the expected call")
-  @MethodSource("moduleContainerGroupResults")
-  @ParameterizedTest(name = "when internal getter returns {0}")
-  @SuppressWarnings("removal")
-  void getPatchModulePathGroupMakesTheExpectedCall(ModuleContainerGroup expected) {
-    // Given
-    when(fileManager.getPatchModulePathGroup()).thenCallRealMethod();
-    when(fileManager.getModuleContainerGroup(any())).thenReturn(expected);
-
-    // When
-    var actual = fileManager.getPatchModulePathGroup();
-
-    // Then
-    verify(fileManager).getModuleContainerGroup(StandardLocation.PATCH_MODULE_PATH);
-    verifyNoMoreInteractions(fileManager);
-    assertThat(actual).isSameAs(expected);
-  }
-
 
   static Stream<ModuleContainerGroup> moduleContainerGroupResults() {
     return Stream.of(
