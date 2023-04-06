@@ -42,6 +42,9 @@
       --add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
       --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
       --add-opens=jdk.compiler/com.sun.source.util=ALL-UNNAMED
+
+      <!-- Workaround for https://youtrack.jetbrains.com/issue/IDEA-317391 -->
+      -DmvnArgLinePropagated=true
     </argLine>
     <checkerframework.version>3.32.0</checkerframework.version>
   </properties>

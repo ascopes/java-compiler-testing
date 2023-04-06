@@ -45,6 +45,9 @@
       --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
       --add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
       --add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED
+
+      <!-- Workaround for https://youtrack.jetbrains.com/issue/IDEA-317391 -->
+      -DmvnArgLinePropagated=true
     </argLine>
 
     <error-prone.version>2.18.0</error-prone.version>
