@@ -89,16 +89,6 @@ EOF
 
 info "Generated XSLT script at ${surefire_prefix_xslt}"
 
-function find_all_test_reports() {
-  info "Discovering test reports"
-  find . -name 'TEST*.xml' -print
-}
-
-function find_all_jacoco_reports() {
-  info "Discovering JaCoCo coverage reports"
-  find . -path '*/target/site/jacoco/*/*.xml' -print
-}
-
 function xsltproc_surefire_report() {
   local prefix="${1}"
   local xslt="${2}"
@@ -129,7 +119,7 @@ while read -r report; do
     wait < <(jobs -p)
     info "Waited for up to ${concurrency} jobs to complete, will now continue..."
   fi
-done < <(find_all_test_reports)
+done < <(find . -name 'TEST*.xml' -print)
 wait < <(jobs -p)
 
 if [[ "${report_count}" -eq 0 ]]; then
@@ -138,20 +128,4 @@ if [[ "${report_count}" -eq 0 ]]; then
 fi
 
 success "Updated ${report_count} test reports"
-
-info "Updating coverage reports..."
-jacoco_count=0
-for jacoco_report in $(find_all_jacoco_reports); do
-  jacoco_count="$((jacoco_count+1))"
-  new_jacoco_report="${jacoco_report/.xml/-java-${ci_java_version}-${ci_os}.xml}"
-  run --no-group <<< "mv '${jacoco_report}' '${new_jacoco_report}'"
-done
-
-if [[ "${jacoco_count}" -eq 0 ]]; then
-  err "No JaCoCo reports found..."
-  exit 4
-fi
-
-success "Updated ${jacoco_count} coverage reports"
-
 success "Processing completed."
