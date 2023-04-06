@@ -82,6 +82,24 @@ public final class OutputContainerGroupImpl
   }
 
   @Override
+  public void addPackage(PathRoot path) {
+    if (super.isEmpty()) {
+      super.addPackage(path);
+    } else {
+      throw packageAlreadySpecified(path);
+    }
+  }
+
+  @Override
+  public void addPackage(Container container) {
+    if (super.isEmpty()) {
+      super.addPackage(container);
+    } else {
+      throw packageAlreadySpecified(container.getPathRoot());
+    }
+  }
+
+  @Override
   public void addModule(String module, Container container) {
     getOrCreateModule(module).addPackage(container);
   }
@@ -172,5 +190,14 @@ public final class OutputContainerGroupImpl
     uncheckedIo(() -> Files.createDirectories(pathWrapper.getPath()));
     group.addPackage(pathWrapper);
     return group;
+  }
+
+  @SuppressWarnings("resource")
+  private IllegalStateException packageAlreadySpecified(PathRoot newPathRoot) {
+    var existingPathRoot = getPackages().iterator().next().getPathRoot();
+    return new IllegalStateException(
+        "Cannot add a new package (" + newPathRoot + ") to this output container group because " +
+            "a package has already been specified (" + existingPathRoot + ")"
+    );
   }
 }

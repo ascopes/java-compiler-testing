@@ -15,6 +15,8 @@
  */
 package io.github.ascopes.jct.containers;
 
+import io.github.ascopes.jct.workspaces.PathRoot;
+import java.util.List;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -29,11 +31,40 @@ import org.apiguardian.api.API.Status;
  * {@link #getOrCreateModule(String) create} the module, and then operate on that sub-container
  * group. Operations on non-module packages should operate on this container group directly.
  *
+ * <p>Note that each container group will usually only support one package container group
+ * in the outputs. This is due to the JSR-199 API not providing a method for specifying which
+ * output location to write files to for legacy-style packages.
+ *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
 public interface OutputContainerGroup extends PackageContainerGroup, ModuleContainerGroup {
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Note that this implementation will only ever allow a single container in the package
+   * container groups. If a container is already present, then an exception will be thrown.
+   *
+   * @param path the path to add.
+   * @throws IllegalStateException if a package already exists in this location.
+   */
+  @Override
+  void addPackage(PathRoot path);
+
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Note that this implementation will only ever allow a single container in the package
+   * container groups. If a container is already present, then an exception will be thrown.
+   *
+   * @param container the container to add.
+   * @throws IllegalStateException if a package already exists in this location.
+   */
+  @Override
+  void addPackage(Container container);
 
   /**
    * Get the output-oriented location.
@@ -42,4 +73,16 @@ public interface OutputContainerGroup extends PackageContainerGroup, ModuleConta
    */
   @Override
   Location getLocation();
+
+  /**
+   * {@inheritDoc}
+   *
+   * <p>Note that this implementation will only ever return one container in the list due to
+   * JSR-199 limitations.
+   *
+   * @return the list containing the package container, if it exists. Otherwise, an empty list is
+   * returned instead.
+   */
+  @Override
+  List<Container> getPackages();
 }
