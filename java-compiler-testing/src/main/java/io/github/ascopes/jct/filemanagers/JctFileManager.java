@@ -267,8 +267,13 @@ public interface JctFileManager extends JavaFileManager {
    *
    * @return the location, or {@code null} if the location is not present in the file manager.
    * @since 0.1.0
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #getOutputContainerGroup(Location)},
+   * passing {@link StandardLocation#NATIVE_HEADER_OUTPUT} as the first parameter.
    */
+  @Deprecated(since = "0.6.0", forRemoval = true)
   @Nullable
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default OutputContainerGroup getNativeHeaderOutputGroup() {
     return getOutputContainerGroup(StandardLocation.NATIVE_HEADER_OUTPUT);
   }
@@ -289,8 +294,13 @@ public interface JctFileManager extends JavaFileManager {
    *
    * @return the location, or {@code null} if the location is not present in the file manager.
    * @since 0.1.0
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #getModuleContainerGroup(Location)},
+   * passing {@link StandardLocation#SYSTEM_MODULES} as the first parameter.
    */
+  @Deprecated(since = "0.6.0", forRemoval = true)
   @Nullable
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default ModuleContainerGroup getUpgradeModulePathGroup() {
     return getModuleContainerGroup(StandardLocation.UPGRADE_MODULE_PATH);
   }
@@ -300,8 +310,13 @@ public interface JctFileManager extends JavaFileManager {
    *
    * @return the location, or {@code null} if the location is not present in the file manager.
    * @since 0.1.0
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #getModuleContainerGroup(Location)},
+   * passing {@link StandardLocation#SYSTEM_MODULES} as the first parameter.
    */
+  @Deprecated(since = "0.6.0", forRemoval = true)
   @Nullable
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default ModuleContainerGroup getSystemModulesGroup() {
     return getModuleContainerGroup(StandardLocation.SYSTEM_MODULES);
   }
@@ -322,8 +337,13 @@ public interface JctFileManager extends JavaFileManager {
    *
    * @return the location, or {@code null} if the location is not present in the file manager.
    * @since 0.1.0
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #getModuleContainerGroup(Location)},
+   * passing {@link StandardLocation#PATCH_MODULE_PATH} as the first parameter.
    */
+  @Deprecated(since = "0.6.0", forRemoval = true)
   @Nullable
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default ModuleContainerGroup getPatchModulePathGroup() {
     return getModuleContainerGroup(StandardLocation.PATCH_MODULE_PATH);
   }

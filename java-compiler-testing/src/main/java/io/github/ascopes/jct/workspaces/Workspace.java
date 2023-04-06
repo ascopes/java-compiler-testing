@@ -531,7 +531,12 @@ public interface Workspace extends AutoCloseable {
    * @see #addNativeHeaderOutputModule(String, Path)
    * @see #createNativeHeaderOutputPackage()
    * @see #createNativeHeaderOutputModule(String)
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #addPackage(Location, Path)}, passing
+   * {@link StandardLocation#NATIVE_HEADER_OUTPUT} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default void addNativeHeaderOutputPackage(Path path) {
     addPackage(StandardLocation.NATIVE_HEADER_OUTPUT, path);
   }
@@ -546,7 +551,12 @@ public interface Workspace extends AutoCloseable {
    * @see #addNativeHeaderOutputPackage(Path)
    * @see #createNativeHeaderOutputPackage()
    * @see #createNativeHeaderOutputModule(String)
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #addModule(Location, String, Path)},
+   * passing {@link StandardLocation#NATIVE_HEADER_OUTPUT} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default void addNativeHeaderOutputModule(String moduleName, Path path) {
     addModule(StandardLocation.NATIVE_HEADER_OUTPUT, moduleName, path);
   }
@@ -559,7 +569,12 @@ public interface Workspace extends AutoCloseable {
    * @throws IllegalArgumentException if the path does not exist.
    * @see #addModule(Location, String, Path)
    * @see #createUpgradeModulePathModule(String)
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #addModule(Location, String, Path)},
+   * passing {@link StandardLocation#UPGRADE_MODULE_PATH} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default void addUpgradeModulePathModule(String moduleName, Path path) {
     addModule(StandardLocation.UPGRADE_MODULE_PATH, moduleName, path);
   }
@@ -571,8 +586,12 @@ public interface Workspace extends AutoCloseable {
    * @param path       the path to add.
    * @throws IllegalArgumentException if the path does not exist.
    * @see #addModule(Location, String, Path)
-   * @see #createSystemModulePathModule(String)
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #addModule(Location, String, Path)},
+   * passing {@link StandardLocation#SYSTEM_MODULES} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default void addSystemModulePathModule(String moduleName, Path path) {
     addModule(StandardLocation.SYSTEM_MODULES, moduleName, path);
   }
@@ -585,7 +604,12 @@ public interface Workspace extends AutoCloseable {
    * @throws IllegalArgumentException if the path does not exist.
    * @see #addModule(Location, String, Path)
    * @see #createPatchModulePathModule(String)
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #addModule(Location, String, Path)},
+   * passing {@link StandardLocation#PATCH_MODULE_PATH} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default void addPatchModulePathModule(String moduleName, Path path) {
     addModule(StandardLocation.PATCH_MODULE_PATH, moduleName, path);
   }
@@ -777,7 +801,12 @@ public interface Workspace extends AutoCloseable {
    * @see #createNativeHeaderOutputModule(String)
    * @see #addNativeHeaderOutputPackage(Path)
    * @see #addNativeHeaderOutputModule(String, Path)
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #createPackage(Location)}, passing
+   * {@link StandardLocation#NATIVE_HEADER_OUTPUT} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default ManagedDirectory createNativeHeaderOutputPackage() {
     return createPackage(StandardLocation.NATIVE_HEADER_OUTPUT);
   }
@@ -791,7 +820,12 @@ public interface Workspace extends AutoCloseable {
    * @see #createNativeHeaderOutputPackage()
    * @see #addNativeHeaderOutputPackage(Path)
    * @see #addNativeHeaderOutputModule(String, Path)
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #createModule(Location, String)}, passing
+   * {@link StandardLocation#NATIVE_HEADER_OUTPUT} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default ManagedDirectory createNativeHeaderOutputModule(String moduleName) {
     return createModule(StandardLocation.NATIVE_HEADER_OUTPUT, moduleName);
   }
@@ -803,7 +837,12 @@ public interface Workspace extends AutoCloseable {
    * @return the created test directory.
    * @see #createModule(Location, String)
    * @see #addUpgradeModulePathModule(String, Path)
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #createModule(Location, String)},
+   * passing {@link StandardLocation#UPGRADE_MODULE_PATH} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default ManagedDirectory createUpgradeModulePathModule(String moduleName) {
     return createModule(StandardLocation.UPGRADE_MODULE_PATH, moduleName);
   }
@@ -815,7 +854,12 @@ public interface Workspace extends AutoCloseable {
    * @return the created test directory.
    * @see #createModule(Location, String)
    * @see #addSystemModulePathModule(String, Path)
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #createModule(Location, String)}, passing
+   * {@link StandardLocation#SYSTEM_MODULES} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default ManagedDirectory createSystemModulePathModule(String moduleName) {
     return createModule(StandardLocation.SYSTEM_MODULES, moduleName);
   }
@@ -827,7 +871,12 @@ public interface Workspace extends AutoCloseable {
    * @return the created test directory.
    * @see #createModule(Location, String)
    * @see #createPatchModulePathModule(String)
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #createModule(Location, String)}, passing
+   * {@link StandardLocation#PATCH_MODULE_PATH} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default ManagedDirectory createPatchModulePathModule(String moduleName) {
     return createModule(StandardLocation.PATCH_MODULE_PATH, moduleName);
   }
@@ -960,7 +1009,11 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the roots in a collection, or an empty collection if none were found.
    * @since 0.1.0
+   * @deprecated The platform class path has been mostly replaced by the use of system modules, so
+   * should not be used. This will be removed in v1.0.0.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default List<? extends PathRoot> getPlatformClassPathPackages() {
     return getPackages(StandardLocation.PLATFORM_CLASS_PATH);
   }
@@ -971,7 +1024,12 @@ public interface Workspace extends AutoCloseable {
    *
    * @return the roots in a collection, or an empty collection if none were found.
    * @since 0.1.0
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #getPackages(Location)}, passing
+   * {@link StandardLocation#NATIVE_HEADER_OUTPUT} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default List<? extends PathRoot> getNativeHeaderOutputPackages() {
     return getPackages(StandardLocation.NATIVE_HEADER_OUTPUT);
   }
@@ -983,7 +1041,12 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name.
    * @return the roots in a collection, or an empty collection if none were found.
    * @since 0.1.0
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #getModule(Location, String)}, passing
+   * {@link StandardLocation#NATIVE_HEADER_OUTPUT} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default List<? extends PathRoot> getNativeHeaderOutputModule(String moduleName) {
     return getModule(StandardLocation.NATIVE_HEADER_OUTPUT, moduleName);
   }
@@ -995,7 +1058,12 @@ public interface Workspace extends AutoCloseable {
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
    * found.
    * @since 0.1.0
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #getModules(Location)}, passing
+   * {@link StandardLocation#NATIVE_HEADER_OUTPUT} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default Map<String, List<? extends PathRoot>> getNativeHeaderOutputModules() {
     return getModules(StandardLocation.NATIVE_HEADER_OUTPUT);
   }
@@ -1029,7 +1097,12 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name to get.
    * @return the roots in a collection, or an empty collection if none were found.
    * @since 0.1.0
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #getModule(Location, String)}, passing
+   * {@link StandardLocation#UPGRADE_MODULE_PATH} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default List<? extends PathRoot> getUpgradeModulePathModule(String moduleName) {
     return getModule(StandardLocation.UPGRADE_MODULE_PATH, moduleName);
   }
@@ -1041,7 +1114,12 @@ public interface Workspace extends AutoCloseable {
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
    * found.
    * @since 0.1.0
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #getModules(Location)}, passing
+   * {@link StandardLocation#UPGRADE_MODULE_PATH} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default Map<String, List<? extends PathRoot>> getUpgradeModulePathModules() {
     return getModules(StandardLocation.UPGRADE_MODULE_PATH);
   }
@@ -1052,7 +1130,12 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name to get.
    * @return the roots in a collection, or an empty collection if none were found.
    * @since 0.1.0
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #getModule(Location, String)}, passing
+   * {@link StandardLocation#SYSTEM_MODULES} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default List<? extends PathRoot> getSystemModulePathModule(String moduleName) {
     return getModule(StandardLocation.SYSTEM_MODULES, moduleName);
   }
@@ -1063,7 +1146,12 @@ public interface Workspace extends AutoCloseable {
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
    * found.
    * @since 0.1.0
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #getModules(Location)}, passing
+   * {@link StandardLocation#SYSTEM_MODULES} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default Map<String, List<? extends PathRoot>> getSystemModulePathModules() {
     return getModules(StandardLocation.SYSTEM_MODULES);
   }
@@ -1096,7 +1184,12 @@ public interface Workspace extends AutoCloseable {
    * @param moduleName the module name to get.
    * @return the roots in a collection, or an empty collection if none were found.
    * @since 0.1.0
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #getModule(Location, String)}, passing
+   * {@link StandardLocation#PATCH_MODULE_PATH} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default List<? extends PathRoot> getPatchModulePathModule(String moduleName) {
     return getModule(StandardLocation.PATCH_MODULE_PATH, moduleName);
   }
@@ -1108,7 +1201,12 @@ public interface Workspace extends AutoCloseable {
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
    * found.
    * @since 0.1.0
+   * @deprecated This is a specialist method that is usually not used. To keep the API simple,
+   * this is being removed. You should instead call {@link #getModules(Location)}, passing
+   * {@link StandardLocation#PATCH_MODULE_PATH} as the first parameter.
    */
+  @Deprecated(forRemoval = true, since = "0.6.0")
+  @SuppressWarnings("DeprecatedIsStillUsed")
   default Map<String, List<? extends PathRoot>> getPatchModulePathModules() {
     return getModules(StandardLocation.PATCH_MODULE_PATH);
   }

@@ -231,6 +231,7 @@ class WorkspaceTest {
 
   @DisplayName(".addNativeHeaderOutputPackage(Path) calls addPackage(NATIVE_HEADER_OUTPUT, Path)")
   @Test
+  @SuppressWarnings("removal")
   void addNativeHeaderOutputPackageCallsAddPackage() {
     // Given
     doCallRealMethod().when(workspace).addNativeHeaderOutputPackage(any());
@@ -249,6 +250,7 @@ class WorkspaceTest {
           + "Path)"
   )
   @Test
+  @SuppressWarnings("removal")
   void addNativeHeaderOutputModuleCallsAddModule() {
     // Given
     doCallRealMethod().when(workspace).addNativeHeaderOutputModule(any(), any());
@@ -267,6 +269,7 @@ class WorkspaceTest {
       ".addUpgradeModulePathModule(String, Path) calls addModule(UPGRADE_MODULE_PATH, String, Path)"
   )
   @Test
+  @SuppressWarnings("removal")
   void addUpgradeModulePathModuleCallsAddModule() {
     // Given
     doCallRealMethod().when(workspace).addUpgradeModulePathModule(any(), any());
@@ -285,6 +288,7 @@ class WorkspaceTest {
       ".addSystemModulePathModule(String, Path) calls addModule(SYSTEM_MODULES, String, Path)"
   )
   @Test
+  @SuppressWarnings("removal")
   void addSystemModulePathModuleCallsAddModule() {
     // Given
     doCallRealMethod().when(workspace).addSystemModulePathModule(any(), any());
@@ -303,6 +307,7 @@ class WorkspaceTest {
       ".addPatchModulePathModule(String, Path) calls addModule(PATCH_MODULE_PATH, String, Path)"
   )
   @Test
+  @SuppressWarnings("removal")
   void addPatchModulePathModuleCallsAddModule() {
     // Given
     doCallRealMethod().when(workspace).addPatchModulePathModule(any(), any());
@@ -486,6 +491,7 @@ class WorkspaceTest {
 
   @DisplayName(".createNativeHeaderOutputPackage(Path) calls createPackage(NATIVE_HEADER_OUTPUT)")
   @Test
+  @SuppressWarnings("removal")
   void createNativeHeaderOutputPackageCallsCreatePackage() {
     // Given
     doCallRealMethod().when(workspace).createNativeHeaderOutputPackage();
@@ -502,6 +508,7 @@ class WorkspaceTest {
       ".createNativeHeaderOutputModule(String) calls createModule(NATIVE_HEADER_OUTPUT, String)"
   )
   @Test
+  @SuppressWarnings("removal")
   void createNativeHeaderOutputModuleCallsCreateModule() {
     // Given
     doCallRealMethod().when(workspace).createNativeHeaderOutputModule(any());
@@ -519,6 +526,7 @@ class WorkspaceTest {
       ".createUpgradeModulePathModule(String) calls createModule(UPGRADE_MODULE_PATH, String)"
   )
   @Test
+  @SuppressWarnings("removal")
   void createUpgradeModulePathModuleCallsCreateModule() {
     // Given
     doCallRealMethod().when(workspace).createUpgradeModulePathModule(any());
@@ -536,6 +544,7 @@ class WorkspaceTest {
       ".createSystemModulePathModule(String) calls createModule(SYSTEM_MODULES, String)"
   )
   @Test
+  @SuppressWarnings("removal")
   void createSystemModulePathModuleCallsCreateModule() {
     // Given
     doCallRealMethod().when(workspace).createSystemModulePathModule(any());
@@ -553,6 +562,7 @@ class WorkspaceTest {
       ".createPatchModulePathModule(String) calls createModule(PATCH_MODULE_PATH, String)"
   )
   @Test
+  @SuppressWarnings("removal")
   void createPatchModulePathModuleCallsCreateModule() {
     // Given
     doCallRealMethod().when(workspace).createPatchModulePathModule(any());
@@ -762,6 +772,7 @@ class WorkspaceTest {
 
   @DisplayName(".getPlatformClassPathPackages calls getPackages(PLATFORM_CLASS_PATH)")
   @Test
+  @SuppressWarnings("removal")
   void getPlatformClassPathPackagesCallsGetPackages() {
     // Given
     List<PathRoot> expected = mock();
@@ -779,6 +790,7 @@ class WorkspaceTest {
 
   @DisplayName(".getNativeHeaderOutputPackages calls getPackages(NATIVE_HEADER_OUTPUT)")
   @Test
+  @SuppressWarnings("removal")
   void getNativeHeaderOutputPackagesCallsGetPackages() {
     // Given
     List<PathRoot> expected = mock();
@@ -796,6 +808,7 @@ class WorkspaceTest {
 
   @DisplayName(".getNativeHeaderOutputModule calls getModule(NATIVE_HEADER_OUTPUT, ...)")
   @Test
+  @SuppressWarnings("removal")
   void getNativeHeaderOutputModuleCallsGetModule() {
     // Given
     List<PathRoot> expected = mock();
@@ -814,6 +827,7 @@ class WorkspaceTest {
 
   @DisplayName(".getNativeHeaderOutputModules calls getModules(NATIVE_HEADER_OUTPUT)")
   @Test
+  @SuppressWarnings("removal")
   void getNativeHeaderOutputModulesCallsGetModules() {
     // Given
     Map<String, List<? extends PathRoot>> expected = mock();
@@ -868,6 +882,7 @@ class WorkspaceTest {
 
   @DisplayName(".getUpgradeModulePathModule calls getModule(UPGRADE_MODULE_PATH, ...)")
   @Test
+  @SuppressWarnings("removal")
   void getUpgradeModulePathModuleCallsGetModule() {
     // Given
     List<PathRoot> expected = mock();
@@ -886,6 +901,7 @@ class WorkspaceTest {
 
   @DisplayName(".getUpgradeModulePathModules calls getModules(UPGRADE_MODULE_PATH)")
   @Test
+  @SuppressWarnings("removal")
   void getUpgradeModulePathModulesCallsGetModules() {
     // Given
     Map<String, List<? extends PathRoot>> expected = mock();
@@ -903,6 +919,7 @@ class WorkspaceTest {
 
   @DisplayName(".getSystemModulePathModule calls getModule(SYSTEM_MODULES, ...)")
   @Test
+  @SuppressWarnings("removal")
   void getSystemModulePathModuleCallsGetModule() {
     // Given
     List<PathRoot> expected = mock();
@@ -921,6 +938,7 @@ class WorkspaceTest {
 
   @DisplayName(".getSystemModulePathModules calls getModules(SYSTEM_MODULES)")
   @Test
+  @SuppressWarnings("removal")
   void getSystemModulePathModulesCallsGetModules() {
     // Given
     Map<String, List<? extends PathRoot>> expected = mock();
@@ -973,6 +991,7 @@ class WorkspaceTest {
 
   @DisplayName(".getPatchModulePathModule calls getModule(PATCH_MODULE_PATH, ...)")
   @Test
+  @SuppressWarnings("removal")
   void getPatchModulePathModuleCallsGetModule() {
     // Given
     List<PathRoot> expected = mock();
@@ -991,6 +1010,7 @@ class WorkspaceTest {
 
   @DisplayName(".getPatchModulePathModules calls getModules(PATCH_MODULE_PATH)")
   @Test
+  @SuppressWarnings("removal")
   void getPatchModulePathModulesCallsGetModules() {
     // Given
     Map<String, List<? extends PathRoot>> expected = mock();

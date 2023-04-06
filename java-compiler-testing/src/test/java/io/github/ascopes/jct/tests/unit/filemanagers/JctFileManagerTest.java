@@ -170,6 +170,7 @@ class JctFileManagerTest {
   @DisplayName(".getNativeHeaderOutputGroup() makes the expected call")
   @MethodSource("outputContainerGroupResults")
   @ParameterizedTest(name = "when internal getter returns {0}")
+  @SuppressWarnings("removal")
   void getNativeHeaderOutputGroupMakesTheExpectedCall(OutputContainerGroup expected) {
     // Given
     when(fileManager.getNativeHeaderOutputGroup()).thenCallRealMethod();
@@ -204,6 +205,7 @@ class JctFileManagerTest {
   @DisplayName(".getUpgradeModulePathGroup() makes the expected call")
   @MethodSource("moduleContainerGroupResults")
   @ParameterizedTest(name = "when internal getter returns {0}")
+  @SuppressWarnings("removal")
   void getUpgradeModulePathGroupMakesTheExpectedCall(ModuleContainerGroup expected) {
     // Given
     when(fileManager.getUpgradeModulePathGroup()).thenCallRealMethod();
@@ -221,6 +223,7 @@ class JctFileManagerTest {
   @DisplayName(".getSystemModulesGroup() makes the expected call")
   @MethodSource("moduleContainerGroupResults")
   @ParameterizedTest(name = "when internal getter returns {0}")
+  @SuppressWarnings("removal")
   void getSystemModulesGroupMakesTheExpectedCall(ModuleContainerGroup expected) {
     // Given
     when(fileManager.getSystemModulesGroup()).thenCallRealMethod();
@@ -255,6 +258,7 @@ class JctFileManagerTest {
   @DisplayName(".getPatchModulePathGroup() makes the expected call")
   @MethodSource("moduleContainerGroupResults")
   @ParameterizedTest(name = "when internal getter returns {0}")
+  @SuppressWarnings("removal")
   void getPatchModulePathGroupMakesTheExpectedCall(ModuleContainerGroup expected) {
     // Given
     when(fileManager.getPatchModulePathGroup()).thenCallRealMethod();
@@ -280,13 +284,6 @@ class JctFileManagerTest {
   static Stream<OutputContainerGroup> outputContainerGroupResults() {
     return Stream.of(
         mock(OutputContainerGroup.class, "an output container group"),
-        null
-    );
-  }
-
-  static Stream<PackageContainerGroup> packageContainerGroupResults() {
-    return Stream.of(
-        mock(PackageContainerGroup.class, "a package container group"),
         null
     );
   }
