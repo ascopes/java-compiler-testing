@@ -183,7 +183,7 @@ public interface PackageContainerGroup extends ContainerGroup {
      * @param recurse     {@code true} to recurse subpackages, {@code false} to only consider the
      *                    given package.
      * @return thr file objects that were found.
-     * @throws IOException if the file lookup fails due to an IO exception.
+     * @throws IOException if the file lookup fails due to an IO error somewhere.
      */
     Set<JavaFileObject> listFileObjects(
             String packageName,
@@ -196,6 +196,7 @@ public interface PackageContainerGroup extends ContainerGroup {
      * within that container.
      *
      * @return a multimap of containers mapping to collections of all files in that container.
+     * @throws IOException if the file lookup fails due to an IO error somewhere.
      * @since 0.6.0
      */
     @API(since = "0.6.0", status = Status.STABLE)
