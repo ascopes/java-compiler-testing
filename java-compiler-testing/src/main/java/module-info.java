@@ -98,7 +98,6 @@ import java.net.spi.URLStreamHandlerProvider;
  *    }
  * </code></pre>
  */
-@SuppressWarnings("removal")
 module io.github.ascopes.jct {
 
   ////////////////////

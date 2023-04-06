@@ -85,7 +85,6 @@ public final class RamDirectoryImpl extends AbstractManagedDirectory {
    * @return the in-memory path.
    */
   public static RamDirectoryImpl newRamDirectory(String name) {
-
     assertValidRootName(name);
 
     // MemoryFileSystem needs unique FS names to work correctly, so use a UUID to enforce this.

@@ -136,7 +136,12 @@ public final class WorkspaceImpl implements Workspace {
       throw new IllegalArgumentException("Location must not be module-oriented");
     }
 
-    var dir = pathStrategy.newInstance(location.getName());
+    // Needs to be unique, and JIMFS cannot hold a file system name containing stuff like
+    // underscores.
+    var fsName = location.getName().replaceAll("[^A-Za-z0-9]", "")
+        + UUID.randomUUID();
+
+    var dir = pathStrategy.newInstance(fsName);
     paths.computeIfAbsent(location, unused -> new ArrayList<>()).add(dir);
     return dir;
   }

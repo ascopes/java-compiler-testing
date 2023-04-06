@@ -35,8 +35,7 @@ import org.jspecify.annotations.Nullable;
  * @since 0.7.0
  */
 @API(since = "0.7.0", status = Status.INTERNAL)
-@SuppressWarnings("removal")
-public final class MemoryFileSystemProvider implements RamFileSystemProvider {
+public final class MemoryFileSystemProvider {
 
   // We could initialise this lazily, but this class has fewer fields and initialisation
   // overhead than a lazy-loaded object would, so it doesn't really make sense to do it
@@ -57,7 +56,6 @@ public final class MemoryFileSystemProvider implements RamFileSystemProvider {
     // Singleton object.
   }
 
-  @Override
   public FileSystem createFileSystem(String name) {
     try {
       return MemoryFileSystemBuilder.newLinux()
