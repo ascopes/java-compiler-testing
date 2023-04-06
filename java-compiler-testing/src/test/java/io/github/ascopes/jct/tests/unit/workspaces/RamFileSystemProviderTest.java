@@ -37,7 +37,7 @@ import org.junit.jupiter.api.parallel.Isolated;
  */
 @DisplayName("RamFileSystemProvider tests")
 @Isolated("messes with global ServiceLoader")
-@SuppressWarnings("Java9UndeclaredServiceUsage")
+@SuppressWarnings({"Java9UndeclaredServiceUsage", "removal"})
 class RamFileSystemProviderTest {
 
   @DisplayName(".getInstance() returns the first service provider instance if present")

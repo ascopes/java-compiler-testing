@@ -51,13 +51,6 @@ public enum PathStrategy {
    *
    * <p>Some non-Javac compiler implementations (such as ECJ) may also have some difficulties
    * dealing with these paths.
-   *
-   * The actual implementation used internally will be the first {@link RamFileSystemProvider} that
-   * is present when querying that interface with the Java 
-   * {@link java.util.ServiceLoader Service Loader mechanism}. By default, if no custom implementation
-   * is provided by the user, then an internal implementation is used. This internal implementation is
-   * subject to change at any time (as long as the change is non-breaking), but currently uses
-   * {@link com.google.common.jimfs.Jimfs Google's JIMFS}.
    */
   RAM_DIRECTORIES(RamDirectoryImpl::newRamDirectory),
 

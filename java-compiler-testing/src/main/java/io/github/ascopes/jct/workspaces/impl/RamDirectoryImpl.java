@@ -18,7 +18,6 @@ package io.github.ascopes.jct.workspaces.impl;
 import static io.github.ascopes.jct.utils.FileUtils.assertValidRootName;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
-import io.github.ascopes.jct.workspaces.RamFileSystemProvider;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -88,7 +87,7 @@ public final class RamDirectoryImpl extends AbstractManagedDirectory {
 
     assertValidRootName(name);
 
-    var fileSystem = RamFileSystemProvider.getInstance().createFileSystem(name);
+    var fileSystem = JimfsFileSystemProviderImpl.getInstance().createFileSystem(name);
     var path = fileSystem.getRootDirectories().iterator().next().resolve(name);
 
     // Ensure the base directory exists.
