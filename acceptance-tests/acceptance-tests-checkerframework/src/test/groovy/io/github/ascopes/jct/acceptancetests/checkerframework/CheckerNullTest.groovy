@@ -31,8 +31,13 @@ class CheckerNullTest {
 
   @BeforeEach
   void setUp() {
+    // Workaround for https://youtrack.jetbrains.com/issue/IDEA-317391
+    assumeThat(System.getProperty("mvnArgLinePropagated", "false"))
+        .withFailMessage("Your IDE has not propagated the <argLine/> in the pom.xml")
+        .isEqualTo("true");
+
     assumeThat(JRE.currentVersion())
-        .as("Checkerframework may misbehave on this JVM, so has been disabled")
+        .withFailMessage("Checkerframework may misbehave on this JVM, so has been disabled")
         .isIn(JRE.JAVA_16, JRE.JAVA_17, JRE.JAVA_18, JRE.JAVA_19, JRE.JAVA_20)
   }
 

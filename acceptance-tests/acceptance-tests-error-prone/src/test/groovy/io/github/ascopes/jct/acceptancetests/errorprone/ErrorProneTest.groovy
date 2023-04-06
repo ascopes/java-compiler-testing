@@ -18,12 +18,22 @@ package io.github.ascopes.jct.acceptancetests.errorprone
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import io.github.ascopes.jct.workspaces.Workspaces
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
+import static org.assertj.core.api.Assumptions.assumeThat
 
 @DisplayName("Error-prone acceptance tests")
 class ErrorProneTest {
+
+  @BeforeAll
+  static void workAroundIdea317391() {
+    // Workaround for https://youtrack.jetbrains.com/issue/IDEA-317391
+    assumeThat(System.getProperty("mvnArgLinePropagated", "false"))
+            .withFailMessage("Your IDE has not propagated the <argLine/> in the pom.xml")
+            .isEqualTo("true");
+  }
 
   @DisplayName("Happy paths work as expected")
   @JavacCompilerTest
