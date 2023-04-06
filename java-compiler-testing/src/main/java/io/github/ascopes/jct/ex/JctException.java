@@ -27,10 +27,21 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.STABLE)
 public abstract class JctException extends RuntimeException {
 
+  /**
+   * Initialise the exception with a message.
+   *
+   * @param message the message to initialise the exception with.
+   */
   JctException(String message) {
     super(message);
   }
 
+  /**
+   * Initialise the exception with a message and a cause.
+   *
+   * @param message the message to initialise the exception with.
+   * @param cause   the cause of the exception.
+   */
   JctException(String message, Throwable cause) {
     super(message, cause);
   }
