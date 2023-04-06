@@ -120,7 +120,7 @@ jobs:
           # XZ with max compression, more efficient than using GZip.  
           XZ_OPT=-9 tar -Jcvf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tar.xz \
               $(find . -name surefire-reports -o -name failsafe-reports) \
-              $(find . -name 'jacoco*.xml')
+              $(find . -name 'jacoco.xml')
 
       - name: Stash reports tarball
         uses: actions/upload-artifact@v3.1.2
@@ -195,10 +195,6 @@ jobs:
           shasum -a 256 -c codecov.SHA256SUM
           chmod -v +x codecov
           ./codecov -v
-          # TODO: upload unit test and integration test reports separately so that
-          # codecov processes it correctly. Need to hard-wire the paths in here somehow.
-          #./codecov -c -F unit -v
-          #./codecov -c -F integration -v
 
   linting:
     name: Linting
