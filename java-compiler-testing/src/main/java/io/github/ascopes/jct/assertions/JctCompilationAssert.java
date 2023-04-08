@@ -264,7 +264,11 @@ public final class JctCompilationAssert extends
    *
    * @return the assertions to perform on the header outputs.
    * @throws AssertionError if the compilation is null.
+   * @deprecated this method is rarely needed, so is being removed in v1.0.0. Use
+   * {@link #outputGroup(Location)}, passing {@link StandardLocation#NATIVE_HEADER_OUTPUT} as the
+   * first parameter instead.
    */
+  @Deprecated(since = "0.6.0", forRemoval = true)
   public OutputContainerGroupAssert generatedHeaders() {
     return outputGroup(StandardLocation.NATIVE_HEADER_OUTPUT);
   }
