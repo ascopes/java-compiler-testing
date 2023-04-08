@@ -41,6 +41,8 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   private static final String SOURCE = "-source";
   private static final String TARGET = "-target";
   private static final String ANNOTATION_OPT = "-A";
+  private static final String PROC_NONE = "-proc:none";
+  private static final String PROC_ONLY = "-proc:only";
 
   private final List<String> craftedFlags;
 
@@ -75,11 +77,11 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   public JctFlagBuilder compilationMode(CompilationMode compilationMode) {
     switch (compilationMode) {
       case COMPILATION_ONLY:
-        craftedFlags.add("-proc:none");
+        craftedFlags.add(PROC_NONE);
         break;
 
       case ANNOTATION_PROCESSING_ONLY:
-        craftedFlags.add("-proc:only");
+        craftedFlags.add(PROC_ONLY);
         break;
 
       default:
