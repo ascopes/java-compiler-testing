@@ -111,15 +111,21 @@ public final class FileUtils extends UtilityClass {
     Objects.requireNonNull(name, "name");
 
     if (name.isBlank()) {
-      throw new IllegalArgumentException("Directory name cannot be blank");
+      throw new IllegalArgumentException(
+          "Directory name cannot be blank: " + StringUtils.quoted(name)
+      );
     }
 
     if (!name.equals(name.trim())) {
-      throw new IllegalArgumentException("Directory name cannot begin or end in spaces");
+      throw new IllegalArgumentException(
+          "Directory name cannot begin or end in spaces: " + StringUtils.quoted(name)
+      );
     }
 
     if (name.contains("/") || name.contains("\\") || name.contains("..")) {
-      throw new IllegalArgumentException("Invalid file name provided");
+      throw new IllegalArgumentException(
+          "Invalid file name provided: " + StringUtils.quoted(name)
+      );
     }
   }
 
@@ -132,7 +138,7 @@ public final class FileUtils extends UtilityClass {
    */
   public static String pathToBinaryName(Path path) {
     if (path.isAbsolute()) {
-      throw new IllegalArgumentException("Path cannot be absolute (got " + path + ")");
+      throw new IllegalArgumentException("Path cannot be absolute: " + StringUtils.quoted(path));
     }
 
     var count = path.getNameCount();

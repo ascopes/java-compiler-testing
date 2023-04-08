@@ -40,6 +40,7 @@ import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.tests.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.FileUtils;
+import io.github.ascopes.jct.utils.StringUtils;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -120,7 +121,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       String rootString,
       String partsString,
       String expectString
-  ) throws IOException {
+  ) {
     // Given
     try (var fs = someTemporaryFileSystem()) {
       var root = fs.getFileSystem().getPath(rootString);
@@ -165,7 +166,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
     // Then
     assertThatThrownBy(() -> assertValidRootName(rootName))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage(expectedError);
+        .hasMessage(expectedError + ": " + StringUtils.quoted(rootName));
   }
 
   @DisplayName("pathToBinaryName throws an IllegalArgumentException for absolute paths")
@@ -179,7 +180,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
     // Then
     assertThatThrownBy(() -> pathToBinaryName(path))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Path cannot be absolute (got /foo/bar/baz)");
+        .hasMessage("Path cannot be absolute: \"/foo/bar/baz\"");
   }
 
   @DisplayName("pathToBinaryName converts relative paths as expected")
@@ -192,8 +193,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       "org/example/foo/bar/Baz$Bork, org.example.foo.bar.Baz$Bork",
   })
   @ParameterizedTest(name = "pathToBinaryName(\"{0}\") should return \"{1}\"")
-  void pathToBinaryNameConvertsRelativePathsAsExpected(String input, String expected)
-      throws IOException {
+  void pathToBinaryNameConvertsRelativePathsAsExpected(String input, String expected) {
 
     try (var fs = someTemporaryFileSystem()) {
       // Given
@@ -262,7 +262,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       String binaryName,
       Kind kind,
       String expected
-  ) throws IOException {
+  ) {
     try (var fs = someTemporaryFileSystem()) {
       // Given
       var directoryPath = fs.getFileSystem().getPath(directory);
@@ -293,7 +293,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       String directory,
       String packageName,
       String expected
-  ) throws IOException {
+  ) {
     try (var fs = someTemporaryFileSystem()) {
       // Given
       var directoryPath = fs.getFileSystem().getPath(directory);
@@ -325,7 +325,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       String className,
       Kind kind,
       String expected
-  ) throws IOException {
+  ) {
     try (var fs = someTemporaryFileSystem()) {
       // Given
       var packageDirectoryPath = fs.getFileSystem().getPath(packageDirectory);
@@ -364,7 +364,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       String packageName,
       String relativeName,
       String expected
-  ) throws IOException {
+  ) {
     try (var fs = someTemporaryFileSystem()) {
       // Given
       var directoryPath = fs.getFileSystem().getPath(directory);
@@ -391,7 +391,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       String fragment,
       String[] fragments,
       String expected
-  ) throws IOException {
+  ) {
     try (var fs = someTemporaryFileSystem()) {
       // Given
       var directoryPath = fs.getFileSystem().getPath(directory);
@@ -437,7 +437,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       "'', OTHER",
   })
   @ParameterizedTest(name = "pathToKind(\"{0}\") should return Kind.{1}")
-  void pathToKindReturnsTheExpectedOutput(String pathName, Kind expectedKind) throws IOException {
+  void pathToKindReturnsTheExpectedOutput(String pathName, Kind expectedKind) {
     try (var fs = someTemporaryFileSystem()) {
       // Given
       var path = fs.getFileSystem().getPath(pathName);
@@ -460,8 +460,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
   @ParameterizedTest(
       name = "fileWithAnyKind([{0}])'s predicate should return false for non-existing path \"{1}\""
   )
-  void fileWithAnyKindShouldFailIfThePathDoesNotExist(Kind kind, String pathName)
-      throws IOException {
+  void fileWithAnyKindShouldFailIfThePathDoesNotExist(Kind kind, String pathName) {
     try (var fs = someTemporaryFileSystem()) {
       // Given
       var path = fs.getFileSystem().getPath(pathName);
