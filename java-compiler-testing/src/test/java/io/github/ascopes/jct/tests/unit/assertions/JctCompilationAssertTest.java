@@ -903,27 +903,6 @@ class JctCompilationAssertTest {
     assertThat(actualAssertions).isSameAs(expectedAssertions);
   }
 
-  @DisplayName(".generatedHeaders() performs the expected operations")
-  @SuppressWarnings("removal")
-  @Test
-  void generatedHeadersPerformsTheExpectedOperations() {
-    // Given
-    var expectedAssertions = mock(OutputContainerGroupAssert.class);
-
-    var assertions = mock(JctCompilationAssert.class);
-    when(assertions.generatedHeaders()).thenCallRealMethod();
-    when(assertions.outputGroup(any())).thenReturn(expectedAssertions);
-
-    // When
-    var actualAssertions = assertions.generatedHeaders();
-
-    // Then
-    verify(assertions).generatedHeaders();
-    verify(assertions).outputGroup(StandardLocation.NATIVE_HEADER_OUTPUT);
-    verifyNoMoreInteractions(assertions);
-    assertThat(actualAssertions).isSameAs(expectedAssertions);
-  }
-
   @DisplayName(".classPath() performs the expected operations")
   @SuppressWarnings("removal")
   @Test
