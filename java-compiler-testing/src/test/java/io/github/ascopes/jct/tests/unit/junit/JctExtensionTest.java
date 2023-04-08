@@ -171,6 +171,9 @@ class JctExtensionTest {
   @Test
   void beforeEachHookInitialisesAnnotatedInstanceWorkspaceFields() {
     // Given
+    InstanceWorkspaceTestCase.someIgnoredStaticWorkspace = null;
+    InstanceWorkspaceTestCase.someInvalidStaticWorkspace = null;
+
     var instance1 = new InstanceWorkspaceTestCase();
     var instance2 = new InstanceWorkspaceTestCase();
     var instance3 = new InstanceWorkspaceTestCase();
