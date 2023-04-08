@@ -339,24 +339,6 @@ public final class JctCompilationAssert extends
   }
 
   /**
-   * Get assertions on the path containing header outputs, if it exists.
-   *
-   * <p>If not configured, the value being asserted on will be {@code null} in value.
-   *
-   * @return the assertions to perform on the header outputs.
-   * @throws AssertionError if the compilation was null, or no group for the location
-   *                        was found.
-   * @deprecated this method is rarely needed, so is being removed in v1.0.0. Use
-   * {@link #outputGroup(Location)}, passing {@link StandardLocation#NATIVE_HEADER_OUTPUT} as the
-   * first parameter instead.
-   */
-  @Deprecated(since = "0.6.0", forRemoval = true)
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  public OutputContainerGroupAssert generatedHeaders() {
-    return outputGroup(StandardLocation.NATIVE_HEADER_OUTPUT);
-  }
-
-  /**
    * Get assertions on the path containing the class path, if it exists.
    *
    * <p>If not configured, the value being asserted on will be {@code null} in value.
