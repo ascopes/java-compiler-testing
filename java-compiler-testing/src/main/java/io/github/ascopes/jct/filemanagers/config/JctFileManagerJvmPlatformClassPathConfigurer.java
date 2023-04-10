@@ -18,6 +18,7 @@ package io.github.ascopes.jct.filemanagers.config;
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
+import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
@@ -64,9 +65,12 @@ public final class JctFileManagerJvmPlatformClassPathConfigurer
     SpecialLocationUtils
         .currentPlatformClassPathLocations()
         .stream()
-        .peek(loc -> LOGGER.trace(
-            "Adding {} to file manager platform classpath (inherited from JVM)", loc
-        ))
+        .peek(loc -> LOGGER
+            .atTrace()
+            .setMessage("Adding {} ({}) to file manager platform class path (inherited from JVM))")
+            .addArgument(() -> StringUtils.quoted(loc.toAbsolutePath()))
+            .addArgument(() -> StringUtils.quoted(loc.toUri()))
+            .log())
         .map(WrappingDirectoryImpl::new)
         .forEach(dir -> fileManager.addPath(StandardLocation.PLATFORM_CLASS_PATH, dir));
 

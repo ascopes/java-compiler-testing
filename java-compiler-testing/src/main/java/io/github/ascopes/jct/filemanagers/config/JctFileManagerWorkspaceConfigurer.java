@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.filemanagers.config;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
+import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.workspaces.Workspace;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -47,8 +48,13 @@ public final class JctFileManagerWorkspaceConfigurer implements JctFileManagerCo
 
   @Override
   public JctFileManager configure(JctFileManager fileManager) {
+    LOGGER.debug("Configuring file manager with user-provided paths");
     var paths = workspace.getAllPaths();
-    LOGGER.debug("Copying user-defined paths from workspace ({})", paths);
+    LOGGER
+        .atTrace()
+        .setMessage("Copying user-defined paths from workspace into file manager ({})")
+        .addArgument(() -> StringUtils.quoted(paths))
+        .log();
     workspace.getAllPaths().forEach(fileManager::addPaths);
     return fileManager;
   }

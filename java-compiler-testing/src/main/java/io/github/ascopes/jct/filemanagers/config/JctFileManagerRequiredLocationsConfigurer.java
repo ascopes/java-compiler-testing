@@ -18,6 +18,7 @@ package io.github.ascopes.jct.filemanagers.config;
 import static java.util.function.Predicate.not;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
+import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.workspaces.Workspace;
 import java.util.Set;
 import javax.tools.StandardLocation;
@@ -51,7 +52,7 @@ public final class JctFileManagerRequiredLocationsConfigurer implements JctFileM
       StandardLocation.CLASS_OUTPUT,
       // We need to provide a header output path in case header generation is enabled at any stage.
       // I might make this disabled by default in the future if there is too much overhead from
-      // doing this by default.
+      // doing this.
       StandardLocation.NATIVE_HEADER_OUTPUT
   );
 
@@ -73,13 +74,12 @@ public final class JctFileManagerRequiredLocationsConfigurer implements JctFileM
     REQUIRED_LOCATIONS
         .stream()
         .filter(not(fileManager::hasLocation))
-        .forEach(location -> {
-          LOGGER.trace(
-              "Required location {} does not exist, so will be created in the workspace",
-              location
-          );
-          fileManager.addPath(location, workspace.createPackage(location));
-        });
+        .peek(location -> LOGGER.atTrace()
+            .setMessage("Required location {} does not exist, so will be created in the workspace")
+            .addArgument(() -> StringUtils.quoted(location.getName()))
+            .log())
+        .forEach(location -> fileManager.addPath(location, workspace.createPackage(location)));
+
     return fileManager;
   }
 }

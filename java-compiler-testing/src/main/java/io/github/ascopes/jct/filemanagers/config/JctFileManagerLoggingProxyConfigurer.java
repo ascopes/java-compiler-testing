@@ -54,13 +54,13 @@ public final class JctFileManagerLoggingProxyConfigurer implements JctFileManage
 
     switch (compiler.getFileManagerLoggingMode()) {
       case STACKTRACES:
-        LOGGER.trace("Decorating file manager {} in a logging proxy with stacktraces", fileManager);
+        LOGGER.trace("Decorating file manager {} in a logger proxy with stack traces", fileManager);
         return LoggingFileManagerProxy.wrap(fileManager, true);
       case ENABLED:
-        LOGGER.trace("Decorating file manager {} in a logging proxy", fileManager);
+        LOGGER.trace("Decorating file manager {} in a logger proxy", fileManager);
         return LoggingFileManagerProxy.wrap(fileManager, false);
       default:
-        throw new IllegalStateException("Cannot configure logging proxy");
+        throw new IllegalStateException("Cannot configure logger proxy");
     }
   }
 
