@@ -49,13 +49,17 @@ public final class JctFileManagerWorkspaceConfigurer implements JctFileManagerCo
   @Override
   public JctFileManager configure(JctFileManager fileManager) {
     LOGGER.debug("Configuring file manager with user-provided paths");
-    var paths = workspace.getAllPaths();
-    LOGGER
-        .atTrace()
-        .setMessage("Copying user-defined paths from workspace into file manager ({})")
-        .addArgument(() -> StringUtils.quoted(paths))
-        .log();
-    workspace.getAllPaths().forEach(fileManager::addPaths);
+
+    workspace.getAllPaths().forEach((location, paths) -> {
+      LOGGER
+          .atTrace()
+          .setMessage("Adding paths from workspace location {} into file manager ({})")
+          .addArgument(() -> StringUtils.quoted(location.getName()))
+          .addArgument(() -> StringUtils.quotedIterable(paths))
+          .log();
+      fileManager.addPaths(location, paths);
+    });
+
     return fileManager;
   }
 }
