@@ -295,6 +295,9 @@ ij_shell_switch_cases_indented = false
 ij_shell_use_unix_line_separator = true
 
 [{*.gant,*.groovy,*.gy}]
+ij_groovy_indent_size = 2
+ij_groovy_continuation_indent_size = 4
+ij_groovy_tab_width = 2
 ij_groovy_align_group_field_declarations = false
 ij_groovy_align_multiline_array_initializer_expression = false
 ij_groovy_align_multiline_assignment = false
@@ -486,9 +489,6 @@ ij_groovy_wrap_chain_calls_after_dot = false
 ij_groovy_wrap_long_lines = false
 
 [{*.markdown,*.md}]
-indent_size = 2
-tab_width = 2
-ij_continuation_indent_size = 4
 ij_markdown_force_one_space_after_blockquote_symbol = true
 ij_markdown_force_one_space_after_header_symbol = true
 ij_markdown_force_one_space_after_list_bullet = true
