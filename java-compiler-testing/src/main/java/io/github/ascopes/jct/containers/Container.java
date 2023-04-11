@@ -103,7 +103,9 @@ public interface Container extends Closeable {
    * an accurate handle to the inner root directory.
    *
    * @return the path root.
+   * @since 0.0.6
    */
+  @API(since = "0.0.6", status = Status.STABLE)
   PathRoot getInnerPathRoot();
 
   /**
