@@ -24,7 +24,7 @@ import org.apiguardian.api.API.Status;
  * <p>This corresponds to the {@code -proc} flag in the OpenJDK Javac implementation.
  *
  * @author Ashley Scopes
- * @since 0.0.1 (0.0.1-M6)
+ * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
 public enum CompilationMode {

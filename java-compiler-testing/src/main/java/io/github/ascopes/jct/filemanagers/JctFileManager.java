@@ -103,7 +103,7 @@ public interface JctFileManager extends JavaFileManager {
    * Get the associated effective release.
    *
    * @return the effective release.
-   * @since 0.0.1 (0.0.1-M8)
+   * @since 0.0.1
    */
   String getEffectiveRelease();
 

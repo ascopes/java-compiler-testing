@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * <p>If platform classpath inheritance is disabled in the compiler, then this will not run.
  *
  * @author Ashley Scopes
- * @since 0.0.1 (0.0.1-M7)
+ * @since 0.0.1
  * @deprecated The platform class path has been mostly replaced by the use of system modules, so
  * should not be used. This will be removed in v1.0.0.
  */

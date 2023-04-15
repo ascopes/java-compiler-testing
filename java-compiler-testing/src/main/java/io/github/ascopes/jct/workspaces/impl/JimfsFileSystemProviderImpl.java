@@ -28,7 +28,7 @@ import org.apiguardian.api.API.Status;
  * RAM file system provider that uses JIMFS as the underlying file system implementation.
  *
  * @author Ashley Scopes
- * @since 0.0.1 (0.0.1-M9)
+ * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 @SuppressWarnings("removal")

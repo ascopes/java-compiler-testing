@@ -31,7 +31,7 @@ import org.apiguardian.api.API.Status;
  * <p>This means any API should not be using this element directly.
  *
  * @author Ashley Scopes
- * @since 0.0.1 (0.0.1-M8)
+ * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 @Documented

@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * <p>If annotation processor discovery is disabled for dependencies, this will be skipped.
  *
  * @author Ashley Scopes
- * @since 0.0.1 (0.0.1-M7)
+ * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
 public final class JctFileManagerAnnotationProcessorClassPathConfigurer implements

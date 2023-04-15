@@ -28,7 +28,7 @@ import org.apiguardian.api.API.Status;
  * compiler.
  *
  * @author Ashley Scopes
- * @since 0.0.1 (0.0.1-M7)
+ * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
 public interface JctCompilationFactory {

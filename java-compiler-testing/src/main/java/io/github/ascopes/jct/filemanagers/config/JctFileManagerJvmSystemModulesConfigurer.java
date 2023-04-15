@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * <p>If system module inheritance is disabled in the compiler, then this will not run.
  *
  * @author Ashley Scopes
- * @since 0.0.1 (0.0.1-M7)
+ * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
 public final class JctFileManagerJvmSystemModulesConfigurer implements JctFileManagerConfigurer {

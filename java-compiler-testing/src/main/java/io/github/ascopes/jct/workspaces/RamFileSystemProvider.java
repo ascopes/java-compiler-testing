@@ -28,7 +28,7 @@ import org.apiguardian.api.API.Status;
  * implementation by using Java's {@link ServiceLoader} mechanism.
  *
  * @author Ashley Scopes
- * @since 0.0.1 (0.0.1-M9)
+ * @since 0.0.1
  * @deprecated this feature should never be needed by users of this library, and so has been
  * deprecated for removal in v1.0.0.
  */

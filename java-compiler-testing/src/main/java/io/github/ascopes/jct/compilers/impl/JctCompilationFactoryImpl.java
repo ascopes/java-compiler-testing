@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * provided sources and configurations from the JCT API descriptors.
  *
  * @author Ashley Scopes
- * @since 0.0.1 (0.0.1-M7)
+ * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class JctCompilationFactoryImpl implements JctCompilationFactory {

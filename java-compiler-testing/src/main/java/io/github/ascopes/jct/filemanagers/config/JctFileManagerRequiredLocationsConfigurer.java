@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * <p>These locations will be created as empty paths in the workspace.
  *
  * @author Ashley Scopes
- * @since 0.0.1 (0.0.1-M7)
+ * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
 public final class JctFileManagerRequiredLocationsConfigurer implements JctFileManagerConfigurer {

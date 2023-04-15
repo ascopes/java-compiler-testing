@@ -23,7 +23,7 @@ import org.apiguardian.api.API.Status;
  * Interface for a configurer of Java File Manager objects.
  *
  * @author Ashley Scopes
- * @since 0.0.1 (0.0.1-M7)
+ * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
 @FunctionalInterface
