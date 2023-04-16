@@ -355,21 +355,11 @@ public final class JctCompilationAssert extends
         .filter(diagnostic -> kindsToDisplay.contains(diagnostic.getKind()))
         .collect(toUnmodifiableList());
 
-    if (diagnostics.isEmpty()) {
-      failWithMessage(message, args);
-    } else {
-      var fullMessage = String.join(
-          "\n",
-          args.length > 0
-              ? String.format(message, args)
-              : message,
-          "",
-          "Diagnostics:",
-          TraceDiagnosticListRepresentation.getInstance().toStringOf(diagnostics)
-      );
-
-      failWithMessage(fullMessage);
-    }
+    failWithMessage(
+        "%s\n\nDiagnostics:\n%s",
+        message,
+        TraceDiagnosticListRepresentation.getInstance().toStringOf(diagnostics)
+    );
   }
 
   private void assertLocationExists(Location location, ContainerGroup group) {
