@@ -19,6 +19,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
 import io.github.ascopes.jct.compilers.JctCompilation;
+import io.github.ascopes.jct.containers.ContainerGroup;
 import io.github.ascopes.jct.repr.TraceDiagnosticListRepresentation;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.util.Collection;
@@ -31,8 +32,6 @@ import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractListAssert;
 import org.assertj.core.api.AbstractStringAssert;
-import org.assertj.core.api.AssertFactory;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.FactoryBasedNavigableListAssert;
 import org.assertj.core.api.StringAssert;
 import org.jspecify.annotations.Nullable;
@@ -156,9 +155,11 @@ public final class JctCompilationAssert extends
    *
    * @param location the location to configure.
    * @return the assertions to perform.
-   * @throws AssertionError           if the compilation was null.
+   * @throws AssertionError           if the compilation was null, or no group for the location
+   *                                  was found.
    * @throws IllegalArgumentException if the location was
-   *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
+   *                                  {@link Location#isModuleOrientedLocation() module-oriented}
+   *                                  or {@link Location#isOutputLocation() an output location}.
    * @throws NullPointerException     if the provided location object is null.
    */
   public PackageContainerGroupAssert packageGroup(Location location) {
@@ -170,11 +171,17 @@ public final class JctCompilationAssert extends
       );
     }
 
+    if (location.isOutputLocation()) {
+      throw new IllegalArgumentException(
+          "Expected location " + location + " to not be an output location"
+      );
+    }
+
     isNotNull();
 
-    return new PackageContainerGroupAssert(
-        actual.getFileManager().getPackageContainerGroup(location)
-    );
+    var group = actual.getFileManager().getPackageContainerGroup(location);
+    assertLocationExists(location, group);
+    return new PackageContainerGroupAssert(group);
   }
 
   /**
@@ -184,7 +191,8 @@ public final class JctCompilationAssert extends
    *
    * @param location the location to configure.
    * @return the assertions to perform.
-   * @throws AssertionError           if the compilation was null.
+   * @throws AssertionError           if the compilation was null, or no group for the location
+   *                                  was found.
    * @throws IllegalArgumentException if the location is not
    *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
    * @throws NullPointerException     if the provided location object is null.
@@ -194,15 +202,21 @@ public final class JctCompilationAssert extends
 
     if (!location.isModuleOrientedLocation()) {
       throw new IllegalArgumentException(
-          "Expected location " + location + " to be module-oriented"
+          "Expected location " + location.getName() + " to be module-oriented"
+      );
+    }
+
+    if (location.isOutputLocation()) {
+      throw new IllegalArgumentException(
+          "Expected location " + location.getName() + " to not be an output location"
       );
     }
 
     isNotNull();
 
-    return new ModuleContainerGroupAssert(
-        actual.getFileManager().getModuleContainerGroup(location)
-    );
+    var group = actual.getFileManager().getModuleContainerGroup(location);
+    assertLocationExists(location, group);
+    return new ModuleContainerGroupAssert(group);
   }
 
   /**
@@ -212,7 +226,8 @@ public final class JctCompilationAssert extends
    *
    * @param location the location to configure.
    * @return the assertions to perform.
-   * @throws AssertionError           if the compilation was null.
+   * @throws AssertionError           if the compilation was null, or no group for the location
+   *                                  was found.
    * @throws IllegalArgumentException if the location is not
    *                                  {@link Location#isOutputLocation() an output location}.
    * @throws NullPointerException     if the provided location object is null.
@@ -222,15 +237,15 @@ public final class JctCompilationAssert extends
 
     if (!location.isOutputLocation()) {
       throw new IllegalArgumentException(
-          "Expected location " + location + " to be an output location"
+          "Expected location " + location.getName() + " to be an output location"
       );
     }
 
     isNotNull();
 
-    return new OutputContainerGroupAssert(
-        actual.getFileManager().getOutputContainerGroup(location)
-    );
+    var group = actual.getFileManager().getOutputContainerGroup(location);
+    assertLocationExists(location, group);
+    return new OutputContainerGroupAssert(group);
   }
 
   /**
@@ -239,7 +254,8 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the class outputs.
-   * @throws AssertionError if the compilation is null.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
    */
   public OutputContainerGroupAssert classOutput() {
     return outputGroup(StandardLocation.CLASS_OUTPUT);
@@ -251,7 +267,8 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the source outputs.
-   * @throws AssertionError if the compilation is null.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
    */
   public OutputContainerGroupAssert sourceOutput() {
     return outputGroup(StandardLocation.SOURCE_OUTPUT);
@@ -263,12 +280,14 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the header outputs.
-   * @throws AssertionError if the compilation is null.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
    * @deprecated this method is rarely needed, so is being removed in v1.0.0. Use
    * {@link #outputGroup(Location)}, passing {@link StandardLocation#NATIVE_HEADER_OUTPUT} as the
    * first parameter instead.
    */
   @Deprecated(since = "0.6.0", forRemoval = true)
+  @SuppressWarnings("DeprecatedIsStillUsed")
   public OutputContainerGroupAssert generatedHeaders() {
     return outputGroup(StandardLocation.NATIVE_HEADER_OUTPUT);
   }
@@ -279,7 +298,8 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the class path.
-   * @throws AssertionError if the compilation is null.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
    */
   public PackageContainerGroupAssert classPath() {
     return packageGroup(StandardLocation.CLASS_PATH);
@@ -291,7 +311,8 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the source path.
-   * @throws AssertionError if the compilation is null.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
    */
   public PackageContainerGroupAssert sourcePath() {
     return packageGroup(StandardLocation.SOURCE_PATH);
@@ -303,7 +324,8 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the source path.
-   * @throws AssertionError if the compilation is null.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
    */
   public ModuleContainerGroupAssert moduleSourcePath() {
     return moduleGroup(StandardLocation.MODULE_SOURCE_PATH);
@@ -315,7 +337,8 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the module path.
-   * @throws AssertionError if the compilation is null.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
    */
   public ModuleContainerGroupAssert modulePath() {
     return moduleGroup(StandardLocation.MODULE_PATH);
@@ -346,6 +369,12 @@ public final class JctCompilationAssert extends
       );
 
       failWithMessage(fullMessage);
+    }
+  }
+
+  private void assertLocationExists(Location location, ContainerGroup group) {
+    if (group == null) {
+      throw new AssertionError("No location named " + location.getName() + " exists");
     }
   }
 }
