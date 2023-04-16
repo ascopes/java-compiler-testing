@@ -16,18 +16,30 @@
 package io.github.ascopes.jct.tests.unit.assertions;
 
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someFlags;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someLocation;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someTraceDiagnostic;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.assertions.JctCompilationAssert;
+import io.github.ascopes.jct.assertions.ModuleContainerGroupAssert;
+import io.github.ascopes.jct.assertions.OutputContainerGroupAssert;
+import io.github.ascopes.jct.assertions.PackageContainerGroupAssert;
 import io.github.ascopes.jct.compilers.JctCompilation;
+import io.github.ascopes.jct.containers.ModuleContainerGroup;
+import io.github.ascopes.jct.containers.OutputContainerGroup;
+import io.github.ascopes.jct.containers.PackageContainerGroup;
+import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.repr.TraceDiagnosticListRepresentation;
-import io.github.ascopes.jct.tests.helpers.Fixtures;
 import java.util.List;
 import javax.tools.Diagnostic.Kind;
+import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -99,13 +111,13 @@ class JctCompilationAssertTest {
     @Test
     void isSuccessfulFailsWithDiagnosticsIfCompilationFailedNoFailOnWarnings() {
       // Given
-      var noteDiag = Fixtures.someTraceDiagnostic(Kind.NOTE);
-      var otherDiag = Fixtures.someTraceDiagnostic(Kind.OTHER);
-      var warnDiag1 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var warnDiag2 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var mandatoryWarnDiag = Fixtures.someTraceDiagnostic(Kind.MANDATORY_WARNING);
-      var errorDiag1 = Fixtures.someTraceDiagnostic(Kind.ERROR);
-      var errorDiag2 = Fixtures.someTraceDiagnostic(Kind.ERROR);
+      var noteDiag = someTraceDiagnostic(Kind.NOTE);
+      var otherDiag = someTraceDiagnostic(Kind.OTHER);
+      var warnDiag1 = someTraceDiagnostic(Kind.WARNING);
+      var warnDiag2 = someTraceDiagnostic(Kind.WARNING);
+      var mandatoryWarnDiag = someTraceDiagnostic(Kind.MANDATORY_WARNING);
+      var errorDiag1 = someTraceDiagnostic(Kind.ERROR);
+      var errorDiag2 = someTraceDiagnostic(Kind.ERROR);
       var diagnostics = List.of(
           noteDiag, otherDiag, warnDiag1, warnDiag2, mandatoryWarnDiag, errorDiag1, errorDiag2
       );
@@ -136,13 +148,13 @@ class JctCompilationAssertTest {
     @Test
     void isSuccessfulFailsWithDiagnosticsIfCompilationFailedFailOnWarnings() {
       // Given
-      var noteDiag = Fixtures.someTraceDiagnostic(Kind.NOTE);
-      var otherDiag = Fixtures.someTraceDiagnostic(Kind.OTHER);
-      var warnDiag1 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var warnDiag2 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var mandatoryWarnDiag = Fixtures.someTraceDiagnostic(Kind.MANDATORY_WARNING);
-      var errorDiag1 = Fixtures.someTraceDiagnostic(Kind.ERROR);
-      var errorDiag2 = Fixtures.someTraceDiagnostic(Kind.ERROR);
+      var noteDiag = someTraceDiagnostic(Kind.NOTE);
+      var otherDiag = someTraceDiagnostic(Kind.OTHER);
+      var warnDiag1 = someTraceDiagnostic(Kind.WARNING);
+      var warnDiag2 = someTraceDiagnostic(Kind.WARNING);
+      var mandatoryWarnDiag = someTraceDiagnostic(Kind.MANDATORY_WARNING);
+      var errorDiag1 = someTraceDiagnostic(Kind.ERROR);
+      var errorDiag2 = someTraceDiagnostic(Kind.ERROR);
       var diagnostics = List.of(
           noteDiag, otherDiag, warnDiag1, warnDiag2, mandatoryWarnDiag, errorDiag1, errorDiag2
       );
@@ -173,11 +185,11 @@ class JctCompilationAssertTest {
     @Test
     void isSuccessfulSucceedsIfCompilationSucceededNoFailOnWarnings() {
       // Given
-      var noteDiag = Fixtures.someTraceDiagnostic(Kind.NOTE);
-      var otherDiag = Fixtures.someTraceDiagnostic(Kind.OTHER);
-      var warnDiag1 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var warnDiag2 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var mandatoryWarnDiag = Fixtures.someTraceDiagnostic(Kind.MANDATORY_WARNING);
+      var noteDiag = someTraceDiagnostic(Kind.NOTE);
+      var otherDiag = someTraceDiagnostic(Kind.OTHER);
+      var warnDiag1 = someTraceDiagnostic(Kind.WARNING);
+      var warnDiag2 = someTraceDiagnostic(Kind.WARNING);
+      var mandatoryWarnDiag = someTraceDiagnostic(Kind.MANDATORY_WARNING);
       var diagnostics = List.of(
           noteDiag, otherDiag, warnDiag1, warnDiag2, mandatoryWarnDiag
       );
@@ -200,8 +212,8 @@ class JctCompilationAssertTest {
     @Test
     void isSuccessfulSucceedsIfCompilationSucceededFailOnWarnings() {
       // Given
-      var noteDiag = Fixtures.someTraceDiagnostic(Kind.NOTE);
-      var otherDiag = Fixtures.someTraceDiagnostic(Kind.OTHER);
+      var noteDiag = someTraceDiagnostic(Kind.NOTE);
+      var otherDiag = someTraceDiagnostic(Kind.OTHER);
       var diagnostics = List.of(noteDiag, otherDiag);
 
       var compilation = mock(JctCompilation.class);
@@ -236,13 +248,13 @@ class JctCompilationAssertTest {
     @Test
     void isSuccessfulFailsWithDiagnosticsIfCompilationFailed() {
       // Given
-      var noteDiag = Fixtures.someTraceDiagnostic(Kind.NOTE);
-      var otherDiag = Fixtures.someTraceDiagnostic(Kind.OTHER);
-      var warnDiag1 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var warnDiag2 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var mandatoryWarnDiag = Fixtures.someTraceDiagnostic(Kind.MANDATORY_WARNING);
-      var errorDiag1 = Fixtures.someTraceDiagnostic(Kind.ERROR);
-      var errorDiag2 = Fixtures.someTraceDiagnostic(Kind.ERROR);
+      var noteDiag = someTraceDiagnostic(Kind.NOTE);
+      var otherDiag = someTraceDiagnostic(Kind.OTHER);
+      var warnDiag1 = someTraceDiagnostic(Kind.WARNING);
+      var warnDiag2 = someTraceDiagnostic(Kind.WARNING);
+      var mandatoryWarnDiag = someTraceDiagnostic(Kind.MANDATORY_WARNING);
+      var errorDiag1 = someTraceDiagnostic(Kind.ERROR);
+      var errorDiag2 = someTraceDiagnostic(Kind.ERROR);
       var diagnostics = List.of(
           noteDiag, otherDiag, warnDiag1, warnDiag2, mandatoryWarnDiag, errorDiag1, errorDiag2
       );
@@ -273,13 +285,13 @@ class JctCompilationAssertTest {
     @Test
     void isSuccessfulFailsWithDiagnosticsIfCompilationSucceededWithWarnings() {
       // Given
-      var noteDiag = Fixtures.someTraceDiagnostic(Kind.NOTE);
-      var otherDiag = Fixtures.someTraceDiagnostic(Kind.OTHER);
-      var warnDiag1 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var warnDiag2 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var mandatoryWarnDiag = Fixtures.someTraceDiagnostic(Kind.MANDATORY_WARNING);
-      var errorDiag1 = Fixtures.someTraceDiagnostic(Kind.ERROR);
-      var errorDiag2 = Fixtures.someTraceDiagnostic(Kind.ERROR);
+      var noteDiag = someTraceDiagnostic(Kind.NOTE);
+      var otherDiag = someTraceDiagnostic(Kind.OTHER);
+      var warnDiag1 = someTraceDiagnostic(Kind.WARNING);
+      var warnDiag2 = someTraceDiagnostic(Kind.WARNING);
+      var mandatoryWarnDiag = someTraceDiagnostic(Kind.MANDATORY_WARNING);
+      var errorDiag1 = someTraceDiagnostic(Kind.ERROR);
+      var errorDiag2 = someTraceDiagnostic(Kind.ERROR);
       var diagnostics = List.of(
           noteDiag, otherDiag, warnDiag1, warnDiag2, mandatoryWarnDiag, errorDiag1, errorDiag2
       );
@@ -309,8 +321,8 @@ class JctCompilationAssertTest {
     @Test
     void isSuccessfulSucceedsIfCompilationSucceededNoFailOnWarnings() {
       // Given
-      var noteDiag = Fixtures.someTraceDiagnostic(Kind.NOTE);
-      var otherDiag = Fixtures.someTraceDiagnostic(Kind.OTHER);
+      var noteDiag = someTraceDiagnostic(Kind.NOTE);
+      var otherDiag = someTraceDiagnostic(Kind.OTHER);
       var diagnostics = List.of(noteDiag, otherDiag);
 
       var compilation = mock(JctCompilation.class);
@@ -346,15 +358,15 @@ class JctCompilationAssertTest {
     @ParameterizedTest(name = "for failOnWarnings = {0}")
     void isFailureFailsIfTheCompilationIsSuccessfulNoFailOnWarnings(boolean failOnWarnings) {
       // Given
-      var noteDiag = Fixtures.someTraceDiagnostic(Kind.NOTE);
-      var otherDiag = Fixtures.someTraceDiagnostic(Kind.OTHER);
-      var warnDiag1 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var warnDiag2 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var mandatoryWarnDiag = Fixtures.someTraceDiagnostic(Kind.MANDATORY_WARNING);
+      var noteDiag = someTraceDiagnostic(Kind.NOTE);
+      var otherDiag = someTraceDiagnostic(Kind.OTHER);
+      var warnDiag1 = someTraceDiagnostic(Kind.WARNING);
+      var warnDiag2 = someTraceDiagnostic(Kind.WARNING);
+      var mandatoryWarnDiag = someTraceDiagnostic(Kind.MANDATORY_WARNING);
       // Technically we can have error diagnostics without the compilation failing, so include
       // them in this test case just for clarity.
-      var errorDiag1 = Fixtures.someTraceDiagnostic(Kind.ERROR);
-      var errorDiag2 = Fixtures.someTraceDiagnostic(Kind.ERROR);
+      var errorDiag1 = someTraceDiagnostic(Kind.ERROR);
+      var errorDiag2 = someTraceDiagnostic(Kind.ERROR);
       var diagnostics = List.of(
           noteDiag, otherDiag, warnDiag1, warnDiag2, mandatoryWarnDiag, errorDiag1, errorDiag2
       );
@@ -384,15 +396,15 @@ class JctCompilationAssertTest {
     @ParameterizedTest(name = "for failOnWarnings = {0}")
     void isFailureSucceedsIfFailure(boolean failOnWarnings) {
       // Given
-      var noteDiag = Fixtures.someTraceDiagnostic(Kind.NOTE);
-      var otherDiag = Fixtures.someTraceDiagnostic(Kind.OTHER);
-      var warnDiag1 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var warnDiag2 = Fixtures.someTraceDiagnostic(Kind.WARNING);
-      var mandatoryWarnDiag = Fixtures.someTraceDiagnostic(Kind.MANDATORY_WARNING);
+      var noteDiag = someTraceDiagnostic(Kind.NOTE);
+      var otherDiag = someTraceDiagnostic(Kind.OTHER);
+      var warnDiag1 = someTraceDiagnostic(Kind.WARNING);
+      var warnDiag2 = someTraceDiagnostic(Kind.WARNING);
+      var mandatoryWarnDiag = someTraceDiagnostic(Kind.MANDATORY_WARNING);
       // Technically we can have error diagnostics without the compilation failing, so include
       // them in this test case just for clarity.
-      var errorDiag1 = Fixtures.someTraceDiagnostic(Kind.ERROR);
-      var errorDiag2 = Fixtures.someTraceDiagnostic(Kind.ERROR);
+      var errorDiag1 = someTraceDiagnostic(Kind.ERROR);
+      var errorDiag2 = someTraceDiagnostic(Kind.ERROR);
       var diagnostics = List.of(
           noteDiag, otherDiag, warnDiag1, warnDiag2, mandatoryWarnDiag, errorDiag1, errorDiag2
       );
@@ -408,5 +420,489 @@ class JctCompilationAssertTest {
       assertThat(assertions.isFailure())
           .isSameAs(assertions);
     }
+  }
+
+  @DisplayName("JctCompilationAssert#diagnostics tests")
+  @Nested
+  class DiagnosticsTest {
+    @DisplayName(".diagnostics() fails if the compilation is null")
+    @Test
+    void diagnosticsFailsIfCompilationIsNull() {
+      // Given
+      var assertions = new JctCompilationAssert(null);
+
+      // Then
+      assertThatThrownBy(assertions::diagnostics)
+          .isInstanceOf(AssertionError.class);
+    }
+
+    @DisplayName(".diagnostics() returns assertions for the diagnostics")
+    @Test
+    void diagnosticsReturnsDiagnosticAssertions() {
+      // Given
+      var diagnostics = List.of(
+          someTraceDiagnostic(),
+          someTraceDiagnostic(),
+          someTraceDiagnostic(),
+          someTraceDiagnostic()
+      );
+      var compilation = mock(JctCompilation.class);
+      when(compilation.getDiagnostics())
+          .thenReturn(diagnostics);
+
+      var assertions = new JctCompilationAssert(compilation).diagnostics();
+
+      // Then
+      assertThatCode(() -> assertions.containsExactlyElementsOf(diagnostics))
+          .doesNotThrowAnyException();
+    }
+  }
+
+  @DisplayName("JctCompilationAssert#packageGroup tests")
+  @Nested
+  class PackageGroupTest {
+    @DisplayName(".packageGroup(...) fails if the compilation is null")
+    @Test
+    void packageGroupFailsIfCompilationIsNull() {
+      // Given
+      var location = someLocation();
+      when(location.isModuleOrientedLocation()).thenReturn(false);
+      when(location.isOutputLocation()).thenReturn(false);
+
+      var assertions = new JctCompilationAssert(null);
+
+      // Then
+      assertThatThrownBy(() -> assertions.packageGroup(location))
+          .isInstanceOf(AssertionError.class);
+    }
+
+    @DisplayName(".packageGroup(...) fails if the compilation is null")
+    @Test
+    void packageGroupFailsIfLocationIsNull() {
+      // Given
+      var assertions = new JctCompilationAssert(mock(JctCompilation.class));
+
+      // Then
+      assertThatThrownBy(() -> assertions.packageGroup(null))
+          .isInstanceOf(NullPointerException.class);
+    }
+
+    @DisplayName(".packageGroup(...) fails if no container group is found")
+    @Test
+    void packageGroupFailsIfNoContainerGroupFound() {
+      // Given
+      var compilation = mock(JctCompilation.class);
+      var fileManager = mock(JctFileManager.class);
+      when(compilation.getFileManager()).thenReturn(fileManager);
+
+      var location = someLocation();
+      when(location.isModuleOrientedLocation()).thenReturn(false);
+      when(location.isOutputLocation()).thenReturn(false);
+
+      var assertions = new JctCompilationAssert(compilation);
+
+      // Then
+      assertThatThrownBy(() -> assertions.packageGroup(location))
+          .isInstanceOf(AssertionError.class)
+          .hasMessage("No location named %s exists", location.getName());
+    }
+
+    @DisplayName(".packageGroup(...) fails if the location is module oriented")
+    @Test
+    void packageGroupFailsIfLocationIsModuleOriented() {
+      // Given
+      var location = someLocation();
+      when(location.isModuleOrientedLocation()).thenReturn(true);
+      when(location.isOutputLocation()).thenReturn(false);
+
+      var assertions = new JctCompilationAssert(mock(JctCompilation.class));
+
+      // Then
+      assertThatThrownBy(() -> assertions.packageGroup(location))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessage("Expected location %s to not be module-oriented", location);
+    }
+
+    @DisplayName(".packageGroup(...) fails if the location is an output location")
+    @Test
+    void packageGroupFailsIfLocationIsAnOutputLocation() {
+      // Given
+      var location = someLocation();
+      when(location.isModuleOrientedLocation()).thenReturn(false);
+      when(location.isOutputLocation()).thenReturn(true);
+
+      var assertions = new JctCompilationAssert(mock(JctCompilation.class));
+
+      // Then
+      assertThatThrownBy(() -> assertions.packageGroup(location))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessage("Expected location %s to not be an output location", location);
+    }
+
+    @DisplayName(".packageGroup(...) returns assertions for the package group")
+    @Test
+    void packageGroupReturnsContainerGroupAssertions() {
+      // Given
+      var compilation = mock(JctCompilation.class);
+      var fileManager = mock(JctFileManager.class);
+      var containerGroup = mock(PackageContainerGroup.class);
+      when(compilation.getFileManager()).thenReturn(fileManager);
+      when(fileManager.getPackageContainerGroup(any())).thenReturn(containerGroup);
+
+      var location = someLocation();
+      when(location.isModuleOrientedLocation()).thenReturn(false);
+      when(location.isOutputLocation()).thenReturn(false);
+
+      var assertions = new JctCompilationAssert(compilation).packageGroup(location);
+
+      // Then
+      verify(fileManager).getPackageContainerGroup(location);
+      verifyNoMoreInteractions(fileManager);
+
+      assertThat(assertions)
+          .isInstanceOf(PackageContainerGroupAssert.class);
+
+      assertThatCode(() -> assertions.isSameAs(containerGroup))
+          .doesNotThrowAnyException();
+    }
+  }
+
+  @DisplayName("JctCompilationAssert#moduleGroup tests")
+  @Nested
+  class ModuleGroupTest {
+    @DisplayName(".moduleGroup(...) fails if the compilation is null")
+    @Test
+    void moduleGroupFailsIfCompilationIsNull() {
+      // Given
+      var location = someLocation();
+      when(location.isModuleOrientedLocation()).thenReturn(true);
+      when(location.isOutputLocation()).thenReturn(false);
+
+      var assertions = new JctCompilationAssert(null);
+
+      // Then
+      assertThatThrownBy(() -> assertions.moduleGroup(location))
+          .isInstanceOf(AssertionError.class);
+    }
+
+    @DisplayName(".moduleGroup(...) fails if the compilation is null")
+    @Test
+    void moduleGroupFailsIfLocationIsNull() {
+      // Given
+      var assertions = new JctCompilationAssert(mock(JctCompilation.class));
+
+      // Then
+      assertThatThrownBy(() -> assertions.moduleGroup(null))
+          .isInstanceOf(NullPointerException.class);
+    }
+
+    @DisplayName(".moduleGroup(...) fails if no container group is found")
+    @Test
+    void moduleGroupFailsIfNoContainerGroupFound() {
+      // Given
+      var compilation = mock(JctCompilation.class);
+      var fileManager = mock(JctFileManager.class);
+      when(compilation.getFileManager()).thenReturn(fileManager);
+
+      var location = someLocation();
+      when(location.isModuleOrientedLocation()).thenReturn(true);
+      when(location.isOutputLocation()).thenReturn(false);
+
+      var assertions = new JctCompilationAssert(compilation);
+
+      // Then
+      assertThatThrownBy(() -> assertions.moduleGroup(location))
+          .isInstanceOf(AssertionError.class)
+          .hasMessage("No location named %s exists", location.getName());
+    }
+
+    @DisplayName(".moduleGroup(...) fails if the location is package oriented")
+    @Test
+    void moduleGroupFailsIfLocationIsModuleOriented() {
+      // Given
+      var location = someLocation();
+      when(location.isModuleOrientedLocation()).thenReturn(false);
+      when(location.isOutputLocation()).thenReturn(false);
+
+      var assertions = new JctCompilationAssert(mock(JctCompilation.class));
+
+      // Then
+      assertThatThrownBy(() -> assertions.moduleGroup(location))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessage("Expected location %s to be module-oriented", location);
+    }
+
+    @DisplayName(".moduleGroup(...) fails if the location is an output location")
+    @Test
+    void moduleGroupFailsIfLocationIsAnOutputLocation() {
+      // Given
+      var location = someLocation();
+      when(location.isModuleOrientedLocation()).thenReturn(true);
+      when(location.isOutputLocation()).thenReturn(true);
+
+      var assertions = new JctCompilationAssert(mock(JctCompilation.class));
+
+      // Then
+      assertThatThrownBy(() -> assertions.moduleGroup(location))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessage("Expected location %s to not be an output location", location);
+    }
+
+    @DisplayName(".moduleGroup(...) returns assertions for the module group")
+    @Test
+    void moduleGroupReturnsContainerGroupAssertions() {
+      // Given
+      var compilation = mock(JctCompilation.class);
+      var fileManager = mock(JctFileManager.class);
+      var containerGroup = mock(ModuleContainerGroup.class);
+      when(compilation.getFileManager()).thenReturn(fileManager);
+      when(fileManager.getModuleContainerGroup(any())).thenReturn(containerGroup);
+
+      var location = someLocation();
+      when(location.isModuleOrientedLocation()).thenReturn(true);
+      when(location.isOutputLocation()).thenReturn(false);
+
+      var assertions = new JctCompilationAssert(compilation).moduleGroup(location);
+
+      // Then
+      verify(fileManager).getModuleContainerGroup(location);
+      verifyNoMoreInteractions(fileManager);
+
+      assertThat(assertions)
+          .isInstanceOf(ModuleContainerGroupAssert.class);
+
+      assertThatCode(() -> assertions.isSameAs(containerGroup))
+          .doesNotThrowAnyException();
+    }
+  }
+
+  @DisplayName("JctCompilationAssert#outputGroup tests")
+  @Nested
+  class OutputGroupTest {
+    @DisplayName(".outputGroup(...) fails if the compilation is null")
+    @Test
+    void outputGroupFailsIfCompilationIsNull() {
+      // Given
+      var location = someLocation();
+      when(location.isOutputLocation()).thenReturn(true);
+
+      var assertions = new JctCompilationAssert(null);
+
+      // Then
+      assertThatThrownBy(() -> assertions.outputGroup(location))
+          .isInstanceOf(AssertionError.class);
+    }
+
+    @DisplayName(".outputGroup(...) fails if the compilation is null")
+    @Test
+    void outputGroupFailsIfLocationIsNull() {
+      // Given
+      var assertions = new JctCompilationAssert(mock(JctCompilation.class));
+
+      // Then
+      assertThatThrownBy(() -> assertions.outputGroup(null))
+          .isInstanceOf(NullPointerException.class);
+    }
+
+    @DisplayName(".outputGroup(...) fails if no container group is found")
+    @Test
+    void outputGroupFailsIfNoContainerGroupFound() {
+      // Given
+      var compilation = mock(JctCompilation.class);
+      var fileManager = mock(JctFileManager.class);
+      when(compilation.getFileManager()).thenReturn(fileManager);
+
+      var location = someLocation();
+      when(location.isOutputLocation()).thenReturn(true);
+
+      var assertions = new JctCompilationAssert(compilation);
+
+      // Then
+      assertThatThrownBy(() -> assertions.outputGroup(location))
+          .isInstanceOf(AssertionError.class)
+          .hasMessage("No location named %s exists", location.getName());
+    }
+
+    @DisplayName(".outputGroup(...) fails if the location is not an output location")
+    @Test
+    void outputGroupFailsIfLocationIsAnOutputLocation() {
+      // Given
+      var location = someLocation();
+      when(location.isOutputLocation()).thenReturn(false);
+
+      var assertions = new JctCompilationAssert(mock(JctCompilation.class));
+
+      // Then
+      assertThatThrownBy(() -> assertions.outputGroup(location))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessage("Expected location %s to be an output location", location);
+    }
+
+    @DisplayName(".outputGroup(...) returns assertions for the output group")
+    @Test
+    void outputGroupReturnsContainerGroupAssertions() {
+      // Given
+      var compilation = mock(JctCompilation.class);
+      var fileManager = mock(JctFileManager.class);
+      var containerGroup = mock(OutputContainerGroup.class);
+      when(compilation.getFileManager()).thenReturn(fileManager);
+      when(fileManager.getOutputContainerGroup(any())).thenReturn(containerGroup);
+
+      var location = someLocation();
+      when(location.isOutputLocation()).thenReturn(true);
+
+      var assertions = new JctCompilationAssert(compilation).outputGroup(location);
+
+      // Then
+      verify(fileManager).getOutputContainerGroup(location);
+      verifyNoMoreInteractions(fileManager);
+
+      assertThat(assertions)
+          .isInstanceOf(OutputContainerGroupAssert.class);
+
+      assertThatCode(() -> assertions.isSameAs(containerGroup))
+          .doesNotThrowAnyException();
+    }
+  }
+
+  @DisplayName(".classOutput() performs the expected operations")
+  @Test
+  void classOutputPerformsTheExpectedOperations() {
+    // Given
+    var expectedAssertions = mock(OutputContainerGroupAssert.class);
+
+    var assertions = mock(JctCompilationAssert.class);
+    when(assertions.classOutput()).thenCallRealMethod();
+    when(assertions.outputGroup(any())).thenReturn(expectedAssertions);
+
+    // When
+    var actualAssertions = assertions.classOutput();
+
+    // Then
+    verify(assertions).classOutput();
+    verify(assertions).outputGroup(StandardLocation.CLASS_OUTPUT);
+    verifyNoMoreInteractions(assertions);
+    assertThat(actualAssertions).isSameAs(expectedAssertions);
+  }
+
+  @DisplayName(".sourceOutput() performs the expected operations")
+  @Test
+  void sourceOutputPerformsTheExpectedOperations() {
+    // Given
+    var expectedAssertions = mock(OutputContainerGroupAssert.class);
+
+    var assertions = mock(JctCompilationAssert.class);
+    when(assertions.sourceOutput()).thenCallRealMethod();
+    when(assertions.outputGroup(any())).thenReturn(expectedAssertions);
+
+    // When
+    var actualAssertions = assertions.sourceOutput();
+
+    // Then
+    verify(assertions).sourceOutput();
+    verify(assertions).outputGroup(StandardLocation.SOURCE_OUTPUT);
+    verifyNoMoreInteractions(assertions);
+    assertThat(actualAssertions).isSameAs(expectedAssertions);
+  }
+
+  @DisplayName(".generatedHeaders() performs the expected operations")
+  @Test
+  @SuppressWarnings("removal")
+  void generatedHeadersPerformsTheExpectedOperations() {
+    // Given
+    var expectedAssertions = mock(OutputContainerGroupAssert.class);
+
+    var assertions = mock(JctCompilationAssert.class);
+    when(assertions.generatedHeaders()).thenCallRealMethod();
+    when(assertions.outputGroup(any())).thenReturn(expectedAssertions);
+
+    // When
+    var actualAssertions = assertions.generatedHeaders();
+
+    // Then
+    verify(assertions).generatedHeaders();
+    verify(assertions).outputGroup(StandardLocation.NATIVE_HEADER_OUTPUT);
+    verifyNoMoreInteractions(assertions);
+    assertThat(actualAssertions).isSameAs(expectedAssertions);
+  }
+
+  @DisplayName(".classPath() performs the expected operations")
+  @Test
+  void classPathPerformsTheExpectedOperations() {
+    // Given
+    var expectedAssertions = mock(PackageContainerGroupAssert.class);
+
+    var assertions = mock(JctCompilationAssert.class);
+    when(assertions.classPath()).thenCallRealMethod();
+    when(assertions.packageGroup(any())).thenReturn(expectedAssertions);
+
+    // When
+    var actualAssertions = assertions.classPath();
+
+    // Then
+    verify(assertions).classPath();
+    verify(assertions).packageGroup(StandardLocation.CLASS_PATH);
+    verifyNoMoreInteractions(assertions);
+    assertThat(actualAssertions).isSameAs(expectedAssertions);
+  }
+
+  @DisplayName(".sourcePath() performs the expected operations")
+  @Test
+  void sourcePathPerformsTheExpectedOperations() {
+    // Given
+    var expectedAssertions = mock(PackageContainerGroupAssert.class);
+
+    var assertions = mock(JctCompilationAssert.class);
+    when(assertions.sourcePath()).thenCallRealMethod();
+    when(assertions.packageGroup(any())).thenReturn(expectedAssertions);
+
+    // When
+    var actualAssertions = assertions.sourcePath();
+
+    // Then
+    verify(assertions).sourcePath();
+    verify(assertions).packageGroup(StandardLocation.SOURCE_PATH);
+    verifyNoMoreInteractions(assertions);
+    assertThat(actualAssertions).isSameAs(expectedAssertions);
+  }
+
+  @DisplayName(".moduleSourcePath() performs the expected operations")
+  @Test
+  void moduleSourcePathPerformsTheExpectedOperations() {
+    // Given
+    var expectedAssertions = mock(ModuleContainerGroupAssert.class);
+
+    var assertions = mock(JctCompilationAssert.class);
+    when(assertions.moduleSourcePath()).thenCallRealMethod();
+    when(assertions.moduleGroup(any())).thenReturn(expectedAssertions);
+
+    // When
+    var actualAssertions = assertions.moduleSourcePath();
+
+    // Then
+    verify(assertions).moduleSourcePath();
+    verify(assertions).moduleGroup(StandardLocation.MODULE_SOURCE_PATH);
+    verifyNoMoreInteractions(assertions);
+    assertThat(actualAssertions).isSameAs(expectedAssertions);
+  }
+  
+  @DisplayName(".modulePath() performs the expected operations")
+  @Test
+  void modulePathPerformsTheExpectedOperations() {
+    // Given
+    var expectedAssertions = mock(ModuleContainerGroupAssert.class);
+
+    var assertions = mock(JctCompilationAssert.class);
+    when(assertions.modulePath()).thenCallRealMethod();
+    when(assertions.moduleGroup(any())).thenReturn(expectedAssertions);
+
+    // When
+    var actualAssertions = assertions.modulePath();
+
+    // Then
+    verify(assertions).modulePath();
+    verify(assertions).moduleGroup(StandardLocation.MODULE_PATH);
+    verifyNoMoreInteractions(assertions);
+    assertThat(actualAssertions).isSameAs(expectedAssertions);
   }
 }
