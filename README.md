@@ -123,7 +123,7 @@ to add a requirement for this module like so:
 ```java
 open module my.tests {
   ...
-  requires io.github.ascopes.jct;
+  requires transitive io.github.ascopes.jct;
   ...
 }
 ```
