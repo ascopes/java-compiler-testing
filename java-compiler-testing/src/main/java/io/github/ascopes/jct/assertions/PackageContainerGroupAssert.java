@@ -24,12 +24,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.repr.LocationRepresentation;
+import io.github.ascopes.jct.utils.StringUtils;
 import java.nio.file.Path;
-import java.util.Collection;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import me.xdrop.fuzzywuzzy.FuzzySearch;
-import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
+import java.util.stream.StreamSupport;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractPathAssert;
@@ -132,7 +132,7 @@ public final class PackageContainerGroupAssert
 
     throw failure(
         "Expected path \"%s\" to not exist in \"%s\" but it was found at \"%s\"",
-        userProvidedPath(fragment, fragments),
+        userProvidedPath(combineOneOrMore(fragment, fragments)),
         LocationRepresentation.getInstance().toStringOf(actual.getLocation()),
         actualFile
     );
@@ -142,16 +142,15 @@ public final class PackageContainerGroupAssert
    * Assert that the given file exists.
    *
    * <pre><code>
-   *   // Using platform-specific separators.
-   *   assertions.fileExists("foo/bar/baz.txt")...;
-   *
    *   // Letting JCT infer the correct path separators to use (recommended).
    *   assertions.fileExists("foo", "bar", "baz.txt");
+   *
+   *   // Using platform-specific separators (more likely to produce unexpected results).
+   *   assertions.fileExists("foo/bar/baz.txt")...;
    * </code></pre>
    *
    * <p>If the file does not exist, then this object will attempt to find the
-   * closest matches and list them in an error message along with the assertion
-   * error.
+   * closest matches and list them in an error message along with the assertion error.
    *
    * @param fragment  the first part of the path.
    * @param fragments any additional parts of the path.
@@ -173,83 +172,46 @@ public final class PackageContainerGroupAssert
       return assertThat(actualFile);
     }
 
-    throw createNoFileFoundFuzzyError(fragment, fragments);
+    var expected = combineOneOrMore(fragment, fragments);
+    throw failure(StringUtils.resultNotFoundWithFuzzySuggestions(
+        fuzzySafePath(expected),
+        userProvidedPath(expected),
+        listAllUniqueFilesForAllContainers(),
+        this::fuzzySafePath,
+        this::userProvidedPath,
+        "path"
+    ));
   }
 
-  private AssertionError createNoFileFoundFuzzyError(String fragment, String... fragments) {
-    var userInput = userProvidedPath(fragment, fragments);
-
-    var matchesString = uncheckedIo(actual::listAllFiles)
-        .entrySet()
+  private Set<Path> listAllUniqueFilesForAllContainers() {
+    return uncheckedIo(actual::listAllFiles)
+        .keySet()
         .stream()
-        .flatMap(entry -> findFuzzyMatchesForContainer(
-            fuzzySafePath(combineOneOrMore(fragment, fragments)),
-            entry.getKey().getInnerPathRoot().getPath(),
-            entry.getValue()
-        ))
-        .map(Path::toString)
-        .map("\n  - "::concat)
-        .collect(Collectors.joining());
-
-    var locationName = LocationRepresentation.getInstance().toStringOf(actual.getLocation());
-
-    if (matchesString.isBlank()) {
-      return failure(
-          "No file named \"%s\" found in %s. No similar results found.",
-          userInput,
-          locationName
-      );
-    }
-
-    return failure(
-        "No file named \"%s\" found in %s. Found similar results:\n%s",
-        userInput,
-        locationName,
-        matchesString
-    );
-  }
-
-  private Stream<Path> findFuzzyMatchesForContainer(
-      String query,
-      Path rootPath,
-      Collection<Path> files
-  ) {
-    var relativeFiles = files.stream()
-        .map(rootPath::relativize)
-        // Filter out the root directory itself.
-        .filter(not(path -> path.toString().isBlank()))
+        // Make all the files relative to their roots.
+        .flatMap(container -> uncheckedIo(container::listAllFiles)
+            .stream()
+            .map(container.getInnerPathRoot().getPath()::relativize))
+        // Filter out the inner path root itself, preventing few confusing issues with zero-length
+        // file names.
+        .filter(not(path -> path.getFileName().toString().isBlank()))
+        // Remove duplicates (don't think this can ever happen but this is just to be safe).
         .collect(Collectors.toSet());
-
-    return FuzzySearch
-        .extractSorted(query, relativeFiles, this::fuzzySafePath, FUZZY_MIN_SCORE)
-        .stream()
-        .limit(FUZZY_MAX_RESULTS)
-        .map(BoundExtractedResult::getReferent);
   }
 
-  private String fuzzySafePath(Iterable<?> fragments) {
-    // We use the null byte to separate chunks of paths here to reduce the risk of ambiguity between
-    // file systems that use different naming systems and path separators. For the actual resultant
-    // representation, we just use the default path representation instead. This prevents
-    // the user inputting 'foo/bar' and it being considered totally different to 'bar\\foo' on
-    // the default file system on a Windows machine, for example.
-
-    var iterator = fragments.iterator();
-    if (!iterator.hasNext()) {
-      return "";
-    }
-
-    var builder = new StringBuilder();
-    builder.append(iterator.next());
-
-    while (iterator.hasNext()) {
-      builder.append('\0').append(iterator.next());
-    }
-
-    return builder.toString();
+  private <T> String userProvidedPath(Iterable<T> parts) {
+    return StreamSupport
+        .stream(parts.spliterator(), false)
+        .map(Objects::toString)
+        .collect(Collectors.joining("/"));
   }
 
-  private String userProvidedPath(String fragment, String... fragments) {
-    return String.join("/", combineOneOrMore(fragment, fragments));
+  private <T> String fuzzySafePath(Iterable<T> parts) {
+    // Join on null bytes as we don't ever use those in normal path names. This way, we ignore
+    // file-system and OS-specific path separators creating ambiguities (like how Windows uses
+    // backslashes rather than forward slashes to delimit paths).
+    return StreamSupport
+        .stream(parts.spliterator(), false)
+        .map(Objects::toString)
+        .collect(Collectors.joining("\0"));
   }
 }

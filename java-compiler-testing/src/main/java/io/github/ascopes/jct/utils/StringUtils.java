@@ -18,8 +18,14 @@ package io.github.ascopes.jct.utils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import me.xdrop.fuzzywuzzy.ToStringFunction;
+import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -237,5 +243,60 @@ public final class StringUtils extends UtilityClass {
     }
 
     builder.append('"');
+  }
+
+  /**
+   * Make an assertion error message that reports a given object was not found somewhere, and then
+   * try to list some close matches below that message, if any relevant close matches were found.
+   *
+   * @param stringToLocate          the object we tried to look for represented as a string.
+   * @param userFriendlyString      a user-friendly string representation of the object we tried to
+   *                                locate.
+   * @param existingObjects         existing objects we know about.
+   * @param comparisonStringifier   a function to produce a string representation of an object that
+   *                                can be used to perform fuzzy string comparison on.
+   * @param userFriendlyStringifier a function to produce a human-readable string representation of
+   *                                an object to display in an error message.
+   * @param entityTypeName          the name of the entity type that could not be found.
+   * @param <T>                     the type being looked for.
+   * @return the assertion error to throw.
+   */
+  public static <T> String resultNotFoundWithFuzzySuggestions(
+      String stringToLocate,
+      String userFriendlyString,
+      Collection<T> existingObjects,
+      ToStringFunction<T> comparisonStringifier,
+      Function<T, String> userFriendlyStringifier,
+      String entityTypeName
+  ) {
+    var errorBuilder = new StringBuilder();
+    errorBuilder
+        .append("No ")
+        .append(entityTypeName)
+        .append(" matching ")
+        .append(userFriendlyString)
+        .append(" was found.");
+
+    var closestMatches = FuzzySearch
+        .extractSorted(stringToLocate, existingObjects, comparisonStringifier, 75)
+        .stream()
+        .limit(5)
+        .map(BoundExtractedResult::getReferent)
+        .map(userFriendlyStringifier)
+        .sorted()
+        .collect(Collectors.toList());
+
+    if (!closestMatches.isEmpty()) {
+      errorBuilder.append(" Maybe you meant:");
+
+      for (var match : closestMatches) {
+        errorBuilder
+            .append("\n")
+            .append("  - ")
+            .append(match);
+      }
+    }
+
+    return errorBuilder.toString();
   }
 }
