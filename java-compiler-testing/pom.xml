@@ -158,6 +158,14 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
+
+        <configuration>
+          <excludes>
+            <!-- LoomPolyFill contains JDK-specific code, so 100% coverage isn't possible on a
+                single platform. -->
+            <exclude>io/github/ascopes/jct/utils/LoomPolyfill.class</exclude>
+          </excludes>
+        </configuration>
       </plugin>
     </plugins>
   </build>
