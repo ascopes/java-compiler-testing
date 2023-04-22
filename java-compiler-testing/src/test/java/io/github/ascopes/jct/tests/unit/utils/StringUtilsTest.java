@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
+import io.github.ascopes.jct.tests.helpers.Fixtures;
 import io.github.ascopes.jct.tests.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.lang.reflect.Type;
@@ -426,33 +427,36 @@ class StringUtilsTest implements UtilityClassTestTemplate {
     @Test
     void closestResultsAreComputedUsingTheGivenComparisonKey() {
       // Given
-      var lookFor = "foo/bar/baz/bork";
-      var existingObjects = List.of(
-          Path.of("foo", "baz"),
-          Path.of("foo", "bar"),
-          Path.of("foo", "bar", "baz"),
-          Path.of("foo", "bar", "baz", "qux")
-      );
+      try (var fs = Fixtures.someTemporaryFileSystem()) {
 
-      // When
-      var actualMessage = StringUtils.resultNotFoundWithFuzzySuggestions(
-          Arrays.toString(lookFor.split("/")),
-          lookFor,
-          existingObjects,
-          path -> Arrays.toString(path.toString().split("\\|/")),
-          Path::toString,
-          "path"
-      );
+        var lookFor = "foo/bar/baz/bork";
+        var existingObjects = List.of(
+            fs.getRootPath().resolve("foo").resolve("baz"),
+            fs.getRootPath().resolve("foo").resolve("bar"),
+            fs.getRootPath().resolve("foo").resolve("bar").resolve("baz"),
+            fs.getRootPath().resolve("foo").resolve("bar").resolve("baz").resolve("qux")
+        );
 
-      // Then
-      assertThat(actualMessage.lines())
-          .containsExactly(
-              "No path matching foo/bar/baz/bork was found. Maybe you meant:",
-              "  - foo/bar",
-              "  - foo/bar/baz",
-              "  - foo/bar/baz/qux",
-              "  - foo/baz"
-          );
+        // When
+        var actualMessage = StringUtils.resultNotFoundWithFuzzySuggestions(
+            Arrays.toString(lookFor.split("/")),
+            lookFor,
+            existingObjects,
+            path -> Arrays.toString(path.toString().split("/")),
+            Path::toString,
+            "path"
+        );
+
+        // Then
+        assertThat(actualMessage.lines())
+            .containsExactly(
+                "No path matching foo/bar/baz/bork was found. Maybe you meant:",
+                "  - /foo/bar",
+                "  - /foo/bar/baz",
+                "  - /foo/bar/baz/qux",
+                "  - /foo/baz"
+            );
+      }
     }
   }
 }
