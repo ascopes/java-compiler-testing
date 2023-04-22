@@ -45,10 +45,10 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
   }
 
   /**
-   * Assert that the location is module-oriented.
+   * Assert that the location is {@link Location#isModuleOrientedLocation() module-oriented}.
    *
    * @return this assertion object for further call chaining.
-   * @throws AssertionError if the location is null.
+   * @throws AssertionError if the location is null or if the location is not module-oriented.
    */
   public LocationAssert isModuleOrientedLocation() {
     isNotNull();
@@ -63,10 +63,10 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
   }
 
   /**
-   * Assert that the location is not module-oriented.
+   * Assert that the location is not {@link Location#isModuleOrientedLocation() module-oriented}.
    *
    * @return this assertion object for further call chaining.
-   * @throws AssertionError if the location is null.
+   * @throws AssertionError if the location is null or if the location is module-oriented.
    */
   public LocationAssert isNotModuleOrientedLocation() {
     isNotNull();
@@ -81,10 +81,10 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
   }
 
   /**
-   * Assert that the location is an output location.
+   * Assert that the location is an {@link Location#isOutputLocation() output location}.
    *
    * @return this assertion object for further call chaining.
-   * @throws AssertionError if the location is null.
+   * @throws AssertionError if the location is null or is not an output location.
    */
   public LocationAssert isOutputLocation() {
     isNotNull();
@@ -99,10 +99,10 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
   }
 
   /**
-   * Assert that the location is not an output location.
+   * Assert that the location is not an {@link Location#isOutputLocation() output location}.
    *
    * @return this assertion object for further call chaining.
-   * @throws AssertionError if the location is null.
+   * @throws AssertionError if the location is null or is an output location.
    */
   public LocationAssert isNotOutputLocation() {
     isNotNull();
@@ -117,7 +117,7 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
   }
 
   /**
-   * Perform assertions on the name of the location.
+   * Perform assertions on the {@link Location#getName name} of the location.
    *
    * @return the string assertions to perform.
    * @throws AssertionError if the location is null.
