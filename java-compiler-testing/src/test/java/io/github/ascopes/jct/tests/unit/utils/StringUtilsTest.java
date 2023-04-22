@@ -22,6 +22,7 @@ import static org.junit.jupiter.params.provider.Arguments.of;
 import io.github.ascopes.jct.tests.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.lang.reflect.Type;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -29,6 +30,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -288,6 +291,168 @@ class StringUtilsTest implements UtilityClassTestTemplate {
     @Override
     public String toString() {
       return "Thing{foo=1, bar=\"2\", bork=\"C:\\Windows\"}";
+    }
+  }
+
+  @DisplayName("StringUtils#resultNotFoundWithFuzzySuggestions tests")
+  @Nested
+  class ResultNotFoundWithFuzzySuggestionsTest {
+
+    @DisplayName("A bare message is output if no existing objects are provided")
+    @Test
+    void bareMessageOutputIfNoExistingObjectsProvided() {
+      // Given
+      var lookFor = "foobar";
+      var existingObjects = List.<String>of();
+
+      // When
+      var actualMessage = StringUtils.resultNotFoundWithFuzzySuggestions(
+          lookFor,
+          lookFor,
+          existingObjects,
+          String::toString,
+          String::toString,
+          "thing"
+      );
+
+      // Then
+      assertThat(actualMessage)
+          .isEqualTo("No thing matching foobar was found.");
+    }
+
+    @DisplayName("A bare message is output if no close results are found")
+    @Test
+    void bareMessageOutputIfNoCloseResultsFound() {
+      // Given
+      var lookFor = "POTATO";
+      var existingObjects = List.of("elephant", "giraffe", "horse", "shoe", "battery");
+
+      // When
+      var actualMessage = StringUtils.resultNotFoundWithFuzzySuggestions(
+          lookFor,
+          lookFor,
+          existingObjects,
+          String::toString,
+          String::toString,
+          "object"
+      );
+
+      // Then
+      assertThat(actualMessage)
+          .isEqualTo("No object matching POTATO was found.");
+    }
+
+
+    @DisplayName("Top 5 closest results are listed")
+    @Test
+    void topFiveClosestResultsAreListed() {
+      // Given
+      var lookFor = "tree";
+      var existingObjects = List.of(
+          "agency",
+          "fir tree",
+          "inspector",
+          "christmas tree",
+          "poet",
+          "percentage",
+          "btree",
+          "abstract syntax tree",
+          "examination",
+          "treeless",
+          "feedback",
+          "area",
+          "treetops",
+          "promotion",
+          "introduction",
+          "client"
+      );
+
+      // When
+      var actualMessage = StringUtils.resultNotFoundWithFuzzySuggestions(
+          lookFor,
+          lookFor,
+          existingObjects,
+          String::toString,
+          String::toString,
+          "word"
+      );
+
+      // Then
+      assertThat(actualMessage.lines())
+          .containsExactly(
+              "No word matching tree was found. Maybe you meant:",
+              "  - abstract syntax tree",
+              "  - christmas tree",
+              "  - fir tree",
+              "  - treeless",
+              "  - treetops"
+          );
+    }
+
+    @DisplayName("Closest results use the given user-friendly representation")
+    @Test
+    void closestResultsUseTheGivenUserFriendlyRepresentation() {
+      // Given
+      var lookFor = "tree";
+      var existingObjects = List.of(
+          "fir tree",
+          "client",
+          "inspector",
+          "christmas tree",
+          "treetops"
+      );
+
+      // When
+      var actualMessage = StringUtils.resultNotFoundWithFuzzySuggestions(
+          lookFor,
+          StringUtils.quoted(lookFor),
+          existingObjects,
+          String::toString,
+          StringUtils::quoted,
+          "word"
+      );
+
+      // Then
+      assertThat(actualMessage.lines())
+          .containsExactly(
+              "No word matching \"tree\" was found. Maybe you meant:",
+              "  - \"christmas tree\"",
+              "  - \"fir tree\"",
+              "  - \"treetops\""
+          );
+    }
+
+    @DisplayName("Closest results are computed using the given comparison key")
+    @Test
+    void closestResultsAreComputedUsingTheGivenComparisonKey() {
+      // Given
+      var lookFor = "foo/bar/baz/bork";
+      var existingObjects = List.of(
+          Path.of("foo", "baz"),
+          Path.of("foo", "bar"),
+          Path.of("foo", "bar", "baz"),
+          Path.of("foo", "bar", "baz", "qux")
+      );
+
+      // When
+      var actualMessage = StringUtils.resultNotFoundWithFuzzySuggestions(
+          Arrays.toString(lookFor.split("/")),
+          lookFor,
+          existingObjects,
+          path -> Arrays.toString(path.toString().split("\\|/")),
+          Path::toString,
+          "path"
+      );
+
+      // Then
+      assertThat(actualMessage.lines())
+          .containsExactly(
+              "No path matching foo/bar/baz/bork was found. Maybe you meant:",
+              "  - foo/bar",
+              "  - foo/bar/baz",
+              "  - foo/bar/baz/qux",
+              "  - foo/baz"
+          );
     }
   }
 }

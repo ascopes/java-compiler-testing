@@ -42,22 +42,6 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
     extends AbstractAssert<I, C> {
 
   /**
-   * Default number of matches to show when performing fuzzy matching.
-   *
-   * <p>This is defined here to allow consistent behaviour across various fuzzy matching
-   * operations in all implementations.
-   */
-  protected static final int FUZZY_MAX_RESULTS = 5;
-
-  /**
-   * Default minimum fuzzy score to require to include results found using fuzzy matching.
-   *
-   * <p>This is defined here to allow consistent behaviour across various fuzzy matching
-   * operations in all implementations.
-   */
-  protected static final int FUZZY_MIN_SCORE = 75;
-
-  /**
    * Initialize the container group assertions.
    *
    * @param containerGroup the container group to assert upon.

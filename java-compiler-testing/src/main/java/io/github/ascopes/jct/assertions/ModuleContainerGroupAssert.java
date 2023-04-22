@@ -20,9 +20,7 @@ import static java.util.Objects.requireNonNull;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.repr.LocationRepresentation;
-import java.util.stream.Collectors;
-import me.xdrop.fuzzywuzzy.FuzzySearch;
-import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
+import io.github.ascopes.jct.utils.StringUtils;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
@@ -44,6 +42,34 @@ public final class ModuleContainerGroupAssert
    */
   public ModuleContainerGroupAssert(@Nullable ModuleContainerGroup containerGroup) {
     super(containerGroup, ModuleContainerGroupAssert.class);
+  }
+
+  /**
+   * Assert that the given module exists and then return assertions to perform on that module.
+   *
+   * @param module the module name.
+   * @return the assertions to perform on the package container group.
+   * @throws AssertionError       if the container group is null or if the module does not exist.
+   * @throws NullPointerException if the module parameter is null.
+   */
+  public PackageContainerGroupAssert moduleExists(String module) {
+    requireNonNull(module, "module must not be null");
+    isNotNull();
+
+    var moduleGroup = actual.getModule(module);
+
+    if (moduleGroup != null) {
+      return new PackageContainerGroupAssert(moduleGroup);
+    }
+
+    throw failure(StringUtils.resultNotFoundWithFuzzySuggestions(
+        module,
+        module,
+        actual.getModules().keySet(),
+        ModuleLocation::getModuleName,
+        ModuleLocation::getModuleName,
+        "module"
+    ));
   }
 
   /**
@@ -71,50 +97,5 @@ public final class ModuleContainerGroupAssert
         module,
         locationName
     );
-  }
-
-  /**
-   * Assert that the given module exists and then return assertions to perform on that module.
-   *
-   * @param module the module name.
-   * @return the assertions to perform on the package container group.
-   * @throws AssertionError       if the container group is null or if the module does not exist.
-   * @throws NullPointerException if the module parameter is null.
-   */
-  public PackageContainerGroupAssert moduleExists(String module) {
-    requireNonNull(module, "module must not be null");
-    isNotNull();
-
-    var moduleGroup = actual.getModule(module);
-
-    if (moduleGroup != null) {
-      return new PackageContainerGroupAssert(moduleGroup);
-    }
-
-    var actualModules = actual.getModules().keySet();
-    var closestMatches = FuzzySearch
-        .extractSorted(module, actualModules,ModuleLocation::getModuleName, FUZZY_MIN_SCORE)
-        .stream()
-        .limit(FUZZY_MAX_RESULTS)
-        .map(BoundExtractedResult::getReferent)
-        .sorted()
-        .collect(Collectors.toList());
-
-    var locationName = LocationRepresentation.getInstance().toStringOf(actual.getLocation());
-
-    if (closestMatches.isEmpty()) {
-      throw failure("No module in %s modules found named %s", locationName, module);
-    } else {
-      throw failure(
-          "No module found named \"%s\" in %s. Did you mean...%s",
-          locationName,
-          module,
-          closestMatches
-              .stream()
-              .map(ModuleLocation::getModuleName)
-              .map("\n\t - "::concat)
-              .collect(Collectors.joining())
-      );
-    }
   }
 }
