@@ -19,7 +19,6 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
-import io.github.ascopes.jct.repr.LocationRepresentation;
 import io.github.ascopes.jct.utils.StringUtils;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -90,12 +89,6 @@ public final class ModuleContainerGroupAssert
       return this;
     }
 
-    var locationName = LocationRepresentation.getInstance().toStringOf(actual.getLocation());
-
-    throw failure(
-        "Expected module %s to not exist in %s but it did",
-        module,
-        locationName
-    );
+    throw failure("Found unexpected module %s", module);
   }
 }
