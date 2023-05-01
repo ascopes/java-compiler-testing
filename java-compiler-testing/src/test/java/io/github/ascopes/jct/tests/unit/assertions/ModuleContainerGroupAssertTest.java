@@ -53,7 +53,8 @@ class ModuleContainerGroupAssertTest {
 
       // Then
       assertThatThrownBy(() -> assertions.moduleExists(null))
-          .isInstanceOf(NullPointerException.class);
+          .isInstanceOf(NullPointerException.class)
+          .hasMessage("module");
     }
 
     @DisplayName(".moduleExists(...) fails if the container group is null")
@@ -131,7 +132,8 @@ class ModuleContainerGroupAssertTest {
 
       // Then
       assertThatThrownBy(() -> assertions.moduleDoesNotExist(null))
-          .isInstanceOf(NullPointerException.class);
+          .isInstanceOf(NullPointerException.class)
+          .hasMessage("module");
     }
 
     @DisplayName(".moduleDoesNotExist(...) fails if the container group is null")

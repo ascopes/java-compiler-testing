@@ -52,7 +52,7 @@ public final class ModuleContainerGroupAssert
    * @throws NullPointerException if the module parameter is null.
    */
   public PackageContainerGroupAssert moduleExists(String module) {
-    requireNonNull(module, "module must not be null");
+    requireNonNull(module, "module");
     isNotNull();
 
     var moduleGroup = actual.getModule(module);
@@ -80,7 +80,7 @@ public final class ModuleContainerGroupAssert
    * @throws NullPointerException if the module parameter is null.
    */
   public ModuleContainerGroupAssert moduleDoesNotExist(String module) {
-    requireNonNull(module, "module must not be null");
+    requireNonNull(module, "module");
     isNotNull();
 
     var moduleGroup = actual.getModule(module);
