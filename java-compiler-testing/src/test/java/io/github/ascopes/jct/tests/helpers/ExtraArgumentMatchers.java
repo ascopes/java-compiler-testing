@@ -18,7 +18,6 @@ package io.github.ascopes.jct.tests.helpers;
 import static org.mockito.ArgumentMatchers.argThat;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import org.mockito.ArgumentMatcher;
