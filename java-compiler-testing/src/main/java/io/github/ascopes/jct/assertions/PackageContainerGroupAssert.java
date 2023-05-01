@@ -15,25 +15,27 @@
  */
 package io.github.ascopes.jct.assertions;
 
-import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
-import static io.github.ascopes.jct.utils.IterableUtils.combineOneOrMore;
-import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
-import static java.util.Objects.requireNonNull;
-import static java.util.function.Predicate.not;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.repr.LocationRepresentation;
 import io.github.ascopes.jct.utils.StringUtils;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
+import org.assertj.core.api.AbstractPathAssert;
+import org.jspecify.annotations.Nullable;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
-import org.assertj.core.api.AbstractPathAssert;
-import org.jspecify.annotations.Nullable;
+
+import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
+import static io.github.ascopes.jct.utils.IterableUtils.combineOneOrMore;
+import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
+import static io.github.ascopes.jct.utils.StringUtils.quoted;
+import static io.github.ascopes.jct.utils.StringUtils.quotedIterable;
+import static java.util.Objects.requireNonNull;
+import static java.util.function.Predicate.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Assertions for package container groups.
@@ -65,10 +67,11 @@ public final class PackageContainerGroupAssert
    * @throws NullPointerException if any of the paths are null.
    */
   public PackageContainerGroupAssert allFilesExist(String path, String... paths) {
-    requireNonNull(path, "path must not be null");
+    requireNonNull(path, "path");
     requireNonNullValues(paths, "paths");
 
-    return allFilesExist(combineOneOrMore(path, paths));
+    allFilesExist(combineOneOrMore(path, paths));
+    return this;
   }
 
   /**
@@ -85,7 +88,12 @@ public final class PackageContainerGroupAssert
 
     isNotNull();
 
-    assertThat(paths).allSatisfy(this::fileExists);
+    assertThat(paths)
+        .withFailMessage(
+            "Expected all paths in %s to exist but one or more did not",
+            quotedIterable(paths)
+        )
+        .allSatisfy(this::fileExists);
     return this;
   }
 
@@ -119,7 +127,7 @@ public final class PackageContainerGroupAssert
    * @throws NullPointerException if any of the fragments are null.
    */
   public PackageContainerGroupAssert fileDoesNotExist(String fragment, String... fragments) {
-    requireNonNull(fragment, "fragment must not be null");
+    requireNonNull(fragment, "fragment");
     requireNonNullValues(fragments, "fragments");
 
     isNotNull();
@@ -131,10 +139,10 @@ public final class PackageContainerGroupAssert
     }
 
     throw failure(
-        "Expected path \"%s\" to not exist in \"%s\" but it was found at \"%s\"",
-        userProvidedPath(combineOneOrMore(fragment, fragments)),
+        "Expected path %s to not exist in %s but it was found at %s",
+        quotedUserProvidedPath(combineOneOrMore(fragment, fragments)),
         LocationRepresentation.getInstance().toStringOf(actual.getLocation()),
-        actualFile
+        quoted(actualFile)
     );
   }
 
@@ -160,7 +168,7 @@ public final class PackageContainerGroupAssert
    */
 
   public AbstractPathAssert<?> fileExists(String fragment, String... fragments) {
-    requireNonNull(fragment, "fragment must not be null");
+    requireNonNull(fragment, "fragment");
     requireNonNullValues(fragments, "fragments");
 
     isNotNull();
@@ -175,11 +183,11 @@ public final class PackageContainerGroupAssert
     var expected = combineOneOrMore(fragment, fragments);
     throw failure(StringUtils.resultNotFoundWithFuzzySuggestions(
         fuzzySafePath(expected),
-        userProvidedPath(expected),
+        quotedUserProvidedPath(expected),
         listAllUniqueFilesForAllContainers(),
         this::fuzzySafePath,
-        this::userProvidedPath,
-        "path"
+        this::quotedUserProvidedPath,
+        "file with relative path"
     ));
   }
 
@@ -198,11 +206,14 @@ public final class PackageContainerGroupAssert
         .collect(Collectors.toSet());
   }
 
-  private <T> String userProvidedPath(Iterable<T> parts) {
+  private <T> String quotedUserProvidedPath(Iterable<T> parts) {
     return StreamSupport
         .stream(parts.spliterator(), false)
         .map(Objects::toString)
-        .collect(Collectors.joining("/"));
+        .collect(Collectors.collectingAndThen(
+            Collectors.joining("/"),
+            StringUtils::quoted
+        ));
   }
 
   private <T> String fuzzySafePath(Iterable<T> parts) {
