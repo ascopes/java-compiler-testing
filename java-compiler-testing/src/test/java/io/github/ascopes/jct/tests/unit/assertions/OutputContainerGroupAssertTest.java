@@ -38,7 +38,7 @@ class OutputContainerGroupAssertTest {
   @Nested
   class PackagesTest {
 
-    @DisplayName("packages() throws an exception if the group is null")
+    @DisplayName(".packages() throws an exception if the group is null")
     @Test
     void packagesThrowsExceptionIfGroupIsNull() {
       // Given
@@ -49,7 +49,7 @@ class OutputContainerGroupAssertTest {
           .isInstanceOf(AssertionError.class);
     }
 
-    @DisplayName("packages() returns assertions across the package groups")
+    @DisplayName(".packages() returns assertions across the package groups")
     @Test
     void packagesReturnsAssertionsAcrossPackageGroups() {
       // Given
@@ -65,7 +65,7 @@ class OutputContainerGroupAssertTest {
   @Nested
   class ModulesTest {
 
-    @DisplayName("modules() throws an exception if the group is null")
+    @DisplayName(".modules() throws an exception if the group is null")
     @Test
     void modulesThrowsExceptionIfGroupIsNull() {
       // Given
@@ -76,7 +76,7 @@ class OutputContainerGroupAssertTest {
           .isInstanceOf(AssertionError.class);
     }
 
-    @DisplayName("modules() returns assertions across the module groups")
+    @DisplayName(".modules() returns assertions across the module groups")
     @Test
     void modulesReturnsAssertionsAcrossModuleGroups() {
       // Given
