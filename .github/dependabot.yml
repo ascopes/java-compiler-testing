@@ -2,9 +2,9 @@ version: 2
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
-    open-pull-requests-limit: 20
+    open-pull-requests-limit: 99
     schedule:
-      interval: "monthly"
+      interval: "weekly"
     assignees:
       - "ascopes"
     labels:
@@ -14,9 +14,9 @@ updates:
 
   - package-ecosystem: "maven"
     directory: "/"
-    open-pull-requests-limit: 20
+    open-pull-requests-limit: 99
     schedule:
-      interval: "monthly"
+      interval: "weekly"
     assignees:
       - "ascopes"
     labels:
