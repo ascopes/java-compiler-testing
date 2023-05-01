@@ -31,7 +31,7 @@
   <description>Acceptance test components.</description>
 
   <properties>
-    <mapstruct.version>1.5.3.Final</mapstruct.version>
+    <mapstruct.version>1.5.5.Final</mapstruct.version>
   </properties>
 
   <dependencies>
