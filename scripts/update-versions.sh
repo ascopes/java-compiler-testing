@@ -42,9 +42,17 @@ while getopts "hv:" opt; do
   esac
 done
 
-if [ -z "${version}" ]; then err "Missing required argument"; usage; exit 1; fi
+if [[ -z "${version}" ]]; then 
+  err "Missing required argument"
+  usage
+  exit 1
+fi
 
-info "Updating versions"
+if ! [[ "${version}" =~ .*-SNAPSHOT$ ]]; then
+  version="${version}-SNAPSHOT"
+fi
+
+info "Updating versions to ${version}"
 run <<< "./mvnw -B -e versions:set -DnewVersion='${version}'"
 
 info "Tracking all 'pom.xml' files with Git"
