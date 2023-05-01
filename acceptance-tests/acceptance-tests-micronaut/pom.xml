@@ -31,7 +31,7 @@
   <description>Acceptance test components.</description>
 
   <properties>
-    <micronaut.version>3.8.8</micronaut.version>
+    <micronaut.version>3.9.1</micronaut.version>
   </properties>
 
   <dependencyManagement>
