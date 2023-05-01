@@ -128,6 +128,19 @@ open module my.tests {
 }
 ```
 
+## Support for ECJ (Eclipse Java Compiler)
+
+The Eclipse Java Compiler supports the same standard interface for invoking a Java compiler
+that Javac does, which means that _in theory_, the _java-compiler-testing_ library supports
+invoking ECJ.
+
+At the time of writing, [GH-163](https://github.com/ascopes/java-compiler-testing/issues/163) tracks the addition of ECJ support to this library. The PR 
+up at [GH-422](https://github.com/ascopes/java-compiler-testing/pull/422) implements this functionality. However, the most recent releases of ECJ do not
+correctly support the detection and handling of modules that appear in the module path, and as a 
+result, test cases making use of JPMS modules and dependencies do not appear to work 
+correctly. Once these issues are resolved with Eclipse, or once a suitable workaround is found,
+then this PR will be completed and merged.
+
 ## Examples
 
 ### In-memory code, using RAM disks for source directories
@@ -381,23 +394,3 @@ install, and run the correct version of Maven:
 ```cmd
 .\mvnw.cmd clean package
 ```
-
-## ECJ support
-
-While this module initially supported ECJ, there were a number of problems relating to bugs
-and incorrect behaviour within ECJ's implementation. This prevented any form of module
-support or generated source support within this library, since ECJ would not use the
-standard JavaFileManager API consistently (often falling back to using FileInputStream objects
-directly). In addition, many edge cases exist where binary names and paths are not handled
-consistently either (such as using forward-slashes to delimit binary names).
-
-To keep this library simpler and more consistent, as of
-[!92](https://github.com/ascopes/java-compiler-testing/issues/92),
-this support was officially removed due to the overwhelming work it was creating.
-
-Some architectural changes have been made since this issue was closed which may make ECJ
-feasible to support again. [!163](https://github.com/ascopes/java-compiler-testing/issues/163)
-has been opened to track this.
-
-ECJ support would also enable the potential support of AspectJ, since the AspectJ
-compiler is built from a fork of ECJ.
