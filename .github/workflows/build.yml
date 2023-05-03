@@ -21,13 +21,8 @@ jobs:
       fail-fast: false
       matrix:
         os-name: [ubuntu-22.04]
-        java-version: [11, 12, 13, 14, 15, 16, 17, 18, 19]
+        java-version: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
         include:
-          # Early access builds.
-          # - As of 21st January 2023, Jacoco has not yet released their updates to ASM
-          #   to support Java 20 bytecode. Therefore, we have to skip coverage here.
-          - os-name: ubuntu-22.04
-            java-version: 20-ea
           # Mockito doesn't yet support Java 21, so let's comment it out for now.
           # - os-name: ubuntu-22.04
           #   java-version: 21-ea
