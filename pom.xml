@@ -159,7 +159,7 @@
 
     <!-- JavaDocs -->
     <current-year>2023</current-year>
-    <newest-java-version>19</newest-java-version>
+    <newest-java-version>20</newest-java-version>
     <github-fork-ribbon.version>0.2.3</github-fork-ribbon.version>
     <highlight-js.version>11.7.0</highlight-js.version>
 
