@@ -22,14 +22,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Feature;
-import com.google.common.jimfs.Jimfs;
-import com.google.common.jimfs.PathType;
+import com.github.marschall.memoryfilesystem.MemoryFileSystemBuilder;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.utils.LoomPolyfill;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
@@ -502,15 +500,14 @@ public final class Fixtures {
     private TempFileSystem() {
       // Default to UNIX to keep behaviour consistent.
       var name = someText();
-      var config = Configuration
-          .builder(PathType.unix())
-          .setSupportedFeatures(Feature.LINKS, Feature.SYMBOLIC_LINKS, Feature.FILE_CHANNEL)
-          .setAttributeViews("basic", "posix")
-          .setRoots("/")
-          .setWorkingDirectory("/")
-          .build();
 
-      fs = Jimfs.newFileSystem(name, config);
+      try {
+        fs = MemoryFileSystemBuilder.newLinux()
+            .setCurrentWorkingDirectory("/")
+            .build(name);
+      } catch (IOException e) {
+        throw new UncheckedIOException("could not create file system with name: " + name, e);
+      }
       root = fs.getRootDirectories().iterator().next();
 
       try {

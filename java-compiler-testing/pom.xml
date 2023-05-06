@@ -40,8 +40,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.google.jimfs</groupId>
-      <artifactId>jimfs</artifactId>
+      <groupId>com.github.marschall</groupId>
+      <artifactId>memoryfilesystem</artifactId>
     </dependency>
 
     <dependency>
