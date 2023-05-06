@@ -150,9 +150,6 @@
       -XX:TieredStopAtLevel=1
     </argLine>
 
-    <!-- Scanning -->
-    <skip-dependency-scan>false</skip-dependency-scan>
-
     <!-- Project flags -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java-release>11</java-release>
