@@ -39,7 +39,7 @@ jobs:
         with:
           distribution: zulu
           # Must use >= JDK 17 for Javadocs to generate correctly.
-          java-version: 17
+          java-version: 20
           server-id: ossrh
           server-username: OSSRH_USERNAME
           server-password: OSSRH_TOKEN
@@ -77,6 +77,10 @@ jobs:
           fi
           echo "release_version=${release_version}" >> "${GITHUB_ENV}"
 
+      - name: Run tests
+        shell: bash
+        run: ./mvnw -B -U -Dcheckstyle.skip=true clean verify
+
       - name: Perform release to Staging
         id: maven-central-staging
         if: inputs.deploy-to-staging
@@ -106,7 +110,7 @@ jobs:
                 -DreleaseVersion='${release_version}' \
                 -DsignTag=false \
                 -Dtag='v${release_version}' \
-                release:prepare release:perform
+                clean release:prepare release:perform
           SCRIPT
             
           success "Release has been promoted to Nexus Staging successfully"
