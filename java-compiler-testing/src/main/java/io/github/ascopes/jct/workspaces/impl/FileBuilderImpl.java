@@ -175,7 +175,7 @@ public final class FileBuilderImpl implements FileBuilder {
 
     switch (scheme) {
       case "classpath":
-      case "jimfs":
+      case "memory":
       case "jrt":
       case "ram":
         return input;

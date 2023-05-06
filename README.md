@@ -18,7 +18,7 @@ testing anything related to the Java compiler. This includes Javac plugins and J
 processors.
 
 All test cases are designed to be as stateless as possible, with facilities to produce
-in-memory file systems (using Google's JIMFS API) or using OS-provided temporary directories.
+in-memory file systems or using OS-provided temporary directories.
 All file system mechanisms are complimented with a fluent API that enables writing expressive
 declarations without unnecessary boilerplate.
 
