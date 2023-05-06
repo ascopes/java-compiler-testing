@@ -18,9 +18,12 @@ package io.github.ascopes.jct.acceptancetests.lombok
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import io.github.ascopes.jct.workspaces.Workspaces
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.JRE
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
+import static org.assertj.core.api.Assumptions.assumeThat
 import static org.assertj.core.api.SoftAssertions.assertSoftly
 
 /**
@@ -32,8 +35,15 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly
  * @author Ashley Scopes
  */
 @DisplayName("Lombok Integration test")
-@SuppressWarnings('GrUnresolvedAccess')
+@SuppressWarnings("GrUnresolvedAccess")
 class LombokIntegrationTest {
+
+  @BeforeEach
+  void setUp() {
+    assumeThat(JRE.currentVersion())
+        .withFailMessage("Lombok fails under JDK-21: See Lombok GH-3393")
+        .isLessThanOrEqualTo(JRE.JAVA_20)
+  }
 
   @DisplayName("Lombok @Data compiles the expected data class")
   @JavacCompilerTest
