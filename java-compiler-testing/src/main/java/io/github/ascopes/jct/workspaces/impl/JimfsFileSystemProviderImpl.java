@@ -15,11 +15,11 @@
  */
 package io.github.ascopes.jct.workspaces.impl;
 
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Feature;
-import com.google.common.jimfs.Jimfs;
-import com.google.common.jimfs.PathType;
+import com.github.marschall.memoryfilesystem.MemoryFileSystemBuilder;
 import io.github.ascopes.jct.workspaces.RamFileSystemProvider;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.FileSystem;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -55,20 +55,12 @@ public final class JimfsFileSystemProviderImpl implements RamFileSystemProvider 
 
   @Override
   public FileSystem createFileSystem(String name) {
-    var config = Configuration
-        .builder(PathType.unix())
-        .setSupportedFeatures(
-            Feature.LINKS,
-            Feature.SYMBOLIC_LINKS,
-            Feature.FILE_CHANNEL,
-            Feature.SECURE_DIRECTORY_STREAM
-        )
-        .setAttributeViews("basic", "posix")
-        .setRoots("/")
-        .setWorkingDirectory("/")
-        .setPathEqualityUsesCanonicalForm(true)
-        .build();
-
-    return Jimfs.newFileSystem(config);
+    try {
+      return MemoryFileSystemBuilder.newLinux()
+          .setCurrentWorkingDirectory("/")
+          .build(name);
+    } catch (IOException e) {
+      throw new UncheckedIOException("could not create file system with name: " + name, e);
+    }
   }
 }
