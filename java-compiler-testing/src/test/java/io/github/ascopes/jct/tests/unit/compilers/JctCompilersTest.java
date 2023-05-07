@@ -18,7 +18,7 @@ package io.github.ascopes.jct.tests.unit.compilers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.compilers.JctCompilers;
-import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
+import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
 import io.github.ascopes.jct.tests.helpers.UtilityClassTestTemplate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

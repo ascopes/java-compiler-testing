@@ -141,7 +141,6 @@ module io.github.ascopes.jct {
   //////////////////////////////////////////////////////
 
   exports io.github.ascopes.jct.compilers.impl to io.github.ascopes.jct.testing;
-  exports io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.filemanagers.impl to io.github.ascopes.jct.testing;
   exports io.github.ascopes.jct.utils to io.github.ascopes.jct.testing;
@@ -154,7 +153,6 @@ module io.github.ascopes.jct {
   opens io.github.ascopes.jct.assertions to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.compilers.impl to io.github.ascopes.jct.testing;
-  opens io.github.ascopes.jct.compilers.javac to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.containers to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.containers.impl to io.github.ascopes.jct.testing;
   opens io.github.ascopes.jct.diagnostics to io.github.ascopes.jct.testing;

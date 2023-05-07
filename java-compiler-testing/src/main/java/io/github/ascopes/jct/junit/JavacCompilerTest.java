@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
-import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

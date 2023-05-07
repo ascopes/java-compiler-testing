@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
-import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
+import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
 import io.github.ascopes.jct.utils.VisibleForTestingOnly;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;

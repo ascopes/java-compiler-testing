@@ -15,8 +15,8 @@
  */
 package io.github.ascopes.jct.tests.unit.junit;
 
-import static io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl.getEarliestSupportedVersionInt;
-import static io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl.getLatestSupportedVersionInt;
+import static io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl.getEarliestSupportedVersionInt;
+import static io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl.getLatestSupportedVersionInt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.params.support.AnnotationConsumerInitializer.initialize;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
-import io.github.ascopes.jct.compilers.javac.JavacJctCompilerImpl;
+import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilersProvider;
 import io.github.ascopes.jct.junit.VersionStrategy;

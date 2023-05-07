@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.tests.unit.compilers.javac;
+package io.github.ascopes.jct.tests.unit.compilers.impl;
 
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someBoolean;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someRelease;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.github.ascopes.jct.compilers.CompilationMode;
-import io.github.ascopes.jct.compilers.javac.JavacJctFlagBuilderImpl;
+import io.github.ascopes.jct.compilers.impl.JavacJctFlagBuilderImpl;
 import io.github.ascopes.jct.tests.helpers.Fixtures;
 import java.util.List;
 import java.util.stream.Collectors;

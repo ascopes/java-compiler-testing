@@ -142,9 +142,7 @@
 
         <configuration>
           <excludePackageNames>
-            io.github.ascopes.jct.compilers.javac;
             io.github.ascopes.jct.**.impl;
-            io.github.ascopes.jct.junit.ext;
             io.github.ascopes.jct.utils;
           </excludePackageNames>
         </configuration>
