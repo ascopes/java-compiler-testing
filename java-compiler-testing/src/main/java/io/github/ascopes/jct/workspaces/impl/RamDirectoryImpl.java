@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.UUID;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -87,8 +88,11 @@ public final class RamDirectoryImpl extends AbstractManagedDirectory {
 
     assertValidRootName(name);
 
-    var fileSystem = MemoryFileSystemProvider.getInstance().createFileSystem(name);
-    var path = fileSystem.getRootDirectories().iterator().next().resolve(name);
+    // MemoryFileSystem needs unique FS names to work correctly, so use a UUID to enforce this.
+
+    var uniqueName = name + ":" + UUID.randomUUID();
+    var fileSystem = MemoryFileSystemProvider.getInstance().createFileSystem(uniqueName);
+    var path = fileSystem.getRootDirectories().iterator().next().resolve(uniqueName);
 
     // Ensure the base directory exists.
     uncheckedIo(() -> Files.createDirectories(path));
