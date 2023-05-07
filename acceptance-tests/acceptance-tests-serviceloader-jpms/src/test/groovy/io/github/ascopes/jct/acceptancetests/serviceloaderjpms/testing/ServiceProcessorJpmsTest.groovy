@@ -27,13 +27,34 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 class ServiceProcessorJpmsTest {
 
   @DisplayName("Expected files get created when the processor is run")
-  @JavacCompilerTest(modules = true)
+  @JavacCompilerTest(minVersion = 9)
   void expectedFilesGetCreated(JctCompiler compiler) {
     try (def workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()
           .createDirectory("org", "example")
+          .copyContentsFrom("src", "test", "resources", "code", "org", "example")
+
+      def compilation = compiler
+          .addAnnotationProcessors(new ServiceProcessor())
+          .compile(workspace)
+
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutputPackages()
+          .fileExists("META-INF", "services", "org.example.InsultProvider")
+          .hasContent("org.example.MeanInsultProviderImpl")
+    }
+  }
+
+  @DisplayName("Expected files get created when the processor is run in multi-module roots")
+  @JavacCompilerTest(minVersion = 9)
+  void expectedFilesGetCreatedInMultiModuleRoots(JctCompiler compiler) {
+    try (def workspace = Workspaces.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathModule("org.example")
           .copyContentsFrom("src", "test", "resources", "code")
 
       def compilation = compiler
@@ -42,8 +63,7 @@ class ServiceProcessorJpmsTest {
 
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputModules().moduleExists("org.example")
           .fileExists("META-INF", "services", "org.example.InsultProvider")
           .hasContent("org.example.MeanInsultProviderImpl")
     }

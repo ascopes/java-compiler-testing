@@ -45,7 +45,7 @@ class SpringBootConfigurationProcessorTest {
       workspace
           .createSourcePathPackage()
           .createDirectory("org", "example")
-          .copyContentsFrom("src", "test", "resources", "code", "configuration")
+          .copyContentsFrom("src", "test", "resources", "code", "configuration", "org", "example")
 
       // When
       def compilation = compiler
@@ -55,8 +55,7 @@ class SpringBootConfigurationProcessorTest {
       // Then
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .fileExists("META-INF", "spring-configuration-metadata.json")
           .isNotEmptyFile()
     }
@@ -69,19 +68,7 @@ class SpringBootConfigurationProcessorTest {
       // Given
       workspace
           .createSourcePathPackage()
-          .createDirectory("org", "example")
           .copyContentsFrom("src", "test", "resources", "code", "configuration")
-          .createFile("module-info.java").withContents("""
-          module org.example {
-            requires java.base;
-            requires spring.beans;
-            requires spring.boot;
-            requires spring.context;
-            requires spring.core;
-            requires spring.web;
-            requires spring.webflux;
-          }
-        """.stripMargin())
 
       // When
       def compilation = compiler
@@ -91,8 +78,30 @@ class SpringBootConfigurationProcessorTest {
       // Then
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
+          .fileExists("META-INF", "spring-configuration-metadata.json")
+          .isNotEmptyFile()
+    }
+  }
+
+  @DisplayName("Spring will index the application context as expected with multi-modules")
+  @JavacCompilerTest(minVersion = 17)
+  void springWillIndexTheApplicationContextAsExpectedWithMultiModules(JctCompiler compiler) {
+    try (def workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+      // Given
+      workspace
+          .createSourcePathModule("org.example")
+          .copyContentsFrom("src", "test", "resources", "code", "configuration")
+
+      // When
+      def compilation = compiler
+          .addAnnotationProcessors(new ConfigurationMetadataAnnotationProcessor())
+          .compile(workspace)
+
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutputModules().moduleExists("org.example")
           .fileExists("META-INF", "spring-configuration-metadata.json")
           .isNotEmptyFile()
     }

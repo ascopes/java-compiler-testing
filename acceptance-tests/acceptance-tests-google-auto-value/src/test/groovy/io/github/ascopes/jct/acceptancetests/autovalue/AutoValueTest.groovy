@@ -47,8 +47,7 @@ class AutoValueTest {
           .isSuccessfulWithoutWarnings()
 
       assertThatCompilation(compilation)
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .allFilesExist(
               "org/example/AutoValue_User.class",
               "org/example/AutoBuilder_UserBuilder.class"

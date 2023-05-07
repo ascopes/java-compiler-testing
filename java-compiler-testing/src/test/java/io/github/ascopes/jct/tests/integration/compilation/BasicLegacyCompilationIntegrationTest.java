@@ -47,7 +47,7 @@ class BasicLegacyCompilationIntegrationTest extends AbstractIntegrationTest {
           .isSuccessfulWithoutWarnings();
 
       assertThatCompilation(compilation)
-          .classOutput().packages()
+          .classOutputPackages()
           .fileExists("com", "example", "HelloWorld.class")
           .isNotEmptyFile();
     }
@@ -68,7 +68,7 @@ class BasicLegacyCompilationIntegrationTest extends AbstractIntegrationTest {
           .isSuccessfulWithoutWarnings();
 
       assertThatCompilation(compilation)
-          .classOutput().packages()
+          .classOutputPackages()
           .fileExists("com", "example", "HelloWorld.class")
           .isNotEmptyFile();
     }
