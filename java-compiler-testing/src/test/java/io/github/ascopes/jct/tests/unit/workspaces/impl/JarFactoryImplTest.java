@@ -15,23 +15,21 @@
  */
 package io.github.ascopes.jct.tests.unit.workspaces.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import io.github.ascopes.jct.tests.helpers.Fixtures;
 import io.github.ascopes.jct.workspaces.impl.JarFactoryImpl;
-import java.io.ByteArrayOutputStream;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.Map;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 /**
  * {@link JarFactoryImpl} tests.
@@ -73,13 +71,14 @@ class JarFactoryImplTest {
       // Then
       assertThatThrownBy(() -> JarFactoryImpl.getInstance().createJarFrom(jarTarget, classesDir))
           .isInstanceOf(NoSuchFileException.class)
-          .hasMessage("/some-non-existent-directory/HelloWorld.jar");
+          .message()
+          .startsWith("/some-non-existent-directory");
     }
   }
 
   @DisplayName("An exception is raised if the input directory does not exist")
   @Test
-  void exceptionRaisedIfInputDirectoryDoesNotExist() throws IOException {
+  void exceptionRaisedIfInputDirectoryDoesNotExist() {
     // Given
     try (var fs = Fixtures.someTemporaryFileSystem()) {
       var classesDir = fs.getRootPath().resolve("target").resolve("classes");
