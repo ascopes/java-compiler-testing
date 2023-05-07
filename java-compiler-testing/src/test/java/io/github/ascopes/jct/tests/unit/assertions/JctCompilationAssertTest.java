@@ -207,7 +207,7 @@ class JctCompilationAssertTest {
     }
 
     @DisplayName(
-        ".isSuccessful succeeds if the compilation succeeded (fail on warnings)"
+        ".isSuccessful() succeeds if the compilation succeeded (fail on warnings)"
     )
     @Test
     void isSuccessfulSucceedsIfCompilationSucceededFailOnWarnings() {

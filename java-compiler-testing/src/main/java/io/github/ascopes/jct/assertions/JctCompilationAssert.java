@@ -68,7 +68,8 @@ public final class JctCompilationAssert extends
 
     // TODO(ascopes): find a way to use Assertions::assertThat here instead of passing the
     //   StringAssert constructor around.
-    return FactoryBasedNavigableListAssert.assertThat(arguments, StringAssert::new)
+    return FactoryBasedNavigableListAssert
+        .assertThat(arguments, StringAssert::new)
         .as("Compiler arguments %s", StringUtils.quotedIterable(arguments));
   }
 
@@ -82,14 +83,15 @@ public final class JctCompilationAssert extends
     isNotNull();
 
     if (actual.isFailure()) {
-      // If we have error diagnostics, add them to the error message to provide helpful debugging
-      // information. If we are treating warnings as errors, then we want to include those in this
-      // as well.
-      var diagnosticKinds = actual.isFailOnWarnings()
-          ? DiagnosticKindAssert.WARNING_AND_ERROR_DIAGNOSTIC_KINDS
-          : DiagnosticKindAssert.ERROR_DIAGNOSTIC_KINDS;
-
-      failWithDiagnostics(diagnosticKinds, "Expected a successful compilation, but it failed.");
+      throw failWithDiagnostics(
+          // If we have error diagnostics, add them to the error message to provide helpful
+          // debugging information. If we are treating warnings as errors, then we want to include
+          // those in this as well.
+          actual.isFailOnWarnings()
+              ? DiagnosticKindAssert.WARNING_AND_ERROR_DIAGNOSTIC_KINDS
+              : DiagnosticKindAssert.ERROR_DIAGNOSTIC_KINDS,
+          "Expected a successful compilation, but it failed."
+      );
     }
 
     return myself;
@@ -128,7 +130,7 @@ public final class JctCompilationAssert extends
     if (actual.isSuccessful()) {
       // If we have any warnings, we should show them in the error message as it might be useful
       // to the user.
-      failWithDiagnostics(
+      throw failWithDiagnostics(
           DiagnosticKindAssert.WARNING_AND_ERROR_DIAGNOSTIC_KINDS,
           "Expected compilation to fail, but it succeeded."
       );
@@ -344,10 +346,9 @@ public final class JctCompilationAssert extends
     return moduleGroup(StandardLocation.MODULE_PATH);
   }
 
-  private void failWithDiagnostics(
+  private AssertionError failWithDiagnostics(
       Collection<? extends Kind> kindsToDisplay,
-      String message,
-      Object... args
+      String message
   ) {
     var diagnostics = actual
         .getDiagnostics()
@@ -355,7 +356,7 @@ public final class JctCompilationAssert extends
         .filter(diagnostic -> kindsToDisplay.contains(diagnostic.getKind()))
         .collect(toUnmodifiableList());
 
-    failWithMessage(
+    return failure(
         "%s\n\nDiagnostics:\n%s",
         message,
         TraceDiagnosticListRepresentation.getInstance().toStringOf(diagnostics)
@@ -364,7 +365,7 @@ public final class JctCompilationAssert extends
 
   private void assertLocationExists(Location location, ContainerGroup group) {
     if (group == null) {
-      throw new AssertionError("No location named " + location.getName() + " exists");
+      throw failure("No location named %s exists", location.getName());
     }
   }
 }
