@@ -34,7 +34,6 @@ import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static io.github.ascopes.jct.utils.StringUtils.quoted;
 import static io.github.ascopes.jct.utils.StringUtils.quotedIterable;
 import static java.util.Objects.requireNonNull;
-import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -181,14 +180,15 @@ public final class PackageContainerGroupAssert
     }
 
     var expected = combineOneOrMore(fragment, fragments);
-    throw failure(StringUtils.resultNotFoundWithFuzzySuggestions(
+    var message = StringUtils.resultNotFoundWithFuzzySuggestions(
         fuzzySafePath(expected),
         quotedUserProvidedPath(expected),
         listAllUniqueFilesForAllContainers(),
         this::fuzzySafePath,
         this::quotedUserProvidedPath,
         "file with relative path"
-    ));
+    );
+    throw failure(message);
   }
 
   private Set<Path> listAllUniqueFilesForAllContainers() {
@@ -200,8 +200,9 @@ public final class PackageContainerGroupAssert
             .stream()
             .map(container.getInnerPathRoot().getPath()::relativize))
         // Filter out the inner path root itself, preventing few confusing issues with zero-length
-        // file names.
-        .filter(not(path -> path.getFileName().toString().isBlank()))
+        // file names. In ZIP paths this can also be null, so we have to check for both "" and null
+        // here.
+        .filter(this::fileNameIsPresent)
         // Remove duplicates (don't think this can ever happen but this is just to be safe).
         .collect(Collectors.toSet());
   }
@@ -224,5 +225,15 @@ public final class PackageContainerGroupAssert
         .stream(parts.spliterator(), false)
         .map(Objects::toString)
         .collect(Collectors.joining("\0"));
+  }
+
+  private boolean fileNameIsPresent(@Nullable Path path) {
+    // Path can be null if no path elements exist in ZipPath impls.
+    if (path == null) {
+      return false;
+    }
+
+    // File name can be null if no path elements exist in the input path.
+    return !Objects.toString(path.getFileName(), "").isBlank();
   }
 }
