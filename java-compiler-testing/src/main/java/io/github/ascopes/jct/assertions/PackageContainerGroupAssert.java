@@ -229,11 +229,6 @@ public final class PackageContainerGroupAssert
 
   private boolean fileNameIsPresent(@Nullable Path path) {
     // Path can be null if no path elements exist in ZipPath impls.
-    if (path == null) {
-      return false;
-    }
-
-    // File name can be null if no path elements exist in the input path.
-    return !Objects.toString(path.getFileName(), "").isBlank();
+    return path == null || !Objects.toString(path.getFileName(), "").isBlank();
   }
 }

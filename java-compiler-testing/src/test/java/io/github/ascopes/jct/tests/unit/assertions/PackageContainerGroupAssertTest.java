@@ -15,25 +15,40 @@
  */
 package io.github.ascopes.jct.tests.unit.assertions;
 
-import io.github.ascopes.jct.assertions.PackageContainerGroupAssert;
-import io.github.ascopes.jct.containers.Container;
-import io.github.ascopes.jct.containers.PackageContainerGroup;
-import io.github.ascopes.jct.repr.LocationRepresentation;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.mockito.quality.Strictness;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
-
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someLocation;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.somePathRoot;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static io.github.ascopes.jct.utils.StringUtils.quoted;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyIterable;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
+
+import io.github.ascopes.jct.assertions.PackageContainerGroupAssert;
+import io.github.ascopes.jct.containers.Container;
+import io.github.ascopes.jct.containers.PackageContainerGroup;
+import io.github.ascopes.jct.repr.LocationRepresentation;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.spi.FileSystemProvider;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.ZipOutputStream;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 
 /**
  * {@link PackageContainerGroupAssert} tests.
@@ -417,6 +432,19 @@ class PackageContainerGroupAssertTest {
           .withRelativeFile("foo", "bar")
           .buildMock();
 
+      var container4 = ContainerBuilder
+          .withZipContainerPath()
+          .withRelativeFile("zipa", "zipb")
+          .withRelativeFile("zipc")
+          .buildMock();
+
+      var container5 = ContainerBuilder
+          .withZipContainerPath("bing", "bong")
+          .withRelativeFile("zipa", "zipb")
+          .withRelativeFile("zipc")
+          .buildMock();
+
+
       var containerGroup = mock(PackageContainerGroup.class);
       when(containerGroup.getFile(any(), any(), any())).thenReturn(null);
 
@@ -424,7 +452,9 @@ class PackageContainerGroupAssertTest {
       var listAllFilesResult = Map.of(
           container1, container1.listAllFiles(),
           container2, container2.listAllFiles(),
-          container3, container3.listAllFiles()
+          container3, container3.listAllFiles(),
+          container4, container4.listAllFiles(),
+          container5, container5.listAllFiles()
       );
 
       when(containerGroup.listAllFiles())
@@ -479,13 +509,18 @@ class PackageContainerGroupAssertTest {
     private final Path innerRootPath;
     private final Set<Path> paths;
 
-    private ContainerBuilder(String innerRootFragment, String... innerRootFragments) {
-      innerRootPath = Path.of(innerRootFragment, innerRootFragments);
+    private ContainerBuilder(Path path) {
+      innerRootPath = path;
       paths = new LinkedHashSet<>();
+      paths.add(innerRootPath);
     }
 
     ContainerBuilder withRelativeFile(String fragment, String... fragments) {
-      paths.add(innerRootPath.resolve(Path.of(fragment, fragments)));
+      var path = innerRootPath.resolve(fragment);
+      for (var nextFragment : fragments) {
+        path = path.resolve(nextFragment);
+      }
+      paths.add(path);
       return this;
     }
 
@@ -499,7 +534,42 @@ class PackageContainerGroupAssertTest {
     }
 
     static ContainerBuilder withRootPath(String fragment, String... fragments) {
-      return new ContainerBuilder(fragment, fragments);
+      return new ContainerBuilder(Path.of(fragment, fragments));
+    }
+
+    static ContainerBuilder withZipContainerPath(String... fragments) {
+      // Hack to get a valid zip container path. This is important to test as ZipPath objects
+      // can have null file names, which we need to check for. UnixPath does not allow this, so
+      // we can't just use the existing logic to test for this.
+      var rootPath = uncheckedIo(() -> {
+        var tempFile = Files.createTempFile("some-file", ".zip");
+        try {
+          try (var zipOutputStream = new ZipOutputStream(Files.newOutputStream(tempFile))) {
+            zipOutputStream.setComment("Empty");
+            zipOutputStream.finish();
+          }
+
+          var fs = FileSystemProvider
+              .installedProviders()
+              .stream()
+              .filter(provider -> provider.getScheme().equals("jar"))
+              .findFirst()
+              .orElseThrow()
+              .newFileSystem(tempFile, Map.of());
+
+          try (fs) {
+            return fs.getRootDirectories().iterator().next();
+          }
+        } finally {
+          Files.delete(tempFile);
+        }
+      });
+
+      for (var fragment : fragments) {
+        rootPath = rootPath.resolve(fragment);
+      }
+
+      return new ContainerBuilder(rootPath);
     }
   }
 }
