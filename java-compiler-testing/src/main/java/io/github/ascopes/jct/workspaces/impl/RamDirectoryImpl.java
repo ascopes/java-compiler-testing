@@ -90,7 +90,7 @@ public final class RamDirectoryImpl extends AbstractManagedDirectory {
 
     // MemoryFileSystem needs unique FS names to work correctly, so use a UUID to enforce this.
 
-    var uniqueName = name + ":" + UUID.randomUUID();
+    var uniqueName = name + "-" + UUID.randomUUID();
     var fileSystem = MemoryFileSystemProvider.getInstance().createFileSystem(uniqueName);
     var path = fileSystem.getRootDirectories().iterator().next().resolve(uniqueName);
 

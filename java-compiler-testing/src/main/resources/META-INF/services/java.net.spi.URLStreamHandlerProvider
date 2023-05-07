@@ -1,0 +1,3 @@
+# For some reason this is not detected correctly if we use the JPMS mechanism to deal with this
+# file. We fall back to the old mechanism instead to avoid this problem.
+io.github.ascopes.jct.workspaces.impl.MemoryFileSystemProvider$MemoryFileSystemUrlHandlerProvider
