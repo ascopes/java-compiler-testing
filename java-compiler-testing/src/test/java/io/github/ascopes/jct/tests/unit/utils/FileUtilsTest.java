@@ -86,7 +86,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
           .isNotNull()
           .isEqualTo(file.toUri().toURL())
           .asString()
-          .startsWith(fs.getScheme() + "://");
+          .startsWith(fs.getScheme() + ":");
     }
   }
 
