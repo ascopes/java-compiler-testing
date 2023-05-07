@@ -103,9 +103,9 @@ module io.github.ascopes.jct {
   /// DEPENDENCIES ///
   ////////////////////
 
+  requires com.github.marschall.memoryfilesystem;
   requires java.compiler;
   requires java.management;
-  requires com.github.marschall.memoryfilesystem;
   requires me.xdrop.fuzzywuzzy;
   requires static transitive org.apiguardian.api;
   requires org.assertj.core;
