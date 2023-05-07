@@ -88,7 +88,7 @@ import org.junit.jupiter.api.extension.Extension;
  *              );
  *
  *          assertThatCompilation(compilation)
- *              .classOutputs().packages()
+ *              .classOutputPackages()
  *              .fileExists("json-schemas", "UserSchema.json").contents()
  *              .isNotEmpty()
  *              .satisfies(contents -> JSONAssert.assertEquals(...));

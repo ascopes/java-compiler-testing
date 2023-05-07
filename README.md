@@ -186,7 +186,7 @@ class ExampleTest {
         .isSuccessfulWithoutWarnings();
 
     assertThatCompilation(compilation)
-        .classOutput().packages()
+        .classOutputPackages()
         .fileExists("com/example/Message.class")
         .isNotEmptyFile();
   }
@@ -238,7 +238,7 @@ class JsonSchemaAnnotationProcessorTest {
         );
 
     assertThatCompilation(compilation)
-        .classOutputs().packages()
+        .classOutputPackages()
         .fileExists("json-schemas", "UserSchema.json").contents()
         .isNotEmpty()
         .satisfies(contents -> JSONAssert.assertEquals(...));
@@ -308,7 +308,7 @@ class ExampleTest {
           .isSuccessfulWithoutWarnings();
 
       assertThatCompilation(compilation)
-          .classOutput().packages()
+          .classOutputPackages()
           .fileExists("com/example/Message.class")
           .isNotEmptyFile();
     }
