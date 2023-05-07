@@ -258,9 +258,39 @@ public final class JctCompilationAssert extends
    * @return the assertions to perform on the class outputs.
    * @throws AssertionError if the compilation was null, or no group for the location
    *                        was found.
+   * @deprecated use {@link #classOutputPackages()} or {@link #classOutputModules()} instead.
    */
+  @Deprecated(since = "0.6.4", forRemoval = true)
+  @SuppressWarnings("DeprecatedIsStillUsed")
   public OutputContainerGroupAssert classOutput() {
     return outputGroup(StandardLocation.CLASS_OUTPUT);
+  }
+
+  /**
+   * Get assertions on the path containing class package outputs, if it exists.
+   *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
+   * @return the assertions to perform on the class package outputs.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
+   */
+  public PackageContainerGroupAssert classOutputPackages() {
+    return outputGroup(StandardLocation.CLASS_OUTPUT).packages();
+  }
+
+
+  /**
+   * Get assertions on the path containing class module outputs, if it exists.
+   *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
+   * @return the assertions to perform on the class module outputs.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
+   */
+  public ModuleContainerGroupAssert classOutputModules() {
+    return outputGroup(StandardLocation.CLASS_OUTPUT).modules();
   }
 
   /**
@@ -271,9 +301,38 @@ public final class JctCompilationAssert extends
    * @return the assertions to perform on the source outputs.
    * @throws AssertionError if the compilation was null, or no group for the location
    *                        was found.
+   * @deprecated use {@link #sourceOutputPackages()} or {@link #sourceOutputModules()} instead.
    */
+  @Deprecated(since = "0.6.4", forRemoval = true)
+  @SuppressWarnings("DeprecatedIsStillUsed")
   public OutputContainerGroupAssert sourceOutput() {
     return outputGroup(StandardLocation.SOURCE_OUTPUT);
+  }
+
+  /**
+   * Get assertions on the path containing generated source package outputs, if it exists.
+   *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
+   * @return the assertions to perform on the source package outputs.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
+   */
+  public PackageContainerGroupAssert sourceOutputPackages() {
+    return outputGroup(StandardLocation.SOURCE_OUTPUT).packages();
+  }
+
+  /**
+   * Get assertions on the path containing generated source module outputs, if it exists.
+   *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
+   * @return the assertions to perform on the source module outputs.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
+   */
+  public ModuleContainerGroupAssert sourceOutputModules() {
+    return outputGroup(StandardLocation.SOURCE_OUTPUT).modules();
   }
 
   /**
@@ -302,8 +361,24 @@ public final class JctCompilationAssert extends
    * @return the assertions to perform on the class path.
    * @throws AssertionError if the compilation was null, or no group for the location
    *                        was found.
+   * @deprecated use {@link #classPathPackages()} instead.
    */
+  @Deprecated(since = "0.6.4", forRemoval = true)
+  @SuppressWarnings("DeprecatedIsStillUsed")
   public PackageContainerGroupAssert classPath() {
+    return packageGroup(StandardLocation.CLASS_PATH);
+  }
+
+  /**
+   * Get assertions on the path containing the class path, if it exists.
+   *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
+   * @return the assertions to perform on the class path.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
+   */
+  public PackageContainerGroupAssert classPathPackages() {
     return packageGroup(StandardLocation.CLASS_PATH);
   }
 
@@ -315,7 +390,10 @@ public final class JctCompilationAssert extends
    * @return the assertions to perform on the source path.
    * @throws AssertionError if the compilation was null, or no group for the location
    *                        was found.
+   * @deprecated use {@link #sourcePathPackages()} instead.
    */
+  @Deprecated(since = "0.6.4", forRemoval = true)
+  @SuppressWarnings("DeprecatedIsStillUsed")
   public PackageContainerGroupAssert sourcePath() {
     return packageGroup(StandardLocation.SOURCE_PATH);
   }
@@ -329,7 +407,36 @@ public final class JctCompilationAssert extends
    * @throws AssertionError if the compilation was null, or no group for the location
    *                        was found.
    */
+  public PackageContainerGroupAssert sourcePathPackages() {
+    return packageGroup(StandardLocation.SOURCE_PATH);
+  }
+
+  /**
+   * Get assertions on the path containing the source path, if it exists.
+   *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
+   * @return the assertions to perform on the source path.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
+   * @deprecated use {@link #moduleSourcePathModules()} instead.
+   */
+  @Deprecated(since = "0.6.4", forRemoval = true)
+  @SuppressWarnings("DeprecatedIsStillUsed")
   public ModuleContainerGroupAssert moduleSourcePath() {
+    return moduleGroup(StandardLocation.MODULE_SOURCE_PATH);
+  }
+
+  /**
+   * Get assertions on the path containing the source path, if it exists.
+   *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
+   * @return the assertions to perform on the source path.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
+   */
+  public ModuleContainerGroupAssert moduleSourcePathModules() {
     return moduleGroup(StandardLocation.MODULE_SOURCE_PATH);
   }
 
@@ -341,10 +448,27 @@ public final class JctCompilationAssert extends
    * @return the assertions to perform on the module path.
    * @throws AssertionError if the compilation was null, or no group for the location
    *                        was found.
+   * @deprecated use {@link #modulePathModules()} instead.
    */
+  @Deprecated(since = "0.6.4", forRemoval = true)
+  @SuppressWarnings("DeprecatedIsStillUsed")
   public ModuleContainerGroupAssert modulePath() {
     return moduleGroup(StandardLocation.MODULE_PATH);
   }
+
+  /**
+   * Get assertions on the path containing the module path, if it exists.
+   *
+   * <p>If not configured, the value being asserted on will be {@code null} in value.
+   *
+   * @return the assertions to perform on the module path.
+   * @throws AssertionError if the compilation was null, or no group for the location
+   *                        was found.
+   */
+  public ModuleContainerGroupAssert modulePathModules() {
+    return moduleGroup(StandardLocation.MODULE_PATH);
+  }
+
 
   private AssertionError failWithDiagnostics(
       Collection<? extends Kind> kindsToDisplay,
