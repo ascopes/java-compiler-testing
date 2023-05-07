@@ -765,27 +765,6 @@ class JctCompilationAssertTest {
     }
   }
 
-  @DisplayName(".classOutput() performs the expected operations")
-  @SuppressWarnings("removal")
-  @Test
-  void classOutputPerformsTheExpectedOperations() {
-    // Given
-    var expectedAssertions = mock(OutputContainerGroupAssert.class);
-
-    var assertions = mock(JctCompilationAssert.class);
-    when(assertions.classOutput()).thenCallRealMethod();
-    when(assertions.outputGroup(any())).thenReturn(expectedAssertions);
-
-    // When
-    var actualAssertions = assertions.classOutput();
-
-    // Then
-    verify(assertions).classOutput();
-    verify(assertions).outputGroup(StandardLocation.CLASS_OUTPUT);
-    verifyNoMoreInteractions(assertions);
-    assertThat(actualAssertions).isSameAs(expectedAssertions);
-  }
-
   @DisplayName(".classOutputPackages() performs the expected operations")
   @Test
   void classOutputPackagesPerformsTheExpectedOperations() {
@@ -831,27 +810,6 @@ class JctCompilationAssertTest {
     verifyNoMoreInteractions(assertions);
     verify(expectedOutputAssertions).modules();
     verifyNoMoreInteractions(expectedOutputAssertions);
-    assertThat(actualAssertions).isSameAs(expectedAssertions);
-  }
-
-  @DisplayName(".sourceOutput() performs the expected operations")
-  @SuppressWarnings("removal")
-  @Test
-  void sourceOutputPerformsTheExpectedOperations() {
-    // Given
-    var expectedAssertions = mock(OutputContainerGroupAssert.class);
-
-    var assertions = mock(JctCompilationAssert.class);
-    when(assertions.sourceOutput()).thenCallRealMethod();
-    when(assertions.outputGroup(any())).thenReturn(expectedAssertions);
-
-    // When
-    var actualAssertions = assertions.sourceOutput();
-
-    // Then
-    verify(assertions).sourceOutput();
-    verify(assertions).outputGroup(StandardLocation.SOURCE_OUTPUT);
-    verifyNoMoreInteractions(assertions);
     assertThat(actualAssertions).isSameAs(expectedAssertions);
   }
 
@@ -903,27 +861,6 @@ class JctCompilationAssertTest {
     assertThat(actualAssertions).isSameAs(expectedAssertions);
   }
 
-  @DisplayName(".classPath() performs the expected operations")
-  @SuppressWarnings("removal")
-  @Test
-  void classPathPerformsTheExpectedOperations() {
-    // Given
-    var expectedAssertions = mock(PackageContainerGroupAssert.class);
-
-    var assertions = mock(JctCompilationAssert.class);
-    when(assertions.classPath()).thenCallRealMethod();
-    when(assertions.packageGroup(any())).thenReturn(expectedAssertions);
-
-    // When
-    var actualAssertions = assertions.classPath();
-
-    // Then
-    verify(assertions).classPath();
-    verify(assertions).packageGroup(StandardLocation.CLASS_PATH);
-    verifyNoMoreInteractions(assertions);
-    assertThat(actualAssertions).isSameAs(expectedAssertions);
-  }
-
   @DisplayName(".classPathPackages() performs the expected operations")
   @Test
   void classPathPackagesPerformsTheExpectedOperations() {
@@ -940,27 +877,6 @@ class JctCompilationAssertTest {
     // Then
     verify(assertions).classPathPackages();
     verify(assertions).packageGroup(StandardLocation.CLASS_PATH);
-    verifyNoMoreInteractions(assertions);
-    assertThat(actualAssertions).isSameAs(expectedAssertions);
-  }
-
-  @DisplayName(".sourcePath() performs the expected operations")
-  @SuppressWarnings("removal")
-  @Test
-  void sourcePathPerformsTheExpectedOperations() {
-    // Given
-    var expectedAssertions = mock(PackageContainerGroupAssert.class);
-
-    var assertions = mock(JctCompilationAssert.class);
-    when(assertions.sourcePath()).thenCallRealMethod();
-    when(assertions.packageGroup(any())).thenReturn(expectedAssertions);
-
-    // When
-    var actualAssertions = assertions.sourcePath();
-
-    // Then
-    verify(assertions).sourcePath();
-    verify(assertions).packageGroup(StandardLocation.SOURCE_PATH);
     verifyNoMoreInteractions(assertions);
     assertThat(actualAssertions).isSameAs(expectedAssertions);
   }
@@ -985,27 +901,6 @@ class JctCompilationAssertTest {
     assertThat(actualAssertions).isSameAs(expectedAssertions);
   }
 
-  @DisplayName(".moduleSourcePath() performs the expected operations")
-  @SuppressWarnings("removal")
-  @Test
-  void moduleSourcePathPerformsTheExpectedOperations() {
-    // Given
-    var expectedAssertions = mock(ModuleContainerGroupAssert.class);
-
-    var assertions = mock(JctCompilationAssert.class);
-    when(assertions.moduleSourcePath()).thenCallRealMethod();
-    when(assertions.moduleGroup(any())).thenReturn(expectedAssertions);
-
-    // When
-    var actualAssertions = assertions.moduleSourcePath();
-
-    // Then
-    verify(assertions).moduleSourcePath();
-    verify(assertions).moduleGroup(StandardLocation.MODULE_SOURCE_PATH);
-    verifyNoMoreInteractions(assertions);
-    assertThat(actualAssertions).isSameAs(expectedAssertions);
-  }
-
   @DisplayName(".moduleSourcePathModules() performs the expected operations")
   @Test
   void moduleSourcePathModulesPerformsTheExpectedOperations() {
@@ -1022,27 +917,6 @@ class JctCompilationAssertTest {
     // Then
     verify(assertions).moduleSourcePathModules();
     verify(assertions).moduleGroup(StandardLocation.MODULE_SOURCE_PATH);
-    verifyNoMoreInteractions(assertions);
-    assertThat(actualAssertions).isSameAs(expectedAssertions);
-  }
-  
-  @DisplayName(".modulePath() performs the expected operations")
-  @SuppressWarnings("removal")
-  @Test
-  void modulePathPerformsTheExpectedOperations() {
-    // Given
-    var expectedAssertions = mock(ModuleContainerGroupAssert.class);
-
-    var assertions = mock(JctCompilationAssert.class);
-    when(assertions.modulePath()).thenCallRealMethod();
-    when(assertions.moduleGroup(any())).thenReturn(expectedAssertions);
-
-    // When
-    var actualAssertions = assertions.modulePath();
-
-    // Then
-    verify(assertions).modulePath();
-    verify(assertions).moduleGroup(StandardLocation.MODULE_PATH);
     verifyNoMoreInteractions(assertions);
     assertThat(actualAssertions).isSameAs(expectedAssertions);
   }
