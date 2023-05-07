@@ -40,6 +40,13 @@ import org.junit.jupiter.api.extension.Extension;
  * is provided to streamline the development process, letting you focus on <strong>your</strong>
  * code rather than flaky test environments and dependency management.</p>
  *
+ * <p>Any questions, feedback, or issues can be submitted
+ * <a href="https://github.com/ascopes/java-compiler-testing">on GitHub</a>.
+ *
+ * <p>Releases can be found on
+ * <a href="https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing/">
+ * Maven Central</a>.
+ *
  * <pre><code>
  *    import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
  *
