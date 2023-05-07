@@ -363,7 +363,6 @@
                 <addBuildEnvironmentEntries>true</addBuildEnvironmentEntries>
                 <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                 <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                <addExtensions>true</addExtensions>
               </manifest>
               <manifestEntries>
                 <Sealed>true</Sealed>
