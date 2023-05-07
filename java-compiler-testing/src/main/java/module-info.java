@@ -15,7 +15,9 @@
  */
 import io.github.ascopes.jct.junit.JctExtension;
 import io.github.ascopes.jct.workspaces.RamFileSystemProvider;
+import io.github.ascopes.jct.workspaces.impl.MemoryFileSystemProvider.MemoryFileSystemUrlHandlerProvider;
 import org.junit.jupiter.api.extension.Extension;
+import java.net.spi.URLStreamHandlerProvider;
 
 /**
  * A framework for performing exhaustive integration testing against Java compilers in modern Java
@@ -133,7 +135,7 @@ module io.github.ascopes.jct {
   /// SERVICE PROVIDER INTERFACES ///
   ///////////////////////////////////
 
-  provides Extension with JctExtension;
+  provides URLStreamHandlerProvider with MemoryFileSystemUrlHandlerProvider;
   uses RamFileSystemProvider;
 
   //////////////////////////////////////////////////////
