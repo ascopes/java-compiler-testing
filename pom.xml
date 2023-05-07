@@ -136,12 +136,22 @@
       coverage agent is installed into the forked JVM running the tests. See
       https://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html for info.
 
-      We also disable code sharing to prevent some other warnings during test runs.
+      We also disable code sharing to prevent some other warnings during test runs, and
+      force the SLF4J simple logger defaults to use in tests here.
+
+      URL support for the memory filesystem requires enablement by system property.
 
       Tired compilation is modified to reduce the amount of time the JVM wastes JITing
       code during tests.
+
+      Byte Buddy experimental support enables running ByteBuddy (used by Mockito) in JDK
+      experimental builds.
     -->
     <argLine>
+      -Dnet.bytebuddy.experimental=true
+      -Dorg.slf4j.simpleLogger.log=INFO
+      -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=TRACE
+      -Djava.protocol.handler.pkgs=com.github.marschall.memoryfilesystem
       -Xshare:off
       -XX:+TieredCompilation
       -XX:TieredStopAtLevel=1
@@ -287,26 +297,6 @@
             <failIfNoTests>true</failIfNoTests>
             <runOrder>random</runOrder>
             <useModulePath>true</useModulePath>
-            
-            <systemPropertyVariables>
-
-              <!--
-                Byte Buddy experimental support enables running ByteBuddy (used by Mockito) in JDK
-                experimental builds.
-              -->
-              <net.bytebuddy.experimental>true</net.bytebuddy.experimental>
-
-              <!--
-                We also force the SLF4J simple logger defaults to use in tests here.
-              -->
-              <org.slf4j.simpleLogger.log>INFO</org.slf4j.simpleLogger.log>
-              <org.slf4j.simpleLogger.log.io.github.ascopes.jct>TRACE</org.slf4j.simpleLogger.log.io.github.ascopes.jct>
-
-              <!--
-                Enable URL support for memoryfilesystem.
-              -->
-              <java.protocol.handler.pkgs>com.github.marschall.memoryfilesystem</java.protocol.handler.pkgs>
-            </systemPropertyVariables>
 
             <!--
               This block is needed to show @DisplayName and @ParameterizedTest
