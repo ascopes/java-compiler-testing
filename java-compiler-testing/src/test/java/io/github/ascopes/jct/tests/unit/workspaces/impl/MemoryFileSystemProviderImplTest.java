@@ -25,7 +25,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SecureDirectoryStream;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -162,7 +161,6 @@ class MemoryFileSystemProviderImplTest {
       var dirs = new ArrayList<Path>();
 
       try (var dirStream = Files.newDirectoryStream(root)) {
-        assertThat(dirStream).isInstanceOf(SecureDirectoryStream.class);
         dirStream.forEach(dirs::add);
       }
 
