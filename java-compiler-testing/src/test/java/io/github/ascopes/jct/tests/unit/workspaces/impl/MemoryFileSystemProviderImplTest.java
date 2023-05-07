@@ -18,19 +18,28 @@ package io.github.ascopes.jct.tests.unit.workspaces.impl;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.github.marschall.memoryfilesystem.memory.Handler;
 import io.github.ascopes.jct.workspaces.impl.MemoryFileSystemProvider;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.spi.URLStreamHandlerProvider;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import io.github.ascopes.jct.workspaces.impl.MemoryFileSystemProvider.MemoryFileSystemUrlHandlerProvider;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 
 /**
@@ -192,6 +201,65 @@ class MemoryFileSystemProviderImplTest {
         assertThat(baos.toString(StandardCharsets.UTF_8))
             .isEqualTo("Hello, World!");
       }
+    }
+  }
+
+  @DisplayName("MemoryFileSystemUrlHandlerProvider tests")
+  @Nested
+  class MemoryFileSystemUrlHandlerProviderTest {
+
+    @DisplayName("The provider is registered as SPI in the module descriptor")
+    @Test
+    void providerIsRegisteredAsSpiInModuleDescriptor() {
+      // Given
+      var module = MemoryFileSystemUrlHandlerProvider.class.getModule();
+      var providers = module.getDescriptor()
+          .provides()
+          .stream()
+          .filter(provide -> provide.service().equals(URLStreamHandlerProvider.class.getName()))
+          .flatMap(provide -> provide.providers().stream());
+
+      // Then
+      assertThat(providers)
+          .contains(MemoryFileSystemUrlHandlerProvider.class.getName());
+    }
+
+    @DisplayName("The provider returns a handler for the 'memory' protocol")
+    @ValueSource(strings = {
+        "memory://foo/bar/baz",
+        "memory:da32e382-ece7-11ed-a05b-0242ac120003://foo/bar/baz",
+        "memory:cc26d303-e997-4ea2-be2b-6b4b6c042b11://foo/bar/baz",
+    })
+    @ParameterizedTest(name = "for URL {0}")
+    void providerReturnsHandlerForMemoryProtocol(String urlString) throws MalformedURLException {
+      // Given
+      var url = new URL(urlString);
+      var provider = new MemoryFileSystemUrlHandlerProvider();
+
+      // When
+      var handler = provider.createURLStreamHandler(url.getProtocol());
+
+      // Then
+      assertThat(handler).isInstanceOf(Handler.class);
+    }
+
+    @DisplayName("The provider returns a null handler for non 'memory' protocols")
+    @ValueSource(strings = {
+        "file://foo/bar/baz",
+        "jar:file://foo/bar/baz.jar!/Bork.class",
+        "jrt:",
+    })
+    @ParameterizedTest(name = "for URL {0}")
+    void providerReturnsNullHandlerForOtherProtocol(String urlString) throws MalformedURLException {
+      // Given
+      var url = new URL(urlString);
+      var provider = new MemoryFileSystemUrlHandlerProvider();
+
+      // When
+      var handler = provider.createURLStreamHandler(url.getProtocol());
+
+      // Then
+      assertThat(handler).isNull();
     }
   }
 }

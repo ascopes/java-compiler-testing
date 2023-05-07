@@ -16,9 +16,12 @@
 package io.github.ascopes.jct.workspaces.impl;
 
 import com.github.marschall.memoryfilesystem.MemoryFileSystemBuilder;
+import com.github.marschall.memoryfilesystem.memory.MemoryURLStreamHandlerFactory;
 import io.github.ascopes.jct.workspaces.RamFileSystemProvider;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URLStreamHandler;
+import java.net.spi.URLStreamHandlerProvider;
 import java.nio.file.FileSystem;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -61,6 +64,38 @@ public final class MemoryFileSystemProvider implements RamFileSystemProvider {
           .build(name);
     } catch (IOException e) {
       throw new UncheckedIOException("could not create file system with name: " + name, e);
+    }
+  }
+
+  /**
+   * Java 9 SPI-based provider handler to register the URL protocol handler for the MemoryFileSystem
+   * API implicitly at runtime. This enables URL resolution to work correctly, which is needed to
+   * support {@link java.net.URLClassLoader} elsewhere.
+   *
+   * <p>Internally, this just adapts a {@link MemoryURLStreamHandlerFactory} into a
+   * {@link URLStreamHandlerProvider} so that the JPMS SPI mechanism can load this provider eagerly
+   * as soon as possible without needing to use JVM flags or call explicit methods during
+   * classloading.
+   *
+   * @author Ashley Scopes
+   * @since 0.7.0
+   */
+  @API(since = "0.7.0", status = Status.INTERNAL)
+  public static final class MemoryFileSystemUrlHandlerProvider extends URLStreamHandlerProvider {
+
+    private final MemoryURLStreamHandlerFactory factory;
+
+    public MemoryFileSystemUrlHandlerProvider() {
+      factory = new MemoryURLStreamHandlerFactory();
+    }
+
+    @Override
+    public URLStreamHandler createURLStreamHandler(String protocol) {
+      // This check can be removed once https://github.com/marschall/memoryfilesystem/pull/144 is
+      // addressed.
+      return com.github.marschall.memoryfilesystem.MemoryFileSystemProvider.SCHEME.equals(protocol)
+          ? factory.createURLStreamHandler(protocol)
+          : null;
     }
   }
 }

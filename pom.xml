@@ -151,7 +151,6 @@
       -Dnet.bytebuddy.experimental=true
       -Dorg.slf4j.simpleLogger.log=INFO
       -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=TRACE
-      -Djava.protocol.handler.pkgs=com.github.marschall.memoryfilesystem
       -Xshare:off
       -XX:+TieredCompilation
       -XX:TieredStopAtLevel=1

@@ -34,4 +34,7 @@ open module io.github.ascopes.jct.testing {
   requires org.mockito;
   requires org.mockito.junit.jupiter;
   requires org.slf4j;
+
+  // Used for MemoryFileSystemProviderImplTest$MemoryFileSystemUrlHandlerProviderTest
+  uses java.net.spi.URLStreamHandlerProvider;
 }
