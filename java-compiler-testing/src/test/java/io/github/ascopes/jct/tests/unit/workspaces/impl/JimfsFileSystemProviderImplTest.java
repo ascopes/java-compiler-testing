@@ -15,7 +15,6 @@
  */
 package io.github.ascopes.jct.tests.unit.workspaces.impl;
 
-
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,6 +30,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -68,7 +68,7 @@ class JimfsFileSystemProviderImplTest {
       // Then
       assertThat(fileSystem.getClass().getSimpleName())
           .as("file system implementation class")
-          .isEqualTo("JimfsFileSystem");
+          .isEqualTo("MemoryFileSystem");
       assertThat(fileSystem.getRootDirectories())
           .as("file system root directories")
           .hasSize(1);
