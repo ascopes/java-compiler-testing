@@ -23,7 +23,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.workspaces.RamFileSystemProvider;
-import io.github.ascopes.jct.workspaces.impl.JimfsFileSystemProviderImpl;
+import io.github.ascopes.jct.workspaces.impl.MemoryFileSystemProvider;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import org.junit.jupiter.api.DisplayName;
@@ -99,6 +99,6 @@ class RamFileSystemProviderTest {
     // AssertJ needs to use service loaders internally, so we cannot keep it mocked for
     // any longer than needed.
     assertThat(result)
-        .isSameAs(JimfsFileSystemProviderImpl.getInstance());
+        .isSameAs(MemoryFileSystemProvider.getInstance());
   }
 }

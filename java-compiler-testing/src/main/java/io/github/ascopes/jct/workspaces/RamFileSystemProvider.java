@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.workspaces;
 
-import io.github.ascopes.jct.workspaces.impl.JimfsFileSystemProviderImpl;
+import io.github.ascopes.jct.workspaces.impl.MemoryFileSystemProvider;
 import java.nio.file.FileSystem;
 import java.util.ServiceLoader;
 import org.apiguardian.api.API;
@@ -53,6 +53,6 @@ public interface RamFileSystemProvider {
     return ServiceLoader
         .load(RamFileSystemProvider.class)
         .findFirst()
-        .orElseGet(JimfsFileSystemProviderImpl::getInstance);
+        .orElseGet(MemoryFileSystemProvider::getInstance);
   }
 }

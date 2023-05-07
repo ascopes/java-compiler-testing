@@ -87,7 +87,7 @@ public final class RamDirectoryImpl extends AbstractManagedDirectory {
 
     assertValidRootName(name);
 
-    var fileSystem = JimfsFileSystemProviderImpl.getInstance().createFileSystem(name);
+    var fileSystem = MemoryFileSystemProvider.getInstance().createFileSystem(name);
     var path = fileSystem.getRootDirectories().iterator().next().resolve(name);
 
     // Ensure the base directory exists.
