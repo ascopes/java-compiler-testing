@@ -41,19 +41,19 @@ class DaggerTest {
       assertThatCompilation(compilation).isSuccessfulWithoutWarnings()
 
       assertThatCompilation(compilation)
-          .sourceOutput().packages()
+          .sourceOutputPackages()
           .fileExists("org", "example", "WebServer_Factory.java").isRegularFile()
 
       assertThatCompilation(compilation)
-          .classOutput().packages()
+          .classOutputPackages()
           .fileExists("org", "example", "WebServer.class").isRegularFile()
 
       assertThatCompilation(compilation)
-          .classOutput().packages()
+          .classOutputPackages()
           .fileExists("org", "example", "WebServerConfiguration.class").isRegularFile()
 
       assertThatCompilation(compilation)
-          .classOutput().packages()
+          .classOutputPackages()
           .fileExists("org", "example", "WebServer_Factory.class").isRegularFile()
     }
   }

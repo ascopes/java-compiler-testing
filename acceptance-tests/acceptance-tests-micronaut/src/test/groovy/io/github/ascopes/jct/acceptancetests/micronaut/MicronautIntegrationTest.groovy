@@ -40,8 +40,7 @@ class MicronautIntegrationTest {
       // Then
       assertThatCompilation(compilation)
           .isSuccessful()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .allFilesExist(
               // Micronaut will generate these files.
               'org/example/$HelloController$Definition.class',

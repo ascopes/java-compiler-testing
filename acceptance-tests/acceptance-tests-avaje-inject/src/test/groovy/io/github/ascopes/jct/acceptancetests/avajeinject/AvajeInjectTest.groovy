@@ -42,8 +42,7 @@ class AvajeInjectTest {
       // Then
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .allFilesExist(
               'org/example/CoffeeMaker.class',
               'org/example/Grinder.class',

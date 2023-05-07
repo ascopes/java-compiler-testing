@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.tests.integration.compilation;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatContainerGroup;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
@@ -46,17 +47,17 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
 
       // Then
       assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings();
-
-      assertThatCompilation(compilation)
-          .classOutput().modules()
+          .isSuccessfulWithoutWarnings()
+          .classOutputModules()
           .moduleExists("hello.world.singlemodule")
-          .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
-
-      assertThatCompilation(compilation)
-          .classOutput().modules()
-          .moduleExists("hello.world.singlemodule")
-          .fileExists("module-info.class").isNotEmptyFile();
+          .satisfies(
+              module -> assertThatContainerGroup(module)
+                  .fileExists("com", "example", "HelloWorld.class")
+                  .isNotEmptyFile(),
+              module -> assertThatContainerGroup(module)
+                  .fileExists("module-info.class")
+                  .isNotEmptyFile()
+          );
     }
   }
 
@@ -74,17 +75,17 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
 
       // Then
       assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings();
-
-      assertThatCompilation(compilation)
-          .classOutput().modules()
+          .isSuccessfulWithoutWarnings()
+          .classOutputModules()
           .moduleExists("hello.world.singlemodule")
-          .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
-
-      assertThatCompilation(compilation)
-          .classOutput().modules()
-          .moduleExists("hello.world.singlemodule")
-          .fileExists("module-info.class").isNotEmptyFile();
+          .satisfies(
+              module -> assertThatContainerGroup(module)
+                  .fileExists("com", "example", "HelloWorld.class")
+                  .isNotEmptyFile(),
+              module -> assertThatContainerGroup(module)
+                  .fileExists("module-info.class")
+                  .isNotEmptyFile()
+          );
     }
   }
 
@@ -109,24 +110,28 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
           .isSuccessfulWithoutWarnings();
 
       assertThatCompilation(compilation)
-          .classOutput().modules()
+          .classOutputModules()
           .moduleExists("hello.world.crossmodule")
-          .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
+          .satisfies(
+              module -> assertThatContainerGroup(module)
+                  .fileExists("com", "example", "HelloWorld.class")
+                  .isNotEmptyFile(),
+              module -> assertThatContainerGroup(module)
+                  .fileExists("module-info.class")
+                  .isNotEmptyFile()
+          );
 
       assertThatCompilation(compilation)
-          .classOutput().modules()
-          .moduleExists("hello.world.crossmodule")
-          .fileExists("module-info.class").isNotEmptyFile();
-
-      assertThatCompilation(compilation)
-          .classOutput().modules()
+          .classOutputModules()
           .moduleExists("greeter")
-          .fileExists("com", "example", "greeter", "Greeter.class").isNotEmptyFile();
-
-      assertThatCompilation(compilation)
-          .classOutput().modules()
-          .moduleExists("greeter")
-          .fileExists("module-info.class").isNotEmptyFile();
+          .satisfies(
+              module -> assertThatContainerGroup(module)
+                  .fileExists("com", "example", "greeter", "Greeter.class")
+                  .isNotEmptyFile(),
+              module -> assertThatContainerGroup(module)
+                  .fileExists("module-info.class")
+                  .isNotEmptyFile()
+          );
     }
   }
 
@@ -150,24 +155,28 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
           .isSuccessfulWithoutWarnings();
 
       assertThatCompilation(compilation)
-          .classOutput().modules()
+          .classOutputModules()
           .moduleExists("hello.world.crossmodule")
-          .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
+          .satisfies(
+              module -> assertThatContainerGroup(module)
+                  .fileExists("com", "example", "HelloWorld.class")
+                  .isNotEmptyFile(),
+              module -> assertThatContainerGroup(module)
+                  .fileExists("module-info.class")
+                  .isNotEmptyFile()
+          );
 
       assertThatCompilation(compilation)
-          .classOutput().modules()
-          .moduleExists("hello.world.crossmodule")
-          .fileExists("module-info.class").isNotEmptyFile();
-
-      assertThatCompilation(compilation)
-          .classOutput().modules()
+          .classOutputModules()
           .moduleExists("greeter")
-          .fileExists("com", "example", "greeter", "Greeter.class").isNotEmptyFile();
-
-      assertThatCompilation(compilation)
-          .classOutput().modules()
-          .moduleExists("greeter")
-          .fileExists("module-info.class").isNotEmptyFile();
+          .satisfies(
+              module -> assertThatContainerGroup(module)
+                  .fileExists("com", "example", "greeter", "Greeter.class")
+                  .isNotEmptyFile(),
+              module -> assertThatContainerGroup(module)
+                  .fileExists("module-info.class")
+                  .isNotEmptyFile()
+          );
     }
   }
 }

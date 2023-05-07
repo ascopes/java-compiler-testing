@@ -15,18 +15,17 @@
  */
 package io.github.ascopes.jct.acceptancetests.dogfood;
 
-import static io.github.ascopes.jct.assertions.JctAssertions.assertThat;
-
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
+import org.junit.jupiter.api.DisplayName;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.DisplayName;
+
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThat;
 
 /**
  * Tests that try to make JCT compile itself to see if it can correctly "test itself".
@@ -81,9 +80,8 @@ class JctDogfoodTest {
           .isSuccessful();
 
       assertThat(compilation)
-          .classOutput()
-          .packages()
-          .allFilesExist(getClassesFrom(TARGET_CLASSES, null));
+          .classOutputPackages()
+          .allFilesExist(getClassesFrom(TARGET_CLASSES));
     }
   }
 
@@ -104,9 +102,8 @@ class JctDogfoodTest {
           .isSuccessful();
 
       assertThat(compilation)
-          .classOutput()
-          .packages()
-          .allFilesExist(getClassesFrom(TARGET_TEST_CLASSES, null));
+          .classPathPackages()
+          .allFilesExist(getClassesFrom(TARGET_TEST_CLASSES));
     }
   }
 
@@ -126,8 +123,8 @@ class JctDogfoodTest {
       var compilation = compiler.compile(workspace);
 
       // Then
-      var expectedMainFiles = getClassesFrom(TARGET_CLASSES, MAIN_MODULE);
-      var expectedTestFiles = getClassesFrom(TARGET_TEST_CLASSES, TEST_MODULE);
+      var expectedMainFiles = getClassesFrom(TARGET_CLASSES);
+      var expectedTestFiles = getClassesFrom(TARGET_TEST_CLASSES);
 
       assertThat(compilation)
           .isSuccessful();
@@ -140,32 +137,25 @@ class JctDogfoodTest {
           .isEmpty();
 
       assertThat(compilation)
-          .classOutput()
-          .packages()
+          .classOutputModules()
           .satisfies(
-              packages -> assertThat(packages)
+              modules -> assertThat(modules.getModule(MAIN_MODULE))
                   .withFailMessage("Missing classes from main source root")
                   .allFilesExist(expectedMainFiles),
-              packages -> assertThat(packages)
+              modules -> assertThat(modules.getModule(TEST_MODULE))
                   .withFailMessage("Missing classes from test source root")
                   .allFilesExist(expectedTestFiles)
           );
     }
   }
 
-  private static Set<String> getClassesFrom(
-      Path location,
-      /* Nullable */ String moduleNamePrefix
-  ) throws IOException {
+  private static Set<String> getClassesFrom(Path location) throws IOException {
     try (var walker = Files.walk(location)) {
       return walker
           .filter(Files::isRegularFile)
           .filter(file -> file.getFileName().endsWith(".class"))
           .map(location::relativize)
           .map(Path::toString)
-          .map(moduleNamePrefix == null
-              ? Function.identity()
-              : (moduleNamePrefix + "/")::concat)
           .collect(Collectors.toSet());
     }
   }

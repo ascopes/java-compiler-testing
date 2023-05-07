@@ -44,7 +44,7 @@ class SpringContextIndexerTest {
       workspace
           .createSourcePathPackage()
           .createDirectory("org", "example")
-          .copyContentsFrom("src", "test", "resources", "code", "indexer")
+          .copyContentsFrom("src", "test", "resources", "code", "indexer", "org", "example")
 
       // When
       def compilation = compiler
@@ -54,8 +54,7 @@ class SpringContextIndexerTest {
       // Then
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .fileExists("META-INF", "spring.components")
           .isNotEmptyFile()
     }
@@ -68,19 +67,7 @@ class SpringContextIndexerTest {
       // Given
       workspace
           .createSourcePathPackage()
-          .createDirectory("org", "example")
           .copyContentsFrom("src", "test", "resources", "code", "indexer")
-          .createFile("module-info.java").withContents("""
-          module org.example {
-            requires java.base;
-            requires spring.beans;
-            requires spring.boot;
-            requires spring.context;
-            requires spring.core;
-            requires spring.web;
-            requires spring.webflux;
-          }
-        """.stripMargin())
 
       // When
       def compilation = compiler
@@ -90,8 +77,31 @@ class SpringContextIndexerTest {
       // Then
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
+          .fileExists("META-INF", "spring.components")
+          .isNotEmptyFile()
+    }
+  }
+
+
+  @DisplayName("Spring will index the application context as expected with multi-modules")
+  @JavacCompilerTest(minVersion = 17)
+  void springWillIndexTheApplicationContextAsExpectedWithMultiModules(JctCompiler compiler) {
+    try (def workspace = Workspaces.newWorkspace()) {
+      // Given
+      workspace
+          .createSourcePathModule("org.example")
+          .copyContentsFrom("src", "test", "resources", "code", "indexer")
+
+      // When
+      def compilation = compiler
+          .addAnnotationProcessors(new CandidateComponentsIndexer())
+          .compile(workspace)
+
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutputModules().moduleExists("org.example")
           .fileExists("META-INF", "spring.components")
           .isNotEmptyFile()
     }

@@ -41,8 +41,7 @@ class AutoServiceTest {
       // Then
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .fileExists("META-INF", "services", "org.example.SomeInterface")
           .hasContent("org.example.SomeImpl")
     }

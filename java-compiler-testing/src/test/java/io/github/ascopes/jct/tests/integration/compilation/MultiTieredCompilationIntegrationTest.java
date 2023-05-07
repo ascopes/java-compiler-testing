@@ -51,8 +51,7 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
       var firstCompilation = compiler.compile(firstWorkspace);
       assertThatCompilation(firstCompilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .fileExists("org", "example", "first", "Adder.class")
           .isRegularFile()
           .isNotEmptyFile();
@@ -65,8 +64,7 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
       var secondCompilation = compiler.compile(secondWorkspace);
       assertThatCompilation(secondCompilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .fileExists("org", "example", "second", "Main.class")
           .isRegularFile()
           .isNotEmptyFile();
@@ -92,8 +90,7 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
       var firstCompilation = compiler.compile(firstWorkspace);
       assertThatCompilation(firstCompilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .fileExists("org", "example", "first", "Adder.class")
           .isRegularFile()
           .isNotEmptyFile();
@@ -112,8 +109,7 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
       var secondCompilation = compiler.compile(secondWorkspace);
       assertThatCompilation(secondCompilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .fileExists("org", "example", "second", "Main.class")
           .isRegularFile()
           .isNotEmptyFile();

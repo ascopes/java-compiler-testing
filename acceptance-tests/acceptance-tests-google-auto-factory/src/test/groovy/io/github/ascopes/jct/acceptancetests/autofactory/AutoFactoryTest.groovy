@@ -45,8 +45,7 @@ class AutoFactoryTest {
       // Then
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .fileExists("org", "example", "UserFactory.class")
           .isNotEmptyFile()
 

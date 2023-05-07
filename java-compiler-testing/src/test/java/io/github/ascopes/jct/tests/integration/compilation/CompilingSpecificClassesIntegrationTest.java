@@ -43,8 +43,7 @@ class CompilingSpecificClassesIntegrationTest extends AbstractIntegrationTest {
 
       assertThat(compilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .allFilesExist("Fibonacci.class", "HelloWorld.class")
           .fileDoesNotExist("Sum.class");
     }

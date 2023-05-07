@@ -45,7 +45,7 @@ class SpringBootAutoconfigureProcessorTest {
       workspace
           .createSourcePathPackage()
           .createDirectory("org", "example")
-          .copyContentsFrom("src", "test", "resources", "code", "autoconfigure")
+          .copyContentsFrom("src", "test", "resources", "code", "autoconfigure", "org", "example")
 
       // When
       def compilation = compiler
@@ -55,8 +55,7 @@ class SpringBootAutoconfigureProcessorTest {
       // Then
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .fileExists("META-INF", "spring-autoconfigure-metadata.properties")
           .isNotEmptyFile()
     }
@@ -69,20 +68,7 @@ class SpringBootAutoconfigureProcessorTest {
       // Given
       workspace
           .createSourcePathPackage()
-          .createDirectory("org", "example")
           .copyContentsFrom("src", "test", "resources", "code", "autoconfigure")
-          .createFile("module-info.java").withContents("""
-          module org.example {
-            requires java.base;
-            requires spring.beans;
-            requires spring.boot;
-            requires spring.boot.autoconfigure;
-            requires spring.context;
-            requires spring.core;
-            requires spring.web;
-            requires spring.webflux;
-          }
-        """.stripMargin())
 
       // When
       def compilation = compiler
@@ -92,8 +78,30 @@ class SpringBootAutoconfigureProcessorTest {
       // Then
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings()
-          .classOutput()
-          .packages()
+          .classOutputPackages()
+          .fileExists("META-INF", "spring-autoconfigure-metadata.properties")
+          .isNotEmptyFile()
+    }
+  }
+
+  @DisplayName("Spring will index the application context as expected when using multi-modules")
+  @JavacCompilerTest(minVersion = 17)
+  void springWillIndexTheApplicationContextAsExpectedWhenUsingMultiModules(JctCompiler compiler) {
+    try (def workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+      // Given
+      workspace
+          .createSourcePathModule("org.example")
+          .copyContentsFrom("src", "test", "resources", "code", "autoconfigure")
+
+      // When
+      def compilation = compiler
+          .addAnnotationProcessors(new AutoConfigureAnnotationProcessor())
+          .compile(workspace)
+
+      // Then
+      assertThatCompilation(compilation)
+          .isSuccessfulWithoutWarnings()
+          .classOutputModules().moduleExists("org.example")
           .fileExists("META-INF", "spring-autoconfigure-metadata.properties")
           .isNotEmptyFile()
     }

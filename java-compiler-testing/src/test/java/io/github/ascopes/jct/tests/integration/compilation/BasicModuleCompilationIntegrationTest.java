@@ -49,14 +49,12 @@ class BasicModuleCompilationIntegrationTest extends AbstractIntegrationTest {
           .isSuccessfulWithoutWarnings();
 
       assertThatCompilation(compilation)
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .fileExists("com", "example", "HelloWorld.class")
           .isNotEmptyFile();
 
       assertThatCompilation(compilation)
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .fileExists("module-info.class")
           .isNotEmptyFile();
     }
@@ -79,14 +77,12 @@ class BasicModuleCompilationIntegrationTest extends AbstractIntegrationTest {
           .isSuccessfulWithoutWarnings();
 
       assertThatCompilation(compilation)
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .fileExists("com", "example", "HelloWorld.class")
           .isNotEmptyFile();
 
       assertThatCompilation(compilation)
-          .classOutput()
-          .packages()
+          .classOutputPackages()
           .fileExists("module-info.class")
           .isNotEmptyFile();
     }
