@@ -18,7 +18,7 @@ package io.github.ascopes.jct.tests.unit.workspaces.impl;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.ascopes.jct.workspaces.impl.JimfsFileSystemProviderImpl;
+import io.github.ascopes.jct.workspaces.impl.MemoryFileSystemProvider;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -30,39 +30,38 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
 /**
- * {@link JimfsFileSystemProviderImpl} tests.
+ * {@link MemoryFileSystemProvider} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("JimfsFileSystemProviderImpl tests")
-class JimfsFileSystemProviderImplTest {
+@DisplayName("MemoryFileSystemProviderImpl tests")
+class MemoryFileSystemProviderImplTest {
 
   @DisplayName("The class is a singleton")
   @Test
   void theClassIsSingleton() {
     // When
     var instances = Stream
-        .generate(JimfsFileSystemProviderImpl::getInstance)
+        .generate(MemoryFileSystemProvider::getInstance)
         .limit(10)
         .collect(Collectors.toList());
 
     // Then
     assertThat(instances)
         .withFailMessage("One or more calls provided a different object")
-        .allMatch(JimfsFileSystemProviderImpl.getInstance()::equals);
+        .allMatch(MemoryFileSystemProvider.getInstance()::equals);
   }
 
   @DisplayName("The provider will create a JIMFS file system")
   @Test
   void theProviderWillCreateJimfsFileSystem() throws IOException {
     // When
-    var instance = JimfsFileSystemProviderImpl.getInstance();
+    var instance = MemoryFileSystemProvider.getInstance();
     var fsName = someText();
     try (var fileSystem = instance.createFileSystem(fsName)) {
       // Then
@@ -79,7 +78,7 @@ class JimfsFileSystemProviderImplTest {
   @Test
   void theCreatedFileSystemSupportsHardLinks() throws IOException {
     // Given
-    var instance = JimfsFileSystemProviderImpl.getInstance();
+    var instance = MemoryFileSystemProvider.getInstance();
     var fsName = someText();
     try (var fileSystem = instance.createFileSystem(fsName)) {
       var root = fileSystem.getRootDirectories().iterator().next();
@@ -102,7 +101,7 @@ class JimfsFileSystemProviderImplTest {
   @Test
   void theCreatedFileSystemSupportsSymbolicLinks() throws IOException {
     // Given
-    var instance = JimfsFileSystemProviderImpl.getInstance();
+    var instance = MemoryFileSystemProvider.getInstance();
     var fsName = someText();
     try (var fileSystem = instance.createFileSystem(fsName)) {
       var root = fileSystem.getRootDirectories().iterator().next();
@@ -125,7 +124,7 @@ class JimfsFileSystemProviderImplTest {
   @Test
   void theCreatedFileSystemSupportsFileChannels() throws IOException {
     // Given
-    var instance = JimfsFileSystemProviderImpl.getInstance();
+    var instance = MemoryFileSystemProvider.getInstance();
     var fsName = someText();
     try (var fileSystem = instance.createFileSystem(fsName)) {
       var root = fileSystem.getRootDirectories().iterator().next();
@@ -152,7 +151,7 @@ class JimfsFileSystemProviderImplTest {
   @Test
   void theCreatedFileSystemSupportsDirectoryStreams() throws IOException {
     // Given
-    var instance = JimfsFileSystemProviderImpl.getInstance();
+    var instance = MemoryFileSystemProvider.getInstance();
     var fsName = someText();
     try (var fileSystem = instance.createFileSystem(fsName)) {
       var root = fileSystem.getRootDirectories().iterator().next();
@@ -177,7 +176,7 @@ class JimfsFileSystemProviderImplTest {
   @Test
   void theCreatedFileSystemSupportsUrls() throws IOException {
     // Given
-    var instance = JimfsFileSystemProviderImpl.getInstance();
+    var instance = MemoryFileSystemProvider.getInstance();
     var fsName = someText();
     try (var fileSystem = instance.createFileSystem(fsName)) {
       var root = fileSystem.getRootDirectories().iterator().next();

@@ -17,7 +17,6 @@ package io.github.ascopes.jct.workspaces.impl;
 
 import com.github.marschall.memoryfilesystem.MemoryFileSystemBuilder;
 import io.github.ascopes.jct.workspaces.RamFileSystemProvider;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.FileSystem;
@@ -25,31 +24,32 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * RAM file system provider that uses JIMFS as the underlying file system implementation.
+ * RAM file system provider that uses {@code memoryfilesystem} as the underlying file system
+ * implementation.
  *
- * @author Ashley Scopes
- * @since 0.0.1
+ * @author Ashley Scopes, Philippe Marschall
+ * @since 0.7.0
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
+@API(since = "0.7.0", status = Status.INTERNAL)
 @SuppressWarnings("removal")
-public final class JimfsFileSystemProviderImpl implements RamFileSystemProvider {
+public final class MemoryFileSystemProvider implements RamFileSystemProvider {
 
   // We could initialise this lazily, but this class has fewer fields and initialisation
   // overhead than a lazy-loaded object would, so it doesn't really make sense to do it
   // here.
-  private static final JimfsFileSystemProviderImpl INSTANCE
-      = new JimfsFileSystemProviderImpl();
+  private static final MemoryFileSystemProvider INSTANCE
+      = new MemoryFileSystemProvider();
 
   /**
    * Get the singleton instance of this provider.
    *
    * @return the singleton instance.
    */
-  public static JimfsFileSystemProviderImpl getInstance() {
+  public static MemoryFileSystemProvider getInstance() {
     return INSTANCE;
   }
 
-  private JimfsFileSystemProviderImpl() {
+  private MemoryFileSystemProvider() {
     // Singleton object.
   }
 
