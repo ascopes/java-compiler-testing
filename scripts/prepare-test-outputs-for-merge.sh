@@ -23,6 +23,7 @@
 set -o errexit
 set -o nounset
 
+# shellcheck source=./scripts/common.sh
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
 function usage() {

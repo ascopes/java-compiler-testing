@@ -82,7 +82,7 @@ function run() {
   local echo_groups="false"
   if [[ "${1:-nothing}" = "--no-group" ]]; then
     shift 1
-  elif [[ ! -z ${CI+undefined} ]]; then
+  elif [[ -n  ${CI+undefined} ]]; then
     echo_groups="true"
   fi
 
