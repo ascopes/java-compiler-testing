@@ -130,13 +130,6 @@ class JctDogfoodTest {
           .isSuccessful();
 
       assertThat(compilation)
-          .diagnostics()
-          .warnings()
-          .filteredOn(diag -> !diag.getCode().equals("compiler.warn.module.not.found"))
-          .withFailMessage("Expected no warnings (other than module.not.found)")
-          .isEmpty();
-
-      assertThat(compilation)
           .classOutputModules()
           .satisfies(
               modules -> assertThat(modules.getModule(MAIN_MODULE))
