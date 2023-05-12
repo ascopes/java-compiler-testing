@@ -52,7 +52,7 @@ Full JUnit5 integration is provided to help streamline the development process.
 - Implements a fully functional JSR-199 Path JavaFileManager.
 - Fluent syntax for creating configurations, executing them, and
   inspecting the results.
-- Integration with [AssertJ](https://joel-costigliola.github.io/assertj/)
+- Integration with [AssertJ](https://assertj.github.io/doc/)
   for fluent assertions on compilation results.
 - Ability to have multiple source roots, just like when using
   `javac` normally.
