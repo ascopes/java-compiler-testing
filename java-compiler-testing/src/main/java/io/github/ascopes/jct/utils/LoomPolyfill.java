@@ -19,7 +19,10 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Polyfill support for Project Loom virtual threads.
+ * Polyfill to enable supporting using the newer Thread APIs on newer platforms.
+ *
+ * <p>This specifically targets the new APIs introduced as part of Project Loom
+ * in Java 19.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -32,26 +35,24 @@ public final class LoomPolyfill extends UtilityClass {
   }
 
   /**
-   * Get the thread ID (possibly the virtual thread ID if Project Loom is enabled).
+   * Get the thread ID.
    *
    * <p>This ensures that the underlying system does not spoof the thread ID on JDK 19 and newer.
    *
    * @param thread the thread to use.
-   * @return the thread ID (possibly the virtual thread ID).
+   * @return the thread ID.
    */
+  @SuppressWarnings("deprecation")
   public static long getThreadId(Thread thread) {
     // Note: this test will never get 100% coverage on one JDK, because it totally depends on the
-    // JDK in use as to which code path runs. In CI, it should get covered when reports are merged.
-
+    // JDK in use as to which code path runs.
     try {
-      // If we are on JDK 19, attempt to call the .threadId() method instead of the .getId()
-      // method. The former is new to JDK 19 and fetches the virtual thread ID.
+      // Where possible, use the newer Loom API to fetch the thread ID.
       var method = Thread.class.getDeclaredMethod("threadId");
       return (long) method.invoke(thread);
     } catch (Exception ex) {
-      @SuppressWarnings("deprecation")
-      var tid = thread.getId();
-      return tid;
+      // Fall back to the old API (which is the only method prior to Java 19).
+      return thread.getId();
     }
   }
 
