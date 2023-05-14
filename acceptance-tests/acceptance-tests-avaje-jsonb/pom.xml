@@ -31,7 +31,7 @@
   <description>Acceptance test components.</description>
 
   <properties>
-    <avaje-jsonb.version>1.5-RC1</avaje-jsonb.version>
+    <avaje-jsonb.version>1.5</avaje-jsonb.version>
     <jsonassert.version>1.5.1</jsonassert.version>
   </properties>
 
