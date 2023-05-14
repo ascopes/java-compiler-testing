@@ -580,7 +580,7 @@
                   Expect this Maven version or crash the build. This ensures people are using
                   ./mvnw or .\mvnw.cmd to build things.
               -->
-              <version>3.9.0</version>
+              <version>3.9.2</version>
             </requireMavenVersion>
           </rules>
         </configuration>
