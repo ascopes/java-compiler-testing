@@ -126,7 +126,7 @@
 
     <!-- Plugin dependencies -->
     <checkstyle.version>10.10.0</checkstyle.version>
-    <maven-surefire-junit5-tree-reporter.version>1.1.0</maven-surefire-junit5-tree-reporter.version>
+    <maven-surefire-junit5-tree-reporter.version>1.2.0</maven-surefire-junit5-tree-reporter.version>
 
     <!-- Log verbosity -->
     <hide-test-logs-in-console>true</hide-test-logs-in-console>
