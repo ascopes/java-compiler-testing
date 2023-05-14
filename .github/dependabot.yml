@@ -1,26 +1,22 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: github-actions
+    directory: /
     open-pull-requests-limit: 99
     schedule:
-      interval: "weekly"
+      interval: weekly
     assignees:
-      - "ascopes"
+      - ascopes
     labels:
-      - "ci"
-      - "housekeeping"
-
-
-  - package-ecosystem: "maven"
-    directory: "/"
+      - ci
+      - housekeeping
+  - package-ecosystem: maven
+    directory: /
     open-pull-requests-limit: 99
     schedule:
-      interval: "weekly"
+      interval: weekly
     assignees:
-      - "ascopes"
+      - ascopes
     labels:
-      - "maven"
-      - "housekeeping"
-
-
+      - maven
+      - housekeeping
