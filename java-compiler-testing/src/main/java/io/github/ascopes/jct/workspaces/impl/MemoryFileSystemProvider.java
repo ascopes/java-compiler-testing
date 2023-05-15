@@ -25,6 +25,7 @@ import java.net.spi.URLStreamHandlerProvider;
 import java.nio.file.FileSystem;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * RAM file system provider that uses {@code memoryfilesystem} as the underlying file system
@@ -89,6 +90,7 @@ public final class MemoryFileSystemProvider implements RamFileSystemProvider {
       factory = new MemoryURLStreamHandlerFactory();
     }
 
+    @Nullable
     @Override
     public URLStreamHandler createURLStreamHandler(String protocol) {
       // This check can be removed once https://github.com/marschall/memoryfilesystem/pull/144 is
