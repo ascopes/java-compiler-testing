@@ -20,8 +20,6 @@ import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Locale;
-import java.util.stream.Stream;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -54,25 +52,6 @@ public final class PackageContainerGroupUrlClassLoader extends URLClassLoader {
         .stream()
         .map(Container::getPathRoot)
         .map(PathRoot::getUrl)
-        .map(PackageContainerGroupUrlClassLoader::fixMemoryFileSystemUrls)
         .toArray(URL[]::new);
-  }
-
-  // This can be removed once https://github.com/marschall/memoryfilesystem/pull/145/files is
-  // addressed.
-  private static URL fixMemoryFileSystemUrls(URL url) {
-    if (url.getPath().endsWith("/") || isProbablyArchive(url)) {
-      return url;
-    }
-
-    return uncheckedIo(() -> new URL(
-        url.getProtocol(), url.getHost(), url.getPort(), url.getFile() + "/"
-    ));
-  }
-
-  private static boolean isProbablyArchive(URL url) {
-    return Stream
-        .of(".jar", ".war", ".ear", ".zip")
-        .anyMatch(url.getFile().toLowerCase(Locale.ROOT)::endsWith);
   }
 }
