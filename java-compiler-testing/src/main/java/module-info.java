@@ -43,10 +43,10 @@ import java.net.spi.URLStreamHandlerProvider;
  * code rather than flaky test environments and dependency management.</p>
  *
  * <p>Any questions, feedback, or issues can be submitted
- * <a href="https://github.com/ascopes/java-compiler-testing">on GitHub</a>.
+ * <a target="_blank" href="https://github.com/ascopes/java-compiler-testing">on GitHub</a>.
  *
  * <p>Releases can be found on
- * <a href="https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing/">
+ * <a target="_blank" href="https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing/">
  * Maven Central</a>.
  *
  * <pre><code>
