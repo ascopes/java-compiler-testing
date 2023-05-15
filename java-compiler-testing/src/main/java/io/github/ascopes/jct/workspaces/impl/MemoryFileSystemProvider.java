@@ -91,11 +91,7 @@ public final class MemoryFileSystemProvider implements RamFileSystemProvider {
 
     @Override
     public URLStreamHandler createURLStreamHandler(String protocol) {
-      // This check can be removed once https://github.com/marschall/memoryfilesystem/pull/144 is
-      // addressed.
-      return com.github.marschall.memoryfilesystem.MemoryFileSystemProvider.SCHEME.equals(protocol)
-          ? factory.createURLStreamHandler(protocol)
-          : null;
+      return factory.createURLStreamHandler(protocol);
     }
   }
 }
