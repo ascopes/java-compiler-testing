@@ -85,7 +85,9 @@ public final class TraceDiagnosticAssert
    * @throws AssertionError if the diagnostic is null.
    */
   public AbstractLongAssert<?> position() {
-    return assertPosition(actual.getPosition(), "position");
+    isNotNull();
+
+    return assertThat(actual.getPosition()).describedAs("position");
   }
 
   /**
@@ -97,7 +99,9 @@ public final class TraceDiagnosticAssert
    * @throws AssertionError if the diagnostic is null.
    */
   public AbstractLongAssert<?> startPosition() {
-    return assertPosition(actual.getPosition(), "startPosition");
+    isNotNull();
+
+    return assertThat(actual.getStartPosition()).describedAs("start position");
   }
 
   /**
@@ -109,7 +113,9 @@ public final class TraceDiagnosticAssert
    * @throws AssertionError if the diagnostic is null.
    */
   public AbstractLongAssert<?> endPosition() {
-    return assertPosition(actual.getEndPosition(), "endPosition");
+    isNotNull();
+
+    return assertThat(actual.getEndPosition()).describedAs("end position");
   }
 
   /**
@@ -121,7 +127,9 @@ public final class TraceDiagnosticAssert
    * @throws AssertionError if the diagnostic is null.
    */
   public AbstractLongAssert<?> lineNumber() {
-    return assertPosition(actual.getLineNumber(), "lineNumber");
+    isNotNull();
+
+    return assertThat(actual.getLineNumber()).describedAs("line number");
   }
 
   /**
@@ -133,7 +141,9 @@ public final class TraceDiagnosticAssert
    * @throws AssertionError if the diagnostic is null.
    */
   public AbstractLongAssert<?> columnNumber() {
-    return assertPosition(actual.getColumnNumber(), "columnNumber");
+    isNotNull();
+
+    return assertThat(actual.getColumnNumber()).describedAs("column number");
   }
 
   /**
@@ -145,7 +155,7 @@ public final class TraceDiagnosticAssert
   public AbstractStringAssert<?> code() {
     isNotNull();
 
-    return assertThat(actual.getCode());
+    return assertThat(actual.getCode()).describedAs("code");
   }
 
   /**
@@ -224,10 +234,5 @@ public final class TraceDiagnosticAssert
     isNotNull();
 
     return new StackTraceAssert(actual.getStackTrace());
-  }
-
-  private AbstractLongAssert<?> assertPosition(long position, String name) {
-    isNotNull();
-    return assertThat(position).describedAs(name);
   }
 }
