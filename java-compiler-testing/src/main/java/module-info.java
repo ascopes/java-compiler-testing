@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import io.github.ascopes.jct.junit.JctExtension;
-import io.github.ascopes.jct.workspaces.RamFileSystemProvider;
 import io.github.ascopes.jct.workspaces.impl.MemoryFileSystemProvider.MemoryFileSystemUrlHandlerProvider;
-import org.junit.jupiter.api.extension.Extension;
 import java.net.spi.URLStreamHandlerProvider;
 
 /**
@@ -135,7 +132,6 @@ module io.github.ascopes.jct {
   ///////////////////////////////////
 
   provides URLStreamHandlerProvider with MemoryFileSystemUrlHandlerProvider;
-  uses RamFileSystemProvider;
 
   //////////////////////////////////////////////////////
   /// EXPOSURE OF INTERNALS TO THE TESTING NAMESPACE ///

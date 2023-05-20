@@ -17,7 +17,6 @@ package io.github.ascopes.jct.workspaces.impl;
 
 import com.github.marschall.memoryfilesystem.MemoryFileSystemBuilder;
 import com.github.marschall.memoryfilesystem.memory.MemoryURLStreamHandlerFactory;
-import io.github.ascopes.jct.workspaces.RamFileSystemProvider;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URLStreamHandler;
