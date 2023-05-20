@@ -73,7 +73,7 @@ public final class StackTraceElementAssert
     isNotNull();
 
     return assertThat(actual.getLineNumber())
-        .as("line number %s", actual.getLineNumber());
+        .as("line number");
   }
 
   /**
