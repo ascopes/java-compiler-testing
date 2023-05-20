@@ -28,14 +28,13 @@
 
   <artifactId>java-compiler-testing</artifactId>
 
-  <name>Java Compiler Testing framework</name>
+  <name>Java Compiler Testing</name>
   <!-- Need to override this as Maven injects the wrong URL otherwise -->
   <url>https://github.com/${project-slug}</url>
 
   <description>
-    Microframework geared towards writing declarative integration tests against Java compiler
-    plugins and annotation processors, with a focus on forwards-compatibility, fluency,
-    and good testing practises.
+    Library to help developers write declarative integration tests that call
+    the Java Compiler toolchain.
   </description>
 
   <dependencies>
@@ -52,6 +51,7 @@
     <dependency>
       <groupId>org.apiguardian</groupId>
       <artifactId>apiguardian-api</artifactId>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
@@ -62,13 +62,13 @@
     <dependency>
       <groupId>org.jspecify</groupId>
       <artifactId>jspecify</artifactId>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
       <!-- Used to provide convenience annotations -->
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
-      <scope>provided</scope>
       <optional>true</optional>
     </dependency>
 
