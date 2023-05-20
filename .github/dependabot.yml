@@ -3,8 +3,11 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     open-pull-requests-limit: 99
+    rebase-strategy: auto
     schedule:
       interval: weekly
+      day: saturday
+      time: "09:00"
     assignees:
       - ascopes
     labels:
@@ -13,8 +16,11 @@ updates:
   - package-ecosystem: maven
     directory: /
     open-pull-requests-limit: 99
+    rebase-strategy: auto
     schedule:
       interval: weekly
+      day: saturday
+      time: "09:00"
     assignees:
       - ascopes
     labels:
