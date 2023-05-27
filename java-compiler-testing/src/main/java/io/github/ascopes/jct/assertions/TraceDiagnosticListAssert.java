@@ -19,6 +19,8 @@ import static io.github.ascopes.jct.utils.IterableUtils.combineOneOrMore;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toUnmodifiableList;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.repr.TraceDiagnosticListRepresentation;
@@ -27,8 +29,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileObject;
@@ -136,11 +138,10 @@ public final class TraceDiagnosticListAssert
    * @throws NullPointerException if any of the kinds are null.
    */
   public TraceDiagnosticListAssert filteringByKinds(Kind kind, Kind... moreKinds) {
-    requireNonNull(kind, "kind must not be null");
+    requireNonNull(kind, "kind");
     requireNonNullValues(moreKinds, "moreKinds");
     return filteringByKinds(combineOneOrMore(kind, moreKinds));
   }
-
 
   /**
    * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to any of the
@@ -153,7 +154,7 @@ public final class TraceDiagnosticListAssert
    */
   public TraceDiagnosticListAssert filteringByKinds(Iterable<Kind> kinds) {
     requireNonNullValues(kinds, "kinds");
-    return filteringBy(kind(kinds));
+    return filteringBy(kindIsOneOf(kinds));
   }
 
   /**
@@ -167,7 +168,7 @@ public final class TraceDiagnosticListAssert
    * @throws NullPointerException if any of the kinds are null.
    */
   public TraceDiagnosticListAssert excludingKinds(Kind kind, Kind... moreKinds) {
-    requireNonNull(kind, "kind must not be null");
+    requireNonNull(kind, "kind");
     requireNonNullValues(moreKinds, "moreKinds");
     return excludingKinds(combineOneOrMore(kind, moreKinds));
   }
@@ -183,7 +184,12 @@ public final class TraceDiagnosticListAssert
    */
   public TraceDiagnosticListAssert excludingKinds(Iterable<Kind> kinds) {
     requireNonNullValues(kinds, "kinds");
-    return filteringBy(not(kind(kinds)));
+    isNotNull();
+    return actual
+        .stream()
+        .filter(Objects::nonNull)
+        .filter(not(kindIsOneOf(kinds)))
+        .collect(collectingAndThen(toUnmodifiableList(), this::newAbstractIterableAssert));
   }
 
   /**
@@ -268,7 +274,7 @@ public final class TraceDiagnosticListAssert
    * @throws NullPointerException if the kind or more kinds are null.
    */
   public TraceDiagnosticListAssert hasNoDiagnosticsOfKinds(Kind kind, Kind... moreKinds) {
-    requireNonNull(kind, "kind must not be null");
+    requireNonNull(kind, "kind");
     requireNonNullValues(moreKinds, "moreKinds");
     return hasNoDiagnosticsOfKinds(combineOneOrMore(kind, moreKinds));
   }
@@ -283,31 +289,34 @@ public final class TraceDiagnosticListAssert
    */
   public TraceDiagnosticListAssert hasNoDiagnosticsOfKinds(Iterable<Kind> kinds) {
     requireNonNullValues(kinds, "kinds");
+    isNotNull();
 
     var actualDiagnostics = actual
         .stream()
-        .filter(kind(kinds))
-        .collect(Collectors.toList());
+        .filter(kindIsOneOf(kinds))
+        .collect(toUnmodifiableList());
 
-    if (!actualDiagnostics.isEmpty()) {
-      var allKindsString = StreamSupport.stream(kinds.spliterator(), false)
-          .map(next -> next.name().toLowerCase(Locale.ROOT).replace('_', ' '))
-          .sorted()
-          .collect(Collectors.collectingAndThen(
-              Collectors.toUnmodifiableList(),
-              names -> StringUtils.toWordedList(names, ", ", ", or ")
-          ));
-
-      failWithActualExpectedAndMessage(
-          actualDiagnostics.size(),
-          0,
-          "Expected no %s diagnostics.\n\nDiagnostics:\n%s",
-          allKindsString,
-          TraceDiagnosticListRepresentation.getInstance().toStringOf(actualDiagnostics)
-      );
+    if (actualDiagnostics.isEmpty()) {
+      return myself;
     }
 
-    return myself;
+    var allKindsString = StreamSupport
+        .stream(kinds.spliterator(), false)
+        .map(next -> next.name().toLowerCase(Locale.ROOT).replace('_', ' '))
+        .distinct()
+        .sorted()
+        .collect(collectingAndThen(
+            toUnmodifiableList(),
+            names -> StringUtils.toWordedList(names, ", ", ", or ")
+        ));
+
+    throw failureWithActualExpected(
+        actualDiagnostics.size(),
+        0,
+        "Expected no %s diagnostics.\n\nDiagnostics:\n%s",
+        allKindsString,
+        TraceDiagnosticListRepresentation.getInstance().toStringOf(actualDiagnostics)
+    );
   }
 
   /**
@@ -322,17 +331,8 @@ public final class TraceDiagnosticListAssert
   public TraceDiagnosticListAssert filteringBy(
       Predicate<TraceDiagnostic<? extends JavaFileObject>> predicate
   ) {
-    requireNonNull(predicate, "predicate must not be null");
-
     isNotNull();
-
-    return actual
-        .stream()
-        .filter(predicate)
-        .collect(Collectors.collectingAndThen(
-            Collectors.toUnmodifiableList(),
-            TraceDiagnosticListAssert::new
-        ));
+    return filteredOn(predicate);
   }
 
   @Override
@@ -352,10 +352,10 @@ public final class TraceDiagnosticListAssert
     return new TraceDiagnosticListAssert(list);
   }
 
-  private Predicate<TraceDiagnostic<? extends JavaFileObject>> kind(Iterable<Kind> kinds) {
+  private Predicate<TraceDiagnostic<? extends JavaFileObject>> kindIsOneOf(Iterable<Kind> kinds) {
     var kindsSet = new LinkedHashSet<Kind>();
     kinds.forEach(kindsSet::add);
 
-    return diagnostic -> kindsSet.contains(diagnostic.getKind());
+    return diagnostic -> diagnostic != null && kindsSet.contains(diagnostic.getKind());
   }
 }

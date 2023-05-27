@@ -34,6 +34,16 @@ public final class ExtraArgumentMatchers {
   }
 
   @SafeVarargs
+  public static <T> T hasGenericType(T... varargs) {
+    if (varargs == null || varargs.length != 0) {
+      throw new IllegalArgumentException("Must not provide any varargs to this call");
+    }
+
+    return argThat(arg -> arg != null
+        && varargs.getClass().getComponentType().isAssignableFrom(arg.getClass()));
+  }
+
+  @SafeVarargs
   public static <E, T extends Iterable<E>> T containsExactlyElements(E... expected) {
     return containsExactlyElements(Set.of(expected));
   }
