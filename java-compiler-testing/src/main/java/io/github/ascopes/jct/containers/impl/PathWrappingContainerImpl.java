@@ -74,7 +74,7 @@ public final class PathWrappingContainerImpl implements Container {
 
   @Override
   public boolean contains(PathFileObject fileObject) {
-    var path = fileObject.getFullPath();
+    var path = fileObject.getAbsolutePath();
     return path.startsWith(root.getPath()) && Files.isRegularFile(path);
   }
 
@@ -143,7 +143,7 @@ public final class PathWrappingContainerImpl implements Container {
 
   @Override
   public String inferBinaryName(PathFileObject javaFileObject) {
-    return javaFileObject.getFullPath().startsWith(root.getPath())
+    return javaFileObject.getAbsolutePath().startsWith(root.getPath())
         ? FileUtils.pathToBinaryName(javaFileObject.getRelativePath())
         : null;
   }

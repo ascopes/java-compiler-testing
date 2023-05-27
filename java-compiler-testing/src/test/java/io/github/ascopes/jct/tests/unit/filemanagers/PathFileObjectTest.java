@@ -202,6 +202,7 @@ class PathFileObjectTest {
   }
 
   @DisplayName(".equals(PathFileObject) returns true if the file object is the same instance")
+  @SuppressWarnings("EqualsWithItself")
   @Test
   void equalsReturnsTrueIfTheFileObjectIsTheSameInstance() {
     // Given
@@ -212,7 +213,20 @@ class PathFileObjectTest {
     var fileObject = new PathFileObject(location, rootPath, relativePath);
 
     // Then
-    assertThat(fileObject).isEqualTo(fileObject);
+    assertThat(fileObject.equals(fileObject)).isTrue();
+  }
+
+  @DisplayName(".getAbsolutePath() returns the absolute path")
+  @Test
+  void getAbsolutePathReturnsTheAbsolutePath() {
+    // Given
+    var rootPath = someAbsolutePath();
+    var relativePath = someRelativePath();
+    var fileObject = new PathFileObject(someLocation(), rootPath, relativePath);
+
+    // Then
+    assertThat(fileObject.getAbsolutePath())
+        .isEqualTo(rootPath.resolve(relativePath));
   }
 
   @DisplayName(".getAccessLevel() returns null")
@@ -310,6 +324,7 @@ class PathFileObjectTest {
 
   @DisplayName(".getFullPath() returns the full path")
   @Test
+  @SuppressWarnings("removal")
   void getFullPathReturnsTheFullPath() {
     // Given
     var rootPath = someAbsolutePath();
