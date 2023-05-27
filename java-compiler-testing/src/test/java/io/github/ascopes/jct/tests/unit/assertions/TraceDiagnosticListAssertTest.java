@@ -1208,7 +1208,6 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @SuppressWarnings("removal")
   @DisplayName("TraceDiagnosticListAssert#filteringBy tests")
   @Nested
   class FilteringByTest {

@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.diagnostics;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.Objects.requireNonNullElse;
 
 import java.io.IOException;
 import java.io.OutputStream;

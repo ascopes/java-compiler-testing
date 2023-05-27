@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
+import io.github.ascopes.jct.filemanagers.impl.PathFileObjectImpl;
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.Lazy;
 import io.github.ascopes.jct.utils.ToStringBuilder;
@@ -33,7 +34,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.ProviderNotFoundException;
 import java.nio.file.spi.FileSystemProvider;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -119,7 +125,7 @@ public final class JarContainerImpl implements Container {
       return null;
     }
 
-    return new PathFileObject(location, file.getRoot(), file);
+    return new PathFileObjectImpl(location, file.getRoot(), file);
   }
 
   @Override
@@ -149,7 +155,7 @@ public final class JarContainerImpl implements Container {
       return null;
     }
 
-    return new PathFileObject(location, file.getRoot(), file);
+    return new PathFileObjectImpl(location, file.getRoot(), file);
   }
 
   @Override
@@ -216,7 +222,7 @@ public final class JarContainerImpl implements Container {
     try (var walker = Files.walk(packagePath, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
       walker
           .filter(FileUtils.fileWithAnyKind(kinds))
-          .map(path -> new PathFileObject(location, path.getRoot(), path))
+          .map(path -> new PathFileObjectImpl(location, path.getRoot(), path))
           .forEach(collection::add);
     }
   }

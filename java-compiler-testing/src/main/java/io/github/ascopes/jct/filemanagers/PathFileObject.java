@@ -15,27 +15,12 @@
  */
 package io.github.ascopes.jct.filemanagers;
 
-import static java.util.Objects.requireNonNull;
-
-import io.github.ascopes.jct.utils.FileUtils;
-import io.github.ascopes.jct.utils.ToStringBuilder;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URI;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CodingErrorAction;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import javax.lang.model.element.Modifier;
@@ -46,64 +31,25 @@ import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * A very simple {@link JavaFileObject} that points to a path on some {@link FileSystem} somewhere.
+ * Interface for a path-based {@link JavaFileObject} that points to a path on a file system
+ * somewhere.
  *
  * <p>This object will always use UTF-8 encoding when obtaining readers or writers.
  *
  * <p>No access level or nesting kind information is provided by this implementation.
  *
  * @author Ashley Scopes
- * @since 0.0.1
+ * @since 1.0.0
  */
-@API(since = "0.0.1", status = Status.STABLE)
-public final class PathFileObject implements JavaFileObject {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(PathFileObject.class);
-  private static final Charset CHARSET = StandardCharsets.UTF_8;
-  private static final long NOT_MODIFIED = 0L;
-
-  private final Location location;
-  private final Path rootPath;
-  private final Path relativePath;
-  private final Path absolutePath;
-  private final String name;
-  private final URI uri;
-  private final Kind kind;
+@API(since = "1.0.0", status = Status.STABLE)
+public interface PathFileObject extends JavaFileObject {
 
   /**
-   * Initialize this file object.
-   *
-   * @param location     the location that the file object is located within.
-   * @param rootPath     the root directory that the path is a package within.
-   * @param relativePath the path to point to, relative to the root.
+   * Timestamp that is returned if the file object has never been modified.
    */
-  public PathFileObject(Location location, Path rootPath, Path relativePath) {
-    requireNonNull(location, "location");
-    requireNonNull(rootPath, "rootPath");
-    requireNonNull(relativePath, "relativePath");
-
-    if (!rootPath.isAbsolute()) {
-      throw new IllegalArgumentException("Expected rootPath to be absolute, but got " + rootPath);
-    }
-
-    this.location = location;
-    this.rootPath = rootPath;
-
-    // TODO(ascopes): should we allow absolute paths in the input here? Not sure that it makes a
-    //  lot of sense.
-    this.relativePath = relativePath.isAbsolute()
-        ? rootPath.relativize(relativePath)
-        : relativePath;
-
-    absolutePath = rootPath.resolve(relativePath);
-    name = this.relativePath.toString();
-    uri = absolutePath.toUri();
-    kind = FileUtils.pathToKind(relativePath);
-  }
+  long NOT_MODIFIED = 0L;
 
   /**
    * Attempt to delete the file.
@@ -111,14 +57,7 @@ public final class PathFileObject implements JavaFileObject {
    * @return {@code true} if the file was deleted, or {@code false} if it was not deleted.
    */
   @Override
-  public boolean delete() {
-    try {
-      return Files.deleteIfExists(absolutePath);
-    } catch (IOException ex) {
-      LOGGER.debug("Ignoring error deleting {}", uri, ex);
-      return false;
-    }
-  }
+  boolean delete();
 
   /**
    * Determine if this object equals another.
@@ -128,47 +67,37 @@ public final class PathFileObject implements JavaFileObject {
    *     {@link #toUri() URI} as this object, or {@code false} otherwise.
    */
   @Override
-  public boolean equals(@Nullable Object other) {
-    // Roughly the same as what Javac does.
-    return other instanceof FileObject && uri.equals(((FileObject) other).toUri());
-  }
+  boolean equals(@Nullable Object other);
 
   /**
    * Get the absolute path of this file object.
    *
    * @return the full path.
    */
-  public Path getAbsolutePath() {
-    return absolutePath;
-  }
+  Path getAbsolutePath();
 
   /**
    * Get the class access level, where appropriate.
    *
-   * <p>In this implementation, this class will always return {@code null}, since this
+   * <p>In most implementations, this class will always return {@code null}, since this
    * information is not readily available without preloading the file in question and parsing it
    * first.
    *
    * <p>At the time of writing, the OpenJDK implementations of the JavaFileObject class
    * do not provide an implementation for this method either.
    *
-   * @return {@code null}, always. This implementation does not provide this functionality.
+   * @return the modifier for the access level, or {@code null} if the information is not available.
    */
+  @Nullable
   @Override
-  public Modifier getAccessLevel() {
-    return unknown();
-  }
+  Modifier getAccessLevel();
 
   /**
    * Get the inferred binary name of the file object.
    *
    * @return the inferred binary name.
-   * @since 0.2.1
    */
-  @API(since = "0.2.1", status = Status.STABLE)
-  public String getBinaryName() {
-    return FileUtils.pathToBinaryName(relativePath);
-  }
+  String getBinaryName();
 
   /**
    * Read the character content of the file into memory and decode it using the default character
@@ -179,13 +108,7 @@ public final class PathFileObject implements JavaFileObject {
    * @throws IOException if an IO error occurs.
    */
   @Override
-  public String getCharContent(boolean ignoreEncodingErrors) throws IOException {
-    try (var input = openInputStream()) {
-      return decoder(ignoreEncodingErrors)
-          .decode(ByteBuffer.wrap(input.readAllBytes()))
-          .toString();
-    }
-  }
+  String getCharContent(boolean ignoreEncodingErrors) throws IOException;
 
   /**
    * Get the kind of the file.
@@ -193,34 +116,23 @@ public final class PathFileObject implements JavaFileObject {
    * @return the inferred file kind.
    */
   @Override
-  public Kind getKind() {
-    return kind;
-  }
+  Kind getKind();
 
   /**
    * Determine when the file was last modified.
    *
    * @return the timestamp in milliseconds since UNIX epoch that the file was last modified at, or
-   *     {@code 0L} if unmodified.
+   *     {@link #NOT_MODIFIED} if unmodified or if the information is not available.
    */
   @Override
-  public long getLastModified() {
-    try {
-      return Files.getLastModifiedTime(absolutePath).toMillis();
-    } catch (IOException ex) {
-      LOGGER.debug("Ignoring error reading last modified time for {}", uri, ex);
-      return NOT_MODIFIED;
-    }
-  }
+  long getLastModified();
 
   /**
    * Get the location of this path file object.
    *
    * @return the location.
    */
-  public Location getLocation() {
-    return location;
-  }
+  Location getLocation();
 
   /**
    * Get the file name as a string.
@@ -228,44 +140,37 @@ public final class PathFileObject implements JavaFileObject {
    * @return the name of the file.
    */
   @Override
-  public String getName() {
-    return name;
-  }
+  String getName();
 
   /**
    * Determine the class nesting kind, where appropriate.
    *
-   * <p>In this implementation, this class will always return {@code null}, since this
+   * <p>In most implementations, this method will always return {@code null}, since this
    * information is not readily available without preloading the file in question and parsing it
    * first.
    *
    * <p>At the time of writing, the OpenJDK implementations of the JavaFileObject class
    * do not provide an implementation for this method either.
    *
-   * @return {@code null} in all cases, this operation is not implemented.
+   * @return the nesting kind, or {@code null} if the information is not available.
    */
+  @Nullable
   @Override
-  public NestingKind getNestingKind() {
-    return unknown();
-  }
+  NestingKind getNestingKind();
 
   /**
    * Get the relative path of this file object.
    *
    * @return the path of this file object.
    */
-  public Path getRelativePath() {
-    return relativePath;
-  }
+  Path getRelativePath();
 
   /**
    * Get the root path that the package containing this file is nested within.
    *
    * @return the root path.
    */
-  public Path getRootPath() {
-    return rootPath;
-  }
+  Path getRootPath();
 
   /**
    * Determine the hash code for this object.
@@ -273,121 +178,84 @@ public final class PathFileObject implements JavaFileObject {
    * @return the hash code for the object.
    */
   @Override
-  public int hashCode() {
-    // Corresponds to what the .equals override checks for.
-    return uri.hashCode();
-  }
+  int hashCode();
 
   /**
    * Determine if a given simple name and file kind are compatible with this file object.
    *
    * <p>This will perform a case-sensitive check, regardless of the platform that it runs on.
    *
+   * @param simpleName the simple name of the class to compare to this file.
+   * @param kind       the kind of the class to compare to this file.
    * @return {@code true} if the simple name and kind are compatible with the current file object
    *     name, or {@code false} if not.
    */
   @Override
-  public boolean isNameCompatible(String simpleName, Kind kind) {
-    // Note that this behaves case-sensitively, even on Windows.
-    var fileName = simpleName + kind.extension;
-
-    return relativePath.getFileName().toString().equals(fileName);
-  }
+  boolean isNameCompatible(String simpleName, Kind kind);
 
   /**
    * Open an input stream into this file.
    *
-   * <p>This input stream must be closed once finished with, otherwise
-   * resources will be leaked.
+   * <p>This input stream must be closed once finished with, otherwise resources will be leaked.
    *
-   * <p>The returned implementation will always be buffered.
+   * <p>The returned implementation will always be buffered when appropriate.
    *
-   * @return a buffered input stream.
+   * @return an input stream.
    * @throws NoSuchFileException if the file does not exist.
    * @throws IOException         if an IO error occurs.
    */
   @Override
-  public BufferedInputStream openInputStream() throws IOException {
-    return new BufferedInputStream(openUnbufferedInputStream());
-  }
+  InputStream openInputStream() throws IOException;
 
   /**
    * Open an output stream to this file.
    *
-   * <p>This will create the file first if it does not already exist. If it does
-   * exist, then this will overwrite the file and truncate it. The parent directories
-   * will also be created if they do not exist.
+   * <p>This will create the file first if it does not already exist. If it does exist, then this
+   * will overwrite the file and truncate it. The parent directories will also be created if they do
+   * not exist.
    *
-   * <p>This output stream must be closed once finished with, otherwise
-   * resources will be leaked.
+   * <p>This output stream must be closed once finished with, otherwise resources will be leaked.
    *
-   * <p>The returned implementation will always be buffered.
+   * <p>The returned implementation will always be buffered when appropriate.
    *
-   * @return a buffered output stream.
+   * @return an output stream.
    * @throws IOException if an IO error occurs.
    */
   @Override
-  public BufferedOutputStream openOutputStream() throws IOException {
-    return new BufferedOutputStream(openUnbufferedOutputStream());
-  }
+  OutputStream openOutputStream() throws IOException;
 
   /**
    * Open a reader to this file using the default charset (UTF-8).
    *
-   * <p>This reader must be closed once finished with, otherwise
-   * resources will be leaked.
+   * <p>This reader must be closed once finished with, otherwise resources will be leaked.
    *
-   * <p>The returned implementation will always be buffered.
+   * <p>The returned implementation will always be buffered when appropriate.
    *
    * @param ignoreEncodingErrors {@code true} to suppress encoding errors, or {@code false} to throw
    *                             them to the caller.
-   * @return a buffered reader.
+   * @return a reader.
    * @throws NoSuchFileException if the file does not exist.
    * @throws IOException         if an IO error occurs.
    */
   @Override
-  public BufferedReader openReader(boolean ignoreEncodingErrors) throws IOException {
-    var inputStream = openUnbufferedInputStream();
-    var decoder = decoder(ignoreEncodingErrors);
-    var reader = new InputStreamReader(inputStream, decoder);
-    return new BufferedReader(reader);
-  }
+  Reader openReader(boolean ignoreEncodingErrors) throws IOException;
 
   /**
    * Open a writer to this file using the default charset (UTF-8).
    *
-   * <p>This will create the file first if it does not already exist. If it does exist,
-   * this will first overwrite the file and truncate it. The parent directories
-   * will also be created if they do not exist.
+   * <p>This will create the file first if it does not already exist. If it does exist, this will
+   * first overwrite the file and truncate it. The parent directories will also be created if they
+   * do not exist.
    *
-   * <p>This input stream must be closed once finished with, otherwise
-   * resources will be leaked.
+   * <p>This input stream must be closed once finished with, otherwise resources will be leaked.
    *
-   * <p>The returned implementation will always be buffered.
+   * <p>The returned implementation will always be buffered when appropriate.
    *
-   * @return a buffered writer.
+   * @return a writer.
    * @throws IOException if an IO error occurs.
    */
   @Override
-  public BufferedWriter openWriter() throws IOException {
-    var outputStream = openUnbufferedOutputStream();
-    var encoder = CHARSET
-        .newEncoder()
-        .onUnmappableCharacter(CodingErrorAction.REPORT)
-        .onMalformedInput(CodingErrorAction.REPORT);
-    var writer = new OutputStreamWriter(outputStream, encoder);
-    return new BufferedWriter(writer);
-  }
-
-  /**
-   * Determine the URI for this file.
-   *
-   * @return the URI for this file object.
-   */
-  @Override
-  public URI toUri() {
-    return uri;
-  }
+  Writer openWriter() throws IOException;
 
   /**
    * Get a string representation of this object.
@@ -395,34 +263,13 @@ public final class PathFileObject implements JavaFileObject {
    * @return a string representation of this object.
    */
   @Override
-  public String toString() {
-    return new ToStringBuilder(this)
-        .attribute("uri", uri)
-        .toString();
-  }
+  String toString();
 
-  private InputStream openUnbufferedInputStream() throws IOException {
-    return Files.newInputStream(absolutePath);
-  }
-
-  private OutputStream openUnbufferedOutputStream() throws IOException {
-    // Ensure parent directories exist first.
-    Files.createDirectories(absolutePath.getParent());
-    return Files.newOutputStream(absolutePath);
-  }
-
-  private CharsetDecoder decoder(boolean ignoreEncodingErrors) {
-    var action = ignoreEncodingErrors
-        ? CodingErrorAction.IGNORE
-        : CodingErrorAction.REPORT;
-
-    return CHARSET
-        .newDecoder()
-        .onUnmappableCharacter(action)
-        .onMalformedInput(action);
-  }
-
-  private <T> T unknown() {
-    return null;
-  }
+  /**
+   * Determine the URI for this file.
+   *
+   * @return the URI for this file object.
+   */
+  @Override
+  URI toUri();
 }

@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.tests.unit.assertions;
 
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someLocation;
-import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,7 +31,6 @@ import java.util.List;
 import java.util.ServiceLoader;
 import org.assertj.core.api.AbstractListAssert;
 import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

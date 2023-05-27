@@ -15,20 +15,27 @@
  */
 package io.github.ascopes.jct.tests.unit.assertions;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.oneOf;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someStackTraceList;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import io.github.ascopes.jct.assertions.TraceDiagnosticAssert;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
+import java.time.Instant;
+import java.util.Locale;
+import javax.tools.Diagnostic.Kind;
+import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import javax.tools.Diagnostic.Kind;
-import javax.tools.JavaFileObject;
-import java.time.Instant;
-import java.util.Locale;
-
-import static io.github.ascopes.jct.tests.helpers.Fixtures.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 /**
  * {@link TraceDiagnosticAssert} tests.

@@ -19,6 +19,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
+import io.github.ascopes.jct.filemanagers.impl.PathFileObjectImpl;
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import io.github.ascopes.jct.workspaces.PathRoot;
@@ -92,14 +93,14 @@ public final class PathWrappingContainerImpl implements Container {
     var path = FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName);
 
     return Files.isRegularFile(path)
-        ? new PathFileObject(location, root.getPath(), path)
+        ? new PathFileObjectImpl(location, root.getPath(), path)
         : null;
   }
 
   @Override
   public PathFileObject getFileForOutput(String packageName, String relativeName) {
     var path = FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName);
-    return new PathFileObject(location, root.getPath(), path);
+    return new PathFileObjectImpl(location, root.getPath(), path);
   }
 
   @Override
@@ -111,14 +112,14 @@ public final class PathWrappingContainerImpl implements Container {
   public PathFileObject getJavaFileForInput(String binaryName, Kind kind) {
     var path = FileUtils.binaryNameToPath(root.getPath(), binaryName, kind);
     return Files.isRegularFile(path)
-        ? new PathFileObject(location, root.getPath(), path)
+        ? new PathFileObjectImpl(location, root.getPath(), path)
         : null;
   }
 
   @Override
   public PathFileObject getJavaFileForOutput(String className, Kind kind) {
     var path = FileUtils.binaryNameToPath(root.getPath(), className, kind);
-    return new PathFileObject(location, root.getPath(), path);
+    return new PathFileObjectImpl(location, root.getPath(), path);
   }
 
   @Override
@@ -168,7 +169,7 @@ public final class PathWrappingContainerImpl implements Container {
     try (var walker = Files.walk(basePath, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
       walker
           .filter(FileUtils.fileWithAnyKind(kinds))
-          .map(path -> new PathFileObject(location, root.getPath(), path))
+          .map(path -> new PathFileObjectImpl(location, root.getPath(), path))
           .forEach(collection::add);
     } catch (NoSuchFileException ex) {
       LOGGER.trace("Directory {} does not exist so is being ignored", root.getPath());

@@ -15,18 +15,18 @@
  */
 package io.github.ascopes.jct.tests.unit.assertions;
 
-import io.github.ascopes.jct.assertions.PathFileObjectAssert;
-import io.github.ascopes.jct.filemanagers.PathFileObject;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someAbsolutePath;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someRelativePath;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import io.github.ascopes.jct.assertions.PathFileObjectAssert;
+import io.github.ascopes.jct.filemanagers.PathFileObject;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 /**
  * {@link PathFileObjectAssert} tests.
