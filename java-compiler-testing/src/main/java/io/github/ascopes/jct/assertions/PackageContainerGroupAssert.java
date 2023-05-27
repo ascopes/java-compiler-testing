@@ -24,6 +24,7 @@ import org.assertj.core.api.AbstractPathAssert;
 import org.jspecify.annotations.Nullable;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -34,6 +35,7 @@ import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static io.github.ascopes.jct.utils.StringUtils.quoted;
 import static io.github.ascopes.jct.utils.StringUtils.quotedIterable;
 import static java.util.Objects.requireNonNull;
+import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -229,6 +231,11 @@ public final class PackageContainerGroupAssert
 
   private boolean fileNameIsPresent(@Nullable Path path) {
     // Path can be null if no path elements exist in ZipPath impls.
-    return path == null || !Objects.toString(path.getFileName(), "").isBlank();
+    return Optional
+        .ofNullable(path)
+        .map(Path::getFileName)
+        .map(Path::toString)
+        .filter(not(String::isBlank))
+        .isPresent();
   }
 }
