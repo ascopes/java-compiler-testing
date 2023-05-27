@@ -59,21 +59,6 @@ public final class PathFileObjectAssert
    *
    * @return the assertions for the path.
    * @throws AssertionError if the file object is null.
-   * @deprecated use {@link #absolutePath()} instead.
-   */
-  @Deprecated(forRemoval = true, since = "0.7.3")
-  @SuppressWarnings("removal")
-  public AbstractPathAssert<?> fullPath() {
-    isNotNull();
-
-    return assertThat(actual.getFullPath());
-  }
-
-  /**
-   * Perform an assertion on the file object's absolute path.
-   *
-   * @return the assertions for the path.
-   * @throws AssertionError if the file object is null.
    */
   public AbstractPathAssert<?> absolutePath() {
     isNotNull();

@@ -322,20 +322,6 @@ class PathFileObjectTest {
     }
   }
 
-  @DisplayName(".getFullPath() returns the full path")
-  @Test
-  @SuppressWarnings("removal")
-  void getFullPathReturnsTheFullPath() {
-    // Given
-    var rootPath = someAbsolutePath();
-    var relativePath = someRelativePath();
-    var fileObject = new PathFileObject(someLocation(), rootPath, relativePath);
-
-    // Then
-    assertThat(fileObject.getFullPath())
-        .isEqualTo(rootPath.resolve(relativePath));
-  }
-
   @DisplayName(".getLastModified() returns the last modified timestamp")
   @Test
   void getLastModifiedReturnsTheLastModifiedTimestamp() throws Exception {
