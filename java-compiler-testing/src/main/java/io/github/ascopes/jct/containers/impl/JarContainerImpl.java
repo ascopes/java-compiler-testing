@@ -90,7 +90,7 @@ public final class JarContainerImpl implements Container {
 
   @Override
   public boolean contains(PathFileObject fileObject) {
-    var path = fileObject.getFullPath();
+    var path = fileObject.getAbsolutePath();
     var root = holder.access().getPathRoot().getPath();
     return path.startsWith(root) && Files.isRegularFile(path);
   }
@@ -183,7 +183,7 @@ public final class JarContainerImpl implements Container {
     // we cannot then parse the URI back to a path without removing the `file://` bit first. Since
     // we assume we always have instances of PathJavaFileObject here, let's just cast to that and
     // get the correct path immediately.
-    var fullPath = javaFileObject.getFullPath();
+    var fullPath = javaFileObject.getAbsolutePath();
 
     if (fullPath.startsWith( holder.access().getPathRoot().getPath())) {
       return FileUtils.pathToBinaryName(javaFileObject.getRelativePath());

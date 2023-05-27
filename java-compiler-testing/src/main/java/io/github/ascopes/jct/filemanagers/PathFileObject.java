@@ -69,7 +69,7 @@ public final class PathFileObject implements JavaFileObject {
   private final Location location;
   private final Path rootPath;
   private final Path relativePath;
-  private final Path fullPath;
+  private final Path absolutePath;
   private final String name;
   private final URI uri;
   private final Kind kind;
@@ -93,15 +93,15 @@ public final class PathFileObject implements JavaFileObject {
     this.location = location;
     this.rootPath = rootPath;
 
-    // TODO(ascopes): should we allow absolute paths here? Not sure that it makes a lot of sense
-    // here. 
+    // TODO(ascopes): should we allow absolute paths in the input here? Not sure that it makes a
+    //  lot of sense.
     this.relativePath = relativePath.isAbsolute()
         ? rootPath.relativize(relativePath)
         : relativePath;
 
-    fullPath = rootPath.resolve(relativePath);
+    absolutePath = rootPath.resolve(relativePath);
     name = this.relativePath.toString();
-    uri = fullPath.toUri();
+    uri = absolutePath.toUri();
     kind = FileUtils.pathToKind(relativePath);
   }
 
@@ -113,7 +113,7 @@ public final class PathFileObject implements JavaFileObject {
   @Override
   public boolean delete() {
     try {
-      return Files.deleteIfExists(fullPath);
+      return Files.deleteIfExists(absolutePath);
     } catch (IOException ex) {
       LOGGER.debug("Ignoring error deleting {}", uri, ex);
       return false;
@@ -131,6 +131,15 @@ public final class PathFileObject implements JavaFileObject {
   public boolean equals(@Nullable Object other) {
     // Roughly the same as what Javac does.
     return other instanceof FileObject && uri.equals(((FileObject) other).toUri());
+  }
+
+  /**
+   * Get the absolute path of this file object.
+   *
+   * @return the full path.
+   */
+  public Path getAbsolutePath() {
+    return absolutePath;
   }
 
   /**
@@ -182,9 +191,12 @@ public final class PathFileObject implements JavaFileObject {
    * Get the full path of this file object.
    *
    * @return the full path.
+   * @deprecated use {@link #getAbsolutePath()} instead.
    */
+  @Deprecated(since = "0.7.3", forRemoval = true)
+  @SuppressWarnings("DeprecatedIsStillUsed")
   public Path getFullPath() {
-    return fullPath;
+    return absolutePath;
   }
 
   /**
@@ -206,7 +218,7 @@ public final class PathFileObject implements JavaFileObject {
   @Override
   public long getLastModified() {
     try {
-      return Files.getLastModifiedTime(fullPath).toMillis();
+      return Files.getLastModifiedTime(absolutePath).toMillis();
     } catch (IOException ex) {
       LOGGER.debug("Ignoring error reading last modified time for {}", uri, ex);
       return NOT_MODIFIED;
@@ -402,13 +414,13 @@ public final class PathFileObject implements JavaFileObject {
   }
 
   private InputStream openUnbufferedInputStream() throws IOException {
-    return Files.newInputStream(fullPath);
+    return Files.newInputStream(absolutePath);
   }
 
   private OutputStream openUnbufferedOutputStream() throws IOException {
     // Ensure parent directories exist first.
-    Files.createDirectories(fullPath.getParent());
-    return Files.newOutputStream(fullPath);
+    Files.createDirectories(absolutePath.getParent());
+    return Files.newOutputStream(absolutePath);
   }
 
   private CharsetDecoder decoder(boolean ignoreEncodingErrors) {
