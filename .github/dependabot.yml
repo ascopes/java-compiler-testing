@@ -6,8 +6,6 @@ updates:
     rebase-strategy: auto
     schedule:
       interval: weekly
-      day: saturday
-      time: "09:00"
     assignees:
       - ascopes
     labels:
@@ -19,8 +17,6 @@ updates:
     rebase-strategy: auto
     schedule:
       interval: weekly
-      day: saturday
-      time: "09:00"
     assignees:
       - ascopes
     labels:
