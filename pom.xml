@@ -106,7 +106,7 @@
     <slf4j.version>2.0.7</slf4j.version>
 
     <!-- Plugins -->
-    <gmaven-plugin.version>2.1.0</gmaven-plugin.version>
+    <gmaven-plugin.version>3.0.0</gmaven-plugin.version>
     <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
     <license-maven-plugin.version>4.2</license-maven-plugin.version>
     <maven-checkstyle-plugin.version>3.2.2</maven-checkstyle-plugin.version>
