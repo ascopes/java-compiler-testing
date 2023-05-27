@@ -66,37 +66,6 @@ class PathFileObjectAssertTest {
     }
   }
 
-  @DisplayName("PathFileObjectAssert#fullPath tests")
-  @Nested
-  @SuppressWarnings("removal")
-  class FullPathTest {
-
-    @DisplayName(".fullPath() fails if the path file object is null")
-    @Test
-    void fullPathFailsIfThePathFileObjectIsNull() {
-      // Given
-      var assertions = new PathFileObjectAssert(null);
-
-      // Then
-      assertThatExceptionOfType(AssertionError.class)
-          .isThrownBy(assertions::fullPath);
-    }
-
-    @DisplayName(".fullPath() returns assertions on the absolute path")
-    @Test
-    void fullPathReturnsAssertionsOnTheFullPath() {
-      // Given
-      var path = someAbsolutePath();
-      var pathFileObject = mock(PathFileObject.class);
-      when(pathFileObject.getFullPath()).thenReturn(path);
-      var assertions = new PathFileObjectAssert(pathFileObject);
-
-      // Then
-      assertThatNoException()
-          .isThrownBy(() -> assertions.fullPath().isSameAs(path));
-    }
-  }
-
   @DisplayName("PathFileObjectAssert#absolutePath tests")
   @Nested
   class AbsolutePathTest {

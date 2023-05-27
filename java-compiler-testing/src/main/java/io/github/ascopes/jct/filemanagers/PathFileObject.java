@@ -188,18 +188,6 @@ public final class PathFileObject implements JavaFileObject {
   }
 
   /**
-   * Get the full path of this file object.
-   *
-   * @return the full path.
-   * @deprecated use {@link #getAbsolutePath()} instead.
-   */
-  @Deprecated(since = "0.7.3", forRemoval = true)
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  public Path getFullPath() {
-    return absolutePath;
-  }
-
-  /**
    * Get the kind of the file.
    *
    * @return the inferred file kind.
