@@ -16,15 +16,15 @@
 package io.github.ascopes.jct.tests.unit.assertions;
 
 
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+
 import io.github.ascopes.jct.assertions.OutputContainerGroupAssert;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 
 /**
  * {@link OutputContainerGroupAssert} tests.

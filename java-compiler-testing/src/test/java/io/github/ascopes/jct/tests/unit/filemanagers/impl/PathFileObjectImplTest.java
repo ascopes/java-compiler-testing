@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.tests.unit.filemanagers;
+package io.github.ascopes.jct.tests.unit.filemanagers.impl;
 
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someAbsolutePath;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someBinaryData;
@@ -26,8 +26,9 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
-import io.github.ascopes.jct.filemanagers.PathFileObject;
+import io.github.ascopes.jct.filemanagers.impl.PathFileObjectImpl;
 import io.github.ascopes.jct.utils.FileUtils;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.MalformedInputException;
@@ -45,18 +46,18 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 /**
- * {@link PathFileObject} tests.
+ * {@link PathFileObjectImpl} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("PathFileObject tests")
-class PathFileObjectTest {
+@DisplayName("PathFileObjectImpl tests")
+class PathFileObjectImplTest {
 
   @DisplayName("Passing a null location to the constructor raises an exception")
   @Test
   void passingNullLocationToConstructorRaisesException() {
     // Then
-    assertThatThrownBy(() -> new PathFileObject(null, someAbsolutePath(), someRelativePath()))
+    assertThatThrownBy(() -> new PathFileObjectImpl(null, someAbsolutePath(), someRelativePath()))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("location");
   }
@@ -65,7 +66,7 @@ class PathFileObjectTest {
   @Test
   void passingNullRootPathToConstructorRaisesException() {
     // Then
-    assertThatThrownBy(() -> new PathFileObject(someLocation(), null, someRelativePath()))
+    assertThatThrownBy(() -> new PathFileObjectImpl(someLocation(), null, someRelativePath()))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("rootPath");
   }
@@ -74,7 +75,7 @@ class PathFileObjectTest {
   @Test
   void passingNullRelativePathToConstructorRaisesException() {
     // Then
-    assertThatThrownBy(() -> new PathFileObject(someLocation(), someAbsolutePath(), null))
+    assertThatThrownBy(() -> new PathFileObjectImpl(someLocation(), someAbsolutePath(), null))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("relativePath");
   }
@@ -86,7 +87,7 @@ class PathFileObjectTest {
     var rootPath = someRelativePath();
 
     // Then
-    assertThatThrownBy(() -> new PathFileObject(someLocation(), rootPath, someRelativePath()))
+    assertThatThrownBy(() -> new PathFileObjectImpl(someLocation(), rootPath, someRelativePath()))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Expected rootPath to be absolute, but got " + rootPath);
   }
@@ -103,7 +104,7 @@ class PathFileObjectTest {
 
       Files.createDirectories(dir);
       Files.createFile(file);
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
 
       // When
       var result = fileObject.delete();
@@ -126,7 +127,7 @@ class PathFileObjectTest {
 
       Files.createDirectories(dir);
 
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
 
       // When
       var result = fileObject.delete();
@@ -151,7 +152,7 @@ class PathFileObjectTest {
       Files.createFile(file);
 
       // Purposely using a directory rather than a file here to trigger a deletion error.
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeDir);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeDir);
 
       // When
       var result = fileObject.delete();
@@ -166,7 +167,7 @@ class PathFileObjectTest {
   @Test
   void equalsNullReturnsFalse() {
     // Given
-    var fileObject = new PathFileObject(someLocation(), someAbsolutePath(), someRelativePath());
+    var fileObject = new PathFileObjectImpl(someLocation(), someAbsolutePath(), someRelativePath());
 
     // Then
     assertThat(fileObject)
@@ -175,9 +176,9 @@ class PathFileObjectTest {
 
   @DisplayName(".equals(Object) returns false if the object is not a path file object")
   @Test
-  void equalsReturnsFalseIfNotPathFileObject() {
+  void equalsReturnsFalseIfNotPathFileObjectImpl() {
     // Given
-    var fileObject = new PathFileObject(someLocation(), someAbsolutePath(), someRelativePath());
+    var fileObject = new PathFileObjectImpl(someLocation(), someAbsolutePath(), someRelativePath());
 
     // Then
     assertThat(fileObject)
@@ -187,21 +188,21 @@ class PathFileObjectTest {
         .isNotEqualTo(1234);
   }
 
-  @DisplayName(".equals(PathFileObject) returns true if the file object has the same URI")
+  @DisplayName(".equals(PathFileObjectImpl) returns true if the file object has the same URI")
   @Test
   void equalsReturnsTrueIfTheFileObjectHasTheSameUri() {
     // Given
     var rootPath = someAbsolutePath();
     var relativePath = someRelativePath();
 
-    var fileObject1 = new PathFileObject(someLocation(), rootPath, relativePath);
-    var fileObject2 = new PathFileObject(someLocation(), rootPath, relativePath);
+    var fileObject1 = new PathFileObjectImpl(someLocation(), rootPath, relativePath);
+    var fileObject2 = new PathFileObjectImpl(someLocation(), rootPath, relativePath);
 
     // Then
     assertThat(fileObject1).isEqualTo(fileObject2);
   }
 
-  @DisplayName(".equals(PathFileObject) returns true if the file object is the same instance")
+  @DisplayName(".equals(PathFileObjectImpl) returns true if the file object is the same instance")
   @SuppressWarnings("EqualsWithItself")
   @Test
   void equalsReturnsTrueIfTheFileObjectIsTheSameInstance() {
@@ -210,7 +211,7 @@ class PathFileObjectTest {
     var rootPath = someAbsolutePath();
     var relativePath = someRelativePath();
 
-    var fileObject = new PathFileObject(location, rootPath, relativePath);
+    var fileObject = new PathFileObjectImpl(location, rootPath, relativePath);
 
     // Then
     assertThat(fileObject.equals(fileObject)).isTrue();
@@ -222,7 +223,7 @@ class PathFileObjectTest {
     // Given
     var rootPath = someAbsolutePath();
     var relativePath = someRelativePath();
-    var fileObject = new PathFileObject(someLocation(), rootPath, relativePath);
+    var fileObject = new PathFileObjectImpl(someLocation(), rootPath, relativePath);
 
     // Then
     assertThat(fileObject.getAbsolutePath())
@@ -233,7 +234,7 @@ class PathFileObjectTest {
   @Test
   void getAccessLevelReturnsNull() {
     // Given
-    var fileObject = new PathFileObject(someLocation(), someAbsolutePath(), someRelativePath());
+    var fileObject = new PathFileObjectImpl(someLocation(), someAbsolutePath(), someRelativePath());
 
     // Then
     assertThat(fileObject.getAccessLevel()).isNull();
@@ -245,7 +246,7 @@ class PathFileObjectTest {
     // Given
     var relativePath = someRelativePath().resolve("Cat.java");
     var expectedBinaryName = FileUtils.pathToBinaryName(relativePath);
-    var fileObject = new PathFileObject(someLocation(), someAbsolutePath(), relativePath);
+    var fileObject = new PathFileObjectImpl(someLocation(), someAbsolutePath(), relativePath);
 
     // Then
     assertThat(fileObject.getBinaryName())
@@ -268,7 +269,7 @@ class PathFileObjectTest {
       Files.createDirectories(dir);
       Files.writeString(file, text, StandardCharsets.UTF_8);
 
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
 
       // Then
       assertThat(fileObject.getCharContent(ignoreEncodingErrors))
@@ -291,7 +292,7 @@ class PathFileObjectTest {
       Files.createDirectories(dir);
       Files.write(file, badlyEncodedBytes);
 
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
 
       // Then
       assertThatCode(() -> fileObject.getCharContent(true))
@@ -314,7 +315,7 @@ class PathFileObjectTest {
       Files.createDirectories(dir);
       Files.write(file, badlyEncodedBytes);
 
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
 
       // Then
       assertThatThrownBy(() -> fileObject.getCharContent(false))
@@ -342,7 +343,7 @@ class PathFileObjectTest {
       // Write again to change the timestamp for modification
       Files.writeString(file, "bazbork");
 
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
 
       // Then
       var creationTime = ((FileTime) Files.getAttribute(file, "creationTime")).toMillis();
@@ -366,7 +367,7 @@ class PathFileObjectTest {
       Files.createDirectories(dir);
       // Purposely do not create the file.
 
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
 
       // Then
       var lastModified = fileObject.getLastModified();
@@ -380,7 +381,7 @@ class PathFileObjectTest {
   void getLocationReturnsTheLocation() {
     // Given
     var location = someLocation();
-    var fileObject = new PathFileObject(location, someAbsolutePath(), someRelativePath());
+    var fileObject = new PathFileObjectImpl(location, someAbsolutePath(), someRelativePath());
 
     // Then
     assertThat(fileObject.getLocation())
@@ -394,7 +395,7 @@ class PathFileObjectTest {
   void getNameReturnsTheFileNameWhenRelativePathIsRelative() {
     // Given
     var relativePath = someRelativePath();
-    var fileObject = new PathFileObject(someLocation(), someAbsolutePath(), relativePath);
+    var fileObject = new PathFileObjectImpl(someLocation(), someAbsolutePath(), relativePath);
 
     // Then
     assertThat(fileObject.getName())
@@ -409,7 +410,7 @@ class PathFileObjectTest {
     // Given
     var absolutePath = someAbsolutePath();
     var relativePath = someRelativePath();
-    var fileObject = new PathFileObject(
+    var fileObject = new PathFileObjectImpl(
         someLocation(),
         absolutePath,
         absolutePath.resolve(relativePath)
@@ -424,7 +425,7 @@ class PathFileObjectTest {
   @Test
   void getNestingKindReturnsNull() {
     // Given
-    var fileObject = new PathFileObject(someLocation(), someAbsolutePath(), someRelativePath());
+    var fileObject = new PathFileObjectImpl(someLocation(), someAbsolutePath(), someRelativePath());
 
     // Then
     assertThat(fileObject.getNestingKind()).isNull();
@@ -436,7 +437,7 @@ class PathFileObjectTest {
     // Given
     var rootPath = someAbsolutePath();
     var relativePath = someRelativePath();
-    var fileObject = new PathFileObject(someLocation(), rootPath, rootPath.resolve(relativePath));
+    var fileObject = new PathFileObjectImpl(someLocation(), rootPath, rootPath.resolve(relativePath));
 
     // Then
     assertThat(fileObject.getRelativePath()).isEqualTo(relativePath);
@@ -448,7 +449,7 @@ class PathFileObjectTest {
     // Given
     var rootPath = someAbsolutePath();
     var relativePath = someRelativePath();
-    var fileObject = new PathFileObject(someLocation(), rootPath, relativePath);
+    var fileObject = new PathFileObjectImpl(someLocation(), rootPath, relativePath);
 
     // Then
     assertThat(fileObject.getRelativePath()).isEqualTo(relativePath);
@@ -459,7 +460,7 @@ class PathFileObjectTest {
   void getRootPathReturnsTheRootPath() {
     // Given
     var rootPath = someAbsolutePath();
-    var fileObject = new PathFileObject(someLocation(), rootPath, someRelativePath());
+    var fileObject = new PathFileObjectImpl(someLocation(), rootPath, someRelativePath());
 
     // Then
     assertThat(fileObject.getRootPath()).isEqualTo(rootPath);
@@ -472,7 +473,7 @@ class PathFileObjectTest {
     var rootPath = someAbsolutePath();
     var relativePath = someRelativePath();
     var uri = rootPath.resolve(relativePath).toUri();
-    var fileObject = new PathFileObject(someLocation(), rootPath, relativePath);
+    var fileObject = new PathFileObjectImpl(someLocation(), rootPath, relativePath);
 
     // Then
     assertThat(fileObject).hasSameHashCodeAs(uri);
@@ -511,7 +512,7 @@ class PathFileObjectTest {
     // Given
     var rootPath = someAbsolutePath();
     var relativePath = someRelativePath().resolve(fileName);
-    var fileObject = new PathFileObject(someLocation(), rootPath, relativePath);
+    var fileObject = new PathFileObjectImpl(someLocation(), rootPath, relativePath);
 
     assertThat(fileObject.isNameCompatible(simpleName, kind))
         .isEqualTo(expectCompatible);
@@ -526,7 +527,7 @@ class PathFileObjectTest {
       var dir = rootDir.resolve("foo").resolve("bar");
       var file = dir.resolve("Baz.txt");
       var relativeFile = rootDir.relativize(file);
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
       var data = someBinaryData();
 
       Files.createDirectories(dir);
@@ -547,7 +548,7 @@ class PathFileObjectTest {
       var dir = rootDir.resolve("foo").resolve("bar");
       var file = dir.resolve("Baz.txt");
       var relativeFile = rootDir.relativize(file);
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
       Files.createDirectories(dir);
 
       // Then
@@ -567,7 +568,7 @@ class PathFileObjectTest {
       var dir = rootDir.resolve("foo").resolve("bar");
       var file = dir.resolve("Baz.txt");
       var relativeFile = rootDir.relativize(file);
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
       var data = someBinaryData();
 
       Files.createDirectories(dir);
@@ -591,7 +592,7 @@ class PathFileObjectTest {
       var dir = rootDir.resolve("foo").resolve("bar");
       var file = dir.resolve("Baz.txt");
       var relativeFile = rootDir.relativize(file);
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
       var data = someBinaryData();
 
       Files.createDirectories(dir);
@@ -623,7 +624,7 @@ class PathFileObjectTest {
       Files.createDirectories(dir);
       Files.writeString(file, text, StandardCharsets.UTF_8);
 
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
 
       // Then
       try (var reader = fileObject.openReader(ignoreEncodingErrors)) {
@@ -650,12 +651,12 @@ class PathFileObjectTest {
       Files.createDirectories(dir);
       Files.write(file, badlyEncodedBytes);
 
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
 
       // Then
       assertThatCode(() -> {
         // Then
-        try (var reader = fileObject.openReader(true)) {
+        try (var reader = (BufferedReader) fileObject.openReader(true)) {
           while (reader.readLine() != null) {
             // discard the line.
           }
@@ -680,11 +681,11 @@ class PathFileObjectTest {
       Files.createDirectories(dir);
       Files.write(file, badlyEncodedBytes);
 
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
 
       // Then
       assertThatThrownBy(() -> {
-        try (var reader = fileObject.openReader(false)) {
+        try (var reader = (BufferedReader) fileObject.openReader(false)) {
           while (reader.readLine() != null) {
             // discard the line.
           }
@@ -704,7 +705,7 @@ class PathFileObjectTest {
       var dir = rootDir.resolve("foo").resolve("bar");
       var file = dir.resolve("Baz.txt");
       var relativeFile = rootDir.relativize(file);
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
       var text = someLinesOfText();
 
       Files.createDirectories(dir);
@@ -728,7 +729,7 @@ class PathFileObjectTest {
       var dir = rootDir.resolve("foo").resolve("bar");
       var file = dir.resolve("Baz.txt");
       var relativeFile = rootDir.relativize(file);
-      var fileObject = new PathFileObject(someLocation(), rootDir, relativeFile);
+      var fileObject = new PathFileObjectImpl(someLocation(), rootDir, relativeFile);
       var text = someLinesOfText();
 
       Files.createDirectories(dir);
@@ -751,7 +752,7 @@ class PathFileObjectTest {
     var rootPath = someAbsolutePath();
     var relativePath = someRelativePath();
     var uri = rootPath.resolve(relativePath).toUri();
-    var fileObject = new PathFileObject(someLocation(), rootPath, relativePath);
+    var fileObject = new PathFileObjectImpl(someLocation(), rootPath, relativePath);
 
     // Then
     assertThat(fileObject.toUri())
@@ -764,10 +765,10 @@ class PathFileObjectTest {
     var rootPath = someAbsolutePath();
     var relativePath = someRelativePath();
     var uri = rootPath.resolve(relativePath).toUri();
-    var fileObject = new PathFileObject(someLocation(), rootPath, relativePath);
+    var fileObject = new PathFileObjectImpl(someLocation(), rootPath, relativePath);
 
     // Then
     assertThat(fileObject.toString())
-        .isEqualTo("PathFileObject{uri=\"%s\"}", uri);
+        .isEqualTo("PathFileObjectImpl{uri=\"%s\"}", uri);
   }
 }

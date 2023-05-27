@@ -23,8 +23,6 @@ import java.net.URLClassLoader;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
-import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
-
 /**
  * An extension of the Java {@link URLClassLoader} that wraps around container groups.
  *

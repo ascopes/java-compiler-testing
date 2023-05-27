@@ -15,20 +15,6 @@
  */
 package io.github.ascopes.jct.assertions;
 
-import io.github.ascopes.jct.containers.PackageContainerGroup;
-import io.github.ascopes.jct.repr.LocationRepresentation;
-import io.github.ascopes.jct.utils.StringUtils;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
-import org.assertj.core.api.AbstractPathAssert;
-import org.jspecify.annotations.Nullable;
-import java.nio.file.Path;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static io.github.ascopes.jct.utils.IterableUtils.combineOneOrMore;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
@@ -37,6 +23,20 @@ import static io.github.ascopes.jct.utils.StringUtils.quotedIterable;
 import static java.util.Objects.requireNonNull;
 import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import io.github.ascopes.jct.containers.PackageContainerGroup;
+import io.github.ascopes.jct.repr.LocationRepresentation;
+import io.github.ascopes.jct.utils.StringUtils;
+import java.nio.file.Path;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
+import org.assertj.core.api.AbstractPathAssert;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Assertions for package container groups.

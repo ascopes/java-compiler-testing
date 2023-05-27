@@ -17,17 +17,18 @@ package io.github.ascopes.jct.containers;
 
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.workspaces.PathRoot;
-import java.io.UnsupportedEncodingException;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
-
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
 /**
  * Base interface representing a group of package-oriented paths.
