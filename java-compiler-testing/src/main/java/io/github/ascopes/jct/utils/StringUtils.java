@@ -291,7 +291,7 @@ public final class StringUtils extends UtilityClass {
 
       for (var match : closestMatches) {
         errorBuilder
-            .append("\n")
+            .append(LF)
             .append("  - ")
             .append(match);
       }
