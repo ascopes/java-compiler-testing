@@ -45,7 +45,7 @@ public final class SpecialLocationUtils extends UtilityClass {
       //  - [ERROR] compiler.err.package.clash.from.requires.in.unnamed
       //       the unnamed module reads package com.intellij.rt.execution.junit from both idea.rt
       //       and junit.rt
-      // - [ERROR] compiler.err.package.clash.from.requires
+      //  - [ERROR] compiler.err.package.clash.from.requires
       //       module spring.core reads package com.intellij.rt.execution.junit from both idea.rt
       //       and junit.rt
       "idea_rt.jar"
