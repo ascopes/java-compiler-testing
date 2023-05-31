@@ -200,6 +200,8 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
+import io.github.ascopes.jct.junit.JctExtension;
+import io.github.ascopes.jct.junit.Managed;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.example.processor.JsonSchemaAnnotationProcessor;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -210,7 +212,7 @@ class JsonSchemaAnnotationProcessorTest {
   @Managed
   Workspace workspace;
 
-  @JavacCompilerTest(minVersion = 11, maxVersion = 19)
+  @JavacCompilerTest(minVersion = 11, maxVersion = 21)
   void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler<?, ?> compiler) {
     // Given
     workspace
@@ -250,9 +252,8 @@ class JsonSchemaAnnotationProcessorTest {
 
 The following shows an example of compiling a multi-module style application with JPMS
 support, running the Lombok annotation processor over the input. This assumes that the Lombok
-JAR is already on the classpath for the JUnit test runner.
-
-Even Maven lacks native support for this, still!
+JAR is already on the classpath for the JUnit test runner (e.g. is a test dependency in your
+project).
 
 ```java
 
