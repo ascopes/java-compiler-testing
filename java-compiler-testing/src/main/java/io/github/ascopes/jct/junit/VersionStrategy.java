@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import java.util.function.BiConsumer;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -65,9 +66,9 @@ public enum VersionStrategy {
           .name(compiler.getName() + " (source and target = Java " + version + ")")
   );
 
-  private final VersionConsumer versionSetter;
+  private final BiConsumer<JctCompiler<?, ?>, Integer> versionSetter;
 
-  VersionStrategy(VersionConsumer versionSetter) {
+  VersionStrategy(BiConsumer<JctCompiler<?, ?>, Integer> versionSetter) {
     this.versionSetter = versionSetter;
   }
 
@@ -78,12 +79,6 @@ public enum VersionStrategy {
    * @param version  the version to set.
    */
   public void configureCompiler(JctCompiler<?, ?> compiler, int version) {
-    versionSetter.apply(compiler, version);
-  }
-
-  @FunctionalInterface
-  private interface VersionConsumer {
-
-    void apply(JctCompiler<?, ?> compiler, int version);
+    versionSetter.accept(compiler, version);
   }
 }
