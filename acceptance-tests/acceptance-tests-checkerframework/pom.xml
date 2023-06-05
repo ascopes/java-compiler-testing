@@ -46,7 +46,7 @@
       <!-- Workaround for https://youtrack.jetbrains.com/issue/IDEA-317391 -->
       -DmvnArgLinePropagated=true
     </argLine>
-    <checkerframework.version>3.34.0</checkerframework.version>
+    <checkerframework.version>3.35.0</checkerframework.version>
   </properties>
 
   <dependencies>
