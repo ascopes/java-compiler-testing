@@ -91,15 +91,15 @@ public final class TraceDiagnosticRepresentation implements Representation {
     }
 
     builder.append("\n\n");
+    
+    var snippet = extractSnippet(diagnostic);
 
-    IoExceptionUtils.uncheckedIo(() -> {
-      var snippet = extractSnippet(diagnostic);
+    if (snippet != null) {
+      snippet.prettyPrintTo(builder);
+      builder.append('\n');
+    }
 
-      if (snippet != null) {
-        snippet.prettyPrintTo(builder);
-        builder.append('\n');
-      }
-
+    IoExceptionUtils.uncheckedIo(() -> { 
       builder
           .append(PADDING)
           .append(diagnostic.getMessage(Locale.ROOT));
@@ -108,6 +108,7 @@ public final class TraceDiagnosticRepresentation implements Representation {
     return builder.toString();
   }
 
+  @Nullable
   private Snippet extractSnippet(Diagnostic<? extends JavaFileObject> diagnostic) {
     var source = diagnostic.getSource();
 
@@ -150,6 +151,7 @@ public final class TraceDiagnosticRepresentation implements Representation {
     );
   }
 
+  @Nullable
   private static String tryGetContents(FileObject fileObject) {
     // We may not always be able to read the contents of a file object correctly. This may be down
     // to IO exceptions occurring on the disk, or it may be due to the components under-test
@@ -258,7 +260,7 @@ public final class TraceDiagnosticRepresentation implements Representation {
           .append(" + ");
 
       var endIndex = Math.min(endOfLine, endOffset);
-      for (int i = startOfLine; i < endIndex; ++i) {
+      for (var i = startOfLine; i < endIndex; ++i) {
         if (i < startOffset) {
           builder.append(' ');
         } else if (i == startOffset || i == endOffset - 1) {
