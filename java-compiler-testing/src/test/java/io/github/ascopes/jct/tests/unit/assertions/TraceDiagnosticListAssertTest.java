@@ -15,28 +15,35 @@
  */
 package io.github.ascopes.jct.tests.unit.assertions;
 
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someTraceDiagnostic;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import io.github.ascopes.jct.assertions.TraceDiagnosticListAssert;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.repr.TraceDiagnosticListRepresentation;
 import io.github.ascopes.jct.tests.helpers.ExtraArgumentMatchers;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-import javax.tools.Diagnostic.Kind;
-import javax.tools.JavaFileObject;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static io.github.ascopes.jct.tests.helpers.Fixtures.someTraceDiagnostic;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import javax.tools.Diagnostic.Kind;
+import javax.tools.JavaFileObject;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 /**
  * {@link TraceDiagnosticListAssert} tests.
@@ -1235,6 +1242,34 @@ class TraceDiagnosticListAssertTest {
 
     private Predicate<TraceDiagnostic<? extends JavaFileObject>> anyPredicate() {
       return ExtraArgumentMatchers.hasGenericType();
+    }
+  }
+
+  @DisplayName("TraceDiagnosticListAssert#toAssert tests")
+  @Nested
+  class ToAssertTest {
+
+    @DisplayName(".toAssert(...) should create a new assertion correctly")
+    @Test
+    void toAssertShouldCreateNewAssertionCorrectly() {
+      // .singleElement() calls .toAssert() internally.
+
+      // Given
+      var description = someText();
+      var diagnostics = List.of(someTraceDiagnostic(Kind.ERROR));
+      var diagnosticListAssertions = new TraceDiagnosticListAssert(diagnostics)
+          .describedAs(description);
+
+      // When
+      var diagnosticAssertions = diagnosticListAssertions.singleElement();
+
+      // Then
+      assertThatNoException()
+          .isThrownBy(() -> diagnosticAssertions.isSameAs(diagnostics.get(0)));
+
+      assertThat(diagnosticAssertions.descriptionText())
+          .startsWith(description)
+          .contains("check single element");
     }
   }
 }
