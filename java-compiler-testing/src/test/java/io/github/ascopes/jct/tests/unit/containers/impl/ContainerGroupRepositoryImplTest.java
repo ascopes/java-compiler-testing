@@ -56,7 +56,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  */
 @DisplayName("ContainerGroupRepositoryImpl tests")
 @ExtendWith(MockitoExtension.class)
-@SuppressWarnings({"AssertBetweenInconvertibleTypes", "resource"})
+@SuppressWarnings("resource")
 class ContainerGroupRepositoryImplTest {
 
   String release;
