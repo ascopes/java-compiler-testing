@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.utils;
 
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toUnmodifiableMap;
 
 import java.lang.module.FindException;
 import java.lang.module.ModuleFinder;
@@ -51,7 +51,7 @@ public final class ModuleDiscoverer extends UtilityClass {
    * or are an {@code Automatic-Module} in an accessible {@code MANIFEST.MF}.
    *
    * @param path the path to look within.
-   * @return a map of module names to the path of the module's package root.
+   * @return an immutable map of module names to the path of the module's package root.
    */
   public static Map<String, Path> findModulesIn(Path path) {
     try {
@@ -60,7 +60,7 @@ public final class ModuleDiscoverer extends UtilityClass {
           .of(path)
           .findAll()
           .stream()
-          .collect(toMap(nameExtractor(), pathExtractor()));
+          .collect(toUnmodifiableMap(nameExtractor(), pathExtractor()));
     } catch (FindException ex) {
       LOGGER.debug("Failed to find modules in {}, will ignore this error", path, ex);
       return Map.of();
