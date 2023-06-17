@@ -37,7 +37,7 @@ import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Common functionality for AbstractJctCompiler compiler that can be overridden and that produces a
+ * Common functionality for a compiler that can be overridden and that produces a
  * {@link JctCompilationImpl} as the compilation result.
  *
  * <p>Implementations should extend this class and override anything they require.
