@@ -28,7 +28,7 @@ import java.util.Locale;
 public class JctCompilationConfigurer implements JctCompilerConfigurer<RuntimeException> {
 
   @Override
-  public void configure(JctCompiler<?, ?> compiler) {
+  public void configure(JctCompiler compiler) {
     compiler
         .failOnWarnings(false)
         .showWarnings(false)  // ignore spam about the testing module being hidden

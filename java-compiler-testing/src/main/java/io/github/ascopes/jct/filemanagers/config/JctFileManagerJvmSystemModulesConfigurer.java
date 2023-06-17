@@ -40,14 +40,14 @@ public final class JctFileManagerJvmSystemModulesConfigurer implements JctFileMa
   private static final Logger LOGGER = LoggerFactory
       .getLogger(JctFileManagerJvmSystemModulesConfigurer.class);
 
-  private final JctCompiler<?, ?> compiler;
+  private final JctCompiler compiler;
 
   /**
    * Initialise the configurer with the desired compiler.
    *
    * @param compiler the compiler to wrap.
    */
-  public JctFileManagerJvmSystemModulesConfigurer(JctCompiler<?, ?> compiler) {
+  public JctFileManagerJvmSystemModulesConfigurer(JctCompiler compiler) {
     this.compiler = compiler;
   }
 

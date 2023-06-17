@@ -62,7 +62,7 @@ import org.mockito.stubbing.Answer;
 class JctFileManagerFactoryImplTest {
 
   @Mock(answer = Answers.RETURNS_MOCKS)
-  JctCompiler<?, ?> compiler;
+  JctCompiler compiler;
 
   @Mock(answer = Answers.RETURNS_MOCKS)
   Workspace workspace;

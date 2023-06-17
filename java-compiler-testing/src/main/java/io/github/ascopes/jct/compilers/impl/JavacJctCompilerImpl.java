@@ -34,7 +34,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public final class JavacJctCompilerImpl extends AbstractJctCompiler<JavacJctCompilerImpl> {
+public final class JavacJctCompilerImpl extends AbstractJctCompiler {
 
   private static final String NAME = "JDK Compiler";
 

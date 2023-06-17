@@ -35,7 +35,7 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
 
   @DisplayName("I can compile a single module using multi-module layout using a RAM disk")
   @JavacCompilerTest(minVersion = 9)
-  void singleModuleInMultiModuleLayoutRamDisk(JctCompiler<?, ?> compiler) {
+  void singleModuleInMultiModuleLayoutRamDisk(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
       // Given
       workspace
@@ -63,7 +63,7 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
 
   @DisplayName("I can compile a single module using multi-module layout using a temp directory")
   @JavacCompilerTest(minVersion = 9)
-  void singleModuleInMultiModuleLayoutTempDirectory(JctCompiler<?, ?> compiler) {
+  void singleModuleInMultiModuleLayoutTempDirectory(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       // Given
       workspace
@@ -91,7 +91,7 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
 
   @DisplayName("I can compile multiple modules using multi-module layout using a RAM disk")
   @JavacCompilerTest(minVersion = 9)
-  void multipleModulesInMultiModuleLayoutRamDisk(JctCompiler<?, ?> compiler) {
+  void multipleModulesInMultiModuleLayoutRamDisk(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
       // Given
       workspace
@@ -137,7 +137,7 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
 
   @DisplayName("I can compile multiple modules using multi-module layout using a temp directory")
   @JavacCompilerTest(minVersion = 9)
-  void multipleModulesInMultiModuleLayoutTempDirectory(JctCompiler<?, ?> compiler) {
+  void multipleModulesInMultiModuleLayoutTempDirectory(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       // Given
       workspace

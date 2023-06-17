@@ -36,13 +36,11 @@ import org.apiguardian.api.API.Status;
  * sources. This is designed to provide functionality that {@code javac} does by default, for JDK
  * 17.
  *
- * @param <C> the implementation type. This is provided to allow call-chaining the implementation.
- * @param <R> the compilation type that gets returned once compilation completes.
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilation> {
+public interface JctCompiler {
 
   /**
    * Default setting for deprecation warnings ({@code true}).
@@ -138,7 +136,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @see #compile(Workspace, String, String...)
    * @see #compile(Workspace, Collection)
    */
-  R compile(Workspace workspace);
+  JctCompilation compile(Workspace workspace);
 
   /**
    * Invoke the compilation and return the compilation result.
@@ -159,7 +157,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @see #compile(Workspace)
    * @see #compile(Workspace, Collection)
    */
-  default R compile(Workspace workspace, String firstClassName, String... additionalClassNames) {
+  default JctCompilation compile(Workspace workspace, String firstClassName, String... additionalClassNames) {
     return compile(workspace, IterableUtils.combineOneOrMore(firstClassName, additionalClassNames));
   }
 
@@ -182,7 +180,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @see #compile(Workspace)
    * @see #compile(Workspace, String, String...)
    */
-  R compile(Workspace workspace, Collection<String> classNames);
+  JctCompilation compile(Workspace workspace, Collection<String> classNames);
 
   /**
    * Apply a given configurer to this compiler that can throw a checked exception.
@@ -192,7 +190,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @return this compiler object for further call chaining.
    * @throws E any exception that may be thrown by the configurer.
    */
-  <E extends Exception> C configure(JctCompilerConfigurer<E> configurer) throws E;
+  <E extends Exception> JctCompiler configure(JctCompilerConfigurer<E> configurer) throws E;
 
   /**
    * Get the friendly printable name of this compiler object.
@@ -207,7 +205,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param name the name to set.
    * @return this compiler object for further call chaining.
    */
-  C name(String name);
+  JctCompiler name(String name);
 
   /**
    * Get an <strong>immutable snapshot view</strong> of the current annotation processor options
@@ -223,7 +221,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param annotationProcessorOptions the options to pass.
    * @return this compiler object for further call chaining.
    */
-  C addAnnotationProcessorOptions(Iterable<String> annotationProcessorOptions);
+  JctCompiler addAnnotationProcessorOptions(Iterable<String> annotationProcessorOptions);
 
   /**
    * Add options to pass to any annotation processors.
@@ -232,7 +230,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param annotationProcessorOptions additional options to pass.
    * @return this compiler object for further call chaining.
    */
-  default C addAnnotationProcessorOptions(
+  default JctCompiler addAnnotationProcessorOptions(
       String annotationProcessorOption,
       String... annotationProcessorOptions
   ) {
@@ -258,7 +256,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param annotationProcessors the processors to invoke.
    * @return this compiler object for further call chaining.
    */
-  C addAnnotationProcessors(Iterable<? extends Processor> annotationProcessors);
+  JctCompiler addAnnotationProcessors(Iterable<? extends Processor> annotationProcessors);
 
   /**
    * Add annotation processors to invoke.
@@ -270,7 +268,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param annotationProcessors additional processors to invoke.
    * @return this compiler object for further call chaining.
    */
-  default C addAnnotationProcessors(
+  default JctCompiler addAnnotationProcessors(
       Processor annotationProcessor,
       Processor... annotationProcessors
   ) {
@@ -291,7 +289,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param compilerOptions the options to add.
    * @return this compiler object for further call chaining.
    */
-  C addCompilerOptions(Iterable<String> compilerOptions);
+  JctCompiler addCompilerOptions(Iterable<String> compilerOptions);
 
   /**
    * Add command line options to pass to {@code javac}.
@@ -300,7 +298,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param compilerOptions additional options to add.
    * @return this compiler object for further call chaining.
    */
-  default C addCompilerOptions(String compilerOption, String... compilerOptions) {
+  default JctCompiler addCompilerOptions(String compilerOption, String... compilerOptions) {
     return addCompilerOptions(IterableUtils.combineOneOrMore(compilerOption, compilerOptions));
   }
 
@@ -331,7 +329,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param enabled {@code true} for verbose output, {@code false} for normal output.
    * @return this compiler for further call chaining.
    */
-  C verbose(boolean enabled);
+  JctCompiler verbose(boolean enabled);
 
   /**
    * Determine whether preview features are enabled or not.
@@ -352,7 +350,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param enabled {@code true} to enable preview features, or {@code false} to disable them.
    * @return this compiler object for further call chaining.
    */
-  C previewFeatures(boolean enabled);
+  JctCompiler previewFeatures(boolean enabled);
 
   /**
    * Determine whether warnings are enabled or not.
@@ -373,7 +371,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param enabled {@code true} to enable warnings. {@code false} to disable them.
    * @return this compiler object for further call chaining.
    */
-  C showWarnings(boolean enabled);
+  JctCompiler showWarnings(boolean enabled);
 
   /**
    * Determine whether deprecation warnings are enabled or not.
@@ -396,7 +394,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param enabled {@code true} to enable deprecation warnings. {@code false} to disable them.
    * @return this compiler object for further call chaining.
    */
-  C showDeprecationWarnings(boolean enabled);
+  JctCompiler showDeprecationWarnings(boolean enabled);
 
   /**
    * Determine whether warnings are being treated as errors or not.
@@ -420,7 +418,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    *                them.
    * @return this compiler object for further call chaining.
    */
-  C failOnWarnings(boolean enabled);
+  JctCompiler failOnWarnings(boolean enabled);
 
   /**
    * Get the compilation mode that is in use.
@@ -441,7 +439,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param compilationMode the compilation mode to use.
    * @return this compiler object for further call chaining.
    */
-  C compilationMode(CompilationMode compilationMode);
+  JctCompiler compilationMode(CompilationMode compilationMode);
 
   /**
    * Get the default release to use if no release or target version is specified.
@@ -485,7 +483,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param release the version to set.
    * @return this compiler object for further call chaining.
    */
-  C release(String release);
+  JctCompiler release(String release);
 
   /**
    * Set the release version.
@@ -498,7 +496,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param release the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C release(int release) {
+  default JctCompiler release(int release) {
     if (release < 0) {
       throw new IllegalArgumentException("Cannot provide a release version less than 0");
     }
@@ -517,7 +515,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param release the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C release(SourceVersion release) {
+  default JctCompiler release(SourceVersion release) {
     return release(Integer.toString(release.ordinal()));
   }
 
@@ -543,7 +541,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param source the version to set.
    * @return this compiler object for further call chaining.
    */
-  C source(String source);
+  JctCompiler source(String source);
 
   /**
    * Set the source version.
@@ -556,7 +554,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param source the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C source(int source) {
+  default JctCompiler source(int source) {
     if (source < 0) {
       throw new IllegalArgumentException("Cannot provide a source version less than 0");
     }
@@ -575,7 +573,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param source the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C source(SourceVersion source) {
+  default JctCompiler source(SourceVersion source) {
     return source(Integer.toString(source.ordinal()));
   }
 
@@ -600,7 +598,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param target the version to set.
    * @return this compiler object for further call chaining.
    */
-  C target(String target);
+  JctCompiler target(String target);
 
   /**
    * Set the target version.
@@ -613,7 +611,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param target the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C target(int target) {
+  default JctCompiler target(int target) {
     if (target < 0) {
       throw new IllegalArgumentException("Cannot provide a target version less than 0");
     }
@@ -632,7 +630,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param target the version to set.
    * @return this compiler object for further call chaining.
    */
-  default C target(SourceVersion target) {
+  default JctCompiler target(SourceVersion target) {
     return target(Integer.toString(target.ordinal()));
   }
 
@@ -666,7 +664,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param fixJvmModulePathMismatch whether to enable the mismatch fixing or not.
    * @return this compiler object for further call chaining.
    */
-  C fixJvmModulePathMismatch(boolean fixJvmModulePathMismatch);
+  JctCompiler fixJvmModulePathMismatch(boolean fixJvmModulePathMismatch);
 
   /**
    * Get whether the class path is inherited from the caller JVM or not.
@@ -687,7 +685,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param inheritClassPath {@code true} to include it, or {@code false} to exclude it.
    * @return this compiler object for further call chaining.
    */
-  C inheritClassPath(boolean inheritClassPath);
+  JctCompiler inheritClassPath(boolean inheritClassPath);
 
   /**
    * Get whether the module path is inherited from the caller JVM or not.
@@ -708,7 +706,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param inheritModulePath {@code true} to include it, or {@code false} to exclude it.
    * @return this compiler object for further call chaining.
    */
-  C inheritModulePath(boolean inheritModulePath);
+  JctCompiler inheritModulePath(boolean inheritModulePath);
 
   /**
    * Get whether the system module path is inherited from the caller JVM or not.
@@ -729,7 +727,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param inheritSystemModulePath {@code true} to include it, or {@code false} to exclude it.
    * @return this compiler object for further call chaining.
    */
-  C inheritSystemModulePath(boolean inheritSystemModulePath);
+  JctCompiler inheritSystemModulePath(boolean inheritSystemModulePath);
 
   /**
    * Get the output locale.
@@ -750,7 +748,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param locale the locale to use.
    * @return this compiler for further call chaining.
    */
-  C locale(Locale locale);
+  JctCompiler locale(Locale locale);
 
   /**
    * Get the charset being used to write compiler logs with.
@@ -771,7 +769,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param logCharset the charset to use.
    * @return this compiler for further call chaining.
    */
-  C logCharset(Charset logCharset);
+  JctCompiler logCharset(Charset logCharset);
 
   /**
    * Get the current file manager logging mode.
@@ -792,7 +790,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param fileManagerLoggingMode the mode to use for file manager logging.
    * @return this compiler for further call chaining.
    */
-  C fileManagerLoggingMode(LoggingMode fileManagerLoggingMode);
+  JctCompiler fileManagerLoggingMode(LoggingMode fileManagerLoggingMode);
 
   /**
    * Get the current diagnostic logging mode.
@@ -813,7 +811,7 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param diagnosticLoggingMode the mode to use for diagnostic capture.
    * @return this compiler for further call chaining.
    */
-  C diagnosticLoggingMode(LoggingMode diagnosticLoggingMode);
+  JctCompiler diagnosticLoggingMode(LoggingMode diagnosticLoggingMode);
 
   /**
    * Get how to perform annotation processor discovery.
@@ -844,5 +842,5 @@ public interface JctCompiler<C extends JctCompiler<C, R>, R extends JctCompilati
    * @param annotationProcessorDiscovery the processor discovery mode to use.
    * @return this compiler for further call chaining.
    */
-  C annotationProcessorDiscovery(AnnotationProcessorDiscovery annotationProcessorDiscovery);
+  JctCompiler annotationProcessorDiscovery(AnnotationProcessorDiscovery annotationProcessorDiscovery);
 }

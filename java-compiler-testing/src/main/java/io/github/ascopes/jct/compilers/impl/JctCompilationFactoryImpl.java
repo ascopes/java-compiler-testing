@@ -56,9 +56,9 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilationFactoryImpl.class);
 
-  private final JctCompiler<?, ?> compiler;
+  private final JctCompiler compiler;
 
-  public JctCompilationFactoryImpl(JctCompiler<?, ?> compiler) {
+  public JctCompilationFactoryImpl(JctCompiler compiler) {
     this.compiler = compiler;
   }
 

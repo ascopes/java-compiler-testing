@@ -44,7 +44,7 @@ class VersionStrategyTest {
   String baseName;
 
   @Mock(answer = Answers.RETURNS_SELF, strictness = Strictness.LENIENT)
-  JctCompiler<?, ?> compiler;
+  JctCompiler compiler;
 
   @BeforeEach
   void setUp() {

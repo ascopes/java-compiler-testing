@@ -45,7 +45,7 @@ import org.apiguardian.api.API.Status;
  *   Workspace workspace;
  *
  *   {@literal @JavacCompilerTest}
- *   void myTest(JctCompiler&lt;?, ?&gt; compiler) {
+ *   void myTest(JctCompiler compiler) {
  *     ...
  *     var compilation = compiler.compile(workspace);
  *     ...

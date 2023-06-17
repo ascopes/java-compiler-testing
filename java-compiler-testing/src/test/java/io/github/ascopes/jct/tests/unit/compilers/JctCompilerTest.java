@@ -53,7 +53,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class JctCompilerTest {
 
   @Mock
-  JctCompiler<?, ?> compiler;
+  JctCompiler compiler;
 
   @DisplayName("addAnnotationProcessorOptions(String, String...) should call the expected method")
   @Test

@@ -37,7 +37,7 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
   )
   @JavacCompilerTest
   void compileSourcesToClassesAndProvideThemInClassPathToSecondCompilation(
-      JctCompiler<?, ?> compiler
+      JctCompiler compiler
   ) {
     try (
         var firstWorkspace = Workspaces.newWorkspace();
@@ -77,7 +77,7 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
   )
   @JavacCompilerTest
   void compileSourcesToClassesAndProvideThemInClassPathToSecondCompilationWithinJar(
-      JctCompiler<?, ?> compiler
+      JctCompiler compiler
   ) {
     try (
         var firstWorkspace = Workspaces.newWorkspace();

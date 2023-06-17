@@ -50,13 +50,11 @@ import org.jspecify.annotations.Nullable;
  * the desired operations, and then apply it to instances of this class using
  * {@link #configure(JctCompilerConfigurer)}.
  *
- * @param <A> the type of the class extending this class.
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
-    implements JctCompiler<A, JctCompilation> {
+public abstract class AbstractJctCompiler implements JctCompiler {
 
   private final List<Processor> annotationProcessors;
   private final List<String> annotationProcessorOptions;
@@ -122,10 +120,10 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public final <E extends Exception> A configure(JctCompilerConfigurer<E> configurer) throws E {
+  public final <E extends Exception> AbstractJctCompiler configure(JctCompilerConfigurer<E> configurer) throws E {
     requireNonNull(configurer, "configurer");
     configurer.configure(this);
-    return myself();
+    return this;
   }
 
   @Override
@@ -134,9 +132,9 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A name(String name) {
+  public AbstractJctCompiler name(String name) {
     this.name = requireNonNull(name, "name");
-    return myself();
+    return this;
   }
 
   @Override
@@ -145,9 +143,9 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A verbose(boolean enabled) {
+  public AbstractJctCompiler verbose(boolean enabled) {
     verbose = enabled;
-    return myself();
+    return this;
   }
 
   @Override
@@ -156,9 +154,9 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A previewFeatures(boolean enabled) {
+  public AbstractJctCompiler previewFeatures(boolean enabled) {
     previewFeatures = enabled;
-    return myself();
+    return this;
   }
 
   @Override
@@ -167,9 +165,9 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A showWarnings(boolean enabled) {
+  public AbstractJctCompiler showWarnings(boolean enabled) {
     showWarnings = enabled;
-    return myself();
+    return this;
   }
 
   @Override
@@ -178,9 +176,9 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A showDeprecationWarnings(boolean enabled) {
+  public AbstractJctCompiler showDeprecationWarnings(boolean enabled) {
     showDeprecationWarnings = enabled;
-    return myself();
+    return this;
   }
 
   @Override
@@ -189,9 +187,9 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A failOnWarnings(boolean enabled) {
+  public AbstractJctCompiler failOnWarnings(boolean enabled) {
     failOnWarnings = enabled;
-    return myself();
+    return this;
   }
 
   @Override
@@ -200,9 +198,9 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A compilationMode(CompilationMode compilationMode) {
+  public AbstractJctCompiler compilationMode(CompilationMode compilationMode) {
     this.compilationMode = compilationMode;
-    return myself();
+    return this;
   }
 
   @Override
@@ -211,10 +209,10 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A addAnnotationProcessorOptions(Iterable<String> annotationProcessorOptions) {
+  public AbstractJctCompiler addAnnotationProcessorOptions(Iterable<String> annotationProcessorOptions) {
     requireNonNullValues(annotationProcessorOptions, "annotationProcessorOptions");
     annotationProcessorOptions.forEach(this.annotationProcessorOptions::add);
-    return myself();
+    return this;
   }
 
   @Override
@@ -223,11 +221,11 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A addAnnotationProcessors(Iterable<? extends Processor> annotationProcessors) {
+  public AbstractJctCompiler addAnnotationProcessors(Iterable<? extends Processor> annotationProcessors) {
     requireNonNullValues(annotationProcessors, "annotationProcessors");
     annotationProcessors.forEach(this.annotationProcessors::add);
 
-    return myself();
+    return this;
   }
 
   @Override
@@ -236,10 +234,10 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A addCompilerOptions(Iterable<String> compilerOptions) {
+  public AbstractJctCompiler addCompilerOptions(Iterable<String> compilerOptions) {
     requireNonNullValues(compilerOptions, "compilerOptions");
     compilerOptions.forEach(this.compilerOptions::add);
-    return myself();
+    return this;
   }
 
   @Override
@@ -261,7 +259,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A release(@Nullable String release) {
+  public AbstractJctCompiler release(@Nullable String release) {
     this.release = release;
 
     if (release != null) {
@@ -269,7 +267,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
       target = null;
     }
 
-    return myself();
+    return this;
   }
 
   @Override
@@ -278,12 +276,12 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A source(@Nullable String source) {
+  public AbstractJctCompiler source(@Nullable String source) {
     this.source = source;
     if (source != null) {
       release = null;
     }
-    return myself();
+    return this;
   }
 
   @Override
@@ -292,12 +290,12 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A target(@Nullable String target) {
+  public AbstractJctCompiler target(@Nullable String target) {
     this.target = target;
     if (target != null) {
       release = null;
     }
-    return myself();
+    return this;
   }
 
   @Override
@@ -306,9 +304,9 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A fixJvmModulePathMismatch(boolean fixJvmModulePathMismatch) {
+  public AbstractJctCompiler fixJvmModulePathMismatch(boolean fixJvmModulePathMismatch) {
     this.fixJvmModulePathMismatch = fixJvmModulePathMismatch;
-    return myself();
+    return this;
   }
 
   @Override
@@ -317,9 +315,9 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A inheritClassPath(boolean inheritClassPath) {
+  public AbstractJctCompiler inheritClassPath(boolean inheritClassPath) {
     this.inheritClassPath = inheritClassPath;
-    return myself();
+    return this;
   }
 
   @Override
@@ -328,9 +326,9 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A inheritModulePath(boolean inheritModulePath) {
+  public AbstractJctCompiler inheritModulePath(boolean inheritModulePath) {
     this.inheritModulePath = inheritModulePath;
-    return myself();
+    return this;
   }
 
   @Override
@@ -339,9 +337,9 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A inheritSystemModulePath(boolean inheritSystemModulePath) {
+  public AbstractJctCompiler inheritSystemModulePath(boolean inheritSystemModulePath) {
     this.inheritSystemModulePath = inheritSystemModulePath;
-    return myself();
+    return this;
   }
 
   @Override
@@ -350,10 +348,10 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A locale(Locale locale) {
+  public AbstractJctCompiler locale(Locale locale) {
     requireNonNull(locale, "locale");
     this.locale = locale;
-    return myself();
+    return this;
   }
 
   @Override
@@ -362,10 +360,10 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A logCharset(Charset logCharset) {
+  public AbstractJctCompiler logCharset(Charset logCharset) {
     requireNonNull(logCharset, "logCharset");
     this.logCharset = logCharset;
-    return myself();
+    return this;
   }
 
   @Override
@@ -374,9 +372,9 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A fileManagerLoggingMode(LoggingMode fileManagerLoggingMode) {
+  public AbstractJctCompiler fileManagerLoggingMode(LoggingMode fileManagerLoggingMode) {
     this.fileManagerLoggingMode = requireNonNull(fileManagerLoggingMode, "fileManagerLoggingMode");
-    return myself();
+    return this;
   }
 
   @Override
@@ -385,10 +383,10 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A diagnosticLoggingMode(LoggingMode diagnosticLoggingMode) {
+  public AbstractJctCompiler diagnosticLoggingMode(LoggingMode diagnosticLoggingMode) {
     requireNonNull(diagnosticLoggingMode, "diagnosticLoggingMode");
     this.diagnosticLoggingMode = diagnosticLoggingMode;
-    return myself();
+    return this;
   }
 
   @Override
@@ -397,12 +395,12 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   }
 
   @Override
-  public A annotationProcessorDiscovery(AnnotationProcessorDiscovery annotationProcessorDiscovery) {
+  public AbstractJctCompiler annotationProcessorDiscovery(AnnotationProcessorDiscovery annotationProcessorDiscovery) {
     this.annotationProcessorDiscovery = requireNonNull(
         annotationProcessorDiscovery,
         "annotationProcessorDiscovery"
     );
-    return myself();
+    return this;
   }
 
   /**
@@ -432,7 +430,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   public abstract Jsr199CompilerFactory getCompilerFactory();
 
   /**
-   * Get the file manager factory to use for building a file manager during compilation.
+   * Get the file manager factory to use for building AbstractJctCompiler file manager during compilation.
    *
    * @return the factory.
    */
@@ -462,19 +460,7 @@ public abstract class AbstractJctCompiler<A extends AbstractJctCompiler<A>>
   @Override
   public abstract String getDefaultRelease();
 
-  /**
-   * Get this implementation of {@link AbstractJctCompiler}, cast to the type parameter {@link A}.
-   *
-   * @return this implementation of {@link AbstractJctCompiler}, cast to {@link A}.
-   */
-  protected final A myself() {
-    @SuppressWarnings("unchecked")
-    var me = (A) this;
-
-    return me;
-  }
-
-  /**
+  /*
    * Build the list of flags from this compiler object using the flag builder.
    *
    * <p>Implementations should not need to override this unless there is a special edge case

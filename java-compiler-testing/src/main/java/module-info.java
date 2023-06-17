@@ -58,7 +58,7 @@ import java.net.spi.URLStreamHandlerProvider;
  *    class JsonSchemaAnnotationProcessorTest {
  *
  *      {@literal @JavacCompilerTest(minVersion=11, maxVersion=19)}
- *      void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler&lt;?, ?&gt; compiler) {
+ *      void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler compiler) {
  *
  *        try (var workspace = Workspaces.newWorkspace()) {
  *          // Given

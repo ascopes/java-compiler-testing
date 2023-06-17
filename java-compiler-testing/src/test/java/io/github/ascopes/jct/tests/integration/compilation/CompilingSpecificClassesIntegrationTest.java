@@ -33,7 +33,7 @@ class CompilingSpecificClassesIntegrationTest extends AbstractIntegrationTest {
 
   @DisplayName("Only the classes that I specify get compiled")
   @JavacCompilerTest
-  void onlyTheClassesSpecifiedGetCompiled(JctCompiler<?, ?> compiler) {
+  void onlyTheClassesSpecifiedGetCompiled(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace()) {
       workspace
           .createSourcePathPackage()
