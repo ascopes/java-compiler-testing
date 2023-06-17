@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("ModuleContainerGroupAssert tests")
 class ModuleContainerGroupAssertTest {
 
-  @DisplayName("ModuleContainerGroupAssert#moduleExists tests")
+  @DisplayName("ModuleContainerGroupAssert.moduleExists(...) tests")
   @Nested
   class ModuleExistsTest {
 
@@ -120,7 +120,7 @@ class ModuleContainerGroupAssertTest {
     }
   }
 
-  @DisplayName("ModuleContainerGroupAssert#moduleDoesNotExist tests")
+  @DisplayName("ModuleContainerGroupAssert.moduleDoesNotExist(...) tests")
   @Nested
   class ModuleDoesNotExistTest {
 

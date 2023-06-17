@@ -38,7 +38,7 @@ import org.junit.jupiter.params.provider.NullSource;
 @DisplayName("JavaFileObjectKindAssert tests")
 class JavaFileObjectKindAssertTest {
 
-  @DisplayName("JavaFileObjectKindAssert#isSource tests")
+  @DisplayName("JavaFileObjectKindAssert.isSource(...) tests")
   @Nested
   class IsSourceTest {
 
@@ -67,7 +67,7 @@ class JavaFileObjectKindAssertTest {
     }
   }
 
-  @DisplayName("JavaFileObjectKindAssert#isClass tests")
+  @DisplayName("JavaFileObjectKindAssert.isClass(...) tests")
   @Nested
   class IsClassTest {
 
@@ -96,7 +96,7 @@ class JavaFileObjectKindAssertTest {
     }
   }
 
-  @DisplayName("JavaFileObjectKindAssert#isHtml tests")
+  @DisplayName("JavaFileObjectKindAssert.isHtml(...) tests")
   @Nested
   class IsHtmlTest {
 
@@ -125,7 +125,7 @@ class JavaFileObjectKindAssertTest {
     }
   }
 
-  @DisplayName("JavaFileObjectKindAssert#isOther tests")
+  @DisplayName("JavaFileObjectKindAssert.isOther(...) tests")
   @Nested
   class IsOtherTest {
 
@@ -154,7 +154,7 @@ class JavaFileObjectKindAssertTest {
     }
   }
 
-  @DisplayName("JavaFileObjectKindAssert#extension tests")
+  @DisplayName("JavaFileObjectKindAssert.extension(...) tests")
   @Nested
   class ExtensionTest {
 

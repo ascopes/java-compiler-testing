@@ -35,7 +35,7 @@ import org.junit.jupiter.params.provider.ValueSource;
  */
 @DisplayName("StackTraceElementAssert tests")
 class StackTraceElementAssertTest {
-  @DisplayName("StackTraceElementAssert#fileName tests")
+  @DisplayName("StackTraceElementAssert.fileName(...) tests")
   @Nested
   class FileNameTest {
     @DisplayName(".fileName() fails if the stack trace element is null")
@@ -67,7 +67,7 @@ class StackTraceElementAssertTest {
     }
   }
 
-  @DisplayName("StackTraceElementAssert#lineNumber tests")
+  @DisplayName("StackTraceElementAssert.lineNumber(...) tests")
   @Nested
   class LineNumberTest {
     @DisplayName(".lineNumber() fails if the stack trace element is null")
@@ -99,7 +99,7 @@ class StackTraceElementAssertTest {
     }
   }
 
-  @DisplayName("StackTraceElementAssert#moduleName tests")
+  @DisplayName("StackTraceElementAssert.moduleName(...) tests")
   @Nested
   class ModuleNameTest {
     @DisplayName(".moduleName() fails if the stack trace element is null")
@@ -131,7 +131,7 @@ class StackTraceElementAssertTest {
     }
   }
 
-  @DisplayName("StackTraceElementAssert#moduleVersion tests")
+  @DisplayName("StackTraceElementAssert.moduleVersion(...) tests")
   @Nested
   class ModuleVersionTest {
     @DisplayName(".moduleVersion() fails if the stack trace element is null")
@@ -163,7 +163,7 @@ class StackTraceElementAssertTest {
     }
   }
 
-  @DisplayName("StackTraceElementAssert#classLoaderName tests")
+  @DisplayName("StackTraceElementAssert.classLoaderName(...) tests")
   @Nested
   class ClassLoaderNameTest {
     @DisplayName(".classLoaderName() fails if the stack trace element is null")
@@ -195,7 +195,7 @@ class StackTraceElementAssertTest {
     }
   }
 
-  @DisplayName("StackTraceElementAssert#className tests")
+  @DisplayName("StackTraceElementAssert.className(...) tests")
   @Nested
   class ClassNameTest {
     @DisplayName(".className() fails if the stack trace element is null")
@@ -227,7 +227,7 @@ class StackTraceElementAssertTest {
     }
   }
 
-  @DisplayName("StackTraceElementAssert#methodName tests")
+  @DisplayName("StackTraceElementAssert.methodName(...) tests")
   @Nested
   class MethodNameTest {
     @DisplayName(".methodName() fails if the stack trace element is null")
@@ -259,7 +259,7 @@ class StackTraceElementAssertTest {
     }
   }
 
-  @DisplayName("StackTraceElementAssert#nativeMethod tests")
+  @DisplayName("StackTraceElementAssert.nativeMethod(...) tests")
   @Nested
   class NativeMethodTest {
     @DisplayName(".nativeMethod() fails if the stack trace element is null")

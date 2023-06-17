@@ -295,7 +295,7 @@ class StringUtilsTest implements UtilityClassTestTemplate {
     }
   }
 
-  @DisplayName("StringUtils#resultNotFoundWithFuzzySuggestions tests")
+  @DisplayName("StringUtils.resultNotFoundWithFuzzySuggestions(...) tests")
   @Nested
   class ResultNotFoundWithFuzzySuggestionsTest {
 

@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("LocationAssert tests")
 class LocationAssertTest {
 
-  @DisplayName("LocationAssert#isModuleOrientedLocation tests")
+  @DisplayName("LocationAssert.isModuleOrientedLocation(...) tests")
   @Nested
   class IsModuleOrientedLocationTest {
     @DisplayName(".isModuleOrientedLocation() fails if the location is null")
@@ -81,7 +81,7 @@ class LocationAssertTest {
     }
   }
 
-  @DisplayName("LocationAssert#isNotModuleOrientedLocation tests")
+  @DisplayName("LocationAssert.isNotModuleOrientedLocation(...) tests")
   @Nested
   class IsNotModuleOrientedLocationTest {
     @DisplayName(".isNotModuleOrientedLocation() fails if the location is null")
@@ -128,7 +128,7 @@ class LocationAssertTest {
     }
   }
 
-  @DisplayName("LocationAssert#isOutputLocation tests")
+  @DisplayName("LocationAssert.isOutputLocation(...) tests")
   @Nested
   class IsOutputLocationTest {
     @DisplayName(".isOutputLocation() fails if the location is null")
@@ -175,7 +175,7 @@ class LocationAssertTest {
     }
   }
 
-  @DisplayName("LocationAssert#isNotOutputLocation tests")
+  @DisplayName("LocationAssert.isNotOutputLocation(...) tests")
   @Nested
   class IsNotOutputLocationTest {
     @DisplayName(".isNotOutputLocation() fails if the location is null")
@@ -222,7 +222,7 @@ class LocationAssertTest {
     }
   }
 
-  @DisplayName("LocationAssert#name tests")
+  @DisplayName("LocationAssert.name(...) tests")
   @Nested
   class NameTest {
     @DisplayName(".name() fails if the location is null")

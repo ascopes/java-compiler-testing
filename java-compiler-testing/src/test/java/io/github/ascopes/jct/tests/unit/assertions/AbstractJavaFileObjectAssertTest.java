@@ -53,7 +53,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 @DisplayName("AbstractJavaFileObjectAssert tests")
 class AbstractJavaFileObjectAssertTest {
 
-  @DisplayName("AbstractJavaFileObjectAssert#uri tests")
+  @DisplayName("AbstractJavaFileObjectAssert.uri(...) tests")
   @Nested
   class UriTest {
 
@@ -86,7 +86,7 @@ class AbstractJavaFileObjectAssertTest {
     }
   }
 
-  @DisplayName("AbstractJavaFileObjectAssert#name tests")
+  @DisplayName("AbstractJavaFileObjectAssert.name(...) tests")
   @Nested
   class NameTest {
 
@@ -119,7 +119,7 @@ class AbstractJavaFileObjectAssertTest {
     }
   }
 
-  @DisplayName("AbstractJavaFileObjectAssert#binaryContent tests")
+  @DisplayName("AbstractJavaFileObjectAssert.binaryContent(...) tests")
   @Nested
   class RawContentTest {
 
@@ -153,7 +153,7 @@ class AbstractJavaFileObjectAssertTest {
     }
   }
 
-  @DisplayName("AbstractJavaFileObjectAssert#content tests")
+  @DisplayName("AbstractJavaFileObjectAssert.content(...) tests")
   @Nested
   class ContentTest {
 
@@ -277,7 +277,7 @@ class AbstractJavaFileObjectAssertTest {
     }
   }
 
-  @DisplayName("AbstractJavaFileObjectAssert#lastModified tests")
+  @DisplayName("AbstractJavaFileObjectAssert.lastModified(...) tests")
   @Nested
   class LastModifiedTest {
 
@@ -310,7 +310,7 @@ class AbstractJavaFileObjectAssertTest {
     }
   }
 
-  @DisplayName("AbstractJavaFileObjectAssert#kind tests")
+  @DisplayName("AbstractJavaFileObjectAssert.kind(...) tests")
   @Nested
   class KindTest {
 

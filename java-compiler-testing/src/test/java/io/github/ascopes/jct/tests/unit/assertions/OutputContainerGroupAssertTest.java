@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("OutputContainerGroupAssert tests")
 class OutputContainerGroupAssertTest {
 
-  @DisplayName("OutputContainerGroupAssert#packages tests")
+  @DisplayName("OutputContainerGroupAssert.packages(...) tests")
   @Nested
   class PackagesTest {
 
@@ -61,7 +61,7 @@ class OutputContainerGroupAssertTest {
     }
   }
 
-  @DisplayName("OutputContainerGroupAssert#modules tests")
+  @DisplayName("OutputContainerGroupAssert.modules(...) tests")
   @Nested
   class ModulesTest {
 

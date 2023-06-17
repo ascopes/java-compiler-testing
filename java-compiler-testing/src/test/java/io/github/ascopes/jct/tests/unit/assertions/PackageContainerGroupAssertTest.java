@@ -210,7 +210,7 @@ class PackageContainerGroupAssertTest {
     }
   }
 
-  @DisplayName("PackageContainerGroupAssert#classLoader tests")
+  @DisplayName("PackageContainerGroupAssert.classLoader(...) tests")
   @Nested
   class ClassLoaderTest {
 
@@ -243,7 +243,7 @@ class PackageContainerGroupAssertTest {
     }
   }
 
-  @DisplayName("PackageContainerGroupAssert#fileDoesNotExist tests")
+  @DisplayName("PackageContainerGroupAssert.fileDoesNotExist(...) tests")
   @Nested
   class FileDoesNotExistTest {
 
@@ -345,7 +345,7 @@ class PackageContainerGroupAssertTest {
     }
   }
 
-  @DisplayName("PackageContainerGroupAssert#fileExists tests")
+  @DisplayName("PackageContainerGroupAssert.fileExists(...) tests")
   @Nested
   class FileExistsTest {
 

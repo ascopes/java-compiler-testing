@@ -53,7 +53,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 @DisplayName("TraceDiagnosticListAssert tests")
 class TraceDiagnosticListAssertTest {
 
-  @DisplayName("TraceDiagnosticListAssert#errors tests")
+  @DisplayName("TraceDiagnosticListAssert.errors(...) tests")
   @Nested
   class ErrorsTest {
 
@@ -96,7 +96,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#warnings tests")
+  @DisplayName("TraceDiagnosticListAssert.warnings(...) tests")
   @Nested
   class WarningsTest {
 
@@ -144,7 +144,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#customWarnings tests")
+  @DisplayName("TraceDiagnosticListAssert.customWarnings(...) tests")
   @Nested
   class CustomWarningsTest {
 
@@ -190,7 +190,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#mandatoryWarnings tests")
+  @DisplayName("TraceDiagnosticListAssert.mandatoryWarnings(...) tests")
   @Nested
   class MandatoryWarningsTest {
 
@@ -236,7 +236,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#notes tests")
+  @DisplayName("TraceDiagnosticListAssert.notes(...) tests")
   @Nested
   class NotesTest {
 
@@ -279,7 +279,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#others tests")
+  @DisplayName("TraceDiagnosticListAssert.others(...) tests")
   @Nested
   class OthersTest {
 
@@ -622,7 +622,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#hasNoErrors tests")
+  @DisplayName("TraceDiagnosticListAssert.hasNoErrors(...) tests")
   @Nested
   class HasNoErrorsTest {
 
@@ -675,7 +675,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#hasNoErrorsOrWarnings tests")
+  @DisplayName("TraceDiagnosticListAssert.hasNoErrorsOrWarnings(...) tests")
   @Nested
   class HasNoErrorsOrWarningsTest {
 
@@ -732,7 +732,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#hasNoWarnings tests")
+  @DisplayName("TraceDiagnosticListAssert.hasNoWarnings(...) tests")
   @Nested
   class HasNoWarningsTest {
 
@@ -784,7 +784,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#hasNoCustomWarnings tests")
+  @DisplayName("TraceDiagnosticListAssert.hasNoCustomWarnings(...) tests")
   @Nested
   class HasNoCustomWarningsTest {
 
@@ -841,7 +841,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#hasNoMandatoryWarnings tests")
+  @DisplayName("TraceDiagnosticListAssert.hasNoMandatoryWarnings(...) tests")
   @Nested
   class HasNoMandatoryWarningsTest {
 
@@ -899,7 +899,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#hasNoNotes tests")
+  @DisplayName("TraceDiagnosticListAssert.hasNoNotes(...) tests")
   @Nested
   class HasNoNotesTest {
 
@@ -952,7 +952,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#hasNoOtherDiagnostics tests")
+  @DisplayName("TraceDiagnosticListAssert.hasNoOtherDiagnostics(...) tests")
   @Nested
   class HasNoOthersTest {
 
@@ -1215,7 +1215,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#filteringBy tests")
+  @DisplayName("TraceDiagnosticListAssert.filteringBy(...) tests")
   @Nested
   class FilteringByTest {
 
@@ -1245,7 +1245,7 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#toAssert tests")
+  @DisplayName("TraceDiagnosticListAssert.toAssert(...) tests")
   @Nested
   class ToAssertTest {
 

@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("PathFileObjectAssert tests")
 class PathFileObjectAssertTest {
 
-  @DisplayName("PathFileObjectAssert#relativePath tests")
+  @DisplayName("PathFileObjectAssert.relativePath(...) tests")
   @Nested
   class RelativePathTest {
 
@@ -66,7 +66,7 @@ class PathFileObjectAssertTest {
     }
   }
 
-  @DisplayName("PathFileObjectAssert#absolutePath tests")
+  @DisplayName("PathFileObjectAssert.absolutePath(...) tests")
   @Nested
   class AbsolutePathTest {
 

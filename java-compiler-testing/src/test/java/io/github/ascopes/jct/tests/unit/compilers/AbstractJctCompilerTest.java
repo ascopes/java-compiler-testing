@@ -466,7 +466,7 @@ class AbstractJctCompilerTest {
     }
   }
 
-  @DisplayName("AbstractJctCompiler#configure tests")
+  @DisplayName("AbstractJctCompiler.configure(...) tests")
   @Nested
   class ConfigureTest {
 
@@ -545,7 +545,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.getName()).isEqualTo(name);
   }
 
-  @DisplayName("AbstractJctCompiler#name tests")
+  @DisplayName("AbstractJctCompiler.name(...) tests")
   @Nested
   class NameTest {
 
@@ -591,7 +591,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.isVerbose()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#verbose tests")
+  @DisplayName("AbstractJctCompiler.verbose(...) tests")
   @Nested
   class VerboseTests {
 
@@ -628,7 +628,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.isPreviewFeatures()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#previewFeatures tests")
+  @DisplayName("AbstractJctCompiler.previewFeatures(...) tests")
   @Nested
   class PreviewFeaturesTests {
 
@@ -665,7 +665,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.isShowWarnings()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#showWarnings tests")
+  @DisplayName("AbstractJctCompiler.showWarnings(...) tests")
   @Nested
   class ShowWarningsTests {
 
@@ -702,7 +702,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.isShowDeprecationWarnings()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#showDeprecationWarnings tests")
+  @DisplayName("AbstractJctCompiler.showDeprecationWarnings(...) tests")
   @Nested
   class ShowDeprecationWarningsTests {
 
@@ -739,7 +739,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.isFailOnWarnings()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#failOnWarnings tests")
+  @DisplayName("AbstractJctCompiler.failOnWarnings(...) tests")
   @Nested
   class FailOnWarningsTests {
 
@@ -776,7 +776,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.getCompilationMode()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#compilationMode tests")
+  @DisplayName("AbstractJctCompiler.compilationMode(...) tests")
   @Nested
   class CompilationModeTests {
 
@@ -820,7 +820,7 @@ class AbstractJctCompilerTest {
         .isNotSameAs(fieldValue);
   }
 
-  @DisplayName("AbstractJctCompiler#addAnnotationProcessorOptions tests")
+  @DisplayName("AbstractJctCompiler.addAnnotationProcessorOptions(...) tests")
   @Nested
   class AddAnnotationProcessorOptionsTest {
 
@@ -879,7 +879,7 @@ class AbstractJctCompilerTest {
         .isNotSameAs(fieldValue);
   }
 
-  @DisplayName("AbstractJctCompiler#addAnnotationProcessors tests")
+  @DisplayName("AbstractJctCompiler.addAnnotationProcessors(...) tests")
   @Nested
   class AddAnnotationProcessorsTest {
 
@@ -934,7 +934,7 @@ class AbstractJctCompilerTest {
         .isNotSameAs(fieldValue);
   }
 
-  @DisplayName("AbstractJctCompiler#addCompilerOptions tests")
+  @DisplayName("AbstractJctCompiler.addCompilerOptions(...) tests")
   @Nested
   class AddCompilerOptionsTest {
 
@@ -1005,7 +1005,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.getRelease()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#release tests")
+  @DisplayName("AbstractJctCompiler.release(...) tests")
   @Nested
   class ReleaseTests {
 
@@ -1074,7 +1074,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.getSource()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#source tests")
+  @DisplayName("AbstractJctCompiler.source(...) tests")
   @Nested
   class SourceTests {
 
@@ -1128,7 +1128,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.getTarget()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#target tests")
+  @DisplayName("AbstractJctCompiler.target(...) tests")
   @Nested
   class TargetTests {
 
@@ -1181,7 +1181,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.isFixJvmModulePathMismatch()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#fixJvmModulePathMismatch tests")
+  @DisplayName("AbstractJctCompiler.fixJvmModulePathMismatch(...) tests")
   @Nested
   class FixJvmModulePathMismatchTests {
 
@@ -1218,7 +1218,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.isInheritClassPath()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#inheritClassPath tests")
+  @DisplayName("AbstractJctCompiler.inheritClassPath(...) tests")
   @Nested
   class InheritClassPathTests {
 
@@ -1255,7 +1255,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.isInheritModulePath()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#inheritModulePath tests")
+  @DisplayName("AbstractJctCompiler.inheritModulePath(...) tests")
   @Nested
   class InheritModulePathTests {
 
@@ -1292,7 +1292,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.isInheritSystemModulePath()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#inheritSystemModulePath tests")
+  @DisplayName("AbstractJctCompiler.inheritSystemModulePath(...) tests")
   @Nested
   class InheritSystemModulePathTests {
 
@@ -1329,7 +1329,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.getLocale()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#locale tests")
+  @DisplayName("AbstractJctCompiler.locale(...) tests")
   @Nested
   class LocaleTests {
 
@@ -1375,7 +1375,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.getLogCharset()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#logCharset tests")
+  @DisplayName("AbstractJctCompiler.logCharset(...) tests")
   @Nested
   class LogCharsetTests {
 
@@ -1421,7 +1421,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.getFileManagerLoggingMode()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#fileManagerLoggingMode tests")
+  @DisplayName("AbstractJctCompiler.fileManagerLoggingMode(...) tests")
   @Nested
   class FileManagerLoggingModeTests {
 
@@ -1468,7 +1468,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.getDiagnosticLoggingMode()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#diagnosticLoggingMode tests")
+  @DisplayName("AbstractJctCompiler.diagnosticLoggingMode(...) tests")
   @Nested
   class DiagnosticLoggingModeTests {
 
@@ -1515,7 +1515,7 @@ class AbstractJctCompilerTest {
     assertThat(compiler.getAnnotationProcessorDiscovery()).isEqualTo(expected);
   }
 
-  @DisplayName("AbstractJctCompiler#annotationProcessorDiscovery tests")
+  @DisplayName("AbstractJctCompiler.annotationProcessorDiscovery(...) tests")
   @Nested
   class AnnotationProcessorDiscoveryTests {
 

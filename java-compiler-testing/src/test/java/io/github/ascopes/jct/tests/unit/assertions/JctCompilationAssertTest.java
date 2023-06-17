@@ -54,7 +54,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 @DisplayName("JctCompilationAssert tests")
 class JctCompilationAssertTest {
 
-  @DisplayName("JctCompilationAssert#arguments tests")
+  @DisplayName("JctCompilationAssert.arguments(...) tests")
   @Nested
   class ArgumentsTest {
 
@@ -90,7 +90,7 @@ class JctCompilationAssertTest {
     }
   }
 
-  @DisplayName("JctCompilationAssert#isSuccessful tests")
+  @DisplayName("JctCompilationAssert.isSuccessful(...) tests")
   @Nested
   class IsSuccessfulTest {
 
@@ -229,7 +229,7 @@ class JctCompilationAssertTest {
     }
   }
 
-  @DisplayName("JctCompilationAssert#isSuccessfulWithoutWarnings tests")
+  @DisplayName("JctCompilationAssert.isSuccessfulWithoutWarnings(...) tests")
   @Nested
   class IsSuccessfulWithoutWarningsTest {
 
@@ -338,7 +338,7 @@ class JctCompilationAssertTest {
     }
   }
 
-  @DisplayName("JctCompilationAssert#isFailure tests")
+  @DisplayName("JctCompilationAssert.isFailure(...) tests")
   @Nested
   class IsFailureTest {
 
@@ -422,7 +422,7 @@ class JctCompilationAssertTest {
     }
   }
 
-  @DisplayName("JctCompilationAssert#diagnostics tests")
+  @DisplayName("JctCompilationAssert.diagnostics(...) tests")
   @Nested
   class DiagnosticsTest {
     @DisplayName(".diagnostics() fails if the compilation is null")
@@ -458,7 +458,7 @@ class JctCompilationAssertTest {
     }
   }
 
-  @DisplayName("JctCompilationAssert#packageGroup tests")
+  @DisplayName("JctCompilationAssert.packageGroup(...) tests")
   @Nested
   class PackageGroupTest {
     @DisplayName(".packageGroup(...) fails if the compilation is null")
@@ -567,7 +567,7 @@ class JctCompilationAssertTest {
     }
   }
 
-  @DisplayName("JctCompilationAssert#moduleGroup tests")
+  @DisplayName("JctCompilationAssert.moduleGroup(...) tests")
   @Nested
   class ModuleGroupTest {
     @DisplayName(".moduleGroup(...) fails if the compilation is null")
@@ -676,7 +676,7 @@ class JctCompilationAssertTest {
     }
   }
 
-  @DisplayName("JctCompilationAssert#outputGroup tests")
+  @DisplayName("JctCompilationAssert.outputGroup(...) tests")
   @Nested
   class OutputGroupTest {
     @DisplayName(".outputGroup(...) fails if the compilation is null")

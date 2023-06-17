@@ -25,7 +25,7 @@ import javax.tools.StandardLocation
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
 import static org.assertj.core.api.SoftAssertions.assertSoftly
 
-@DisplayName("MapStruct integration tests")
+
 @SuppressWarnings('GrUnresolvedAccess')
 class MapStructIntegrationTest {
 

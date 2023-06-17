@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("TraceDiagnosticAssert tests")
 class TraceDiagnosticAssertTest {
 
-  @DisplayName("TraceDiagnosticAssert#kind tests")
+  @DisplayName("TraceDiagnosticAssert.kind(...) tests")
   @Nested
   class KindTest {
 
@@ -76,7 +76,7 @@ class TraceDiagnosticAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticAssert#source tests")
+  @DisplayName("TraceDiagnosticAssert.source(...) tests")
   @Nested
   class SourceTest {
 
@@ -107,7 +107,7 @@ class TraceDiagnosticAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticAssert#position tests")
+  @DisplayName("TraceDiagnosticAssert.position(...) tests")
   @Nested
   class PositionTest {
 
@@ -140,7 +140,7 @@ class TraceDiagnosticAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticAssert#startPosition tests")
+  @DisplayName("TraceDiagnosticAssert.startPosition(...) tests")
   @Nested
   class StartPositionTest {
 
@@ -173,7 +173,7 @@ class TraceDiagnosticAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticAssert#endPosition tests")
+  @DisplayName("TraceDiagnosticAssert.endPosition(...) tests")
   @Nested
   class EndPositionTest {
 
@@ -206,7 +206,7 @@ class TraceDiagnosticAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticAssert#lineNumber tests")
+  @DisplayName("TraceDiagnosticAssert.lineNumber(...) tests")
   @Nested
   class LineNumberTest {
 
@@ -239,7 +239,7 @@ class TraceDiagnosticAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticAssert#columnNumber tests")
+  @DisplayName("TraceDiagnosticAssert.columnNumber(...) tests")
   @Nested
   class ColumnNumberTest {
 
@@ -272,7 +272,7 @@ class TraceDiagnosticAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticAssert#code tests")
+  @DisplayName("TraceDiagnosticAssert.code(...) tests")
   @Nested
   class CodeTest {
 
@@ -371,7 +371,7 @@ class TraceDiagnosticAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticAssert#timestamp tests")
+  @DisplayName("TraceDiagnosticAssert.timestamp(...) tests")
   @Nested
   class TimestampTest {
 
@@ -403,7 +403,7 @@ class TraceDiagnosticAssertTest {
   }
 
 
-  @DisplayName("TraceDiagnosticAssert#threadId tests")
+  @DisplayName("TraceDiagnosticAssert.threadId(...) tests")
   @Nested
   class ThreadIdTest {
 
@@ -433,7 +433,7 @@ class TraceDiagnosticAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticAssert#threadName tests")
+  @DisplayName("TraceDiagnosticAssert.threadName(...) tests")
   @Nested
   class ThreadNameTest {
 
@@ -463,7 +463,7 @@ class TraceDiagnosticAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticAssert#stackTrace tests")
+  @DisplayName("TraceDiagnosticAssert.stackTrace(...) tests")
   @Nested
   class StackTraceTest {
 

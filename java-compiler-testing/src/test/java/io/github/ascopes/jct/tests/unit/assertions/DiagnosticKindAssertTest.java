@@ -36,7 +36,7 @@ import org.junit.jupiter.params.provider.NullSource;
 @DisplayName("DiagnosticKindAssert tests")
 class DiagnosticKindAssertTest {
 
-  @DisplayName("DiagnosticKindAssert#isError tests")
+  @DisplayName("DiagnosticKindAssert.isError(...) tests")
   @Nested
   class IsErrorTest {
 
@@ -65,7 +65,7 @@ class DiagnosticKindAssertTest {
     }
   }
 
-  @DisplayName("DiagnosticKindAssert#isWarningOrError tests")
+  @DisplayName("DiagnosticKindAssert.isWarningOrError(...) tests")
   @Nested
   class IsWarningOrErrorTest {
 
@@ -107,7 +107,7 @@ class DiagnosticKindAssertTest {
     }
   }
 
-  @DisplayName("DiagnosticKindAssert#isWarning tests")
+  @DisplayName("DiagnosticKindAssert.isWarning(...) tests")
   @Nested
   class IsWarningTest {
 
@@ -137,7 +137,7 @@ class DiagnosticKindAssertTest {
     }
   }
 
-  @DisplayName("DiagnosticKindAssert#isCustomWarning tests")
+  @DisplayName("DiagnosticKindAssert.isCustomWarning(...) tests")
   @Nested
   class IsCustomWarningTest {
 
@@ -166,7 +166,7 @@ class DiagnosticKindAssertTest {
     }
   }
 
-  @DisplayName("DiagnosticKindAssert#isMandatoryWarning tests")
+  @DisplayName("DiagnosticKindAssert.isMandatoryWarning(...) tests")
   @Nested
   class IsMandatoryWarningTest {
 
@@ -195,7 +195,7 @@ class DiagnosticKindAssertTest {
     }
   }
 
-  @DisplayName("DiagnosticKindAssert#isNote tests")
+  @DisplayName("DiagnosticKindAssert.isNote(...) tests")
   @Nested
   class IsNoteTest {
 
@@ -224,7 +224,7 @@ class DiagnosticKindAssertTest {
     }
   }
 
-  @DisplayName("DiagnosticKindAssert#isOther tests")
+  @DisplayName("DiagnosticKindAssert.isOther(...) tests")
   @Nested
   class IsOtherTest {
 

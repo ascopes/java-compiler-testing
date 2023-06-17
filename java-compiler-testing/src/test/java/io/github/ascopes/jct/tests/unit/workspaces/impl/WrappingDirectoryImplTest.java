@@ -142,7 +142,7 @@ class WrappingDirectoryImplTest {
     }
   }
 
-  @DisplayName("WrappingDirectoryImpl#equals tests")
+  @DisplayName("WrappingDirectoryImpl.equals(...) tests")
   @Nested
   class EqualsTest {
 

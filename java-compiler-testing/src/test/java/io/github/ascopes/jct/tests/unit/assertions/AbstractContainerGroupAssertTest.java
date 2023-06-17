@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("AbstractContainerGroupAssert tests")
 class AbstractContainerGroupAssertTest {
 
-  @DisplayName("AbstractContainerGroupAssert#location tests")
+  @DisplayName("AbstractContainerGroupAssert.location(...) tests")
   @Nested
   class LocationTest {
 
@@ -82,7 +82,7 @@ class AbstractContainerGroupAssertTest {
     }
   }
 
-  @DisplayName("AbstractContainerGroupAssert#services tests")
+  @DisplayName("AbstractContainerGroupAssert.services(...) tests")
   @Nested
   class ServicesTest {
 
