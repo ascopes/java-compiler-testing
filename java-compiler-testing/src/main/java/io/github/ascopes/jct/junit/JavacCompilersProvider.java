@@ -44,7 +44,7 @@ public final class JavacCompilersProvider extends AbstractCompilersProvider
   }
 
   @Override
-  protected JctCompiler<?, ?> initializeNewCompiler() {
+  protected JctCompiler initializeNewCompiler() {
     return new JavacJctCompilerImpl();
   }
 

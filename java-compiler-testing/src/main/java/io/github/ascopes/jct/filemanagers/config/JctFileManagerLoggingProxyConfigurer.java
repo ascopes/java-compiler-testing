@@ -37,14 +37,14 @@ public final class JctFileManagerLoggingProxyConfigurer implements JctFileManage
   private static final Logger LOGGER = LoggerFactory
       .getLogger(JctFileManagerLoggingProxyConfigurer.class);
 
-  private final JctCompiler<?, ?> compiler;
+  private final JctCompiler compiler;
 
   /**
    * Initialise this configurer.
    *
    * @param compiler the compiler to apply to the file manager.
    */
-  public JctFileManagerLoggingProxyConfigurer(JctCompiler<?, ?> compiler) {
+  public JctFileManagerLoggingProxyConfigurer(JctCompiler compiler) {
     this.compiler = compiler;
   }
 

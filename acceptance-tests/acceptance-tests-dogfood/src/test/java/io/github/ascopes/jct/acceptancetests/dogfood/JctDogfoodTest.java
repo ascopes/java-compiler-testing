@@ -65,7 +65,7 @@ class JctDogfoodTest {
 
   @DisplayName("JCT can compile itself as a legacy module source")
   @JavacCompilerTest(minVersion = 11, configurers = JctCompilationConfigurer.class)
-  void jctCanCompileItselfAsLegacyModule(JctCompiler<?, ?> compiler) throws IOException {
+  void jctCanCompileItselfAsLegacyModule(JctCompiler compiler) throws IOException {
     // Given
     try (var workspace = Workspaces.newWorkspace()) {
       workspace
@@ -87,7 +87,7 @@ class JctDogfoodTest {
 
   @DisplayName("JCT can compile its unit tests as a legacy module source")
   @JavacCompilerTest(minVersion = 11, configurers = JctCompilationConfigurer.class)
-  void jctCanCompileUnitTestsAsLegacyModule(JctCompiler<?, ?> compiler) throws IOException {
+  void jctCanCompileUnitTestsAsLegacyModule(JctCompiler compiler) throws IOException {
     // Given
     try (var workspace = Workspaces.newWorkspace()) {
       workspace
@@ -109,7 +109,7 @@ class JctDogfoodTest {
 
   @DisplayName("JCT can compile itself and its unit tests as a multiple-module source")
   @JavacCompilerTest(minVersion = 11, configurers = JctCompilationConfigurer.class)
-  void jctCanCompileItselfAndUnitTestsAsMultiModule(JctCompiler<?, ?> compiler) throws IOException {
+  void jctCanCompileItselfAndUnitTestsAsMultiModule(JctCompiler compiler) throws IOException {
     // Given
     try (var workspace = Workspaces.newWorkspace()) {
       workspace

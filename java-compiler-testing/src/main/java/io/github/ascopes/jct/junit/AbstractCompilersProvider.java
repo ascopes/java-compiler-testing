@@ -64,7 +64,7 @@ import org.opentest4j.TestAbortedException;
  *     implements AnnotationConsumer&lt;MyCompilerTest&gt; {
  *
  *   {@literal @Override}
- *   protected JctCompiler&lt;?, ?&gt; initializeNewCompiler() {
+ *   protected JctCompiler initializeNewCompiler() {
  *     return new MyCompilerImpl();
  *   }
  *
@@ -95,18 +95,18 @@ import org.opentest4j.TestAbortedException;
  *
  * <pre><code>
  * {@literal @MyCompilerTest(minVersion=13, maxVersion=17)}
- * void testSomething(JctCompiler&lt;?, ?&gt; compiler) {
+ * void testSomething(JctCompiler compiler) {
  *   ...
  * }
  *
  * {@literal @MyCompilerTest(configurers=WerrorConfigurer.class)}
- * void testSomethingElse(JctCompiler&lt;?, ?&gt; compiler) {
+ * void testSomethingElse(JctCompiler compiler) {
  *   ...
  * }
  *
  * static class WerrorConfigurer implements JctCompilerConfigurer {
  *   {@literal @Override}
- *   public void configure(JctCompiler&lt;?, ?&gt; compiler) {
+ *   public void configure(JctCompiler compiler) {
  *     compiler.failOnErrors(true);
  *   }
  * }
@@ -188,7 +188,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
    *
    * @return the compiler object.
    */
-  protected abstract JctCompiler<?, ?> initializeNewCompiler();
+  protected abstract JctCompiler initializeNewCompiler();
 
   /**
    * Get the minimum supported compiler version.
@@ -208,13 +208,13 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   @API(since = "1.0.0", status = Status.STABLE)
   protected abstract int maxSupportedVersion();
 
-  private JctCompiler<?, ?> createCompilerForVersion(int version) {
+  private JctCompiler createCompilerForVersion(int version) {
     var compiler = initializeNewCompiler();
     versionStrategy.configureCompiler(compiler, version);
     return compiler;
   }
 
-  private void applyConfigurers(JctCompiler<?, ?> compiler) {
+  private void applyConfigurers(JctCompiler compiler) {
     var classes = requireNonNull(configurerClasses);
 
     for (var configurerClass : classes) {

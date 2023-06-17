@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  *   Workspace workspace;
  *
  *   {@literal @JavacCompilerTest}
- *   void myTest(JctCompiler&lt;?, ?&gt; compiler) {
+ *   void myTest(JctCompiler compiler) {
  *     // Given
  *     workspace
  *        .createSourcePathPackage()

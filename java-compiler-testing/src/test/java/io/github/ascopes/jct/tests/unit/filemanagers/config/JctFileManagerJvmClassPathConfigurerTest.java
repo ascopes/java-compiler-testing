@@ -50,7 +50,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class JctFileManagerJvmClassPathConfigurerTest {
 
   @Mock
-  JctCompiler<?, ?> compiler;
+  JctCompiler compiler;
 
   @Mock
   JctFileManagerImpl fileManager;

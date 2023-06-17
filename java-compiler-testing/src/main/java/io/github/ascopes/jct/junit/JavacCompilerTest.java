@@ -48,7 +48,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
  * <pre><code>
  *   class SomeTest {
  *     {@literal @JavacCompilerTest(minVersion = 11, maxVersion = 17)}
- *     void canCompileHelloWorld(JctCompiler&lt;?, ?&gt;> compiler) {
+ *     void canCompileHelloWorld(JctCompiler> compiler) {
  *       // Given
  *       try (var workspace = Workspaces.newWorkspace()) {
  *         workspace
@@ -140,7 +140,7 @@ public @interface JavacCompilerTest {
    * <pre><code>
    *   public class WerrorConfigurer implements JctCompilerConfigurer&lt;RuntimeException&gt; {
    *     {@literal @Override}
-   *     public void configure(JctCompiler&lt;?, ?&gt; compiler) {
+   *     public void configure(JctCompiler compiler) {
    *       compiler.failOnWarnings(true);
    *     }
    *   }
@@ -149,7 +149,7 @@ public @interface JavacCompilerTest {
    *
    *   class SomeTest {
    *     {@literal @JavacCompilerTest(configurers = WerrorConfigurer.class)}
-   *     void someTest(JctCompiler&lt;?, ?&gt; compiler) {
+   *     void someTest(JctCompiler compiler) {
    *       // ...
    *     }
    *   }

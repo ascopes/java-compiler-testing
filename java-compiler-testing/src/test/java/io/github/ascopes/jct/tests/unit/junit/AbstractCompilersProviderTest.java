@@ -113,7 +113,7 @@ class AbstractCompilersProviderTest {
     // When
     provider.configureInternals(10, 15, versionStrategy);
     var compilers = provider.provideArguments(mock(ExtensionContext.class))
-        .map(args -> (JctCompiler<?, ?>) args.get()[0])
+        .map(args -> (JctCompiler) args.get()[0])
         .collect(Collectors.toList());
 
     // Then
@@ -136,7 +136,7 @@ class AbstractCompilersProviderTest {
     // When
     provider.configureInternals(10, 17, versionStrategy);
     var compilers = provider.provideArguments(mock(ExtensionContext.class))
-        .map(args -> (JctCompiler<?, ?>) args.get()[0])
+        .map(args -> (JctCompiler) args.get()[0])
         .collect(Collectors.toList());
 
     // Then
@@ -159,7 +159,7 @@ class AbstractCompilersProviderTest {
     // When
     provider.configureInternals(15, 20, versionStrategy);
     var compilers = provider.provideArguments(mock(ExtensionContext.class))
-        .map(args -> (JctCompiler<?, ?>) args.get()[0])
+        .map(args -> (JctCompiler) args.get()[0])
         .collect(Collectors.toList());
 
     // Then
@@ -189,7 +189,7 @@ class AbstractCompilersProviderTest {
           FooConfigurer.class, BarConfigurer.class, BazConfigurer.class
       );
       var compilers = provider.provideArguments(mock(ExtensionContext.class))
-          .map(args -> (JctCompiler<?, ?>) args.get()[0])
+          .map(args -> (JctCompiler) args.get()[0])
           .collect(Collectors.toList());
 
       // Then
@@ -392,7 +392,7 @@ class AbstractCompilersProviderTest {
               "public class SomeConfigurer implements " + JctCompilerConfigurer.class.getName()
                   + "<" + RuntimeException.class.getName() + "> {",
               "  @Override",
-              "  public void configure(" + JctCompiler.class.getName() + "<?, ?> compiler) {",
+              "  public void configure(" + JctCompiler.class.getName() + " compiler) {",
               "    return;",
               "  }",
               "}"
@@ -489,7 +489,7 @@ class AbstractCompilersProviderTest {
     }
 
     @Override
-    protected JctCompiler<?, ?> initializeNewCompiler() {
+    protected JctCompiler initializeNewCompiler() {
       return mock(withSettings()
               .name("mock compiler")
               .defaultAnswer(Answers.RETURNS_SELF));
@@ -519,7 +519,7 @@ class AbstractCompilersProviderTest {
     }
 
     @Override
-    public void configure(JctCompiler<?, ?> compiler) {
+    public void configure(JctCompiler compiler) {
       // Do nothing.
     }
   }
@@ -537,7 +537,7 @@ class AbstractCompilersProviderTest {
     }
 
     @Override
-    public void configure(JctCompiler<?, ?> compiler) {
+    public void configure(JctCompiler compiler) {
       // Do nothing.
     }
   }
@@ -555,7 +555,7 @@ class AbstractCompilersProviderTest {
     }
 
     @Override
-    public void configure(JctCompiler<?, ?> compiler) {
+    public void configure(JctCompiler compiler) {
       // Do nothing.
     }
   }
@@ -573,7 +573,7 @@ class AbstractCompilersProviderTest {
     }
 
     @Override
-    public void configure(JctCompiler<?, ?> compiler) {
+    public void configure(JctCompiler compiler) {
       // Do nothing; unreachable.
     }
   }
@@ -591,7 +591,7 @@ class AbstractCompilersProviderTest {
     }
 
     @Override
-    public void configure(JctCompiler<?, ?> compiler) {
+    public void configure(JctCompiler compiler) {
       throw new TestAbortedException("aborted!");
     }
   }
@@ -609,7 +609,7 @@ class AbstractCompilersProviderTest {
     }
 
     @Override
-    public void configure(JctCompiler<?, ?> compiler) {
+    public void configure(JctCompiler compiler) {
       // Do nothing; unreachable.
     }
   }
@@ -627,7 +627,7 @@ class AbstractCompilersProviderTest {
     }
 
     @Override
-    public void configure(JctCompiler<?, ?> compiler) {
+    public void configure(JctCompiler compiler) {
       // Do nothing.
     }
   }
@@ -645,7 +645,7 @@ class AbstractCompilersProviderTest {
     }
 
     @Override
-    public void configure(JctCompiler<?, ?> compiler) {
+    public void configure(JctCompiler compiler) {
       throw new RuntimeException("Some error here");
     }
   }
@@ -663,7 +663,7 @@ class AbstractCompilersProviderTest {
     }
 
     @Override
-    public void configure(JctCompiler<?, ?> compiler) {
+    public void configure(JctCompiler compiler) {
       // Do nothing.
     }
   }

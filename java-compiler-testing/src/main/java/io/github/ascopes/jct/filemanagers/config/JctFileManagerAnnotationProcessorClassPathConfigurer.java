@@ -51,14 +51,14 @@ public final class JctFileManagerAnnotationProcessorClassPathConfigurer implemen
       StandardLocation.CLASS_PATH, StandardLocation.ANNOTATION_PROCESSOR_PATH
   );
 
-  private final JctCompiler<?, ?> compiler;
+  private final JctCompiler compiler;
 
   /**
    * Initialise the configurer with the desired compiler.
    *
    * @param compiler the compiler to wrap.
    */
-  public JctFileManagerAnnotationProcessorClassPathConfigurer(JctCompiler<?, ?> compiler) {
+  public JctFileManagerAnnotationProcessorClassPathConfigurer(JctCompiler compiler) {
     this.compiler = compiler;
   }
 

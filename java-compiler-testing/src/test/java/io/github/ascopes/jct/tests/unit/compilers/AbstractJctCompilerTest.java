@@ -1641,7 +1641,7 @@ class AbstractJctCompilerTest {
   /// Helper methods and types ///
   ////////////////////////////////
 
-  class CompilerImpl extends AbstractJctCompiler<CompilerImpl> {
+  class CompilerImpl extends AbstractJctCompiler {
 
     private final String defaultRelease;
 

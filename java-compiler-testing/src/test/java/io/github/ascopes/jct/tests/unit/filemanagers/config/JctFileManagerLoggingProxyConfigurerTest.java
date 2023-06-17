@@ -54,7 +54,7 @@ class JctFileManagerLoggingProxyConfigurerTest {
   MockedStatic<LoggingFileManagerProxy> loggingFileManagerProxyStatic;
 
   @Mock
-  JctCompiler<?, ?> compiler;
+  JctCompiler compiler;
 
   @Mock
   JctFileManager proxiedFileManager;

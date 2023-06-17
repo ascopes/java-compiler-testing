@@ -156,7 +156,7 @@ class ExampleTest {
 
   @DisplayName("I can compile a Hello World application")
   @JavacCompilerTest
-  void canCompileHelloWorld(JctCompiler<?, ?> compiler) {
+  void canCompileHelloWorld(JctCompiler compiler) {
     // Given
     workspace
         .createSourcePathPackage()
@@ -213,7 +213,7 @@ class JsonSchemaAnnotationProcessorTest {
   Workspace workspace;
 
   @JavacCompilerTest(minVersion = 11, maxVersion = 21)
-  void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler<?, ?> compiler) {
+  void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler compiler) {
     // Given
     workspace
         .createSourcePathPackage()
@@ -262,7 +262,7 @@ class ExampleTest {
 
   @DisplayName("I can compile a module that is using Lombok")
   @JavacCompilerTest(modules = true)
-  void canCompileModuleUsingLombok(JctCompiler<?, ?> compiler) {
+  void canCompileModuleUsingLombok(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace()) {
       // Given
       workspace

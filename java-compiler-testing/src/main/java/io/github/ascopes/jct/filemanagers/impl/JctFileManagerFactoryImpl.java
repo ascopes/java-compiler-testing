@@ -45,14 +45,14 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
 
-  private final JctCompiler<?, ?> compiler;
+  private final JctCompiler compiler;
 
   /**
    * Initialise this factory.
    *
    * @param compiler the compiler to pull configuration details from.
    */
-  public JctFileManagerFactoryImpl(JctCompiler<?, ?> compiler) {
+  public JctFileManagerFactoryImpl(JctCompiler compiler) {
     this.compiler = compiler;
   }
 

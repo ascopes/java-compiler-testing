@@ -33,7 +33,7 @@ import org.apiguardian.api.API.Status;
  * <pre><code>
  * class MyAnnotationProcessorConfigurer implements JctCompilerConfigurer&lt;RuntimeException&gt; {
  *    {@literal @Override}
- *    public void configure(JctCompiler&lt;?, ?&gt; compiler) {
+ *    public void configure(JctCompiler compiler) {
  *      compiler
  *          .addAnnotationProcessors(new MyAnnotationProcessor())
  *          .addAnnotationProcessorOptions("MyAnnotationProcessor.debug=true");
@@ -78,7 +78,7 @@ import org.apiguardian.api.API.Status;
  *
  * <pre><code>
  *   {@literal @JavacCompilersTest(configurers = {MyAnnotationProcessorConfigurer.class})}
- *   void theCompilationSucceedsAsExpected(JctCompiler&lt;?, ?&gt; compiler) {
+ *   void theCompilationSucceedsAsExpected(JctCompiler compiler) {
  *     // ...
  *   }
  * </code></pre>
@@ -101,5 +101,5 @@ public interface JctCompilerConfigurer<E extends Exception> {
    * @param compiler the compiler.
    * @throws E any exception that may be thrown by the configurer.
    */
-  void configure(JctCompiler<?, ?> compiler) throws E;
+  void configure(JctCompiler compiler) throws E;
 }

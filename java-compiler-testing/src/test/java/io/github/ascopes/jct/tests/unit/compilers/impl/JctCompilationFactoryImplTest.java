@@ -97,7 +97,7 @@ class JctCompilationFactoryImplTest {
   List<String> flags;
 
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-  JctCompiler<?, ?> jctCompiler;
+  JctCompiler jctCompiler;
 
   @InjectMocks
   JctCompilationFactoryImpl factory;

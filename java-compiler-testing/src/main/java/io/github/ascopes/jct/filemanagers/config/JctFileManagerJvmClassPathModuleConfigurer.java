@@ -44,14 +44,14 @@ public final class JctFileManagerJvmClassPathModuleConfigurer implements JctFile
   private static final Logger LOGGER = LoggerFactory
       .getLogger(JctFileManagerJvmClassPathModuleConfigurer.class);
 
-  private final JctCompiler<?, ?> compiler;
+  private final JctCompiler compiler;
 
   /**
    * Initialise the configurer with the desired compiler.
    *
    * @param compiler the compiler to wrap.
    */
-  public JctFileManagerJvmClassPathModuleConfigurer(JctCompiler<?, ?> compiler) {
+  public JctFileManagerJvmClassPathModuleConfigurer(JctCompiler compiler) {
     this.compiler = compiler;
   }
 
