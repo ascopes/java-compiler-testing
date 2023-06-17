@@ -146,13 +146,9 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
     
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: ncipollo/release-action@v1.12.0
         with:
-          tag_name: ${{ env.release_name }}
-          release_name: ${{ env.release_name }}
-          body: Automated release via GitHub actions.
-          draft: false
-          prerelease: false
+          tag: v${{ env.release_name }}
+          name: v${{ env.release_name }}
+          generateReleaseNotes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
