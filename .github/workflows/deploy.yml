@@ -148,7 +148,7 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1.12.0
         with:
-          tag: v${{ env.release_name }}
-          name: v${{ env.release_name }}
+          tag: v${{ env.release_version }}
+          name: v${{ env.release_version }}
           generateReleaseNotes: true
           token: ${{ secrets.GITHUB_TOKEN }}
