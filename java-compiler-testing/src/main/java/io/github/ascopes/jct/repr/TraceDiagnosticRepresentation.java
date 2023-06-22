@@ -208,6 +208,12 @@ public final class TraceDiagnosticRepresentation implements Representation {
       this.endOffset = endOffset;
 
       // Width of the line number part of the output.
+      // Use log10 to determine the number of decimal digits
+      // to use. This allows us to produce a consistent width
+      // margin that will fit every line number. We only show a
+      // few lines in the snippet usually, so adding 1 more
+      // digit to this provides us safety if the snippet were
+      // to start on line 99 and move into line 100.
       lineNumberWidth = (int) Math.ceil(Math.log10(startLine)) + 1;
     }
 
