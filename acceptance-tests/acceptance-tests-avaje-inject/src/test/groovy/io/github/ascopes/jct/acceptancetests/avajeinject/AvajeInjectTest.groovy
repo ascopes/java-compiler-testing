@@ -15,42 +15,62 @@
  */
 package io.github.ascopes.jct.acceptancetests.avajeinject
 
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
+
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.filemanagers.LoggingMode
+import io.github.ascopes.jct.junit.EcjCompilerTest
 import io.github.ascopes.jct.junit.JavacCompilerTest
+import io.github.ascopes.jct.workspaces.PathStrategy
+import io.github.ascopes.jct.workspaces.Workspace
 import io.github.ascopes.jct.workspaces.Workspaces
 import org.junit.jupiter.api.DisplayName
 
-import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
-
 @DisplayName("Avaje Inject acceptance tests")
 class AvajeInjectTest {
-  @DisplayName("Dependency injection code gets generated as expected")
+  @DisplayName("Dependency injection code gets generated as expected for Javac")
   @JavacCompilerTest(minVersion = 11)
-  void dependencyInjectionCodeGetsGeneratedAsExpected(JctCompiler compiler) {
+  void dependencyInjectionCodeGetsGeneratedAsExpectedForJavac(JctCompiler compiler) {
     // Given
     try (def workspace = Workspaces.newWorkspace()) {
-      workspace
-          .createSourcePathPackage()
-          .copyContentsFrom("src", "test", "resources", "code")
-
-      // When
-      def compilation = compiler
-          .diagnosticLoggingMode(LoggingMode.STACKTRACES)
-          .compile(workspace)
-
-      // Then
-      assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings()
-          .classOutputPackages()
-          .allFilesExist(
-              'org/example/CoffeeMaker.class',
-              'org/example/Grinder.class',
-              'org/example/Pump.class',
-              'org/example/CoffeeMaker$DI.class',
-              'org/example/Grinder$DI.class',
-              'org/example/Pump$DI.class',
-          )
+      runTest(compiler, workspace)
     }
+  }
+
+  @DisplayName("Dependency injection code gets generated as expected for ECJ")
+  @EcjCompilerTest(minVersion = 11)
+  void dependencyInjectionCodeGetsGeneratedAsExpectedForEcj(JctCompiler compiler) {
+    // Given
+    try (def workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+      runTest(compiler, workspace)
+    }
+  }
+
+  private static void runTest(JctCompiler compiler, Workspace workspace) {
+    workspace
+        .createSourcePathPackage()
+        .copyContentsFrom("src", "test", "resources", "code")
+
+    // When
+    def compilation = compiler
+        // TODO(ascopes): disable this
+        .fileManagerLoggingMode(LoggingMode.ENABLED)
+        .diagnosticLoggingMode(LoggingMode.STACKTRACES)
+        .verbose(true)
+        // end temporary block
+        .compile(workspace)
+
+    // Then
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings()
+        .classOutputPackages()
+        .allFilesExist(
+            'org/example/CoffeeMaker.class',
+            'org/example/Grinder.class',
+            'org/example/Pump.class',
+            'org/example/CoffeeMaker$DI.class',
+            'org/example/Grinder$DI.class',
+            'org/example/Pump$DI.class',
+        )
   }
 }

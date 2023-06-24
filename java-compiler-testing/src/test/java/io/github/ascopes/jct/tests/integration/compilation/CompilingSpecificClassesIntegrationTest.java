@@ -18,8 +18,12 @@ package io.github.ascopes.jct.tests.integration.compilation;
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThat;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.tests.integration.AbstractIntegrationTest;
+import io.github.ascopes.jct.tests.integration.IntegrationTestConfigurer;
+import io.github.ascopes.jct.workspaces.PathStrategy;
+import io.github.ascopes.jct.workspaces.Workspace;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
 
@@ -31,21 +35,33 @@ import org.junit.jupiter.api.DisplayName;
 @DisplayName("Compiling specific classes integration tests")
 class CompilingSpecificClassesIntegrationTest extends AbstractIntegrationTest {
 
-  @DisplayName("Only the classes that I specify get compiled")
-  @JavacCompilerTest
-  void onlyTheClassesSpecifiedGetCompiled(JctCompiler compiler) {
+  @DisplayName("Only the classes that I specify get compiled with Javac")
+  @JavacCompilerTest(configurers = IntegrationTestConfigurer.class)
+  void onlyTheClassesSpecifiedGetCompiledJavac(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace()) {
-      workspace
-          .createSourcePathPackage()
-          .copyContentsFrom(resourcesDirectory());
-
-      var compilation = compiler.compile(workspace, "Fibonacci", "HelloWorld");
-
-      assertThat(compilation)
-          .isSuccessfulWithoutWarnings()
-          .classOutputPackages()
-          .allFilesExist("Fibonacci.class", "HelloWorld.class")
-          .fileDoesNotExist("Sum.class");
+      runTest(compiler, workspace);
     }
+  }
+
+  @DisplayName("Only the classes that I specify get compiled with ECJ")
+  @EcjCompilerTest(configurers = IntegrationTestConfigurer.class)
+  void onlyTheClassesSpecifiedGetCompiledEcj(JctCompiler compiler) {
+    try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+      runTest(compiler, workspace);
+    }
+  }
+
+  private void runTest(JctCompiler compiler, Workspace workspace) {
+    workspace
+        .createSourcePathPackage()
+        .copyContentsFrom(resourcesDirectory());
+
+    var compilation = compiler.compile(workspace, "Fibonacci", "HelloWorld");
+
+    assertThat(compilation)
+        .isSuccessfulWithoutWarnings()
+        .classOutputPackages()
+        .allFilesExist("Fibonacci.class", "HelloWorld.class")
+        .fileDoesNotExist("Sum.class");
   }
 }

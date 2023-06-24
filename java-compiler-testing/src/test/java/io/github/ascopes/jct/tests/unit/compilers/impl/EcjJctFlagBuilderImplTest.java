@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.github.ascopes.jct.compilers.CompilationMode;
-import io.github.ascopes.jct.compilers.impl.JavacJctFlagBuilderImpl;
+import io.github.ascopes.jct.compilers.impl.EcjJctFlagBuilderImpl;
 import io.github.ascopes.jct.tests.helpers.Fixtures;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,43 +38,53 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 /**
- * {@link JavacJctFlagBuilderImpl} tests.
+ * {@link EcjJctFlagBuilderImpl} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("JavacJctFlagBuilderImpl tests")
+@DisplayName("EcjJctFlagBuilderImpl tests")
 @TestMethodOrder(OrderAnnotation.class)
-class JavacJctFlagBuilderImplTest {
+class EcjJctFlagBuilderImplTest {
 
-  JavacJctFlagBuilderImpl flagBuilder;
+  EcjJctFlagBuilderImpl flagBuilder;
 
   @BeforeEach
   void setUp() {
-    flagBuilder = new JavacJctFlagBuilderImpl();
+    flagBuilder = new EcjJctFlagBuilderImpl();
   }
 
   @DisplayName(".verbose(boolean) tests")
   @Nested
   class VerboseFlagTest {
 
-    @DisplayName("Setting .verbose(true) adds the '-verbose' flag")
-    @Test
-    void addsFlagIfTrue() {
+    @DisplayName("Setting .verbose(true) adds the expected flags")
+    @ValueSource(strings = {
+        "-verbose",
+        "-XprintProcessorInfo",
+        "-XprintRounds",
+    })
+    @ParameterizedTest(name = "for \"{0}\"")
+    void addsFlagIfTrue(String flag) {
       // When
       flagBuilder.verbose(true);
 
       // Then
-      assertThat(flagBuilder.build()).contains("-verbose");
+      assertThat(flagBuilder.build()).contains(flag);
     }
 
-    @DisplayName("Setting .verbose(false) does not add the '-verbose' flag")
-    @Test
-    void doesNotAddFlagIfFalse() {
+    @DisplayName("Setting .verbose(false) does not add the expected flags")
+    @ValueSource(strings = {
+        "-verbose",
+        "-XprintProcessorInfo",
+        "-XprintRounds",
+    })
+    @ParameterizedTest(name = "for \"{0}\"")
+    void doesNotAddFlagIfFalse(String flag) {
       // When
       flagBuilder.verbose(false);
 
       // Then
-      assertThat(flagBuilder.build()).doesNotContain("-verbose");
+      assertThat(flagBuilder.build()).doesNotContain(flag);
     }
 
     @DisplayName(".verbose(...) returns the flag builder")
@@ -156,24 +166,24 @@ class JavacJctFlagBuilderImplTest {
   @Nested
   class FailOnWarningsFlagTest {
 
-    @DisplayName("Setting .failOnWarnings(true) adds the '-Werror' flag")
+    @DisplayName("Setting .failOnWarnings(true) adds the '--failOnWarning' flag")
     @Test
     void addsFlagIfTrue() {
       // When
       flagBuilder.failOnWarnings(true);
 
       // Then
-      assertThat(flagBuilder.build()).contains("-Werror");
+      assertThat(flagBuilder.build()).contains("--failOnWarning");
     }
 
-    @DisplayName("Setting .failOnWarnings(false) does not add the '-Werror'  flag")
+    @DisplayName("Setting .failOnWarnings(false) does not add the '--failOnWarning'  flag")
     @Test
     void doesNotAddFlagIfFalse() {
       // When
       flagBuilder.failOnWarnings(false);
 
       // Then
-      assertThat(flagBuilder.build()).doesNotContain("-Werror");
+      assertThat(flagBuilder.build()).doesNotContain("--failOnWarning");
     }
 
     @DisplayName(".failOnWarnings(...) returns the flag builder")

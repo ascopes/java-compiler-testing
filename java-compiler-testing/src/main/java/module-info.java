@@ -107,6 +107,7 @@ module io.github.ascopes.jct {
   requires me.xdrop.fuzzywuzzy;
   requires static transitive org.apiguardian.api;
   requires org.assertj.core;
+  requires org.eclipse.jdt.core.compiler.batch;
   requires static org.jspecify;
   requires static transitive org.junit.jupiter.api;
   requires static transitive org.junit.jupiter.params;

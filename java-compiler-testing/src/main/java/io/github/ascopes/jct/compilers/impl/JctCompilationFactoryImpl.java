@@ -96,7 +96,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
     }
 
     // Do not close stdout, it breaks test engines, especially IntellIJ.
-    var writer = TeeWriter.wrapOutputStream(System.out, compiler.getLogCharset());
+    var writer = TeeWriter.wrapOutputStream(System.err, compiler.getLogCharset());
 
     var diagnosticListener = new TracingDiagnosticListener<>(
         compiler.getDiagnosticLoggingMode() != LoggingMode.DISABLED,

@@ -335,9 +335,9 @@ class JctCompilationFactoryImplTest {
     verifyNoInteractions(javaCompiler);
   }
 
-  @DisplayName("The compiler should write logs to System.out")
+  @DisplayName("The compiler should write logs to System.err")
   @Test
-  void theCompilerShouldWriteLogsToSystemOut() throws IOException {
+  void theCompilerShouldWriteLogsToSystemErr() throws IOException {
     // Given
     try (var teeWriterStatic = mockStatic(TeeWriter.class)) {
       var teeWriter = mock(TeeWriter.class);
@@ -356,7 +356,7 @@ class JctCompilationFactoryImplTest {
 
       // Then
       teeWriterStatic.verify(() -> TeeWriter.wrapOutputStream(
-          System.out,
+          System.err,
           jctCompiler.getLogCharset()
       ));
       teeWriterStatic.verifyNoMoreInteractions();

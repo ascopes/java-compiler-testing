@@ -18,6 +18,7 @@ package io.github.ascopes.jct.junit;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -32,22 +33,23 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 /**
  * Annotation that can be applied to a JUnit parameterized test to invoke that test case across
- * multiple compilers, each configured to a specific version in a range of Java language versions.
+ * multiple ECJ compilers, each configured to a specific version in a range of Java language
+ * versions.
  *
- * <p>This will also add the {@code "java-compiler-testing-test"} tag and {@code "javac-test"}
+ * <p>This will also add the {@code "java-compiler-testing-test"} tag and {@code "ecj-test"}
  * tags to your test method, meaning you can instruct your IDE or build system to optionally only
  * run tests annotated with this method for development purposes. As an example, Maven Surefire
- * could be instructed to only run these tests by passing {@code -Dgroup="javac-test"} to Maven.
+ * could be instructed to only run these tests by passing {@code -Dgroup="ecj-test"} to Maven.
  *
  * <p>If your build is running in a GraalVM Native Image, then this test will not execute, as
  * the <em>Java Compiler Testing</em> API is not yet tested within Native Images.
  *
- * <p>For example, to run a simple test on Java 11 through 17 (inclusive):
+ * <p>For example, to run a simple test on Java 11 through 14 (inclusive):
  *
  * <pre><code>
  *   class SomeTest {
- *     {@literal @JavacCompilerTest(minVersion = 11, maxVersion = 17)}
- *     void canCompileHelloWorld(JctCompiler> compiler) {
+ *     {@literal @EcjCompilerTest(minVersion = 11, maxVersion = 14)}
+ *     void canCompileHelloWorld(JctCompiler&lt;?, ?&gt;> compiler) {
  *       // Given
  *       try (var workspace = Workspaces.newWorkspace()) {
  *         workspace
@@ -71,36 +73,37 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
  *   }
  * </code></pre>
  *
+ * <p>Note that this is highly experimental, and may break in strange and unexpected ways, or may
+ * even be removed without notice. Use at your own risk.
+ *
  * @author Ashley Scopes
- * @since 0.0.1
+ * @since TBC
  */
-@API(since = "0.0.1", status = Status.STABLE)
-@ArgumentsSource(JavacCompilersProvider.class)
+@API(since = "TBC", status = Status.EXPERIMENTAL)
+@ArgumentsSource(EcjCompilersProvider.class)
 @DisabledInNativeImage
 @Documented
+@Inherited
 @ParameterizedTest(name = "for compiler \"{0}\"")
 @Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
+@TestTemplate
 @Tags({
     @Tag(CommonTags.JAVA_COMPILER_TESTING_TEST),
-    @Tag(CommonTags.JAVAC_TEST)
+    @Tag(CommonTags.ECJ_TEST)
 })
-@Target({
-    ElementType.ANNOTATION_TYPE, 
-    ElementType.METHOD,
-})
-@TestTemplate
-public @interface JavacCompilerTest {
+public @interface EcjCompilerTest {
 
   /**
    * Minimum version to use (inclusive).
    *
-   * <p>By default, it will use the lowest possible version supported by the compiler. This
-   * varies between versions of the JDK that are in use.
+   * <p>By default, it will use the lowest possible version supported by the compiler. This depends
+   * on the version of ECJ that is in use.
    *
    * <p>If the version is lower than the minimum supported version, then the minimum supported
-   * version of the compiler will be used instead. This enables writing tests that will work on a
-   * range of JDKs during builds without needing to duplicate the test to satisfy different JDK
-   * supported version ranges.
+   * version of the compiler will be used instead. This enables writing tests that will work on
+   * a range of JDKs during builds without needing to duplicate the test to satisfy different
+   * JDK supported version ranges.
    *
    * @return the minimum version.
    */
@@ -110,12 +113,12 @@ public @interface JavacCompilerTest {
    * Maximum version to use (inclusive).
    *
    * <p>By default, it will use the highest possible version supported by the compiler. This
-   * varies between versions of the JDK that are in use.
+   * depends on the version of ECJ that is in use.
    *
    * <p>If the version is higher than the maximum supported version, then the maximum supported
-   * version of the compiler will be used instead. This enables writing tests that will work on a
-   * range of JDKs during builds without needing to duplicate the test to satisfy different JDK
-   * supported version ranges.
+   * version of the compiler will be used instead. This enables writing tests that will work on
+   * a range of JDKs during builds without needing to duplicate the test to satisfy different
+   * JDK supported version ranges.
    *
    * @return the maximum version.
    */
@@ -135,13 +138,13 @@ public @interface JavacCompilerTest {
    *   opens org.example.mytests to io.github.ascopes.jct;
    * }
    * </code></pre>
-   * <p>
+   *
    * An example of usage:
    *
    * <pre><code>
    *   public class WerrorConfigurer implements JctCompilerConfigurer&lt;RuntimeException&gt; {
    *     {@literal @Override}
-   *     public void configure(JctCompiler compiler) {
+   *     public void configure(JctCompiler&lt;?, ?&gt; compiler) {
    *       compiler.failOnWarnings(true);
    *     }
    *   }
@@ -149,8 +152,8 @@ public @interface JavacCompilerTest {
    *   // ...
    *
    *   class SomeTest {
-   *     {@literal @JavacCompilerTest(configurers = WerrorConfigurer.class)}
-   *     void someTest(JctCompiler compiler) {
+   *     {@literal @EcjCompilerTest(configurers = WerrorConfigurer.class)}
+   *     void someTest(JctCompiler&lt;?, ?&gt; compiler) {
    *       // ...
    *     }
    *   }
@@ -159,6 +162,18 @@ public @interface JavacCompilerTest {
    * @return an array of classes to run to configure the compiler. These run in the given order.
    */
   Class<? extends JctCompilerConfigurer<?>>[] configurers() default {};
+
+  /**
+   * Whether we need to support modules or not.
+   *
+   * <p>Setting this to true will skip any versions of the compiler that do not support JPMS
+   * modules.
+   *
+   * @return {@code true} if we need to support modules, or {@code false} if we do not.
+   * @deprecated this will be removed in a future release, since Java 8 is reaching end-of-life.
+   */
+  @Deprecated(forRemoval = true, since = "0.1.0")
+  boolean modules() default false;
 
   /**
    * The version strategy to use.

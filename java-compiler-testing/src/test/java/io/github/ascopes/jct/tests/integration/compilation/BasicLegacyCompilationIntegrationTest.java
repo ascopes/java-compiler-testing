@@ -18,9 +18,12 @@ package io.github.ascopes.jct.tests.integration.compilation;
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.tests.integration.AbstractIntegrationTest;
+import io.github.ascopes.jct.tests.integration.IntegrationTestConfigurer;
 import io.github.ascopes.jct.workspaces.PathStrategy;
+import io.github.ascopes.jct.workspaces.Workspace;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
@@ -33,44 +36,44 @@ import org.junit.jupiter.api.DisplayName;
 @DisplayName("Basic legacy compilation integration tests")
 class BasicLegacyCompilationIntegrationTest extends AbstractIntegrationTest {
 
-  @DisplayName("I can compile a 'Hello, World!' program using a RAM directory")
-  @JavacCompilerTest
-  void helloWorldJavacRamDirectory(JctCompiler compiler) {
+  @DisplayName("I can compile a 'Hello, World!' program using a RAM directory on Javac")
+  @JavacCompilerTest(configurers = IntegrationTestConfigurer.class)
+  void helloWorldRamDirectoryJavac(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
-      workspace
-          .createPackage(StandardLocation.SOURCE_PATH)
-          .createDirectory("com", "example")
-          .copyContentsFrom(resourcesDirectory());
-      var compilation = compiler.compile(workspace);
-
-      assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings();
-
-      assertThatCompilation(compilation)
-          .classOutputPackages()
-          .fileExists("com", "example", "HelloWorld.class")
-          .isNotEmptyFile();
+      runTest(compiler, workspace);
     }
   }
 
-  @DisplayName("I can compile a 'Hello, World!' program using a temp directory")
-  @JavacCompilerTest
-  void helloWorldJavacTempDirectory(JctCompiler compiler) {
+  @DisplayName("I can compile a 'Hello, World!' program using a temp directory on Javac")
+  @JavacCompilerTest(configurers = IntegrationTestConfigurer.class)
+  void helloWorldTempDirectoryJavac(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
-      workspace
-          .createPackage(StandardLocation.SOURCE_PATH)
-          .createDirectory("com", "example")
-          .copyContentsFrom(resourcesDirectory());
-
-      var compilation = compiler.compile(workspace);
-
-      assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings();
-
-      assertThatCompilation(compilation)
-          .classOutputPackages()
-          .fileExists("com", "example", "HelloWorld.class")
-          .isNotEmptyFile();
+      runTest(compiler, workspace);
     }
+  }
+
+  @DisplayName("I can compile a 'Hello, World!' program using a temp directory on ECJ")
+  @EcjCompilerTest(configurers = IntegrationTestConfigurer.class)
+  void helloWorldTempDirectoryEcj(JctCompiler compiler) {
+    try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+      runTest(compiler, workspace);
+    }
+  }
+
+  private void runTest(JctCompiler compiler, Workspace workspace) {
+    workspace
+        .createPackage(StandardLocation.SOURCE_PATH)
+        .createDirectory("com", "example")
+        .copyContentsFrom(resourcesDirectory());
+
+    var compilation = compiler.compile(workspace);
+
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings();
+
+    assertThatCompilation(compilation)
+        .classOutputPackages()
+        .fileExists("com", "example", "HelloWorld.class")
+        .isNotEmptyFile();
   }
 }

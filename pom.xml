@@ -96,6 +96,7 @@
     <apiguardian.version>1.1.2</apiguardian.version>
     <assertj.version>3.24.2</assertj.version>
     <awaitility.version>4.2.0</awaitility.version>
+    <ecj.version>3.33.0</ecj.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <groovy.version>4.0.13</groovy.version>
     <jspecify.version>0.3.0</jspecify.version>
@@ -210,6 +211,13 @@
         <groupId>org.apache.groovy</groupId>
         <artifactId>groovy</artifactId>
         <version>${groovy.version}</version>
+      </dependency>
+
+      <dependency>
+        <!-- Eclipse Java compiler -->
+        <groupId>org.eclipse.jdt</groupId>
+        <artifactId>ecj</artifactId>
+        <version>${ecj.version}</version>
       </dependency>
 
       <dependency>

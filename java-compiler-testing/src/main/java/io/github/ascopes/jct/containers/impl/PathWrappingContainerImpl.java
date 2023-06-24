@@ -21,6 +21,7 @@ import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.filemanagers.impl.PathFileObjectImpl;
 import io.github.ascopes.jct.utils.FileUtils;
+import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import java.io.IOException;
@@ -163,8 +164,18 @@ public final class PathWrappingContainerImpl implements Container {
       boolean recurse,
       Collection<JavaFileObject> collection
   ) throws IOException {
+    var initialSize = collection.size();
     var maxDepth = recurse ? Integer.MAX_VALUE : 1;
     var basePath = FileUtils.packageNameToPath(root.getPath(), packageName);
+
+    LOGGER
+        .atTrace()
+        .setMessage("Performing lookup of files matching kinds {} in package {} ({}) (depth = {})")
+        .addArgument(() -> StringUtils.quotedIterable(kinds))
+        .addArgument(() -> StringUtils.quoted(packageName))
+        .addArgument(() -> StringUtils.quoted(basePath))
+        .addArgument(maxDepth)
+        .log();
 
     try (var walker = Files.walk(basePath, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
       walker
@@ -172,8 +183,19 @@ public final class PathWrappingContainerImpl implements Container {
           .map(path -> new PathFileObjectImpl(location, root.getPath(), path))
           .forEach(collection::add);
     } catch (NoSuchFileException ex) {
-      LOGGER.trace("Directory {} does not exist so is being ignored", root.getPath());
+      LOGGER.atTrace()
+          .setMessage("File system object {} does not exist, so is being skipped ({})")
+          .addArgument(() -> StringUtils.quoted(ex.getFile()))
+          .addArgument(() -> StringUtils.quoted(ex.getReason()))
+          .log();
     }
+
+    LOGGER.atTrace()
+        .setMessage("Found {} matches for criteria in package {} ({})")
+        .addArgument(() -> collection.size() - initialSize)
+        .addArgument(() -> StringUtils.quoted(packageName))
+        .addArgument(() -> StringUtils.quoted(basePath))
+        .log();
   }
 
   @Override

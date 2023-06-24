@@ -19,10 +19,14 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatContainerGroup;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.tests.integration.AbstractIntegrationTest;
+import io.github.ascopes.jct.tests.integration.IntegrationTestConfigurer;
 import io.github.ascopes.jct.workspaces.PathStrategy;
+import io.github.ascopes.jct.workspaces.Workspace;
 import io.github.ascopes.jct.workspaces.Workspaces;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 
 /**
@@ -33,150 +37,127 @@ import org.junit.jupiter.api.DisplayName;
 @DisplayName("Basic multi-module compilation integration tests")
 class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest {
 
-  @DisplayName("I can compile a single module using multi-module layout using a RAM disk")
-  @JavacCompilerTest(minVersion = 9)
-  void singleModuleInMultiModuleLayoutRamDisk(JctCompiler compiler) {
+  @DisplayName("I can compile a single module using multi-module layout using a RAM disk on Javac")
+  @JavacCompilerTest(minVersion = 9, configurers = IntegrationTestConfigurer.class)
+  void singleModuleInMultiModuleLayoutRamDiskJavac(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
-      // Given
-      workspace
-          .createSourcePathModule("hello.world.singlemodule")
-          .copyContentsFrom(resourcesDirectory().resolve("hello.world.singlemodule"));
-
-      // When
-      var compilation = compiler.compile(workspace);
-
-      // Then
-      assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings()
-          .classOutputModules()
-          .moduleExists("hello.world.singlemodule")
-          .satisfies(
-              module -> assertThatContainerGroup(module)
-                  .fileExists("com", "example", "HelloWorld.class")
-                  .isNotEmptyFile(),
-              module -> assertThatContainerGroup(module)
-                  .fileExists("module-info.class")
-                  .isNotEmptyFile()
-          );
+      runSingleModuleInMultiModuleLayoutTest(compiler, workspace);
     }
   }
 
-  @DisplayName("I can compile a single module using multi-module layout using a temp directory")
-  @JavacCompilerTest(minVersion = 9)
-  void singleModuleInMultiModuleLayoutTempDirectory(JctCompiler compiler) {
+  @DisplayName(
+      "I can compile a single module using multi-module layout using a temp directory on Javac"
+  )
+  @JavacCompilerTest(minVersion = 9, configurers = IntegrationTestConfigurer.class)
+  void singleModuleInMultiModuleLayoutTempDirectoryJavac(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
-      // Given
-      workspace
-          .createSourcePathModule("hello.world.singlemodule")
-          .copyContentsFrom(resourcesDirectory().resolve("hello.world.singlemodule"));
-
-      // When
-      var compilation = compiler.compile(workspace);
-
-      // Then
-      assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings()
-          .classOutputModules()
-          .moduleExists("hello.world.singlemodule")
-          .satisfies(
-              module -> assertThatContainerGroup(module)
-                  .fileExists("com", "example", "HelloWorld.class")
-                  .isNotEmptyFile(),
-              module -> assertThatContainerGroup(module)
-                  .fileExists("module-info.class")
-                  .isNotEmptyFile()
-          );
+      runSingleModuleInMultiModuleLayoutTest(compiler, workspace);
     }
   }
 
-  @DisplayName("I can compile multiple modules using multi-module layout using a RAM disk")
-  @JavacCompilerTest(minVersion = 9)
-  void multipleModulesInMultiModuleLayoutRamDisk(JctCompiler compiler) {
+  @DisplayName("I can compile multiple modules using multi-module layout using a RAM disk on Javac")
+  @JavacCompilerTest(minVersion = 9, configurers = IntegrationTestConfigurer.class)
+  void multipleModulesInMultiModuleLayoutRamDiskJavac(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
-      // Given
-      workspace
-          .createSourcePathModule("hello.world.crossmodule")
-          .copyContentsFrom(resourcesDirectory().resolve("hello.world.crossmodule"));
-
-      workspace
-          .createSourcePathModule("greeter")
-          .copyContentsFrom(resourcesDirectory().resolve("greeter"));
-
-      // When
-      var compilation = compiler.compile(workspace);
-
-      // Then
-      assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings();
-
-      assertThatCompilation(compilation)
-          .classOutputModules()
-          .moduleExists("hello.world.crossmodule")
-          .satisfies(
-              module -> assertThatContainerGroup(module)
-                  .fileExists("com", "example", "HelloWorld.class")
-                  .isNotEmptyFile(),
-              module -> assertThatContainerGroup(module)
-                  .fileExists("module-info.class")
-                  .isNotEmptyFile()
-          );
-
-      assertThatCompilation(compilation)
-          .classOutputModules()
-          .moduleExists("greeter")
-          .satisfies(
-              module -> assertThatContainerGroup(module)
-                  .fileExists("com", "example", "greeter", "Greeter.class")
-                  .isNotEmptyFile(),
-              module -> assertThatContainerGroup(module)
-                  .fileExists("module-info.class")
-                  .isNotEmptyFile()
-          );
+      runMultipleModulesInMultiModuleLayoutTest(compiler, workspace);
     }
   }
 
-  @DisplayName("I can compile multiple modules using multi-module layout using a temp directory")
-  @JavacCompilerTest(minVersion = 9)
-  void multipleModulesInMultiModuleLayoutTempDirectory(JctCompiler compiler) {
+  @DisplayName(
+      "I can compile multiple modules using multi-module layout using a temp directory on Javac"
+  )
+  @JavacCompilerTest(minVersion = 9, configurers = IntegrationTestConfigurer.class)
+  void multipleModulesInMultiModuleLayoutTempDirectoryJavac(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
-      // Given
-      workspace
-          .createSourcePathModule("hello.world.crossmodule")
-          .copyContentsFrom(resourcesDirectory().resolve("hello.world.crossmodule"));
-
-      workspace
-          .createSourcePathModule("greeter")
-          .copyContentsFrom(resourcesDirectory().resolve("greeter"));
-
-      // When
-      var compilation = compiler.compile(workspace);
-
-      assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings();
-
-      assertThatCompilation(compilation)
-          .classOutputModules()
-          .moduleExists("hello.world.crossmodule")
-          .satisfies(
-              module -> assertThatContainerGroup(module)
-                  .fileExists("com", "example", "HelloWorld.class")
-                  .isNotEmptyFile(),
-              module -> assertThatContainerGroup(module)
-                  .fileExists("module-info.class")
-                  .isNotEmptyFile()
-          );
-
-      assertThatCompilation(compilation)
-          .classOutputModules()
-          .moduleExists("greeter")
-          .satisfies(
-              module -> assertThatContainerGroup(module)
-                  .fileExists("com", "example", "greeter", "Greeter.class")
-                  .isNotEmptyFile(),
-              module -> assertThatContainerGroup(module)
-                  .fileExists("module-info.class")
-                  .isNotEmptyFile()
-          );
+      runMultipleModulesInMultiModuleLayoutTest(compiler, workspace);
     }
+  }
+
+  @Disabled("ECJ support is buggy for multi-module sources")
+  @DisplayName(
+      "I can compile a single module using multi-module layout using a temp directory on ECJ"
+  )
+  @EcjCompilerTest(minVersion = 9, configurers = IntegrationTestConfigurer.class)
+  void singleModuleInMultiModuleLayoutTempDirectoryEcj(JctCompiler compiler) {
+    try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+      runSingleModuleInMultiModuleLayoutTest(compiler, workspace);
+    }
+  }
+
+  @Disabled("ECJ support is buggy for multi-module sources")
+  @DisplayName(
+      "I can compile multiple modules using multi-module layout using a temp directory on ECJ"
+  )
+  @EcjCompilerTest(minVersion = 9, configurers = IntegrationTestConfigurer.class)
+  void multipleModulesInMultiModuleLayoutTempDirectoryEcj(JctCompiler compiler) {
+    try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
+      runMultipleModulesInMultiModuleLayoutTest(compiler, workspace);
+    }
+  }
+
+  private void runSingleModuleInMultiModuleLayoutTest(
+      JctCompiler compiler,
+      Workspace workspace
+  ) {
+    workspace
+        .createSourcePathModule("hello.world.singlemodule")
+        .copyContentsFrom(resourcesDirectory().resolve("hello.world.singlemodule"));
+
+    // When
+    var compilation = compiler.compile(workspace);
+
+    // Then
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings();
+
+    assertThatCompilation(compilation)
+        .classOutputModules()
+        .moduleExists("hello.world.singlemodule")
+        .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
+
+    assertThatCompilation(compilation)
+        .classOutputModules()
+        .moduleExists("hello.world.singlemodule")
+        .fileExists("module-info.class").isNotEmptyFile();
+  }
+
+  private void runMultipleModulesInMultiModuleLayoutTest(
+      JctCompiler compiler,
+      Workspace workspace
+  ) {
+    // Given
+    workspace
+        .createSourcePathModule("hello.world.crossmodule")
+        .copyContentsFrom(resourcesDirectory().resolve("hello.world.crossmodule"));
+
+    workspace
+        .createSourcePathModule("greeter")
+        .copyContentsFrom(resourcesDirectory().resolve("greeter"));
+
+    // When
+    var compilation = compiler.compile(workspace);
+
+    assertThatCompilation(compilation)
+        .isSuccessfulWithoutWarnings();
+
+    assertThatCompilation(compilation)
+        .classOutputModules()
+        .moduleExists("hello.world.crossmodule")
+        .fileExists("com", "example", "HelloWorld.class").isNotEmptyFile();
+
+    assertThatCompilation(compilation)
+        .classOutputModules()
+        .moduleExists("hello.world.crossmodule")
+        .fileExists("module-info.class").isNotEmptyFile();
+
+    assertThatCompilation(compilation)
+        .classOutputModules()
+        .moduleExists("greeter")
+        .fileExists("com", "example", "greeter", "Greeter.class").isNotEmptyFile();
+
+    assertThatCompilation(compilation)
+        .classOutputModules()
+        .moduleExists("greeter")
+        .fileExists("module-info.class").isNotEmptyFile();
   }
 }

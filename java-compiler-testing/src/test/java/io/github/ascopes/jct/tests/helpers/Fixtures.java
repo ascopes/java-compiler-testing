@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -473,6 +474,20 @@ public final class Fixtures {
       }
       return iter.next();
     }
+  }
+
+  /**
+   * Return one or more of the members of a given enum in a set.
+   *
+   * @param cls the enum class.
+   * @param <E> the enum type.
+   * @return the set of the enum members.
+   */
+  public static <E extends Enum<E>> Set<E> someOf(Class<E> cls) {
+    return Stream
+        .generate(() -> oneOf(cls))
+        .limit(RANDOM.nextInt(cls.getEnumConstants().length))
+        .collect(Collectors.toSet());
   }
 
   private static void createStubMethodsFor(Diagnostic<JavaFileObject> diagnostic) {

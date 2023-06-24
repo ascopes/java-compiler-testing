@@ -18,6 +18,7 @@ package io.github.ascopes.jct.tests.unit.compilers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.compilers.JctCompilers;
+import io.github.ascopes.jct.compilers.impl.EcjJctCompilerImpl;
 import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
 import io.github.ascopes.jct.tests.helpers.UtilityClassTestTemplate;
 import org.junit.jupiter.api.DisplayName;
@@ -49,6 +50,24 @@ class JctCompilersTest implements UtilityClassTestTemplate {
           .isInstanceOf(JavacJctCompilerImpl.class);
 
       assertThat(javacJctCompilerImplMock.constructed())
+          .singleElement()
+          // Nested assertion to swap expected/actual args.
+          .satisfies(constructed -> assertThat(compiler).isSameAs(constructed));
+    }
+  }
+
+  @DisplayName(".newEcjCompiler() creates an EcjJctCompilerImpl instance")
+  @Test
+  void newEcjCompilerReturnsTheExpectedInstance() {
+    try (var ecjJctCompilerImplMock = Mockito.mockConstruction(EcjJctCompilerImpl.class)) {
+      // When
+      var compiler = JctCompilers.newEcjCompiler();
+
+      // Then
+      assertThat(compiler)
+          .isInstanceOf(EcjJctCompilerImpl.class);
+
+      assertThat(ecjJctCompilerImplMock.constructed())
           .singleElement()
           // Nested assertion to swap expected/actual args.
           .satisfies(constructed -> assertThat(compiler).isSameAs(constructed));

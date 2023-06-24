@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.compilers;
 
+import io.github.ascopes.jct.compilers.impl.EcjJctCompilerImpl;
 import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
 import io.github.ascopes.jct.utils.UtilityClass;
 import org.apiguardian.api.API;
@@ -43,5 +44,19 @@ public final class JctCompilers extends UtilityClass {
   @API(status = Status.STABLE, since = "0.2.0")
   public static JctCompiler newPlatformCompiler() {
     return new JavacJctCompilerImpl();
+  }
+
+  /**
+   * Create a new instance of an ECJ compiler.
+   *
+   * <p>Note that this is highly experimental, and may break in strange and unexpected ways, or may
+   * even be removed without notice. Use at your own risk.
+   *
+   * @return the compiler instance.
+   * @since TBC
+   */
+  @API(status = Status.EXPERIMENTAL, since = "TBC")
+  public static JctCompiler newEcjCompiler() {
+    return new EcjJctCompilerImpl();
   }
 }
