@@ -16,8 +16,8 @@
 package io.github.ascopes.jct.filemanagers.config;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
+import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 /**
  * A chain of configurers to apply to a file manager.
  *
- * <p>Note that modifications to instances of this class are not
- * threadsafe (e.g. adding new configurers to the chain). Invoking
- * the configurer chain is also not threadsafe by design.
+ * <p>While not designed for concurrent use, all operations are shielded by a
+ * mutex to guard against potentially confusing behaviour should this component
+ * be shared across multiple threads.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -39,13 +39,15 @@ public final class JctFileManagerConfigurerChain {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctFileManagerConfigurerChain.class);
 
+  private final Object lock;
   private final Deque<JctFileManagerConfigurer> configurers;
 
   /**
    * Initialise this chain.
    */
   public JctFileManagerConfigurerChain() {
-    configurers = new LinkedList<>();
+    lock = new Object();
+    configurers = new ArrayDeque<>(16);
   }
 
   /**
@@ -55,7 +57,9 @@ public final class JctFileManagerConfigurerChain {
    * @return this chain for further calls.
    */
   public JctFileManagerConfigurerChain addFirst(JctFileManagerConfigurer configurer) {
-    configurers.addFirst(configurer);
+    synchronized (lock) {
+      configurers.addFirst(configurer);
+    }
     return this;
   }
 
@@ -66,7 +70,9 @@ public final class JctFileManagerConfigurerChain {
    * @return this chain for further calls.
    */
   public JctFileManagerConfigurerChain addLast(JctFileManagerConfigurer configurer) {
-    configurers.addLast(configurer);
+    synchronized (lock) {
+      configurers.addLast(configurer);
+    }
     return this;
   }
 
@@ -76,7 +82,9 @@ public final class JctFileManagerConfigurerChain {
    * @return the list of configurers.
    */
   public List<JctFileManagerConfigurer> list() {
-    return List.copyOf(configurers);
+    synchronized (lock) {
+      return List.copyOf(configurers);
+    }
   }
 
   /**
@@ -87,12 +95,14 @@ public final class JctFileManagerConfigurerChain {
    *     parameter, depending on how the configurers manipulate the input object.
    */
   public JctFileManager configure(JctFileManager fileManager) {
-    for (var configurer : configurers) {
-      if (configurer.isEnabled()) {
-        LOGGER.trace("Applying {} to file manager", configurer);
-        fileManager = configurer.configure(fileManager);
-      } else {
-        LOGGER.trace("Skipping {}", configurer);
+    synchronized (lock) {
+      for (var configurer : configurers) {
+        if (configurer.isEnabled()) {
+          LOGGER.debug("Applying {} to file manager", configurer);
+          fileManager = configurer.configure(fileManager);
+        } else {
+          LOGGER.trace("Skipping {}", configurer);
+        }
       }
     }
 
