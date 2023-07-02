@@ -168,7 +168,7 @@ class ExampleTest {
                 
             @Data
             public class Message {
-              private String content;
+              private final String content;
                 
               public static void main(String[] args) {
                 Message message = new Message("Hello, World!");
