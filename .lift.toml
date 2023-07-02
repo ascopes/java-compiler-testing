@@ -13,12 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-setup = "apt install bash -qy"
+
+# Module info seems to break some Lift tools, so remove them for now to disable
+# JPMS modularity during compilation.
+setup = "apt install bash -qy && find . -name module-info.java -exec rm {} +"
 build = "./mvnw clean verify -DskipTests"
 ignoreFiles = """
-acceptance-tests/**
-**/src/test/**
-**/target/**
+    acceptance-tests/**
+    **/src/test/**
+    **/target/**
 """
 summaryComments = true
 ignoreRules = [
