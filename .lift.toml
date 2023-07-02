@@ -13,9 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-build = "mvn"
-ignoreFiles = "acceptance-tests/**"
+setup = "apt install bash -qy"
+build = "./mvnw clean verify -DskipTests"
+ignoreFiles = """
+acceptance-tests/**
+**/src/test/**
+**/target/**
+"""
 summaryComments = true
 ignoreRules = [
   "PATH_TRAVERSAL_IN",
