@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         os-name: [ubuntu-22.04]
-        java-version: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21-ea]
+        java-version: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21-ea, 22-ea]
         include:
 
           # MacOS builds (only check Java 17).
