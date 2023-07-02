@@ -31,7 +31,7 @@
   <description>Acceptance test components.</description>
 
   <properties>
-    <auto-value.version>1.10.1</auto-value.version>
+    <auto-value.version>1.10.2</auto-value.version>
   </properties>
 
   <dependencies>
