@@ -121,9 +121,31 @@ If your tests make use of JPMS (i.e. they have a `module-info.java` somewhere), 
 to add a requirement for this module like so:
 
 ```java
+module my.tests {
+  ...
+  requires org.assertj.core;
+  requires io.github.ascopes.jct;
+  ...
+}
+```
+
+## JUnit5 integration
+
+While this library provides JUnit5 support and extensions, it does not provide JUnit5 as a direct dependency.
+You should ensure you have a working JUnit5 configuration in your project prior to including
+this library.
+
+For Maven, it is also suggested to ensure you are using `maven-surefire-plugin` (or `maven-failsafe-plugin`)
+on version 3.0.0-M1 or newer. This ensures that JPMS is handled correctly.
+
+If making use of JPMS, you should include the following in your `module-info.java`:
+
+```java
 open module my.tests {
   ...
-  requires transitive io.github.ascopes.jct;
+  requires org.assertj.core;
+  requires io.github.ascopes.jct;
+  requires transitive org.junit.jupiter;
   ...
 }
 ```
