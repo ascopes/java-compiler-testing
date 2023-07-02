@@ -165,9 +165,9 @@ public @interface JavacCompilerTest {
    * <p>This determines whether the version number being iterated across specifies the
    * release, source, target, or source and target versions.
    *
-   * <p>The default is to specify the release.
+   * <p>The default behaviour is specified by {@link VersionStrategy#DEFAULT}.
    *
    * @return the version strategy to use.
    */
-  VersionStrategy versionStrategy() default VersionStrategy.RELEASE;
+  VersionStrategy versionStrategy() default VersionStrategy.DEFAULT;
 }
