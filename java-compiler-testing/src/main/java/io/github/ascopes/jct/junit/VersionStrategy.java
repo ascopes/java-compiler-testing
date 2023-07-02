@@ -31,6 +31,9 @@ public enum VersionStrategy {
 
   /**
    * Set the {@link JctCompiler#release release}.
+   *
+   * <p>This will define the source and target version to use, as well as providing information
+   * to the compiler about supported APIs. This is generally the strategy you want to be using.
    */
   RELEASE(
       (compiler, version) -> compiler
@@ -40,6 +43,12 @@ public enum VersionStrategy {
 
   /**
    * Set the {@link JctCompiler#source} source}.
+   *
+   * <p>This only sets the source version for the code being parsed. The target version that
+   * defines the class file bytecode version will be left to the compiler default (usually
+   * Java 1.5 or Java 8).
+   *
+   * <p>Use {@link #SOURCE_AND_TARGET} to set both the source and target.
    */
   SOURCE(
       (compiler, version) -> compiler
@@ -49,6 +58,11 @@ public enum VersionStrategy {
 
   /**
    * Set the {@link JctCompiler#target} target}.
+   *
+   * <p>This only sets the target version for aby generated class file bytecode. The source
+   * code version will be left as the compiler default (usually Java 1.5 or Java 8).
+   *
+   * <p>Use {@link #SOURCE_AND_TARGET} to set both the source and target.
    */
   TARGET(
       (compiler, version) -> compiler
@@ -58,6 +72,10 @@ public enum VersionStrategy {
 
   /**
    * Set the {@link JctCompiler#source source} and {@link JctCompiler#target target}.
+   *
+   * <p>This is similar to using {@link #RELEASE} but allows you to override the core libraries
+   * being used by the compiler. Generally you will want to use {@link #RELEASE} instead, as
+   * it is more robust.
    */
   SOURCE_AND_TARGET(
       (compiler, version) -> compiler
@@ -65,6 +83,16 @@ public enum VersionStrategy {
           .target(version)
           .name(compiler.getName() + " (source and target = Java " + version + ")")
   );
+
+  /**
+   * The default version strategy that the library will prefer to use.
+   *
+   * <p>This defaults to the {@link #RELEASE} strategy.
+   *
+   * @since 1.0.1
+   */
+  @API(since = "1.0.1", status = Status.STABLE)
+  public static final VersionStrategy DEFAULT = RELEASE;
 
   private final BiConsumer<JctCompiler, Integer> versionSetter;
 
