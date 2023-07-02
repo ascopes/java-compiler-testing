@@ -133,7 +133,7 @@ module my.tests {
 
 While this library provides JUnit5 support and extensions, it does not provide JUnit5 as a direct dependency.
 You should ensure you have a working JUnit5 configuration in your project prior to including
-this library.
+this library. This includes `junit-jupiter` and `junit-jupiter-params`.
 
 For Maven, it is also suggested to ensure you are using `maven-surefire-plugin` (or `maven-failsafe-plugin`)
 on version 3.0.0-M1 or newer. This ensures that JPMS is handled correctly.
@@ -146,6 +146,7 @@ open module my.tests {
   requires org.assertj.core;
   requires io.github.ascopes.jct;
   requires transitive org.junit.jupiter;
+  requires org.junit.jupiter.params;
   ...
 }
 ```
@@ -182,19 +183,13 @@ class ExampleTest {
     // Given
     workspace
         .createSourcePathPackage()
-        .createFile("org/example/Message.java").withContents("""
+        .createFile("org/example/HelloWorld.java").withContents("""
             package org.example;
                 
-            import lombok.Data;
-            import lombok.NonNull;
-                
             @Data
-            public class Message {
-              private final String content;
-                
+            public class HelloWorld {
               public static void main(String[] args) {
-                Message message = new Message("Hello, World!");
-                System.out.println(message);
+                System.out.println("Hello, World!");
               }
             }
             """
@@ -209,7 +204,7 @@ class ExampleTest {
 
     assertThatCompilation(compilation)
         .classOutputPackages()
-        .fileExists("com/example/Message.class")
+        .fileExists("org/example/HelloWorld.class")
         .isNotEmptyFile();
   }
 }
