@@ -218,7 +218,7 @@ public final class TraceDiagnosticRepresentation implements Representation {
       // few lines in the snippet usually, so adding 1 more
       // digit to this provides us safety if the snippet were
       // to start on line 99 and move into line 100.
-      lineNumberWidth = getDigitCount(startOfLine) + 1;
+      lineNumberWidth = getDigitCount(startLine) + 1;
     }
 
     public void prettyPrintTo(StringBuilder builder) {
