@@ -76,7 +76,8 @@ public final class TraceDiagnosticRepresentation implements Representation {
 
     var code = diagnostic.getCode();
     if (code != null) {
-      builder.append(' ').append(code);
+      builder.append(' ')
+          .append(code);
     }
 
     if (diagnostic.getSource() != null) {
@@ -99,13 +100,13 @@ public final class TraceDiagnosticRepresentation implements Representation {
       builder.append('\n');
     }
 
-    IoExceptionUtils.uncheckedIo(() -> { 
-      builder
-          .append(PADDING)
-          .append(diagnostic.getMessage(Locale.ROOT));
-    });
+    var message = IoExceptionUtils
+        .uncheckedIo(() -> diagnostic.getMessage(Locale.ROOT));
 
-    return builder.toString();
+    return builder
+        .append(PADDING)
+        .append(message)
+        .toString();
   }
 
   @Nullable
@@ -139,7 +140,10 @@ public final class TraceDiagnosticRepresentation implements Representation {
         ? endOffset
         : StringUtils.indexOfEndOfLine(content, endOffset);
 
-    for (var i = 0; i < ADDITIONAL_CONTEXT_LINES; ++i) {
+    for (var index = 0; index < ADDITIONAL_CONTEXT_LINES; ++index) {
+      // For each additional context line we should add, get the end of the line.
+      // We do this incrementally as we cannot compute in advance where the line
+      // is going to end.
       endOfSnippet = StringUtils.indexOfEndOfLine(content, endOfSnippet + 1);
     }
 
@@ -214,7 +218,7 @@ public final class TraceDiagnosticRepresentation implements Representation {
       // few lines in the snippet usually, so adding 1 more
       // digit to this provides us safety if the snippet were
       // to start on line 99 and move into line 100.
-      lineNumberWidth = (int) Math.ceil(Math.log10(startLine)) + 1;
+      lineNumberWidth = getDigitCount(startLine) + 1;
     }
 
     public void prettyPrintTo(StringBuilder builder) {
@@ -222,27 +226,31 @@ public final class TraceDiagnosticRepresentation implements Representation {
       var isNewLine = true;
       var startOfLine = 0;
 
-      for (var i = 0; i < text.length(); ++i) {
+      for (var index = 0; index < text.length(); ++index) {
         if (isNewLine) {
           appendLineNumberPart(builder, lineIndex);
           isNewLine = false;
         }
 
-        var nextChar = text.charAt(i);
+        var nextChar = text.charAt(index);
         builder.append(nextChar);
 
-        if (nextChar == '\n' || i == text.length() - 1) {
+        if (nextChar == '\n' || index == text.length() - 1) {
           if (nextChar != '\n') {
             // Ensure newline if we are adding the end-of-content line
             builder.append('\n');
           }
 
-          appendPossibleUnderline(builder, startOfLine, i);
+          appendPossibleUnderline(builder, startOfLine, index);
           ++lineIndex;
-          startOfLine = i + 1;
+          startOfLine = index + 1;
           isNewLine = true;
         }
       }
+    }
+
+    private int getDigitCount(long number) {
+      return (int) Math.ceil(Math.log10(number));
     }
 
     private void appendLineNumberPart(StringBuilder builder, int lineIndex) {
@@ -256,6 +264,43 @@ public final class TraceDiagnosticRepresentation implements Representation {
     }
 
     private void appendPossibleUnderline(StringBuilder builder, int startOfLine, int endOfLine) {
+      // The idea here is to consider where abouts we are in the snippet we are formatting.
+      // If we find that part of the marked position range in the diagnostic lies within the
+      // current line, we will attempt to create an extra "underlining" line after the current
+      // line.
+      //
+      // This involves marking the beginning and end of the diagnostic position range by using
+      // the ^ caret character, and filling the middle in with the ~ tilde character.
+      //
+      // Each underline line will start with the line number gutter left empty, and the vertical
+      // separator will use the + plus character rather than a vertical pipe | character.
+      //
+      // Output rendering is complicated a little further because the start position of the content
+      // to underline may not be on the same line as the end position, so we would need to then
+      // wrap around to multiple lines to achieve this.
+      //
+      // Expected output looks like this...
+      //
+      //  010 | public class App {
+      //  011 |   public static void main(String[[] args) {
+      //      +                           ^~~~~~~~^
+      //  012 |     System.out.println("Hello, World!");
+      //  013 |   }
+      //
+      // ...or when across multiple lines...
+      //
+      //    009 |
+      //    010 |   public static void main(String[] args) {
+      //        +                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      //    011 |     System.out.println("Hello, World!");
+      //        + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      //    012 |     return false;
+      //        + ~~~~~~~~~~~~~~~~^
+      //    013 |   }
+      //    014 | }
+
+      // If we are after the snippet or before the snippet and neither the start nor the
+      // end is on the current line we are considering, then we do not do anything.
       if (startOfLine > endOffset || endOfLine < startOffset) {
         return;
       }
@@ -265,17 +310,31 @@ public final class TraceDiagnosticRepresentation implements Representation {
           .append(" ".repeat(lineNumberWidth))
           .append(" + ");
 
+      // Go to the end of the line or the end of the highlighted section, whichever
+      // comes first.
       var endIndex = Math.min(endOfLine, endOffset);
-      for (var i = startOfLine; i < endIndex; ++i) {
-        if (i < startOffset) {
+
+      // If we are after the end of the snippet, we will not do anything.
+      for (var index = startOfLine; index < endIndex; ++index) {
+        // If we are before the start of the highlighted section, but still on the line it starts
+        // at, then add padding space characters.
+        if (index < startOffset) {
           builder.append(' ');
-        } else if (i == startOffset || i == endOffset - 1) {
-          builder.append('^');
-        } else {
-          builder.append('~');
+          continue;
         }
+
+        // If we are on the start or end of the highlighted section, add a caret to mark it.
+        if (index == startOffset || index == endOffset - 1) {
+          builder.append('^');
+          continue;
+        }
+
+        // Otherwise, we are in the middle of the highlighted section, so add the tilde.
+        builder.append('~');
       }
 
+      // Since getting this far implies we are adding an underline, we need an additional
+      // line feed to finish.
       builder.append('\n');
     }
   }
