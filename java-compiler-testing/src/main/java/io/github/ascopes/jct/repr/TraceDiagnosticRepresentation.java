@@ -249,7 +249,7 @@ public final class TraceDiagnosticRepresentation implements Representation {
       }
     }
 
-    private int getDigitCount(int number) {
+    private int getDigitCount(long number) {
       return (int) Math.ceil(Math.log10(number));
     }
 
