@@ -327,7 +327,7 @@ class ExampleTest {
 
       assertThatCompilation(compilation)
           .classOutputPackages()
-          .fileExists("com/example/Message.class")
+          .fileExists("org/example/Message.class")
           .isNotEmptyFile();
     }
   }
