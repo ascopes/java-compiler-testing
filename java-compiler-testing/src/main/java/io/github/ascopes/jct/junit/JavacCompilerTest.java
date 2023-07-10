@@ -79,7 +79,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 @ArgumentsSource(JavacCompilersProvider.class)
 @DisabledInNativeImage
 @Documented
-@Inherited
 @ParameterizedTest(name = "for compiler \"{0}\"")
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
