@@ -17,6 +17,7 @@ package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspace;
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -57,6 +58,7 @@ import org.apiguardian.api.API.Status;
  * @since 0.4.0
  */
 @API(since = "0.4.0", status = Status.STABLE)
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Managed {
