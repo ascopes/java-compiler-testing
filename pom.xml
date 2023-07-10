@@ -98,9 +98,9 @@
     <awaitility.version>4.2.0</awaitility.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <groovy.version>4.0.13</groovy.version>
-    <memoryfilesystem.version>2.6.1</memoryfilesystem.version>
     <jspecify.version>0.3.0</jspecify.version>
     <junit.version>5.9.3</junit.version>
+    <memoryfilesystem.version>2.6.1</memoryfilesystem.version>
     <mockito.version>5.4.0</mockito.version>
     <slf4j.version>2.0.7</slf4j.version>
 
