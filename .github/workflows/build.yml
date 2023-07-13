@@ -45,11 +45,13 @@ jobs:
         continue-on-error: false
         if: always()
         shell: bash
-        run: curl --fail -I --data-binary @codecov.yml https://codecov.io/validate
+        run: curl --fail -vv --data-binary @codecov.yml https://codecov.io/validate
 
   build:
     name: Build on JDK ${{ matrix.java-version }} (${{ matrix.os-name }})
     runs-on: ${{ matrix.os-name }}
+    needs:
+      - linting
 
     strategy:
       fail-fast: false
