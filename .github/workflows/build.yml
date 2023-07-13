@@ -13,6 +13,40 @@ on:
   workflow_dispatch: {}
 
 jobs:
+  linting:
+    name: Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.5.3
+        with:
+          fetch-depth: 2
+
+      - name: Initialize Java
+        uses: actions/setup-java@v3.11.0
+        with:
+          distribution: 'zulu'
+          java-version: 17
+          cache: 'maven'
+
+      - name: Run Maven checks
+        shell: bash
+        run: >-
+          ./mvnw -B -U
+          -DskipTests=true
+          -Dmaven.main.skip
+          -Dmaven.jar.skip
+          -Dmaven.resources.skip
+          -Dmaven.test.skip
+          verify
+          
+      - name: Validate codecov.yml
+        continue-on-error: false
+        if: always()
+        shell: bash
+        run: curl --fail -I --data-binary @codecov.yml https://codecov.io/validate
+
   build:
     name: Build on JDK ${{ matrix.java-version }} (${{ matrix.os-name }})
     runs-on: ${{ matrix.os-name }}
@@ -183,43 +217,12 @@ jobs:
           chmod -v +x codecov
           ./codecov -v
 
-  linting:
-    name: Linting
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3.5.3
-        with:
-          fetch-depth: 2
-
-      - name: Initialize Java
-        uses: actions/setup-java@v3.11.0
-        with:
-          distribution: 'zulu'
-          java-version: 17
-          cache: 'maven'
-
-      - name: Run Maven checks
-        shell: bash
-        run: >-
-          ./mvnw -B -U
-          -DskipTests=true
-          -Dmaven.main.skip
-          -Dmaven.jar.skip
-          -Dmaven.resources.skip
-          -Dmaven.test.skip
-          verify
-          
-      - name: Validate codecov.yml
-        continue-on-error: false
-        if: always()
-        shell: bash
-        run: curl --data-binary --fail @codecov.yml https://codecov.io/validate
-
   generate-documentation:
     name: Generate documentation
     runs-on: ubuntu-latest
+    needs:
+      - linting
+      - build
 
     steps:
       - name: Checkout repository
