@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os-name: [ubuntu-22.04]
+        os-name: [ubuntu-latest]
         java-version: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21-ea]
         include:
 
@@ -125,10 +125,11 @@ jobs:
 
   publish-test-reports:
     name: Publish test reports
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     if: always()
     needs:
       - build
+      - linting
 
     permissions:
       checks: write
@@ -167,12 +168,6 @@ jobs:
           test_changes_limit: 500
           time_unit: "milliseconds"
 
-      - name: Validate codecov.yml
-        continue-on-error: false
-        if: always()
-        shell: bash
-        run: curl --data-binary --fail @codecov.yml https://codecov.io/validate
-
       - name: Publish to codecov
         continue-on-error: true
         if: always()
@@ -190,7 +185,7 @@ jobs:
 
   linting:
     name: Linting
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -205,7 +200,7 @@ jobs:
           java-version: 17
           cache: 'maven'
 
-      - name: Run checks
+      - name: Run Maven checks
         shell: bash
         run: >-
           ./mvnw -B -U
@@ -215,10 +210,16 @@ jobs:
           -Dmaven.resources.skip
           -Dmaven.test.skip
           verify
+          
+      - name: Validate codecov.yml
+        continue-on-error: false
+        if: always()
+        shell: bash
+        run: curl --data-binary --fail @codecov.yml https://codecov.io/validate
 
   generate-documentation:
     name: Generate documentation
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -254,7 +255,8 @@ jobs:
     concurrency: 
       cancel-in-progress: true
       group: snapshot-javadocs
-    runs-on: ubuntu-22.04
+
+    runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
 
     permissions:
