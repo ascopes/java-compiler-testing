@@ -460,7 +460,7 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   @Override
   public abstract String getDefaultRelease();
 
-  /*
+  /**
    * Build the list of flags from this compiler object using the flag builder.
    *
    * <p>Implementations should not need to override this unless there is a special edge case
