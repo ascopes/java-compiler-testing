@@ -39,7 +39,7 @@ public enum VersionStrategy {
   ),
 
   /**
-   * Set the {@link JctCompiler#source} source}.
+   * Set the {@link JctCompiler#source source}.
    */
   SOURCE(
       (compiler, version) -> compiler
@@ -48,7 +48,7 @@ public enum VersionStrategy {
   ),
 
   /**
-   * Set the {@link JctCompiler#target} target}.
+   * Set the {@link JctCompiler#target target}.
    */
   TARGET(
       (compiler, version) -> compiler
