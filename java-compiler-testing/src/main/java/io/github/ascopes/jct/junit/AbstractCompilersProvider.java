@@ -31,11 +31,24 @@ import org.apiguardian.api.API.Status;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.support.AnnotationConsumer;
 import org.opentest4j.TestAbortedException;
 
 /**
  * Base for defining a compiler-supplying arguments-provider for JUnit Jupiter parameterised test
  * support.
+ *
+ * <p>Each implementation is expected to provide:
+ *
+ * <ul>
+ *   <li>A method {@link #initializeNewCompiler} that returns new instances of a 
+ *       {@link JctCompiler};</li>
+ *   <li>A minimum acceptable language level for the compiler, as an integer;</li>
+ *   <li>A maximum acceptable language level for the compiler, as an integer;</li>
+ *   <li>An implementation of {@link AnnotationConsumer} that consumes the desired
+ *       annotation. The details of the annotation should be extracted and a call
+ *       to {@link #configure} should be made.</li>
+ * </ul>
  *
  * <p>An example annotation would look like the following:
  *
@@ -43,11 +56,12 @@ import org.opentest4j.TestAbortedException;
  * {@literal @ArgumentsSource(MyCompilersProvider.class)}
  * {@literal @ParameterizedTest(name = "for {0}")}
  * {@literal @Retention(RetentionPolicy.RUNTIME)}
+ * {@literal @Tag("java-compiler-testing-test")}
  * {@literal @Target}({
  *     ElementType.ANNOTATION_TYPE,
  *     ElementType.METHOD,
- *     ElementType.TYPE,
  * })
+ * {@literal @TestTemplate}
  * public {@literal @interface} MyCompilerTest {
  *     int minVersion() default Integer.MIN_VALUE;
  *     int maxVersion() default Integer.MAX_VALUE;
@@ -89,8 +103,8 @@ import org.opentest4j.TestAbortedException;
  *   }
  * }
  * </code></pre>
- * <p>
- * This would enable you to define your test cases like so:
+ *
+ * <p>This would enable you to define your test cases like so:
  *
  * <pre><code>
  * {@literal @MyCompilerTest(minVersion=13, maxVersion=17)}
@@ -150,6 +164,20 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
 
   /**
    * Configure this provider with parameters from annotations.
+   *
+   * <p>This is expected to be called from an implementation of {@link AnnotationConsumer}.
+   *
+   * <p>The minimum compiler version will be set to the {@code min} parameter, or {@link #minSupportedVersion}, 
+   * whichever is greater. This means annotations can pass {@link Integer#MIN_VALUE} as a default value safely.
+   *
+   * <p>The maximum compiler version will be set to the {@code max} parameter, or {@link #maxSupportedVersion}, 
+   * whichever is smaller. This means annotations can pass {@link Integer#MAC_VALUE} as a default value safely.
+   *
+   * <p>If implementations do not support specifying custom compiler configurers, then an empty array must be
+   * passed for the {@code configurerClasses} parameter.
+   *
+   * <p>If implementations do not support changing the version strategy, then it is suggested to pass
+   * {@link VersionStrategy#RELEASE} as the value for the {@code versionStrategy} parameter.
    *
    * @param min               the inclusive minimum compiler version to use.
    * @param max               the inclusive maximum compiler version to use.
