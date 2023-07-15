@@ -100,5 +100,6 @@ public interface PathRoot {
    *
    * @return the parent path root, or {@code null} if no parent root exists.
    */
+  @Nullable
   PathRoot getParent();
 }
