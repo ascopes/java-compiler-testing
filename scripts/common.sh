@@ -98,6 +98,7 @@ function run() {
 
   {
     echo "#!/usr/bin/env bash"
+    # shellcheck disable=SC2028
     echo "PS4=$'Running: \e[1;33m$ \e[0;3;33m'"
     echo "set -o errexit"
     echo "set -o nounset"
