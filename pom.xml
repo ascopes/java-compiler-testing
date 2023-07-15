@@ -380,6 +380,8 @@
               <option>--allow-script-in-comments</option>
               <option>--override-methods=detail</option>
               <option>--show-packages=exported</option>
+              <option>-use</option>
+              <option>-Xdoclint:all</option>
             </additionalOptions>
             <bottom>© ${project.inceptionYear} - ${current-year}, Ashley Scopes --
               Apache License V2
@@ -416,8 +418,8 @@
               <link>https://www.slf4j.org/apidocs</link>
               <link>https://junit.org/junit5/docs/${junit.version}/api</link>
             </links>
-            <source>${java-release}</source>
             <quiet>true</quiet>
+            <release>${java-release}</release>
           </configuration>
         </plugin>
 
