@@ -409,7 +409,6 @@
               </script>
               ]]>
             </header>
-            <keywords>true</keywords>
             <linksource>true</linksource>
             <links>
               <link>https://docs.oracle.com/en/java/javase/${newest-java-version}/docs/api</link>
