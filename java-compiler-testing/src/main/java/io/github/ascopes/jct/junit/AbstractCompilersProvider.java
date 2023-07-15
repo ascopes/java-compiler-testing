@@ -69,12 +69,12 @@ import org.opentest4j.TestAbortedException;
  *   }
  *
  *   {@literal @Override}
- *   protected int minSupportedVersion(boolean modules) {
+ *   protected int minSupportedVersion() {
  *     return 11;  // Support Java 11 as the minimum.
  *   }
  *
  *   {@literal @Override}
- *   protected int maxSupportedVersion(boolean modules) {
+ *   protected int maxSupportedVersion() {
  *     return 19;  // Support Java 19 as the maximum.
  *   }
  *
@@ -83,7 +83,6 @@ import org.opentest4j.TestAbortedException;
  *     super.configure(
  *         annotation.minVersion(),
  *         annotation.maxVersion(),
- *         true,
  *         annotation.configurers(),
  *         annotation.versionStrategy(),
  *     );
