@@ -224,7 +224,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - linting
-      - build
 
     steps:
       - name: Checkout repository
