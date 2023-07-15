@@ -171,7 +171,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
    * whichever is greater. This means annotations can pass {@link Integer#MIN_VALUE} as a default value safely.
    *
    * <p>The maximum compiler version will be set to the {@code max} parameter, or {@link #maxSupportedVersion}, 
-   * whichever is smaller. This means annotations can pass {@link Integer#MAC_VALUE} as a default value safely.
+   * whichever is smaller. This means annotations can pass {@link Integer#MAX_VALUE} as a default value safely.
    *
    * <p>If implementations do not support specifying custom compiler configurers, then an empty array must be
    * passed for the {@code configurerClasses} parameter.
