@@ -153,16 +153,9 @@ open module my.tests {
 
 ## Support for ECJ (Eclipse Java Compiler)
 
-The Eclipse Java Compiler supports the same standard interface for invoking a Java compiler
-that Javac does, which means that _in theory_, the _java-compiler-testing_ library supports
-invoking ECJ.
+While ECJ supports the same interfaces as Javac that are used to call the compiler from this library, [eclipse-jdt/eclipse.jdt.core#1153](https://github.com/eclipse-jdt/eclipse.jdt.core/issues/1153) means we will not get functional Java 11 support going forwards. 
 
-At the time of writing, [GH-163](https://github.com/ascopes/java-compiler-testing/issues/163) tracks the addition of ECJ support to this library. The PR 
-up at [GH-422](https://github.com/ascopes/java-compiler-testing/pull/422) implements this functionality. However, the most recent releases of ECJ do not
-correctly support the detection and handling of modules that appear in the module path, and as a 
-result, test cases making use of JPMS modules and dependencies do not appear to work 
-correctly. Once these issues are resolved with Eclipse, or once a suitable workaround is found,
-then this PR will be completed and merged.
+A number of issues were found while developing  [ascopes/java-compiler-testing#163](https://github.com/ascopes/java-compiler-testing/issues/163) with ECJ which prevents many features such as JPMS support from working correctly. Since it is unlikely these issues will be addressed in the near future, support for ECJ has been shelved.
 
 ## Examples
 
