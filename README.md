@@ -151,15 +151,6 @@ open module my.tests {
 }
 ```
 
-## Support for ECJ (Eclipse Java Compiler)
-
-While ECJ supports the same interfaces as Javac that are used to call the compiler from this library, [eclipse-jdt/eclipse.jdt.core#1153](https://github.com/eclipse-jdt/eclipse.jdt.core/issues/1153) means we will not get functional Java 11 support going forwards. 
-
-A number of issues were found while developing  [ascopes/java-compiler-testing#163](https://github.com/ascopes/java-compiler-testing/issues/163) with ECJ which prevents many features such as JPMS support from working correctly 
-([eclipse-jdt/eclipse.jdt.core#958](https://github.com/eclipse-jdt/eclipse.jdt.core/issues/958).
-
-Since it is unlikely these issues will be addressed in the near future, support for ECJ has been shelved for the forseeable future.
-
 ## Examples
 
 ### In-memory code, using RAM disks for source directories
@@ -408,3 +399,16 @@ install, and run the correct version of Maven:
 ```cmd
 .\mvnw.cmd clean package
 ```
+
+---
+
+## Third-party compiler support
+
+### ECJ (Eclipse Java Compiler)
+
+While ECJ supports the same interfaces as Javac that are used to call the compiler from this library, [eclipse-jdt/eclipse.jdt.core#1153](https://github.com/eclipse-jdt/eclipse.jdt.core/issues/1153) means we will not get functional Java 11 support going forwards. 
+
+A number of issues were found while developing  [ascopes/java-compiler-testing#163](https://github.com/ascopes/java-compiler-testing/issues/163) with ECJ which prevents many features such as JPMS support from working correctly 
+([eclipse-jdt/eclipse.jdt.core#958](https://github.com/eclipse-jdt/eclipse.jdt.core/issues/958)).
+
+Since it is unlikely these issues will be addressed in the near future, support for ECJ has been shelved for the forseeable future.
