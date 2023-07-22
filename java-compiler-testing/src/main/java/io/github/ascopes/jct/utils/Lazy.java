@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Helper type that wraps an initializer and invokes it lazily as required.
@@ -32,16 +33,19 @@ import org.apiguardian.api.API.Status;
  * <p>This descriptor is thread-safe. No guarantees are made about the thread-safety of the
  * internally stored data, nor the initializer supplier.
  *
+ * <p>This descriptor currently does not support virtual threads. Any synchronization will
+ * occur on the physical thread level.
+ *
  * @param <T> the type of lazy value to return when accessed.
  * @author Ashley Scopes
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-public class Lazy<T> {
+public final class Lazy<T> {
 
   private final Supplier<T> initializer;
   private final Object lock;
-  private volatile T data;
+  private volatile @Nullable T data;
 
   /**
    * Initialize the object.
