@@ -15,6 +15,8 @@
  */
 package io.github.ascopes.jct.utils;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.Objects;
 import java.util.function.Supplier;
 import org.apiguardian.api.API;
@@ -33,8 +35,7 @@ import org.jspecify.annotations.Nullable;
  * <p>This descriptor is thread-safe. No guarantees are made about the thread-safety of the
  * internally stored data, nor the initializer supplier.
  *
- * <p>This descriptor currently does not support virtual threads. Any synchronization will
- * occur on the physical thread level.
+ * <p>This descriptor supports working with Loom virtual threads correctly.
  *
  * @param <T> the type of lazy value to return when accessed.
  * @author Ashley Scopes
@@ -44,7 +45,7 @@ import org.jspecify.annotations.Nullable;
 public final class Lazy<T> {
 
   private final Supplier<T> initializer;
-  private final Object lock;
+  private final Lock lock;
   private volatile @Nullable T data;
 
   /**
@@ -54,7 +55,7 @@ public final class Lazy<T> {
    */
   public Lazy(Supplier<T> initializer) {
     this.initializer = Objects.requireNonNull(initializer, "initializer must not be null");
-    lock = new Object();
+    lock = new ReentrantLock();
     data = null;
   }
 
@@ -65,10 +66,13 @@ public final class Lazy<T> {
 
     // Synchronize to prevent a race condition between reading
     // the data and reading the "initialized" flag.
-    synchronized (lock) {
+    lock.lock();
+    try {
       repr = new ToStringBuilder(this)
           .attribute("data", data)
           .toString();
+    } finally {
+      lock.unlock();
     }
 
     return repr;
@@ -81,10 +85,13 @@ public final class Lazy<T> {
    */
   public T access() {
     if (data == null) {
-      synchronized (lock) {
+      lock.lock();
+      try {
         if (data == null) {
           data = initializer.get();
         }
+      } finally {
+        lock.unlock();
       }
     }
 
@@ -101,8 +108,11 @@ public final class Lazy<T> {
    */
   public void destroy() {
     if (data != null) {
-      synchronized (lock) {
+      lock.lock();
+      try {
         data = null;
+      } finally {
+        lock.unlock();
       }
     }
   }
@@ -120,10 +130,13 @@ public final class Lazy<T> {
       ThrowingConsumer<? super T, ? extends E> consumer
   ) throws E {
     if (data != null) {
-      synchronized (lock) {
+      lock.lock();
+      try {
         if (data != null) {
           consumer.consume(data);
         }
+      } finally {
+        lock.unlock();
       }
     }
 
