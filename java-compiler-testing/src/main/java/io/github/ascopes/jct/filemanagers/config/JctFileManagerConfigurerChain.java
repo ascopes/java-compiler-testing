@@ -19,6 +19,8 @@ import io.github.ascopes.jct.filemanagers.JctFileManager;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -28,8 +30,8 @@ import org.slf4j.LoggerFactory;
  * A chain of configurers to apply to a file manager.
  *
  * <p>While not designed for concurrent use, all operations are shielded by a
- * mutex to guard against potentially confusing behaviour should this component
- * be shared across multiple threads.
+ * lock to guard against potentially confusing behaviour, should this component
+ * be shared across multiple physical and virtual threads.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -39,14 +41,14 @@ public final class JctFileManagerConfigurerChain {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctFileManagerConfigurerChain.class);
 
-  private final Object lock;
+  private final Lock lock;
   private final Deque<JctFileManagerConfigurer> configurers;
 
   /**
    * Initialise this chain.
    */
   public JctFileManagerConfigurerChain() {
-    lock = new Object();
+    lock = new ReentrantLock();
     configurers = new ArrayDeque<>(16);
   }
 
@@ -57,8 +59,11 @@ public final class JctFileManagerConfigurerChain {
    * @return this chain for further calls.
    */
   public JctFileManagerConfigurerChain addFirst(JctFileManagerConfigurer configurer) {
-    synchronized (lock) {
+    lock.lock();
+    try {
       configurers.addFirst(configurer);
+    } finally {
+      lock.unlock();
     }
     return this;
   }
@@ -70,8 +75,11 @@ public final class JctFileManagerConfigurerChain {
    * @return this chain for further calls.
    */
   public JctFileManagerConfigurerChain addLast(JctFileManagerConfigurer configurer) {
-    synchronized (lock) {
+    lock.lock();
+    try {
       configurers.addLast(configurer);
+    } finally {
+      lock.unlock();
     }
     return this;
   }
@@ -82,8 +90,11 @@ public final class JctFileManagerConfigurerChain {
    * @return the list of configurers.
    */
   public List<JctFileManagerConfigurer> list() {
-    synchronized (lock) {
+    lock.lock();
+    try {
       return List.copyOf(configurers);
+    } finally {
+      lock.unlock();
     }
   }
 
@@ -95,7 +106,8 @@ public final class JctFileManagerConfigurerChain {
    *     parameter, depending on how the configurers manipulate the input object.
    */
   public JctFileManager configure(JctFileManager fileManager) {
-    synchronized (lock) {
+    lock.lock();
+    try {
       for (var configurer : configurers) {
         if (configurer.isEnabled()) {
           LOGGER.debug("Applying {} to file manager", configurer);
@@ -104,6 +116,8 @@ public final class JctFileManagerConfigurerChain {
           LOGGER.trace("Skipping {}", configurer);
         }
       }
+    } finally {
+      lock.unlock();
     }
 
     return fileManager;
