@@ -71,6 +71,13 @@ class JctFileManagerFactoryImplTest {
   @Spy
   JctFileManagerFactoryImpl factory;
 
+  @DisplayName(".getCompiler() returns the compiler")
+  @Test
+  void getCompilerReturnsTheCompiler() {
+    // Then
+    assertThat(factory.getCompiler()).isSameAs(compiler);
+  }
+
   @DisplayName("Created file managers use the effective release")
   @Test
   void createdFileManagersUseTheEffectiveRelease() {
