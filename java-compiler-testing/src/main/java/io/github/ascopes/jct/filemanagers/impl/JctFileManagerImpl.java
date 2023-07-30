@@ -21,6 +21,8 @@ import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.containers.impl.ContainerGroupRepositoryImpl;
+import io.github.ascopes.jct.ex.JctIllegalInputException;
+import io.github.ascopes.jct.ex.JctNotFoundException;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
@@ -30,7 +32,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -226,7 +227,7 @@ public final class JctFileManagerImpl implements JctFileManager {
       return null;
     }
 
-    throw new IllegalArgumentException(
+    throw new JctIllegalInputException(
         "File object " + fo + " is not compatible with this file manager"
     );
   }
@@ -270,7 +271,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     var group = repository.getContainerGroup(location);
 
     if (group == null) {
-      throw new NoSuchElementException(
+      throw new JctNotFoundException(
           "No container group for location " + location.getName() + " exists in this file manager"
       );
     }
@@ -355,7 +356,7 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   private static void requireOutputOrModuleOrientedLocation(Location location) {
     if (!location.isOutputLocation() && !location.isModuleOrientedLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Location " + location.getName() + " must be output or module-oriented"
       );
     }
@@ -363,7 +364,7 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   private static void requireModuleOrientedLocation(Location location) {
     if (!location.isModuleOrientedLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Location " + location.getName() + " must be module-oriented"
       );
     }
@@ -371,7 +372,7 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   private static void requireOutputLocation(Location location) {
     if (!location.isOutputLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Location " + location.getName() + " must be an output location"
       );
     }
@@ -379,7 +380,7 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   private void requirePackageLocation(Location location) {
     if (location.isModuleOrientedLocation() || location.isOutputLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Location " + location.getName() + " must be an input package location"
       );
     }
@@ -387,7 +388,7 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   private void requirePackageOrientedLocation(Location location) {
     if (location.isModuleOrientedLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Location " + location.getName() + " must be package-oriented"
       );
     }

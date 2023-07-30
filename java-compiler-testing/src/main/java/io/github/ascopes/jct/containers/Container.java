@@ -99,8 +99,8 @@ public interface Container extends Closeable {
    * in, rather than the location of the archive on the original file system.
    *
    * <p>It is worth noting that this operation may result in the archive being loaded into memory
-   * eagerly if it uses lazy loading, due to the need to load the archive to be able to determine
-   * an accurate handle to the inner root directory.
+   * eagerly if it uses lazy loading, due to the need to load the archive to be able to determine an
+   * accurate handle to the inner root directory.
    *
    * @return the path root.
    * @since 0.0.6

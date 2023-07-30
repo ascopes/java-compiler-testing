@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.filemanagers.config;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import java.util.Map;
@@ -84,7 +85,7 @@ public final class JctFileManagerAnnotationProcessorClassPathConfigurer implemen
         return fileManager;
 
       default:
-        throw new IllegalStateException("Cannot configure annotation processor discovery");
+        throw new JctIllegalInputException("Cannot configure annotation processor discovery");
     }
   }
 

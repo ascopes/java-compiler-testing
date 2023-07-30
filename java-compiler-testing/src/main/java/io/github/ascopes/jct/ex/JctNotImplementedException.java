@@ -13,11 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.greeter;
+package io.github.ascopes.jct.ex;
 
-public class Greeter {
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
-  public static String greet(String name) {
-    return "Hello, " + name + "!";
+/**
+ * Exception that is raised if an internal feature is not implemented.
+ *
+ * @author Ashley Scopes
+ * @since 1.1.0
+ */
+@API(since = "1.1.0", status = Status.STABLE)
+public final class JctNotImplementedException extends JctException {
+
+  /**
+   * Initialise the exception.
+   *
+   * @param message the message to report.
+   */
+  public JctNotImplementedException(String message) {
+    super(message);
   }
 }

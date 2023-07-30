@@ -92,7 +92,7 @@ public final class TraceDiagnosticRepresentation implements Representation {
     }
 
     builder.append("\n\n");
-    
+
     var snippet = extractSnippet(diagnostic);
 
     if (snippet != null) {

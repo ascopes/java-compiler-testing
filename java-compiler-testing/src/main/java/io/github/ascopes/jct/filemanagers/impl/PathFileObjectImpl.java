@@ -17,6 +17,7 @@ package io.github.ascopes.jct.filemanagers.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
@@ -88,7 +89,7 @@ public final class PathFileObjectImpl implements PathFileObject {
     requireNonNull(relativePath, "relativePath");
 
     if (!rootPath.isAbsolute()) {
-      throw new IllegalArgumentException("Expected rootPath to be absolute, but got " + rootPath);
+      throw new JctIllegalInputException("Expected rootPath to be absolute, but got " + rootPath);
     }
 
     this.location = location;

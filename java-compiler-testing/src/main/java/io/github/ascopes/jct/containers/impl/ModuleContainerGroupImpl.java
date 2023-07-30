@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.StringUtils;
@@ -56,15 +57,15 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
    *
    * @param location the module-oriented location.
    * @param release  the release to use for Multi-Release JARs.
-   * @throws UnsupportedOperationException if the {@code location} is not module-oriented, or is
-   *                                       output-oriented.
+   * @throws JctIllegalInputException if the {@code location} is not module-oriented, or is
+   *                                  output-oriented.
    */
   public ModuleContainerGroupImpl(Location location, String release) {
     this.location = requireNonNull(location, "location");
     this.release = requireNonNull(release, "release");
 
     if (location.isOutputLocation()) {
-      throw new UnsupportedOperationException(
+      throw new JctIllegalInputException(
           "Cannot use output-oriented locations such as "
               + StringUtils.quoted(location.getName())
               + " with this container"
@@ -72,7 +73,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
     }
 
     if (!location.isModuleOrientedLocation()) {
-      throw new UnsupportedOperationException(
+      throw new JctIllegalInputException(
           "Cannot use package-oriented locations such as "
               + StringUtils.quoted(location.getName())
               + " with this container"
@@ -138,7 +139,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   @Override
   public PackageContainerGroup getModule(String name) {
     if (name.isEmpty()) {
-      throw new IllegalArgumentException("Cannot have module sources with no valid module name");
+      throw new JctIllegalInputException("Cannot have module sources with no valid module name");
     }
 
     return modules.get(new ModuleLocation(location, name));

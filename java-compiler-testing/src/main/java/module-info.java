@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import io.github.ascopes.jct.workspaces.impl.MemoryFileSystemProvider.MemoryFileSystemUrlHandlerProvider;
 import java.net.spi.URLStreamHandlerProvider;
 
@@ -43,8 +44,9 @@ import java.net.spi.URLStreamHandlerProvider;
  * <a target="_blank" href="https://github.com/ascopes/java-compiler-testing">on GitHub</a>.
  *
  * <p>Releases can be found on
- * <a target="_blank" href="https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing/">
- * Maven Central</a>.
+ * <a target="_blank"
+ * href="https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing/"> Maven
+ * Central</a>.
  *
  * <pre><code>
  *    import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;

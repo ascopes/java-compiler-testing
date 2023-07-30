@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.impl.PathFileObjectImpl;
 import io.github.ascopes.jct.utils.FileUtils;
 import java.io.BufferedReader;
@@ -88,7 +89,7 @@ class PathFileObjectImplTest {
 
     // Then
     assertThatThrownBy(() -> new PathFileObjectImpl(someLocation(), rootPath, someRelativePath()))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(JctIllegalInputException.class)
         .hasMessage("Expected rootPath to be absolute, but got " + rootPath);
   }
 
@@ -437,7 +438,8 @@ class PathFileObjectImplTest {
     // Given
     var rootPath = someAbsolutePath();
     var relativePath = someRelativePath();
-    var fileObject = new PathFileObjectImpl(someLocation(), rootPath, rootPath.resolve(relativePath));
+    var fileObject = new PathFileObjectImpl(someLocation(), rootPath,
+        rootPath.resolve(relativePath));
 
     // Then
     assertThat(fileObject.getRelativePath()).isEqualTo(relativePath);

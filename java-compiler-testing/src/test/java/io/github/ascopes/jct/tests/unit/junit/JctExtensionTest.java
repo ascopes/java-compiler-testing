@@ -56,6 +56,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 @Isolated("This modifies global state in some test cases")
 class JctExtensionTest {
+
   @Mock
   ExtensionContext extensionContext;
 
@@ -134,6 +135,7 @@ class JctExtensionTest {
 
   @Disabled("This is just test data")
   static class StaticWorkspaceTestCase {
+
     @Managed
     static Workspace staticWorkspace1;
 
@@ -155,7 +157,7 @@ class JctExtensionTest {
 
     @Managed
     Workspace someIgnoredInstanceWorkspace;
-    
+
     @Test
     void testSomething() {
       // ...
@@ -224,7 +226,7 @@ class JctExtensionTest {
         instance3.workspace2,
         instance3.workspace3
     )).containsExactlyInAnyOrder(expectedWorkspace7, expectedWorkspace8, expectedWorkspace9);
-    
+
     assertThat(InstanceWorkspaceTestCase.someIgnoredStaticWorkspace).isNull();
     assertThat(InstanceWorkspaceTestCase.someInvalidStaticWorkspace).isNull();
   }
@@ -256,7 +258,7 @@ class JctExtensionTest {
     instance3.workspace3 = mock();
     instance3.someIgnoredInstanceWorkspace = mock();
     instance3.someInvalidInstanceWorkspace = mock();
-    
+
     when(extensionContext.getRequiredTestInstances())
         .thenReturn(testInstances);
 
@@ -297,6 +299,7 @@ class JctExtensionTest {
 
   @Disabled(value = "This is just test data")
   static class InstanceWorkspaceTestCase {
+
     @Managed
     Workspace workspace1;
 
@@ -388,21 +391,25 @@ class JctExtensionTest {
   }
 
   static class TestCaseBase1 {
+
     @Managed
     Workspace testCaseBase1Workspace;
   }
 
   static class TestCaseBase2 extends TestCaseBase1 {
+
     @Managed
     Workspace testCaseBase2Workspace;
   }
 
   static class TestCaseBase3 extends TestCaseBase2 {
+
     @Managed
     Workspace testCaseBase3Workspace;
   }
 
   static class TestCaseImpl extends TestCaseBase3 {
+
     @Managed
     Workspace testCaseImplWorkspace;
   }

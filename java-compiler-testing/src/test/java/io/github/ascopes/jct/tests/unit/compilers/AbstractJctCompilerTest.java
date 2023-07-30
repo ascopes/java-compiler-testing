@@ -352,7 +352,7 @@ class AbstractJctCompilerTest {
       when(flagBuilderFactory.createFlagBuilder()).thenReturn(flagBuilder);
       when(jsr199CompilerFactory.createCompiler()).thenReturn(jsr199Compiler);
       fileManagers.when(() -> JctFileManagers.newJctFileManagerFactory(any()))
-            .thenReturn(fileManagerFactory);
+          .thenReturn(fileManagerFactory);
       when(fileManagerFactory.createFileManager(any())).thenReturn(fileManager);
 
       // Default implementation. We can override this to make it throw exceptions, etc.

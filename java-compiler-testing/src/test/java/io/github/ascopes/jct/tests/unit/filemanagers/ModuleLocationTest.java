@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.tests.helpers.Fixtures;
 import java.util.Objects;
@@ -65,7 +66,7 @@ class ModuleLocationTest {
   void passingInputPackageOrientedLocationToConstructorRaisesException(StandardLocation location) {
     // Then
     assertThatThrownBy(() -> new ModuleLocation(location, "foo.bar"))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(JctIllegalInputException.class)
         .hasMessage(
             "The parent of a module location must be either an output location or be "
                 + "module-oriented, but got %s",

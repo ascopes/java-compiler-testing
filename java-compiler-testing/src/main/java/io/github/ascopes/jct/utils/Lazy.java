@@ -15,9 +15,10 @@
  */
 package io.github.ascopes.jct.utils;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.Objects;
 import java.util.function.Supplier;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -54,7 +55,7 @@ public final class Lazy<T> {
    * @param initializer the initializer to call.
    */
   public Lazy(Supplier<T> initializer) {
-    this.initializer = Objects.requireNonNull(initializer, "initializer must not be null");
+    this.initializer = requireNonNull(initializer, "initializer must not be null");
     lock = new ReentrantLock();
     data = null;
   }
@@ -95,7 +96,7 @@ public final class Lazy<T> {
       }
     }
 
-    return Objects.requireNonNull(data, "cannot store null data in Lazy");
+    return requireNonNull(data, "cannot store null data in Lazy");
   }
 
   /**

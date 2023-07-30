@@ -85,7 +85,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
     @Tag("javac-test")
 })
 @Target({
-    ElementType.ANNOTATION_TYPE, 
+    ElementType.ANNOTATION_TYPE,
     ElementType.METHOD,
 })
 @TestTemplate

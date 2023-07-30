@@ -32,8 +32,8 @@ import org.apiguardian.api.API.Status;
  * group. Operations on non-module packages should operate on this container group directly.
  *
  * <p>Note that each container group will usually only support one package container group
- * in the outputs. This is due to the JSR-199 API not providing a method for specifying which
- * output location to write files to for legacy-style packages.
+ * in the outputs. This is due to the JSR-199 API not providing a method for specifying which output
+ * location to write files to for legacy-style packages.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -81,7 +81,7 @@ public interface OutputContainerGroup extends PackageContainerGroup, ModuleConta
    * JSR-199 limitations.
    *
    * @return the list containing the package container, if it exists. Otherwise, an empty list is
-   * returned instead.
+   *     returned instead.
    */
   @Override
   List<Container> getPackages();

@@ -38,6 +38,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.tests.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.utils.StringUtils;
@@ -90,9 +91,9 @@ class FileUtilsTest implements UtilityClassTestTemplate {
     }
   }
 
-  @DisplayName("retrieveRequiredUrl with an invalid scheme throws an IllegalArgumentException")
+  @DisplayName("retrieveRequiredUrl with an invalid scheme throws an JctIllegalInputException")
   @Test
-  void retrieveRequiredUrlThrowsIllegalArgumentExceptionIfPathUsesUnknownUriScheme() {
+  void retrieveRequiredUrlThrowsJctIllegalInputExceptionIfPathUsesUnknownUriScheme() {
     // Given
     var uri = URI.create("some-crazy-random-scheme://foo/bar/baz.txt");
     var path = mock(Path.class);
@@ -100,7 +101,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
 
     // Then
     assertThatThrownBy(() -> retrieveRequiredUrl(path))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(JctIllegalInputException.class)
         .hasCauseInstanceOf(MalformedURLException.class);
   }
 
@@ -166,7 +167,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
   void assertValidRootNameFailsForInvalidRootNames(String rootName, String expectedError) {
     // Then
     assertThatThrownBy(() -> assertValidRootName(rootName))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(JctIllegalInputException.class)
         .hasMessage(expectedError + ": " + StringUtils.quoted(rootName));
   }
 
@@ -180,7 +181,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
 
     // Then
     assertThatThrownBy(() -> pathToBinaryName(path))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(JctIllegalInputException.class)
         .hasMessage("Path cannot be absolute: \"/foo/bar/baz\"");
   }
 

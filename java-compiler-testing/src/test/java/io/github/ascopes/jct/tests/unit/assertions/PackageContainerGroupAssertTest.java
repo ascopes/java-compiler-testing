@@ -444,7 +444,6 @@ class PackageContainerGroupAssertTest {
           .withRelativeFile("zipc")
           .buildMock();
 
-
       var containerGroup = mock(PackageContainerGroup.class);
       when(containerGroup.getFile(any(), any(), any())).thenReturn(null);
 

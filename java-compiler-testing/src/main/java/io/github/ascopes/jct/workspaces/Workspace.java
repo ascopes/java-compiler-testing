@@ -694,7 +694,7 @@ public interface Workspace extends AutoCloseable {
    * Get the module path roots for {@link StandardLocation#CLASS_OUTPUT class outputs}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   * found.
+   *     found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getClassOutputModules() {
@@ -728,7 +728,7 @@ public interface Workspace extends AutoCloseable {
    * Get the module path roots for {@link StandardLocation#SOURCE_OUTPUT source outputs}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   * found.
+   *     found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getSourceOutputModules() {
@@ -783,7 +783,7 @@ public interface Workspace extends AutoCloseable {
    * {@link StandardLocation#ANNOTATION_PROCESSOR_MODULE_PATH annotation processor module path}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   * found.
+   *     found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getAnnotationProcessorPathModules() {
@@ -806,7 +806,7 @@ public interface Workspace extends AutoCloseable {
    * {@link StandardLocation#MODULE_SOURCE_PATH module source paths}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   * found.
+   *     found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getSourcePathModules() {
@@ -828,7 +828,7 @@ public interface Workspace extends AutoCloseable {
    * Get the module path roots for the {@link StandardLocation#MODULE_PATH module paths}.
    *
    * @return the roots in a map of module names to lists of roots, or an empty map if none were
-   * found.
+   *     found.
    * @since 0.1.0
    */
   default Map<String, List<? extends PathRoot>> getModulePathModules() {

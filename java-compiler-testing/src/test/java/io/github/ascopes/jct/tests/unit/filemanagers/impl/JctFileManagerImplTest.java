@@ -48,6 +48,8 @@ import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.containers.impl.ContainerGroupRepositoryImpl;
+import io.github.ascopes.jct.ex.JctIllegalInputException;
+import io.github.ascopes.jct.ex.JctNotFoundException;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
@@ -55,7 +57,6 @@ import io.github.ascopes.jct.tests.helpers.Fixtures;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
-import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -392,7 +393,7 @@ class JctFileManagerImplTest {
               someRelativePath().toString(),
               someJavaFileObject()
           ))
-          .isInstanceOf(IllegalArgumentException.class)
+          .isInstanceOf(JctIllegalInputException.class)
           .hasMessage("Location %s must be an output location", name);
     }
 
@@ -588,7 +589,7 @@ class JctFileManagerImplTest {
               kind,
               someJavaFileObject()
           ))
-          .isInstanceOf(IllegalArgumentException.class)
+          .isInstanceOf(JctIllegalInputException.class)
           .hasMessage("Location %s must be an output location", name);
     }
 
@@ -723,7 +724,7 @@ class JctFileManagerImplTest {
 
       // Then
       assertThatThrownBy(() -> fileManager.getLocationForModule(location, moduleName))
-          .isInstanceOf(IllegalArgumentException.class)
+          .isInstanceOf(JctIllegalInputException.class)
           .hasMessage("Location %s must be output or module-oriented", location.getName());
     }
 
@@ -756,7 +757,7 @@ class JctFileManagerImplTest {
 
       // Then
       assertThatThrownBy(() -> fileManager.getLocationForModule(location, fileObject))
-          .isInstanceOf(IllegalArgumentException.class)
+          .isInstanceOf(JctIllegalInputException.class)
           .hasMessage("Location %s must be output or module-oriented", location.getName());
     }
 
@@ -769,7 +770,7 @@ class JctFileManagerImplTest {
 
       // Then
       assertThatThrownBy(() -> fileManager.getLocationForModule(location, fileObject))
-          .isInstanceOf(IllegalArgumentException.class)
+          .isInstanceOf(JctIllegalInputException.class)
           .hasMessage("File object %s is not compatible with this file manager", fileObject);
     }
 
@@ -827,7 +828,7 @@ class JctFileManagerImplTest {
     ) {
       // Then
       assertThatThrownBy(() -> fileManager.getModuleContainerGroup(location))
-          .isInstanceOf(IllegalArgumentException.class)
+          .isInstanceOf(JctIllegalInputException.class)
           .hasMessage("Location %s must be module-oriented", location.getName());
 
       verifyNoInteractions(repository);
@@ -886,7 +887,7 @@ class JctFileManagerImplTest {
     ) {
       // Then
       assertThatThrownBy(() -> fileManager.getOutputContainerGroup(location))
-          .isInstanceOf(IllegalArgumentException.class)
+          .isInstanceOf(JctIllegalInputException.class)
           .hasMessage("Location %s must be an output location", location.getName());
 
       verifyNoInteractions(repository);
@@ -944,7 +945,7 @@ class JctFileManagerImplTest {
     void getPackageContainerGroupThrowsExceptionForNonPackageContainerGroups(Location location) {
       // Then
       assertThatThrownBy(() -> fileManager.getPackageContainerGroup(location))
-          .isInstanceOf(IllegalArgumentException.class)
+          .isInstanceOf(JctIllegalInputException.class)
           .hasMessage("Location %s must be an input package location", location.getName());
 
       verifyNoInteractions(repository);
@@ -1002,7 +1003,7 @@ class JctFileManagerImplTest {
 
       // Then
       assertThatThrownBy(() -> fileManager.getServiceLoader(location, Some.class))
-          .isInstanceOf(NoSuchElementException.class)
+          .isInstanceOf(JctNotFoundException.class)
           .hasMessage("No container group for location %s exists in this file manager",
               location.getName());
 
@@ -1083,7 +1084,7 @@ class JctFileManagerImplTest {
     void inferBinaryNameThrowsExceptionForModuleOrientedLocations(Location location) {
       // Then
       assertThatThrownBy(() -> fileManager.inferBinaryName(location, someJavaFileObject()))
-          .isInstanceOf(IllegalArgumentException.class)
+          .isInstanceOf(JctIllegalInputException.class)
           .hasMessage("Location %s must be package-oriented", location.getName());
 
       verifyNoInteractions(repository);
@@ -1166,7 +1167,7 @@ class JctFileManagerImplTest {
     void inferModuleNameThrowsAnExceptionIfLocationIsNotPackageOriented(Location location) {
       // Then
       assertThatThrownBy(() -> fileManager.inferModuleName(location))
-          .isInstanceOf(IllegalArgumentException.class)
+          .isInstanceOf(JctIllegalInputException.class)
           .hasMessage("Location %s must be package-oriented", location.getName());
     }
 
@@ -1288,7 +1289,7 @@ class JctFileManagerImplTest {
 
       // Then
       assertThatThrownBy(() -> fileManager.list(location, packageName, kinds, recurse))
-          .isInstanceOf(IllegalArgumentException.class)
+          .isInstanceOf(JctIllegalInputException.class)
           .hasMessage("Location %s must be package-oriented", location.getName());
     }
 
@@ -1368,7 +1369,7 @@ class JctFileManagerImplTest {
     void listLocationsForModulesThrowsExceptionIfLocationIsPackageOriented(Location location) {
       // Then
       assertThatThrownBy(() -> fileManager.listLocationsForModules(location))
-          .isInstanceOf(IllegalArgumentException.class)
+          .isInstanceOf(JctIllegalInputException.class)
           .hasMessage("Location %s must be output or module-oriented", location.getName());
     }
 

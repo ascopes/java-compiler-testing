@@ -26,16 +26,15 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Annotation for a {@link Workspace} field in a test class. This will ensure it gets
- * initialised and closed correctly between tests.
+ * Annotation for a {@link Workspace} field in a test class. This will ensure it gets initialised
+ * and closed correctly between tests.
  *
  * <p>Use static-fields to keep a workspace object alive for the duration of all the tests
  * (providing the same semantics as initialising and closing resources using the
- * {@link org.junit.jupiter.api.BeforeAll} and {@link org.junit.jupiter.api.AfterAll}
- * annotations).
- *
- * You must extend your test class with the {@link JctExtension} extension for this annotation
- * to be detected and handled.
+ * {@link org.junit.jupiter.api.BeforeAll} and {@link org.junit.jupiter.api.AfterAll} annotations).
+ * <p>
+ * You must extend your test class with the {@link JctExtension} extension for this annotation to be
+ * detected and handled.
  *
  * <p>Example usage:
  *

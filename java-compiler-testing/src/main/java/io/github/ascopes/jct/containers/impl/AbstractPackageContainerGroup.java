@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.Lazy;
@@ -140,7 +141,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
       }
     }
 
-    if (exceptions.size() > 0) {
+    if (!exceptions.isEmpty()) {
       var newEx = new IOException("Containers failed to close in " + location.getName());
       exceptions.forEach(newEx::addSuppressed);
       throw newEx;
@@ -230,7 +231,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
   @Override
   public <S> ServiceLoader<S> getServiceLoader(Class<S> service) {
     if (location instanceof ModuleLocation) {
-      throw new UnsupportedOperationException("Cannot load services from specific modules");
+      throw new JctIllegalInputException("Cannot load services from specific modules");
     }
 
     return ServiceLoader.load(service, classLoaderLazy.access());

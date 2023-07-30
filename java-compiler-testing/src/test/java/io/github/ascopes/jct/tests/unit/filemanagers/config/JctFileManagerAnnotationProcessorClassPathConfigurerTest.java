@@ -23,6 +23,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerAnnotationProcessorClassPathConfigurer;
@@ -130,7 +131,7 @@ class JctFileManagerAnnotationProcessorClassPathConfigurerTest {
 
     // Then
     assertThatThrownBy(() -> configurer.configure(fileManager))
-        .isInstanceOf(IllegalStateException.class);
+        .isInstanceOf(JctIllegalInputException.class);
   }
 
   @DisplayName(".isEnabled() returns the expected value")

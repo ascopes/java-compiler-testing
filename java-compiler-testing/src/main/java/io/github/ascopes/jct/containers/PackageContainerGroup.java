@@ -39,167 +39,167 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.STABLE)
 public interface PackageContainerGroup extends ContainerGroup {
 
-    /**
-     * Add a container to this group.
-     *
-     * <p>The provided container will be closed when this group is closed.
-     *
-     * @param container the container to add.
-     */
-    void addPackage(Container container);
+  /**
+   * Add a container to this group.
+   *
+   * <p>The provided container will be closed when this group is closed.
+   *
+   * @param container the container to add.
+   */
+  void addPackage(Container container);
 
-    /**
-     * Add a path to this group.
-     *
-     * <p>Note that this will destroy the {@link #getClassLoader() classloader} if one is already
-     * allocated.
-     *
-     * <p>If the path points to some form of archive (such as a JAR), then this may open that archive
-     * in a new resource internally. If this occurs, then the resource will always be freed by this
-     * class by calling {@link #close()}.
-     *
-     * <p>Any other closable resources passed to this function will not be closed by this
-     * implementation. You must handle the lifecycle of those objects yourself.
-     *
-     * @param path the path to add.
-     */
-    void addPackage(PathRoot path);
+  /**
+   * Add a path to this group.
+   *
+   * <p>Note that this will destroy the {@link #getClassLoader() classloader} if one is already
+   * allocated.
+   *
+   * <p>If the path points to some form of archive (such as a JAR), then this may open that archive
+   * in a new resource internally. If this occurs, then the resource will always be freed by this
+   * class by calling {@link #close()}.
+   *
+   * <p>Any other closable resources passed to this function will not be closed by this
+   * implementation. You must handle the lifecycle of those objects yourself.
+   *
+   * @param path the path to add.
+   */
+  void addPackage(PathRoot path);
 
-    /**
-     * Get a class loader for this group of containers.
-     *
-     * <p>Note that adding additional containers to this group after accessing this class loader
-     * may result in the class loader being destroyed or re-created.
-     *
-     * @return the class loader.
-     */
-    ClassLoader getClassLoader();
+  /**
+   * Get a class loader for this group of containers.
+   *
+   * <p>Note that adding additional containers to this group after accessing this class loader
+   * may result in the class loader being destroyed or re-created.
+   *
+   * @return the class loader.
+   */
+  ClassLoader getClassLoader();
 
-    /**
-     * Find the first occurrence of a given path to a file in packages or modules.
-     *
-     * <p>Modules are treated as subdirectories.
-     *
-     * <pre><code>
-     *   // Using platform-specific separators.
-     *   containerGroup.getFile("foo/bar/baz.txt")...;
-     *
-     *   // Letting JCT infer the correct path separators to use (recommended).
-     *   containerGroup.getFile("foo", "bar", "baz.txt");
-     * </code></pre>
-     *
-     * @param fragment  the first part of the path.
-     * @param fragments any additional parts of the path.
-     * @return the first occurrence of the path in this group, or null if not found.
-     * @throws IllegalArgumentException if the provided path is absolute.
-     */
-    Path getFile(String fragment, String... fragments);
+  /**
+   * Find the first occurrence of a given path to a file in packages or modules.
+   *
+   * <p>Modules are treated as subdirectories.
+   *
+   * <pre><code>
+   *   // Using platform-specific separators.
+   *   containerGroup.getFile("foo/bar/baz.txt")...;
+   *
+   *   // Letting JCT infer the correct path separators to use (recommended).
+   *   containerGroup.getFile("foo", "bar", "baz.txt");
+   * </code></pre>
+   *
+   * @param fragment  the first part of the path.
+   * @param fragments any additional parts of the path.
+   * @return the first occurrence of the path in this group, or null if not found.
+   * @throws IllegalArgumentException if the provided path is absolute.
+   */
+  Path getFile(String fragment, String... fragments);
 
-    /**
-     * Get a {@link FileObject} that can have content read from it.
-     *
-     * <p>This will return {@code null} if no file is found matching the criteria.
-     *
-     * @param packageName  the package name of the file to read.
-     * @param relativeName the relative name of the file to read.
-     * @return the file object, or null if the file is not found.
-     */
-    PathFileObject getFileForInput(String packageName, String relativeName);
+  /**
+   * Get a {@link FileObject} that can have content read from it.
+   *
+   * <p>This will return {@code null} if no file is found matching the criteria.
+   *
+   * @param packageName  the package name of the file to read.
+   * @param relativeName the relative name of the file to read.
+   * @return the file object, or null if the file is not found.
+   */
+  PathFileObject getFileForInput(String packageName, String relativeName);
 
-    /**
-     * Get a {@link FileObject} that can have content written to it for the given file.
-     *
-     * <p>This will attempt to write to the first writeable path in this group. {@code null}
-     * will be returned if no writeable paths exist in this group.
-     *
-     * @param packageName  the name of the package the file is in.
-     * @param relativeName the relative name of the file within the package.
-     * @return the {@link FileObject} to write to, or null if this group has no paths that can be
-     * written to.
-     */
-    PathFileObject getFileForOutput(String packageName, String relativeName);
+  /**
+   * Get a {@link FileObject} that can have content written to it for the given file.
+   *
+   * <p>This will attempt to write to the first writeable path in this group. {@code null}
+   * will be returned if no writeable paths exist in this group.
+   *
+   * @param packageName  the name of the package the file is in.
+   * @param relativeName the relative name of the file within the package.
+   * @return the {@link FileObject} to write to, or null if this group has no paths that can be
+   *     written to.
+   */
+  PathFileObject getFileForOutput(String packageName, String relativeName);
 
-    /**
-     * Get a {@link JavaFileObject} that can have content read from it for the given file.
-     *
-     * <p>This will return {@code null} if no file is found matching the criteria.
-     *
-     * @param className the binary name of the class to read.
-     * @param kind      the kind of file to read.
-     * @return the {@link JavaFileObject} to write to, or null if this group has no paths that can be
-     * written to.
-     */
-    PathFileObject getJavaFileForInput(String className, Kind kind);
+  /**
+   * Get a {@link JavaFileObject} that can have content read from it for the given file.
+   *
+   * <p>This will return {@code null} if no file is found matching the criteria.
+   *
+   * @param className the binary name of the class to read.
+   * @param kind      the kind of file to read.
+   * @return the {@link JavaFileObject} to write to, or null if this group has no paths that can be
+   *     written to.
+   */
+  PathFileObject getJavaFileForInput(String className, Kind kind);
 
-    /**
-     * Get a {@link JavaFileObject} that can have content written to it for the given class.
-     *
-     * <p>This will attempt to write to the first writeable path in this group. {@code null}
-     * will be returned if no writeable paths exist in this group.
-     *
-     * @param className the name of the class.
-     * @param kind      the kind of the class file.
-     * @return the {@link JavaFileObject} to write to, or null if this group has no paths that can be
-     * written to.
-     */
-    PathFileObject getJavaFileForOutput(String className, Kind kind);
+  /**
+   * Get a {@link JavaFileObject} that can have content written to it for the given class.
+   *
+   * <p>This will attempt to write to the first writeable path in this group. {@code null}
+   * will be returned if no writeable paths exist in this group.
+   *
+   * @param className the name of the class.
+   * @param kind      the kind of the class file.
+   * @return the {@link JavaFileObject} to write to, or null if this group has no paths that can be
+   *     written to.
+   */
+  PathFileObject getJavaFileForOutput(String className, Kind kind);
 
-    /**
-     * Get the package-oriented location that this group of paths is for.
-     *
-     * @return the package-oriented location.
-     */
-    Location getLocation();
+  /**
+   * Get the package-oriented location that this group of paths is for.
+   *
+   * @return the package-oriented location.
+   */
+  Location getLocation();
 
-    /**
-     * Get the package containers in this group.
-     *
-     * <p>Returned packages are presented in the order that they were registered. This is the
-     * resolution order that the compiler will use.
-     *
-     * @return the containers.
-     */
-    List<Container> getPackages();
+  /**
+   * Get the package containers in this group.
+   *
+   * <p>Returned packages are presented in the order that they were registered. This is the
+   * resolution order that the compiler will use.
+   *
+   * @return the containers.
+   */
+  List<Container> getPackages();
 
-    /**
-     * Try to infer the binary name of a given file object.
-     *
-     * @param fileObject the file object to infer the binary name for.
-     * @return the binary name if known, or null otherwise.
-     */
-    String inferBinaryName(PathFileObject fileObject);
+  /**
+   * Try to infer the binary name of a given file object.
+   *
+   * @param fileObject the file object to infer the binary name for.
+   * @return the binary name if known, or null otherwise.
+   */
+  String inferBinaryName(PathFileObject fileObject);
 
-    /**
-     * Determine if this group has no paths registered.
-     *
-     * @return {@code true} if no paths are registered. {@code false} if paths are registered.
-     */
-    boolean isEmpty();
+  /**
+   * Determine if this group has no paths registered.
+   *
+   * @return {@code true} if no paths are registered. {@code false} if paths are registered.
+   */
+  boolean isEmpty();
 
-    /**
-     * List all the file objects that match the given criteria in this group.
-     *
-     * @param packageName the package name to look in.
-     * @param kinds       the kinds of file to look for.
-     * @param recurse     {@code true} to recurse subpackages, {@code false} to only consider the
-     *                    given package.
-     * @return thr file objects that were found.
-     * @throws IOException if the file lookup fails due to an IO error somewhere.
-     */
-    Set<JavaFileObject> listFileObjects(
-            String packageName,
-            Set<? extends Kind> kinds,
-            boolean recurse
-    ) throws IOException;
+  /**
+   * List all the file objects that match the given criteria in this group.
+   *
+   * @param packageName the package name to look in.
+   * @param kinds       the kinds of file to look for.
+   * @param recurse     {@code true} to recurse subpackages, {@code false} to only consider the
+   *                    given package.
+   * @return thr file objects that were found.
+   * @throws IOException if the file lookup fails due to an IO error somewhere.
+   */
+  Set<JavaFileObject> listFileObjects(
+      String packageName,
+      Set<? extends Kind> kinds,
+      boolean recurse
+  ) throws IOException;
 
-    /**
-     * List all files recursively in this container group, returning a multimap of each container and all files
-     * within that container.
-     *
-     * @return a multimap of containers mapping to collections of all files in that container.
-     * @throws IOException if the file lookup fails due to an IO error somewhere.
-     * @since 0.6.0
-     */
-    @API(since = "0.6.0", status = Status.STABLE)
-    Map<Container, Collection<Path>> listAllFiles() throws IOException;
+  /**
+   * List all files recursively in this container group, returning a multimap of each container and
+   * all files within that container.
+   *
+   * @return a multimap of containers mapping to collections of all files in that container.
+   * @throws IOException if the file lookup fails due to an IO error somewhere.
+   * @since 0.6.0
+   */
+  @API(since = "0.6.0", status = Status.STABLE)
+  Map<Container, Collection<Path>> listAllFiles() throws IOException;
 }

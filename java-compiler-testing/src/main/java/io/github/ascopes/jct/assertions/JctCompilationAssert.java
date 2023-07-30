@@ -157,11 +157,11 @@ public final class JctCompilationAssert extends
    *
    * @param location the location to configure.
    * @return the assertions to perform.
-   * @throws AssertionError           if the compilation was null, or no group for the location
-   *                                  was found.
+   * @throws AssertionError           if the compilation was null, or no group for the location was
+   *                                  found.
    * @throws IllegalArgumentException if the location was
-   *                                  {@link Location#isModuleOrientedLocation() module-oriented}
-   *                                  or {@link Location#isOutputLocation() an output location}.
+   *                                  {@link Location#isModuleOrientedLocation() module-oriented} or
+   *                                  {@link Location#isOutputLocation() an output location}.
    * @throws NullPointerException     if the provided location object is null.
    */
   public PackageContainerGroupAssert packageGroup(Location location) {
@@ -193,8 +193,8 @@ public final class JctCompilationAssert extends
    *
    * @param location the location to configure.
    * @return the assertions to perform.
-   * @throws AssertionError           if the compilation was null, or no group for the location
-   *                                  was found.
+   * @throws AssertionError           if the compilation was null, or no group for the location was
+   *                                  found.
    * @throws IllegalArgumentException if the location is not
    *                                  {@link Location#isModuleOrientedLocation() module-oriented}.
    * @throws NullPointerException     if the provided location object is null.
@@ -228,8 +228,8 @@ public final class JctCompilationAssert extends
    *
    * @param location the location to configure.
    * @return the assertions to perform.
-   * @throws AssertionError           if the compilation was null, or no group for the location
-   *                                  was found.
+   * @throws AssertionError           if the compilation was null, or no group for the location was
+   *                                  found.
    * @throws IllegalArgumentException if the location is not
    *                                  {@link Location#isOutputLocation() an output location}.
    * @throws NullPointerException     if the provided location object is null.
@@ -256,8 +256,7 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the class package outputs.
-   * @throws AssertionError if the compilation was null, or no group for the location
-   *                        was found.
+   * @throws AssertionError if the compilation was null, or no group for the location was found.
    */
   @API(since = "0.6.4", status = Status.STABLE)
   public PackageContainerGroupAssert classOutputPackages() {
@@ -270,8 +269,7 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the class module outputs.
-   * @throws AssertionError if the compilation was null, or no group for the location
-   *                        was found.
+   * @throws AssertionError if the compilation was null, or no group for the location was found.
    */
   @API(since = "0.6.4", status = Status.STABLE)
   public ModuleContainerGroupAssert classOutputModules() {
@@ -284,8 +282,7 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the source package outputs.
-   * @throws AssertionError if the compilation was null, or no group for the location
-   *                        was found.
+   * @throws AssertionError if the compilation was null, or no group for the location was found.
    */
   @API(since = "0.6.4", status = Status.STABLE)
   public PackageContainerGroupAssert sourceOutputPackages() {
@@ -298,8 +295,7 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the source module outputs.
-   * @throws AssertionError if the compilation was null, or no group for the location
-   *                        was found.
+   * @throws AssertionError if the compilation was null, or no group for the location was found.
    */
   @API(since = "0.6.4", status = Status.STABLE)
   public ModuleContainerGroupAssert sourceOutputModules() {
@@ -312,8 +308,7 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the class path.
-   * @throws AssertionError if the compilation was null, or no group for the location
-   *                        was found.
+   * @throws AssertionError if the compilation was null, or no group for the location was found.
    */
   @API(since = "0.6.4", status = Status.STABLE)
   public PackageContainerGroupAssert classPathPackages() {
@@ -326,8 +321,7 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the source path.
-   * @throws AssertionError if the compilation was null, or no group for the location
-   *                        was found.
+   * @throws AssertionError if the compilation was null, or no group for the location was found.
    */
   @API(since = "0.6.4", status = Status.STABLE)
   public PackageContainerGroupAssert sourcePathPackages() {
@@ -340,8 +334,7 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the source path.
-   * @throws AssertionError if the compilation was null, or no group for the location
-   *                        was found.
+   * @throws AssertionError if the compilation was null, or no group for the location was found.
    */
   @API(since = "0.6.4", status = Status.STABLE)
   public ModuleContainerGroupAssert moduleSourcePathModules() {
@@ -354,8 +347,7 @@ public final class JctCompilationAssert extends
    * <p>If not configured, the value being asserted on will be {@code null} in value.
    *
    * @return the assertions to perform on the module path.
-   * @throws AssertionError if the compilation was null, or no group for the location
-   *                        was found.
+   * @throws AssertionError if the compilation was null, or no group for the location was found.
    */
   @API(since = "0.6.4", status = Status.STABLE)
   public ModuleContainerGroupAssert modulePathModules() {

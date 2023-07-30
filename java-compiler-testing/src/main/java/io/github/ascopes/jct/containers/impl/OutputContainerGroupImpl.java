@@ -20,6 +20,7 @@ import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.StringUtils;
@@ -65,7 +66,7 @@ public final class OutputContainerGroupImpl
     modules = new HashMap<>();
 
     if (location.isModuleOrientedLocation()) {
-      throw new UnsupportedOperationException(
+      throw new JctIllegalInputException(
           "Cannot use module-oriented locations such as "
               + StringUtils.quoted(location.getName())
               + " with this container"
@@ -73,7 +74,7 @@ public final class OutputContainerGroupImpl
     }
 
     if (!location.isOutputLocation()) {
-      throw new UnsupportedOperationException(
+      throw new JctIllegalInputException(
           "Cannot use non-output locations such as "
               + StringUtils.quoted(location.getName())
               + " with this container"
@@ -173,7 +174,7 @@ public final class OutputContainerGroupImpl
 
     if (packages.isEmpty()) {
       // This *shouldn't* be reachable in most cases.
-      throw new IllegalStateException(
+      throw new JctIllegalInputException(
           "Cannot add module " + moduleLocation + " to outputs. No output path has been "
               + "provided for this location! Please register a package path to output generated "
               + "modules to first before running the compiler."
@@ -193,9 +194,9 @@ public final class OutputContainerGroupImpl
   }
 
   @SuppressWarnings("resource")
-  private IllegalStateException packageAlreadySpecified(PathRoot newPathRoot) {
+  private JctIllegalInputException packageAlreadySpecified(PathRoot newPathRoot) {
     var existingPathRoot = getPackages().iterator().next().getPathRoot();
-    return new IllegalStateException(
+    return new JctIllegalInputException(
         "Cannot add a new package (" + newPathRoot + ") to this output container group because " +
             "a package has already been specified (" + existingPathRoot + ")"
     );

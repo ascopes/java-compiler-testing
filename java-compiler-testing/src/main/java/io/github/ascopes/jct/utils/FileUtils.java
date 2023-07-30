@@ -18,6 +18,7 @@ package io.github.ascopes.jct.utils;
 import static io.github.ascopes.jct.utils.IterableUtils.combineOneOrMore;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -63,7 +64,7 @@ public final class FileUtils extends UtilityClass {
    *
    * @param path the path to obtain a URL for.
    * @return the URL.
-   * @throws IllegalArgumentException if the path does not support being represented as a URL.
+   * @throws JctIllegalInputException if the path does not support being represented as a URL.
    */
   public static URL retrieveRequiredUrl(Path path) {
     try {
@@ -76,7 +77,7 @@ public final class FileUtils extends UtilityClass {
       // we enforce that URLs must be able to be generated for the path. Users are far less likely
       // to want to use custom FileSystem objects that do not have URL protocol handlers than they
       // are to want to assume that our classloaders we expose are instances of URLClassLoader.
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Cannot obtain a URL for the given path "
               + StringUtils.quoted(path)
               + ", this is likely due to no URL protocol implementation for this file system. "
@@ -104,26 +105,26 @@ public final class FileUtils extends UtilityClass {
    * the directory we are running from.
    *
    * @param name the directory name to check.
-   * @throws IllegalArgumentException if the name is invalid.
+   * @throws JctIllegalInputException if the name is invalid.
    * @throws NullPointerException     if the name is {@code null}.
    */
   public static void assertValidRootName(@Nullable String name) {
     Objects.requireNonNull(name, "name");
 
     if (name.isBlank()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Directory name cannot be blank: " + StringUtils.quoted(name)
       );
     }
 
     if (!name.equals(name.trim())) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Directory name cannot begin or end in spaces: " + StringUtils.quoted(name)
       );
     }
 
     if (name.contains("/") || name.contains("\\") || name.contains("..") || name.contains("_")) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Invalid file name provided: " + StringUtils.quoted(name)
       );
     }
@@ -134,11 +135,11 @@ public final class FileUtils extends UtilityClass {
    *
    * @param path the relative path to convert.
    * @return the expected binary name.
-   * @throws IllegalArgumentException if the path is absolute.
+   * @throws JctIllegalInputException if the path is absolute.
    */
   public static String pathToBinaryName(Path path) {
     if (path.isAbsolute()) {
-      throw new IllegalArgumentException("Path cannot be absolute: " + StringUtils.quoted(path));
+      throw new JctIllegalInputException("Path cannot be absolute: " + StringUtils.quoted(path));
     }
 
     var count = path.getNameCount();

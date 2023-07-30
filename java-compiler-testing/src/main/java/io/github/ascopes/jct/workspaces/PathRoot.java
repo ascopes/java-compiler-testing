@@ -42,7 +42,7 @@ public interface PathRoot {
    * some compiled outputs into a JAR to use them as inputs to another build.
    *
    * @return the byte contents of the JAR.
-   * @throws UncheckedIOException if the JAR cannot be created.
+   * @throws UncheckedIOException          if the JAR cannot be created.
    * @throws UnsupportedOperationException if the operation is not supported.
    * @since 0.4.0
    */

@@ -22,6 +22,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -36,7 +38,7 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.STABLE)
 public final class TeeWriter extends Writer {
 
-  private final Object lock;
+  private final Lock lock;
 
   private volatile boolean closed;
 
@@ -53,7 +55,7 @@ public final class TeeWriter extends Writer {
    * @param writer the underlying writer to "tee" to.
    */
   public TeeWriter(Writer writer) {
-    lock = new Object();
+    lock = new ReentrantLock();
     closed = false;
 
     this.writer = requireNonNull(writer, "writer");
@@ -65,21 +67,27 @@ public final class TeeWriter extends Writer {
   public void close() throws IOException {
     // release to set and acquire to check ensures in-order operations to prevent
     // a very minute chance of a race condition.
-    synchronized (lock) {
+    lock.lock();
+    try {
       if (!closed) {
         closed = true;
         builder.trimToSize();
         writer.flush();
         writer.close();
       }
+    } finally {
+      lock.unlock();
     }
   }
 
   @Override
   public void flush() throws IOException {
-    synchronized (lock) {
+    lock.lock();
+    try {
       ensureOpen();
       writer.flush();
+    } finally {
+      lock.unlock();
     }
   }
 
@@ -91,8 +99,11 @@ public final class TeeWriter extends Writer {
    */
   @API(since = "0.2.1", status = Status.STABLE)
   public String getContent() {
-    synchronized (lock) {
+    lock.lock();
+    try {
       return builder.toString();
+    } finally {
+      lock.unlock();
     }
   }
 
@@ -110,19 +121,22 @@ public final class TeeWriter extends Writer {
 
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
-    synchronized (lock) {
+    lock.lock();
+    try {
       ensureOpen();
 
       writer.write(cbuf, off, len);
       // Only append to the buffer once we know that the writing
       // operation has completed.
       builder.append(cbuf, off, len);
+    } finally {
+      lock.unlock();
     }
   }
 
-  private void ensureOpen() {
+  private void ensureOpen() throws IOException {
     if (closed) {
-      throw new IllegalStateException("TeeWriter is closed");
+      throw new IOException("TeeWriter is closed");
     }
   }
 
@@ -133,7 +147,7 @@ public final class TeeWriter extends Writer {
    * the output stream.
    *
    * @param outputStream the output stream.
-   * @param charset the charset.
+   * @param charset      the charset.
    * @return the Tee Writer.
    * @since 0.2.1
    */

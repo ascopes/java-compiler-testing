@@ -47,7 +47,7 @@ import org.junit.jupiter.params.provider.ValueSource;
  */
 @DisplayName("JctCompilationImpl tests")
 class JctCompilationImplTest {
-  
+
   @DisplayName(".getArguments() returns the expected value")
   @ValueSource(ints = {0, 1, 2, 3, 5, 10, 100})
   @ParameterizedTest(name = "for argumentCount = {0}")
@@ -67,7 +67,7 @@ class JctCompilationImplTest {
         .asInstanceOf(iterable(String.class))
         .containsExactlyElementsOf(arguments);
   }
-  
+
   @DisplayName(".isSuccessful() returns the expected value")
   @ValueSource(booleans = {true, false})
   @ParameterizedTest(name = "for success = {0}")
