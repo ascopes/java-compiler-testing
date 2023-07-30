@@ -22,7 +22,7 @@
   <parent>
     <groupId>io.github.ascopes.jct</groupId>
     <artifactId>acceptance-tests</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
