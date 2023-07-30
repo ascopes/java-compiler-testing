@@ -424,4 +424,4 @@ While ECJ supports the same interfaces as Javac that are used to call the compil
 A number of issues were found while developing  [ascopes/java-compiler-testing#163](https://github.com/ascopes/java-compiler-testing/issues/163) with ECJ which prevents many features such as JPMS support from working correctly 
 ([eclipse-jdt/eclipse.jdt.core#958](https://github.com/eclipse-jdt/eclipse.jdt.core/issues/958)).
 
-Since it is unlikely these issues will be addressed in the near future, support for ECJ has been shelved for the forseeable future.
+Since it is unlikely these issues will be addressed in the near future, support for ECJ has been shelved for the foreseeable future.
