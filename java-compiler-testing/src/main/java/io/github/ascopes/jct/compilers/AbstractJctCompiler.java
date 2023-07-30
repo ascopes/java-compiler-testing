@@ -23,6 +23,7 @@ import io.github.ascopes.jct.compilers.impl.JctCompilationImpl;
 import io.github.ascopes.jct.ex.JctCompilerException;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.JctFileManagerFactory;
+import io.github.ascopes.jct.filemanagers.JctFileManagers;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.workspaces.Workspace;
 import java.io.IOException;
@@ -432,9 +433,15 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   /**
    * Get the file manager factory to use for building AbstractJctCompiler file manager during compilation.
    *
+   * <p>Since v1.1.0, this method has provided a default implementation. Before this, it was
+   * abstract. The default implementation calls
+   * {@link JctFileManagers#newJctFileManagerFactory(JctCompiler)}.
+   *
    * @return the factory.
    */
-  public abstract JctFileManagerFactory getFileManagerFactory();
+  public JctFileManagerFactory getFileManagerFactory() {
+    return JctFileManagers.newJctFileManagerFactory(this);
+  }
 
   /**
    * Get the compilation factory to use for building a compilation.
@@ -444,7 +451,9 @@ public abstract class AbstractJctCompiler implements JctCompiler {
    *
    * <p>Some obscure compiler implementations with potentially satanic rituals for initialising
    * and configuring components correctly may need to provide a custom implementation here instead.
-   * In this case, this method should be overridden.
+   * In this case, this method should be overridden. Base classes are not provided for you to
+   * extend in this case as this is usually not something you want to be doing. Instead, you should
+   * implement {@link JctCompilationFactory} directly.
    *
    * @return the compilation factory.
    */
