@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
  * A chain of configurers to apply to a file manager.
  *
  * <p>While not designed for concurrent use, all operations are shielded by a
- * lock to guard against potentially confusing behaviour, should this component
- * be shared across multiple physical and virtual threads.
+ * lock to guard against potentially confusing behaviour, should this component be shared across
+ * multiple physical and virtual threads.
  *
  * @author Ashley Scopes
  * @since 0.0.1

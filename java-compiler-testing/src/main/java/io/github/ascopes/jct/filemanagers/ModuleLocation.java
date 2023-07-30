@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.filemanagers;
 
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.Objects;
 import javax.tools.JavaFileManager.Location;
@@ -40,7 +41,7 @@ public final class ModuleLocation implements Location {
    *
    * @param parent     the parent location.
    * @param moduleName the module name.
-   * @throws IllegalArgumentException if the parent location is not an output location or a
+   * @throws JctIllegalInputException if the parent location is not an output location or a
    *                                  module-oriented location.
    */
   public ModuleLocation(Location parent, String moduleName) {
@@ -48,7 +49,7 @@ public final class ModuleLocation implements Location {
     Objects.requireNonNull(moduleName, "moduleName");
 
     if (!parent.isOutputLocation() && !parent.isModuleOrientedLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "The parent of a module location must be either an output location "
               + "or be module-oriented, but got "
               + parent.getName()

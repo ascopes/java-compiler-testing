@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.containers.Container;
+import io.github.ascopes.jct.ex.JctNotImplementedException;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.filemanagers.impl.PathFileObjectImpl;
 import io.github.ascopes.jct.utils.FileUtils;
@@ -130,7 +131,7 @@ public final class JarContainerImpl implements Container {
 
   @Override
   public PathFileObject getFileForOutput(String packageName, String relativeName) {
-    throw new UnsupportedOperationException("Cannot handle output files in JARs");
+    throw new JctNotImplementedException("Cannot handle output files in JARs");
   }
 
   @Override
@@ -160,7 +161,7 @@ public final class JarContainerImpl implements Container {
 
   @Override
   public PathFileObject getJavaFileForOutput(String className, Kind kind) {
-    throw new UnsupportedOperationException("Cannot handle output source files in JARs");
+    throw new JctNotImplementedException("Cannot handle output source files in JARs");
   }
 
   @Override
@@ -191,7 +192,7 @@ public final class JarContainerImpl implements Container {
     // get the correct path immediately.
     var fullPath = javaFileObject.getAbsolutePath();
 
-    if (fullPath.startsWith( holder.access().getPathRoot().getPath())) {
+    if (fullPath.startsWith(holder.access().getPathRoot().getPath())) {
       return FileUtils.pathToBinaryName(javaFileObject.getRelativePath());
     }
 

@@ -26,8 +26,8 @@ import java.nio.file.Path;
 public abstract class AbstractIntegrationTest {
 
   /**
-   * Get the resources directory for this test. This will be a directory named the full
-   * canonical class name.
+   * Get the resources directory for this test. This will be a directory named the full canonical
+   * class name.
    *
    * @return the resource directory path.
    */

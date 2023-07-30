@@ -18,6 +18,7 @@ package io.github.ascopes.jct.workspaces.impl;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
 
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.workspaces.ManagedDirectory;
 import io.github.ascopes.jct.workspaces.PathRoot;
@@ -77,7 +78,7 @@ public final class WorkspaceImpl implements Workspace {
         }
       }
 
-      if (exceptions.size() > 0) {
+      if (!exceptions.isEmpty()) {
         var newEx = new IllegalStateException("One or more components failed to close");
         exceptions.forEach(newEx::addSuppressed);
         throw newEx;
@@ -98,11 +99,11 @@ public final class WorkspaceImpl implements Workspace {
     requireNonNull(path, "path");
 
     if (location.isModuleOrientedLocation()) {
-      throw new IllegalArgumentException("Location must not be module-oriented");
+      throw new JctIllegalInputException("Location must not be module-oriented");
     }
 
     if (!Files.exists(path)) {
-      throw new IllegalArgumentException("Path " + path + " does not exist");
+      throw new JctIllegalInputException("Path " + path + " does not exist");
     }
 
     var dir = new WrappingDirectoryImpl(path);
@@ -116,13 +117,13 @@ public final class WorkspaceImpl implements Workspace {
     requireNonNull(path, "path");
 
     if (!location.isModuleOrientedLocation() && !location.isOutputLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Cannot add a module to a non-module-oriented or non-output location"
       );
     }
 
     if (location instanceof ModuleLocation) {
-      throw new IllegalArgumentException("Cannot register a module within a module");
+      throw new JctIllegalInputException("Cannot register a module within a module");
     }
 
     addPackage(new ModuleLocation(location, moduleName), path);
@@ -133,7 +134,7 @@ public final class WorkspaceImpl implements Workspace {
     requireNonNull(location, "location");
 
     if (location.isModuleOrientedLocation()) {
-      throw new IllegalArgumentException("Location must not be module-oriented");
+      throw new JctIllegalInputException("Location must not be module-oriented");
     }
 
     // Needs to be unique, and JIMFS cannot hold a file system name containing stuff like
@@ -152,13 +153,13 @@ public final class WorkspaceImpl implements Workspace {
     requireNonNull(location, "moduleName");
 
     if (!location.isModuleOrientedLocation() && !location.isOutputLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Cannot add a module to a non-module-oriented or non-output location"
       );
     }
 
     if (location instanceof ModuleLocation) {
-      throw new IllegalArgumentException("Cannot register a module within a module");
+      throw new JctIllegalInputException("Cannot register a module within a module");
     }
 
     return createPackage(new ModuleLocation(location, moduleName));
@@ -175,11 +176,11 @@ public final class WorkspaceImpl implements Workspace {
   @Override
   public List<? extends PathRoot> getModule(Location location, String moduleName) {
     if (location instanceof ModuleLocation) {
-      throw new IllegalArgumentException("Use .getPackages(ModuleLocation) for module locations");
+      throw new JctIllegalInputException("Use .getPackages(ModuleLocation) for module locations");
     }
 
     if (!location.isOutputLocation() && !location.isModuleOrientedLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Location " + location.getName() + " must be module-oriented or an output location"
       );
     }
@@ -191,11 +192,11 @@ public final class WorkspaceImpl implements Workspace {
   @Override
   public Map<String, List<? extends PathRoot>> getModules(Location location) {
     if (location instanceof ModuleLocation) {
-      throw new IllegalArgumentException("Cannot pass a ModuleLocation to this method");
+      throw new JctIllegalInputException("Cannot pass a ModuleLocation to this method");
     }
 
     if (!location.isOutputLocation() && !location.isModuleOrientedLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Location " + location.getName() + " must be module-oriented or an output location"
       );
     }
@@ -226,7 +227,7 @@ public final class WorkspaceImpl implements Workspace {
   @Override
   public List<? extends PathRoot> getPackages(Location location) {
     if (location.isModuleOrientedLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Location " + location.getName() + " must not be module-oriented"
       );
     }

@@ -18,6 +18,7 @@ package io.github.ascopes.jct.utils;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,9 +72,7 @@ public final class IterableUtils extends UtilityClass {
   public static <T> List<T> combineOneOrMore(T first, T... rest) {
     var list = new ArrayList<T>(1 + rest.length);
     list.add(first);
-    for (var item : rest) {
-      list.add(item);
-    }
+    list.addAll(Arrays.asList(rest));
     return Collections.unmodifiableList(list);
   }
 

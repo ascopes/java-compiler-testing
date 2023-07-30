@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.ex.JctJunitConfigurerException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InaccessibleObjectException;
@@ -41,7 +42,7 @@ import org.opentest4j.TestAbortedException;
  * <p>Each implementation is expected to provide:
  *
  * <ul>
- *   <li>A method {@link #initializeNewCompiler} that returns new instances of a 
+ *   <li>A method {@link #initializeNewCompiler} that returns new instances of a
  *       {@link JctCompiler};</li>
  *   <li>A minimum acceptable language level for the compiler, as an integer;</li>
  *   <li>A maximum acceptable language level for the compiler, as an integer;</li>
@@ -167,17 +168,19 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
    *
    * <p>This is expected to be called from an implementation of {@link AnnotationConsumer}.
    *
-   * <p>The minimum compiler version will be set to the {@code min} parameter, or {@link #minSupportedVersion}, 
-   * whichever is greater. This means annotations can pass {@link Integer#MIN_VALUE} as a default value safely.
+   * <p>The minimum compiler version will be set to the {@code min} parameter, or
+   * {@link #minSupportedVersion}, whichever is greater. This means annotations can pass
+   * {@link Integer#MIN_VALUE} as a default value safely.
    *
-   * <p>The maximum compiler version will be set to the {@code max} parameter, or {@link #maxSupportedVersion}, 
-   * whichever is smaller. This means annotations can pass {@link Integer#MAX_VALUE} as a default value safely.
+   * <p>The maximum compiler version will be set to the {@code max} parameter, or
+   * {@link #maxSupportedVersion}, whichever is smaller. This means annotations can pass
+   * {@link Integer#MAX_VALUE} as a default value safely.
    *
-   * <p>If implementations do not support specifying custom compiler configurers, then an empty array must be
-   * passed for the {@code configurerClasses} parameter.
+   * <p>If implementations do not support specifying custom compiler configurers, then an empty
+   * array must be passed for the {@code configurerClasses} parameter.
    *
-   * <p>If implementations do not support changing the version strategy, then it is suggested to pass
-   * {@link VersionStrategy#RELEASE} as the value for the {@code versionStrategy} parameter.
+   * <p>If implementations do not support changing the version strategy, then it is suggested to
+   * pass {@link VersionStrategy#RELEASE} as the value for the {@code versionStrategy} parameter.
    *
    * @param min               the inclusive minimum compiler version to use.
    * @param max               the inclusive maximum compiler version to use.
@@ -194,11 +197,11 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
     max = Math.min(max, maxSupportedVersion());
 
     if (max < 8 || min < 8) {
-      throw new IllegalArgumentException("Cannot use a Java version less than Java 8");
+      throw new JctIllegalInputException("Cannot use a Java version less than Java 8");
     }
 
     if (min > max) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Cannot set min version to a version higher than the max version"
       );
     }

@@ -61,7 +61,7 @@ class TeeWriterTest {
 
     // Then
     assertThatThrownBy(() -> tee.write(text))
-        .isInstanceOf(IllegalStateException.class)
+        .isInstanceOf(IOException.class)
         .hasMessage("TeeWriter is closed");
 
     assertThat(writer)
@@ -96,7 +96,7 @@ class TeeWriterTest {
 
     // Then
     assertThatThrownBy(tee::flush)
-        .isInstanceOf(IllegalStateException.class)
+        .isInstanceOf(IOException.class)
         .hasMessage("TeeWriter is closed");
 
     then(writer).shouldHaveNoInteractions();

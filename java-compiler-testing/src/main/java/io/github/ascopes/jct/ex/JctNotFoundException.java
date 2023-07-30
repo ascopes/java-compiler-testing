@@ -13,11 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.greeter;
+package io.github.ascopes.jct.ex;
 
-public class Greeter {
+import org.apiguardian.api.API;
+import org.apiguardian.api.API.Status;
 
-  public static String greet(String name) {
-    return "Hello, " + name + "!";
+/**
+ * Exception raised if an element is not found.
+ *
+ * @author Ashley Scopes
+ * @since 1.1.0
+ */
+@API(since = "1.1.0", status = Status.STABLE)
+public final class JctNotFoundException extends JctException {
+
+  /**
+   * Initialise the exception.
+   *
+   * @param message the message to report.
+   */
+  public JctNotFoundException(String message) {
+    super(message);
   }
 }

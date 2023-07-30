@@ -157,7 +157,8 @@ public interface JctCompiler {
    * @see #compile(Workspace)
    * @see #compile(Workspace, Collection)
    */
-  default JctCompilation compile(Workspace workspace, String firstClassName, String... additionalClassNames) {
+  default JctCompilation compile(Workspace workspace, String firstClassName,
+      String... additionalClassNames) {
     return compile(workspace, IterableUtils.combineOneOrMore(firstClassName, additionalClassNames));
   }
 
@@ -842,5 +843,6 @@ public interface JctCompiler {
    * @param annotationProcessorDiscovery the processor discovery mode to use.
    * @return this compiler for further call chaining.
    */
-  JctCompiler annotationProcessorDiscovery(AnnotationProcessorDiscovery annotationProcessorDiscovery);
+  JctCompiler annotationProcessorDiscovery(
+      AnnotationProcessorDiscovery annotationProcessorDiscovery);
 }

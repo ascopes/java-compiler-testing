@@ -30,6 +30,7 @@ import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.compilers.JctCompilers;
 import io.github.ascopes.jct.containers.Container;
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.ex.JctJunitConfigurerException;
 import io.github.ascopes.jct.junit.AbstractCompilersProvider;
 import io.github.ascopes.jct.junit.VersionStrategy;
@@ -73,7 +74,7 @@ class AbstractCompilersProviderTest {
 
     // Then
     assertThatThrownBy(() -> provider.configureInternals(min, max, VersionStrategy.RELEASE))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(JctIllegalInputException.class)
         .hasMessage("Cannot use a Java version less than Java 8");
   }
 
@@ -87,7 +88,7 @@ class AbstractCompilersProviderTest {
 
     // Then
     assertThatThrownBy(() -> provider.configureInternals(11, 10, VersionStrategy.RELEASE))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(JctIllegalInputException.class)
         .hasMessage("Cannot set min version to a version higher than the max version");
   }
 
@@ -491,8 +492,8 @@ class AbstractCompilersProviderTest {
     @Override
     protected JctCompiler initializeNewCompiler() {
       return mock(withSettings()
-              .name("mock compiler")
-              .defaultAnswer(Answers.RETURNS_SELF));
+          .name("mock compiler")
+          .defaultAnswer(Answers.RETURNS_SELF));
     }
 
     @Override

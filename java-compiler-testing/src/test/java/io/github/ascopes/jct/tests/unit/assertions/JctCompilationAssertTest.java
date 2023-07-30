@@ -425,6 +425,7 @@ class JctCompilationAssertTest {
   @DisplayName("JctCompilationAssert.diagnostics(...) tests")
   @Nested
   class DiagnosticsTest {
+
     @DisplayName(".diagnostics() fails if the compilation is null")
     @Test
     void diagnosticsFailsIfCompilationIsNull() {
@@ -461,6 +462,7 @@ class JctCompilationAssertTest {
   @DisplayName("JctCompilationAssert.packageGroup(...) tests")
   @Nested
   class PackageGroupTest {
+
     @DisplayName(".packageGroup(...) fails if the compilation is null")
     @Test
     void packageGroupFailsIfCompilationIsNull() {
@@ -570,6 +572,7 @@ class JctCompilationAssertTest {
   @DisplayName("JctCompilationAssert.moduleGroup(...) tests")
   @Nested
   class ModuleGroupTest {
+
     @DisplayName(".moduleGroup(...) fails if the compilation is null")
     @Test
     void moduleGroupFailsIfCompilationIsNull() {
@@ -679,6 +682,7 @@ class JctCompilationAssertTest {
   @DisplayName("JctCompilationAssert.outputGroup(...) tests")
   @Nested
   class OutputGroupTest {
+
     @DisplayName(".outputGroup(...) fails if the compilation is null")
     @Test
     void outputGroupFailsIfCompilationIsNull() {
@@ -827,7 +831,7 @@ class JctCompilationAssertTest {
 
     // When
     var actualAssertions = assertions.sourceOutputPackages();
-    
+
     // Then
     verify(assertions).sourceOutputPackages();
     verify(assertions).outputGroup(StandardLocation.SOURCE_OUTPUT);

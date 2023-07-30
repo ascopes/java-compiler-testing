@@ -19,6 +19,7 @@ import io.github.ascopes.jct.containers.ContainerGroup;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.utils.ModuleDiscoverer;
 import io.github.ascopes.jct.workspaces.PathRoot;
@@ -71,7 +72,7 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    *
    * @param location the location to add.
    * @param pathRoot the path root to register with the location.
-   * @throws IllegalStateException if the location is an output location and is misconfigured.
+   * @throws JctIllegalInputException if the location is an output location and is misconfigured.
    */
   public void addPath(Location location, PathRoot pathRoot) {
     if (location instanceof ModuleLocation) {
@@ -101,26 +102,26 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    *
    * @param from the location to copy from.
    * @param to   the location to copy to.
-   * @throws IllegalArgumentException if either location is a {@link ModuleLocation}, or if the two
+   * @throws JctIllegalInputException if either location is a {@link ModuleLocation}, or if the two
    *                                  locations are not the same orientation (i.e. output-oriented,
    *                                  module-oriented).
    */
   public void copyContainers(Location from, Location to) {
     if (from instanceof ModuleLocation || to instanceof ModuleLocation) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Cannot currently transfer individual modules to other locations"
       );
     }
 
     if (from.isOutputLocation() && !to.isOutputLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Expected " + from.getName() + " and " + to.getName() + " to both be "
               + "output locations"
       );
     }
 
     if (from.isModuleOrientedLocation() && !to.isModuleOrientedLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Expected " + from.getName() + " and " + to.getName() + " to both be "
               + "module-oriented locations"
       );
@@ -140,13 +141,13 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    * Create an empty location if it does not already exist.
    *
    * @param location the location to create.
-   * @throws IllegalArgumentException if the input is a module location.
+   * @throws JctIllegalInputException if the input is a module location.
    */
   public void createEmptyLocation(Location location) {
     if (location instanceof ModuleLocation) {
-      throw new IllegalArgumentException("Cannot ensure a module location exists");
+      throw new JctIllegalInputException("Cannot ensure a module location exists");
     } else if (location.isOutputLocation()) {
-      throw new IllegalArgumentException(
+      throw new JctIllegalInputException(
           "Cannot create an empty output location. It must be created by "
               + "registering at least one file system path to enable output to."
       );

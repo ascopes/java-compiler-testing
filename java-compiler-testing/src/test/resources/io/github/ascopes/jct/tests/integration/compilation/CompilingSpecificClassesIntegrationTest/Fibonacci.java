@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 
@@ -22,6 +23,7 @@ import java.math.BigInteger;
  * Command line app to calculate the nth number of the fibonacci sequence.
  */
 public class Fibonacci {
+
   public static void main(String[] args) {
     if (args.length != 1) {
       System.out.println("USAGE: java Fibonacci <n>");

@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.containers.impl;
 
+import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.utils.StringUtils;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
@@ -44,7 +45,7 @@ public final class PackageContainerGroupImpl extends AbstractPackageContainerGro
     super(location, release);
 
     if (location.isOutputLocation()) {
-      throw new UnsupportedOperationException(
+      throw new JctIllegalInputException(
           "Cannot use output locations such as "
               + StringUtils.quoted(location.getName())
               + " with this container"
@@ -52,7 +53,7 @@ public final class PackageContainerGroupImpl extends AbstractPackageContainerGro
     }
 
     if (location.isModuleOrientedLocation()) {
-      throw new UnsupportedOperationException(
+      throw new JctIllegalInputException(
           "Cannot use module-oriented locations such as "
               + StringUtils.quoted(location.getName())
               + " with this container"

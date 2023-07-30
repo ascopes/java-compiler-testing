@@ -30,6 +30,7 @@ import org.apiguardian.api.API.Status;
  */
 @API(since = "1.1.0", status = Status.STABLE)
 public final class JctFileManagers extends UtilityClass {
+
   private JctFileManagers() {
     // Static-only class.
   }

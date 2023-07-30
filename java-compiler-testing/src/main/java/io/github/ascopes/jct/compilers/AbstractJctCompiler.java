@@ -121,7 +121,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   }
 
   @Override
-  public final <E extends Exception> AbstractJctCompiler configure(JctCompilerConfigurer<E> configurer) throws E {
+  public final <E extends Exception> AbstractJctCompiler configure(
+      JctCompilerConfigurer<E> configurer) throws E {
     requireNonNull(configurer, "configurer");
     configurer.configure(this);
     return this;
@@ -210,7 +211,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   }
 
   @Override
-  public AbstractJctCompiler addAnnotationProcessorOptions(Iterable<String> annotationProcessorOptions) {
+  public AbstractJctCompiler addAnnotationProcessorOptions(
+      Iterable<String> annotationProcessorOptions) {
     requireNonNullValues(annotationProcessorOptions, "annotationProcessorOptions");
     annotationProcessorOptions.forEach(this.annotationProcessorOptions::add);
     return this;
@@ -222,7 +224,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   }
 
   @Override
-  public AbstractJctCompiler addAnnotationProcessors(Iterable<? extends Processor> annotationProcessors) {
+  public AbstractJctCompiler addAnnotationProcessors(
+      Iterable<? extends Processor> annotationProcessors) {
     requireNonNullValues(annotationProcessors, "annotationProcessors");
     annotationProcessors.forEach(this.annotationProcessors::add);
 
@@ -396,7 +399,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   }
 
   @Override
-  public AbstractJctCompiler annotationProcessorDiscovery(AnnotationProcessorDiscovery annotationProcessorDiscovery) {
+  public AbstractJctCompiler annotationProcessorDiscovery(
+      AnnotationProcessorDiscovery annotationProcessorDiscovery) {
     this.annotationProcessorDiscovery = requireNonNull(
         annotationProcessorDiscovery,
         "annotationProcessorDiscovery"
@@ -431,7 +435,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   public abstract Jsr199CompilerFactory getCompilerFactory();
 
   /**
-   * Get the file manager factory to use for building AbstractJctCompiler file manager during compilation.
+   * Get the file manager factory to use for building AbstractJctCompiler file manager during
+   * compilation.
    *
    * <p>Since v1.1.0, this method has provided a default implementation. Before this, it was
    * abstract. The default implementation calls
@@ -451,8 +456,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
    *
    * <p>Some obscure compiler implementations with potentially satanic rituals for initialising
    * and configuring components correctly may need to provide a custom implementation here instead.
-   * In this case, this method should be overridden. Base classes are not provided for you to
-   * extend in this case as this is usually not something you want to be doing. Instead, you should
+   * In this case, this method should be overridden. Base classes are not provided for you to extend
+   * in this case as this is usually not something you want to be doing. Instead, you should
    * implement {@link JctCompilationFactory} directly.
    *
    * @return the compilation factory.
