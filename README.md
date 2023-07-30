@@ -415,7 +415,6 @@ object. This is already defined for you. All you need to provide in your compile
 
 - A [Jsr199CompilerFactory](https://javadoc.io/doc/io.github.ascopes.jct/java-compiler-testing/latest/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#compile(io.github.ascopes.jct.workspaces.Workspace)) to provide JavaCompiler objects.
 - A [default release](https://javadoc.io/static/io.github.ascopes.jct/java-compiler-testing/1.0.3/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getDefaultRelease()) that defines the default language version to use unless overridden.
-- A [JctFileManagerFactory](https://javadoc.io/static/io.github.ascopes.jct/java-compiler-testing/1.0.3/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getFileManagerFactory()) to create a file manager.
 - A [FlagBuilder](https://javadoc.io/static/io.github.ascopes.jct/java-compiler-testing/1.0.3/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getFlagBuilderFactory()) to translate the compiler configuration to command-line arguments.
 
 ### ECJ (Eclipse Java Compiler)
