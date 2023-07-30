@@ -115,10 +115,10 @@ class JctCompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("releaseVersion(int) should call releaseVersion(String)")
+  @DisplayName("release(int) should call release(String)")
   @ValueSource(ints = {11, 12, 13, 14, 15, 16, 17})
   @ParameterizedTest(name = "for version = {0}")
-  void releaseVersionIntCallsReleaseVersionString(int versionInt) {
+  void releaseIntCallsReleaseVersionString(int versionInt) {
     // Given
     var versionString = "" + versionInt;
     given(compiler.release(anyInt())).willCallRealMethod();
@@ -132,10 +132,10 @@ class JctCompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("releaseVersion(int) throws an IllegalArgumentException for negative versions")
+  @DisplayName("release(int) throws an IllegalArgumentException for negative versions")
   @ValueSource(ints = {-1, -2, -5, -100_000})
   @ParameterizedTest(name = "for version = {0}")
-  void releaseVersionIntThrowsIllegalArgumentExceptionForNegativeVersions(int versionInt) {
+  void releaseIntThrowsIllegalArgumentExceptionForNegativeVersions(int versionInt) {
     // Given
     given(compiler.release(anyInt())).willCallRealMethod();
 
@@ -145,10 +145,10 @@ class JctCompilerTest {
         .hasMessage("Cannot provide a release version less than 0");
   }
 
-  @DisplayName("releaseVersion(SourceVersion) should call releaseVersion(String)")
+  @DisplayName("release(SourceVersion) should call release(String)")
   @MethodSource("sourceVersions")
   @ParameterizedTest(name = "for version = {0}")
-  void releaseVersionSourceVersionCallsReleaseVersionString(
+  void releaseSourceVersionCallsReleaseVersionString(
       SourceVersion versionEnum,
       String versionString
   ) {
@@ -164,10 +164,25 @@ class JctCompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("sourceVersion(int) should call sourceVersion(String)")
+  @DisplayName(".useRuntimeRelease() should call .release(int) with the runtime feature version")
+  @Test
+  void useRuntimeReleaseShouldSetTheRuntimeFeatureVersion() {
+    // Given
+    given(compiler.useRuntimeRelease()).willCallRealMethod();
+    given(compiler.release(anyInt())).will(ctx -> compiler);
+
+    // When
+    var result = compiler.useRuntimeRelease();
+
+    // Then
+    then(compiler).should().release(Runtime.version().feature());
+    assertThat(result).isSameAs(compiler);
+  }
+
+  @DisplayName("source(int) should call source(String)")
   @ValueSource(ints = {11, 12, 13, 14, 15, 16, 17})
   @ParameterizedTest(name = "for version = {0}")
-  void sourceVersionIntCallsReleaseVersionString(int versionInt) {
+  void sourceIntCallsReleaseVersionString(int versionInt) {
     // Given
     var versionString = "" + versionInt;
     given(compiler.source(anyInt())).willCallRealMethod();
@@ -181,10 +196,10 @@ class JctCompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("sourceVersion(int) throws an IllegalArgumentException for negative versions")
+  @DisplayName("source(int) throws an IllegalArgumentException for negative versions")
   @ValueSource(ints = {-1, -2, -5, -100_000})
   @ParameterizedTest(name = "for version = {0}")
-  void sourceVersionIntThrowsIllegalArgumentExceptionForNegativeVersions(int versionInt) {
+  void sourceIntThrowsIllegalArgumentExceptionForNegativeVersions(int versionInt) {
     // Given
     given(compiler.source(anyInt())).willCallRealMethod();
 
@@ -194,10 +209,10 @@ class JctCompilerTest {
         .hasMessage("Cannot provide a source version less than 0");
   }
 
-  @DisplayName("sourceVersion(SourceVersion) should call sourceVersion(String)")
+  @DisplayName("source(SourceVersion) should call source(String)")
   @MethodSource("sourceVersions")
   @ParameterizedTest(name = "for version = {0}")
-  void sourceVersionSourceVersionCallsReleaseVersionString(
+  void sourceSourceVersionCallsReleaseVersionString(
       SourceVersion versionEnum,
       String versionString
   ) {
@@ -213,10 +228,10 @@ class JctCompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("targetVersion(int) should call targetVersion(String)")
+  @DisplayName("target(int) should call target(String)")
   @ValueSource(ints = {11, 12, 13, 14, 15, 16, 17})
   @ParameterizedTest(name = "for version = {0}")
-  void targetVersionIntCallsReleaseVersionString(int versionInt) {
+  void targetIntCallsReleaseVersionString(int versionInt) {
     // Given
     var versionString = "" + versionInt;
     given(compiler.target(anyInt())).willCallRealMethod();
@@ -230,10 +245,10 @@ class JctCompilerTest {
     assertThat(result).isSameAs(compiler);
   }
 
-  @DisplayName("targetVersion(int) throws an IllegalArgumentException for negative versions")
+  @DisplayName("target(int) throws an IllegalArgumentException for negative versions")
   @ValueSource(ints = {-1, -2, -5, -100_000})
   @ParameterizedTest(name = "for version = {0}")
-  void targetVersionIntThrowsIllegalArgumentExceptionForNegativeVersions(int versionInt) {
+  void targetIntThrowsIllegalArgumentExceptionForNegativeVersions(int versionInt) {
     // Given
     given(compiler.target(anyInt())).willCallRealMethod();
 
@@ -243,10 +258,10 @@ class JctCompilerTest {
         .hasMessage("Cannot provide a target version less than 0");
   }
 
-  @DisplayName("targetVersion(SourceVersion) should call targetVersion(String)")
+  @DisplayName("target(SourceVersion) should call target(String)")
   @MethodSource("sourceVersions")
   @ParameterizedTest(name = "for version = {0}")
-  void targetVersionSourceVersionCallsReleaseVersionString(
+  void targetSourceVersionCallsReleaseVersionString(
       SourceVersion versionEnum,
       String versionString
   ) {
