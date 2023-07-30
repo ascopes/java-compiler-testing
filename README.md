@@ -40,7 +40,7 @@ Full JUnit5 integration is provided to help streamline the development process.
   system, and without awkward resource-cleanup logic.
 - Enables running compilations on combinations of real files, class path
   resources, in-memory files, JARs, WARs, EARs, ZIP files, etc.
-- Null-safe API (using [JSpecify](https://jspecify.dev/))
+- Null-safe API (using [JSpecify](https://jspecify.dev/)).
 - [Tested on multiple existing frameworks](acceptance-tests/) including 
   Avaje, Spring, Lombok, MapStruct, ErrorProne, and CheckerFramework.
 - Supports Java 9 JPMS modules.
@@ -49,7 +49,7 @@ Full JUnit5 integration is provided to help streamline the development process.
 - Provides support for `javac` out of the box, with the
   ability to support other JSR-199 implementations if desired --
   just make use of one of the compiler classes, or make your own!
-- Implements a fully functional JSR-199 Path JavaFileManager.
+- Implements a fully functional JSR-199 Path JavaFileManager and class loading mechanism.
 - Fluent syntax for creating configurations, executing them, and
   inspecting the results.
 - Integration with [AssertJ](https://assertj.github.io/doc/)
@@ -59,7 +59,7 @@ Full JUnit5 integration is provided to help streamline the development process.
 - Diagnostic reporting includes stack traces, so you can find out
   exactly what triggered a diagnostic and begin debugging any
   issues in your applications quickly.
-- Helpful error messages to assist in annotation processor development:
+- Helpful error messages to assist in annotation processor development. For example:
 
 ```
 [main] ERROR io.github.ascopes.jct.diagnostics.TracingDiagnosticListener - cannot find symbol
@@ -103,7 +103,7 @@ The project can be found on Maven Central.
 ```
 
 If you are using Gradle, make sure you enable the Maven Central repositories
-first!
+first, otherwise the dependency will not resolve.
 
 ```kotlin
 repositories {
@@ -367,7 +367,7 @@ This project uses Java 11, and bootstraps Maven using the Maven Wrapper tooling.
 all you need to build this is any JDK from Java 11
 onwards: everything else will be set up automatically for you.
 
-### Non-Windows
+### Unix-like systems
 
 On Linux, BSD, and MacOS, I tend to use [sdkman!](https://sdkman.io/) to install the JDK I want to use:
 
@@ -390,7 +390,7 @@ and run the correct version of Maven:
 $ ./mvnw clean package
 ```
 
-### Windows
+### Windows systems
 
 On Windows, you can install the JDK of your choice directly from their website, or use Chocolatey to
 install it for you. Once installed, you can just run the Maven Wrapper batch script to download,
@@ -403,6 +403,20 @@ install, and run the correct version of Maven:
 ---
 
 ## Third-party compiler support
+
+The base classes to provide third party compiler integrations are made public in this
+API so you can extend them. 
+
+To integrate with your chosen JSR-199 compatible compiler, extend the [AbstractJctCompiler](https://javadoc.io/doc/io.github.ascopes.jct/java-compiler-testing/latest/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html) 
+class and override anything you need to tweak. 
+
+The call to `compile` will return a [JctCompilation](https://javadoc.io/doc/io.github.ascopes.jct/java-compiler-testing/latest/io.github.ascopes.jct/io/github/ascopes/jct/compilers/JctCompilation.html)
+object. This is already defined for you. All you need to provide in your compiler class is:
+
+- A [Jsr199CompilerFactory](https://javadoc.io/doc/io.github.ascopes.jct/java-compiler-testing/latest/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#compile(io.github.ascopes.jct.workspaces.Workspace)) to provide JavaCompiler objects.
+- A [default release](https://javadoc.io/static/io.github.ascopes.jct/java-compiler-testing/1.0.3/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getDefaultRelease()) that defines the default language version to use unless overridden.
+- A [JctFileManagerFactory](https://javadoc.io/static/io.github.ascopes.jct/java-compiler-testing/1.0.3/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getFileManagerFactory()) to create a file manager.
+- A [FlagBuilder](https://javadoc.io/static/io.github.ascopes.jct/java-compiler-testing/1.0.3/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getFlagBuilderFactory()) to translate the compiler configuration to command-line arguments.
 
 ### ECJ (Eclipse Java Compiler)
 
