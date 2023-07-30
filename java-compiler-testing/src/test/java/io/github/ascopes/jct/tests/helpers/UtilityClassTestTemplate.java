@@ -69,6 +69,14 @@ public interface UtilityClassTestTemplate {
         .hasSuperclass(UtilityClass.class);
   }
 
+  @DisplayName("Class should not implement any interfaces")
+  @Test
+  default void classShouldNotImplementAnyInterfaces() {
+    assertThat(getTypeBeingTested().getInterfaces())
+        .withFailMessage("Expected utility class to not implement any interfaces")
+        .isEmpty();
+  }
+
   @DisplayName("Class should be final")
   @Test
   default void testClassIsFinal() {

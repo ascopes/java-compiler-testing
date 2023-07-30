@@ -56,6 +56,18 @@ public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
     this.compiler = compiler;
   }
 
+  /**
+   * Get the compiler that was set on this file manager factory.
+   *
+   * @return the compiler
+   * @since 1.1.0
+   */
+  @API(since = "1.1.0", status = Status.INTERNAL)
+  @VisibleForTestingOnly
+  public JctCompiler getCompiler() {
+    return compiler;
+  }
+
   @Override
   public JctFileManager createFileManager(Workspace workspace) {
     var release = compiler.getEffectiveRelease();
