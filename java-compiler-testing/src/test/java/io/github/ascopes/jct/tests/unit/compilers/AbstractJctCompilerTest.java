@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -47,6 +48,7 @@ import io.github.ascopes.jct.ex.JctCompilerException;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.JctFileManagerFactory;
+import io.github.ascopes.jct.filemanagers.JctFileManagers;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.workspaces.Workspace;
 import java.io.IOException;
@@ -85,6 +87,7 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedConstruction.Context;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -102,9 +105,6 @@ class AbstractJctCompilerTest {
 
   @Mock(answer = Answers.RETURNS_MOCKS)
   Jsr199CompilerFactory jsr199CompilerFactory;
-
-  @Mock(answer = Answers.RETURNS_MOCKS)
-  JctFileManagerFactory fileManagerFactory;
 
   String name;
   String defaultRelease;
@@ -309,13 +309,19 @@ class AbstractJctCompilerTest {
   }
 
   @ExtendWith(MockitoExtension.class)
-  @SuppressWarnings("unused")
+  @SuppressWarnings({"unused", "JUnitMalformedDeclaration" /* IDEA-326883 */})
   abstract class AbstractCompileTestTemplate {
 
     @Mock
     Workspace workspace;
 
     List<String> flags;
+
+    @Mock
+    MockedStatic<JctFileManagers> fileManagers;
+
+    @Mock
+    JctFileManagerFactory fileManagerFactory;
 
     @Mock
     JctFileManager fileManager;
@@ -345,6 +351,8 @@ class AbstractJctCompilerTest {
 
       when(flagBuilderFactory.createFlagBuilder()).thenReturn(flagBuilder);
       when(jsr199CompilerFactory.createCompiler()).thenReturn(jsr199Compiler);
+      fileManagers.when(() -> JctFileManagers.newJctFileManagerFactory(any()))
+            .thenReturn(fileManagerFactory);
       when(fileManagerFactory.createFileManager(any())).thenReturn(fileManager);
 
       // Default implementation. We can override this to make it throw exceptions, etc.
@@ -1558,6 +1566,24 @@ class AbstractJctCompilerTest {
     assertThat(compiler).hasToString(name);
   }
 
+  @DisplayName(".getFileManagerFactory() should build a new file manager factory impl")
+  @Test
+  void getFileManagerFactoryShouldBuildNewFileManagerFactoryImpl() {
+    // Given
+    try (var fileManagersCls = mockStatic(JctFileManagers.class)) {
+      var expectedFactory = mock(JctFileManagerFactory.class);
+      fileManagersCls.when(() -> JctFileManagers.newJctFileManagerFactory(any()))
+          .thenReturn(expectedFactory);
+
+      // When
+      var actualFactory = compiler.getFileManagerFactory();
+
+      // Then
+      fileManagersCls.verify(() -> JctFileManagers.newJctFileManagerFactory(compiler));
+      assertThat(actualFactory).isSameAs(expectedFactory);
+    }
+  }
+
   @DisplayName(".getCompilationFactory() should build a new compilation factory impl")
   @Test
   void getCompilationFactoryBuildsCompilationFactoryImpl() {
@@ -1666,11 +1692,6 @@ class AbstractJctCompilerTest {
     @Override
     public Jsr199CompilerFactory getCompilerFactory() {
       return jsr199CompilerFactory;
-    }
-
-    @Override
-    public JctFileManagerFactory getFileManagerFactory() {
-      return fileManagerFactory;
     }
 
     @Override
