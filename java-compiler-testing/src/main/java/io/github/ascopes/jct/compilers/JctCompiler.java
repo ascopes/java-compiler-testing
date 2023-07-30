@@ -521,6 +521,21 @@ public interface JctCompiler {
   }
 
   /**
+   * Request that the compiler uses a language version that corresponds to the
+   * runtime language version in use on the JVM running tests.
+   *
+   * <p>For example, running this on JRE 19 would set the release to "19".
+   *
+   * <p>This calls {@link #release(int) internally}.
+   *
+   * @return this compiler object for further call chaining.
+   */
+  @API(since = "1.1.0", status = Status.STABLE)
+  default JctCompiler useRuntimeRelease() {
+    return release(Runtime.version().feature());
+  }
+
+  /**
    * Get the current source version that is set, or {@code null} if left to the compiler to decide.
    * default.
    *

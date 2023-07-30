@@ -73,7 +73,7 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler {
    * @return the minimum supported version.
    * @since 1.0.0
    */
-  @API(since = "1.0.0", status = Status.STABLE)
+  @API(since = "1.0.0", status = Status.INTERNAL)
   public static int getEarliestSupportedVersionInt() {
     // Purposely do not hardcode members of the SourceVersion enum here other
     // than utility methods, as this prevents compilation problems on various
@@ -97,7 +97,7 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler {
    *
    * @return the maximum supported version.
    */
-  @API(since = "1.0.0", status = Status.STABLE)
+  @API(since = "1.0.0", status = Status.INTERNAL)
   public static int getLatestSupportedVersionInt() {
     return SourceVersion.latestSupported().ordinal();
   }
