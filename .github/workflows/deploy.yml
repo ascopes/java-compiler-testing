@@ -17,7 +17,7 @@ jobs:
   maven-central:
     name: Deploy to Maven Central
     environment:
-      name: ${{ input.dry-run && "test" || "maven-central" }}
+      name: ${{ inputs.dry-run && "test" || "maven-central" }}
       url: https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing/
     runs-on: ubuntu-latest
 
