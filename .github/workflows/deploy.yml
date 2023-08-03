@@ -125,7 +125,7 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
     
       - name: Create GitHub Release
-        if: ! inputs.dry-run
+        if: ${{ ! inputs.dry-run }}
         uses: ncipollo/release-action@v1.12.0
         with:
           tag: v${{ env.release_version }}
