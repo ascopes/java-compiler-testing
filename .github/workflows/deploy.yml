@@ -100,7 +100,7 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Promote Maven Central Staging Release
-        if: ! inputs.dry-run
+        if: ${{ ! inputs.dry-run }}
         shell: bash
         run: |-
           source ./scripts/common.sh
