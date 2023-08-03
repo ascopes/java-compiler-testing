@@ -14,12 +14,43 @@ on:
         type: string
 
 jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3.5.3
+        with:
+          fetch-depth: 2
+
+      - name: Initialize Java
+        uses: actions/setup-java@v3.12.0
+        with:
+          distribution: zulu
+          # Must use >= JDK 17 for Javadocs to generate correctly.
+          java-version: 20
+    
+      - name: Verify Tests Pass
+        shell: bash
+        run: |-
+          source ./scripts/common.sh
+          run <<-'SCRIPT'
+            ./mvnw -B -U \
+                -Dcheckstyle.skip=true \
+                -DskipTests='${{ inputs.dry-run }}' \
+                clean verify
+          SCRIPT
+
+          success "All tests have passed"
+
   maven-central:
     name: Deploy to Maven Central
     environment:
       name: maven-central
       url: https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing/
     runs-on: ubuntu-latest
+    needs:
+      - test
 
     permissions:
       contents: write
@@ -64,19 +95,6 @@ jobs:
             fi
             echo "release_version=${release_version}" >> "${GITHUB_ENV}"
           SCRIPT
-
-      - name: Verify Tests Pass
-        shell: bash
-        run: |-
-          source ./scripts/common.sh
-          run <<-'SCRIPT'
-            ./mvnw -B -U \
-                -Dcheckstyle.skip=true \
-                -DskipTests='${{ inputs.dry-run }}' \
-                clean verify
-          SCRIPT
-
-          success "All tests have passed"
 
       - name: Create Maven Central Staging Release
         shell: bash
