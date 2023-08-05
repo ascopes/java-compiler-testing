@@ -10,6 +10,7 @@ updates:
       - ascopes
     labels:
       - ci
+      - housekeeping
   - package-ecosystem: maven
     directory: /
     open-pull-requests-limit: 99
@@ -20,3 +21,4 @@ updates:
       - ascopes
     labels:
       - maven
+      - housekeeping
