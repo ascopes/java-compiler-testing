@@ -104,7 +104,8 @@ jobs:
           run <<-'SCRIPT'
             ./mvnw -B -e \
                 -Preleases \
-                -Darguments='-Preleases -Dmaven.test.skip' \
+                -Pmaven-central \
+                -Darguments='-Preleases -Pmaven-central -Dmaven.test.skip' \
                 -DdryRun='${{ inputs.dry-run }}' \
                 -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
                 -DreleaseVersion='${release_version}' \
