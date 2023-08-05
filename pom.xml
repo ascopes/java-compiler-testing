@@ -56,24 +56,6 @@
 
   <contributors />
 
-  <distributionManagement>
-    <repository>
-      <id>ossrh</id>
-      <name>Maven Central Releases</name>
-      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <name>Maven Central Snapshots</name>
-      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>github</id>
-      <name>GitHub Packages</name>
-      <url>https://maven.pkg.github.com/${project-slug}</url>
-    </repository>
-  </distributionManagement>
-
   <issueManagement>
     <system>GitHub Issues</system>
     <url>${project-slug}/issues</url>
@@ -660,6 +642,40 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>maven-central</id>
+
+      <distributionManagement>
+        <repository>
+          <id>ossrh</id>
+          <name>Maven Central Releases</name>
+          <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+          <id>ossrh</id>
+          <name>Maven Central Snapshots</name>
+          <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+    
+    <profile>
+      <id>github</id>
+
+      <distributionManagement>
+        <repository>
+          <id>github</id>
+          <name>GitHub Packages</name>
+          <url>https://maven.pkg.github.com/${project-slug}</url>
+        </repository>
+        <snapshotRepository>
+          <id>github</id>
+          <name>GitHub Packages Snapshots</name>
+          <url>https://maven.pkg.github.com/${project-slug}</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+
     <profile>
       <id>releases</id>
 
