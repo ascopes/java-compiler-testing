@@ -113,6 +113,7 @@ public interface JctFileManager extends JavaFileManager {
    * @param location the package oriented location.
    * @return the container group, or null if one does not exist.
    */
+  @Nullable
   PackageContainerGroup getPackageContainerGroup(Location location);
 
   /**
@@ -128,6 +129,7 @@ public interface JctFileManager extends JavaFileManager {
    * @param location the module oriented location.
    * @return the container group, or null if one does not exist.
    */
+  @Nullable
   ModuleContainerGroup getModuleContainerGroup(Location location);
 
   /**
@@ -143,6 +145,7 @@ public interface JctFileManager extends JavaFileManager {
    * @param location the output oriented location.
    * @return the container group, or null if one does not exist.
    */
+  @Nullable
   OutputContainerGroup getOutputContainerGroup(Location location);
 
   /**
