@@ -117,9 +117,9 @@ public interface JctFileManager extends JavaFileManager {
   PackageContainerGroup getPackageContainerGroup(Location location);
 
   /**
-   * Get a collection of all package container impl in this file manager.
+   * Get a collection of all package container groups in this file manager.
    *
-   * @return the package container impl.
+   * @return the package container groups.
    */
   Collection<PackageContainerGroup> getPackageContainerGroups();
 
@@ -133,9 +133,9 @@ public interface JctFileManager extends JavaFileManager {
   ModuleContainerGroup getModuleContainerGroup(Location location);
 
   /**
-   * Get a collection of all module container impl in this file manager.
+   * Get a collection of all module container groups in this file manager.
    *
-   * @return the module container impl.
+   * @return the module container groups.
    */
   Collection<ModuleContainerGroup> getModuleContainerGroups();
 
@@ -149,9 +149,9 @@ public interface JctFileManager extends JavaFileManager {
   OutputContainerGroup getOutputContainerGroup(Location location);
 
   /**
-   * Get a collection of all output container impl in this file manager.
+   * Get a collection of all output container groups in this file manager.
    *
-   * @return the output container impl.
+   * @return the output container groups.
    */
   Collection<OutputContainerGroup> getOutputContainerGroups();
 
