@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-java@v3.12.0
         with:
           distribution: 'zulu'
-          java-version: 17
+          java-version: 20
           cache: 'maven'
 
       - name: Run Maven checks
@@ -77,13 +77,13 @@ jobs:
           - 21-ea
         include:
 
-          # MacOS builds (only check Java 17).
+          # MacOS builds (only check Java 20).
           - os-name: macos-13
-            java-version: 17
+            java-version: 20
 
-          # Windows builds (only check 17).
+          # Windows builds (only check 20).
           - os-name: windows-2022
-            java-version: 17
+            java-version: 20
 
     steps:
       - name: Checkout repository
@@ -253,7 +253,7 @@ jobs:
         with:
           distribution: 'zulu'
           # Must use >= JDK 17 for JavaDocs to generate correctly.
-          java-version: 17
+          java-version: 20
           cache: 'maven'
 
       - name: Generate JavaDocs
