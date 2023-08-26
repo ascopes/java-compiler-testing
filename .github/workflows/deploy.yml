@@ -19,12 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
       - name: Initialize Java
-        uses: actions/setup-java@v3.12.0
+        uses: actions/setup-java@v3
         with:
           distribution: zulu
           # Must use >= JDK 17 for Javadocs to generate correctly.
@@ -58,12 +58,12 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
       - name: Initialize Java
-        uses: actions/setup-java@v3.12.0
+        uses: actions/setup-java@v3
         with:
           distribution: zulu
           # Must use >= JDK 17 for Javadocs to generate correctly.
@@ -147,7 +147,7 @@ jobs:
     
       - name: Create GitHub Release
         if: ${{ ! inputs.dry-run }}
-        uses: ncipollo/release-action@v1.12.0
+        uses: ncipollo/release-action@v1
         with:
           tag: v${{ env.release_version }}
           name: v${{ env.release_version }}
