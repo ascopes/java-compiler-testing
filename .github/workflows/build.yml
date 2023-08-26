@@ -78,11 +78,11 @@ jobs:
         include:
 
           # MacOS builds (only check Java 20).
-          - os-name: macos-13
+          - os-name: macos-latest
             java-version: 20
 
           # Windows builds (only check 20).
-          - os-name: windows-2022
+          - os-name: windows-latest
             java-version: 20
 
     steps:
