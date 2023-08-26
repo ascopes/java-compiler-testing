@@ -120,7 +120,7 @@ public final class JctExtension
       for (var field : currentClass.getDeclaredFields()) {
         var isWorkspace = field.getType().equals(Workspace.class);
         var isManaged = field.isAnnotationPresent(Managed.class);
-        var isDesiredScope = Modifiers.isStatic(field.getModifiers()) == wantStatic;
+        var isDesiredScope = Modifier.isStatic(field.getModifiers()) == wantStatic;
 
         if (isWorkspace && isManaged && isDesiredScope) {
           field.setAccessible(true);
