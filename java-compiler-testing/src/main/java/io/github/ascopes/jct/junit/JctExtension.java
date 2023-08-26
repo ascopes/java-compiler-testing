@@ -63,8 +63,8 @@ import org.slf4j.LoggerFactory;
  * @since 0.4.0
  */
 @API(since = "0.4.0", status = Status.STABLE)
-public final class JctExtension implements
-    Extension, BeforeEachCallback, BeforeAllCallback, AfterEachCallback, AfterAllCallback {
+public final class JctExtension
+    implements Extension, BeforeEachCallback, BeforeAllCallback, AfterEachCallback, AfterAllCallback {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctExtension.class);
 
@@ -80,7 +80,7 @@ public final class JctExtension implements
 
   @Override
   public void beforeAll(ExtensionContext context) throws Exception {
-    for (var field : getManagedStaticWorkspaceFields(context.getRequiredTestClass())) {
+    for (var field : getManagedWorkspaceFields(context.getRequiredTestClass(), true)) {
       initWorkspaceForField(field, null);
     }
   }
@@ -88,7 +88,7 @@ public final class JctExtension implements
   @Override
   public void beforeEach(ExtensionContext context) throws Exception {
     for (var instance : context.getRequiredTestInstances().getAllInstances()) {
-      for (var field : getManagedInstanceWorkspaceFields(instance.getClass())) {
+      for (var field : getManagedWorkspaceFields(instance.getClass(), false)) {
         initWorkspaceForField(field, instance);
       }
     }
@@ -96,7 +96,7 @@ public final class JctExtension implements
 
   @Override
   public void afterAll(ExtensionContext context) throws Exception {
-    for (var field : getManagedStaticWorkspaceFields(context.getRequiredTestClass())) {
+    for (var field : getManagedWorkspaceFields(context.getRequiredTestClass(), true)) {
       closeWorkspaceForField(field, null);
     }
   }
@@ -104,49 +104,40 @@ public final class JctExtension implements
   @Override
   public void afterEach(ExtensionContext context) throws Exception {
     for (var instance : context.getRequiredTestInstances().getAllInstances()) {
-      for (var field : getManagedInstanceWorkspaceFields(instance.getClass())) {
+      for (var field : getManagedWorkspaceFields(instance.getClass(), false)) {
         closeWorkspaceForField(field, instance);
       }
     }
   }
 
-  private List<Field> getManagedStaticWorkspaceFields(Class<?> clazz) {
-    // Do not recurse for static fields, as the state of any parent classes may be shared
-    // with other classes running in parallel. Need to look up how JUnit expects us to handle that
-    // case, if at all.
-
+  private List<Field> getManagedWorkspaceFields(Class<?> clazz, boolean wantStatic) {
     var fields = new ArrayList<Field>();
 
-    for (var field : clazz.getDeclaredFields()) {
-      if (isWorkspaceField(field) && Modifier.isStatic(field.getModifiers())) {
-        fields.add(field);
-      }
-    }
+    @Nullable
+    Class<?> currentClass = clazz;
 
-    return fields;
-  }
+    do {
+      for (var field : currentClass.getDeclaredFields()) {
+        var isWorkspace = field.getType().equals(Workspace.class);
+        var isManaged = field.isAnnotationPresent(Managed.class);
+        var isDesiredScope = Modifier.isStatic(field.getModifiers()) == wantStatic;
 
-  private List<Field> getManagedInstanceWorkspaceFields(Class<?> clazz) {
-    // For instances, discover all the fields recursively in superclasses as well that are
-    // non-static.
-
-    var fields = new ArrayList<Field>();
-
-    while (clazz != null) {
-      for (var field : clazz.getDeclaredFields()) {
-        if (isWorkspaceField(field) && !Modifier.isStatic(field.getModifiers())) {
+        if (isWorkspace && isManaged && isDesiredScope) {
+          field.setAccessible(true);
           fields.add(field);
         }
       }
-      clazz = clazz.getSuperclass();
-    }
+
+      // Only recurse if we are checking instance scope. We don't manage annotated fields
+      // in superclasses that are static as we cannot guarantee they are not shared with a
+      // different class running in parallel.
+      currentClass = wantStatic
+          ? null
+          : currentClass.getSuperclass();
+  
+    } while (currentClass != null);
 
     return fields;
-  }
-
-  private boolean isWorkspaceField(Field field) {
-    return field.getType().equals(Workspace.class)
-        && field.isAnnotationPresent(Managed.class);
   }
 
   private void initWorkspaceForField(Field field, @Nullable Object instance) throws Exception {
@@ -159,7 +150,6 @@ public final class JctExtension implements
         .addArgument(instance)
         .log();
 
-    field.setAccessible(true);
     var managedWorkspace = field.getAnnotation(Managed.class);
     var workspace = Workspaces.newWorkspace(managedWorkspace.pathStrategy());
     field.set(instance, workspace);
@@ -175,7 +165,7 @@ public final class JctExtension implements
         .addArgument(instance)
         .log();
 
-    field.setAccessible(true);
-    ((Workspace) field.get(instance)).close();
+    var workspace = (Workspace) field.get(instance);
+    workspace.close();
   }
 }
