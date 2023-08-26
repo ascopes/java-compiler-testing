@@ -76,6 +76,7 @@ jobs:
           - 19
           - 20
           - 21-ea
+          - 22-ea
         include:
 
           # MacOS builds (only check Java 20).
