@@ -19,12 +19,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
       - name: Initialize Java
-        uses: actions/setup-java@v3.12.0
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: 20
@@ -42,7 +42,7 @@ jobs:
           verify
       
       - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@2.0.0
+        uses: ludeeus/action-shellcheck@2
         with:
           check_together: 'yes'
           scandir: './scripts'
@@ -87,12 +87,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
       - name: Initialize JDK
-        uses: actions/setup-java@v3.12.0
+        uses: actions/setup-java@v3
         with:
           cache: maven
           check-latest: true
@@ -168,7 +168,7 @@ jobs:
               $(find . -name 'jacoco.xml')
 
       - name: Stash reports tarball
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: reports-${{ matrix.java-version }}-${{ matrix.os-name }}
@@ -190,13 +190,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v3
         with:
           # Needed to keep actions working correctly.
           fetch-depth: 2
 
       - name: Download stashed tarballs
-        uses: actions/download-artifact@v3.0.2
+        uses: actions/download-artifact@v3
         with:
           path: 'artifacts/reports-*.tar.xz'
 
@@ -208,7 +208,7 @@ jobs:
 
       - name: Publish test results
         continue-on-error: true
-        uses: EnricoMi/publish-unit-test-result-action@v2.9.0
+        uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           action_fail: false
@@ -244,12 +244,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
       - name: Initialize Java
-        uses: actions/setup-java@v3.12.0
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           # Must use >= JDK 17 for JavaDocs to generate correctly.
@@ -291,10 +291,10 @@ jobs:
     steps:
       - name: Deploy JavaDocs build artifact to GitHub Pages
         id: snapshot-javadocs
-        uses: actions/deploy-pages@v2.0.4
+        uses: actions/deploy-pages@v2
 
       - name: Delete temporary artifacts
-        uses: geekyeggo/delete-artifact@v2.0.0
+        uses: geekyeggo/delete-artifact@v2
         with:
           name: github-pages
           failOnError: false
