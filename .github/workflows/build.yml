@@ -63,7 +63,18 @@ jobs:
       fail-fast: false
       matrix:
         os-name: [ubuntu-latest]
-        java-version: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21-ea]
+        java-version: 
+          - 11
+          - 12
+          - 13
+          - 14
+          - 15
+          - 16
+          - 17
+          - 18
+          - 19
+          - 20
+          - 21-ea
         include:
 
           # MacOS builds (only check Java 17).
@@ -114,18 +125,18 @@ jobs:
       - name: Dump system and JDK info
         shell: bash
         run: |-
-            source "./scripts/common.sh"
+          source "./scripts/common.sh"
 
-            function report() {
-              info "${1}:"
-              run <<< "${2}"
-              echo
-            }
+          function report() {
+            info "${1}:"
+            run <<< "${2}"
+            echo
+          }
 
-            report "System" "uname -a"
-            report "JRE/JVM" "java -version"
-            report "JDK" "javac -version"
-            report "Maven" "./mvnw -v"
+          report "System" "uname -a"
+          report "JRE/JVM" "java -version"
+          report "JDK" "javac -version"
+          report "Maven" "./mvnw -v"
 
       - name: Compile and run tests
         shell: bash
