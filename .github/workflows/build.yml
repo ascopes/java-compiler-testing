@@ -42,7 +42,7 @@ jobs:
           verify
       
       - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@2
+        uses: ludeeus/action-shellcheck@master
         with:
           check_together: 'yes'
           scandir: './scripts'
