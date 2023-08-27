@@ -55,12 +55,12 @@ while getopts "dh" opt; do
 done
 
 info "Cleaning workspace..."
-run <<< "./mvnw --quiet ${mvn_flags[*]} clean"
+./mvnw --quiet "${mvn_flags[@]}" clean
 
 info "Reapplying licenses across workspace..."
-run <<< "./mvnw ${mvn_flags[*]} license:remove license:format"
+./mvnw "${mvn_flags[@]}" license:remove license:format
 
 info "Running verification (skipping tests)"
-run <<<  "./mvnw ${mvn_flags[*]} verify -DskipTests"
+./mvnw "${mvn_flags[@]}" verify -DskipTests
 
 success "Completed!"
