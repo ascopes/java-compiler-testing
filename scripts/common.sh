@@ -59,7 +59,7 @@ function ensure-set() {
   return_code=0
 
   for variable_name; do
-    if [ "${!variable_name}" = "" ]; then
+    if [[ "${!variable_name}" = "" ]]; then
       err "Variable ${variable_name} was empty or not set"
       return_code=1
     fi
@@ -71,57 +71,33 @@ function ensure-set() {
 # Dump the contents of a file.
 function dump() {
   local name
-  name="$(basename "${1?Provide a file to dump as the first argument}}")"
-  while IFS=$'\r\n' read -r line; do __log 37 "${name}" "${line}"; done < "${1}"
+  name="$(basename "${1?Provide a file to dump as the first argument}")"
+  while IFS=$'\r\n' read -r line; do 
+    __log 37 "${name}" "${line}"
+  done < "${1}"
 }
 
-# Visually run the command, showing the command being run, stdout, and stderr to the user.
-# Pass the commands to run in via a heredoc as stdin. Incorrect usage will dump an error and
-# terminate the current shell.
 function run() {
-  local echo_groups="false"
-  if [[ "${1:-nothing}" = "--no-group" ]]; then
-    shift 1
-  elif [[ -n  ${CI+undefined} ]]; then
-    echo_groups="true"
-  fi
-
   # Run in subshell to enable correct argument re-quoting.
   local file
   file="$(mktemp)"
+  trap 'rm "${file}"' EXIT INT TERM
 
   if [[ "$#" -gt 0 ]]; then
     err "Function <run> called incorrectly. Pass script to run via stdin rather than as arguments."
     err "Invocation: <${*}>"
-    exit 1
+    return 1
   fi
 
   {
     echo "#!/usr/bin/env bash"
     # shellcheck disable=SC2028
-    echo "PS4=$'$ Running: \e[1;33m$ \e[0;3;33m'"
+    echo "PS4=$'+ Running: \e[1;33m$ \e[0;3;33m'"
     echo "set -o errexit"
     echo "set -o nounset"
     echo "set -o xtrace"
     cat -
   } >> "${file}"
 
-  # Use the first line of the command as the group name.
-  if [[ "${echo_groups}" = "true" ]]; then echo "::group::$(tail -n +6 "${file}" | head -n 1)"; fi
-
-  set +e
-  /usr/bin/env bash \
-       1> >(while IFS=$'\r\n' read -r line; do __log 36 STDOUT "${line}"; done) \
-       2> >(while IFS=$'\r\n' read -r line; do __log 37 STDERR "${line}"; done) \
-       "${file}"
-  local return_code="${?}"
-  rm "${file}"
-  set -e
-
-  # Wait for stdout and stderr to flush for ~50ms
-  sleep 0.05
-
-  if [[ "${echo_groups}" = "true" ]]; then echo "::endgroup::"; fi
-
-  return "${return_code}"
+  /usr/bin/env bash "${file}"
 }
