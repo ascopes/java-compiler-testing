@@ -54,9 +54,9 @@ if ! [[ "${version}" =~ .*-SNAPSHOT$ ]]; then
 fi
 
 info "Updating versions to ${version}"
-run <<< "./mvnw -B -e versions:set -DnewVersion='${version}'"
+./mvnw -B -e versions:set -DnewVersion="${version}"
 
 info "Tracking all 'pom.xml' files with Git"
-run <<< "find . -name 'pom.xml' -type f -exec git add -v {} \;"
+find . -name 'pom.xml' -type f -exec git add -v {} \;
 
 success 'Complete!'
