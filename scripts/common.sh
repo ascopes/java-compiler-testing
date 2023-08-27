@@ -15,6 +15,8 @@
 # limitations under the License.
 #
 
+# shellcheck disable=SC2119
+
 ###
 ### Common functions.
 ###
