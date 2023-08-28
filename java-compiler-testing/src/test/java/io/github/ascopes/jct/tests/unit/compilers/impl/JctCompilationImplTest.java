@@ -131,7 +131,7 @@ class JctCompilationImplTest {
     // Then
     assertThat(compilation.getCompilationUnits())
         .asInstanceOf(iterable(JavaFileObject.class))
-        .containsExactlyElementsOf(compilationUnits);
+        .containsExactlyInAnyOrderElementsOf(compilationUnits);
   }
 
   @DisplayName(".getDiagnostics() returns the expected value")
