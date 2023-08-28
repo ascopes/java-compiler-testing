@@ -50,7 +50,7 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
    * Initialize this flag builder.
    */
   public JavacJctFlagBuilderImpl() {
-    craftedFlags = new ArrayList<>();
+    craftedFlags = new ArrayList<>(3);
   }
 
   @Override
@@ -65,7 +65,7 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
 
   @Override
   public JavacJctFlagBuilderImpl showWarnings(boolean enabled) {
-    return addFlagIfTrue(!enabled, NOWARN);
+    return addFlagIfFalse(enabled, NOWARN);
   }
 
   @Override
@@ -136,6 +136,10 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
     }
 
     return this;
+  }
+
+  private JavacJctFlagBuilderImpl addFlagIfFalse(boolean condition, String flag) {
+    return addFlagIfTrue(!condition, flag);
   }
 
   private JavacJctFlagBuilderImpl addVersionIfPresent(String flagPrefix, @Nullable String version) {
