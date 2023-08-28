@@ -117,6 +117,14 @@ public abstract class AbstractJctCompiler implements JctCompiler {
 
   @Override
   public JctCompilation compile(Workspace workspace, Collection<String> classNames) {
+    // There is no reason to invoke this overload with null values, so
+    // prevent this.
+    requireNonNullValues(classNames, "classNames");
+
+    if (classNames.isEmpty()) {
+      throw new IllegalArgumentException("classNames must not be empty");
+    }
+
     return compileInternal(workspace, classNames);
   }
 
@@ -500,7 +508,10 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   }
 
   @SuppressWarnings("ThrowFromFinallyBlock")
-  private JctCompilation compileInternal(Workspace workspace, Collection<String> classNames) {
+  private JctCompilation compileInternal(
+        Workspace workspace, 
+        @Nullable Collection<String> classNames
+  ) {
     var fileManagerFactory = getFileManagerFactory();
     var flagBuilderFactory = getFlagBuilderFactory();
     var compilerFactory = getCompilerFactory();
