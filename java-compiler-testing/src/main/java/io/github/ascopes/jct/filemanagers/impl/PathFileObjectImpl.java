@@ -131,7 +131,7 @@ public final class PathFileObjectImpl implements PathFileObject {
   @Override
   @Nullable
   public Modifier getAccessLevel() {
-    return unknown();
+    return null;
   }
 
   @Override
@@ -152,7 +152,6 @@ public final class PathFileObjectImpl implements PathFileObject {
   public Kind getKind() {
     return kind;
   }
-
 
   @Override
   public long getLastModified() {
@@ -177,7 +176,7 @@ public final class PathFileObjectImpl implements PathFileObject {
   @Nullable
   @Override
   public NestingKind getNestingKind() {
-    return unknown();
+    return null;
   }
 
   @Override
@@ -200,7 +199,6 @@ public final class PathFileObjectImpl implements PathFileObject {
   public boolean isNameCompatible(String simpleName, Kind kind) {
     // Note that this behaves case-sensitively, even on Windows.
     var fileName = simpleName + kind.extension;
-
     return relativePath.getFileName().toString().equals(fileName);
   }
 
@@ -264,9 +262,5 @@ public final class PathFileObjectImpl implements PathFileObject {
         .newDecoder()
         .onUnmappableCharacter(action)
         .onMalformedInput(action);
-  }
-
-  private <T> T unknown() {
-    return null;
   }
 }
