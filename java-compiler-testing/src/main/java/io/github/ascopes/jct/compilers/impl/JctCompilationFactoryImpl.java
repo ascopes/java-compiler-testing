@@ -30,7 +30,7 @@ import io.github.ascopes.jct.filemanagers.PathFileObject;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -55,7 +55,8 @@ import org.slf4j.LoggerFactory;
 public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilationFactoryImpl.class);
-
+  private static final String THE_ROOT_PACKAGE = "";
+  
   private final JctCompiler compiler;
 
   public JctCompilationFactoryImpl(JctCompiler compiler) {
@@ -67,10 +68,76 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       List<String> flags,
       JctFileManager fileManager,
       JavaCompiler jsr199Compiler,
-      Collection<String> classNames
+      @Nullable Collection<String> classNames
   ) {
     try {
-      return createCheckedCompilation(flags, fileManager, jsr199Compiler, classNames);
+      var compilationUnits = findFilteredCompilationUnits(fileManager, classNames);
+
+      if (compilationUnits.isEmpty()) {
+        throw new JctCompilerException("No compilation units were found in the given workspace");
+      }
+
+      // Note: we do not close stdout, it breaks test engines, especially IntelliJ.
+      var writer = TeeWriter.wrapOutputStream(System.out, compiler.getLogCharset());
+
+      var diagnosticListener = new TracingDiagnosticListener<>(
+          compiler.getDiagnosticLoggingMode() != LoggingMode.DISABLED,
+          compiler.getDiagnosticLoggingMode() == LoggingMode.STACKTRACES
+      );
+
+      var task = jsr199Compiler.getTask(
+          writer,
+          fileManager,
+          diagnosticListener,
+          flags,
+          null,
+          compilationUnits
+      );
+
+      var processors = compiler.getAnnotationProcessors();
+      if (!processors.isEmpty()) {
+        task.setProcessors(processors);
+      }
+
+      task.setLocale(compiler.getLocale());
+
+      LOGGER
+          .atInfo()
+          .setMessage("Starting compilation with {} (found {} compilation units)")
+          .addArgument(compiler::getName)
+          .addArgument(compilationUnits::size)
+          .log();
+
+      var start = System.nanoTime();
+      var success = requireNonNull(
+          task.call(),
+          () -> "Compiler " + compiler.getName()
+              + " task .call() method returned null unexpectedly!"
+      );
+      var delta = (System.nanoTime() - start) / 1_000_000L;
+
+      // Ensure we commit the writer contents to the wrapped output stream in full.
+      writer.flush();
+
+      LOGGER
+          .atInfo()
+          .setMessage("Compilation with {} {} after approximately {}ms (roughly {} classes/sec)")
+          .addArgument(compiler::getName)
+          .addArgument(() -> success ? "completed successfully" : "failed")
+          .addArgument(delta)
+          .addArgument(() -> String.format("%.2f", 1000.0 * compilationUnits.size() / delta))
+          .log();
+
+      return JctCompilationImpl
+          .builder()
+          .arguments(flags)
+          .compilationUnits(Set.copyOf(compilationUnits))
+          .fileManager(fileManager)
+          .outputLines(writer.getContent().lines().collect(toList()))
+          .diagnostics(diagnosticListener.getDiagnostics())
+          .success(success)
+          .failOnWarnings(compiler.isFailOnWarnings())
+          .build();
 
     } catch (JctCompilerException ex) {
       // Rethrow JctCompilerExceptions -- we don't want to wrap these again.
@@ -81,85 +148,6 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
           "Failed to perform compilation, an unexpected exception was raised", ex
       );
     }
-  }
-
-  private JctCompilation createCheckedCompilation(
-      List<String> flags,
-      JctFileManager fileManager,
-      JavaCompiler jsr199Compiler,
-      Collection<String> classNames
-  ) throws Exception {
-    var compilationUnits = findFilteredCompilationUnits(fileManager, classNames);
-
-    if (compilationUnits.isEmpty()) {
-      throw new JctCompilerException("No compilation units were found in the given workspace");
-    }
-
-    // Do not close stdout, it breaks test engines, especially IntellIJ.
-    var writer = TeeWriter.wrapOutputStream(System.out, compiler.getLogCharset());
-
-    var diagnosticListener = new TracingDiagnosticListener<>(
-        compiler.getDiagnosticLoggingMode() != LoggingMode.DISABLED,
-        compiler.getDiagnosticLoggingMode() == LoggingMode.STACKTRACES
-    );
-
-    var task = jsr199Compiler.getTask(
-        writer,
-        fileManager,
-        diagnosticListener,
-        flags,
-        null,
-        compilationUnits
-    );
-
-    var processors = compiler.getAnnotationProcessors();
-    if (!processors.isEmpty()) {
-      task.setProcessors(processors);
-    }
-
-    task.setLocale(compiler.getLocale());
-
-    LOGGER
-        .atInfo()
-        .setMessage("Starting compilation with {} (found {} compilation units)")
-        .addArgument(compiler::getName)
-        .addArgument(compilationUnits::size)
-        .log();
-
-    var start = System.nanoTime();
-    var success = requireNonNull(
-        task.call(),
-        () -> "Compiler " + compiler.getName() + " task .call() method returned null unexpectedly!"
-    );
-    var delta = (System.nanoTime() - start) / 1_000_000L;
-
-    // Ensure we commit the writer contents to the wrapped output stream in full.
-    writer.flush();
-
-    LOGGER
-        .atInfo()
-        .setMessage("Compilation with {} {} after approximately {}ms (roughly {} classes/sec)")
-        .addArgument(compiler::getName)
-        .addArgument(() -> success ? "completed successfully" : "failed")
-        .addArgument(delta)
-        .addArgument(() -> String.format(
-            "%.2f",
-            classNames == null
-                ? 1000.0 * compilationUnits.size() / delta
-                : 1000.0 * classNames.size() / delta
-        ))
-        .log();
-
-    return JctCompilationImpl
-        .builder()
-        .arguments(flags)
-        .compilationUnits(Set.copyOf(compilationUnits))
-        .fileManager(fileManager)
-        .outputLines(writer.getContent().lines().collect(toList()))
-        .diagnostics(diagnosticListener.getDiagnostics())
-        .success(success)
-        .failOnWarnings(compiler.isFailOnWarnings())
-        .build();
   }
 
   private Collection<JavaFileObject> findFilteredCompilationUnits(
@@ -196,10 +184,11 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       );
     }
 
-    var objects = new HashSet<JavaFileObject>();
+    // Use a linked hash set to retain order for consistency.
+    var objects = new LinkedHashSet<JavaFileObject>();
 
     for (var location : locations) {
-      objects.addAll(fileManager.list(location, "", Set.of(Kind.SOURCE), true));
+      objects.addAll(fileManager.list(location, THE_ROOT_PACKAGE, Set.of(Kind.SOURCE), true));
     }
 
     return objects;
@@ -216,17 +205,13 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
         // it due to covariance rules.
         .map(PathFileObject.class::cast)
         .filter(fo -> classNames.contains(fo.getBinaryName()))
-        .collect(Collectors.toMap(
-            PathFileObject::getBinaryName,
-            JavaFileObject.class::cast
-        ));
+        .collect(Collectors.toMap(PathFileObject::getBinaryName, JavaFileObject.class::cast));
 
     for (var className : classNames) {
       var compilationUnit = binaryNamesToCompilationUnits.get(className);
       if (compilationUnit == null) {
-        throw new JctCompilerException(
-            "No compilation unit matching " + className + " found in the provided sources"
-        );
+        throw new JctCompilerException("No compilation unit matching " + className 
+            + " found in the provided sources");
       }
     }
 
