@@ -28,7 +28,8 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Implementation of a {@code javac} compiler.
+ * Implementation of a JCT compiler that integrates with the default {@code javac}
+ * compiler that is bundled with the current JDK.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -36,6 +37,9 @@ import org.apiguardian.api.API.Status;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class JavacJctCompilerImpl extends AbstractJctCompiler {
 
+  private static final int JAVA_8 = 8;
+  private static final int JAVA_9 = 9;
+  private static final int JAVA_20 = 20;
   private static final String NAME = "JDK Compiler";
 
   /**
@@ -59,7 +63,8 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler {
   public Jsr199CompilerFactory getCompilerFactory() {
     // RequireNonNull to ensure the return result is non-null, since the ToolProvider
     // method is not annotated.
-    return () -> requireNonNull(ToolProvider.getSystemJavaCompiler());
+    return () -> requireNonNull(ToolProvider.getSystemJavaCompiler(), 
+        "ToolProvider.getSystemJavaCompiler()");
   }
 
   @Override
@@ -82,14 +87,14 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler {
     var latestSupported = SourceVersion.latestSupported().ordinal();
 
     //noinspection NonStrictComparisonCanBeEquality
-    if (latestSupported >= 20) {
+    if (latestSupported >= JAVA_20) {
       // JDK 20 marks source-version 8 as obsolete, and emits compilation
       // warnings that may break tests using "fail on warnings". To avoid this,
       // disallow compiling Java 8 sources under Javac in JDK 20 or newer
-      return 9;
+      return JAVA_9;
     }
 
-    return 8;
+    return JAVA_8;
   }
 
   /**
