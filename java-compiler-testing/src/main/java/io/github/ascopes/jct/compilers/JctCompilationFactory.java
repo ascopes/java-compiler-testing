@@ -22,6 +22,7 @@ import java.util.List;
 import javax.tools.JavaCompiler;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Factory for producing {@link JctCompilation} objects by performing a physical compilation with a
@@ -46,11 +47,12 @@ public interface JctCompilationFactory {
    * @throws JctCompilerException if any prerequisites fail, such as no compilation units being
    *                              found, or if the underlying JSR-199 compiler raises an unhandled
    *                              exception and cannot complete when invoked.
+   * @throws NullPointerException if any inputs are unexpectedly set to {@code null}.
    */
   JctCompilation createCompilation(
       List<String> flags,
       JctFileManager fileManager,
       JavaCompiler jsr199Compiler,
-      Collection<String> classNames
+      @Nullable Collection<String> classNames
   );
 }
