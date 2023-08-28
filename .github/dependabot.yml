@@ -20,5 +20,6 @@ updates:
     assignees:
       - ascopes
     labels:
-      - maven
       - housekeeping
+      - java
+      - maven
