@@ -16,8 +16,6 @@
 package io.github.ascopes.jct.compilers.impl;
 
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.compilers.JctCompilation;
@@ -29,6 +27,7 @@ import java.util.Set;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Representation of the result of running a Javac compilation.
@@ -48,28 +47,21 @@ public final class JctCompilationImpl implements JctCompilation {
   private final JctFileManager fileManager;
 
   private JctCompilationImpl(Builder builder) {
-    arguments = unmodifiableList(
-        requireNonNullValues(builder.arguments, "arguments")
-    );
-
-    success = requireNonNull(
-        builder.success, "success"
-    );
-    failOnWarnings = requireNonNull(
-        builder.failOnWarnings, "failOnWarnings"
-    );
-    outputLines = unmodifiableList(
-        requireNonNullValues(builder.outputLines, "outputLines")
-    );
-    compilationUnits = unmodifiableSet(
-        requireNonNullValues(builder.compilationUnits, "compilationUnits")
-    );
-    diagnostics = unmodifiableList(
-        requireNonNullValues(builder.diagnostics, "diagnostics")
-    );
-    fileManager = requireNonNull(
-        builder.fileManager, "fileManager"
-    );
+    requireNonNullValues(builder.arguments, "arguments");
+    requireNonNull(builder.success, "success");
+    requireNonNull(builder.failOnWarnings, "failOnWarnings");
+    requireNonNullValues(builder.outputLines, "outputLines");
+    requireNonNullValues(builder.compilationUnits, "compilationUnits");
+    requireNonNullValues(builder.diagnostics, "diagnostics");
+    requireNonNull(builder.fileManager, "fileManager");
+    
+    arguments = List.copyOf(builder.arguments);
+    success = builder.success;
+    failOnWarnings = builder.failOnWarnings;
+    outputLines = List.copyOf(builder.outputLines);
+    compilationUnits = Set.copyOf(builder.compilationUnits);
+    diagnostics = List.copyOf(builder.diagnostics);
+    fileManager = builder.fileManager;
   }
 
   @Override
@@ -135,16 +127,15 @@ public final class JctCompilationImpl implements JctCompilation {
   @API(since = "0.0.1", status = Status.INTERNAL)
   public static final class Builder {
 
-    private List<String> arguments;
-    private Boolean failOnWarnings;
-    private Boolean success;
-    private List<String> outputLines;
-    private Set<JavaFileObject> compilationUnits;
-    private List<TraceDiagnostic<JavaFileObject>> diagnostics;
-    private JctFileManager fileManager;
+    private @Nullable List<String> arguments;
+    private @Nullable Boolean failOnWarnings;
+    private @Nullable Boolean success;
+    private @Nullable List<String> outputLines;
+    private @Nullable Set<JavaFileObject> compilationUnits;
+    private @Nullable List<TraceDiagnostic<JavaFileObject>> diagnostics;
+    private @Nullable JctFileManager fileManager;
 
     private Builder() {
-      // Only initialized in this file.
       arguments = null;
       failOnWarnings = null;
       success = null;
@@ -161,7 +152,7 @@ public final class JctCompilationImpl implements JctCompilation {
      * @return this builder.
      */
     public Builder arguments(List<String> arguments) {
-      this.arguments = arguments;
+      this.arguments = requireNonNull(arguments, "arguments");
       return this;
     }
 
@@ -171,8 +162,8 @@ public final class JctCompilationImpl implements JctCompilation {
      * @param failOnWarnings {@code true} or {@code false}.
      * @return this builder.
      */
-    public Builder failOnWarnings(boolean failOnWarnings) {
-      this.failOnWarnings = failOnWarnings;
+    public Builder failOnWarnings(Boolean failOnWarnings) {
+      this.failOnWarnings = requireNonNull(failOnWarnings, "failOnWarnings");
       return this;
     }
 
@@ -182,8 +173,8 @@ public final class JctCompilationImpl implements JctCompilation {
      * @param success {@code true} or {@code false}.
      * @return this builder.
      */
-    public Builder success(boolean success) {
-      this.success = success;
+    public Builder success(Boolean success) {
+      this.success = requireNonNull(success, "success");
       return this;
     }
 
