@@ -460,8 +460,12 @@ class AbstractJctCompilerTest {
   @Nested
   class CompileClassNamesTest extends AbstractCompileTestTemplate {
 
-    @Mock
     Collection<String> classNames;
+
+    @BeforeEach
+    void setUpClassNames() {
+      classNames = List.of("org.example.Foo", "org.example.Bar");
+    }
 
     @Override
     JctCompilation doCompile() {
