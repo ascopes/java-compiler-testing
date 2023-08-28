@@ -87,9 +87,9 @@ public abstract class AbstractJctCompiler implements JctCompiler {
    */
   protected AbstractJctCompiler(String defaultName) {
     name = requireNonNull(defaultName, "name");
-    annotationProcessors = new ArrayList<>();
-    annotationProcessorOptions = new ArrayList<>();
-    compilerOptions = new ArrayList<>();
+    annotationProcessors = new ArrayList<>(1);
+    annotationProcessorOptions = new ArrayList<>(1);
+    compilerOptions = new ArrayList<>(3);
     showWarnings = JctCompiler.DEFAULT_SHOW_WARNINGS;
     showDeprecationWarnings = JctCompiler.DEFAULT_SHOW_DEPRECATION_WARNINGS;
     failOnWarnings = JctCompiler.DEFAULT_FAIL_ON_WARNINGS;
@@ -135,7 +135,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
 
   @Override
   public AbstractJctCompiler name(String name) {
-    this.name = requireNonNull(name, "name");
+    requireNonNull(name, "name");
+    this.name = name;
     return this;
   }
 
@@ -377,7 +378,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
 
   @Override
   public AbstractJctCompiler fileManagerLoggingMode(LoggingMode fileManagerLoggingMode) {
-    this.fileManagerLoggingMode = requireNonNull(fileManagerLoggingMode, "fileManagerLoggingMode");
+    requireNonNull(fileManagerLoggingMode, "fileManagerLoggingMode");
+    this.fileManagerLoggingMode = fileManagerLoggingMode;
     return this;
   }
 
@@ -401,10 +403,9 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   @Override
   public AbstractJctCompiler annotationProcessorDiscovery(
       AnnotationProcessorDiscovery annotationProcessorDiscovery) {
-    this.annotationProcessorDiscovery = requireNonNull(
-        annotationProcessorDiscovery,
-        "annotationProcessorDiscovery"
-    );
+    requireNonNull(annotationProcessorDiscovery, 
+        "annotationProcessorDiscovery");
+    this.annotationProcessorDiscovery = annotationProcessorDiscovery;
     return this;
   }
 
