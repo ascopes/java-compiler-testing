@@ -101,6 +101,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     repository.flush();
   }
 
+  @Nullable
   @Override
   public ClassLoader getClassLoader(Location location) {
     // While we would normally enforce that we cannot get a classloader for a closed
@@ -118,6 +119,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     return effectiveRelease;
   }
 
+  @Nullable
   @Override
   public FileObject getFileForInput(
       Location location,
@@ -131,6 +133,7 @@ public final class JctFileManagerImpl implements JctFileManager {
         : group.getFileForInput(packageName, relativeName);
   }
 
+  @Nullable
   @Override
   public FileObject getFileForOutput(
       Location location,
@@ -159,6 +162,7 @@ public final class JctFileManagerImpl implements JctFileManager {
         : group.getFileForOutput(packageName, relativeName);
   }
 
+  @Nullable
   @Override
   public JavaFileObject getJavaFileForInput(
       Location location,
@@ -172,6 +176,7 @@ public final class JctFileManagerImpl implements JctFileManager {
         : group.getJavaFileForInput(className, kind);
   }
 
+  @Nullable
   @Override
   public JavaFileObject getJavaFileForOutput(
       Location location,
@@ -209,6 +214,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     return new ModuleLocation(location, moduleName);
   }
 
+  @Nullable
   @Override
   public ModuleLocation getLocationForModule(Location location, JavaFileObject fo) {
     requireOutputOrModuleOrientedLocation(location);
@@ -232,7 +238,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     );
   }
 
-
+  @Nullable
   @Override
   public ModuleContainerGroup getModuleContainerGroup(Location location) {
     requireModuleOrientedLocation(location);
@@ -244,6 +250,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     return repository.getModuleContainerGroups();
   }
 
+  @Nullable
   @Override
   public OutputContainerGroup getOutputContainerGroup(Location location) {
     requireOutputLocation(location);
@@ -255,6 +262,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     return repository.getOutputContainerGroups();
   }
 
+  @Nullable
   @Override
   public PackageContainerGroup getPackageContainerGroup(Location location) {
     requirePackageLocation(location);
@@ -290,6 +298,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     return repository.hasLocation(location);
   }
 
+  @Nullable
   @Override
   public String inferBinaryName(Location location, JavaFileObject file) {
     requirePackageOrientedLocation(location);
@@ -305,6 +314,7 @@ public final class JctFileManagerImpl implements JctFileManager {
         : group.inferBinaryName((PathFileObject) file);
   }
 
+  @Nullable
   @Override
   public String inferModuleName(Location location) {
     requirePackageOrientedLocation(location);
@@ -354,7 +364,7 @@ public final class JctFileManagerImpl implements JctFileManager {
         .toString();
   }
 
-  private static void requireOutputOrModuleOrientedLocation(Location location) {
+  private void requireOutputOrModuleOrientedLocation(Location location) {
     if (!location.isOutputLocation() && !location.isModuleOrientedLocation()) {
       throw new JctIllegalInputException(
           "Location " + location.getName() + " must be output or module-oriented"
@@ -362,7 +372,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     }
   }
 
-  private static void requireModuleOrientedLocation(Location location) {
+  private void requireModuleOrientedLocation(Location location) {
     if (!location.isModuleOrientedLocation()) {
       throw new JctIllegalInputException(
           "Location " + location.getName() + " must be module-oriented"
@@ -370,7 +380,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     }
   }
 
-  private static void requireOutputLocation(Location location) {
+  private void requireOutputLocation(Location location) {
     if (!location.isOutputLocation()) {
       throw new JctIllegalInputException(
           "Location " + location.getName() + " must be an output location"
