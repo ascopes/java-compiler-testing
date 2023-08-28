@@ -152,6 +152,7 @@ public interface JctCompiler {
    * @return the compilation result.
    * @throws JctCompilerException  if the compiler threw an unhandled exception. This should not
    *                               occur for compilation failures generally.
+   * @throws NullPointerException  if any class names are null.
    * @throws IllegalStateException if no compilation units were found.
    * @throws UncheckedIOException  if an IO error occurs.
    * @see #compile(Workspace)
@@ -174,7 +175,9 @@ public interface JctCompiler {
    * @param classNames the class names to compile.
    * @return the compilation result.
    * @throws JctCompilerException     if the compiler threw an unhandled exception. This should not
-   *                                  occur for compilation failures generally.
+   *                                  occur for compilation failures usually.
+   * @throws NullPointerException     if the {@code classNames} collection contains any null values,
+   *                                  or if the collection itself is null.
    * @throws IllegalArgumentException if the collection is empty.
    * @throws IllegalStateException    if no compilation units were found.
    * @throws UncheckedIOException     if an IO error occurs.
