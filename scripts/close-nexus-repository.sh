@@ -239,7 +239,7 @@ function wait-for-closure-to-end() {
   local url="https://${server}/service/local/staging/repository/${repository_id}/activity"
 
   echo -e "\e[1;33m[GET ${url}]\e[0m Waiting for the repository to complete the closure process" >&2
-  for _ in {1..50}; do
+  for _ in {1..500}; do
     # In our case, the "close" activity will gain the attribute named "stopped" once the process
     # is over (we then need to check if it passed or failed separately).
     if curl \
