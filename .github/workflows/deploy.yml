@@ -33,15 +33,12 @@ jobs:
       - name: Verify Tests Pass
         shell: bash
         run: |-
-          source ./scripts/common.sh
-          run <<-'SCRIPT'
-            ./mvnw -B -U \
-                -Dcheckstyle.skip=true \
-                -DskipTests='${{ inputs.dry-run }}' \
-                clean verify
-          SCRIPT
+          ./mvnw -B -U \
+              -Dcheckstyle.skip=true \
+              -DskipTests='${{ inputs.dry-run }}' \
+              clean verify
 
-          success "All tests have passed"
+          echo "All tests have passed"
 
   maven-central:
     name: Deploy to Maven Central
@@ -74,47 +71,37 @@ jobs:
           gpg-passphrase: GPG_PASSPHRASE
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
 
-      - name: Configure Metadata
+      - name: Deploy to staging
         shell: bash
         run: |-
-          source ./scripts/common.sh
-          run <<-'SCRIPT'
-            git config user.name '${{ github.actor }}'
-            git config user.email '${{ github.actor }}@users.noreply.github.com'
+          git config user.name '${{ github.actor }}'
+          git config user.email '${{ github.actor }}@users.noreply.github.com'
           
-            group_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.groupId")"
-            echo "group_id=${group_id}" >> "${GITHUB_ENV}"
+          group_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.groupId")"
+          echo "group_id=${group_id}" >> "${GITHUB_ENV}"
 
-            artifact_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.artifactId")"
-            echo "artifact_id=${artifact_id}" >> "${GITHUB_ENV}"
+          artifact_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.artifactId")"
+          echo "artifact_id=${artifact_id}" >> "${GITHUB_ENV}"
   
-            if [[ '${{ inputs.version }}' == "" ]]; then
-              release_version="$(./mvnw -B help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//g')"
-            else
-              release_version='${{ inputs.version }}'
-            fi
-            echo "release_version=${release_version}" >> "${GITHUB_ENV}"
-          SCRIPT
+          if [[ '${{ inputs.version }}' == "" ]]; then
+            release_version="$(./mvnw -B help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//g')"
+          else
+            release_version='${{ inputs.version }}'
+          fi
+          echo "release_version=${release_version}" >> "${GITHUB_ENV}"
 
-      - name: Create Maven Central Staging Release
-        shell: bash
-        run: |-
-          source ./scripts/common.sh
-
-          run <<-'SCRIPT'
-            ./mvnw -B -e \
-                -Preleases \
-                -Pmaven-central \
-                -Darguments='-Preleases -Pmaven-central -Dmaven.test.skip' \
-                -DdryRun='${{ inputs.dry-run }}' \
-                -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
-                -DreleaseVersion='${release_version}' \
-                -DsignTag=false \
-                -Dtag='v${release_version}' \
-                clean release:prepare release:perform
-          SCRIPT
+          ./mvnw -B -e \
+              -Preleases \
+              -Pmaven-central \
+              -Darguments='-Preleases -Pmaven-central -Dmaven.test.skip' \
+              -DdryRun='${{ inputs.dry-run }}' \
+              -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
+              -DreleaseVersion="${release_version}" \
+              -DsignTag=false \
+              -Dtag="v${release_version}" \
+              clean release:prepare release:perform
             
-          success "Created staging release for ${group_id}/${artifact_id}/${release_version}"
+          echo "Created staging release for ${group_id}/${artifact_id}/${release_version}"
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
@@ -124,22 +111,17 @@ jobs:
         if: ${{ ! inputs.dry-run }}
         shell: bash
         run: |-
-          source ./scripts/common.sh
-          
-          ensure-set OSSRH_USERNAME OSSRH_TOKEN GPG_PASSPHRASE
-          info "Will now promote ${group_id}/${artifact_id}/${release_version} to Maven Central"
+          echo "Will now promote ${group_id}/${artifact_id}/${release_version} to Maven Central"
             
-          run <<-SCRIPT
-            ./scripts/close-nexus-repository.sh \
-                -u "${OSSRH_USERNAME}" \
-                -p "${OSSRH_TOKEN}" \
-                -g "${group_id}" \
-                -a "${artifact_id}" \
-                -v "${release_version}" \
-                -s "https://s01.oss.sonatype.org/" 
-          SCRIPT
+          ./scripts/close-nexus-repository.sh \
+              -u "${OSSRH_USERNAME}" \
+              -p "${OSSRH_TOKEN}" \
+              -g "${group_id}" \
+              -a "${artifact_id}" \
+              -v "${release_version}" \
+              -s "https://s01.oss.sonatype.org/" 
             
-          success "Promoted staging ${group_id}/${artifact_id}/${release_version} to Maven Central successfully"
+          echo "Promoted staging ${group_id}/${artifact_id}/${release_version} to Maven Central successfully"
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
