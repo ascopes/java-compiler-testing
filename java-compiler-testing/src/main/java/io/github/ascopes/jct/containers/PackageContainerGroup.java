@@ -104,7 +104,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    *   // brevity. See the java.lang.reflect documentation for full details.
    *
    *   ClassLoader cl = containerGroup.getClassLoader();
-   *   Class<?> cls = cl.loadClass("org.example.NumberAdder");
+   *   Class&lt;?&gt; cls = cl.loadClass("org.example.NumberAdder");
    *   Object adder = cls.getDeclaredConstructor().newInstance();
    *   Method addMethod = cls.getMethod("add", int.class, int.class);
    *   int result = (int) addMethod.invoke(adder, 9, 18);
@@ -147,8 +147,8 @@ public interface PackageContainerGroup extends ContainerGroup {
    * </code></pre>
    *
    * @return a class loader for the contents of this container group.
-   * @see java.lang.reflect.ClassLoader
-   * @see java.lang.reflect.Class
+   * @see java.lang.ClassLoader
+   * @see java.lang.Class
    * @see java.lang.reflect.Method
    * @see java.lang.reflect.Field
    * @see java.lang.reflect.Constructor
