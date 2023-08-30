@@ -41,6 +41,7 @@ class JctFileManagersTest implements UtilityClassTestTemplate {
   }
 
   @DisplayName(".newJctFileManager(String) returns a new JctFileManagerImpl instance")
+  @SuppressWarnings("removal")
   @Test
   void newJctFileManagerReturnsNewJctFileManagerImplInstance() {
     // Given
