@@ -20,7 +20,20 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Interface for a configurer of Java File Manager objects.
+ * Interface for a {@link JctFileManager} configurer.
+ *
+ * <p>Configurers are designed to be chained to enable applying sets of operation to file managers
+ * during creation.
+ *
+ * <p>The configurer itself must return a {@link JctFileManager} instance. This will usually
+ * be the same value that is passed in the input parameter, as most configurers will only
+ * want to mutate an existing file manager. Configurers may instead opt to return a different
+ * file manager as the result, enabling wrapping the input in proxies or delegating
+ * implementations.
+ *
+ * <p>Configurers may also decide to not run at all by marking themselves as being disabled,
+ * which will result in them being skipped by any configurer chain or file manager that
+ * respects this attribute.
  *
  * @author Ashley Scopes
  * @since 0.0.1
