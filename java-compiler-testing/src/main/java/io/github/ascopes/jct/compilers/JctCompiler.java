@@ -146,6 +146,10 @@ public interface JctCompiler {
    * <p>If you wish to let JCT determine which classes to compile dynamically, see
    * {@link #compile(Workspace)} instead.
    *
+   * <p>Note that nested instance/static nested classes cannot be specified individually
+   * here. To compile them, you must also compile their outer class that they are defined
+   * within.
+   *
    * @param workspace            the workspace to compile.
    * @param firstClassName       the first class name to compile.
    * @param additionalClassNames any additional class names to compile.
@@ -170,6 +174,10 @@ public interface JctCompiler {
    *
    * <p>If you wish to let JCT determine which classes to compile dynamically, see
    * {@link #compile(Workspace)} instead.
+   *
+   * <p>Note that nested instance/static nested classes cannot be specified individually
+   * here. To compile them, you must also compile their outer class that they are defined
+   * within.
    *
    * @param workspace  the workspace to compile.
    * @param classNames the class names to compile.
