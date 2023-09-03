@@ -16,8 +16,8 @@
 package io.github.ascopes.jct.filemanagers.config;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
-import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -27,11 +27,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A chain of configurers to apply to a file manager.
+ * A collection representing a chain of configurers to apply to a file manager.
+ *
+ * <p>This is used to provide a set of ordered configuration operations to perform on newly
+ * created file managers to prepare them for consumption in test cases. Common operations
+ * may include: 
+ *
+ * <ul>
+ *   <li>Automatically configuring the annotation processor paths;</li>
+ *   <li>Creating empty locations to prevent compilers raising exceptions;</li>
+ *   <li>Installing logging interceptors.</li>
+ * </ul>
+ *
+ * <p>When configuring a file manager with this chain, each configurer is invoked in the
+ * provided order. Configurers themselves must return a file manager as a result of the
+ * configure operation. This operation may return the input file manager if the operation
+ * mutated the input, or it may return a different file manager instance. In the latter
+ * case, subsequent configuration operations internally will use the new file manager.
+ * The last returned file manager in the chain will be used as the final returned result.
+ * This enables configurers to wrap file managers in proxies or delegating implementations
+ * to intercept or override existing behaviours.
  *
  * <p>While not designed for concurrent use, all operations are shielded by a
  * lock to guard against potentially confusing behaviour, should this component be shared across
- * multiple physical and virtual threads.
+ * multiple physical or virtual threads.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -49,7 +68,7 @@ public final class JctFileManagerConfigurerChain {
    */
   public JctFileManagerConfigurerChain() {
     lock = new ReentrantLock();
-    configurers = new ArrayDeque<>(16);
+    configurers = new LinkedList<>();
   }
 
   /**
@@ -110,7 +129,9 @@ public final class JctFileManagerConfigurerChain {
     try {
       for (var configurer : configurers) {
         if (configurer.isEnabled()) {
-          LOGGER.debug("Applying {} to file manager", configurer);
+          LOGGER.debug("Applying {} to file manager {}", configurer, fileManager);
+          // Configurers can totally replace the existing file manager
+          // if they choose.
           fileManager = configurer.configure(fileManager);
         } else {
           LOGGER.trace("Skipping {}", configurer);
