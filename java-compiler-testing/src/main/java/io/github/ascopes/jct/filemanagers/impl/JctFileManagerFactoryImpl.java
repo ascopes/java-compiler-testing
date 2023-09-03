@@ -62,7 +62,6 @@ public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
    * @return the compiler
    * @since 1.1.0
    */
-  @API(since = "1.1.0", status = Status.INTERNAL)
   @VisibleForTestingOnly
   public JctCompiler getCompiler() {
     return compiler;
