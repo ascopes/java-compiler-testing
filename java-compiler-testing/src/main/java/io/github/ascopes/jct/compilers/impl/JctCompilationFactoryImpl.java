@@ -198,11 +198,16 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       Collection<JavaFileObject> compilationUnits,
       Collection<String> classNames
   ) {
+    // We need to access the binary name of each file object. This forces us
+    // to cast to PathFileObject in an unsafe way as the standard JavaFileObject
+    // interface does not expose this information consistently.
+    // All JCT implementations should be using PathFileObject types internally
+    // anyway, so this should be fine as a hack for now. In the future I may decide
+    // to add an additional set of methods to PathFileObject to expose searching
+    // for PathFileObjects directly to prevent the cast back to JavaFileObject that
+    // makes us need this hsck.
     var binaryNamesToCompilationUnits = compilationUnits
         .stream()
-        // Assumption that we always use this class internally. Technically unsafe, but we don't
-        // care too much as the implementation should conform to this anyway. We just cannot enforce
-        // it due to covariance rules.
         .map(PathFileObject.class::cast)
         .filter(fo -> classNames.contains(fo.getBinaryName()))
         .collect(Collectors.toMap(PathFileObject::getBinaryName, JavaFileObject.class::cast));
