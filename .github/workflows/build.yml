@@ -64,6 +64,7 @@ jobs:
       max-parallel: 3
       matrix:
         os-name: [ubuntu-latest]
+        maven-flags: [""]
         java-version: 
           - 11
           - 12
@@ -76,8 +77,12 @@ jobs:
           - 19
           - 20
           - 21-ea
-          - 22-ea
         include:
+          # Java 22 bytecode isn't supported by Groovy yet,
+          # so only run a partial build.
+          - os-name: ubuntu-latest
+            java-version: 22-ea
+            maven-flags: -Dgroovy.skip=true
 
           # MacOS builds (only check Java 20).
           - os-name: macos-latest
@@ -142,7 +147,7 @@ jobs:
 
       - name: Compile and run tests
         shell: bash
-        run: ./mvnw -B -U -Dcheckstyle.skip=true -Dlicense.skip=true clean verify
+        run: ./mvnw -B -U ${{ matrix.maven-flags}} -Dcheckstyle.skip=true -Dlicense.skip=true clean verify
 
       - name: Annotate test reports with build environment info
         if: always()
