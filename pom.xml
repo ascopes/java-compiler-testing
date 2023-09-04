@@ -151,6 +151,9 @@
     <newest-java-version>20</newest-java-version>
     <highlight-js.version>11.8.0</highlight-js.version>
 
+    <!-- Workaround for JDK 22 support -->
+    <groovy.skip>false</groovy.skip>
+
     <!-- Other configuration -->
     <project-slug>ascopes/java-compiler-testing</project-slug>
   </properties>
@@ -278,7 +281,6 @@
               <include>*IntegrationTest</include>
             </includes>
 
-            <failIfNoTests>true</failIfNoTests>
             <runOrder>random</runOrder>
             <useModulePath>true</useModulePath>
 
@@ -443,7 +445,6 @@
               <exclude>*IntegrationTest</exclude>
             </excludes>
 
-            <failIfNoTests>true</failIfNoTests>
             <runOrder>random</runOrder>
             <useModulePath>true</useModulePath>
 
@@ -493,6 +494,9 @@
                 <goal>compile</goal>
                 <goal>compileTests</goal>
               </goals>
+              <configuration>
+                <skip>${groovy.skip}</skip>
+              </configuration>
             </execution>
           </executions>
         </plugin>
