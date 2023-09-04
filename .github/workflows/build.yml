@@ -130,7 +130,7 @@ jobs:
               run <<< "sudo apt-get install xsltproc -qy"
               ;;
             *)
-              warn "Unknown OS type '${OSTYPE}'. Update build.yaml with a new case."
+              warn "Unknown OS type '${OSTYPE}'. Update build.yml with a new case."
               ;;
           esac
 
@@ -152,7 +152,7 @@ jobs:
 
       - name: Compile and run tests
         shell: bash
-        run: ./mvnw -B -U ${{ matrix.maven-flags}} -Dcheckstyle.skip=true -Dlicense.skip=true clean verify
+        run: ./mvnw -B -U ${{ matrix.maven-flags }} -Dcheckstyle.skip=true -Dlicense.skip=true clean verify
 
       - name: Annotate test reports with build environment info
         if: always()
