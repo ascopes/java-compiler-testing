@@ -12,6 +12,11 @@ on:
   workflow_call: {}
   workflow_dispatch: {}
 
+concurrency: 
+  # Cancel old builds when we push new changes
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   linting:
     name: Linting
