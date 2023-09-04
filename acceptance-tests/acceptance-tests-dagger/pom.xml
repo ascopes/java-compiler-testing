@@ -31,7 +31,7 @@
   <description>Acceptance test components.</description>
 
   <properties>
-    <dagger.version>2.47</dagger.version>
+    <dagger.version>2.48</dagger.version>
   </properties>
 
   <dependencies>
