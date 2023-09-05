@@ -43,7 +43,7 @@ if [[ -n ${DEBUG+undef} ]]; then
 fi
 
 function usage() {
-  echo "USAGE: ${BASH_SOURCE[0]} [-h] -a <artifactId> -g <groupId> -v <version> -u <userName> -p <password> -s <server>"
+  echo "USAGE: ${BASH_SOURCE[0]} [-h] -a <artifactId> -g <groupId> -v <version> -u <userName> -p <password> -s <server> [-r <maxRetries>]"
   echo "    -a    <artifactId>   The base artifact ID to use. This can be any artifact ID in the project"
   echo "                         and is only used to determine the correct staging repository on Nexus"
   echo "                         to deploy."
@@ -54,18 +54,23 @@ function usage() {
   echo "    -p    <password>     The Nexus password to use."
   echo "    -s    <server>       The Nexus server to use."
   echo "    -h                   Show this message and exit."
+  echo "    -r    <maxRetries>   Set the maximum number of times to retry while waiting for closure to complete."
+  echo "                         Defaults to 500 seconds."
+  echo
+  echo "    Set the DEBUG environment variable to enable debug output."
   echo
 }
 
 artifact_id=""
 operation="promote"
 group_id=""
+max_retries=500
 version=""
 username=""
 password=""
 server=""
 
-while getopts "a:dg:hp:s:u:v:" opt; do
+while getopts "a:dg:hp:r:s:u:v:" opt; do
   case "${opt}" in
   a)
     artifact_id="${OPTARG}"
@@ -82,6 +87,15 @@ while getopts "a:dg:hp:s:u:v:" opt; do
     ;;
   p)
     password="${OPTARG}"
+    ;;
+  r)
+    if [[ "${OPTARG}" =~ ^[1-9][0-9]*$ ]]; then
+      max_retries="${OPTARG}"
+    else
+      echo "ERROR: Invalid value for max retries" >&2
+      usage
+      exit 1
+    fi
     ;;
   s)
     # Remove https:// or http:// at the start, remove trailing forward-slash
@@ -103,7 +117,7 @@ while getopts "a:dg:hp:s:u:v:" opt; do
 done
 
 for required_arg in artifact_id group_id password server username version; do
-  if [ -z "${!required_arg}" ]; then
+  if [[ -z "${!required_arg}" ]]; then
     echo "ERROR: Missing required argument: ${required_arg}" >&2
     usage
     exit 1
@@ -235,11 +249,11 @@ function close-staging-repository() {
 }
 
 function wait-for-closure-to-end() {
-  local repository_id="${1?Pass the repository ID}"
+  local repository_id="${1?Pass the repository ID as the first argument}"
   local url="https://${server}/service/local/staging/repository/${repository_id}/activity"
 
   echo -e "\e[1;33m[GET ${url}]\e[0m Waiting for the repository to complete the closure process" >&2
-  for _ in {1..500}; do
+  for i in {1..${max_retries}}; do
     # In our case, the "close" activity will gain the attribute named "stopped" once the process
     # is over (we then need to check if it passed or failed separately).
     if curl \
@@ -254,9 +268,9 @@ function wait-for-closure-to-end() {
       echo -e "\e[1;32mClosure process completed\e[0m" >&2
       return 0
     else
-      echo -e "\e[1;32mStill waiting for closure to complete...\e[0m" >&2
+      echo -e "\e[1;32mStill waiting for closure to complete... (attempt ${i}/${max_retries})\e[0m" >&2
     fi
-    sleep 2
+    sleep 1
   done
 
   echo -e "\e[1;31mERROR: Repository did not close after 50 iterations. Is Nexus down?\e[0m" >&2
