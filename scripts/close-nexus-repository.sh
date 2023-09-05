@@ -185,7 +185,6 @@ function get-staging-repositories() {
 function is-artifact-in-repository() {
   # Group ID has . replaced with /
   local path="${group_id//./\/}/${artifact_id}/${version}"
-  local repository_id="${1?Pass the repository ID}"
   local url="https://${server}/service/local/repositories/${repository_id}/content/${path}/"
 
   echo -e "\e[1;33m[GET ${url}]\e[0m" >&2
@@ -219,7 +218,6 @@ function find-correct-repository-id() {
 }
 
 function close-staging-repository() {
-  local repository_id="${1?Pass the repository ID}"
   local url="https://${server}/service/local/staging/bulk/close"
   local payload
   payload="$(
@@ -249,11 +247,10 @@ function close-staging-repository() {
 }
 
 function wait-for-closure-to-end() {
-  local repository_id="${1?Pass the repository ID as the first argument}"
   local url="https://${server}/service/local/staging/repository/${repository_id}/activity"
 
   echo -e "\e[1;33m[GET ${url}]\e[0m Waiting for the repository to complete the closure process" >&2
-  for i in {1..${max_retries}}; do
+  for i in $(seq 1 "${max_retries}"); do
     # In our case, the "close" activity will gain the attribute named "stopped" once the process
     # is over (we then need to check if it passed or failed separately).
     if curl \
@@ -278,7 +275,6 @@ function wait-for-closure-to-end() {
 }
 
 function ensure-closure-succeeded() {
-  local repository_id="${1?Pass the repository ID}"
   local url="https://${server}/service/local/staging/repository/${repository_id}/activity"
 
   echo -e "\e[1;33m[GET ${url}]\e[0m Checking the closure process succeeded" >&2
@@ -302,7 +298,6 @@ function ensure-closure-succeeded() {
 }
 
 function trigger-drop-or-promote() {
-  local repository_id="${1?Pass the repository ID}"
   local url="https://${server}/service/local/staging/bulk/${operation}"
   local payload
   payload="$(
@@ -333,9 +328,9 @@ function trigger-drop-or-promote() {
 }
 
 repository_id="$(find-correct-repository-id)"
-close-staging-repository "${repository_id}"
-wait-for-closure-to-end "${repository_id}"
-ensure-closure-succeeded "${repository_id}"
-trigger-drop-or-promote "${repository_id}"
+close-staging-repository
+wait-for-closure-to-end
+ensure-closure-succeeded
+trigger-drop-or-promote
 
 echo -e "\e[1;32mRelease ${operation} for repository ${repository_id} completed. Have a nice day :-)\e[0m" >&2
