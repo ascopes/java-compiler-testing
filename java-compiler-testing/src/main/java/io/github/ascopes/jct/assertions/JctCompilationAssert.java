@@ -372,7 +372,7 @@ public final class JctCompilationAssert extends
     );
   }
 
-  private void assertLocationExists(Location location, ContainerGroup group) {
+  private void assertLocationExists(Location location, @Nullable ContainerGroup group) {
     if (group == null) {
       throw failure("No location named %s exists", location.getName());
     }
