@@ -37,6 +37,7 @@ import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractListAssert;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Assertions for a list of diagnostics.
@@ -46,8 +47,7 @@ import org.assertj.core.api.AbstractListAssert;
  */
 @API(since = "0.0.1", status = Status.STABLE)
 public final class TraceDiagnosticListAssert
-    extends
-    AbstractListAssert<TraceDiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, TraceDiagnosticAssert> {
+    extends AbstractListAssert<TraceDiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, TraceDiagnosticAssert> {
 
   /**
    * Initialize this assertion.
@@ -55,7 +55,7 @@ public final class TraceDiagnosticListAssert
    * @param traceDiagnostics the diagnostics to perform assertions on.
    */
   public TraceDiagnosticListAssert(
-      List<? extends TraceDiagnostic<? extends JavaFileObject>> traceDiagnostics
+      @Nullable List<@Nullable ? extends TraceDiagnostic<? extends JavaFileObject>> traceDiagnostics
   ) {
     super(traceDiagnostics, TraceDiagnosticListAssert.class);
     info.useRepresentation(TraceDiagnosticListRepresentation.getInstance());
