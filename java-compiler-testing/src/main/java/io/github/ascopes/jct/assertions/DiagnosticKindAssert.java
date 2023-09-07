@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import java.util.EnumSet;
 import java.util.Set;
 import javax.tools.Diagnostic.Kind;
 import org.apiguardian.api.API;
@@ -34,7 +35,7 @@ public final class DiagnosticKindAssert
   /**
    * Kinds that we consider to be types of warnings.
    */
-  static final Set<Kind> WARNING_DIAGNOSTIC_KINDS = Set.of(
+  static final Set<Kind> WARNING_DIAGNOSTIC_KINDS = EnumSet.of(
       Kind.WARNING,
       Kind.MANDATORY_WARNING
   );
@@ -42,14 +43,14 @@ public final class DiagnosticKindAssert
   /**
    * Kinds that we consider to be types of error.
    */
-  static final Set<Kind> ERROR_DIAGNOSTIC_KINDS = Set.of(
+  static final Set<Kind> ERROR_DIAGNOSTIC_KINDS = EnumSet.of(
       Kind.ERROR
   );
 
   /**
    * Kinds that we consider to be types of warning or errors.
    */
-  static final Set<Kind> WARNING_AND_ERROR_DIAGNOSTIC_KINDS = Set.of(
+  static final Set<Kind> WARNING_AND_ERROR_DIAGNOSTIC_KINDS = EnumSet.of(
       Kind.WARNING,
       Kind.MANDATORY_WARNING,
       Kind.ERROR
