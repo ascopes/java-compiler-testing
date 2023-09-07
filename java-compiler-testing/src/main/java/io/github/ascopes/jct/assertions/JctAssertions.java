@@ -68,7 +68,7 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static ModuleContainerGroupAssert assertThat(
-      ModuleContainerGroup moduleContainerGroup
+      @Nullable ModuleContainerGroup moduleContainerGroup
   ) {
     return assertThatContainerGroup(moduleContainerGroup);
   }
@@ -84,7 +84,7 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static OutputContainerGroupAssert assertThat(
-      OutputContainerGroup outputContainerGroup
+     @Nullable OutputContainerGroup outputContainerGroup
   ) {
     return assertThatContainerGroup(outputContainerGroup);
   }
@@ -100,7 +100,7 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static PackageContainerGroupAssert assertThat(
-      PackageContainerGroup packageContainerGroup
+     @Nullable PackageContainerGroup packageContainerGroup
   ) {
     return assertThatContainerGroup(packageContainerGroup);
   }
@@ -116,7 +116,7 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static TraceDiagnosticAssert assertThat(
-      TraceDiagnostic<? extends JavaFileObject> diagnostic
+      @Nullable TraceDiagnostic<? extends JavaFileObject> diagnostic
   ) {
     return assertThatDiagnostic(diagnostic);
   }
@@ -208,7 +208,7 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static ModuleContainerGroupAssert assertThatContainerGroup(
-      ModuleContainerGroup moduleContainerGroup
+      @Nullable ModuleContainerGroup moduleContainerGroup
   ) {
     return new ModuleContainerGroupAssert(moduleContainerGroup);
   }
@@ -220,7 +220,7 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static OutputContainerGroupAssert assertThatContainerGroup(
-      OutputContainerGroup outputContainerGroup
+      @Nullable OutputContainerGroup outputContainerGroup
   ) {
     return new OutputContainerGroupAssert(outputContainerGroup);
   }
@@ -232,7 +232,7 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static PackageContainerGroupAssert assertThatContainerGroup(
-      PackageContainerGroup packageContainerGroup
+      @Nullable PackageContainerGroup packageContainerGroup
   ) {
     return new PackageContainerGroupAssert(packageContainerGroup);
   }
@@ -244,7 +244,7 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static TraceDiagnosticAssert assertThatDiagnostic(
-      TraceDiagnostic<? extends JavaFileObject> diagnostic
+      @Nullable TraceDiagnostic<? extends JavaFileObject> diagnostic
   ) {
     return new TraceDiagnosticAssert(diagnostic);
   }
@@ -256,7 +256,7 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static TraceDiagnosticListAssert assertThatDiagnostics(
-      List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
+      @Nullable List<@Nullable ? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
   ) {
     return new TraceDiagnosticListAssert(diagnostics);
   }
