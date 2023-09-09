@@ -33,8 +33,10 @@ import org.apiguardian.api.API.Status;
 
 /**
  * Base definition of a compiler that can be configured to perform a compilation run against
- * sources. This is designed to provide functionality that {@code javac} does by default, for JDK
- * 17.
+ * sources.
+ *
+ * <p>JctCompiler objects are often a nexus that will manage configuring an underlying JSR-199
+ * compiler internally in a platform agnostic way.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -595,6 +597,8 @@ public interface JctCompiler {
    *
    * @param release the version to set.
    * @return this compiler object for further call chaining.
+   * @throws IllegalArgumentException if the version is less than 0.
+   * @throws UnsupportedOperationException if the compiler does not support integer versions.
    */
   default JctCompiler release(int release) {
     if (release < 0) {
@@ -618,6 +622,7 @@ public interface JctCompiler {
    *
    * @param release the version to set.
    * @return this compiler object for further call chaining.
+   * @throws UnsupportedOperationException if the compiler does not support integer versions.
    */
   default JctCompiler release(SourceVersion release) {
     return release(Integer.toString(release.ordinal()));
@@ -634,7 +639,8 @@ public interface JctCompiler {
    * @return this compiler object for further call chaining.
    * @since 1.1.0
    * @throws UnsupportedOperationException if the current JVM version does not
-   *     correspond to a supported Jave release version in the compiler.
+   *     correspond to a supported Jave release version in the compiler, or if the
+   *     compiler does not support integral version numbers.
    */
   @API(since = "1.1.0", status = Status.STABLE)
   default JctCompiler useRuntimeRelease() {
@@ -685,6 +691,9 @@ public interface JctCompiler {
    *
    * @param source the version to set.
    * @return this compiler object for further call chaining.
+   * @throws IllegalArgumentException if the version is less than 0.
+   * @throws UnsupportedOperationException if the compiler does not
+   *     support integer versions.
    */
   default JctCompiler source(int source) {
     if (source < 0) {
@@ -709,6 +718,7 @@ public interface JctCompiler {
    *
    * @param source the version to set.
    * @return this compiler object for further call chaining.
+   * @throws UnsupportedOperationException if the compiler does not support integer versions.
    */
   default JctCompiler source(SourceVersion source) {
     return source(Integer.toString(source.ordinal()));
@@ -757,6 +767,8 @@ public interface JctCompiler {
    *
    * @param target the version to set.
    * @return this compiler object for further call chaining.
+   * @throws IllegalArgumentException if the version is less than 0.
+   * @throws UnsupportedOperationException if the compiler does not support integer versions.
    */
   default JctCompiler target(int target) {
     if (target < 0) {
@@ -781,6 +793,7 @@ public interface JctCompiler {
    *
    * @param target the version to set.
    * @return this compiler object for further call chaining.
+   * @throws UnsupportedOperationException if the compiler does not support integer versions.
    */
   default JctCompiler target(SourceVersion target) {
     return target(Integer.toString(target.ordinal()));
