@@ -40,8 +40,8 @@ public interface JctCompilationFactory {
    * @param flags          the flags to pass to the compiler.
    * @param fileManager    the file manager to use for file management.
    * @param jsr199Compiler the compiler backend to use.
-   * @param classNames     the binary names of the classes to compile. If this is null, then classes
-   *                       should be discovered automatically.
+   * @param classNames     the binary names of the classes to compile. If this is {@code null}, then
+   *                       classes should be discovered automatically.
    * @return the compilation result that contains whether the compiler succeeded or failed, amongst
    *     other information.
    * @throws JctCompilerException if any prerequisites fail, such as no compilation units being
