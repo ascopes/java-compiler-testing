@@ -195,12 +195,64 @@ public interface JctCompiler {
   JctCompilation compile(Workspace workspace, Collection<String> classNames);
 
   /**
-   * Apply a given configurer to this compiler that can throw a checked exception.
+   * Apply a given configurer to this compiler.
+   *
+   * <p>Configurers can be lambdas, method references, or objects.
+   *
+   * <pre><code>
+   *   // Using an object configurer
+   *   var werrorConfigurer = new JctCompilerConfigurer&lt;RuntimeException&gt;() {
+   *     {@literal @Override}
+   *     public void configure(JctCompiler compiler) {
+   *       compiler.failOnWarnings(true);
+   *     }
+   *   };
+   *   compiler.configure(werrorConfigurer);
+   *
+   *   // Using a lambda configurer
+   *   compiler.configure(c -&gt; c.verbose(true));
+   * </code></pre>
+   *
+   * <p>Configurers take a type parameter that corresponds to an exception type. This
+   * is the exception type that can be thrown by the configurer, or {@link RuntimeException}
+   * if no checked exception is thrown. This mechanism allows configurers to propagate
+   * checked exceptions to their caller where needed.
+   *
+   * <pre><code>
+   *   class FileFlagConfigurer implements JctCompilerConfigurer&lt;IOException&gt; {
+   *     private final Path path;
+   *     
+   *     public FileFlagConfigurer(String... path) {
+   *       this(Path.of(path));
+   *     }
+   *
+   *     public FileFlagConfigurer(Path path) {
+   *       this.path = path;
+   *     }
+   *
+   *     {@literal @Override}
+   *     public void configure(JctCompiler compiler) throws IOException {
+   *       var flags = Files.lines(path)
+   *           .map(String::trim)
+   *           .filter(not(String::isBlank))
+   *           .toList();
+   *       compiler.addCompilerOptions(flags);
+   *     }
+   *   }
+   *
+   *   {@literal @Test}
+   *   void testSomething() throws IOException {
+   *     ...
+   *     compiler.configure(new FileFlagConfigurer("src", "test", "resources", "flags.txt"));
+   *     ...
+   *   }
+   * </code></pre>
    *
    * @param <E>        any exception that may be thrown.
    * @param configurer the configurer to invoke.
    * @return this compiler object for further call chaining.
-   * @throws E any exception that may be thrown by the configurer.
+   * @throws E any exception that may be thrown by the configurer. If no checked exception
+   *           is thrown, then this should be treated as {@link RuntimeException}.
    */
   <E extends Exception> JctCompiler configure(JctCompilerConfigurer<E> configurer) throws E;
 
@@ -213,6 +265,10 @@ public interface JctCompiler {
 
   /**
    * Set the friendly name of this compiler.
+   *
+   * <p>This will be used by the 
+   * {@link io.github.ascopes.jct.junit.JavacCompilerTest JUnit5 support}
+   * to name unit test cases.
    *
    * @param name the name to set.
    * @return this compiler object for further call chaining.
@@ -262,8 +318,9 @@ public interface JctCompiler {
   /**
    * Add annotation processors to invoke.
    *
-   * <p>This bypasses the discovery process of annotation processors provided in the annotation
-   * processor path.
+   * <p><strong>Warning:</strong> This bypasses the discovery process of annotation processors
+   * provided in the annotation processor path and annotation processor module paths, as well as
+   * any other locations such as class paths and module paths.
    *
    * @param annotationProcessors the processors to invoke.
    * @return this compiler object for further call chaining.
@@ -273,8 +330,9 @@ public interface JctCompiler {
   /**
    * Add annotation processors to invoke.
    *
-   * <p>This bypasses the discovery process of annotation processors provided in the annotation
-   * processor path.
+   * <p><strong>Warning:</strong> This bypasses the discovery process of annotation processors
+   * provided in the annotation processor path and annotation processor module paths, as well as
+   * any other locations such as class paths and module paths.
    *
    * @param annotationProcessor  the first processor to invoke.
    * @param annotationProcessors additional processors to invoke.
@@ -354,10 +412,13 @@ public interface JctCompiler {
   boolean isPreviewFeatures();
 
   /**
-   * Set whether to enable preview features or not.
+   * Set whether to enable compiler preview features or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_PREVIEW_FEATURES}.
+   *
+   * <p>Generally, this feature should be avoided if testing across multiple versions
+   * of Java, as preview features are oftenvnot finalised and may change without warning.
    *
    * @param enabled {@code true} to enable preview features, or {@code false} to disable them.
    * @return this compiler object for further call chaining.
@@ -421,6 +482,8 @@ public interface JctCompiler {
   /**
    * Set whether to enable treating warnings as errors or not.
    *
+   * <p>Some compilers may call this flag something different, such as "{@code -Werror}".
+   *
    * <p>This is ignored if {@link #showWarnings(boolean)} is disabled.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
@@ -445,6 +508,10 @@ public interface JctCompiler {
   /**
    * Set the compilation mode to use for this compiler.
    *
+   * <p>This allows you to override whether sources are compiled or annotation-processed
+   * without running the full compilation process. Tuning this may provide faster test
+   * cases in some situations.
+   *
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_COMPILATION_MODE}.
    *
@@ -456,7 +523,12 @@ public interface JctCompiler {
   /**
    * Get the default release to use if no release or target version is specified.
    *
-   * <p>This can <strong>not</strong> be configured.
+   * <p>This can <strong>not</strong> be configured generally, as it is defined by
+   * the internal compiler implementation.
+   *
+   * <p>Generally, this value will be an integer within a string. The value is
+   * represented as a string to allow supporting compilers which may use non-integer
+   * version numbers.
    *
    * @return the default release version to use.
    */
@@ -464,6 +536,10 @@ public interface JctCompiler {
 
   /**
    * Get the effective release to use for the actual compilation.
+   *
+   * <p>Generally, this value will be an integer within a string. The value is
+   * represented as a string to allow supporting compilers which may use non-integer
+   * version numbers.
    *
    * <p>This may be determined from the {@link #getSource() source},
    * {@link #getTarget() target}, {@link #getRelease() release}, and
@@ -477,6 +553,10 @@ public interface JctCompiler {
    * Get the current release version that is set, or {@code null} if left to the compiler to decide.
    * default.
    *
+   * <p>Generally, this value will be an integer within a string. The value is
+   * represented as a string to allow supporting compilers which may use non-integer
+   * version numbers.
+   *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
@@ -488,6 +568,10 @@ public interface JctCompiler {
    * Set the release version.
    *
    * <p>This will clear any source and target version that is set.
+   *
+   * <p>Generally, this value will be an integer within a string. The value is
+   * represented as a string to allow supporting compilers which may use non-integer
+   * version numbers.
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
@@ -501,6 +585,10 @@ public interface JctCompiler {
    * Set the release version.
    *
    * <p>This will clear any source and target version that is set.
+   *
+   * <p>Generally, this value will be an integer within a string. The value is
+   * represented as a string to allow supporting compilers which may use non-integer
+   * version numbers.
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
@@ -521,6 +609,10 @@ public interface JctCompiler {
    *
    * <p>This will clear any source and target version that is set.
    *
+   * <p>Generally, this value will be an integer within a string. The value is
+   * represented as a string to allow supporting compilers which may use non-integer
+   * version numbers.
+   *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
@@ -533,13 +625,16 @@ public interface JctCompiler {
 
   /**
    * Request that the compiler uses a language version that corresponds to the
-   * runtime language version in use on the JVM running tests.
+   * runtime language version in use on the current JVM.
    *
    * <p>For example, running this on JRE 19 would set the release to "19".
    *
    * <p>This calls {@link #release(int) internally}.
    *
    * @return this compiler object for further call chaining.
+   * @since 1.1.0
+   * @throws UnsupportedOperationException if the current JVM version does not
+   *     correspond to a supported Jave release version in the compiler.
    */
   @API(since = "1.1.0", status = Status.STABLE)
   default JctCompiler useRuntimeRelease() {
@@ -565,6 +660,11 @@ public interface JctCompiler {
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
+   * <p>Source and target versions have mostly been replaced with the release version
+   * mechanism which controls both flags and can ensure other behaviours are consistent.
+   * This feature is still provided in case you have a specific use case that is not covered
+   * by this functionality.
+   *
    * @param source the version to set.
    * @return this compiler object for further call chaining.
    */
@@ -577,6 +677,11 @@ public interface JctCompiler {
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
+   *
+   * <p>Source and target versions have mostly been replaced with the release version
+   * mechanism which controls both flags and can ensure other behaviours are consistent.
+   * This feature is still provided in case you have a specific use case that is not covered
+   * by this functionality.
    *
    * @param source the version to set.
    * @return this compiler object for further call chaining.
@@ -596,6 +701,11 @@ public interface JctCompiler {
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
+   *
+   * <p>Source and target versions have mostly been replaced with the release version
+   * mechanism which controls both flags and can ensure other behaviours are consistent.
+   * This feature is still provided in case you have a specific use case that is not covered
+   * by this functionality.
    *
    * @param source the version to set.
    * @return this compiler object for further call chaining.
@@ -622,6 +732,11 @@ public interface JctCompiler {
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
+   * <p>Source and target versions have mostly been replaced with the release version
+   * mechanism which controls both flags and can ensure other behaviours are consistent.
+   * This feature is still provided in case you have a specific use case that is not covered
+   * by this functionality.
+   *
    * @param target the version to set.
    * @return this compiler object for further call chaining.
    */
@@ -634,6 +749,11 @@ public interface JctCompiler {
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
+   *
+   * <p>Source and target versions have mostly been replaced with the release version
+   * mechanism which controls both flags and can ensure other behaviours are consistent.
+   * This feature is still provided in case you have a specific use case that is not covered
+   * by this functionality.
    *
    * @param target the version to set.
    * @return this compiler object for further call chaining.
@@ -653,6 +773,11 @@ public interface JctCompiler {
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
+   *
+   * <p>Source and target versions have mostly been replaced with the release version
+   * mechanism which controls both flags and can ensure other behaviours are consistent.
+   * This feature is still provided in case you have a specific use case that is not covered
+   * by this functionality.
    *
    * @param target the version to set.
    * @return this compiler object for further call chaining.
@@ -694,7 +819,7 @@ public interface JctCompiler {
   JctCompiler fixJvmModulePathMismatch(boolean fixJvmModulePathMismatch);
 
   /**
-   * Get whether the class path is inherited from the caller JVM or not.
+   * Get whether the class path is inherited from the active JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_INHERIT_CLASS_PATH}.
@@ -704,7 +829,7 @@ public interface JctCompiler {
   boolean isInheritClassPath();
 
   /**
-   * Set whether the class path is inherited from the caller JVM or not.
+   * Set whether the class path is inherited from the active JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_INHERIT_CLASS_PATH}.
@@ -715,7 +840,7 @@ public interface JctCompiler {
   JctCompiler inheritClassPath(boolean inheritClassPath);
 
   /**
-   * Get whether the module path is inherited from the caller JVM or not.
+   * Get whether the module path is inherited from the active JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_INHERIT_MODULE_PATH}.
@@ -725,7 +850,7 @@ public interface JctCompiler {
   boolean isInheritModulePath();
 
   /**
-   * Set whether the module path is inherited from the caller JVM or not.
+   * Set whether the module path is inherited from the active JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_INHERIT_MODULE_PATH}.
@@ -736,7 +861,7 @@ public interface JctCompiler {
   JctCompiler inheritModulePath(boolean inheritModulePath);
 
   /**
-   * Get whether the system module path is inherited from the caller JVM or not.
+   * Get whether the system module path is inherited from the active JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_INHERIT_SYSTEM_MODULE_PATH}.
@@ -746,7 +871,7 @@ public interface JctCompiler {
   boolean isInheritSystemModulePath();
 
   /**
-   * Set whether the system module path is inherited from the caller JVM or not.
+   * Set whether the system module path is inherited from the active JVM or not.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_INHERIT_SYSTEM_MODULE_PATH}.
