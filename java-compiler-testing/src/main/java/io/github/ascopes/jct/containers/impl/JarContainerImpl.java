@@ -41,11 +41,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +69,16 @@ import org.slf4j.LoggerFactory;
 public final class JarContainerImpl implements Container {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JarContainerImpl.class);
+
+  private static final Lazy<FileSystemProvider> JAR_FS_PROVIDER = new Lazy(() -> {
+    for (var fsProvider : FileSystemProvider.installedProviders()) {
+      if (fsProvider.getScheme().equals("jar")) {
+        return fsProvider;
+      }
+    }
+
+    throw new ProviderNotFoundException("jar");
+  });
 
   private final Location location;
   private final PathRoot jarPath;
@@ -98,13 +110,14 @@ public final class JarContainerImpl implements Container {
   @Override
   public boolean contains(PathFileObject fileObject) {
     var path = fileObject.getAbsolutePath();
-    var root = holder.access().getPathRoot().getPath();
+    var root = holder.access().getPath();
     return path.startsWith(root) && Files.isRegularFile(path);
   }
 
+  @Nullable
   @Override
   public Path getFile(String fragment, String... fragments) {
-    var root = holder.access().getPathRoot().getPath();
+    var root = holder.access().getPath();
     var fullPath = FileUtils.relativeResourceNameToPath(root, fragment, fragments);
     if (Files.isRegularFile(fullPath)) {
       return fullPath;
@@ -112,6 +125,7 @@ public final class JarContainerImpl implements Container {
     return null;
   }
 
+  @Nullable
   @Override
   public PathFileObject getFileForInput(String packageName, String relativeName) {
     var packageObj = holder.access().getPackage(packageName);
@@ -129,6 +143,7 @@ public final class JarContainerImpl implements Container {
     return new PathFileObjectImpl(location, file.getRoot(), file);
   }
 
+  @Nullable
   @Override
   public PathFileObject getFileForOutput(String packageName, String relativeName) {
     throw new JctNotImplementedException("Cannot handle output files in JARs");
@@ -139,6 +154,7 @@ public final class JarContainerImpl implements Container {
     return holder.access().getPathRoot();
   }
 
+  @Nullable
   @Override
   public PathFileObject getJavaFileForInput(String binaryName, Kind kind) {
     var packageName = FileUtils.binaryNameToPackageName(binaryName);
@@ -159,6 +175,7 @@ public final class JarContainerImpl implements Container {
     return new PathFileObjectImpl(location, file.getRoot(), file);
   }
 
+  @Nullable
   @Override
   public PathFileObject getJavaFileForOutput(String className, Kind kind) {
     throw new JctNotImplementedException("Cannot handle output source files in JARs");
@@ -171,7 +188,7 @@ public final class JarContainerImpl implements Container {
 
   @Override
   public ModuleFinder getModuleFinder() {
-    return ModuleFinder.of(holder.access().getPathRoot().getPath());
+    return ModuleFinder.of(holder.access().getPath());
   }
 
   @Override
@@ -184,6 +201,7 @@ public final class JarContainerImpl implements Container {
     return jarPath;
   }
 
+  @Nullable
   @Override
   public String inferBinaryName(PathFileObject javaFileObject) {
     // For some reason, converting a zip entry to a URI gives us a scheme of `jar://file://`, but
@@ -192,7 +210,7 @@ public final class JarContainerImpl implements Container {
     // get the correct path immediately.
     var fullPath = javaFileObject.getAbsolutePath();
 
-    if (fullPath.startsWith(holder.access().getPathRoot().getPath())) {
+    if (fullPath.startsWith(holder.access().getPath())) {
       return FileUtils.pathToBinaryName(javaFileObject.getRelativePath());
     }
 
@@ -211,7 +229,7 @@ public final class JarContainerImpl implements Container {
       boolean recurse,
       Collection<JavaFileObject> collection
   ) throws IOException {
-    var packageDir = holder.access().getPackages().get(packageName);
+    var packageDir = holder.access().getPackage(packageName);
 
     if (packageDir == null) {
       return;
@@ -241,9 +259,10 @@ public final class JarContainerImpl implements Container {
    */
   private final class PackageFileSystemHolder {
 
-    private final Map<String, PathRoot> packages;
     private final FileSystem fileSystem;
     private final PathRoot rootDirectoryPathRoot;
+    private final Lazy<Map<String, PathRoot>> packages;
+    private final Lazy<Collection<Path>> files;
 
     private PackageFileSystemHolder() throws IOException {
       // It turns out that we can open more than one ZIP file system pointing to the
@@ -253,15 +272,11 @@ public final class JarContainerImpl implements Container {
       //
       // This means we have to do a little of hacking around to get this to work how we need it to.
       // Remember that JARs are just glorified zip folders.
-
+      //
       // Set the multi-release flag to enable reading META-INF/release/* files correctly if the
       // MANIFEST.MF specifies the Multi-Release entry as true.
       // Turns out the JDK implementation of the ZipFileSystem handles this for us.
-      packages = new HashMap<>();
-
-      var actualJarPath = jarPath.getPath();
-
-      var env = Map.<String, Object>of(
+      Map<String, Object> env = Map.of(
           "releaseVersion", release,
           "multi-release", release
       );
@@ -270,23 +285,46 @@ public final class JarContainerImpl implements Container {
       // if I pass a URI in here. If I pass a Path in here instead, then I can make
       // multiple copies of it in memory. No idea why this is the way it is, but it
       // appears to be how the JavacFileManager in the JDK can make itself run in parallel
-      // safely. While in Rome, I guess.
-      fileSystem = getJarFileSystemProvider().newFileSystem(actualJarPath, env);
+      // safely.
+      var actualJarPath = jarPath.getPath();
+      fileSystem = JAR_FS_PROVIDER.access().newFileSystem(actualJarPath, env);
 
       // Always expect just one root directory in a ZIP archive.
       var rootDirectory = fileSystem.getRootDirectories().iterator().next();
       rootDirectoryPathRoot = new WrappingDirectoryImpl(rootDirectory);
 
-      // Index packages ahead-of-time to improve performance.
-      try (var walker = Files.walk(rootDirectory)) {
-        walker
-            .filter(Files::isDirectory)
-            .map(rootDirectory::relativize)
-            .forEach(path -> packages.put(
-                FileUtils.pathToBinaryName(path),
-                new WrappingDirectoryImpl(rootDirectory.resolve(path))
-            ));
-      }
+      // We now compute the package mapping and the file mapping only when we first attempt
+      // to access their values. This prevents creating additional overhead by indexing each JAR
+      // as soon as we attempt to inspect any attribute within it, since we may not ever need to
+      // process the actual values here.
+      
+      packages = new Lazy(() -> uncheckedIo(() -> {
+        LOGGER.trace("Indexing packages in JAR {}...", actualJarPath);
+        try (var walker = Files.walk(rootDirectory)) {
+          return walker
+              .filter(Files::isDirectory)
+              .map(rootDirectory::relativize)
+              .collect(Collectors.toUnmodifiableMap(
+                  FileUtils::pathToBinaryName,
+                  path -> new WrappingDirectoryImpl(rootDirectory.resolve())
+              ));
+        }
+      }));
+
+      files = new Lazy(() -> uncheckedIo(() -> {
+        LOGGER.trace("Indexing files in JAR {}...", actualJarPath);
+        var allPaths = new ArrayList<Path>();
+
+        // We have to do this eagerly all at once as the walker streams must be closed to
+        // prevent resource leakage elsewhere.
+        for (var root : fileSystem.getRootDirectories()) {
+          try (var walker = Files.walk(root)) {
+            walker.forEach(allPaths::add);
+          }
+        }
+
+        return Collections.unmodifiableList(allPaths);
+      }));
     }
 
     private void close() throws IOException {
@@ -295,43 +333,23 @@ public final class JarContainerImpl implements Container {
           jarPath.getUri(),
           fileSystem.getRootDirectories()
       );
-      packages.clear();
       fileSystem.close();
     }
 
-    private Map<String, PathRoot> getPackages() {
-      return packages;
-    }
-
     private PathRoot getPackage(String name) {
-      return packages.get(name);
+      return packages.access().get(name);
     }
 
     private PathRoot getPathRoot() {
       return rootDirectoryPathRoot;
     }
 
-    private Collection<Path> getAllFiles() throws IOException {
-      var allPaths = new ArrayList<Path>();
-
-      // We have to do this eagerly as the walkers must be closed to prevent resource leakage.
-      for (var root : fileSystem.getRootDirectories()) {
-        try (var walker = Files.walk(root)) {
-          walker.forEach(allPaths::add);
-        }
-      }
-
-      return Collections.unmodifiableList(allPaths);
-    }
-  }
-
-  private static FileSystemProvider getJarFileSystemProvider() {
-    for (var fsProvider : FileSystemProvider.installedProviders()) {
-      if (fsProvider.getScheme().equals("jar")) {
-        return fsProvider;
-      }
+    private Path getPath() {
+      return rootDirectoryPathRoot.getPath();
     }
 
-    throw new ProviderNotFoundException("jar");
+    private Collection<Path> getAllFiles() {
+      return files.access();
+    }
   }
 }
