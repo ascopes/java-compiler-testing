@@ -265,6 +265,9 @@ public final class JarContainerImpl implements Container {
     private final Lazy<Collection<Path>> files;
 
     private PackageFileSystemHolder() throws IOException {
+      var actualJarPath = jarPath.getPath();
+      LOGGER.trace("Preparing virtual file system holder for JAR {}", actualJarPath);
+
       // It turns out that we can open more than one ZIP file system pointing to the
       // same file at once, but we cannot do this with the JAR file system itself.
       // This is an issue since it hinders our ability to run tests in parallel where multiple tests
@@ -286,7 +289,6 @@ public final class JarContainerImpl implements Container {
       // multiple copies of it in memory. No idea why this is the way it is, but it
       // appears to be how the JavacFileManager in the JDK can make itself run in parallel
       // safely.
-      var actualJarPath = jarPath.getPath();
       fileSystem = JAR_FS_PROVIDER.access().newFileSystem(actualJarPath, env);
 
       // Always expect just one root directory in a ZIP archive.
@@ -306,21 +308,19 @@ public final class JarContainerImpl implements Container {
               .map(rootDirectory::relativize)
               .collect(Collectors.toUnmodifiableMap(
                   FileUtils::pathToBinaryName,
-                  path -> new WrappingDirectoryImpl(rootDirectory.resolve())
+                  path -> new WrappingDirectoryImpl(rootDirectory.resolve(path))
               ));
         }
       }));
 
       files = new Lazy(() -> uncheckedIo(() -> {
         LOGGER.trace("Indexing files in JAR {}...", actualJarPath);
-        var allPaths = new ArrayList<Path>();
+        var allPaths = new ArrayList<Path>(6);
 
         // We have to do this eagerly all at once as the walker streams must be closed to
         // prevent resource leakage elsewhere.
-        for (var root : fileSystem.getRootDirectories()) {
-          try (var walker = Files.walk(root)) {
-            walker.forEach(allPaths::add);
-          }
+        try (var walker = Files.walk(rootDirectory)) {
+          walker.forEach(allPaths::add);
         }
 
         return Collections.unmodifiableList(allPaths);
