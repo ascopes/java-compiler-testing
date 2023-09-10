@@ -308,7 +308,15 @@ public final class JarContainerImpl implements Container {
               .map(rootDirectory::relativize)
               .collect(Collectors.toUnmodifiableMap(
                   FileUtils::pathToBinaryName,
-                  path -> new WrappingDirectoryImpl(rootDirectory.resolve(path))
+                  path -> new WrappingDirectoryImpl(rootDirectory.resolve(path)),
+                  HashMap::new,
+                  (a, b) -> {
+                    LOGGER.trace(
+                        "Found duplicate entry {}. This copy will be silently dropped.", 
+                        b
+                    );
+                    return a;
+                  }
               ));
         }
       }));
