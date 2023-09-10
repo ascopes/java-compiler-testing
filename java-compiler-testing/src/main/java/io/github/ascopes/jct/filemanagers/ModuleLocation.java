@@ -126,7 +126,7 @@ public final class ModuleLocation implements Location {
    * ModuleLocation. 
    *
    * @param location the location to attempt to upcast.
-   * @returns an optional containing the upcast location if it is a module location,
+   * @return an optional containing the upcast location if it is a module location,
    *     or an empty optional if not.
    */
   @API(since = "1.1.5", status = Status.STABLE)
