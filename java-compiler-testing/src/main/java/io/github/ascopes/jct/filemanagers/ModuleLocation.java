@@ -18,6 +18,7 @@ package io.github.ascopes.jct.filemanagers;
 import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.Objects;
+import java.util.Optional;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -118,5 +119,20 @@ public final class ModuleLocation implements Location {
         .attribute("parent", parent)
         .attribute("moduleName", moduleName)
         .toString();
+  }
+
+  /**
+   * Attempt to upcast a given location to a ModuleLocation if it is an instance of
+   * ModuleLocation. 
+   *
+   * @param location the location to attempt to upcast.
+   * @returns an optional containing the upcast location if it is a module location,
+   *     or an empty optional if not.
+   */
+  @API(since = "1.1.5", status = Status.STABLE)
+  public static Optional<ModuleLocation> upcast(Location location) {
+    return Optional.of(location)
+        .filter(ModuleLocation.class::isInstance)
+        .map(ModuleLocation.class::cast);
   }
 }
