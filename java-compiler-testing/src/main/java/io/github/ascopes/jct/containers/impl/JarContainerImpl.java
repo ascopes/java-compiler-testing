@@ -38,7 +38,6 @@ import java.nio.file.spi.FileSystemProvider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -309,7 +308,6 @@ public final class JarContainerImpl implements Container {
               .collect(Collectors.toUnmodifiableMap(
                   FileUtils::pathToBinaryName,
                   path -> new WrappingDirectoryImpl(rootDirectory.resolve(path)),
-                  HashMap::new,
                   (a, b) -> {
                     LOGGER.trace(
                         "Found duplicate entry {}. This copy will be silently dropped.", 
