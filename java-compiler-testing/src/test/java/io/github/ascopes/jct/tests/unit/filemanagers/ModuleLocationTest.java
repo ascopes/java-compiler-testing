@@ -29,6 +29,7 @@ import io.github.ascopes.jct.tests.helpers.Fixtures;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
+import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
