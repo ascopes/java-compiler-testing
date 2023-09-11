@@ -147,6 +147,13 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       throw new JctCompilerException(
           "Failed to perform compilation, an unexpected exception was raised", ex
       );
+
+    } finally {
+      // Compiler invovation is a pretty heavy operation, so we advise the JVM that
+      // it might be a good idea to reclaim resources now rather than doing it later
+      // during another compilation. This may help keep compiler invocation times
+      // more consistent between test cases.
+      System.gc();
     }
   }
 
