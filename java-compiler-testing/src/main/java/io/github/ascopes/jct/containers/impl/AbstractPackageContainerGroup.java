@@ -44,6 +44,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An abstract base implementation for a group of containers that relate to a specific location.
@@ -148,6 +149,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
     }
   }
 
+  @Nullable
   @Override
   public Path getFile(String fragment, String... fragments) {
     for (var container : containers) {
@@ -165,6 +167,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
     return classLoaderLazy.access();
   }
 
+  @Nullable
   @Override
   public PathFileObject getFileForInput(String packageName, String relativeName) {
     for (var container : containers) {
@@ -177,6 +180,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
     return null;
   }
 
+  @Nullable
   @Override
   public PathFileObject getFileForOutput(String packageName, String relativeName) {
     for (var container : containers) {
@@ -189,6 +193,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
     return null;
   }
 
+  @Nullable
   @Override
   public PathFileObject getJavaFileForInput(String className, Kind kind) {
     for (var container : containers) {
@@ -201,6 +206,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
     return null;
   }
 
+  @Nullable
   @Override
   public PathFileObject getJavaFileForOutput(String className, Kind kind) {
     for (var container : containers) {
@@ -237,6 +243,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
     return ServiceLoader.load(service, classLoaderLazy.access());
   }
 
+  @Nullable
   @Override
   public String inferBinaryName(PathFileObject fileObject) {
     for (var container : containers) {
@@ -260,12 +267,13 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
       Set<? extends Kind> kinds,
       boolean recurse
   ) throws IOException {
-    // XXX: could this be run in parallel?
+    // XXX: could this be run in parallel? This probably won't make much difference
+    // for in-memory paths, but may improve performance for disk-based paths.
     var collection = new HashSet<JavaFileObject>();
     for (var container : containers) {
       container.listFileObjects(packageName, kinds, recurse, collection);
     }
-    return collection;
+    return Collections.unmodifiableSet(collection);
   }
 
   @API(since = "0.6.0", status = Status.STABLE)

@@ -27,7 +27,9 @@ import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.tests.helpers.Fixtures;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
+import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -255,6 +257,37 @@ class ModuleLocationTest {
     // Then
     assertThat(moduleLocation.toString())
         .isEqualTo("ModuleLocation{parent=%s, moduleName=\"%s\"}", parent, moduleName);
+  }
+
+  @DisplayName(".upcast(Location) returns the cast location when an instance of ModuleLocation")
+  @Test
+  void upcastLocationReturnsLocationWhenModuleLocation() {
+    // Given
+    var parent = someValidParentLocation();
+    var moduleName = someModuleName();
+    Location location = new ModuleLocation(parent, moduleName);
+
+    // When
+    var optional = ModuleLocation.upcast(location);
+
+    // Then
+    assertThat(optional)
+        .isPresent()
+        .get()
+        .isSameAs(location);
+  }
+
+  @DisplayName(".upcast(Location) returns empty when not passed a ModuleLocation")
+  @Test
+  void upcastLocationReturnsEmptyWhenNotModuleLocation() {
+    // Given
+    var location = someValidParentLocation();
+
+    // When
+    var optional = ModuleLocation.upcast(location);
+
+    // Then
+    assertThat(optional).isEmpty();
   }
 
   static Stream<StandardLocation> packageOrientedInputLocations() {
