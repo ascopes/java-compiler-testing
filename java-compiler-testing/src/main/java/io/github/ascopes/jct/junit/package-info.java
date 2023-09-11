@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Additional functionality to simplify writing tests with Junit.
+ * Integrations with JUnit5 test cases.
  */
 @API(since = "0.0.1", status = Status.STABLE)
 @NullMarked
