@@ -57,7 +57,7 @@ public class TraceDiagnostic<S extends JavaFileObject> implements Diagnostic<S> 
   public TraceDiagnostic(
       Instant timestamp,
       long threadId,
-      String threadName,
+      @Nullable String threadName,
       List<StackTraceElement> stackTrace,
       Diagnostic<? extends S> original
   ) {
@@ -73,6 +73,7 @@ public class TraceDiagnostic<S extends JavaFileObject> implements Diagnostic<S> 
     return original.getKind();
   }
 
+  @Nullable
   @Override
   public S getSource() {
     return original.getSource();
@@ -103,6 +104,7 @@ public class TraceDiagnostic<S extends JavaFileObject> implements Diagnostic<S> 
     return original.getColumnNumber();
   }
 
+  @Nullable
   @Override
   public String getCode() {
     return original.getCode();
@@ -136,6 +138,7 @@ public class TraceDiagnostic<S extends JavaFileObject> implements Diagnostic<S> 
    *
    * @return the thread name, if known, or else {@code null}.
    */
+  @Nullable
   public String getThreadName() {
     return threadName;
   }
