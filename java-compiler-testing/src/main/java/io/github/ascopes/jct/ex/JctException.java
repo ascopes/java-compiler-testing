@@ -17,6 +17,7 @@ package io.github.ascopes.jct.ex;
 
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base for any exceptions thrown by JCT.
@@ -40,9 +41,9 @@ public abstract class JctException extends RuntimeException {
    * Initialise the exception with a message and a cause.
    *
    * @param message the message to initialise the exception with.
-   * @param cause   the cause of the exception.
+   * @param cause   the cause of the exception (or {@code null} if no cause exists).
    */
-  JctException(String message, Throwable cause) {
+  JctException(String message, @Nullable Throwable cause) {
     super(message, cause);
   }
 }
