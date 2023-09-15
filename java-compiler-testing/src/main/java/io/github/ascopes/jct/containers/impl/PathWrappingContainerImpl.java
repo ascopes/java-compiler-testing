@@ -37,6 +37,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,6 @@ public final class PathWrappingContainerImpl implements Container {
 
   private final Location location;
   private final PathRoot root;
-  private final String name;
 
   /**
    * Initialize this container.
@@ -64,7 +64,6 @@ public final class PathWrappingContainerImpl implements Container {
   public PathWrappingContainerImpl(Location location, PathRoot root) {
     this.location = requireNonNull(location, "location");
     this.root = requireNonNull(root, "root");
-    name = root.toString();
   }
 
   @Override
@@ -79,6 +78,7 @@ public final class PathWrappingContainerImpl implements Container {
     return path.startsWith(root.getPath()) && Files.isRegularFile(path);
   }
 
+  @Nullable
   @Override
   public Path getFile(String fragment, String... fragments) {
     var realPath = FileUtils.relativeResourceNameToPath(root.getPath(), fragment, fragments);
@@ -88,6 +88,7 @@ public final class PathWrappingContainerImpl implements Container {
         : null;
   }
 
+  @Nullable
   @Override
   public PathFileObject getFileForInput(String packageName, String relativeName) {
     var path = FileUtils.resourceNameToPath(root.getPath(), packageName, relativeName);
@@ -103,11 +104,20 @@ public final class PathWrappingContainerImpl implements Container {
     return new PathFileObjectImpl(location, root.getPath(), path);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * <p>This implementation returns the same value as {@link #getPathRoot}, since this
+   * implementation is not an opaque wrapper for an archive or serialized resource.
+   *
+   * @returns the path root.
+   */
   @Override
   public PathRoot getInnerPathRoot() {
     return root;
   }
 
+  @Nullable
   @Override
   public PathFileObject getJavaFileForInput(String binaryName, Kind kind) {
     var path = FileUtils.binaryNameToPath(root.getPath(), binaryName, kind);
@@ -134,7 +144,7 @@ public final class PathWrappingContainerImpl implements Container {
 
   @Override
   public String getName() {
-    return name;
+    return root.toString();
   }
 
   @Override
@@ -142,6 +152,7 @@ public final class PathWrappingContainerImpl implements Container {
     return root;
   }
 
+  @Nullable
   @Override
   public String inferBinaryName(PathFileObject javaFileObject) {
     return javaFileObject.getAbsolutePath().startsWith(root.getPath())
@@ -166,6 +177,7 @@ public final class PathWrappingContainerImpl implements Container {
     var maxDepth = recurse ? Integer.MAX_VALUE : 1;
     var basePath = FileUtils.packageNameToPath(root.getPath(), packageName);
 
+    // XXX: Do we want to follow symbolic links here, or can it lead to recursive loops?
     try (var walker = Files.walk(basePath, maxDepth, FileVisitOption.FOLLOW_LINKS)) {
       walker
           .filter(FileUtils.fileWithAnyKind(kinds))
