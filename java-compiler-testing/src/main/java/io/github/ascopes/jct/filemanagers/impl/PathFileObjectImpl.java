@@ -129,12 +129,6 @@ public final class PathFileObjectImpl implements PathFileObject {
   }
 
   @Override
-  @Nullable
-  public Modifier getAccessLevel() {
-    return null;
-  }
-
-  @Override
   public String getBinaryName() {
     return FileUtils.pathToBinaryName(relativePath);
   }
@@ -171,12 +165,6 @@ public final class PathFileObjectImpl implements PathFileObject {
   @Override
   public String getName() {
     return name;
-  }
-
-  @Nullable
-  @Override
-  public NestingKind getNestingKind() {
-    return null;
   }
 
   @Override
