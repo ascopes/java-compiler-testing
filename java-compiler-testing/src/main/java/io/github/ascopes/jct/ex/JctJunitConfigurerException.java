@@ -17,6 +17,7 @@ package io.github.ascopes.jct.ex;
 
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An exception that is thrown when a compiler configurer cannot be initialised successfully using
@@ -41,9 +42,9 @@ public final class JctJunitConfigurerException extends JctException {
    * Initialise the exception.
    *
    * @param message the error message to show.
-   * @param cause   the cause of the exception.
+   * @param cause   the cause of the exception (or {@code null} if no cause exists).
    */
-  public JctJunitConfigurerException(String message, Throwable cause) {
+  public JctJunitConfigurerException(String message, @Nullable Throwable cause) {
     super(message, cause);
   }
 }
