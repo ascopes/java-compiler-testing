@@ -17,6 +17,7 @@ package io.github.ascopes.jct.ex;
 
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Exception that is thrown if the compiler fails to run and throws an unhandled exception.
@@ -40,9 +41,9 @@ public final class JctCompilerException extends JctException {
    * Initialize the error.
    *
    * @param message the error message.
-   * @param cause   the cause of the error.
+   * @param cause   the cause of the error (or {@code null} if no cause exists).
    */
-  public JctCompilerException(String message, Throwable cause) {
+  public JctCompilerException(String message, @Nullable Throwable cause) {
     super(message, cause);
   }
 }
