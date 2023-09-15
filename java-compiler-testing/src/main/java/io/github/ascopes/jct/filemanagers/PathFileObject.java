@@ -90,7 +90,9 @@ public interface PathFileObject extends JavaFileObject {
    */
   @Nullable
   @Override
-  Modifier getAccessLevel();
+  default Modifier getAccessLevel() {
+    return null;
+  }
 
   /**
    * Get the inferred binary name of the file object.
@@ -156,7 +158,9 @@ public interface PathFileObject extends JavaFileObject {
    */
   @Nullable
   @Override
-  NestingKind getNestingKind();
+  default NestingKind getNestingKind() {
+    return null;
+  }
 
   /**
    * Get the relative path of this file object.
