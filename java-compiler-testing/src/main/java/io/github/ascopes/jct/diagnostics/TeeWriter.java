@@ -60,7 +60,7 @@ public final class TeeWriter extends Writer {
 
     this.writer = requireNonNull(writer, "writer");
     builder = new StringBuilder();
-    builder.ensureCapacity(512);
+    builder.ensureCapacity(64);
   }
 
   @Override
