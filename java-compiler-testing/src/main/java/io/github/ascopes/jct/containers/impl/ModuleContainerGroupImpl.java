@@ -38,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.tools.JavaFileManager.Location;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Simple implementation of a {@link ModuleContainerGroup}.
@@ -136,6 +137,7 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
     return Set.copyOf(modules.keySet());
   }
 
+  @Nullable
   @Override
   public PackageContainerGroup getModule(String name) {
     if (name.isEmpty()) {
