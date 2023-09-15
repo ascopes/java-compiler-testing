@@ -104,7 +104,7 @@ public final class FileUtils extends UtilityClass {
    * potentially dangerous characters such as double-dots or slashes that could be used to escape
    * the directory we are running from.
    *
-   * @param name the directory name to check.
+   * @param name the directory name to check. May be {@code null} if invalid.
    * @throws JctIllegalInputException if the name is invalid.
    * @throws NullPointerException     if the name is {@code null}.
    */
