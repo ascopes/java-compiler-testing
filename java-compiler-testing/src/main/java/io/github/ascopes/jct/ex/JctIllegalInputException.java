@@ -17,6 +17,7 @@ package io.github.ascopes.jct.ex;
 
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Exception raised if an illegal input is provided to a method.
@@ -40,9 +41,9 @@ public final class JctIllegalInputException extends JctException {
    * Initialise the exception with a cause.
    *
    * @param message the message to report.
-   * @param cause   the cause of the exception.
+   * @param cause   the cause of the exception (or {@code null} if no cause exists).
    */
-  public JctIllegalInputException(String message, Throwable cause) {
+  public JctIllegalInputException(String message, @Nullable Throwable cause) {
     super(message, cause);
   }
 }
