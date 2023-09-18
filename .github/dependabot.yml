@@ -5,7 +5,7 @@ updates:
     open-pull-requests-limit: 99
     rebase-strategy: auto
     schedule:
-      interval: weekly
+      interval: monthly
     assignees:
       - ascopes
     labels:
@@ -16,6 +16,7 @@ updates:
     open-pull-requests-limit: 99
     rebase-strategy: auto
     schedule:
+      day: monday
       interval: weekly
     assignees:
       - ascopes
