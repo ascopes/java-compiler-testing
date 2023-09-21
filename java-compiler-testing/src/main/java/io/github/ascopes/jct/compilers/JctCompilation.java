@@ -28,7 +28,11 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
 /**
- * Interface representing the result of a compilation.
+ * The result of a compilation.
+ *
+ * <p>This provides access to a number of useful pieces of information
+ * including the file manager used for the compilation, compiler logs,
+ * and diagnostics.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -84,7 +88,8 @@ public interface JctCompilation {
   Set<JavaFileObject> getCompilationUnits();
 
   /**
-   * Get the diagnostics that were reported by the compilation.
+   * Get the diagnostics that were reported by the compilation, in the order that they
+   * were reported.
    *
    * @return the diagnostics
    */
@@ -93,12 +98,18 @@ public interface JctCompilation {
   /**
    * Get the file manager that was used to store and manage files.
    *
+   * <p>This can be used to obtain a classloader for any compiled sources,
+   * which can then be used to reflectively test what the compiler produced.
+   *
    * @return the file manager.
    */
   JctFileManager getFileManager();
 
   /**
    * Get the output container group for class outputs.
+   *
+   * <p>This usually consists of any {@code *.class} files produced by the compiler,
+   * and is equivalent to {@code target/classes} in a Maven project.
    *
    * @return the output container group, or {@code null} if it does not exist.
    */
@@ -109,6 +120,9 @@ public interface JctCompilation {
   /**
    * Get the output container group for source outputs.
    *
+   * <p>This consists of any generated source code created by annotation processors,
+   * and is equivalent to {@code target/generated-sources} in a Maven project.
+   *
    * @return the output container group, or {@code null} if it does not exist.
    */
   default OutputContainerGroup getSourceOutputs() {
@@ -118,6 +132,8 @@ public interface JctCompilation {
   /**
    * Get the package container group for the class path.
    *
+   * <p>This represents the class path used for compilation.
+   *
    * @return the package container group, or {@code null} if it does not exist.
    */
   default PackageContainerGroup getClassPath() {
@@ -126,6 +142,9 @@ public interface JctCompilation {
 
   /**
    * Get the package container group for the source path.
+   *
+   * <p>This is equivalent to {@code src/main/java} and {@code src/main/resources}
+   * in a Maven project.
    *
    * @return the package container group, or {@code null} if it does not exist.
    */
@@ -155,6 +174,10 @@ public interface JctCompilation {
   /**
    * Get the package container group for the platform class path (a.k.a. the bootstrap class path).
    *
+   * <p>You generally do not need to use this. The platform class path mechanism has been mostly
+   * replaced by the use of the system modules path as of Java 11. It is simply provided for
+   * backwards compatibility.
+   *
    * @return the package container group, or {@code null} if it does not exist.
    */
   default PackageContainerGroup getPlatformClassPath() {
@@ -163,6 +186,9 @@ public interface JctCompilation {
 
   /**
    * Get the output container group for the native header file outputs.
+   *
+   * <p>If you invoke {@code javac} with the {@code -H} flag, then this represents the
+   * directory that C/C++ header file stubs for JNI are written to.
    *
    * @return the output container group, or {@code null} if it does not exist.
    */
@@ -173,6 +199,13 @@ public interface JctCompilation {
   /**
    * Get the module container group for the module source path.
    *
+   * <p>Many build tools do not provide a direct equivalent of this mechanism as of now, but
+   * this is a source path introduced in Java 9 that allows specifying multiple named JPMS
+   * modules to compile under a single compilation invocation.
+   *
+   * <p>For example, you may use this in a project to compile an API module, a default
+   * implementation module, and a module containing unit tests all together.
+   *
    * @return the module container group, or {@code null} if it does not exist.
    */
   default ModuleContainerGroup getModuleSourcePath() {
@@ -181,6 +214,9 @@ public interface JctCompilation {
 
   /**
    * Get the module container group for the upgrade module path.
+   *
+   * <p>You generally will not need to use this, as this is a mechanism used to upgrade
+   * modules in-place incrementally with fixes without redistributing the entire application.
    *
    * @return the module container group, or {@code null} if it does not exist.
    */
@@ -191,6 +227,8 @@ public interface JctCompilation {
   /**
    * Get the module container group for all system modules that are part of the JDK distribution.
    *
+   * <p>This will usually just point to the Java standard library.
+   *
    * @return the module container group, or {@code null} if it does not exist.
    */
   default ModuleContainerGroup getSystemModules() {
@@ -200,6 +238,8 @@ public interface JctCompilation {
   /**
    * Get the module container group for the module path.
    *
+   * <p>This is equivalent to the class path, but holds any JPMS modules.
+   *
    * @return the module container group, or {@code null} if it does not exist.
    */
   default ModuleContainerGroup getModulePath() {
@@ -208,6 +248,11 @@ public interface JctCompilation {
 
   /**
    * Get the module container group for the patch module path.
+   *
+   * <p>You generally will not need to use this. It consists of patchable module sources that
+   * can be used to inject additional classes into a module. This can be used for cases like
+   * unit tests where you wish to embed the unit test classes into the existing application
+   * module to exploit features such as package private access.
    *
    * @return the module container group, or {@code null} if it does not exist.
    */
