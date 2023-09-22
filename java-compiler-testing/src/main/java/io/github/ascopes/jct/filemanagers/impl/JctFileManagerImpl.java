@@ -78,12 +78,12 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   @Override
   public boolean contains(Location location, FileObject fo) {
-    if (!(fo instanceof PathFileObject)) {
-      return false;
+    if (fo instanceof PathFileObject) {
+      var group = repository.getContainerGroup(location);
+      return group != null && group.contains((PathFileObject) fo);
     }
 
-    var group = repository.getContainerGroup(location);
-    return group != null && group.contains((PathFileObject) fo);
+    return false;
   }
 
   @Override
@@ -108,7 +108,6 @@ public final class JctFileManagerImpl implements JctFileManager {
     // file manager, we explicitly do not check for this as this is useful behaviour to have
     // retrospectively when performing assertions and tests on the resulting file manager state.
     var group = repository.getPackageOrientedContainerGroup(location);
-
     return group == null
         ? null
         : group.getClassLoader();
@@ -127,7 +126,6 @@ public final class JctFileManagerImpl implements JctFileManager {
       String relativeName
   ) {
     var group = repository.getPackageOrientedContainerGroup(location);
-
     return group == null
         ? null
         : group.getFileForInput(packageName, relativeName);
@@ -142,21 +140,7 @@ public final class JctFileManagerImpl implements JctFileManager {
       FileObject sibling
   ) {
     requireOutputLocation(location);
-
-    PackageContainerGroup group = null;
-
-    // If we have a module, we may need to create a brand-new location for it.
-    if (location instanceof ModuleLocation) {
-      var moduleLocation = ((ModuleLocation) location);
-      var parentGroup = repository.getOutputContainerGroup(moduleLocation.getParent());
-
-      if (parentGroup != null) {
-        group = parentGroup.getOrCreateModule(moduleLocation.getModuleName());
-      }
-    } else {
-      group = repository.getOutputContainerGroup(location);
-    }
-
+    var group = getOutputContainerGroup(location);
     return group == null
         ? null
         : group.getFileForOutput(packageName, relativeName);
@@ -170,7 +154,6 @@ public final class JctFileManagerImpl implements JctFileManager {
       Kind kind
   ) {
     var group = repository.getPackageOrientedContainerGroup(location);
-
     return group == null
         ? null
         : group.getJavaFileForInput(className, kind);
@@ -185,21 +168,7 @@ public final class JctFileManagerImpl implements JctFileManager {
       FileObject sibling
   ) {
     requireOutputLocation(location);
-
-    PackageContainerGroup group = null;
-
-    // If we have a module, we may need to create a brand-new location for it.
-    if (location instanceof ModuleLocation) {
-      var moduleLocation = ((ModuleLocation) location);
-      var parentGroup = repository.getOutputContainerGroup(moduleLocation.getParent());
-
-      if (parentGroup != null) {
-        group = parentGroup.getOrCreateModule(moduleLocation.getModuleName());
-      }
-    } else {
-      group = repository.getOutputContainerGroup(location);
-    }
-
+    var group = getOutputContainerGroup(location);
     return group == null
         ? null
         : group.getJavaFileForOutput(className, kind);
@@ -210,7 +179,6 @@ public final class JctFileManagerImpl implements JctFileManager {
     // ModuleLocation will also validate this, but we do this to keep consistent
     // error messages.
     requireOutputOrModuleOrientedLocation(location);
-
     return new ModuleLocation(location, moduleName);
   }
 
@@ -223,14 +191,12 @@ public final class JctFileManagerImpl implements JctFileManager {
       var pathFileObject = (PathFileObject) fo;
       var moduleLocation = pathFileObject.getLocation();
 
-      if (moduleLocation instanceof ModuleLocation) {
-        return (ModuleLocation) moduleLocation;
-      }
-
       // The expectation is to return null if this is not for a module. Certain frameworks like
       // manifold expect this behaviour, despite it not being documented very clearly in the
       // Java compiler API.
-      return null;
+      return ModuleLocation
+          .upcast(pathFileObject.getLocation())
+          .orElse(null);
     }
 
     throw new JctIllegalInputException(
@@ -319,14 +285,16 @@ public final class JctFileManagerImpl implements JctFileManager {
   public String inferModuleName(Location location) {
     requirePackageOrientedLocation(location);
 
-    return location instanceof ModuleLocation
-        ? ((ModuleLocation) location).getModuleName()
-        : null;
+    return ModuleLocation
+        .upcast(location)
+        .map(ModuleLocation::getModuleName)
+        .orElse(null);
   }
 
   @Override
   public boolean isSameFile(@Nullable FileObject a, @Nullable FileObject b) {
     // Some annotation processors provide null values here for some reason.
+    // The URI check is roughly equivalent to what Javac does to check for this.
     return a != null && b != null && Objects.equals(a.toUri(), b.toUri());
   }
 
@@ -345,7 +313,6 @@ public final class JctFileManagerImpl implements JctFileManager {
     requirePackageOrientedLocation(location);
 
     var group = repository.getPackageOrientedContainerGroup(location);
-
     return group == null
         ? Set.of()
         : group.listFileObjects(packageName, kinds, recurse);
@@ -362,6 +329,22 @@ public final class JctFileManagerImpl implements JctFileManager {
     return new ToStringBuilder(this)
         .attribute("repository", repository)
         .toString();
+  }
+
+  @Nullable
+  private PackageContainerGroup getModuleOutputContainerGroup(ModuleLocation moduleLocation) {
+    var parentGroup = repository.getOutputContainerGroup(moduleLocation.getParent());
+
+    return parentGroup == null
+        ? null
+        : parentGroup.getOrCreateModule(moduleLocation.getModuleName());
+  }
+
+  @Nullable
+  private PackageContainerGroup getOutputContainerGroup(Location location) {
+    return ModuleLocation.upcast(location)
+        .map(this::getModuleOutputContainerGroup)
+        .orElseGet(() -> repository.getOutputContainerGroup(location));
   }
 
   private void requireOutputOrModuleOrientedLocation(Location location) {
