@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import javax.tools.FileObject;
@@ -78,14 +79,14 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   @Override
   public boolean contains(Location location, FileObject fo) {
-    if (fo instanceof PathFileObject) {
-      var group = repository.getContainerGroup(location);
-      return group != null && group.contains((PathFileObject) fo);
-    }
-
-    return false;
+    return PathFileObject
+        .upcast(fo)
+        .flatMap(pfo -> Optional
+            .ofNullable(repository.getContainerGroup(location))
+            .filter(group -> group.contains(pfo)))
+        .isPresent();
   }
-
+                
   @Override
   public void copyContainers(Location from, Location to) {
     repository.copyContainers(from, to);
@@ -107,10 +108,10 @@ public final class JctFileManagerImpl implements JctFileManager {
     // While we would normally enforce that we cannot get a classloader for a closed
     // file manager, we explicitly do not check for this as this is useful behaviour to have
     // retrospectively when performing assertions and tests on the resulting file manager state.
-    var group = repository.getPackageOrientedContainerGroup(location);
-    return group == null
-        ? null
-        : group.getClassLoader();
+    return Optional
+        .ofNullable(repository.getPackageOrientedContainerGroup(location))
+        .map(PackageContainerGroup::getClassLoader)
+        .orElse(null);
   }
 
   @Override
@@ -125,10 +126,10 @@ public final class JctFileManagerImpl implements JctFileManager {
       String packageName,
       String relativeName
   ) {
-    var group = repository.getPackageOrientedContainerGroup(location);
-    return group == null
-        ? null
-        : group.getFileForInput(packageName, relativeName);
+    return Optional
+        .ofNullable(repository.getPackageOrientedContainerGroup(location))
+        .map(group -> group.getFileForInput(packageName, relativeName))
+        .orElse(null);
   }
 
   @Nullable
@@ -140,10 +141,10 @@ public final class JctFileManagerImpl implements JctFileManager {
       FileObject sibling
   ) {
     requireOutputLocation(location);
-    var group = repository.getPackageOrientedContainerGroup(location);
-    return group == null
-        ? null
-        : group.getFileForOutput(packageName, relativeName);
+    return Optional
+        .ofNullable(repository.getPackageOrientedContainerGroup(location))
+        .map(group -> group.getFileForOutput(packageName, relativeName))
+        .orElse(null);
   }
 
   @Nullable
@@ -153,10 +154,10 @@ public final class JctFileManagerImpl implements JctFileManager {
       String className,
       Kind kind
   ) {
-    var group = repository.getPackageOrientedContainerGroup(location);
-    return group == null
-        ? null
-        : group.getJavaFileForInput(className, kind);
+    return Optional
+        .ofNullable(repository.getPackageOrientedContainerGroup(location))
+        .map(group -> group.getJavaFileForInput(className, kind))
+        .orElse(null);
   }
 
   @Nullable
@@ -168,10 +169,10 @@ public final class JctFileManagerImpl implements JctFileManager {
       FileObject sibling
   ) {
     requireOutputLocation(location);
-    var group = repository.getPackageOrientedContainerGroup(location);
-    return group == null
-        ? null
-        : group.getJavaFileForOutput(className, kind);
+    return Optional
+        .ofNullable(repository.getPackageOrientedContainerGroup(location))
+        .map(group -> group.getJavaFileForOutput(className, kind))
+        .orElse(null);
   }
 
   @Override
@@ -187,21 +188,19 @@ public final class JctFileManagerImpl implements JctFileManager {
   public ModuleLocation getLocationForModule(Location location, JavaFileObject fo) {
     requireOutputOrModuleOrientedLocation(location);
 
-    if (fo instanceof PathFileObject) {
-      var pathFileObject = (PathFileObject) fo;
-      var moduleLocation = pathFileObject.getLocation();
-
-      // The expectation is to return null if this is not for a module. Certain frameworks like
-      // manifold expect this behaviour, despite it not being documented very clearly in the
-      // Java compiler API.
-      return ModuleLocation
-          .upcast(pathFileObject.getLocation())
-          .orElse(null);
-    }
-
-    throw new JctIllegalInputException(
-        "File object " + fo + " is not compatible with this file manager"
-    );
+    var location = PathFileObject
+        .upcast(fo)
+        .orElseThrow(() -> new JctIllegalInputException(
+            "File object " + fo + " is not compatible with this file manager"
+        ))
+        .getLocation();
+      
+    // The expectation is to return null if this is not for a module. Certain frameworks like
+    // manifold expect this behaviour, despite it not being documented very clearly in the
+    // Java compiler API.
+    return ModuleLocation
+        .upcast(location)
+        .orElse(null);
   }
 
   @Nullable
@@ -242,15 +241,12 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   @Override
   public <S> ServiceLoader<S> getServiceLoader(Location location, Class<S> service) {
-    var group = repository.getContainerGroup(location);
-
-    if (group == null) {
-      throw new JctNotFoundException(
-          "No container group for location " + location.getName() + " exists in this file manager"
-      );
-    }
-
-    return group.getServiceLoader(service);
+    return Optional
+        .ofNullable(repository.getContainerGroup(location))
+        .orElseThrow(() -> new JctNotFoundException(
+            "No container group for location " + location.getName() + " exists in this file manager"
+        ))
+        .getServiceLoader(service);
   }
 
   @Override
@@ -266,18 +262,15 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   @Nullable
   @Override
-  public String inferBinaryName(Location location, JavaFileObject file) {
+  public String inferBinaryName(Location location, JavaFileObject fo) {
     requirePackageOrientedLocation(location);
 
-    if (!(file instanceof PathFileObject)) {
-      return null;
-    }
-
-    var group = repository.getPackageOrientedContainerGroup(location);
-
-    return group == null
-        ? null
-        : group.inferBinaryName((PathFileObject) file);
+    return PathFileObject
+        .upcast(fo)
+        .flatMap(pfo -> Optional
+            .ofNullable(repository.getPackageOrientedContainerGroup(location))
+            .map(group -> group.inferBinaryName(pfo)))
+        .orElse(null);
   }
 
   @Nullable
