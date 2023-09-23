@@ -140,7 +140,7 @@ public final class JctFileManagerImpl implements JctFileManager {
       FileObject sibling
   ) {
     requireOutputLocation(location);
-    var group = getOutputContainerGroup(location);
+    var group = getContainerGroupForOutput(location);
     return group == null
         ? null
         : group.getFileForOutput(packageName, relativeName);
@@ -168,7 +168,7 @@ public final class JctFileManagerImpl implements JctFileManager {
       FileObject sibling
   ) {
     requireOutputLocation(location);
-    var group = getOutputContainerGroup(location);
+    var group = getContainerGroupForOutput(location);
     return group == null
         ? null
         : group.getJavaFileForOutput(className, kind);
@@ -332,7 +332,7 @@ public final class JctFileManagerImpl implements JctFileManager {
   }
 
   @Nullable
-  private PackageContainerGroup getModuleOutputContainerGroup(ModuleLocation moduleLocation) {
+  private PackageContainerGroup getModuleContainerGroupForOutput(ModuleLocation moduleLocation) {
     var parentGroup = repository.getOutputContainerGroup(moduleLocation.getParent());
 
     return parentGroup == null
@@ -341,9 +341,9 @@ public final class JctFileManagerImpl implements JctFileManager {
   }
 
   @Nullable
-  private PackageContainerGroup getOutputContainerGroup(Location location) {
+  private PackageContainerGroup getContainerGroupForOutput(Location location) {
     return ModuleLocation.upcast(location)
-        .map(this::getModuleOutputContainerGroup)
+        .map(this::getModuleContainerGroupForOutput)
         .orElseGet(() -> repository.getOutputContainerGroup(location));
   }
 
