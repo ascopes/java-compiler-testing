@@ -397,68 +397,6 @@ class JctFileManagerImplTest {
           .hasMessage("Location %s must be an output location", name);
     }
 
-    @DisplayName(".getFileForOutput(ModuleLocation, ...) returns null if the group does not exist")
-    @Test
-    void moduleLocationReturnsNullIfGroupDoesNotExist() {
-      // Given
-      var parentLocation = StandardLocation.CLASS_OUTPUT;
-      var moduleLocation = new ModuleLocation(parentLocation, someModuleName());
-      var packageName = somePackageName();
-      var relativeName = someRelativePath().toString();
-      var sibling = someJavaFileObject();
-
-      when(repository.getOutputContainerGroup(any()))
-          .thenReturn(null);
-
-      // When
-      var result = fileManager.getFileForOutput(moduleLocation, packageName, relativeName, sibling);
-
-      // Then
-      verify(repository).getOutputContainerGroup(parentLocation);
-      verifyNoMoreInteractions(repository);
-
-      assertThat(result).isNull();
-    }
-
-    @DisplayName(
-        ".getFileForOutput(ModuleLocation, ...) creates the new location and "
-            + "returns the file object")
-    @Test
-    void moduleLocationCreatesTheNewLocationAndReturnsTheFileObject() {
-      // Given
-      var parentLocation = StandardLocation.SOURCE_OUTPUT;
-      var moduleName = someModuleName();
-      var moduleLocation = new ModuleLocation(parentLocation, moduleName);
-      var packageName = somePackageName();
-      var relativeName = someRelativePath().toString();
-      var sibling = someJavaFileObject();
-      OutputContainerGroup outputContainerGroup = mock();
-      PackageContainerGroup moduleGroup = mock();
-      PathFileObject fileForOutput = mock();
-
-      when(repository.getOutputContainerGroup(any()))
-          .thenReturn(outputContainerGroup);
-      when(outputContainerGroup.getOrCreateModule(any()))
-          .thenReturn(moduleGroup);
-      when(moduleGroup.getFileForOutput(any(), any()))
-          .thenReturn(fileForOutput);
-
-      // When
-      var result = fileManager.getFileForOutput(moduleLocation, packageName, relativeName, sibling);
-
-      // Then
-      verify(repository).getOutputContainerGroup(parentLocation);
-      verifyNoMoreInteractions(repository);
-
-      verify(outputContainerGroup).getOrCreateModule(moduleName);
-      verifyNoMoreInteractions(outputContainerGroup);
-
-      verify(moduleGroup).getFileForOutput(packageName, relativeName);
-      verifyNoMoreInteractions(moduleGroup);
-
-      assertThat(result).isSameAs(fileForOutput);
-    }
-
     @DisplayName(".getFileForOutput(Location, ...) returns null if the group does not exist")
     @Test
     void locationReturnsNullIfGroupDoesNotExist() {
@@ -468,14 +406,14 @@ class JctFileManagerImplTest {
       var relativeName = someRelativePath().toString();
       var sibling = someJavaFileObject();
 
-      when(repository.getOutputContainerGroup(any()))
+      when(repository.getPackageOrientedContainerGroup(any()))
           .thenReturn(null);
 
       // When
       var result = fileManager.getFileForOutput(location, packageName, relativeName, sibling);
 
       // Then
-      verify(repository).getOutputContainerGroup(location);
+      verify(repository).getPackageOrientedContainerGroup(location);
       verifyNoMoreInteractions(repository);
 
       assertThat(result).isNull();
@@ -492,7 +430,7 @@ class JctFileManagerImplTest {
       OutputContainerGroup outputContainerGroup = mock();
       PathFileObject fileForOutput = mock();
 
-      when(repository.getOutputContainerGroup(any()))
+      when(repository.getPackageOrientedContainerGroup(any()))
           .thenReturn(outputContainerGroup);
       when(outputContainerGroup.getFileForOutput(any(), any()))
           .thenReturn(fileForOutput);
@@ -501,7 +439,7 @@ class JctFileManagerImplTest {
       var result = fileManager.getFileForOutput(location, packageName, relativeName, sibling);
 
       // Then
-      verify(repository).getOutputContainerGroup(location);
+      verify(repository).getPackageOrientedContainerGroup(location);
       verifyNoMoreInteractions(repository);
 
       verify(outputContainerGroup).getFileForOutput(packageName, relativeName);
@@ -593,70 +531,6 @@ class JctFileManagerImplTest {
           .hasMessage("Location %s must be an output location", name);
     }
 
-    @DisplayName(
-        ".getJavaFileForOutput(ModuleLocation, ...) returns null if the group does not exist"
-    )
-    @Test
-    void moduleLocationReturnsNullIfGroupDoesNotExist() {
-      // Given
-      var parentLocation = StandardLocation.CLASS_OUTPUT;
-      var moduleLocation = new ModuleLocation(parentLocation, someModuleName());
-      var className = someClassName();
-      var kind = oneOf(Kind.class);
-      var sibling = someJavaFileObject();
-
-      when(repository.getOutputContainerGroup(any()))
-          .thenReturn(null);
-
-      // When
-      var result = fileManager.getJavaFileForOutput(moduleLocation, className, kind, sibling);
-
-      // Then
-      verify(repository).getOutputContainerGroup(parentLocation);
-      verifyNoMoreInteractions(repository);
-
-      assertThat(result).isNull();
-    }
-
-    @DisplayName(
-        ".getJavaFileForOutput(ModuleLocation, ...) creates the new location and "
-            + "returns the file object")
-    @Test
-    void moduleLocationCreatesTheNewLocationAndReturnsTheFileObject() {
-      // Given
-      var parentLocation = StandardLocation.SOURCE_OUTPUT;
-      var moduleName = someModuleName();
-      var moduleLocation = new ModuleLocation(parentLocation, moduleName);
-      var className = someClassName();
-      var kind = oneOf(Kind.class);
-      var sibling = someJavaFileObject();
-      OutputContainerGroup outputContainerGroup = mock();
-      PackageContainerGroup moduleGroup = mock();
-      PathFileObject javaFileForOutput = mock();
-
-      when(repository.getOutputContainerGroup(any()))
-          .thenReturn(outputContainerGroup);
-      when(outputContainerGroup.getOrCreateModule(any()))
-          .thenReturn(moduleGroup);
-      when(moduleGroup.getJavaFileForOutput(any(), any()))
-          .thenReturn(javaFileForOutput);
-
-      // When
-      var result = fileManager.getJavaFileForOutput(moduleLocation, className, kind, sibling);
-
-      // Then
-      verify(repository).getOutputContainerGroup(parentLocation);
-      verifyNoMoreInteractions(repository);
-
-      verify(outputContainerGroup).getOrCreateModule(moduleName);
-      verifyNoMoreInteractions(outputContainerGroup);
-
-      verify(moduleGroup).getJavaFileForOutput(className, kind);
-      verifyNoMoreInteractions(moduleGroup);
-
-      assertThat(result).isSameAs(javaFileForOutput);
-    }
-
     @DisplayName(".getJavaFileForOutput(Location, ...) returns null if the group does not exist")
     @Test
     void locationReturnsNullIfGroupDoesNotExist() {
@@ -666,14 +540,14 @@ class JctFileManagerImplTest {
       var kind = oneOf(Kind.class);
       var sibling = someJavaFileObject();
 
-      when(repository.getOutputContainerGroup(any()))
+      when(repository.getPackageOrientedContainerGroup(any()))
           .thenReturn(null);
 
       // When
       var result = fileManager.getJavaFileForOutput(location, className, kind, sibling);
 
       // Then
-      verify(repository).getOutputContainerGroup(location);
+      verify(repository).getPackageOrientedContainerGroup(location);
       verifyNoMoreInteractions(repository);
 
       assertThat(result).isNull();
@@ -690,7 +564,7 @@ class JctFileManagerImplTest {
       OutputContainerGroup outputContainerGroup = mock();
       PathFileObject javaFileForOutput = mock();
 
-      when(repository.getOutputContainerGroup(any()))
+      when(repository.getPackageOrientedContainerGroup(any()))
           .thenReturn(outputContainerGroup);
       when(outputContainerGroup.getJavaFileForOutput(any(), any()))
           .thenReturn(javaFileForOutput);
@@ -699,7 +573,7 @@ class JctFileManagerImplTest {
       var result = fileManager.getJavaFileForOutput(location, className, kind, sibling);
 
       // Then
-      verify(repository).getOutputContainerGroup(location);
+      verify(repository).getPackageOrientedContainerGroup(location);
       verifyNoMoreInteractions(repository);
 
       verify(outputContainerGroup).getJavaFileForOutput(className, kind);
