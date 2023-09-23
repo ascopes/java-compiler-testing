@@ -188,7 +188,7 @@ public final class JctFileManagerImpl implements JctFileManager {
   public ModuleLocation getLocationForModule(Location location, JavaFileObject fo) {
     requireOutputOrModuleOrientedLocation(location);
 
-    var location = PathFileObject
+    var moduleLocation = PathFileObject
         .upcast(fo)
         .orElseThrow(() -> new JctIllegalInputException(
             "File object " + fo + " is not compatible with this file manager"
@@ -199,7 +199,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     // manifold expect this behaviour, despite it not being documented very clearly in the
     // Java compiler API.
     return ModuleLocation
-        .upcast(location)
+        .upcast(moduleLocation)
         .orElse(null);
   }
 
