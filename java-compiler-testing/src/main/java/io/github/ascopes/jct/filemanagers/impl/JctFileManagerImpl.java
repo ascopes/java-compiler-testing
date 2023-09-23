@@ -143,7 +143,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     var group = repository.getPackageOrientedContainerGroup(location);
     return group == null
         ? null
-        : group.getFileForOutput(className, kind);
+        : group.getFileForOutput(packageName, relativeName);
   }
 
   @Nullable
