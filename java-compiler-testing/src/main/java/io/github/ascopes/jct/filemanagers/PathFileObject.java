@@ -282,7 +282,7 @@ public interface PathFileObject extends JavaFileObject {
    * Attempt to upcast a given {@link FileObject} to a {@link PathFileObject}.
    *
    * @param fileObject the file object to try and upcast.
-   * @returns an optional containing the upcast file object, if the input was
+   * @return an optional containing the upcast file object, if the input was
    *     able to be upcast, or an empty optional otherwise.
    */
   @API(since = "1.1.5", status = Status.STABLE)
