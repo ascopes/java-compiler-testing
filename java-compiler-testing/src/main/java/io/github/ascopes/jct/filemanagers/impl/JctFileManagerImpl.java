@@ -140,10 +140,10 @@ public final class JctFileManagerImpl implements JctFileManager {
       FileObject sibling
   ) {
     requireOutputLocation(location);
-    var group = getContainerGroupForOutput(location);
+    var group = repository.getPackageOrientedContainerGroup(location);
     return group == null
         ? null
-        : group.getFileForOutput(packageName, relativeName);
+        : group.getFileForOutput(className, kind);
   }
 
   @Nullable
@@ -168,7 +168,7 @@ public final class JctFileManagerImpl implements JctFileManager {
       FileObject sibling
   ) {
     requireOutputLocation(location);
-    var group = getContainerGroupForOutput(location);
+    var group = repository.getPackageOrientedContainerGroup(location);
     return group == null
         ? null
         : group.getJavaFileForOutput(className, kind);
@@ -284,7 +284,6 @@ public final class JctFileManagerImpl implements JctFileManager {
   @Override
   public String inferModuleName(Location location) {
     requirePackageOrientedLocation(location);
-
     return ModuleLocation
         .upcast(location)
         .map(ModuleLocation::getModuleName)
@@ -311,7 +310,6 @@ public final class JctFileManagerImpl implements JctFileManager {
       boolean recurse
   ) throws IOException {
     requirePackageOrientedLocation(location);
-
     var group = repository.getPackageOrientedContainerGroup(location);
     return group == null
         ? Set.of()
@@ -329,22 +327,6 @@ public final class JctFileManagerImpl implements JctFileManager {
     return new ToStringBuilder(this)
         .attribute("repository", repository)
         .toString();
-  }
-
-  @Nullable
-  private PackageContainerGroup getModuleContainerGroupForOutput(ModuleLocation moduleLocation) {
-    var parentGroup = repository.getOutputContainerGroup(moduleLocation.getParent());
-
-    return parentGroup == null
-        ? null
-        : parentGroup.getOrCreateModule(moduleLocation.getModuleName());
-  }
-
-  @Nullable
-  private PackageContainerGroup getContainerGroupForOutput(Location location) {
-    return ModuleLocation.upcast(location)
-        .map(this::getModuleContainerGroupForOutput)
-        .orElseGet(() -> repository.getOutputContainerGroup(location));
   }
 
   private void requireOutputOrModuleOrientedLocation(Location location) {
