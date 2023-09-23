@@ -23,6 +23,7 @@ import java.io.Writer;
 import java.net.URI;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.Optional;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
 import javax.tools.FileObject;
@@ -276,4 +277,18 @@ public interface PathFileObject extends JavaFileObject {
    */
   @Override
   URI toUri();
+
+  /**
+   * Attempt to upcast a given {@link FileObject} to a {@link PathFileObject}.
+   *
+   * @param fileObject the file object to try and upcast.
+   * @returns an optional containing the upcast file object, if the input was
+   *     able to be upcast, or an empty optional otherwise.
+   */
+  @API(since = "1.1.5", status = Status.STABLE)
+  static Optional<PathFileObject> upcast(FileObject fileObject) {
+    return Optional.of(fileObject)
+        .filter(PathFileObject.class::isInstance)
+        .map(PathFileObject.class::cast);
+  }
 }
