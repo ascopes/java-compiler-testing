@@ -55,12 +55,12 @@ import org.slf4j.LoggerFactory;
 public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilationFactoryImpl.class);
-  private static final String THE_ROOT_PACKAGE = "";
+  private static final String ROOT_PACKAGE = "";
   
   private final JctCompiler compiler;
 
   public JctCompilationFactoryImpl(JctCompiler compiler) {
-    this.compiler = compiler;
+    this.compiler = requireNonNull(compiler);
   }
 
   @Override
@@ -71,6 +71,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       @Nullable Collection<String> classNames
   ) {
     try {
+      final var startPreparation = System.nanoTime();
       var compilationUnits = findFilteredCompilationUnits(fileManager, classNames);
 
       if (compilationUnits.isEmpty()) {
@@ -81,16 +82,18 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       var writer = TeeWriter.wrapOutputStream(System.out, compiler.getLogCharset());
 
       var diagnosticListener = new TracingDiagnosticListener<>(
-          compiler.getDiagnosticLoggingMode() != LoggingMode.DISABLED,
-          compiler.getDiagnosticLoggingMode() == LoggingMode.STACKTRACES
+          /* enabled */ compiler.getDiagnosticLoggingMode() != LoggingMode.DISABLED,
+          /* stackTraces */ compiler.getDiagnosticLoggingMode() == LoggingMode.STACKTRACES
       );
 
+      // We work out the classes to annotation process rather than relying on the
+      // compiler to do this, as we retain more control by doing so.
       var task = jsr199Compiler.getTask(
           writer,
           fileManager,
           diagnosticListener,
           flags,
-          null,
+          /* classes */ null,
           compilationUnits
       );
 
@@ -101,20 +104,23 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
       task.setLocale(compiler.getLocale());
 
+      var preparationExecutionTimeMs = timeDeltaMs(startPreparation);
+
       LOGGER
           .atInfo()
-          .setMessage("Starting compilation with {} (found {} compilation units)")
+          .setMessage("Starting compilation with {} (found {} compilation units in approx {}ms)")
           .addArgument(compiler::getName)
           .addArgument(compilationUnits::size)
+          .addArgument(preparationExecutionTimeMs)
           .log();
 
-      var start = System.nanoTime();
+      var startCompilation = System.nanoTime();
       var success = requireNonNull(
           task.call(),
           () -> "Compiler " + compiler.getName()
               + " task .call() method returned null unexpectedly!"
       );
-      var delta = (System.nanoTime() - start) / 1_000_000L;
+      var compilationExecutionTimeMs = timeDeltaMs(startCompilation);
 
       // Ensure we commit the writer contents to the wrapped output stream in full.
       writer.flush();
@@ -124,8 +130,11 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
           .setMessage("Compilation with {} {} after approximately {}ms (roughly {} classes/sec)")
           .addArgument(compiler::getName)
           .addArgument(() -> success ? "completed successfully" : "failed")
-          .addArgument(delta)
-          .addArgument(() -> String.format("%.2f", 1000.0 * compilationUnits.size() / delta))
+          .addArgument(compilationExecutionTimeMs)
+          .addArgument(() -> String.format(
+              "%.2f", 
+              (1000.0 * compilationUnits.size()) / compilationExecutionTimeMs
+          ))
           .log();
 
       return JctCompilationImpl
@@ -177,8 +186,9 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
   private Collection<JavaFileObject> findCompilationUnits(
       JctFileManager fileManager
   ) throws IOException {
-    var locations = IterableUtils
-        .flatten(fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH));
+    // If we use modules, we may have more than one module location to search for.
+    var deepLocations = fileManager.listLocationsForModules(StandardLocation.MODULE_SOURCE_PATH);
+    var locations = IterableUtils.flatten(deepLocations);
 
     if (locations.isEmpty()) {
       LOGGER.info(
@@ -192,30 +202,24 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
     }
 
     // Use a linked hash set to retain order for consistency.
-    var objects = new LinkedHashSet<JavaFileObject>();
+    var fileObjects = new LinkedHashSet<JavaFileObject>();
+    var kinds = Set.of(Kind.SOURCE);
 
     for (var location : locations) {
-      objects.addAll(fileManager.list(location, THE_ROOT_PACKAGE, Set.of(Kind.SOURCE), true));
+      var nextFileObjects = fileManager.list(location, ROOT_PACKAGE, kinds, true);
+      fileObjects.addAll(nextFileObjects);
     }
 
-    return objects;
+    return fileObjects;
   }
 
   private Collection<JavaFileObject> filterCompilationUnitsByBinaryNames(
       Collection<JavaFileObject> compilationUnits,
       Collection<String> classNames
   ) {
-    // We need to access the binary name of each file object. This forces us
-    // to cast to PathFileObject in an unsafe way as the standard JavaFileObject
-    // interface does not expose this information consistently.
-    // All JCT implementations should be using PathFileObject types internally
-    // anyway, so this should be fine as a hack for now. In the future I may decide
-    // to add an additional set of methods to PathFileObject to expose searching
-    // for PathFileObjects directly to prevent the cast back to JavaFileObject that
-    // makes us need this hsck.
     var binaryNamesToCompilationUnits = compilationUnits
         .stream()
-        .map(PathFileObject.class::cast)
+        .map(this::forceUpcastJavaFileObject)
         .filter(fo -> classNames.contains(fo.getBinaryName()))
         .collect(Collectors.toMap(PathFileObject::getBinaryName, JavaFileObject.class::cast));
 
@@ -228,11 +232,30 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
     }
 
     LOGGER.atDebug()
-        .setMessage("Filtered {} candidate compilation units down to {} final compilation units")
+        .setMessage("Filtered {} candidate compilation units down to {} via class whitelist {}")
         .addArgument(compilationUnits::size)
         .addArgument(binaryNamesToCompilationUnits::size)
+        .addArgument(classNames)
         .log();
 
     return binaryNamesToCompilationUnits.values();
+  }
+
+  // We need to access the binary name of each file object. This forces us
+  // to cast to PathFileObject in an unsafe way as the standard JavaFileObject
+  // interface does not expose this information consistently.
+  // All JCT implementations should be using PathFileObject types internally
+  // anyway, so this should be fine as a hack for now. In the future I may decide
+  // to add an additional set of methods to PathFileObject to expose searching
+  // for PathFileObjects directly to prevent the cast back to JavaFileObject that
+  // makes us need this hack.
+  private PathFileObject forceUpcastJavaFileObject(JavaFileObject jfo) {
+    assert jfo instanceof PathFileObject
+        : "Unexpected state: JavaFileObject " + jfo + " was not a PathFileObject!";
+    return (PathFileObject) jfo;
+  }
+
+  private static long timeDeltaMs(long startNanos) {
+    return (System.nanoTime() - startNanos) / 1_000_000;
   }
 }
