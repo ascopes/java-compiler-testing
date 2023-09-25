@@ -41,16 +41,23 @@ ignored.
 ## Getting help
 
 Please make a discussion in the discussions tab rather
-than opening a new issue if you need help with something!
+than opening a new issue if you need help with using this library.
 
 ## Contributing changes to fix issues
 
 If you are contributing to an issue, drop a message on
-that issue so that I can assign it to you! If you would be
+that issue so that I can assign it to you! **If you would be
 able to keep me up to date with any progress on that issue,
-that would be fantastic, since it enables me to track
+that would be fantastic**, since it enables me to track
 how much work is left to do and to be able to provide any
 help if needed.
+
+Everyone is entitled to their own life, but if I haven't heard anything back for a while, 
+then I may unassign issues at my own discretion so that it can be worked on. If there is any
+reason you may not be able to do something for a while, then just let me know.
+
+This is just so I can keep track of what is being worked on without changes being proposed
+but never actually finished.
 
 ## Branching
 
@@ -127,3 +134,19 @@ Please try to keep commits atomic and clear. Each commit
 should ideally leave the project in a working state. Each
 commit should also have a clear title and explaination as
 to what the commit changes, and why.
+
+## Deployment process
+
+Deployments to Maven Central are performed from GitHub Actions, and are triggered when we feel 
+that it is an appropriate time to release a change.
+
+Unless otherwise specified, deployments will occur from the `main` branch, so any PRs should
+target that branch where possible.
+
+Changelogs are automatically generated from the pull request history between the head of the 
+`main` branch and the last tag that was added. This is why it is important to have descriptive
+pull requests where appropriate.
+
+Upon successfully deploying to Maven Central, a release will be added to the 
+[releases](../../releases) page on the repository. A changelog will automatically get
+attached and any contributors will be `@mentioned` in those changelogs.
