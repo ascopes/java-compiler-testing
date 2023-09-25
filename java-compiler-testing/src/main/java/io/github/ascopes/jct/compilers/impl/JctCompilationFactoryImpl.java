@@ -131,7 +131,10 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
           .addArgument(compiler::getName)
           .addArgument(() -> success ? "completed successfully" : "failed")
           .addArgument(compilationExecutionTimeMs)
-          .addArgument(() -> String.format("%.2f", 1000.0 * compilationUnits.size() / delta))
+          .addArgument(() -> String.format(
+              "%.2f", 
+              (1000.0 * compilationUnits.size()) / compilationExecutionTimeMs
+          ))
           .log();
 
       return JctCompilationImpl
