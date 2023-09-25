@@ -299,8 +299,8 @@
             </consoleOutputReporter>
             <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode">
               <disable>false</disable>
-              <printStackTraceOnError>true</printStackTraceOnError>
-              <printStackTraceOnFailure>true</printStackTraceOnFailure>
+              <printStacktraceOnError>true</printStacktraceOnError>
+              <printStacktraceOnFailure>true</printStacktraceOnFailure>
               <usePhrasedFileName>false</usePhrasedFileName>
               <usePhrasedClassNameInRunning>true</usePhrasedClassNameInRunning>
               <usePhrasedClassNameInTestCaseSummary>true</usePhrasedClassNameInTestCaseSummary>
@@ -467,8 +467,8 @@
             </consoleOutputReporter>
             <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode">
               <disable>false</disable>
-              <printStackTraceOnError>true</printStackTraceOnError>
-              <printStackTraceOnFailure>true</printStackTraceOnFailure>
+              <printStacktraceOnError>true</printStacktraceOnError>
+              <printStacktraceOnFailure>true</printStacktraceOnFailure>
               <usePhrasedFileName>false</usePhrasedFileName>
               <usePhrasedClassNameInRunning>true</usePhrasedClassNameInRunning>
               <usePhrasedClassNameInTestCaseSummary>true</usePhrasedClassNameInTestCaseSummary>
