@@ -204,10 +204,10 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
     for (var location : locations) {
       var nextFileObjects = fileManager.list(location, ROOT_PACKAGE, kinds, true);
-      objects.addAll(nextFileObjects);
+      fileObjects.addAll(nextFileObjects);
     }
 
-    return objects;
+    return fileObjects;
   }
 
   private Collection<JavaFileObject> filterCompilationUnitsByBinaryNames(
