@@ -360,47 +360,6 @@ holding the flags you wish to use.
    has a high churn of objects. On Java 11, the ZGC is an experimental feature, which needs
    to be enabled with `-XX:+UnlockExperimentalOptions -XX:+UseZGC`. On Java 17, you just
    need to pass `-XX:+UseZGC` alone.
-   
-## Building this project
-
-This project uses Java 11, and bootstraps Maven using the Maven Wrapper tooling. This means that
-all you need to build this is any JDK from Java 11
-onwards: everything else will be set up automatically for you.
-
-### Unix-like systems
-
-On Linux, BSD, and MacOS, I tend to use [sdkman!](https://sdkman.io/) to install the JDK I want to use:
-
-```shell
-# Install sdkman
-$ curl -s "https://get.sdkman.io" | bash
-$ source "$HOME/.sdkman/bin/sdkman-init.sh"
-
-# See what versions of Java are available
-$ sdk list java
-
-# Install a JDK of my choice, like Amazon Corretto
-$ sdk install java x.y.z-amzn
-```
-
-Once that is configured, you can just run the Maven Wrapper shell script to download, install,
-and run the correct version of Maven:
-
-```shell
-$ ./mvnw clean package
-```
-
-### Windows systems
-
-On Windows, you can install the JDK of your choice directly from their website, or use Chocolatey to
-install it for you. Once installed, you can just run the Maven Wrapper batch script to download,
-install, and run the correct version of Maven:
-
-```cmd
-.\mvnw.cmd clean package
-```
-
----
 
 ## Third-party compiler support
 
