@@ -28,7 +28,7 @@
 
   <artifactId>acceptance-tests-lombok</artifactId>
   <name>JCT acceptance tests for Lombok</name>
-  <description>Acceptance test components.</description>
+  <description>Acceptance tests for Lombok.</description>
 
   <properties>
     <lombok.version>1.18.30</lombok.version>
@@ -38,12 +38,6 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>java-compiler-testing</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.groovy</groupId>
-      <artifactId>groovy</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -69,11 +63,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.gmavenplus</groupId>
-        <artifactId>gmavenplus-plugin</artifactId>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>

@@ -28,7 +28,7 @@
 
   <artifactId>acceptance-tests-spring</artifactId>
   <name>JCT acceptance tests for Spring Framework 6</name>
-  <description>Acceptance test components.</description>
+  <description>Acceptance tests for Spring Framework.</description>
 
   <properties>
     <spring-boot.version>3.1.4</spring-boot.version>
@@ -87,12 +87,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.groovy</groupId>
-      <artifactId>groovy</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
@@ -108,11 +102,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.gmavenplus</groupId>
-        <artifactId>gmavenplus-plugin</artifactId>
-      </plugin>
-
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
@@ -121,7 +110,7 @@
 
   <profiles>
     <profile>
-      <id>${project.artifactId}::ignore-tests-before-jdk17</id>
+      <id>${project.artifactId}-incompatible-jdk</id>
       <activation>
         <jdk>[,17)</jdk>
       </activation>
