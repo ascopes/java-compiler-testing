@@ -69,7 +69,7 @@ public final class JarContainerImpl implements Container {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JarContainerImpl.class);
 
-  private static final Lazy<FileSystemProvider> JAR_FS_PROVIDER = new Lazy(() -> {
+  private static final Lazy<FileSystemProvider> JAR_FS_PROVIDER = new Lazy<>(() -> {
     for (var fsProvider : FileSystemProvider.installedProviders()) {
       if (fsProvider.getScheme().equals("jar")) {
         return fsProvider;
@@ -299,7 +299,7 @@ public final class JarContainerImpl implements Container {
       // as soon as we attempt to inspect any attribute within it, since we may not ever need to
       // process the actual values here.
       
-      packages = new Lazy(() -> uncheckedIo(() -> {
+      packages = new Lazy<>(() -> uncheckedIo(() -> {
         LOGGER.trace("Indexing packages in JAR {}...", actualJarPath);
         try (var walker = Files.walk(rootDirectory)) {
           return walker
@@ -319,7 +319,7 @@ public final class JarContainerImpl implements Container {
         }
       }));
 
-      files = new Lazy(() -> uncheckedIo(() -> {
+      files = new Lazy<>(() -> uncheckedIo(() -> {
         LOGGER.trace("Indexing files in JAR {}...", actualJarPath);
         var allPaths = new ArrayList<Path>(6);
 

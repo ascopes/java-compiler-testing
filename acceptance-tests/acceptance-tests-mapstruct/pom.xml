@@ -28,7 +28,7 @@
 
   <artifactId>acceptance-tests-mapstruct</artifactId>
   <name>JCT acceptance tests for MapStruct</name>
-  <description>Acceptance test components.</description>
+  <description>Acceptance tests for MapStruct.</description>
 
   <properties>
     <mapstruct.version>1.5.5.Final</mapstruct.version>
@@ -38,12 +38,6 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>java-compiler-testing</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.groovy</groupId>
-      <artifactId>groovy</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -76,11 +70,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.gmavenplus</groupId>
-        <artifactId>gmavenplus-plugin</artifactId>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>

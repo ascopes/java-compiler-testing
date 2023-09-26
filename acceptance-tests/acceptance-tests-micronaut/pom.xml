@@ -28,7 +28,7 @@
 
   <artifactId>acceptance-tests-micronaut</artifactId>
   <name>JCT acceptance tests for Micronaut</name>
-  <description>Acceptance test components.</description>
+  <description>Acceptance tests for Micronaut.</description>
 
   <properties>
     <micronaut.version>3.10.1</micronaut.version>
@@ -69,12 +69,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.groovy</groupId>
-      <artifactId>groovy</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>jakarta.annotation</groupId>
       <artifactId>jakarta.annotation-api</artifactId>
     </dependency>
@@ -94,11 +88,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.gmavenplus</groupId>
-        <artifactId>gmavenplus-plugin</artifactId>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>

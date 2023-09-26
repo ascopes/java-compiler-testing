@@ -28,7 +28,7 @@
 
   <artifactId>acceptance-tests-google-auto-value</artifactId>
   <name>JCT acceptance tests for Google AutoValue</name>
-  <description>Acceptance test components.</description>
+  <description>Acceptance tests for Google AutoValue.</description>
 
   <properties>
     <auto-value.version>1.10.4</auto-value.version>
@@ -56,12 +56,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.groovy</groupId>
-      <artifactId>groovy</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
@@ -76,11 +70,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.gmavenplus</groupId>
-        <artifactId>gmavenplus-plugin</artifactId>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
