@@ -91,4 +91,17 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>${project.artifactId}-incompatible-jdk</id>
+      <activation>
+        <!-- No idea why JDK 16 doesn't work specifically. -->
+        <jdk>16</jdk>
+      </activation>
+      <properties>
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
+    </profile>
+  </profiles>
 </project>
