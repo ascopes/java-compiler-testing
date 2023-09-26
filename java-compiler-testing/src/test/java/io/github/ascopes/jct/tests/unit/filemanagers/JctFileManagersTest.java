@@ -40,21 +40,6 @@ class JctFileManagersTest implements UtilityClassTestTemplate {
     return JctFileManagers.class;
   }
 
-  @DisplayName(".newJctFileManager(String) returns a new JctFileManagerImpl instance")
-  @SuppressWarnings("removal")
-  @Test
-  void newJctFileManagerReturnsNewJctFileManagerImplInstance() {
-    // Given
-    var release = someRelease();
-
-    // When
-    var fileManager = JctFileManagers.newJctFileManager(release);
-
-    // Then
-    assertThat(fileManager).isInstanceOf(JctFileManagerImpl.class);
-    assertThat(fileManager.getEffectiveRelease()).isEqualTo(release);
-  }
-
   @DisplayName(
       ".newJctFileManagerFactory(JctCompiler) returns a new JctFileManagerFactoryImpl instance"
   )
