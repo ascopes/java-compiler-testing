@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.acceptancetests.serviceloaderjpms.testing
+package io.github.ascopes.jct.acceptancetests.serviceloaderjpms.testing;
 
-import io.github.ascopes.jct.acceptancetests.serviceloaderjpms.ServiceProcessor
-import io.github.ascopes.jct.compilers.JctCompiler
-import io.github.ascopes.jct.junit.JavacCompilerTest
-import io.github.ascopes.jct.workspaces.Workspaces
-import org.junit.jupiter.api.DisplayName
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 
-import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
+import io.github.ascopes.jct.acceptancetests.serviceloaderjpms.ServiceProcessor;
+import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.JavacCompilerTest;
+import io.github.ascopes.jct.workspaces.Workspaces;
+import org.junit.jupiter.api.DisplayName;
 
 @DisplayName("ServiceProcessor tests (JPMS)")
 class ServiceProcessorJpmsTest {
@@ -29,43 +29,43 @@ class ServiceProcessorJpmsTest {
   @DisplayName("Expected files get created when the processor is run")
   @JavacCompilerTest(minVersion = 9)
   void expectedFilesGetCreated(JctCompiler compiler) {
-    try (def workspace = Workspaces.newWorkspace()) {
+    try (var workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()
           .createDirectory("org", "example")
-          .copyContentsFrom("src", "test", "resources", "code", "org", "example")
+          .copyContentsFrom("src", "test", "resources", "code", "org", "example");
 
-      def compilation = compiler
+      var compilation = compiler
           .addAnnotationProcessors(new ServiceProcessor())
-          .compile(workspace)
+          .compile(workspace);
 
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings()
           .classOutputPackages()
           .fileExists("META-INF", "services", "org.example.InsultProvider")
-          .hasContent("org.example.MeanInsultProviderImpl")
+          .hasContent("org.example.MeanInsultProviderImpl");
     }
   }
 
   @DisplayName("Expected files get created when the processor is run in multi-module roots")
   @JavacCompilerTest(minVersion = 9)
   void expectedFilesGetCreatedInMultiModuleRoots(JctCompiler compiler) {
-    try (def workspace = Workspaces.newWorkspace()) {
+    try (var workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathModule("org.example")
-          .copyContentsFrom("src", "test", "resources", "code")
+          .copyContentsFrom("src", "test", "resources", "code");
 
-      def compilation = compiler
+      var compilation = compiler
           .addAnnotationProcessors(new ServiceProcessor())
-          .compile(workspace)
+          .compile(workspace);
 
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings()
           .classOutputModules().moduleExists("org.example")
           .fileExists("META-INF", "services", "org.example.InsultProvider")
-          .hasContent("org.example.MeanInsultProviderImpl")
+          .hasContent("org.example.MeanInsultProviderImpl");
     }
   }
 }
