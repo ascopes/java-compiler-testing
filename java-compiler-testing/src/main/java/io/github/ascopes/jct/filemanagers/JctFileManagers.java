@@ -36,18 +36,6 @@ public final class JctFileManagers extends UtilityClass {
   }
 
   /**
-   * Create a new default implementation of a file manager.
-   *
-   * @param release the Java release to use for the file manager.
-   * @return the file manager instance.
-   * @deprecated use {@link #newJctFileManagerFactory} instead.
-   */
-  @Deprecated(forRemoval = true, since = "1.1.3")
-  public static JctFileManager newJctFileManager(String release) {
-    return new JctFileManagerImpl(release);
-  }
-
-  /**
    * Create a new default implementation of a file manager factory.
    *
    * @param compiler the JctCompiler to bind any file managers to.
