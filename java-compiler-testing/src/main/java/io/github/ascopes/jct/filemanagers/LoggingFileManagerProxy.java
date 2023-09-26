@@ -49,14 +49,12 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
   private final Logger logger;
   private final JctFileManager inner;
   private final boolean stackTraces;
-  private final ThreadLocal<Integer> stackDepth;
 
   private LoggingFileManagerProxy(JctFileManager inner, boolean stackTraces) {
     // Instance scoped for testing purposes.
     logger = LoggerFactory.getLogger(LoggingFileManagerProxy.class);
     this.inner = inner;
     this.stackTraces = stackTraces;
-    stackDepth = ThreadLocal.withInitial(() -> 0);
   }
 
   /**
@@ -77,7 +75,6 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
     var thread = LoomPolyfill.getCurrentThread();
     var threadId = LoomPolyfill.getThreadId(thread);
 
-    var depth = incrementStackDepth();
     var returnType = method.getReturnType().getSimpleName();
     var methodName = method.getName();
     var paramStr = Stream
@@ -95,9 +92,8 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
 
     logger
         .atDebug()
-        .setMessage(">>> [thread={}, depth={}] {} {}({}) called with ({}){}")
+        .setMessage(">>> [thread={}] {} {}({}) called with ({}){}")
         .addArgument(threadId)
-        .addArgument(depth)
         .addArgument(returnType)
         .addArgument(methodName)
         .addArgument(paramStr)
@@ -111,9 +107,8 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
       if (method.getReturnType().equals(void.class)) {
         logger
             .atDebug()
-            .setMessage("<<< [thread={}, depth={}] {} {}({}) completed")
+            .setMessage("<<< [thread={}] {} {}({}) completed")
             .addArgument(threadId)
-            .addArgument(depth)
             .addArgument(returnType)
             .addArgument(methodName)
             .addArgument(paramStr)
@@ -121,9 +116,8 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
       } else {
         logger
             .atDebug()
-            .setMessage("<<< [thread={}, depth={}] {} {}({}) returned {}")
+            .setMessage("<<< [thread={}] {} {}({}) returned {}")
             .addArgument(threadId)
-            .addArgument(depth)
             .addArgument(returnType)
             .addArgument(methodName)
             .addArgument(paramStr)
@@ -134,12 +128,10 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
       return result;
 
     } catch (ReflectiveOperationException ex) {
-
       logger
           .atDebug()
-          .setMessage("!!! [thread={}, depth={}] {} {}({}) threw exception")
+          .setMessage("!!! [thread={}] {} {}({}) threw exception")
           .addArgument(threadId)
-          .addArgument(depth)
           .addArgument(returnType)
           .addArgument(methodName)
           .addArgument(paramStr)
@@ -148,8 +140,6 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
 
       throw ex.getCause();
 
-    } finally {
-      decrementStackDepth();
     }
   }
 
@@ -159,17 +149,6 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
         .attribute("inner", inner)
         .attribute("stackTraces", stackTraces)
         .toString();
-  }
-
-  private int incrementStackDepth() {
-    var depth = stackDepth.get() + 1;
-    stackDepth.set(depth);
-    return depth;
-  }
-
-  private void decrementStackDepth() {
-    var depth = stackDepth.get() - 1;
-    stackDepth.set(depth);
   }
 
   private Supplier<String> stackTraceFormatter(StackTraceElement[] stackTrace) {

@@ -192,9 +192,8 @@ class LoggingFileManagerProxyTest {
     slf4jLoggerFake.assertThatEntryLogged(
         Level.DEBUG,
         null,
-        ">>> [thread={}, depth={}] {} {}({}) called with ({}){}",
+        ">>> [thread={}] {} {}({}) called with ({}){}",
         threadId,
-        1,
         method.getReturnType().getSimpleName(),
         method.getName(),
         Stream.of(method.getParameterTypes())
@@ -226,9 +225,8 @@ class LoggingFileManagerProxyTest {
     slf4jLoggerFake.assertThatEntryLogged(
         Level.DEBUG,
         null,
-        ">>> [thread={}, depth={}] {} {}({}) called with ({}){}",
+        ">>> [thread={}] {} {}({}) called with ({}){}",
         threadId,
-        1,
         method.getReturnType().getSimpleName(),
         method.getName(),
         Stream.of(method.getParameterTypes())
@@ -262,9 +260,8 @@ class LoggingFileManagerProxyTest {
       slf4jLoggerFake.assertThatEntryLogged(
           Level.DEBUG,
           null,
-          "<<< [thread={}, depth={}] {} {}({}) completed",
+          "<<< [thread={}] {} {}({}) completed",
           threadId,
-          1,
           method.getReturnType().getSimpleName(),
           method.getName(),
           Stream.of(method.getParameterTypes())
@@ -275,9 +272,8 @@ class LoggingFileManagerProxyTest {
       slf4jLoggerFake.assertThatEntryLogged(
           Level.DEBUG,
           null,
-          "<<< [thread={}, depth={}] {} {}({}) returned {}",
+          "<<< [thread={}] {} {}({}) returned {}",
           threadId,
-          1,
           method.getReturnType().getSimpleName(),
           method.getName(),
           Stream.of(method.getParameterTypes())
@@ -312,9 +308,8 @@ class LoggingFileManagerProxyTest {
     slf4jLoggerFake.assertThatEntryLogged(
         Level.DEBUG,
         exception,
-        "!!! [thread={}, depth={}] {} {}({}) threw exception",
+        "!!! [thread={}] {} {}({}) threw exception",
         threadId,
-        1,
         method.getReturnType().getSimpleName(),
         method.getName(),
         Stream.of(method.getParameterTypes())
