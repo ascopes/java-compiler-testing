@@ -31,7 +31,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 @DisplayName("Avaje Jsonb acceptance tests")
 class AvajeJsonbTest {
   @DisplayName("JSON handling logic is generated as expected")
-  @JavacCompilerTest
+  @JavacCompilerTest(minVersion = 11)
   void jsonHandlingLogicIsGeneratedAsExpected(JctCompiler compiler) throws Throwable {
     // Given
     try (var workspace = Workspaces.newWorkspace()) {
