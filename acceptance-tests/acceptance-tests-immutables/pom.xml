@@ -31,7 +31,7 @@
   <description>Acceptance tests for Immutables.</description>
 
   <properties>
-    <immutables.version>2.9.3</immutables.version>
+    <immutables.version>2.10.0</immutables.version>
   </properties>
 
   <dependencies>
