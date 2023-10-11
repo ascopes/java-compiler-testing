@@ -66,6 +66,7 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
    * @return the result.
    * @throws Throwable any exception that is thrown.
    */
+  @Nullable
   @Override
   public Object invoke(Object proxy, Method method, Object @Nullable ... args) throws Throwable {
     if (method.getName().equals("toString")) {
