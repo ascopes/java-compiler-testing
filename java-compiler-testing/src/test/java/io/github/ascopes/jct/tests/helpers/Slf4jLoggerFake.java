@@ -18,13 +18,13 @@ package io.github.ascopes.jct.tests.helpers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.utils.ToStringBuilder;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
 import org.slf4j.helpers.AbstractLogger;
@@ -32,15 +32,17 @@ import org.slf4j.helpers.AbstractLogger;
 /**
  * Fake implementation of a SLF4J logger that captures all logging inputs.
  *
+ * <p>This implementation is thread-safe.
+ *
  * @author Ashley Scopes
  * @since 0.0.1
  */
 public final class Slf4jLoggerFake extends AbstractLogger {
 
-  private final List<Entry<Level, LogRecord>> entries;
+  private final List<LogRecord> entries;
 
   public Slf4jLoggerFake() {
-    entries = new ArrayList<>();
+    entries = Collections.synchronizedList(new ArrayList<LogRecord>(32));
   }
 
   /**
@@ -53,20 +55,19 @@ public final class Slf4jLoggerFake extends AbstractLogger {
    */
   public void assertThatEntryLogged(
       Level level,
-      Throwable ex,
+      @Nullable Throwable ex,
       String message,
       Object... args
   ) {
     var levelEntries = entries
         .stream()
-        .filter(entry -> entry.getKey().equals(level));
+        .filter(entry -> entry.level.equals(level));
 
-    var expect = new LogRecord(ex, message, args);
+    var expect = new LogRecord(level, ex, message, args);
 
     assertThat(levelEntries)
         .withFailMessage("Expected at least one %s entry to be logged", level)
         .hasSizeGreaterThan(0)
-        .extracting(Entry::getValue)
         .withFailMessage(
             "No log entry at level %s found that matches\n - %s\nAll invocations:\n%s",
             level,
@@ -87,16 +88,12 @@ public final class Slf4jLoggerFake extends AbstractLogger {
   @Override
   protected void handleNormalizedLoggingCall(
       Level level,
-      Marker marker,
+      @Nullable Marker marker,
       String format,
       Object[] args,
-      Throwable throwable
+      @Nullable Throwable throwable
   ) {
-    entries.add(new SimpleImmutableEntry<>(level, new LogRecord(
-        throwable,
-        format,
-        args
-    )));
+    entries.add(new LogRecord(level, throwable, format, args));
   }
 
   @Override
@@ -105,7 +102,7 @@ public final class Slf4jLoggerFake extends AbstractLogger {
   }
 
   @Override
-  public boolean isTraceEnabled(Marker marker) {
+  public boolean isTraceEnabled(@Nullable Marker marker) {
     return true;
   }
 
@@ -115,7 +112,7 @@ public final class Slf4jLoggerFake extends AbstractLogger {
   }
 
   @Override
-  public boolean isDebugEnabled(Marker marker) {
+  public boolean isDebugEnabled(@Nullable Marker marker) {
     return true;
   }
 
@@ -125,7 +122,7 @@ public final class Slf4jLoggerFake extends AbstractLogger {
   }
 
   @Override
-  public boolean isInfoEnabled(Marker marker) {
+  public boolean isInfoEnabled(@Nullable Marker marker) {
     return true;
 
   }
@@ -136,7 +133,7 @@ public final class Slf4jLoggerFake extends AbstractLogger {
   }
 
   @Override
-  public boolean isWarnEnabled(Marker marker) {
+  public boolean isWarnEnabled(@Nullable Marker marker) {
     return true;
   }
 
@@ -146,35 +143,34 @@ public final class Slf4jLoggerFake extends AbstractLogger {
   }
 
   @Override
-  public boolean isErrorEnabled(Marker marker) {
+  public boolean isErrorEnabled(@Nullable Marker marker) {
     return true;
   }
 
-  private static class LogRecord {
+  private static final class LogRecord {
 
-    private final Throwable ex;
+    private final Level level;
+    private final @Nullable Throwable ex;
     private final String message;
     private final Object[] args;
 
-    LogRecord(
-        Throwable ex,
-        String message,
-        Object... args
-    ) {
+    LogRecord(Level level, @Nullable Throwable ex, String message, Object... args) {
+      this.level = level;
       this.ex = ex;
       this.message = message;
       this.args = args;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
       if (!(obj instanceof LogRecord)) {
         return false;
       }
 
       var that = (LogRecord) obj;
 
-      return Objects.equals(ex, that.ex)
+      return Objects.equal(level, that.level)
+          && Objects.equals(ex, that.ex)
           && Objects.equals(message, that.message)
           && Arrays.deepEquals(args, that.args);
     }
@@ -182,6 +178,7 @@ public final class Slf4jLoggerFake extends AbstractLogger {
     @Override
     public String toString() {
       return new ToStringBuilder(this)
+          .attribute("level", level)
           .attribute("ex", ex)
           .attribute("message", message)
           .attribute("args", args)
