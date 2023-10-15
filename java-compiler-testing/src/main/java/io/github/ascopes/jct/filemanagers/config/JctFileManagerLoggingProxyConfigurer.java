@@ -17,8 +17,8 @@ package io.github.ascopes.jct.filemanagers.config;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
-import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
+import io.github.ascopes.jct.filemanagers.impl.LoggingFileManagerProxy;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;

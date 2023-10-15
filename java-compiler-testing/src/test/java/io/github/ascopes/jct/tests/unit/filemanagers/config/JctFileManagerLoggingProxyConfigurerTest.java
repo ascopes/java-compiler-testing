@@ -23,9 +23,9 @@ import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
-import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerLoggingProxyConfigurer;
+import io.github.ascopes.jct.filemanagers.impl.LoggingFileManagerProxy;
 import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
