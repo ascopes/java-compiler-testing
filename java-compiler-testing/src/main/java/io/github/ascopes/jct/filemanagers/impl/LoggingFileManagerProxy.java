@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.filemanagers;
+package io.github.ascopes.jct.filemanagers.impl;
 
+import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.utils.LoomPolyfill;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.lang.reflect.InvocationHandler;
@@ -40,10 +41,13 @@ import org.slf4j.LoggerFactory;
  *
  * <p>All logs are emitted with the {@code DEBUG} logging level.
  *
+ * <p>Since v2.0.0, this class is now an internal class that is not part of the
+ * public API.
+ *
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
+@API(since = "0.0.1", status = Status.INTERNAL)
 public final class LoggingFileManagerProxy implements InvocationHandler {
 
   private final Logger logger;

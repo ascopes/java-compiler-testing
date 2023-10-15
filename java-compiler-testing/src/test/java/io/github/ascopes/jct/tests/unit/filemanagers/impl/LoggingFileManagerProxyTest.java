@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.tests.unit.filemanagers;
+package io.github.ascopes.jct.tests.unit.filemanagers.impl;
 
 import static io.github.ascopes.jct.tests.helpers.Fixtures.oneOf;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someBoolean;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
-import io.github.ascopes.jct.filemanagers.LoggingFileManagerProxy;
+import io.github.ascopes.jct.filemanagers.impl.LoggingFileManagerProxy;
 import io.github.ascopes.jct.tests.helpers.Slf4jLoggerFake;
 import io.github.ascopes.jct.utils.LoomPolyfill;
 import java.lang.reflect.Array;
