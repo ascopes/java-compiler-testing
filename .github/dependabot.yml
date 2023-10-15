@@ -12,30 +12,10 @@ updates:
     labels:
       - ci
       - housekeeping
-  # Update compile dependencies weekly
   - package-ecosystem: maven
     directory: /
     open-pull-requests-limit: 99
     rebase-strategy: auto
-    allow:
-      dependency-type: production
-    schedule:
-      day: monday
-      interval: weekly
-    target-branch: main
-    assignees:
-      - ascopes
-    labels:
-      - housekeeping
-      - java
-      - maven
-  # Update all other dependencies (i.e. test scope) monthly
-  - package-ecosystem: maven
-    directory: /
-    open-pull-requests-limit: 99
-    rebase-strategy: auto
-    allow:
-      dependency-type: all
     schedule:
       interval: monthly
     target-branch: main
