@@ -133,8 +133,8 @@
     -->
     <argLine>
       -Dnet.bytebuddy.experimental=true
-      -Dorg.slf4j.simpleLogger.log=INFO
-      -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=TRACE
+      -Dorg.slf4j.simpleLogger.log=WARN
+      -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=INFO
       -Xshare:off
       -XX:+TieredCompilation
       -XX:TieredStopAtLevel=1
