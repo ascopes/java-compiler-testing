@@ -147,7 +147,7 @@
     <!-- JavaDocs -->
     <current-year>2023</current-year>
     <newest-java-version>21</newest-java-version>
-    <highlight-js.version>11.8.0</highlight-js.version>
+    <highlight-js.version>11.9.0</highlight-js.version>
 
     <!-- Other configuration -->
     <project-slug>ascopes/java-compiler-testing</project-slug>
