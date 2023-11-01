@@ -31,7 +31,7 @@
   <description>Acceptance tests for Micronaut.</description>
 
   <properties>
-    <micronaut.version>3.10.1</micronaut.version>
+    <micronaut.version>3.10.2</micronaut.version>
   </properties>
 
   <dependencyManagement>
