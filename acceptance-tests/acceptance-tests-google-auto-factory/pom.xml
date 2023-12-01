@@ -31,7 +31,7 @@
   <description>Acceptance tests for Google AutoFactory</description>
 
   <properties>
-    <auto-factory.version>1.0.1</auto-factory.version>
+    <auto-factory.version>1.1.0</auto-factory.version>
   </properties>
 
   <dependencies>
