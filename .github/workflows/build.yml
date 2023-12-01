@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 2
 
       - name: Initialize Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: 21
@@ -93,7 +93,7 @@ jobs:
           fetch-depth: 2
 
       - name: Initialize JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           cache: maven
           check-latest: true
@@ -250,7 +250,7 @@ jobs:
           fetch-depth: 2
 
       - name: Initialize Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           # Must use >= JDK 17 for JavaDocs to generate correctly.
