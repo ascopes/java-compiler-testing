@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 2
 
       - name: Initialize Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: zulu
           # Must use >= JDK 17 for Javadocs to generate correctly.
@@ -60,7 +60,7 @@ jobs:
           fetch-depth: 2
 
       - name: Initialize Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: zulu
           # Must use >= JDK 17 for Javadocs to generate correctly.
