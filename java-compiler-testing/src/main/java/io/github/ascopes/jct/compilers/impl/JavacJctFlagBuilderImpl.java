@@ -43,6 +43,7 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   private static final String ANNOTATION_OPT = "-A";
   private static final String PROC_NONE = "-proc:none";
   private static final String PROC_ONLY = "-proc:only";
+  private static final String PROC_ALL = "-proc:all";
 
   private final List<String> craftedFlags;
 
@@ -85,7 +86,9 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
         break;
 
       default:
-        // Do nothing. The default behaviour is to allow this.
+        // In Java 22, the default is to disable all annotation processing by default.
+        // Prior to Java 22, the default was to enable all annotation processing by default.
+        craftedFlags.add(PROC_ALL);
         break;
     }
 
