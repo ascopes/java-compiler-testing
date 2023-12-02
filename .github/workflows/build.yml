@@ -3,7 +3,7 @@ on:
   pull_request:
     branches:
       - '**'
-    types: 
+    types:
       - opened
       - synchronize
   push:
@@ -40,13 +40,13 @@ jobs:
           -Dmaven.resources.skip
           -Dmaven.test.skip
           verify
-      
+
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
         with:
           check_together: 'yes'
           scandir: './scripts'
-          
+
       - name: Validate codecov.yml
         continue-on-error: false
         if: always()
@@ -64,7 +64,7 @@ jobs:
       max-parallel: 6
       matrix:
         os-name: [ubuntu-latest]
-        java-version: 
+        java-version:
           - 11
           - 12
           - 13
@@ -105,12 +105,12 @@ jobs:
         shell: bash
         run: |-
           source "./scripts/common.sh"
-          
+
           # Ensure consistent versions of tools we use. MacOS uses an outdated version of bash, for
           # example.
           case "${OSTYPE}" in
             win*|msys*)
-              run <<< "choco install xsltproc"            
+              run <<< "choco install xsltproc"
               ;;
             darwin*)
               run <<< "brew install bash libxslt"
@@ -163,7 +163,7 @@ jobs:
           set -x
           # Allow globs to not match anything without causing errors.
           shopt -s nullglob
-  
+
           # XZ with max compression, more efficient than using GZip.  
           XZ_OPT=-9 tar -Jcvf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tar.xz \
               $(find . -name surefire-reports -o -name failsafe-reports) \
@@ -275,7 +275,7 @@ jobs:
   publish-documentation:
     name: Publish documentation
     # Do not run multiple builds at once, as it can fail.
-    concurrency: 
+    concurrency:
       cancel-in-progress: true
       group: snapshot-javadocs
 
