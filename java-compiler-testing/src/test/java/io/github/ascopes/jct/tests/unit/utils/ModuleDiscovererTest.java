@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
@@ -31,15 +32,8 @@ import java.lang.module.ModuleReference;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Set;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 /**
  * {@link ModuleDiscoverer} tests.
@@ -47,59 +41,57 @@ import org.mockito.quality.Strictness;
  * @author Ashley Scopes
  */
 @DisplayName("ModuleDiscoverer tests")
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class ModuleDiscovererTest {
-
-  @Mock
-  MockedStatic<ModuleFinder> moduleFinderStatic;
-
-  @Mock
-  ModuleFinder moduleFinder;
-
-  @BeforeEach
-  void setUp() {
-    moduleFinderStatic.when(() -> ModuleFinder.of(any()))
-        .thenReturn(moduleFinder);
-  }
 
   @DisplayName("Modules are discovered")
   @Test
   void modulesAreDiscovered() {
     // Given
-    var path1 = somePath();
-    var module1 = someModuleRef("foo.bar", path1);
-    var path2 = somePath();
-    var module2 = someModuleRef("baz.bork", path2);
-    var path3 = somePath();
-    var module3 = someModuleRef("qux.quxx", path3);
-    when(moduleFinder.findAll()).thenReturn(Set.of(module1, module2, module3));
+    var moduleFinder = mock(ModuleFinder.class);
+    try (var moduleFinderStatic = mockStatic(ModuleFinder.class)) {
+      moduleFinderStatic.when(() -> ModuleFinder.of(any()))
+          .thenReturn(moduleFinder);
 
-    var path = somePath();
+      var path1 = somePath();
+      var module1 = someModuleRef("foo.bar", path1);
+      var path2 = somePath();
+      var module2 = someModuleRef("baz.bork", path2);
+      var path3 = somePath();
+      var module3 = someModuleRef("qux.quxx", path3);
+      when(moduleFinder.findAll()).thenReturn(Set.of(module1, module2, module3));
 
-    // When
-    var results = ModuleDiscoverer.findModulesIn(path);
+      var path = somePath();
 
-    // Then
-    moduleFinderStatic.verify(() -> ModuleFinder.of(path));
-    assertThat(results)
-        .containsEntry("foo.bar", path1)
-        .containsEntry("baz.bork", path2)
-        .containsEntry("qux.quxx", path3)
-        .hasSize(3);
+      // When
+      var results = ModuleDiscoverer.findModulesIn(path);
+
+      // Then
+      moduleFinderStatic.verify(() -> ModuleFinder.of(path));
+      assertThat(results)
+          .containsEntry("foo.bar", path1)
+          .containsEntry("baz.bork", path2)
+          .containsEntry("qux.quxx", path3)
+          .hasSize(3);
+    }
   }
 
   @DisplayName("Module discovery errors fail silently")
   @Test
   void moduleDiscoveryErrorsFailSilently() {
     // Given
-    when(moduleFinder.findAll()).thenThrow(FindException.class);
+    var moduleFinder = mock(ModuleFinder.class);
+    try (var moduleFinderStatic = mockStatic(ModuleFinder.class)) {
+      moduleFinderStatic.when(() -> ModuleFinder.of(any()))
+          .thenReturn(moduleFinder);
 
-    // When
-    var results = ModuleDiscoverer.findModulesIn(somePath());
+      when(moduleFinder.findAll()).thenThrow(FindException.class);
 
-    // Then
-    assertThat(results).isEmpty();
+      // When
+      var results = ModuleDiscoverer.findModulesIn(somePath());
+
+      // Then
+      assertThat(results).isEmpty();
+    }
   }
 
   static ModuleReference someModuleRef(String name, Path path) {
