@@ -21,6 +21,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
 
 import io.github.ascopes.jct.containers.Container;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
@@ -34,14 +35,10 @@ import java.util.stream.Stream;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Answers;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * {@link ContainerGroupRepositoryImpl} tests.
@@ -55,15 +52,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * @author Ashley Scopes
  */
 @DisplayName("ContainerGroupRepositoryImpl tests")
-@ExtendWith(MockitoExtension.class)
 @SuppressWarnings("resource")
 class ContainerGroupRepositoryImplTest {
 
   String release;
   ContainerGroupRepositoryImpl repository;
-
-  @Mock(answer = Answers.RETURNS_SMART_NULLS)
-  MockedStatic<ModuleDiscoverer> moduleDiscoverer;
 
   @BeforeEach
   void setUp() {
@@ -176,22 +169,24 @@ class ContainerGroupRepositoryImplTest {
     @Test
     void addingEmptyDirectoryToModuleOrientedGroupDoesNotRegisterModules() {
       // Given
-      var location = StandardLocation.MODULE_SOURCE_PATH;
-      PathRoot pathRoot = somePathRoot();
+      try (var moduleDiscoverer = mockStatic(ModuleDiscoverer.class)) {
+        var location = StandardLocation.MODULE_SOURCE_PATH;
+        PathRoot pathRoot = somePathRoot();
 
-      moduleDiscoverer.when(() -> ModuleDiscoverer.findModulesIn(any()))
-          .thenReturn(Map.of());
+        moduleDiscoverer.when(() -> ModuleDiscoverer.findModulesIn(any()))
+            .thenReturn(Map.of());
 
-      // When
-      repository.addPath(location, pathRoot);
+        // When
+        repository.addPath(location, pathRoot);
 
-      // Then
-      var groups = repository.getModuleContainerGroups();
-      assertThat(groups)
-          .as("module container groups")
-          .isEmpty();
+        // Then
+        var groups = repository.getModuleContainerGroups();
+        assertThat(groups)
+            .as("module container groups")
+            .isEmpty();
 
-      moduleDiscoverer.verify(() -> ModuleDiscoverer.findModulesIn(pathRoot.getPath()));
+        moduleDiscoverer.verify(() -> ModuleDiscoverer.findModulesIn(pathRoot.getPath()));
+      }
     }
 
     @DisplayName(
@@ -200,60 +195,63 @@ class ContainerGroupRepositoryImplTest {
     @Test
     void addingDirectoryOfModulesToModuleOrientedGroupRegistersThemAsModules() {
       // Given
-      var location = StandardLocation.MODULE_SOURCE_PATH;
-      PathRoot pathRoot = somePathRoot();
+      try (var moduleDiscoverer = mockStatic(ModuleDiscoverer.class)) {
+        var location = StandardLocation.MODULE_SOURCE_PATH;
+        PathRoot pathRoot = somePathRoot();
 
-      var discoveredModules = Stream.of("foo.bar", "baz.bork")
-          .collect(toMap(
-              Function.identity(),
-              pathRoot.getPath()::resolve
-          ));
+        var discoveredModules = Stream.of("foo.bar", "baz.bork")
+            .collect(toMap(
+                Function.identity(),
+                pathRoot.getPath()::resolve
+            ));
 
-      moduleDiscoverer.when(() -> ModuleDiscoverer.findModulesIn(any()))
-          .thenReturn(discoveredModules);
+        moduleDiscoverer.when(() -> ModuleDiscoverer.findModulesIn(any()))
+            .thenReturn(discoveredModules);
 
-      // When
-      repository.addPath(location, pathRoot);
+        // When
+        repository.addPath(location, pathRoot);
 
-      // Then
-      var groups = repository.getModuleContainerGroups();
-      assertThat(groups)
-          .as("module container groups")
-          .hasSize(1);
+        // Then
+        var groups = repository.getModuleContainerGroups();
+        assertThat(groups)
+            .as("module container groups")
+            .hasSize(1);
 
-      var group = groups.iterator().next();
-      assertThat(group.getLocation())
-          .as("module container group location")
-          .isEqualTo(location);
+        var group = groups.iterator().next();
+        assertThat(group.getLocation())
+            .as("module container group location")
+            .isEqualTo(location);
 
-      var modules = group.getModules();
-      assertThat(modules)
-          .as("module container group modules")
-          .hasSize(2);
+        var modules = group.getModules();
+        assertThat(modules)
+            .as("module container group modules")
+            .hasSize(2);
 
-      assertThat(modules.get(new ModuleLocation(StandardLocation.MODULE_SOURCE_PATH, "foo.bar")))
-          .as("module container group module <foo.bar>")
-          .extracting(PackageContainerGroup::getPackages, list(Container.class))
-          .singleElement()
-          .extracting(Container::getPathRoot)
-          .extracting(PathRoot::getPath)
-          .isEqualTo(pathRoot.getPath().resolve("foo.bar"));
+        assertThat(modules.get(new ModuleLocation(StandardLocation.MODULE_SOURCE_PATH, "foo.bar")))
+            .as("module container group module <foo.bar>")
+            .extracting(PackageContainerGroup::getPackages, list(Container.class))
+            .singleElement()
+            .extracting(Container::getPathRoot)
+            .extracting(PathRoot::getPath)
+            .isEqualTo(pathRoot.getPath().resolve("foo.bar"));
 
-      assertThat(modules.get(new ModuleLocation(StandardLocation.MODULE_SOURCE_PATH, "baz.bork")))
-          .as("module container group module <baz.bork>")
-          .extracting(PackageContainerGroup::getPackages, list(Container.class))
-          .singleElement()
-          .extracting(Container::getPathRoot)
-          .extracting(PathRoot::getPath)
-          .isEqualTo(pathRoot.getPath().resolve("baz.bork"));
+        assertThat(modules.get(new ModuleLocation(StandardLocation.MODULE_SOURCE_PATH, "baz.bork")))
+            .as("module container group module <baz.bork>")
+            .extracting(PackageContainerGroup::getPackages, list(Container.class))
+            .singleElement()
+            .extracting(Container::getPathRoot)
+            .extracting(PathRoot::getPath)
+            .isEqualTo(pathRoot.getPath().resolve("baz.bork"));
 
-      moduleDiscoverer.verify(() -> ModuleDiscoverer.findModulesIn(pathRoot.getPath()));
+        moduleDiscoverer.verify(() -> ModuleDiscoverer.findModulesIn(pathRoot.getPath()));
+      }
     }
 
+    @Disabled("todo: continue implementing test cases here...")
     @DisplayName("adding a package root registers the package root")
     @Test
     void addingPackageRootRegistersPackageRoot() {
-
+      // TODO: continue
     }
   }
 }
