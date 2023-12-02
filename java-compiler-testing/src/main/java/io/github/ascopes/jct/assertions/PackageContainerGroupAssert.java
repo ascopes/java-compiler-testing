@@ -28,6 +28,7 @@ import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.repr.LocationRepresentation;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -36,6 +37,8 @@ import java.util.stream.StreamSupport;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractPathAssert;
+import org.assertj.core.description.TextDescription;
+import org.assertj.core.error.MultipleAssertionsError;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -89,12 +92,28 @@ public final class PackageContainerGroupAssert
 
     isNotNull();
 
-    assertThat(paths)
-        .withFailMessage(
-            "Expected all paths in %s to exist but one or more did not",
-            quotedIterable(paths)
-        )
-        .allSatisfy(this::fileExists);
+    var errors = new ArrayList<AssertionError>();
+
+    for (var path : paths) {
+      try {
+        fileExists(path);
+      } catch (AssertionError ex) {
+        errors.add(ex);
+      }
+    }
+
+    if (errors.size() == 1) {
+      throw errors.get(0);
+    } else if (errors.size() > 1) {
+      throw new MultipleAssertionsError(
+          new TextDescription(
+              "Expected all paths in %s to exist but one or more did not",
+              quotedIterable(paths)
+          ),
+          errors
+      );
+    }
+
     return this;
   }
 
