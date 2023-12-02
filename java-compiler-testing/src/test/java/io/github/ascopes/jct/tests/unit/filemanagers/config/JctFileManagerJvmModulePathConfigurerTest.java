@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.tests.helpers.Fixtures.somePath;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,7 +39,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -56,9 +56,6 @@ class JctFileManagerJvmModulePathConfigurerTest {
   @Mock
   JctFileManagerImpl fileManager;
 
-  @Mock
-  MockedStatic<SpecialLocationUtils> specialLocationUtilsStatic;
-
   @InjectMocks
   JctFileManagerJvmModulePathConfigurer configurer;
 
@@ -66,39 +63,41 @@ class JctFileManagerJvmModulePathConfigurerTest {
   @Test
   void configureAddsTheModulePathToTheFileManager() {
     // Given
-    var paths = List.of(
-        somePath(),
-        somePath(),
-        somePath(),
-        somePath()
-    );
+    try (var specialLocationUtilsStatic = mockStatic(SpecialLocationUtils.class)) {
+      var paths = List.of(
+          somePath(),
+          somePath(),
+          somePath(),
+          somePath()
+      );
 
-    specialLocationUtilsStatic.when(SpecialLocationUtils::currentModulePathLocations)
-        .thenReturn(paths);
+      specialLocationUtilsStatic.when(SpecialLocationUtils::currentModulePathLocations)
+          .thenReturn(paths);
 
-    // When
-    configurer.configure(fileManager);
+      // When
+      configurer.configure(fileManager);
 
-    // Then
-    var classPathCaptor = ArgumentCaptor.forClass(WrappingDirectoryImpl.class);
+      // Then
+      var classPathCaptor = ArgumentCaptor.forClass(WrappingDirectoryImpl.class);
 
-    verify(fileManager, times(paths.size()))
-        .addPath(eq(StandardLocation.CLASS_PATH), classPathCaptor.capture());
+      verify(fileManager, times(paths.size()))
+          .addPath(eq(StandardLocation.CLASS_PATH), classPathCaptor.capture());
 
-    var modulePathCaptor = ArgumentCaptor.forClass(WrappingDirectoryImpl.class);
+      var modulePathCaptor = ArgumentCaptor.forClass(WrappingDirectoryImpl.class);
 
-    verify(fileManager, times(paths.size()))
-        .addPath(eq(StandardLocation.MODULE_PATH), modulePathCaptor.capture());
+      verify(fileManager, times(paths.size()))
+          .addPath(eq(StandardLocation.MODULE_PATH), modulePathCaptor.capture());
 
-    assertSoftly(softly -> {
-      softly.assertThat(classPathCaptor.getAllValues())
-          .map(WrappingDirectoryImpl::getPath)
-          .containsExactlyElementsOf(paths);
+      assertSoftly(softly -> {
+        softly.assertThat(classPathCaptor.getAllValues())
+            .map(WrappingDirectoryImpl::getPath)
+            .containsExactlyElementsOf(paths);
 
-      softly.assertThat(modulePathCaptor.getAllValues())
-          .map(WrappingDirectoryImpl::getPath)
-          .containsExactlyElementsOf(paths);
-    });
+        softly.assertThat(modulePathCaptor.getAllValues())
+            .map(WrappingDirectoryImpl::getPath)
+            .containsExactlyElementsOf(paths);
+      });
+    }
   }
 
   @DisplayName(".configure(...) returns the input file manager")
