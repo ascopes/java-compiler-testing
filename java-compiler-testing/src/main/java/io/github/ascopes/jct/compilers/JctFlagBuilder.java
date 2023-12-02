@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.compilers;
 
 import java.util.List;
+import java.util.Set;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
@@ -99,6 +100,24 @@ public interface JctFlagBuilder {
    * @return this builder.
    */
   JctFlagBuilder target(@Nullable String version);
+
+  /**
+   * Add the debugging info flags.
+   *
+   * @param set the set of debugging info flags to enable.
+   * @return this builder.
+   * @since 3.0.0
+   */
+  JctFlagBuilder debuggingInfo(Set<DebuggingInfo> set);
+
+  /**
+   * Specify whether to include parameter reflection info in the compiled classes.
+   *
+   * @param enabled whether the parameter info is enabled or not.
+   * @return this builder.
+   * @since 3.0.0
+   */
+  JctFlagBuilder parameterInfoEnabled(boolean enabled);
 
   /**
    * Add annotation processor options.

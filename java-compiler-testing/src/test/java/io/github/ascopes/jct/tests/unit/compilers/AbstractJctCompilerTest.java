@@ -18,6 +18,7 @@ package io.github.ascopes.jct.tests.unit.compilers;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someBoolean;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someFlags;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someInt;
+import static io.github.ascopes.jct.tests.helpers.Fixtures.someOf;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someRelease;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someText;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.compilers.AbstractJctCompiler;
 import io.github.ascopes.jct.compilers.CompilationMode;
+import io.github.ascopes.jct.compilers.DebuggingInfo;
 import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
@@ -62,6 +64,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
@@ -73,6 +76,7 @@ import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestClassOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -1590,6 +1594,93 @@ class AbstractJctCompilerTest {
     }
   }
 
+  @DisplayName(".getDebuggingInfo() returns the expected values")
+  @EnumSource(DebuggingInfo.class)
+  @ParameterizedTest(name = "for a set of = {0}")
+  void getAnnotationProcessorDiscoveryReturnsExpectedValue(DebuggingInfo expected) {
+    // Given
+    setFieldOnCompiler("debuggingInfo", Set.of(expected));
+
+    // Then
+    assertThat(compiler.getDebuggingInfo())
+        .singleElement()
+        .isEqualTo(expected);
+  }
+
+  @DisplayName("AbstractJctCompiler.debuggingInfo(...) tests")
+  @Nested
+  class DebuggingInfoTests {
+
+    @DisplayName(".debuggingInfo(...) sets the expected values")
+    @Test
+    void debuggingInfoSetsTheExpectedValues() {
+      // Given
+      var flags = DebuggingInfo.all();
+
+      // When
+      compiler.debuggingInfo(flags);
+
+      // Then
+      assertThatCompilerField("debuggingInfo").isEqualTo(flags);
+    }
+
+    @DisplayName(".debuggingInfo(...) throws a NullPointerException if debugging info is null")
+    @Test
+    void debuggingInfoThrowsNullPointerExceptionIfNull() {
+      // Then
+      assertThatThrownBy(() -> compiler.debuggingInfo(null))
+          .isInstanceOf(NullPointerException.class)
+          .hasMessage("debuggingInfo");
+    }
+
+    @DisplayName(".debuggingInfo(...) returns the compiler")
+    @Test
+    void debuggingInfoReturnsTheCompiler() {
+      // When
+      var result = compiler.debuggingInfo(DebuggingInfo.all());
+
+      // Then
+      assertThat(result).isSameAs(compiler);
+    }
+  }
+
+  @DisplayName(".isParameterInfoEnabled() returns the expected values")
+  @ValueSource(booleans = {true, false})
+  @ParameterizedTest(name = "for parameterInfoEnabled = {0}")
+  void isParameterInfoEnabledReturnsExpectedValue(boolean expected) {
+    // Given
+    setFieldOnCompiler("parameterInfoEnabled", expected);
+
+    // Then
+    assertThat(compiler.isParameterInfoEnabled()).isEqualTo(expected);
+  }
+
+  @DisplayName("AbstractJctCompiler.parameterInfoEnabled(...) tests")
+  @Nested
+  class ParameterInfoEnabledTests {
+
+    @DisplayName(".parameterInfoEnabled(...) sets the expected values")
+    @ValueSource(booleans = {true, false})
+    @ParameterizedTest(name = "for parameterInfoEnabled = {0}")
+    void parameterInfoEnabledSetsExpectedValue(boolean expected) {
+      // When
+      compiler.parameterInfoEnabled(expected);
+
+      // Then
+      assertThatCompilerField("parameterInfoEnabled").isEqualTo(expected);
+    }
+
+    @DisplayName(".parameterInfoEnabled(...) returns the compiler")
+    @Test
+    void parameterInfoEnabledReturnsTheCompiler() {
+      // When
+      var result = compiler.parameterInfoEnabled(true);
+
+      // Then
+      assertThat(result).isSameAs(compiler);
+    }
+  }
+
   @DisplayName(".toString() should return the name")
   @Test
   void toStringShouldReturnTheName() {
@@ -1632,7 +1723,7 @@ class AbstractJctCompilerTest {
   }
 
   @DisplayName(".buildFlags(...) applies the flags to the flag builder and builds them")
-  @Test
+  @RepeatedTest(10)
   void buildFlagsBuildsTheExpectedFlags() {
     // Given
     var flagBuilder = mock(JctFlagBuilder.class, Answers.RETURNS_SELF);
@@ -1647,6 +1738,8 @@ class AbstractJctCompilerTest {
     var target = setFieldOnCompiler("target", someRelease());
     var verbose = setFieldOnCompiler("verbose", someBoolean());
     var showWarnings = setFieldOnCompiler("showWarnings", someBoolean());
+    var debuggingInfo = setFieldOnCompiler("debuggingInfo", someOf(DebuggingInfo.class));
+    var parameterInfoEnabled = setFieldOnCompiler("parameterInfoEnabled", someBoolean());
 
     var expectedFlags = someFlags();
     when(flagBuilder.build()).thenReturn(expectedFlags);
@@ -1665,6 +1758,8 @@ class AbstractJctCompilerTest {
     verify(flagBuilder).target(eq(target));
     verify(flagBuilder).verbose(eq(verbose));
     verify(flagBuilder).showWarnings(eq(showWarnings));
+    verify(flagBuilder).debuggingInfo(eq(debuggingInfo));
+    verify(flagBuilder).parameterInfoEnabled(eq(parameterInfoEnabled));
     verify(flagBuilder).build();
 
     assertThat(actualFlags).isEqualTo(expectedFlags);

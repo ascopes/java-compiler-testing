@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import javax.annotation.processing.Processor;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -79,6 +80,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   private boolean inheritSystemModulePath;
   private LoggingMode fileManagerLoggingMode;
   private AnnotationProcessorDiscovery annotationProcessorDiscovery;
+  private Set<DebuggingInfo> debuggingInfo;
+  private boolean parameterInfoEnabled;
 
   /**
    * Initialize this compiler.
@@ -108,6 +111,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
     inheritSystemModulePath = JctCompiler.DEFAULT_INHERIT_SYSTEM_MODULE_PATH;
     fileManagerLoggingMode = JctCompiler.DEFAULT_FILE_MANAGER_LOGGING_MODE;
     annotationProcessorDiscovery = JctCompiler.DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
+    debuggingInfo = DEFAULT_DEBUGGING_INFO;
+    parameterInfoEnabled = DEFAULT_PARAMETER_INFO_ENABLED;
   }
 
   @Override
@@ -417,6 +422,29 @@ public abstract class AbstractJctCompiler implements JctCompiler {
     return this;
   }
 
+  @Override
+  public Set<DebuggingInfo> getDebuggingInfo() {
+    return debuggingInfo;
+  }
+
+  @Override
+  public JctCompiler debuggingInfo(Set<DebuggingInfo> debuggingInfo) {
+    requireNonNullValues(debuggingInfo, "debuggingInfo");
+    this.debuggingInfo = Set.copyOf(debuggingInfo);
+    return this;
+  }
+
+  @Override
+  public boolean isParameterInfoEnabled() {
+    return parameterInfoEnabled;
+  }
+
+  @Override
+  public JctCompiler parameterInfoEnabled(boolean parameterInfoEnabled) {
+    this.parameterInfoEnabled = parameterInfoEnabled;
+    return this;
+  }
+
   /**
    * Get the string representation of the compiler.
    *
@@ -504,6 +532,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
         .target(target)
         .verbose(verbose)
         .showWarnings(showWarnings)
+        .debuggingInfo(debuggingInfo)
+        .parameterInfoEnabled(parameterInfoEnabled)
         .build();
   }
 

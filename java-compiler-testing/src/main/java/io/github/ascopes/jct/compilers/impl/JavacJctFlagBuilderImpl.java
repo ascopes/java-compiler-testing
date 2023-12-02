@@ -16,9 +16,11 @@
 package io.github.ascopes.jct.compilers.impl;
 
 import io.github.ascopes.jct.compilers.CompilationMode;
+import io.github.ascopes.jct.compilers.DebuggingInfo;
 import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
@@ -44,6 +46,11 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   private static final String PROC_NONE = "-proc:none";
   private static final String PROC_ONLY = "-proc:only";
   private static final String PROC_ALL = "-proc:all";
+  private static final String DEBUG_LINES = "-g:lines";
+  private static final String DEBUG_VARS = "-g:vars";
+  private static final String DEBUG_SOURCE = "-g:source";
+  private static final String DEBUG_NONE = "-g:none";
+  private static final String PARAMETERS = "-parameters";
 
   private final List<String> craftedFlags;
 
@@ -116,6 +123,34 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   }
 
   @Override
+  public JctFlagBuilder debuggingInfo(Set<DebuggingInfo> set) {
+    if (set.isEmpty()) {
+      craftedFlags.add(DEBUG_NONE);
+    } else {
+      for (var flag : set) {
+        switch (flag) {
+          case LINES:
+            craftedFlags.add(DEBUG_LINES);
+            break;
+          case SOURCE:
+            craftedFlags.add(DEBUG_SOURCE);
+            break;
+          case VARS:
+            craftedFlags.add(DEBUG_VARS);
+            break;
+        }
+      }
+    }
+
+    return this;
+  }
+
+  @Override
+  public JctFlagBuilder parameterInfoEnabled(boolean enabled) {
+    return addFlagIfTrue(enabled, PARAMETERS);
+  }
+
+  @Override
   public JavacJctFlagBuilderImpl annotationProcessorOptions(List<String> options) {
     options.forEach(option -> craftedFlags.add(ANNOTATION_OPT + option));
     return this;
@@ -141,6 +176,7 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
     return this;
   }
 
+  @SuppressWarnings("SameParameterValue")
   private JavacJctFlagBuilderImpl addFlagIfFalse(boolean condition, String flag) {
     return addFlagIfTrue(!condition, flag);
   }
