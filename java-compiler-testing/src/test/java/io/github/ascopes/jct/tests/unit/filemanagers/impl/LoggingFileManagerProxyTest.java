@@ -27,6 +27,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -56,7 +57,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Answers;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -80,14 +80,8 @@ class LoggingFileManagerProxyTest {
   long threadId;
   StackTraceElement[] stackTrace;
 
-  @Mock(answer = Answers.CALLS_REAL_METHODS)
-  MockedStatic<LoomPolyfill> loomPolyfillMockedStatic;
-
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   Thread thread;
-
-  @Mock
-  MockedStatic<LoggerFactory> slf4jLoggerFactory;
 
   Slf4jLoggerFake slf4jLoggerFake;
 
@@ -96,18 +90,10 @@ class LoggingFileManagerProxyTest {
     threadId = someLong(66_666);
     stackTrace = someRealStackTrace();
 
-    loomPolyfillMockedStatic.when(LoomPolyfill::getCurrentThread)
-        .thenReturn(thread);
-
-    loomPolyfillMockedStatic.when(() -> LoomPolyfill.getThreadId(thread))
-        .thenReturn(threadId);
-
     when(thread.getStackTrace())
         .thenReturn(stackTrace);
 
     slf4jLoggerFake = new Slf4jLoggerFake();
-    slf4jLoggerFactory.when(() -> LoggerFactory.getLogger(any(Class.class)))
-        .thenReturn(slf4jLoggerFake);
   }
 
   @DisplayName("toString() returns the expected result")
@@ -180,30 +166,43 @@ class LoggingFileManagerProxyTest {
   @ParameterizedTest(name = "for method {0}")
   void methodInvocationsGetLoggedWithoutStacktraces(String ignored, Method method)
       throws Throwable {
-    // Given
-    var params = mockParams(method);
-    var impl = mock(JctFileManager.class, Answers.RETURNS_DEEP_STUBS);
-    var proxy = LoggingFileManagerProxy.wrap(impl, false);
 
-    // When
-    method.invoke(proxy, params);
+    try (
+        var loomPolyfillMockedStatic = mockStatic(LoomPolyfill.class);
+        var loggerFactoryMockedStatic = mockStatic(LoggerFactory.class)
+    ) {
+      loomPolyfillMockedStatic.when(LoomPolyfill::getCurrentThread)
+          .thenReturn(thread);
+      loomPolyfillMockedStatic.when(() -> LoomPolyfill.getThreadId(thread))
+          .thenReturn(threadId);
+      loggerFactoryMockedStatic.when(() -> LoggerFactory.getLogger(any(Class.class)))
+          .thenReturn(slf4jLoggerFake);
 
-    // Then
-    slf4jLoggerFake.assertThatEntryLogged(
-        Level.DEBUG,
-        null,
-        ">>> [thread={}] {} {}({}) called with ({}){}",
-        threadId,
-        method.getReturnType().getSimpleName(),
-        method.getName(),
-        Stream.of(method.getParameterTypes())
-            .map(Class::getSimpleName)
-            .collect(Collectors.joining(", ")),
-        Stream.of(params)
-            .map(Objects::toString)
-            .collect(Collectors.joining(", ")),
-        ""
-    );
+      // Given
+      var params = mockParams(method);
+      var impl = mock(JctFileManager.class, Answers.RETURNS_DEEP_STUBS);
+      var proxy = LoggingFileManagerProxy.wrap(impl, false);
+
+      // When
+      method.invoke(proxy, params);
+
+      // Then
+      slf4jLoggerFake.assertThatEntryLogged(
+          Level.DEBUG,
+          null,
+          ">>> [thread={}] {} {}({}) called with ({}){}",
+          threadId,
+          method.getReturnType().getSimpleName(),
+          method.getName(),
+          Stream.of(method.getParameterTypes())
+              .map(Class::getSimpleName)
+              .collect(Collectors.joining(", ")),
+          Stream.of(params)
+              .map(Objects::toString)
+              .collect(Collectors.joining(", ")),
+          ""
+      );
+    }
   }
 
   @DisplayName("Method invocations are logged with stacktraces")
@@ -211,35 +210,46 @@ class LoggingFileManagerProxyTest {
   @ParameterizedTest(name = "for method {0}")
   void methodInvocationsGetLoggedWithStacktraces(String ignored, Method method) throws Throwable {
     // Given
-    when(thread.getStackTrace())
-        .thenReturn(stackTrace);
+    try (
+        var loomPolyfillMockedStatic = mockStatic(LoomPolyfill.class);
+        var loggerFactoryMockedStatic = mockStatic(LoggerFactory.class)
+    ) {
+      loomPolyfillMockedStatic.when(LoomPolyfill::getCurrentThread)
+          .thenReturn(thread);
+      loomPolyfillMockedStatic.when(() -> LoomPolyfill.getThreadId(thread))
+          .thenReturn(threadId);
+      loggerFactoryMockedStatic.when(() -> LoggerFactory.getLogger(any(Class.class)))
+          .thenReturn(slf4jLoggerFake);
+      when(thread.getStackTrace())
+          .thenReturn(stackTrace);
 
-    var params = mockParams(method);
-    var impl = mock(JctFileManager.class, Answers.RETURNS_DEEP_STUBS);
-    var proxy = LoggingFileManagerProxy.wrap(impl, true);
+      var params = mockParams(method);
+      var impl = mock(JctFileManager.class, Answers.RETURNS_DEEP_STUBS);
+      var proxy = LoggingFileManagerProxy.wrap(impl, true);
 
-    // When
-    method.invoke(proxy, params);
+      // When
+      method.invoke(proxy, params);
 
-    // Then
-    slf4jLoggerFake.assertThatEntryLogged(
-        Level.DEBUG,
-        null,
-        ">>> [thread={}] {} {}({}) called with ({}){}",
-        threadId,
-        method.getReturnType().getSimpleName(),
-        method.getName(),
-        Stream.of(method.getParameterTypes())
-            .map(Class::getSimpleName)
-            .collect(Collectors.joining(", ")),
-        Stream.of(params)
-            .map(Objects::toString)
-            .collect(Collectors.joining(", ")),
-        Stream.of(stackTrace)
-            .map(Objects::toString)
-            .map("\n\t"::concat)
-            .collect(Collectors.joining())
-    );
+      // Then
+      slf4jLoggerFake.assertThatEntryLogged(
+          Level.DEBUG,
+          null,
+          ">>> [thread={}] {} {}({}) called with ({}){}",
+          threadId,
+          method.getReturnType().getSimpleName(),
+          method.getName(),
+          Stream.of(method.getParameterTypes())
+              .map(Class::getSimpleName)
+              .collect(Collectors.joining(", ")),
+          Stream.of(params)
+              .map(Objects::toString)
+              .collect(Collectors.joining(", ")),
+          Stream.of(stackTrace)
+              .map(Objects::toString)
+              .map("\n\t"::concat)
+              .collect(Collectors.joining())
+      );
+    }
   }
 
   @DisplayName("Method results are logged")
@@ -247,40 +257,52 @@ class LoggingFileManagerProxyTest {
   @ParameterizedTest(name = "for method {0}")
   void methodResultsGetLogged(String ignored, Method method) throws Throwable {
     // Given
-    var params = mockParams(method);
-    var expectedResult = isVoidReturnType(method) ? null : mockReturnType(method);
-    var impl = mock(JctFileManager.class, (ctx) -> expectedResult);
-    var proxy = LoggingFileManagerProxy.wrap(impl, someBoolean());
+    try (
+        var loomPolyfillMockedStatic = mockStatic(LoomPolyfill.class);
+        var loggerFactoryMockedStatic = mockStatic(LoggerFactory.class)
+    ) {
+      loomPolyfillMockedStatic.when(LoomPolyfill::getCurrentThread)
+          .thenReturn(thread);
+      loomPolyfillMockedStatic.when(() -> LoomPolyfill.getThreadId(thread))
+          .thenReturn(threadId);
+      loggerFactoryMockedStatic.when(() -> LoggerFactory.getLogger(any(Class.class)))
+          .thenReturn(slf4jLoggerFake);
 
-    // When
-    method.invoke(proxy, params);
+      var params = mockParams(method);
+      var expectedResult = isVoidReturnType(method) ? null : mockReturnType(method);
+      var impl = mock(JctFileManager.class, (ctx) -> expectedResult);
+      var proxy = LoggingFileManagerProxy.wrap(impl, someBoolean());
 
-    // Then
-    if (isVoidReturnType(method)) {
-      slf4jLoggerFake.assertThatEntryLogged(
-          Level.DEBUG,
-          null,
-          "<<< [thread={}] {} {}({}) completed",
-          threadId,
-          method.getReturnType().getSimpleName(),
-          method.getName(),
-          Stream.of(method.getParameterTypes())
-              .map(Class::getSimpleName)
-              .collect(Collectors.joining(", "))
-      );
-    } else {
-      slf4jLoggerFake.assertThatEntryLogged(
-          Level.DEBUG,
-          null,
-          "<<< [thread={}] {} {}({}) returned {}",
-          threadId,
-          method.getReturnType().getSimpleName(),
-          method.getName(),
-          Stream.of(method.getParameterTypes())
-              .map(Class::getSimpleName)
-              .collect(Collectors.joining(", ")),
-          expectedResult
-      );
+      // When
+      method.invoke(proxy, params);
+
+      // Then
+      if (isVoidReturnType(method)) {
+        slf4jLoggerFake.assertThatEntryLogged(
+            Level.DEBUG,
+            null,
+            "<<< [thread={}] {} {}({}) completed",
+            threadId,
+            method.getReturnType().getSimpleName(),
+            method.getName(),
+            Stream.of(method.getParameterTypes())
+                .map(Class::getSimpleName)
+                .collect(Collectors.joining(", "))
+        );
+      } else {
+        slf4jLoggerFake.assertThatEntryLogged(
+            Level.DEBUG,
+            null,
+            "<<< [thread={}] {} {}({}) returned {}",
+            threadId,
+            method.getReturnType().getSimpleName(),
+            method.getName(),
+            Stream.of(method.getParameterTypes())
+                .map(Class::getSimpleName)
+                .collect(Collectors.joining(", ")),
+            expectedResult
+        );
+      }
     }
   }
 
@@ -289,33 +311,44 @@ class LoggingFileManagerProxyTest {
   @ParameterizedTest(name = "for method {0}")
   void methodExceptionsGetLogged(String ignored, Method method) {
     // Given
-    var params = mockParams(method);
+    try (
+        var loomPolyfillMockedStatic = mockStatic(LoomPolyfill.class);
+        var loggerFactoryMockedStatic = mockStatic(LoggerFactory.class)
+    ) {
+      loomPolyfillMockedStatic.when(LoomPolyfill::getCurrentThread)
+          .thenReturn(thread);
+      loomPolyfillMockedStatic.when(() -> LoomPolyfill.getThreadId(thread))
+          .thenReturn(threadId);
+      loggerFactoryMockedStatic.when(() -> LoggerFactory.getLogger(any(Class.class)))
+          .thenReturn(slf4jLoggerFake);
+      var params = mockParams(method);
 
-    var stackTrace = someRealStackTrace();
-    var exception = new RuntimeException("Bang bang bang");
-    exception.setStackTrace(stackTrace);
+      var stackTrace = someRealStackTrace();
+      var exception = new RuntimeException("Bang bang bang");
+      exception.setStackTrace(stackTrace);
 
-    var impl = mock(JctFileManager.class, ctx -> {
-      throw exception;
-    });
-    var proxy = LoggingFileManagerProxy.wrap(impl, someBoolean());
+      var impl = mock(JctFileManager.class, ctx -> {
+        throw exception;
+      });
+      var proxy = LoggingFileManagerProxy.wrap(impl, someBoolean());
 
-    // When
-    assertThatThrownBy(() -> method.invoke(proxy, params))
-        .isNotNull();
+      // When
+      assertThatThrownBy(() -> method.invoke(proxy, params))
+          .isNotNull();
 
-    // Then
-    slf4jLoggerFake.assertThatEntryLogged(
-        Level.DEBUG,
-        exception,
-        "!!! [thread={}] {} {}({}) threw exception",
-        threadId,
-        method.getReturnType().getSimpleName(),
-        method.getName(),
-        Stream.of(method.getParameterTypes())
-            .map(Class::getSimpleName)
-            .collect(Collectors.joining(", "))
-    );
+      // Then
+      slf4jLoggerFake.assertThatEntryLogged(
+          Level.DEBUG,
+          exception,
+          "!!! [thread={}] {} {}({}) threw exception",
+          threadId,
+          method.getReturnType().getSimpleName(),
+          method.getName(),
+          Stream.of(method.getParameterTypes())
+              .map(Class::getSimpleName)
+              .collect(Collectors.joining(", "))
+      );
+    }
   }
 
   //////////////////////////////////////////////////////
