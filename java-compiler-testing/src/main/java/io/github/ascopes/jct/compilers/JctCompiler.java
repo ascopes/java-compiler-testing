@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
 import org.apiguardian.api.API;
@@ -36,7 +37,7 @@ import org.apiguardian.api.API.Status;
  * sources.
  *
  * <p>JctCompiler objects are often a nexus that will manage configuring an underlying JSR-199
- * compiler internally in a platform agnostic way.
+ * compiler internally in a platform-agnostic way.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -123,6 +124,17 @@ public interface JctCompiler {
   Charset DEFAULT_LOG_CHARSET = StandardCharsets.UTF_8;
 
   /**
+   * Default debugging info to include in the compilation (all possible info).
+   */
+  Set<DebuggingInfo> DEFAULT_DEBUGGING_INFO = DebuggingInfo.all();
+
+  /**
+   * Default preference for including reflective parameter information in compiled classes
+   * ({@code true}).
+   */
+  boolean DEFAULT_PARAMETER_INFO_ENABLED = true;
+
+  /**
    * Invoke the compilation and return the compilation result.
    *
    * <p>The actual classes to compile will be dynamically discovered. If you wish to
@@ -149,8 +161,7 @@ public interface JctCompiler {
    * {@link #compile(Workspace)} instead.
    *
    * <p>Note that nested instance/static nested classes cannot be specified individually
-   * here. To compile them, you must also compile their outer class that they are defined
-   * within.
+   * here. To compile them, you must also compile their outer class that they are defined within.
    *
    * @param workspace            the workspace to compile.
    * @param firstClassName       the first class name to compile.
@@ -178,8 +189,7 @@ public interface JctCompiler {
    * {@link #compile(Workspace)} instead.
    *
    * <p>Note that nested instance/static nested classes cannot be specified individually
-   * here. To compile them, you must also compile their outer class that they are defined
-   * within.
+   * here. To compile them, you must also compile their outer class that they are defined within.
    *
    * @param workspace  the workspace to compile.
    * @param classNames the class names to compile.
@@ -216,14 +226,14 @@ public interface JctCompiler {
    * </code></pre>
    *
    * <p>Configurers take a type parameter that corresponds to an exception type. This
-   * is the exception type that can be thrown by the configurer, or {@link RuntimeException}
-   * if no checked exception is thrown. This mechanism allows configurers to propagate
-   * checked exceptions to their caller where needed.
+   * is the exception type that can be thrown by the configurer, or {@link RuntimeException} if no
+   * checked exception is thrown. This mechanism allows configurers to propagate checked exceptions
+   * to their caller where needed.
    *
    * <pre><code>
    *   class FileFlagConfigurer implements JctCompilerConfigurer&lt;IOException&gt; {
    *     private final Path path;
-   *     
+   *
    *     public FileFlagConfigurer(String... path) {
    *       this(Path.of(path));
    *     }
@@ -253,8 +263,8 @@ public interface JctCompiler {
    * @param <E>        any exception that may be thrown.
    * @param configurer the configurer to invoke.
    * @return this compiler object for further call chaining.
-   * @throws E any exception that may be thrown by the configurer. If no checked exception
-   *           is thrown, then this should be treated as {@link RuntimeException}.
+   * @throws E any exception that may be thrown by the configurer. If no checked exception is
+   *           thrown, then this should be treated as {@link RuntimeException}.
    */
   <E extends Exception> JctCompiler configure(JctCompilerConfigurer<E> configurer) throws E;
 
@@ -268,9 +278,8 @@ public interface JctCompiler {
   /**
    * Set the friendly name of this compiler.
    *
-   * <p>This will be used by the 
-   * {@link io.github.ascopes.jct.junit.JavacCompilerTest JUnit5 support}
-   * to name unit test cases.
+   * <p>This will be used by the
+   * {@link io.github.ascopes.jct.junit.JavacCompilerTest JUnit5 support} to name unit test cases.
    *
    * @param name the name to set.
    * @return this compiler object for further call chaining.
@@ -321,8 +330,8 @@ public interface JctCompiler {
    * Add annotation processors to invoke.
    *
    * <p><strong>Warning:</strong> This bypasses the discovery process of annotation processors
-   * provided in the annotation processor path and annotation processor module paths, as well as
-   * any other locations such as class paths and module paths.
+   * provided in the annotation processor path and annotation processor module paths, as well as any
+   * other locations such as class paths and module paths.
    *
    * @param annotationProcessors the processors to invoke.
    * @return this compiler object for further call chaining.
@@ -333,8 +342,8 @@ public interface JctCompiler {
    * Add annotation processors to invoke.
    *
    * <p><strong>Warning:</strong> This bypasses the discovery process of annotation processors
-   * provided in the annotation processor path and annotation processor module paths, as well as
-   * any other locations such as class paths and module paths.
+   * provided in the annotation processor path and annotation processor module paths, as well as any
+   * other locations such as class paths and module paths.
    *
    * @param annotationProcessor  the first processor to invoke.
    * @param annotationProcessors additional processors to invoke.
@@ -511,8 +520,8 @@ public interface JctCompiler {
    * Set the compilation mode to use for this compiler.
    *
    * <p>This allows you to override whether sources are compiled or annotation-processed
-   * without running the full compilation process. Tuning this may provide faster test
-   * cases in some situations.
+   * without running the full compilation process. Tuning this may provide faster test cases in some
+   * situations.
    *
    * <p>Unless otherwise changed or specified, implementations should default to
    * {@link #DEFAULT_COMPILATION_MODE}.
@@ -529,8 +538,8 @@ public interface JctCompiler {
    * the internal compiler implementation.
    *
    * <p>Generally, this value will be an integer within a string. The value is
-   * represented as a string to allow supporting compilers which may use non-integer
-   * version numbers.
+   * represented as a string to allow supporting compilers which may use non-integer version
+   * numbers.
    *
    * @return the default release version to use.
    */
@@ -540,8 +549,8 @@ public interface JctCompiler {
    * Get the effective release to use for the actual compilation.
    *
    * <p>Generally, this value will be an integer within a string. The value is
-   * represented as a string to allow supporting compilers which may use non-integer
-   * version numbers.
+   * represented as a string to allow supporting compilers which may use non-integer version
+   * numbers.
    *
    * <p>This may be determined from the {@link #getSource() source},
    * {@link #getTarget() target}, {@link #getRelease() release}, and
@@ -556,8 +565,8 @@ public interface JctCompiler {
    * default.
    *
    * <p>Generally, this value will be an integer within a string. The value is
-   * represented as a string to allow supporting compilers which may use non-integer
-   * version numbers.
+   * represented as a string to allow supporting compilers which may use non-integer version
+   * numbers.
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
@@ -572,8 +581,8 @@ public interface JctCompiler {
    * <p>This will clear any source and target version that is set.
    *
    * <p>Generally, this value will be an integer within a string. The value is
-   * represented as a string to allow supporting compilers which may use non-integer
-   * version numbers.
+   * represented as a string to allow supporting compilers which may use non-integer version
+   * numbers.
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
@@ -589,15 +598,15 @@ public interface JctCompiler {
    * <p>This will clear any source and target version that is set.
    *
    * <p>Generally, this value will be an integer within a string. The value is
-   * represented as a string to allow supporting compilers which may use non-integer
-   * version numbers.
+   * represented as a string to allow supporting compilers which may use non-integer version
+   * numbers.
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
    *
    * @param release the version to set.
    * @return this compiler object for further call chaining.
-   * @throws IllegalArgumentException if the version is less than 0.
+   * @throws IllegalArgumentException      if the version is less than 0.
    * @throws UnsupportedOperationException if the compiler does not support integer versions.
    */
   default JctCompiler release(int release) {
@@ -614,8 +623,8 @@ public interface JctCompiler {
    * <p>This will clear any source and target version that is set.
    *
    * <p>Generally, this value will be an integer within a string. The value is
-   * represented as a string to allow supporting compilers which may use non-integer
-   * version numbers.
+   * represented as a string to allow supporting compilers which may use non-integer version
+   * numbers.
    *
    * <p>Unless explicitly defined, the default setting is expected to be a sane compiler-specific
    * default.
@@ -629,18 +638,18 @@ public interface JctCompiler {
   }
 
   /**
-   * Request that the compiler uses a language version that corresponds to the
-   * runtime language version in use on the current JVM.
+   * Request that the compiler uses a language version that corresponds to the runtime language
+   * version in use on the current JVM.
    *
    * <p>For example, running this on JRE 19 would set the release to "19".
    *
    * <p>This calls {@link #release(int) internally}.
    *
    * @return this compiler object for further call chaining.
+   * @throws UnsupportedOperationException if the current JVM version does not correspond to a
+   *                                       supported Jave release version in the compiler, or if the
+   *                                       compiler does not support integral version numbers.
    * @since 1.1.0
-   * @throws UnsupportedOperationException if the current JVM version does not
-   *     correspond to a supported Jave release version in the compiler, or if the
-   *     compiler does not support integral version numbers.
    */
   @API(since = "1.1.0", status = Status.STABLE)
   default JctCompiler useRuntimeRelease() {
@@ -667,9 +676,9 @@ public interface JctCompiler {
    * default.
    *
    * <p>Source and target versions have mostly been replaced with the release version
-   * mechanism which controls both flags and can ensure other behaviours are consistent.
-   * This feature is still provided in case you have a specific use case that is not covered
-   * by this functionality.
+   * mechanism which controls both flags and can ensure other behaviours are consistent. This
+   * feature is still provided in case you have a specific use case that is not covered by this
+   * functionality.
    *
    * @param source the version to set.
    * @return this compiler object for further call chaining.
@@ -685,15 +694,14 @@ public interface JctCompiler {
    * default.
    *
    * <p>Source and target versions have mostly been replaced with the release version
-   * mechanism which controls both flags and can ensure other behaviours are consistent.
-   * This feature is still provided in case you have a specific use case that is not covered
-   * by this functionality.
+   * mechanism which controls both flags and can ensure other behaviours are consistent. This
+   * feature is still provided in case you have a specific use case that is not covered by this
+   * functionality.
    *
    * @param source the version to set.
    * @return this compiler object for further call chaining.
-   * @throws IllegalArgumentException if the version is less than 0.
-   * @throws UnsupportedOperationException if the compiler does not
-   *     support integer versions.
+   * @throws IllegalArgumentException      if the version is less than 0.
+   * @throws UnsupportedOperationException if the compiler does not support integer versions.
    */
   default JctCompiler source(int source) {
     if (source < 0) {
@@ -712,9 +720,9 @@ public interface JctCompiler {
    * default.
    *
    * <p>Source and target versions have mostly been replaced with the release version
-   * mechanism which controls both flags and can ensure other behaviours are consistent.
-   * This feature is still provided in case you have a specific use case that is not covered
-   * by this functionality.
+   * mechanism which controls both flags and can ensure other behaviours are consistent. This
+   * feature is still provided in case you have a specific use case that is not covered by this
+   * functionality.
    *
    * @param source the version to set.
    * @return this compiler object for further call chaining.
@@ -743,9 +751,9 @@ public interface JctCompiler {
    * default.
    *
    * <p>Source and target versions have mostly been replaced with the release version
-   * mechanism which controls both flags and can ensure other behaviours are consistent.
-   * This feature is still provided in case you have a specific use case that is not covered
-   * by this functionality.
+   * mechanism which controls both flags and can ensure other behaviours are consistent. This
+   * feature is still provided in case you have a specific use case that is not covered by this
+   * functionality.
    *
    * @param target the version to set.
    * @return this compiler object for further call chaining.
@@ -761,13 +769,13 @@ public interface JctCompiler {
    * default.
    *
    * <p>Source and target versions have mostly been replaced with the release version
-   * mechanism which controls both flags and can ensure other behaviours are consistent.
-   * This feature is still provided in case you have a specific use case that is not covered
-   * by this functionality.
+   * mechanism which controls both flags and can ensure other behaviours are consistent. This
+   * feature is still provided in case you have a specific use case that is not covered by this
+   * functionality.
    *
    * @param target the version to set.
    * @return this compiler object for further call chaining.
-   * @throws IllegalArgumentException if the version is less than 0.
+   * @throws IllegalArgumentException      if the version is less than 0.
    * @throws UnsupportedOperationException if the compiler does not support integer versions.
    */
   default JctCompiler target(int target) {
@@ -787,9 +795,9 @@ public interface JctCompiler {
    * default.
    *
    * <p>Source and target versions have mostly been replaced with the release version
-   * mechanism which controls both flags and can ensure other behaviours are consistent.
-   * This feature is still provided in case you have a specific use case that is not covered
-   * by this functionality.
+   * mechanism which controls both flags and can ensure other behaviours are consistent. This
+   * feature is still provided in case you have a specific use case that is not covered by this
+   * functionality.
    *
    * @param target the version to set.
    * @return this compiler object for further call chaining.
@@ -1009,4 +1017,44 @@ public interface JctCompiler {
    */
   JctCompiler annotationProcessorDiscovery(
       AnnotationProcessorDiscovery annotationProcessorDiscovery);
+
+  /**
+   * Get the debugging info that is enabled.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_DEBUGGING_INFO}.
+   *
+   * @return the set of debugging info flags that are enabled.
+   * @since 3.0.0
+   */
+  Set<DebuggingInfo> getDebuggingInfo();
+
+  /**
+   * Set the debugging info level to use.
+   *
+   * @param debuggingInfoFlags the set of debugging info flags to enable.
+   * @return this compiler for further call chaining.
+   * @since 3.0.0
+   */
+  JctCompiler debuggingInfo(Set<DebuggingInfo> debuggingInfoFlags);
+
+  /**
+   * Determine if including reflective parameter info is enabled or not.
+   *
+   * <p>Unless otherwise changed or specified, implementations should default to
+   * {@link #DEFAULT_PARAMETER_INFO_ENABLED}.
+   *
+   * @return the parameter info inclusion preference.
+   * @since 3.0.0
+   */
+  boolean isParameterInfoEnabled();
+
+  /**
+   * Set whether to include parameter reflective info by default in compiled classes or not.
+   *
+   * @param parameterInfoEnabled whether to include the parameter reflective info or not.
+   * @return this compiler for further call chaining.
+   * @since 3.0.0
+   */
+  JctCompiler parameterInfoEnabled(boolean parameterInfoEnabled);
 }

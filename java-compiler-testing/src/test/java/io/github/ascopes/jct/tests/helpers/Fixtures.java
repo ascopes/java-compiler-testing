@@ -35,11 +35,14 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -453,6 +456,24 @@ public final class Fixtures {
    */
   public static <E extends Enum<E>> E oneOf(Class<E> cls) {
     return oneOf(cls.getEnumConstants());
+  }
+
+  /**
+   * Return some of the members of a given enum.
+   *
+   * @param cls the enum class.
+   * @param <E> the enum type.
+   * @return a set containing some of the enum members.
+   */
+  public static <E extends Enum<E>> Set<E> someOf(Class<E> cls) {
+    var set = new HashSet<E>();
+    var options = new ArrayList<>(Arrays.asList(cls.getEnumConstants()));
+
+    while (!options.isEmpty()) {
+      set.add(options.remove(someInt(options.size())));
+    }
+
+    return set;
   }
 
   /**

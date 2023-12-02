@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.github.ascopes.jct.compilers.CompilationMode;
+import io.github.ascopes.jct.compilers.DebuggingInfo;
 import io.github.ascopes.jct.compilers.impl.JavacJctFlagBuilderImpl;
 import io.github.ascopes.jct.tests.helpers.Fixtures;
 import java.util.List;
@@ -362,6 +363,58 @@ class JavacJctFlagBuilderImplTest {
       // Then
       assertThat(flagBuilder.target(someRelease()))
           .isSameAs(flagBuilder);
+    }
+  }
+
+  @DisplayName(".debuggingInfo(Set<DebuggingInfo>) tests")
+  @Nested
+  class DebuggingInfoTest {
+
+    @DisplayName("Setting .debuggingInfo with an empty set adds the '-g:none' flag")
+    @Test
+    void emptySetAddsGnoneFlag() {
+      // When
+      flagBuilder.debuggingInfo(DebuggingInfo.none());
+
+      // Then
+      assertThat(flagBuilder.build()).containsOnlyOnce("-g:none");
+    }
+
+    @DisplayName("Setting .debuggingInfo with some values set adds the '-g:xxx' flags")
+    @Test
+    void nonEmptySetAddsValues() {
+      // When
+      flagBuilder.debuggingInfo(DebuggingInfo.all());
+
+      // Then
+      assertThat(flagBuilder.build())
+          .doesNotContain("-g", "-g:none")
+          .containsOnlyOnce("-g:lines", "-g:source", "-g:vars");
+    }
+  }
+
+  @DisplayName(".parameterInfoEnabled(boolean) tests")
+  @Nested
+  class ParameterInfoEnabledTest {
+
+    @DisplayName("Setting .parameterInfoEnabled(true) adds the '-parameters' flag")
+    @Test
+    void trueAddsFlag() {
+      // When
+      flagBuilder.parameterInfoEnabled(true);
+
+      // Then
+      assertThat(flagBuilder.build()).containsOnlyOnce("-parameters");
+    }
+
+    @DisplayName("Setting .parameterInfoEnabled(false) does not add the '-parameters' flag")
+    @Test
+    void falseDoesNotAddFlag() {
+      // When
+      flagBuilder.parameterInfoEnabled(false);
+
+      // Then
+      assertThat(flagBuilder.build()).doesNotContain("-parameters");
     }
   }
 
