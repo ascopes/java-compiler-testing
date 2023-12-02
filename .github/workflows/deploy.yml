@@ -14,40 +14,12 @@ on:
         type: string
 
 jobs:
-  test:
-    name: Run tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Initialize Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: zulu
-          # Must use >= JDK 17 for Javadocs to generate correctly.
-          java-version: 21
-    
-      - name: Verify Tests Pass
-        shell: bash
-        run: |-
-          ./mvnw -B -U \
-              -Dcheckstyle.skip=true \
-              -DskipTests='${{ inputs.dry-run }}' \
-              clean verify
-
-          echo "All tests have passed"
-
   maven-central:
     name: Deploy to Maven Central
     environment:
       name: maven-central
       url: https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing/
     runs-on: ubuntu-latest
-    needs:
-      - test
 
     permissions:
       contents: write
@@ -76,13 +48,13 @@ jobs:
         run: |-
           git config user.name '${{ github.actor }}'
           git config user.email '${{ github.actor }}@users.noreply.github.com'
-          
+
           group_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.groupId")"
           echo "group_id=${group_id}" >> "${GITHUB_ENV}"
 
           artifact_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.artifactId")"
           echo "artifact_id=${artifact_id}" >> "${GITHUB_ENV}"
-  
+
           if [[ '${{ inputs.version }}' == "" ]]; then
             release_version="$(./mvnw -B help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//g')"
           else
@@ -93,14 +65,14 @@ jobs:
           ./mvnw -B -e \
               -Preleases \
               -Pmaven-central \
-              -Darguments='-Preleases -Pmaven-central -Dmaven.test.skip' \
+              -Darguments='-Preleases -Pmaven-central' \
               -DdryRun='${{ inputs.dry-run }}' \
               -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
               -DreleaseVersion="${release_version}" \
               -DsignTag=false \
               -Dtag="v${release_version}" \
               clean release:prepare release:perform
-            
+
           echo "Created staging release for ${group_id}/${artifact_id}/${release_version}"
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
@@ -112,21 +84,21 @@ jobs:
         shell: bash
         run: |-
           echo "Will now promote ${group_id}/${artifact_id}/${release_version} to Maven Central"
-            
+
           ./scripts/close-nexus-repository.sh \
               -u "${OSSRH_USERNAME}" \
               -p "${OSSRH_TOKEN}" \
               -g "${group_id}" \
               -a "${artifact_id}" \
               -v "${release_version}" \
-              -s "https://s01.oss.sonatype.org/" 
-            
+              -s "https://s01.oss.sonatype.org/"
+
           echo "Promoted staging ${group_id}/${artifact_id}/${release_version} to Maven Central successfully"
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-    
+
       - name: Create GitHub Release
         if: ${{ ! inputs.dry-run }}
         uses: ncipollo/release-action@v1
