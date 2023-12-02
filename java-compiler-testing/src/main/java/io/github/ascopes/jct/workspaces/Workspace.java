@@ -834,4 +834,26 @@ public interface Workspace extends AutoCloseable {
   default Map<String, List<? extends PathRoot>> getModulePathModules() {
     return getModules(StandardLocation.MODULE_PATH);
   }
+
+  /**
+   * Fluent API that handles this workspace in a try-with-resources internally, ensuring that it
+   * is closed after the given operation exists.
+   *
+   * <p>This is designed to improve the API for Kotlin users. Java users should use a
+   * try-with-resources instead.
+   *
+   * @param workspaceOperation the operation to run.
+   * @throws Exception if an exception is thrown from within the given operation.
+   */
+  @API(since = "2.1.0", status = Status.STABLE)
+  default void use(WorkspaceOperation workspaceOperation) throws Exception {
+    try (var workspace = this) {
+      workspaceOperation.run(workspace);
+    }
+  }
+
+  @FunctionalInterface
+  interface WorkspaceOperation {
+    void run(Workspace workspace) throws Exception;
+  }
 }

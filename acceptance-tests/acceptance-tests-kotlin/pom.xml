@@ -16,7 +16,9 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -26,31 +28,25 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>acceptance-tests-google-error-prone</artifactId>
-  <name>JCT acceptance tests for Google ErrorProne</name>
-  <description>Acceptance tests for Google ErrorProne.</description>
+  <artifactId>acceptance-tests-kotlin</artifactId>
+  <name>JCT acceptance tests for Kotlin</name>
+  <description>Acceptance tests for invocation with Kotlin.</description>
 
   <properties>
     <argLine>
       -Dorg.slf4j.simpleLogger.log=INFO
       -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=DEBUG
       -Xshare:off
-      --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
-      --add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED
-      --add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED
-      --add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED
-      --add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED
-      --add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED
-      --add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
-      --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
-      --add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
-      --add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED
-
+      --add-opens=java.base/java.lang=ALL-UNNAMED
+      --add-opens=java.base/java.io=ALL-UNNAMED
       <!-- Workaround for https://youtrack.jetbrains.com/issue/IDEA-317391 -->
       -DmvnArgLinePropagated=true
     </argLine>
 
-    <error-prone.version>2.23.0</error-prone.version>
+    <kotlin.version>1.9.21</kotlin.version>
+
+    <!-- Compiler configuration -->
+    <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
   </properties>
 
   <dependencies>
@@ -61,10 +57,15 @@
     </dependency>
 
     <dependency>
-      <groupId>com.google.errorprone</groupId>
-      <artifactId>error_prone_core</artifactId>
-      <version>${error-prone.version}</version>
-      <scope>test</scope>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib</artifactId>
+      <version>${kotlin.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-test</artifactId>
+      <version>${kotlin.version}</version>
     </dependency>
 
     <dependency>
@@ -81,24 +82,36 @@
   </dependencies>
 
   <build>
+    <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+    <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
+
+      <plugin>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-maven-plugin</artifactId>
+        <version>${kotlin.version}</version>
+
+        <executions>
+          <execution>
+            <id>compile</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+
+          <execution>
+            <id>test-compile</id>
+            <goals>
+              <goal>test-compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <!-- https://github.com/google/error-prone/issues/3710 -->
-      <id>${project.artifactId}-incompatible-jdk</id>
-      <activation>
-        <jdk>[,12)</jdk>
-      </activation>
-      <properties>
-        <maven.test.skip>true</maven.test.skip>
-      </properties>
-    </profile>
-  </profiles>
 </project>

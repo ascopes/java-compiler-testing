@@ -250,6 +250,11 @@ ij_java_wrap_comments = true
 ij_java_wrap_first_method_in_call_chain = false
 ij_java_wrap_long_lines = false
 
+[*.kt]
+ij_kotlin_indent_size = 2
+ij_kotlin_continuation_indent_for_chained_calls = true
+ij_kotlin_continuation_indent_size = 4
+
 [*.properties]
 ij_properties_align_group_field_declarations = false
 ij_properties_keep_blank_lines = false
