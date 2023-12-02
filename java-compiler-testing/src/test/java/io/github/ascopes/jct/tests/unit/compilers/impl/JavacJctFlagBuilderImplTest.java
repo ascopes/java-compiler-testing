@@ -189,16 +189,6 @@ class JavacJctFlagBuilderImplTest {
   @Nested
   class CompilationModeFlagTest {
 
-    @DisplayName(".compilationMode(COMPILATION_AND_ANNOTATION_PROCESSING) adds no flags")
-    @Test
-    void compilationAndAnnotationProcessingAddsNoFlags() {
-      // When
-      flagBuilder.compilationMode(CompilationMode.COMPILATION_AND_ANNOTATION_PROCESSING);
-
-      // Then
-      assertThat(flagBuilder.build()).isEmpty();
-    }
-
     @DisplayName(".compilationMode(COMPILATION_ONLY) adds -proc:none")
     @Test
     void compilationOnlyAddsProcNone() {
@@ -217,6 +207,16 @@ class JavacJctFlagBuilderImplTest {
 
       // Then
       assertThat(flagBuilder.build()).containsExactly("-proc:only");
+    }
+
+    @DisplayName(".compilationMode(COMPILATION_AND_ANNOTATION_PROCESSING) adds -proc:all")
+    @Test
+    void compilationAndAnnotationProcessingAddsProcAll() {
+      // When
+      flagBuilder.compilationMode(CompilationMode.COMPILATION_AND_ANNOTATION_PROCESSING);
+
+      // Then
+      assertThat(flagBuilder.build()).containsExactly("-proc:all");
     }
 
     @DisplayName(".compilationMode(...) returns the flag builder")
