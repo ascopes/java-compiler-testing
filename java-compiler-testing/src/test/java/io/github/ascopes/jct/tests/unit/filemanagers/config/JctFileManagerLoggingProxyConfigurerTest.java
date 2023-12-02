@@ -19,15 +19,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerLoggingProxyConfigurer;
-import io.github.ascopes.jct.filemanagers.impl.LoggingFileManagerProxy;
 import io.github.ascopes.jct.filemanagers.impl.JctFileManagerImpl;
-import org.junit.jupiter.api.BeforeEach;
+import io.github.ascopes.jct.filemanagers.impl.LoggingFileManagerProxy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,8 +37,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mock.Strictness;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -49,9 +47,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("JctFileManagerLoggingProxyConfigurer tests")
 @ExtendWith(MockitoExtension.class)
 class JctFileManagerLoggingProxyConfigurerTest {
-
-  @Mock(strictness = Strictness.LENIENT)
-  MockedStatic<LoggingFileManagerProxy> loggingFileManagerProxyStatic;
 
   @Mock
   JctCompiler compiler;
@@ -65,12 +60,6 @@ class JctFileManagerLoggingProxyConfigurerTest {
   @InjectMocks
   JctFileManagerLoggingProxyConfigurer configurer;
 
-  @BeforeEach
-  void setUp() {
-    loggingFileManagerProxyStatic.when(() -> LoggingFileManagerProxy.wrap(any(), anyBoolean()))
-        .thenReturn(proxiedFileManager);
-  }
-
   @DisplayName(".configure(...) will wrap the file manager in a proxy")
   @CsvSource({
       "STACKTRACES, true",
@@ -81,14 +70,19 @@ class JctFileManagerLoggingProxyConfigurerTest {
   )
   void configureWillCopyAllWorkspacePathsToTheFileManager(LoggingMode mode, boolean stacktraces) {
     // Given
-    when(compiler.getFileManagerLoggingMode()).thenReturn(mode);
+    try (var loggingFileManagerProxyStatic = mockStatic(LoggingFileManagerProxy.class)) {
+      loggingFileManagerProxyStatic.when(() -> LoggingFileManagerProxy.wrap(any(), anyBoolean()))
+          .thenReturn(proxiedFileManager);
 
-    // When
-    configurer.configure(fileManager);
+      when(compiler.getFileManagerLoggingMode()).thenReturn(mode);
 
-    // Then
-    loggingFileManagerProxyStatic
-        .verify(() -> LoggingFileManagerProxy.wrap(fileManager, stacktraces));
+      // When
+      configurer.configure(fileManager);
+
+      // Then
+      loggingFileManagerProxyStatic
+          .verify(() -> LoggingFileManagerProxy.wrap(fileManager, stacktraces));
+    }
   }
 
   @DisplayName(".configure(...) will raise an IllegalStateException if logging is disabled")
@@ -107,15 +101,19 @@ class JctFileManagerLoggingProxyConfigurerTest {
   @ParameterizedTest(name = "for logging mode = {0}")
   void configureReturnsTheProxiedFileManager(LoggingMode mode) {
     // Given
-    when(compiler.getFileManagerLoggingMode()).thenReturn(mode);
+    try (var loggingFileManagerProxyStatic = mockStatic(LoggingFileManagerProxy.class)) {
+      loggingFileManagerProxyStatic.when(() -> LoggingFileManagerProxy.wrap(any(), anyBoolean()))
+          .thenReturn(proxiedFileManager);
+      when(compiler.getFileManagerLoggingMode()).thenReturn(mode);
 
-    // When
-    var result = configurer.configure(fileManager);
+      // When
+      var result = configurer.configure(fileManager);
 
-    // Then
-    assertThat(result)
-        .isNotSameAs(fileManager)
-        .isSameAs(proxiedFileManager);
+      // Then
+      assertThat(result)
+          .isNotSameAs(fileManager)
+          .isSameAs(proxiedFileManager);
+    }
   }
 
   @DisplayName(".isEnabled() returns the expected result")
