@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.acceptancetests.avajeinject;
+package io.github.ascopes.jct.acceptancetests.avajehttp;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 
@@ -22,12 +22,12 @@ import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
 
-@DisplayName("Avaje Inject acceptance tests")
-class AvajeInjectTest {
+@DisplayName("Avaje HTTP acceptance tests")
+class AvajeHttpTest {
 
-  @DisplayName("Dependency injection code gets generated as expected")
+  @DisplayName("HTTP client code gets generated as expected")
   @JavacCompilerTest(minVersion = 11)
-  void dependencyInjectionCodeGetsGeneratedAsExpected(JctCompiler compiler) {
+  void httpClientCodeGetsGeneratedAsExpected(JctCompiler compiler) {
     // Given
     try (var workspace = Workspaces.newWorkspace()) {
       workspace
@@ -43,12 +43,8 @@ class AvajeInjectTest {
           .isSuccessfulWithoutWarnings()
           .classOutputPackages()
           .allFilesExist(
-              "org/example/CoffeeMaker.class",
-              "org/example/Grinder.class",
-              "org/example/Pump.class",
-              "org/example/CoffeeMaker$DI.class",
-              "org/example/Grinder$DI.class",
-              "org/example/Pump$DI.class"
+              "org/example/httpclient/GeneratedHttpComponent.class",
+              "org/example/httpclient/UserApiHttpClient.class"
           );
     }
   }

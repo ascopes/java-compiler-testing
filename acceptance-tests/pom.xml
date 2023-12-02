@@ -38,6 +38,7 @@
     <module>acceptance-tests-serviceloader-jpms</module>
 
     <!-- Third-party library tests -->
+    <module>acceptance-tests-avaje-http</module>
     <module>acceptance-tests-avaje-inject</module>
     <module>acceptance-tests-avaje-jsonb</module>
     <module>acceptance-tests-checkerframework</module>
