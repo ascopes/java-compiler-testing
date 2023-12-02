@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -35,16 +36,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestInstances;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.mockito.Answers;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * {@link JctExtension} tests.
@@ -53,20 +50,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
  */
 @DisplayName("JctExtension tests")
 @Execution(ExecutionMode.SAME_THREAD)
-@ExtendWith(MockitoExtension.class)
 @Isolated("This modifies global state in some test cases")
 class JctExtensionTest {
 
-  @Mock
   ExtensionContext extensionContext;
-
-  @Mock(answer = Answers.RETURNS_MOCKS)
-  MockedStatic<Workspaces> workspacesMock;
-
   JctExtension extension;
 
   @BeforeEach
   void setUp() {
+    extensionContext = mock();
     extension = new JctExtension();
   }
 
@@ -74,36 +66,39 @@ class JctExtensionTest {
   @Test
   void beforeAllHookInitialisesAnnotatedStaticWorkspaceFields() {
     // Given
-    StaticWorkspaceTestCase.staticWorkspace1 = null;
-    StaticWorkspaceTestCase.staticWorkspace2 = null;
-    StaticWorkspaceTestCase.staticWorkspace3 = null;
-    StaticWorkspaceTestCase.someInvalidStaticWorkspace = null;
-    StaticWorkspaceTestCase.someIgnoredStaticWorkspace = null;
+    try (var workspacesMock = mockStatic(Workspaces.class, Answers.RETURNS_MOCKS)) {
+      StaticWorkspaceTestCase.staticWorkspace1 = null;
+      StaticWorkspaceTestCase.staticWorkspace2 = null;
+      StaticWorkspaceTestCase.staticWorkspace3 = null;
+      StaticWorkspaceTestCase.someInvalidStaticWorkspace = null;
+      StaticWorkspaceTestCase.someIgnoredStaticWorkspace = null;
 
-    var expectedWorkspace1 = mock(Workspace.class);
-    var expectedWorkspace2 = mock(Workspace.class);
-    var expectedWorkspace3 = mock(Workspace.class);
-    workspacesMock.when(() -> Workspaces.newWorkspace(any()))
-        .thenReturn(expectedWorkspace1, expectedWorkspace2, expectedWorkspace3);
-    when(extensionContext.getRequiredTestClass()).thenAnswer(ctx -> StaticWorkspaceTestCase.class);
+      var expectedWorkspace1 = mock(Workspace.class);
+      var expectedWorkspace2 = mock(Workspace.class);
+      var expectedWorkspace3 = mock(Workspace.class);
+      workspacesMock.when(() -> Workspaces.newWorkspace(any()))
+          .thenReturn(expectedWorkspace1, expectedWorkspace2, expectedWorkspace3);
+      when(extensionContext.getRequiredTestClass()).thenAnswer(
+          ctx -> StaticWorkspaceTestCase.class);
 
-    // When
-    assertThatCode(() -> extension.beforeAll(extensionContext))
-        .doesNotThrowAnyException();
+      // When
+      assertThatCode(() -> extension.beforeAll(extensionContext))
+          .doesNotThrowAnyException();
 
-    // Then
-    workspacesMock.verify(() -> Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES), times(2));
-    workspacesMock.verify(() -> Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES));
-    workspacesMock.verifyNoMoreInteractions();
+      // Then
+      workspacesMock.verify(() -> Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES), times(2));
+      workspacesMock.verify(() -> Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES));
+      workspacesMock.verifyNoMoreInteractions();
 
-    assertThat(List.of(
-        StaticWorkspaceTestCase.staticWorkspace1,
-        StaticWorkspaceTestCase.staticWorkspace2,
-        StaticWorkspaceTestCase.staticWorkspace3
-    )).containsExactlyInAnyOrder(expectedWorkspace1, expectedWorkspace2, expectedWorkspace3);
+      assertThat(List.of(
+          StaticWorkspaceTestCase.staticWorkspace1,
+          StaticWorkspaceTestCase.staticWorkspace2,
+          StaticWorkspaceTestCase.staticWorkspace3
+      )).containsExactlyInAnyOrder(expectedWorkspace1, expectedWorkspace2, expectedWorkspace3);
 
-    assertThat(StaticWorkspaceTestCase.someInvalidStaticWorkspace).isNull();
-    assertThat(StaticWorkspaceTestCase.someIgnoredStaticWorkspace).isNull();
+      assertThat(StaticWorkspaceTestCase.someInvalidStaticWorkspace).isNull();
+      assertThat(StaticWorkspaceTestCase.someIgnoredStaticWorkspace).isNull();
+    }
   }
 
   @DisplayName("The afterAll hook closes annotated static workspace fields")
@@ -173,62 +168,64 @@ class JctExtensionTest {
   @Test
   void beforeEachHookInitialisesAnnotatedInstanceWorkspaceFields() {
     // Given
-    InstanceWorkspaceTestCase.someIgnoredStaticWorkspace = null;
-    InstanceWorkspaceTestCase.someInvalidStaticWorkspace = null;
+    try (var workspacesMock = mockStatic(Workspaces.class, Answers.RETURNS_MOCKS)) {
+      InstanceWorkspaceTestCase.someIgnoredStaticWorkspace = null;
+      InstanceWorkspaceTestCase.someInvalidStaticWorkspace = null;
 
-    var instance1 = new InstanceWorkspaceTestCase();
-    var instance2 = new InstanceWorkspaceTestCase();
-    var instance3 = new InstanceWorkspaceTestCase();
-    var testInstances = mock(TestInstances.class);
-    when(testInstances.getAllInstances()).thenReturn(List.of(instance1, instance2, instance3));
+      var instance1 = new InstanceWorkspaceTestCase();
+      var instance2 = new InstanceWorkspaceTestCase();
+      var instance3 = new InstanceWorkspaceTestCase();
+      var testInstances = mock(TestInstances.class);
+      when(testInstances.getAllInstances()).thenReturn(List.of(instance1, instance2, instance3));
 
-    var expectedWorkspace1 = mock(Workspace.class);
-    var expectedWorkspace2 = mock(Workspace.class);
-    var expectedWorkspace3 = mock(Workspace.class);
-    var expectedWorkspace4 = mock(Workspace.class);
-    var expectedWorkspace5 = mock(Workspace.class);
-    var expectedWorkspace6 = mock(Workspace.class);
-    var expectedWorkspace7 = mock(Workspace.class);
-    var expectedWorkspace8 = mock(Workspace.class);
-    var expectedWorkspace9 = mock(Workspace.class);
-    workspacesMock.when(() -> Workspaces.newWorkspace(any()))
-        .thenReturn(
-            expectedWorkspace1, expectedWorkspace2, expectedWorkspace3, expectedWorkspace4,
-            expectedWorkspace5, expectedWorkspace6, expectedWorkspace7, expectedWorkspace8,
-            expectedWorkspace9
-        );
-    when(extensionContext.getRequiredTestInstances())
-        .thenReturn(testInstances);
+      var expectedWorkspace1 = mock(Workspace.class);
+      var expectedWorkspace2 = mock(Workspace.class);
+      var expectedWorkspace3 = mock(Workspace.class);
+      var expectedWorkspace4 = mock(Workspace.class);
+      var expectedWorkspace5 = mock(Workspace.class);
+      var expectedWorkspace6 = mock(Workspace.class);
+      var expectedWorkspace7 = mock(Workspace.class);
+      var expectedWorkspace8 = mock(Workspace.class);
+      var expectedWorkspace9 = mock(Workspace.class);
+      workspacesMock.when(() -> Workspaces.newWorkspace(any()))
+          .thenReturn(
+              expectedWorkspace1, expectedWorkspace2, expectedWorkspace3, expectedWorkspace4,
+              expectedWorkspace5, expectedWorkspace6, expectedWorkspace7, expectedWorkspace8,
+              expectedWorkspace9
+          );
+      when(extensionContext.getRequiredTestInstances())
+          .thenReturn(testInstances);
 
-    // When
-    assertThatCode(() -> extension.beforeEach(extensionContext))
-        .doesNotThrowAnyException();
+      // When
+      assertThatCode(() -> extension.beforeEach(extensionContext))
+          .doesNotThrowAnyException();
 
-    // Then
-    workspacesMock.verify(() -> Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES), times(6));
-    workspacesMock.verify(() -> Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES), times(3));
-    workspacesMock.verifyNoMoreInteractions();
+      // Then
+      workspacesMock.verify(() -> Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES), times(6));
+      workspacesMock.verify(() -> Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES), times(3));
+      workspacesMock.verifyNoMoreInteractions();
 
-    assertThat(List.of(
-        instance1.workspace1,
-        instance1.workspace2,
-        instance1.workspace3
-    )).containsExactlyInAnyOrder(expectedWorkspace1, expectedWorkspace2, expectedWorkspace3);
+      assertThat(List.of(
+          instance1.workspace1,
+          instance1.workspace2,
+          instance1.workspace3
+      )).containsExactlyInAnyOrder(expectedWorkspace1, expectedWorkspace2, expectedWorkspace3);
 
-    assertThat(List.of(
-        instance2.workspace1,
-        instance2.workspace2,
-        instance2.workspace3
-    )).containsExactlyInAnyOrder(expectedWorkspace4, expectedWorkspace5, expectedWorkspace6);
+      assertThat(List.of(
+          instance2.workspace1,
+          instance2.workspace2,
+          instance2.workspace3
+      )).containsExactlyInAnyOrder(expectedWorkspace4, expectedWorkspace5, expectedWorkspace6);
 
-    assertThat(List.of(
-        instance3.workspace1,
-        instance3.workspace2,
-        instance3.workspace3
-    )).containsExactlyInAnyOrder(expectedWorkspace7, expectedWorkspace8, expectedWorkspace9);
+      assertThat(List.of(
+          instance3.workspace1,
+          instance3.workspace2,
+          instance3.workspace3
+      )).containsExactlyInAnyOrder(expectedWorkspace7, expectedWorkspace8, expectedWorkspace9);
 
-    assertThat(InstanceWorkspaceTestCase.someIgnoredStaticWorkspace).isNull();
-    assertThat(InstanceWorkspaceTestCase.someInvalidStaticWorkspace).isNull();
+      assertThat(InstanceWorkspaceTestCase.someIgnoredStaticWorkspace).isNull();
+      assertThat(InstanceWorkspaceTestCase.someInvalidStaticWorkspace).isNull();
+    }
   }
 
   @DisplayName("The afterEach hook closes annotated instance workspace fields")
@@ -337,28 +334,31 @@ class JctExtensionTest {
   @Test
   void beforeEachHookWillInitialiseWorkspacesInAnySuperClasses() {
     // Given
-    var instance = new TestCaseImpl();
-    var testInstances = mock(TestInstances.class);
-    when(testInstances.getAllInstances()).thenReturn(List.of(instance));
-    when(extensionContext.getRequiredTestInstances()).thenReturn(testInstances);
+    try (var workspacesMock = mockStatic(Workspaces.class, Answers.RETURNS_MOCKS)) {
+      var instance = new TestCaseImpl();
+      var testInstances = mock(TestInstances.class);
+      when(testInstances.getAllInstances()).thenReturn(List.of(instance));
+      when(extensionContext.getRequiredTestInstances()).thenReturn(testInstances);
 
-    var expectedWorkspace1 = mock(Workspace.class);
-    var expectedWorkspace2 = mock(Workspace.class);
-    var expectedWorkspace3 = mock(Workspace.class);
-    var expectedWorkspace4 = mock(Workspace.class);
+      var expectedWorkspace1 = mock(Workspace.class);
+      var expectedWorkspace2 = mock(Workspace.class);
+      var expectedWorkspace3 = mock(Workspace.class);
+      var expectedWorkspace4 = mock(Workspace.class);
 
-    workspacesMock.when(() -> Workspaces.newWorkspace(any()))
-        .thenReturn(expectedWorkspace1, expectedWorkspace2, expectedWorkspace3, expectedWorkspace4);
+      workspacesMock.when(() -> Workspaces.newWorkspace(any()))
+          .thenReturn(expectedWorkspace1, expectedWorkspace2, expectedWorkspace3,
+              expectedWorkspace4);
 
-    // When
-    assertThatCode(() -> extension.beforeEach(extensionContext))
-        .doesNotThrowAnyException();
+      // When
+      assertThatCode(() -> extension.beforeEach(extensionContext))
+          .doesNotThrowAnyException();
 
-    // Then
-    assertThat(instance.testCaseImplWorkspace).isSameAs(expectedWorkspace1);
-    assertThat(instance.testCaseBase3Workspace).isSameAs(expectedWorkspace2);
-    assertThat(instance.testCaseBase2Workspace).isSameAs(expectedWorkspace3);
-    assertThat(instance.testCaseBase1Workspace).isSameAs(expectedWorkspace4);
+      // Then
+      assertThat(instance.testCaseImplWorkspace).isSameAs(expectedWorkspace1);
+      assertThat(instance.testCaseBase3Workspace).isSameAs(expectedWorkspace2);
+      assertThat(instance.testCaseBase2Workspace).isSameAs(expectedWorkspace3);
+      assertThat(instance.testCaseBase1Workspace).isSameAs(expectedWorkspace4);
+    }
   }
 
   @DisplayName("The afterEach hook will close workspaces in any superclasses")
