@@ -68,7 +68,6 @@ import javax.annotation.processing.Processor;
 import javax.tools.JavaCompiler;
 import org.assertj.core.api.AbstractObjectAssert;
 import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
@@ -85,9 +84,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Answers;
 import org.mockito.Mock;
-import org.mockito.MockedConstruction;
 import org.mockito.MockedConstruction.Context;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -318,9 +315,6 @@ class AbstractJctCompilerTest {
     List<String> flags;
 
     @Mock
-    MockedStatic<JctFileManagers> fileManagers;
-
-    @Mock
     JctFileManagerFactory fileManagerFactory;
 
     @Mock
@@ -335,35 +329,21 @@ class AbstractJctCompilerTest {
     @Mock
     JctCompilation compilation;
 
-    MockedConstruction<JctCompilationFactoryImpl> compilationFactoryConstructor;
-
     BiConsumer<JctCompilationFactoryImpl, Context> compilationFactoryMockConfigurer;
 
     @BeforeEach
     void setUp() {
       flags = someFlags();
       when(flagBuilder.build()).thenReturn(flags);
-      compilationFactoryConstructor = mockConstruction(
-          JctCompilationFactoryImpl.class,
-          // Curry the call to allow other tests to override the behaviour in their "given" phase.
-          (factory, compiler) -> compilationFactoryMockConfigurer.accept(factory, compiler)
-      );
 
       when(flagBuilderFactory.createFlagBuilder()).thenReturn(flagBuilder);
       when(jsr199CompilerFactory.createCompiler()).thenReturn(jsr199Compiler);
-      fileManagers.when(() -> JctFileManagers.newJctFileManagerFactory(any()))
-          .thenReturn(fileManagerFactory);
       when(fileManagerFactory.createFileManager(any())).thenReturn(fileManager);
 
       // Default implementation. We can override this to make it throw exceptions, etc.
       compilationFactoryMockConfigurer =
           (factory, ctx) -> when(factory.createCompilation(any(), any(), any(), any()))
               .thenReturn(compilation);
-    }
-
-    @AfterEach
-    void tearDown() {
-      compilationFactoryConstructor.closeOnDemand();
     }
 
     abstract JctCompilation doCompile();
@@ -374,69 +354,116 @@ class AbstractJctCompilerTest {
     @DisplayName(".compile(...) interacts with the internal factories as expected")
     @Test
     void compileInteractsWithInternalFactoriesAsExpected() {
-      // When
-      doCompile();
+      try (
+          var fileManagersCls = mockStatic(JctFileManagers.class);
+          var compilationFactoryConstructor = mockConstruction(
+              JctCompilationFactoryImpl.class,
+              (factory, compiler) -> compilationFactoryMockConfigurer.accept(factory, compiler)
+          )
+      ) {
+        // Given
+        fileManagersCls.when(() -> JctFileManagers.newJctFileManagerFactory(any()))
+            .thenReturn(fileManagerFactory);
 
-      // Then
-      verify(fileManagerFactory).createFileManager(workspace);
-      verifyNoMoreInteractions(fileManagerFactory);
+        // When
+        doCompile();
 
-      verify(flagBuilderFactory).createFlagBuilder();
-      verifyNoMoreInteractions(flagBuilderFactory);
+        // Then
+        verify(fileManagerFactory).createFileManager(workspace);
+        verifyNoMoreInteractions(fileManagerFactory);
 
-      verify(flagBuilder).build();
+        verify(flagBuilderFactory).createFlagBuilder();
+        verifyNoMoreInteractions(flagBuilderFactory);
 
-      verify(jsr199CompilerFactory).createCompiler();
-      verifyNoMoreInteractions(jsr199CompilerFactory);
+        verify(flagBuilder).build();
 
-      assertThat(compilationFactoryConstructor.constructed()).hasSize(1);
+        verify(jsr199CompilerFactory).createCompiler();
+        verifyNoMoreInteractions(jsr199CompilerFactory);
 
-      var compilationFactory = compilationFactoryConstructor.constructed().get(0);
-      verify(compilationFactory)
-          .createCompilation(flags, fileManager, jsr199Compiler, classNames());
-      verifyNoMoreInteractions(compilationFactory);
+        assertThat(compilationFactoryConstructor.constructed()).hasSize(1);
+
+        var compilationFactory = compilationFactoryConstructor.constructed().get(0);
+        verify(compilationFactory)
+            .createCompilation(flags, fileManager, jsr199Compiler, classNames());
+        verifyNoMoreInteractions(compilationFactory);
+      }
     }
 
     @DisplayName(".compile(...) returns the expected compilation")
     @Test
     void compileReturnsTheExpectedCompilation() {
-      // When
-      var actualCompilation = doCompile();
+      try (
+          var fileManagersCls = mockStatic(JctFileManagers.class);
+          var compilationFactoryConstructor = mockConstruction(
+              JctCompilationFactoryImpl.class,
+              (factory, compiler) -> compilationFactoryMockConfigurer.accept(factory, compiler)
+          )
+      ) {
+        // Given
+        fileManagersCls.when(() -> JctFileManagers.newJctFileManagerFactory(any()))
+            .thenReturn(fileManagerFactory);
 
-      // Then
-      assertThat(actualCompilation).isSameAs(compilation);
+        // When
+        var actualCompilation = doCompile();
+
+        // Then
+        assertThat(actualCompilation).isSameAs(compilation);
+      }
     }
 
     @DisplayName(".compile(...) propagates exceptions thrown by the compilation process")
     @Test
     void compilePropagatesExceptionsThrownByTheCompilationProcess() {
-      // Given
-      var expectedException = new JctCompilerException(
-          "Compiler is broken, time to move to the forest and widdle spoons for a living",
-          new IllegalStateException("This shouldn't be happening!")
-      );
+      try (
+          var fileManagersCls = mockStatic(JctFileManagers.class);
+          var compilationFactoryConstructor = mockConstruction(
+              JctCompilationFactoryImpl.class,
+              (factory, compiler) -> compilationFactoryMockConfigurer.accept(factory, compiler)
+          )
+      ) {
+        // Given
+        fileManagersCls.when(() -> JctFileManagers.newJctFileManagerFactory(any()))
+            .thenReturn(fileManagerFactory);
 
-      compilationFactoryMockConfigurer =
-          (factory, ctx) -> when(factory.createCompilation(any(), any(), any(), any()))
-              .thenThrow(expectedException);
+        var expectedException = new JctCompilerException(
+            "Compiler is broken, time to move to the forest and widdle spoons for a living",
+            new IllegalStateException("This shouldn't be happening!")
+        );
 
-      // Then
-      assertThatThrownBy(this::doCompile)
-          .isSameAs(expectedException);
+        compilationFactoryMockConfigurer =
+            (factory, ctx) -> when(factory.createCompilation(any(), any(), any(), any()))
+                .thenThrow(expectedException);
+
+        // Then
+        assertThatThrownBy(this::doCompile)
+            .isSameAs(expectedException);
+      }
     }
 
     @DisplayName(".compile(...) rethrows filemanager closure exceptions")
     @Test
     void compileRethrowsFileManagerClosureExceptions() throws IOException {
-      // Given
-      var expectedException = new IOException("file manager do be heckin broken");
-      doThrow(expectedException).when(fileManager).close();
+      try (
+          var fileManagersCls = mockStatic(JctFileManagers.class);
+          var compilationFactoryConstructor = mockConstruction(
+              JctCompilationFactoryImpl.class,
+              (factory, compiler) -> compilationFactoryMockConfigurer.accept(factory, compiler)
+          )
+      ) {
+        // Given
+        fileManagersCls.when(() -> JctFileManagers.newJctFileManagerFactory(any()))
+            .thenReturn(fileManagerFactory);
 
-      // Then
-      assertThatThrownBy(this::doCompile)
-          .isInstanceOf(JctCompilerException.class)
-          .hasMessage("Failed to close file manager. This is probably a bug, so please report it.")
-          .hasCause(expectedException);
+        var expectedException = new IOException("file manager do be heckin broken");
+        doThrow(expectedException).when(fileManager).close();
+
+        // Then
+        assertThatThrownBy(this::doCompile)
+            .isInstanceOf(JctCompilerException.class)
+            .hasMessage(
+                "Failed to close file manager. This is probably a bug, so please report it.")
+            .hasCause(expectedException);
+      }
     }
   }
 
