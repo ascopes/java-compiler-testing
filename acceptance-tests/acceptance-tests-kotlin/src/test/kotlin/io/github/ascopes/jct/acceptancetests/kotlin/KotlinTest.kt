@@ -19,8 +19,18 @@ import io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation
 import io.github.ascopes.jct.compilers.JctCompiler
 import io.github.ascopes.jct.junit.JavacCompilerTest
 import io.github.ascopes.jct.workspaces.Workspaces
+import org.assertj.core.api.Assumptions.assumeThat
+import org.junit.jupiter.api.BeforeEach
 
 class KotlinTest {
+
+  @BeforeEach
+  fun setUp() {
+    // Workaround for https://youtrack.jetbrains.com/issue/IDEA-317391
+    assumeThat(System.getProperty("mvnArgLinePropagated", "false"))
+        .withFailMessage("Your IDE has not propagated the <argLine/> in the pom.xml")
+        .isEqualTo("true")
+  }
 
   @JavacCompilerTest
   fun `I can compile a 'Hello, World!' application`(compiler: JctCompiler) {
