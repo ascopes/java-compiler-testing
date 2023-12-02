@@ -44,9 +44,6 @@
     </argLine>
 
     <kotlin.version>1.9.21</kotlin.version>
-
-    <!-- Compiler configuration -->
-    <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
   </properties>
 
   <dependencies>
