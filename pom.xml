@@ -37,13 +37,13 @@
   </modules>
 
   <inceptionYear>2022</inceptionYear>
-  <url>https://github.com/${project-slug}</url>
+  <url>https://github.com/ascopes/java-compiler-testing</url>
 
   <developers>
     <developer>
       <id>ascopes</id>
       <name>Ashley Scopes</name>
-      <email>ashleyscopes@outlook.com</email>
+      <email>73482956+ascopes@users.noreply.github.com</email>
       <url>https://github.com/ascopes</url>
       <organization>Ashley Scopes</organization>
       <organizationUrl>https://github.com/ascopes</organizationUrl>
@@ -58,25 +58,25 @@
 
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>${project-slug}/issues</url>
+    <url>https://github.com/ascopes/java-compiler-testing/issues</url>
   </issueManagement>
 
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
-      <url>${project.url}/blob/main/LICENSE.txt</url>
+      <url>https://github.com/ascopes/java-compiler-testing/blob/main/LICENSE.txt</url>
     </license>
   </licenses>
 
   <organization>
     <name>Ashley Scopes (GitHub)</name>
-    <url>${project.url}</url>
+    <url>https://github.com/ascopes</url>
   </organization>
 
   <scm>
-    <url>scm:git:${project.url}</url>
-    <connection>scm:git:${project.url}</connection>
-    <developerConnection>scm:git:${project.url}</developerConnection>
+    <url>scm:git:https://github.com/ascopes/java-compiler-testing</url>
+    <connection>scm:git:https://github.com/ascopes/java-compiler-testing</connection>
+    <developerConnection>scm:git:https://github.com/ascopes/java-compiler-testing</developerConnection>
     <tag>vHEAD</tag>
   </scm>
 
