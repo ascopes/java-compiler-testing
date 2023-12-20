@@ -25,13 +25,27 @@ import org.apiguardian.api.API.Status;
  *
  * <p>This corresponds to the {@code -g} flag in the OpenJDK Javac implementation.
  *
+ * <p>Debugging info flags are designed to be combined using the helper methods on this class.
+ *
  * @author Ashley Scopes
  * @since 3.0.0
  */
 @API(since = "3.0.0", status = Status.STABLE)
 public enum DebuggingInfo {
+
+  /**
+   * Include line numbers.
+   */
   LINES,
+
+  /**
+   * Include local variable names.
+   */
   VARS,
+
+  /**
+   * Include source code.
+   */
   SOURCE;
 
   /**
