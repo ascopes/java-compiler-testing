@@ -170,7 +170,7 @@ jobs:
               $(find . -name 'jacoco.xml')
 
       - name: Stash reports tarball
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: reports-${{ matrix.java-version }}-${{ matrix.os-name }}
