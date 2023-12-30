@@ -32,7 +32,9 @@ public enum CompilationMode {
   /**
    * Run compilation and run the annotation processors, if configured.
    *
-   * <p>This is usually the default mode.
+   * <p>Prior to Java 21, this is the default if no {@code -proc} flag is provided to the compiler.
+   *
+   * <p>From Java 21 and onwards, this is equivalent to passing {@code -proc:full} to the compiler.
    */
   COMPILATION_AND_ANNOTATION_PROCESSING,
 

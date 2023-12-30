@@ -45,7 +45,7 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   private static final String ANNOTATION_OPT = "-A";
   private static final String PROC_NONE = "-proc:none";
   private static final String PROC_ONLY = "-proc:only";
-  private static final String PROC_ALL = "-proc:all";
+  private static final String PROC_FULL = "-proc:full";
   private static final String DEBUG_LINES = "-g:lines";
   private static final String DEBUG_VARS = "-g:vars";
   private static final String DEBUG_SOURCE = "-g:source";
@@ -95,7 +95,7 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
       default:
         // In Java 22, the default is to disable all annotation processing by default.
         // Prior to Java 22, the default was to enable all annotation processing by default.
-        craftedFlags.add(PROC_ALL);
+        craftedFlags.add(PROC_FULL);
         break;
     }
 
