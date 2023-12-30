@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (C) 2022 - 2023, the original author or authors.
+    Copyright (C) 2022 - 2024, the original author or authors.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -145,7 +145,7 @@
     <java-release>11</java-release>
 
     <!-- JavaDocs -->
-    <current-year>2023</current-year>
+    <current-year>2024</current-year>
     <newest-java-version>21</newest-java-version>
     <highlight-js.version>11.9.0</highlight-js.version>
 
