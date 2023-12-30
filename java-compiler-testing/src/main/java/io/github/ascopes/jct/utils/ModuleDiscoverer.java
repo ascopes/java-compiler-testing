@@ -15,16 +15,18 @@
  */
 package io.github.ascopes.jct.utils;
 
-import static java.util.stream.Collectors.toUnmodifiableMap;
-
+import io.github.ascopes.jct.workspaces.PathRoot;
+import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
 import java.lang.module.FindException;
+import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
-import java.lang.module.ModuleReference;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,33 +47,113 @@ public final class ModuleDiscoverer extends UtilityClass {
   }
 
   /**
-   * Find all modules that exist in a given path.
+   * Find all compiled modules that exist in a given path.
    *
    * <p>This will only discover modules that contain a {@code module-info.class}
    * or are an {@code Automatic-Module} in an accessible {@code MANIFEST.MF}.
    *
    * @param path the path to look within.
-   * @return an immutable map of module names to the path of the module's package root.
+   * @return a set of candidate modules.
    */
-  public static Map<String, Path> findModulesIn(Path path) {
+  public static Set<ModuleCandidate> findModulesIn(Path path) {
     try {
-      // TODO(ascopes): should I deal with sources here too? How should I do that?
       return ModuleFinder
           .of(path)
           .findAll()
           .stream()
-          .collect(toUnmodifiableMap(nameExtractor(), pathExtractor()));
+          .map(module -> new ModuleCandidate(
+              module.descriptor().name(),
+              Path.of(module.location().orElseThrow()),
+              module.descriptor()
+          ))
+          .collect(Collectors.toUnmodifiableSet());
     } catch (FindException ex) {
       LOGGER.debug("Failed to find modules in {}, will ignore this error", path, ex);
-      return Map.of();
+      return Set.of();
     }
   }
 
-  private static Function<ModuleReference, String> nameExtractor() {
-    return ref -> ref.descriptor().name();
-  }
+  /**
+   * Representation of a candidate module that was discovered.
+   */
+  @API(status = Status.INTERNAL, since = "3.0.2")
+  public static final class ModuleCandidate {
 
-  private static Function<ModuleReference, Path> pathExtractor() {
-    return ref -> Path.of(ref.location().orElseThrow());
+    private final String name;
+    private final Path path;
+    private final ModuleDescriptor descriptor;
+
+    /**
+     * Initialise this module.
+     *
+     * @param name       the module name.
+     * @param path       the path to the module.
+     * @param descriptor the descriptor of the module.
+     */
+    public ModuleCandidate(String name, Path path, ModuleDescriptor descriptor) {
+      this.name = name;
+      this.path = path;
+      this.descriptor = descriptor;
+    }
+
+    /**
+     * Get the module name.
+     *
+     * @return the module name.
+     */
+    public String getName() {
+      return name;
+    }
+
+    /**
+     * Get the module path.
+     *
+     * @return the module path.
+     */
+    public Path getPath() {
+      return path;
+    }
+
+    /**
+     * Construct a new {@link PathRoot} for this module.
+     *
+     * @return the path root.
+     */
+    public PathRoot createPathRoot() {
+      return new WrappingDirectoryImpl(path);
+    }
+
+    /**
+     * Get the module descriptor.
+     *
+     * @return the module descriptor.
+     */
+    public ModuleDescriptor getDescriptor() {
+      return descriptor;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object other) {
+      if (!(other instanceof ModuleCandidate)) {
+        return false;
+      }
+
+      var that = (ModuleCandidate) other;
+
+      return name.equals(that.name) && path.equals(that.path);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name, path);
+    }
+
+    @Override
+    public String toString() {
+      return new ToStringBuilder(this)
+          .attribute("name", name)
+          .attribute("path", path)
+          .toString();
+    }
   }
 }

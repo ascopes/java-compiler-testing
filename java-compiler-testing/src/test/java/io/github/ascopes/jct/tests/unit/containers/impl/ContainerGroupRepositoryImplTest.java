@@ -21,6 +21,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 
 import io.github.ascopes.jct.containers.Container;
@@ -28,9 +29,12 @@ import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.containers.impl.ContainerGroupRepositoryImpl;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.utils.ModuleDiscoverer;
+import io.github.ascopes.jct.utils.ModuleDiscoverer.ModuleCandidate;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.tools.StandardLocation;
 import org.junit.jupiter.api.AfterEach;
@@ -174,7 +178,7 @@ class ContainerGroupRepositoryImplTest {
         PathRoot pathRoot = somePathRoot();
 
         moduleDiscoverer.when(() -> ModuleDiscoverer.findModulesIn(any()))
-            .thenReturn(Map.of());
+            .thenReturn(Set.of());
 
         // When
         repository.addPath(location, pathRoot);
@@ -197,13 +201,15 @@ class ContainerGroupRepositoryImplTest {
       // Given
       try (var moduleDiscoverer = mockStatic(ModuleDiscoverer.class)) {
         var location = StandardLocation.MODULE_SOURCE_PATH;
-        PathRoot pathRoot = somePathRoot();
+        var pathRoot = somePathRoot();
 
         var discoveredModules = Stream.of("foo.bar", "baz.bork")
-            .collect(toMap(
-                Function.identity(),
-                pathRoot.getPath()::resolve
-            ));
+            .map(name -> new ModuleCandidate(
+                name,
+                pathRoot.getPath().resolve(name),
+                mock("some descriptor")
+            ))
+            .collect(Collectors.toSet());
 
         moduleDiscoverer.when(() -> ModuleDiscoverer.findModulesIn(any()))
             .thenReturn(discoveredModules);
