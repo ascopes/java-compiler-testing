@@ -210,14 +210,14 @@ class JavacJctFlagBuilderImplTest {
       assertThat(flagBuilder.build()).containsExactly("-proc:only");
     }
 
-    @DisplayName(".compilationMode(COMPILATION_AND_ANNOTATION_PROCESSING) adds -proc:all")
+    @DisplayName(".compilationMode(COMPILATION_AND_ANNOTATION_PROCESSING) adds -proc:full")
     @Test
     void compilationAndAnnotationProcessingAddsProcAll() {
       // When
       flagBuilder.compilationMode(CompilationMode.COMPILATION_AND_ANNOTATION_PROCESSING);
 
       // Then
-      assertThat(flagBuilder.build()).containsExactly("-proc:all");
+      assertThat(flagBuilder.build()).containsExactly("-proc:full");
     }
 
     @DisplayName(".compilationMode(...) returns the flag builder")
