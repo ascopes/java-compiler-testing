@@ -23,7 +23,6 @@ import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.utils.ModuleDiscoverer;
 import io.github.ascopes.jct.workspaces.PathRoot;
-import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -350,20 +349,17 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
   }
 
   private void addModuleRoot(Location location, PathRoot pathRoot) {
-    // Attempt to find the modules in the location.
     var modules = ModuleDiscoverer.findModulesIn(pathRoot.getPath());
 
     if (modules.isEmpty()) {
-      LOGGER.warn(
-          "There were no valid modules present in {}, so nothing has been registered.",
-          pathRoot.getPath()
-      );
-    } else {
-      var moduleGroup = getOrCreateModuleContainerGroup(location);
+      LOGGER.debug("Not adding module root {} as no modules were found inside it", location);
+      return;
+    }
 
-      modules.forEach((moduleName, modulePath) -> {
-        moduleGroup.addModule(moduleName, new WrappingDirectoryImpl(modulePath));
-      });
+    var group = getOrCreateModuleContainerGroup(location);
+
+    for (var module : modules) {
+      group.addModule(module.getName(), module.createPathRoot());
     }
   }
 

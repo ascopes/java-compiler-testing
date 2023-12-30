@@ -17,9 +17,13 @@ package io.github.ascopes.jct.filemanagers.config;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
+import io.github.ascopes.jct.utils.ModuleDiscoverer;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.utils.StringUtils;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
+import java.nio.file.Path;
+import java.util.Map.Entry;
+import java.util.Set;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -70,9 +74,18 @@ public final class JctFileManagerJvmClassPathModuleConfigurer implements JctFile
             .addArgument(() -> StringUtils.quoted(loc.toAbsolutePath()))
             .addArgument(() -> StringUtils.quoted(loc.toUri()))
             .log())
-        .map(WrappingDirectoryImpl::new)
+        .map(ModuleDiscoverer::findModulesIn)
+        .flatMap(Set::stream)
+        .peek(module -> LOGGER
+            .atDebug()
+            .setMessage("Discovered module {}")
+            .addArgument(module)
+            .log())
         // File manager will pull out the actual modules automatically.
-        .forEach(dir -> fileManager.addPath(StandardLocation.MODULE_PATH, dir));
+        .forEach(module -> fileManager.addPath(
+            StandardLocation.MODULE_PATH,
+            module.createPathRoot()
+        ));
 
     return fileManager;
   }
