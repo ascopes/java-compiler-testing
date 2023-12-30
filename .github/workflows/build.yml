@@ -268,7 +268,7 @@ jobs:
           clean compile javadoc:jar
 
       - name: Upload JavaDocs as a build artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: java-compiler-testing/target/apidocs
 
