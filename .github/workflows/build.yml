@@ -296,7 +296,7 @@ jobs:
         uses: actions/deploy-pages@v2
 
       - name: Delete temporary artifacts
-        uses: geekyeggo/delete-artifact@v2
+        uses: geekyeggo/delete-artifact@v4
         with:
           name: github-pages
           failOnError: false
