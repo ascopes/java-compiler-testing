@@ -53,7 +53,7 @@ public final class SpecialLocationUtils extends UtilityClass {
   private static final String NO_PATH = "";
   private static final URI JAVA_RUNTIME_URI = URI.create("jrt:/");
   private static final String JDK_MODULE_PROPERTY = "jdk.module.path";
-  private static final String SEPARATOR = File.pathSeparator;
+  private static final StringSlicer SEPARATOR_SLICER = new StringSlicer(File.pathSeparator);
 
   private SpecialLocationUtils() {
     // Disallow initialisation.
@@ -69,7 +69,7 @@ public final class SpecialLocationUtils extends UtilityClass {
    * <p>See {@code com.sun.tools.javac.file.JRTIndex} within the {@code jdk.compiler} module to
    * read the OpenJDK equivalent of this.
    *
-   * @return a list across the runtime paths.
+   * @return a list across the runtime paths. This is always a single element list.
    */
   public static List<Path> javaRuntimeLocations() {
     // Had to do a load of digging around the OpenJDK compiler implementation to work this out, and
@@ -84,7 +84,7 @@ public final class SpecialLocationUtils extends UtilityClass {
    *
    * <p>This corresponds to the {@link javax.tools.StandardLocation#CLASS_PATH} location.
    *
-   * @return a list across the paths.
+   * @return a list across the normalized, absolute paths. Any duplicates are removed.
    */
   public static List<Path> currentClassPathLocations() {
     return createPaths(ManagementFactory.getRuntimeMXBean().getClassPath());
@@ -99,18 +99,20 @@ public final class SpecialLocationUtils extends UtilityClass {
    * is also added in the {@link javax.tools.StandardLocation#CLASS_PATH} to handle some otherwise
    * confusing behaviours.
    *
-   * @return a list across the paths.
+   * @return a list across the normalized, absolute paths. Any duplicates are removed.
    */
   public static List<Path> currentModulePathLocations() {
     return createPaths(System.getProperty(JDK_MODULE_PROPERTY, NO_PATH));
   }
 
   private static List<Path> createPaths(String raw) {
-    return new StringSlicer(SEPARATOR)
+    return SEPARATOR_SLICER
         .splitToStream(raw)
         .filter(SpecialLocationUtils::isNotBlank)
         .map(Path::of)
         .filter(SpecialLocationUtils::isNotBlacklistedFile)
+        .map(Path::normalize)
+        .map(Path::toAbsolutePath)
         // We have to check this, annoyingly, because some tools like Maven (Surefire) will report
         // paths that don't actually exist to the class path, and Java will just ignore this
         // normally. It will cause random failures during builds, however, if directories such as
