@@ -15,8 +15,6 @@
  */
 package io.github.ascopes.jct.utils;
 
-import static java.util.function.Predicate.not;
-
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.net.URI;
@@ -55,9 +53,7 @@ public final class SpecialLocationUtils extends UtilityClass {
   private static final String NO_PATH = "";
   private static final URI JAVA_RUNTIME_URI = URI.create("jrt:/");
   private static final String JDK_MODULE_PROPERTY = "jdk.module.path";
-  private static final StringSlicer SEPARATOR = new StringSlicer(
-      System.getProperty("path.separator", File.pathSeparator)
-  );
+  private static final String SEPARATOR = File.pathSeparator;
 
   private SpecialLocationUtils() {
     // Disallow initialisation.
@@ -110,37 +106,32 @@ public final class SpecialLocationUtils extends UtilityClass {
   }
 
   private static List<Path> createPaths(String raw) {
-    return SEPARATOR
+    return new StringSlicer(SEPARATOR)
         .splitToStream(raw)
-        .filter(not(String::isBlank))
+        .filter(SpecialLocationUtils::isNotBlank)
         .map(Path::of)
-        .filter(not(SpecialLocationUtils::isBlacklistedFile))
+        .filter(SpecialLocationUtils::isNotBlacklistedFile)
         // We have to check this, annoyingly, because some tools like Maven (Surefire) will report
         // paths that don't actually exist to the class path, and Java will just ignore this
         // normally. It will cause random failures during builds, however, if directories such as
         // src/main/java do not exist.
         .distinct()
-        .filter(SpecialLocationUtils::exists)
+        .filter(Files::exists)
         .collect(Collectors.toUnmodifiableList());
   }
 
-  private static boolean exists(Path path) {
-    if (Files.exists(path)) {
-      return true;
-    }
-
-    LOGGER.trace("Environment-provided path {} does not exist, so will be skipped", path);
-    return false;
+  private static boolean isNotBlank(String string) {
+    return !string.isBlank();
   }
 
-  private static boolean isBlacklistedFile(Path path) {
+  private static boolean isNotBlacklistedFile(Path path) {
     var fileName = path.getFileName().toString();
 
     if (BLACKLISTED_FILE_NAMES.contains(fileName)) {
-      LOGGER.trace("Excluding {} from classpath as it is a blacklisted file", fileName);
-      return true;
+      LOGGER.debug("Excluding {} from path list as it is a blacklisted file", fileName);
+      return false;
     }
 
-    return false;
+    return true;
   }
 }
