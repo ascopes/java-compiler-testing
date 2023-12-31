@@ -21,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.util.List;
-import java.util.function.Supplier;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
@@ -127,7 +126,7 @@ public abstract class AbstractEnumAssert<A extends AbstractEnumAssert<A, E>, E e
     return myself;
   }
 
-  private Supplier<String> description() {
-    return () -> String.format("%s enum value <%s>", actual.getClass().getSimpleName(), actual);
+  private String description() {
+    return String.format("%s enum value <%s>", actual.getClass().getSimpleName(), actual);
   }
 }
