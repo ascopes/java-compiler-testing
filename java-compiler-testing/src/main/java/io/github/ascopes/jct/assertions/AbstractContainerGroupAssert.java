@@ -78,7 +78,7 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
     isNotNull();
 
     var items = new ArrayList<T>();
-    actual.getServiceLoader(clazz).iterator().forEachRemaining(items::add);
+    actual.getServiceLoader(type).iterator().forEachRemaining(items::add);
 
     return assertThat(items, Assertions::assertThat);
   }
