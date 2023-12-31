@@ -61,7 +61,6 @@ jobs:
 
     strategy:
       fail-fast: false
-      max-parallel: 10
       matrix:
         os-name: [ubuntu-latest]
         java-version:
@@ -144,6 +143,11 @@ jobs:
         shell: bash
         run: ./mvnw -B -U -Dcheckstyle.skip=true -Dlicense.skip=true clean verify
 
+      - name: Upload to codecov
+        uses: codecov/codecov-action@v3
+        with:
+          name: tests-java-${{ matrix.java-version }}-os-${{ matrix.os-name }}
+
       - name: Annotate test reports with build environment info
         if: always()
         shell: bash
@@ -152,34 +156,19 @@ jobs:
           -j "${{ matrix.java-version }}"
           -o "${{ matrix.os-name }}"
 
-      # Compress first so that the collection job later takes far less time (order of a few minutes
-      # or so). GitHub does not compress these until after the workflow finishes, meaning when
-      # we unstash them to produce the coverage reports, it will make an HTTP call for every single
-      # file. This can take several minutes and is somewhat painful to have to wait for.
-      - name: Compress test and coverage reports into tarball
-        if: always()
-        shell: bash
-        run: |-
-          set -x
-          # Allow globs to not match anything without causing errors.
-          shopt -s nullglob
-
-          # XZ with max compression, more efficient than using GZip.  
-          XZ_OPT=-9 tar -Jcvf reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tar.xz \
-              $(find . -name surefire-reports -o -name failsafe-reports) \
-              $(find . -name 'jacoco.xml')
-
-      - name: Stash reports tarball
+      - name: Stash reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: reports-${{ matrix.java-version }}-${{ matrix.os-name }}
           if-no-files-found: error
-          path: reports-${{ matrix.java-version }}-${{ matrix.os-name }}.tar.xz
+          path: |
+            **/surefire-reports/**
+            **/failsafe-reports/**
           retention-days: 30
 
-  publish-test-reports:
-    name: Publish test reports
+  aggregate-test-reports:
+    name: Aggregate test results
     runs-on: ubuntu-latest
     if: always()
     needs:
@@ -197,16 +186,12 @@ jobs:
           # Needed to keep actions working correctly.
           fetch-depth: 2
 
-      - name: Download stashed tarballs
+      - name: Download reports
         uses: actions/download-artifact@v4
         with:
-          path: 'artifacts/reports-*.tar.xz'
-
-      - name: Decompress stashed report tarballs
-        shell: bash
-        run: |-
-          find artifacts/ -name "reports-*.tar.xz" -exec tar -Jxvf {} \;
-          find artifacts/ -name "reports-*.tar.xz" -exec rm -v {} \;
+          path: |
+            **/surefire-reports/**
+            **/failsafe-reports/**
 
       - name: Publish test results
         continue-on-error: true
@@ -222,21 +207,6 @@ jobs:
           report_individual_runs: false
           test_changes_limit: 500
           time_unit: "milliseconds"
-
-      - name: Publish to codecov
-        continue-on-error: true
-        if: always()
-        shell: bash
-        run: |-
-          curl --fail https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring \
-              --keyring trustedkeys.gpg --import
-          curl --fail -Os https://uploader.codecov.io/latest/linux/codecov
-          curl --fail -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
-          curl --fail -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig
-          gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
-          shasum -a 256 -c codecov.SHA256SUM
-          chmod -v +x codecov
-          ./codecov -v
 
   generate-documentation:
     name: Generate documentation
@@ -294,9 +264,3 @@ jobs:
       - name: Deploy JavaDocs build artifact to GitHub Pages
         id: snapshot-javadocs
         uses: actions/deploy-pages@v4
-
-      - name: Delete temporary artifacts
-        uses: geekyeggo/delete-artifact@v4
-        with:
-          name: github-pages
-          failOnError: false
