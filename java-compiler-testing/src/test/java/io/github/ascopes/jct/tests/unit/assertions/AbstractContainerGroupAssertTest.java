@@ -95,7 +95,7 @@ class AbstractContainerGroupAssertTest {
       // Then
       assertThatThrownBy(() -> assertions.services(null))
           .isInstanceOf(NullPointerException.class)
-          .hasMessageEndingWith("class must not be null");
+          .hasMessageEndingWith("type must not be null");
     }
 
     @DisplayName(".services() throws an AssertionError if the container group is null")

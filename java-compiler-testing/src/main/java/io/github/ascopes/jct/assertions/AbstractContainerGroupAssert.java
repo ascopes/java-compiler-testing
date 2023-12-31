@@ -65,16 +65,16 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
   /**
    * Get assertions for the services loaded by the given service loader.
    *
-   * @param clazz the class to look up in the service loader.
-   * @param <T>   the service type.
+   * @param type the class to look up in the service loader.
+   * @param <T>  the service type.
    * @return the assertions across the resultant services that are loaded for the given class.
    * @throws AssertionError       if the object being asserted upon is null.
    * @throws NullPointerException if the provided class parameter is null.
    */
   public <T> AbstractListAssert<?, List<? extends T>, T, ? extends ObjectAssert<T>> services(
-      Class<T> clazz
+      Class<T> type
   ) {
-    requireNonNull(clazz, "class must not be null");
+    requireNonNull(type, "type must not be null");
     isNotNull();
 
     var items = new ArrayList<T>();
