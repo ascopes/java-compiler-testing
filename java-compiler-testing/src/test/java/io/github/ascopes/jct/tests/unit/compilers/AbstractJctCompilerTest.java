@@ -70,6 +70,7 @@ import java.util.stream.Stream;
 import javax.annotation.processing.Processor;
 import javax.tools.JavaCompiler;
 import org.assertj.core.api.AbstractObjectAssert;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.ClassOrderer;
@@ -145,7 +146,7 @@ class AbstractJctCompilerTest {
     void constructorInitialisesAnnotationProcessorsToEmptyList() {
       // Then
       assertThatCompilerField("annotationProcessors")
-          .asList()
+          .asInstanceOf(InstanceOfAssertFactories.LIST)
           .isEmpty();
     }
 
@@ -154,7 +155,7 @@ class AbstractJctCompilerTest {
     void constructorInitialisesAnnotationProcessorOptionsToEmptyList() {
       // Then
       assertThatCompilerField("annotationProcessorOptions")
-          .asList()
+          .asInstanceOf(InstanceOfAssertFactories.LIST)
           .isEmpty();
     }
 
@@ -163,7 +164,7 @@ class AbstractJctCompilerTest {
     void constructorInitialisesCompilerOptionsToEmptyList() {
       // Then
       assertThatCompilerField("compilerOptions")
-          .asList()
+          .asInstanceOf(InstanceOfAssertFactories.LIST)
           .isEmpty();
     }
 
