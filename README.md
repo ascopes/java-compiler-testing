@@ -374,7 +374,7 @@ object. This is already defined for you. All you need to provide in your compile
 
 - A [Jsr199CompilerFactory](https://ascopes.github.io/java-compiler-testing/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getCompilerFactory()) to provide JavaCompiler objects.
 - A [default release](https://ascopes.github.io/java-compiler-testing/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getDefaultRelease()) that defines the default language version to use unless overridden.
-- A [FlagBuilderFactory](https://ascopes.github.io/java-compiler-testing/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getFlagBuilderFactory()) to translate the compiler configuration to command-line arguments.
+- A [JctFlagBuilderFactory](https://ascopes.github.io/java-compiler-testing/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getFlagBuilderFactory()) to translate the compiler configuration to command-line arguments.
 
 ### ECJ (Eclipse Java Compiler)
 
