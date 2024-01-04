@@ -366,15 +366,15 @@ holding the flags you wish to use.
 The base classes to provide third party compiler integrations are made public in this
 API so you can extend them. 
 
-To integrate with your chosen JSR-199 compatible compiler, extend the [AbstractJctCompiler](https://javadoc.io/doc/io.github.ascopes.jct/java-compiler-testing/latest/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html) 
+To integrate with your chosen JSR-199 compatible compiler, extend the [AbstractJctCompiler](https://ascopes.github.io/java-compiler-testing/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html) 
 class and override anything you need to tweak. 
 
-The call to `compile` will return a [JctCompilation](https://javadoc.io/doc/io.github.ascopes.jct/java-compiler-testing/latest/io.github.ascopes.jct/io/github/ascopes/jct/compilers/JctCompilation.html)
+The call to `compile` will return a [JctCompilation](https://ascopes.github.io/java-compiler-testing/io.github.ascopes.jct/io/github/ascopes/jct/compilers/JctCompilation.html)
 object. This is already defined for you. All you need to provide in your compiler class is:
 
-- A [Jsr199CompilerFactory](https://javadoc.io/doc/io.github.ascopes.jct/java-compiler-testing/latest/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#compile(io.github.ascopes.jct.workspaces.Workspace)) to provide JavaCompiler objects.
-- A [default release](https://javadoc.io/static/io.github.ascopes.jct/java-compiler-testing/1.0.3/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getDefaultRelease()) that defines the default language version to use unless overridden.
-- A [FlagBuilder](https://javadoc.io/static/io.github.ascopes.jct/java-compiler-testing/1.0.3/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getFlagBuilderFactory()) to translate the compiler configuration to command-line arguments.
+- A [Jsr199CompilerFactory](https://ascopes.github.io/java-compiler-testing/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getCompilerFactory()) to provide JavaCompiler objects.
+- A [default release](https://ascopes.github.io/java-compiler-testing/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getDefaultRelease()) that defines the default language version to use unless overridden.
+- A [FlagBuilderFactory](https://ascopes.github.io/java-compiler-testing/io.github.ascopes.jct/io/github/ascopes/jct/compilers/AbstractJctCompiler.html#getFlagBuilderFactory()) to translate the compiler configuration to command-line arguments.
 
 ### ECJ (Eclipse Java Compiler)
 
