@@ -226,6 +226,9 @@ function close-staging-repository() {
       --arg repository_id "${repository_id}"
   )"
 
+  echo "Waiting a few seconds to mitigate eventual consistency on Nexus" >&2
+  sleep 10
+
   echo -e "\e[1;33m[POST ${url} ${payload}]\e[0m Triggering the closure process" >&2
 
   if curl \
