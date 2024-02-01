@@ -89,7 +89,7 @@
     <jspecify.version>0.3.0</jspecify.version>
     <junit.version>5.10.1</junit.version>
     <memoryfilesystem.version>2.7.0</memoryfilesystem.version>
-    <mockito.version>5.8.0</mockito.version>
+    <mockito.version>5.10.0</mockito.version>
     <slf4j.version>2.0.10</slf4j.version>
 
     <!-- Plugins -->
