@@ -74,7 +74,7 @@
   </organization>
 
   <scm>
-    <url>scm:git:https://github.com/ascopes/java-compiler-testing</url>
+    <url>https://github.com/ascopes/java-compiler-testing</url>
     <connection>scm:git:https://github.com/ascopes/java-compiler-testing</connection>
     <developerConnection>scm:git:https://github.com/ascopes/java-compiler-testing</developerConnection>
     <tag>vHEAD</tag>
