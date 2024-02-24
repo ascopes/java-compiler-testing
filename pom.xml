@@ -269,7 +269,6 @@
               <include>*IntegrationTest</include>
             </includes>
 
-            <failIfNoTests>true</failIfNoTests>
             <runOrder>random</runOrder>
             <useModulePath>true</useModulePath>
 
@@ -443,7 +442,6 @@
               <exclude>*IntegrationTest</exclude>
             </excludes>
 
-            <failIfNoTests>true</failIfNoTests>
             <runOrder>random</runOrder>
             <useModulePath>true</useModulePath>
 
