@@ -132,6 +132,7 @@
       experimental builds.
     -->
     <argLine>
+      -DmvnArgLinePropagated=true
       -Dnet.bytebuddy.experimental=true
       -Dorg.slf4j.simpleLogger.log=WARN
       -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=INFO
