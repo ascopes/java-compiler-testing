@@ -150,6 +150,7 @@
     <highlight-js.version>11.9.0</highlight-js.version>
 
     <!-- Other configuration -->
+    <mvnArgLinePropagated>true</mvnArgLinePropagated>
     <project-slug>ascopes/java-compiler-testing</project-slug>
   </properties>
 
