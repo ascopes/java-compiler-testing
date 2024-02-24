@@ -121,6 +121,13 @@ while read -r report; do
     info "Waited for up to ${concurrency} jobs to complete, will now continue..."
   fi
 done < <(find . -name 'TEST*.xml' -print)
+
+while read -r report; do
+  report_count="$((report_count+1))"
+  new_report="${report/.log/-java-${ci_java_version}-${ci_os}.log}"
+  mv "${report}" "${new_report}"
+done < <(find . -name build.log -print)
+
 wait < <(jobs -p)
 
 if [[ "${report_count}" -eq 0 ]]; then

@@ -39,6 +39,7 @@ jobs:
           -Dmaven.jar.skip
           -Dmaven.resources.skip
           -Dmaven.test.skip
+          -Dinvoker.skip
           verify
 
       - name: Run ShellCheck
@@ -165,6 +166,7 @@ jobs:
           path: |
             **/surefire-reports/**
             **/failsafe-reports/**
+            **/build*.log
           retention-days: 30
 
   aggregate-test-reports:
@@ -192,6 +194,7 @@ jobs:
           path: |
             **/surefire-reports/**
             **/failsafe-reports/**
+            **/build*.log
 
       - name: Publish test results
         continue-on-error: true
