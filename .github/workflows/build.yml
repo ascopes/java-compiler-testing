@@ -28,7 +28,6 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 21
-          cache: 'maven'
 
       - name: Run Maven checks
         shell: bash
@@ -96,7 +95,6 @@ jobs:
       - name: Initialize JDK
         uses: actions/setup-java@v4
         with:
-          cache: maven
           check-latest: true
           distribution: zulu
           java-version: ${{ matrix.java-version }}
@@ -229,7 +227,6 @@ jobs:
           distribution: 'zulu'
           # Must use >= JDK 17 for JavaDocs to generate correctly.
           java-version: 21
-          cache: 'maven'
 
       - name: Generate JavaDocs
         shell: bash
