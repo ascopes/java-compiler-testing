@@ -45,7 +45,7 @@ import org.jspecify.annotations.Nullable;
  * <p>Implementations should extend this class and override anything they require.
  * In most cases, you should not need to override anything other than the constructor.
  *
- * <p>This class is <strong>not</strong> thread-safe.
+ * <p>This class is <strong>not thread-safe</strong> thread-safe!
  *
  * <p>If you wish to create a common set of configuration settings for instances of
  * this class, you should consider writing a custom {@link JctCompilerConfigurer} object to apply
@@ -61,6 +61,7 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   private final List<Processor> annotationProcessors;
   private final List<String> annotationProcessorOptions;
   private final List<String> compilerOptions;
+
   private String name;
   private boolean showWarnings;
   private boolean showDeprecationWarnings;
@@ -70,9 +71,6 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   private Charset logCharset;
   private boolean verbose;
   private boolean previewFeatures;
-  private @Nullable String release;
-  private @Nullable String source;
-  private @Nullable String target;
   private LoggingMode diagnosticLoggingMode;
   private boolean fixJvmModulePathMismatch;
   private boolean inheritClassPath;
@@ -83,6 +81,10 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   private Set<DebuggingInfo> debuggingInfo;
   private boolean parameterInfoEnabled;
 
+  private @Nullable String release;
+  private @Nullable String source;
+  private @Nullable String target;
+
   /**
    * Initialize this compiler.
    *
@@ -90,9 +92,10 @@ public abstract class AbstractJctCompiler implements JctCompiler {
    */
   protected AbstractJctCompiler(String defaultName) {
     name = requireNonNull(defaultName, "name");
-    annotationProcessors = new ArrayList<>(1);
-    annotationProcessorOptions = new ArrayList<>(1);
-    compilerOptions = new ArrayList<>(3);
+
+    annotationProcessors = new ArrayList<>();
+    annotationProcessorOptions = new ArrayList<>();
+    compilerOptions = new ArrayList<>();
     showWarnings = JctCompiler.DEFAULT_SHOW_WARNINGS;
     showDeprecationWarnings = JctCompiler.DEFAULT_SHOW_DEPRECATION_WARNINGS;
     failOnWarnings = JctCompiler.DEFAULT_FAIL_ON_WARNINGS;
@@ -100,9 +103,6 @@ public abstract class AbstractJctCompiler implements JctCompiler {
     locale = JctCompiler.DEFAULT_LOCALE;
     logCharset = JctCompiler.DEFAULT_LOG_CHARSET;
     previewFeatures = JctCompiler.DEFAULT_PREVIEW_FEATURES;
-    release = null;
-    source = null;
-    target = null;
     verbose = JctCompiler.DEFAULT_VERBOSE;
     diagnosticLoggingMode = JctCompiler.DEFAULT_DIAGNOSTIC_LOGGING_MODE;
     fixJvmModulePathMismatch = JctCompiler.DEFAULT_FIX_JVM_MODULE_PATH_MISMATCH;
@@ -113,11 +113,16 @@ public abstract class AbstractJctCompiler implements JctCompiler {
     annotationProcessorDiscovery = JctCompiler.DEFAULT_ANNOTATION_PROCESSOR_DISCOVERY;
     debuggingInfo = DEFAULT_DEBUGGING_INFO;
     parameterInfoEnabled = DEFAULT_PARAMETER_INFO_ENABLED;
+
+    // If none of these are overridden then we assume the defaults instead.
+    release = null;
+    source = null;
+    target = null;
   }
 
   @Override
   public JctCompilation compile(Workspace workspace) {
-    return compileInternal(workspace, null);
+    return performCompilation(workspace, null);
   }
 
   @Override
@@ -130,12 +135,13 @@ public abstract class AbstractJctCompiler implements JctCompiler {
       throw new IllegalArgumentException("classNames must not be empty");
     }
 
-    return compileInternal(workspace, classNames);
+    return performCompilation(workspace, classNames);
   }
 
   @Override
   public final <E extends Exception> AbstractJctCompiler configure(
-      JctCompilerConfigurer<E> configurer) throws E {
+      JctCompilerConfigurer<E> configurer
+  ) throws E {
     requireNonNull(configurer, "configurer");
     configurer.configure(this);
     return this;
@@ -226,7 +232,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
 
   @Override
   public AbstractJctCompiler addAnnotationProcessorOptions(
-      Iterable<String> annotationProcessorOptions) {
+      Iterable<String> annotationProcessorOptions
+  ) {
     requireNonNullValues(annotationProcessorOptions, "annotationProcessorOptions");
     annotationProcessorOptions.forEach(this.annotationProcessorOptions::add);
     return this;
@@ -239,7 +246,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
 
   @Override
   public AbstractJctCompiler addAnnotationProcessors(
-      Iterable<? extends Processor> annotationProcessors) {
+      Iterable<? extends Processor> annotationProcessors
+  ) {
     requireNonNullValues(annotationProcessors, "annotationProcessors");
     annotationProcessors.forEach(this.annotationProcessors::add);
 
@@ -415,7 +423,8 @@ public abstract class AbstractJctCompiler implements JctCompiler {
 
   @Override
   public AbstractJctCompiler annotationProcessorDiscovery(
-      AnnotationProcessorDiscovery annotationProcessorDiscovery) {
+      AnnotationProcessorDiscovery annotationProcessorDiscovery
+  ) {
     requireNonNull(annotationProcessorDiscovery, 
         "annotationProcessorDiscovery");
     this.annotationProcessorDiscovery = annotationProcessorDiscovery;
@@ -538,7 +547,7 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   }
 
   @SuppressWarnings("ThrowFromFinallyBlock")
-  private JctCompilation compileInternal(
+  private JctCompilation performCompilation(
         Workspace workspace, 
         @Nullable Collection<String> classNames
   ) {
@@ -553,9 +562,11 @@ public abstract class AbstractJctCompiler implements JctCompiler {
     // Any internal exceptions should be rethrown as a JctCompilerException by the
     // compilation factory, so there is nothing else to worry about here.
     // Likewise, do not catch IOException on the compilation process, as it may hide
-    // bugs. Hence, we have to use a try-finally-try-catch-rethrow manually rather than a nice
-    // try-with-resources. This is kinda crap code, but it prevents reporting errors incorrectly.
-
+    // bugs.
+    //
+    // The try-finally-try-catch-rethrow ensures we only catch IOExceptions during
+    // the file manager closure, where it is a bug.
+    
     try {
       return compilationFactory.createCompilation(flags, fileManager, compiler, classNames);
     } finally {
