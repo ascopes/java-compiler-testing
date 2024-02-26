@@ -143,7 +143,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    *     is.transferTo(baos);
    *     String content = new String(baos.toByteArray(), ...);
    *     ...
-   *    }
+   *   }
    * </code></pre>
    *
    * @return a class loader for the contents of this container group.
