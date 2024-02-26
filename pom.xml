@@ -589,6 +589,7 @@
                 <include>security-suppressions.xml</include>
                 <include>src/**/*.groovy</include>
                 <include>src/**/*.java</include>
+                <include>src/it/settings.xml</include>
                 <include>scripts/**/*.sh</include>
               </includes>
             </licenseSet>
