@@ -62,6 +62,13 @@ function tidy() {
   run <<< "rm -Rf '${surefire_prefix_xslt_dir}'"
 }
 
+function yeet_noise() {
+  local temp
+  temp=$(mktemp)
+  sed 's/[\d128-\d255]//g' "${1?}" > "${temp}"
+  mv "${temp}" "${1}"
+}
+
 trap 'tidy' EXIT SIGINT SIGTERM SIGQUIT
 surefire_prefix_xslt="${surefire_prefix_xslt_dir}/surefire.xslt"
 
@@ -95,6 +102,8 @@ function xsltproc_surefire_report() {
   local xslt="${2}"
   local input_report="${3}"
   local output_report="${4}"
+
+  yeet_noise "${input_report}"
 
   if ! run --no-group <<< "xsltproc --stringparam prefix '${prefix}' '${xslt}' '${input_report}' > '${output_report}'"; then
     err "Error invoking xsltproc! Erroneous report was:"
