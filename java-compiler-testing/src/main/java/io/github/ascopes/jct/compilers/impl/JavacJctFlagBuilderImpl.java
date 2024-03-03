@@ -93,9 +93,11 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
         break;
 
       default:
-        // In Java 22, the default is to disable all annotation processing by default.
-        // Prior to Java 22, the default was to enable all annotation processing by default.
-        craftedFlags.add(PROC_FULL);
+        if (Runtime.version().feature() >= 22) {
+          // In Java 22, the default is to disable all annotation processing by default
+          // Prior to Java 22, the default was to enable all annotation processing by default.
+          craftedFlags.add(PROC_FULL);
+        }
         break;
     }
 
