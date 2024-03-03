@@ -16,11 +16,8 @@
 package io.github.ascopes.jct.filemanagers.config;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
-import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
@@ -48,9 +45,7 @@ import org.slf4j.LoggerFactory;
  * This enables configurers to wrap file managers in proxies or delegating implementations
  * to intercept or override existing behaviours.
  *
- * <p>While not designed for concurrent use, all operations are shielded by a
- * lock to guard against potentially confusing behaviour, should this component be shared across
- * multiple physical or virtual threads.
+ * <p>This class is not threadsafe.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -60,14 +55,12 @@ public final class JctFileManagerConfigurerChain {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JctFileManagerConfigurerChain.class);
 
-  private final Lock lock;
-  private final Deque<JctFileManagerConfigurer> configurers;
+  private final LinkedList<JctFileManagerConfigurer> configurers;
 
   /**
    * Initialise this chain.
    */
   public JctFileManagerConfigurerChain() {
-    lock = new ReentrantLock();
     configurers = new LinkedList<>();
   }
 
@@ -78,12 +71,7 @@ public final class JctFileManagerConfigurerChain {
    * @return this chain for further calls.
    */
   public JctFileManagerConfigurerChain addFirst(JctFileManagerConfigurer configurer) {
-    lock.lock();
-    try {
-      configurers.addFirst(configurer);
-    } finally {
-      lock.unlock();
-    }
+    configurers.addFirst(configurer);
     return this;
   }
 
@@ -94,12 +82,7 @@ public final class JctFileManagerConfigurerChain {
    * @return this chain for further calls.
    */
   public JctFileManagerConfigurerChain addLast(JctFileManagerConfigurer configurer) {
-    lock.lock();
-    try {
-      configurers.addLast(configurer);
-    } finally {
-      lock.unlock();
-    }
+    configurers.addLast(configurer);
     return this;
   }
 
@@ -109,12 +92,7 @@ public final class JctFileManagerConfigurerChain {
    * @return the list of configurers.
    */
   public List<JctFileManagerConfigurer> list() {
-    lock.lock();
-    try {
-      return List.copyOf(configurers);
-    } finally {
-      lock.unlock();
-    }
+    return List.copyOf(configurers);
   }
 
   /**
@@ -125,21 +103,10 @@ public final class JctFileManagerConfigurerChain {
    *     parameter, depending on how the configurers manipulate the input object.
    */
   public JctFileManager configure(JctFileManager fileManager) {
-    lock.lock();
-    try {
-      for (var configurer : configurers) {
-        if (configurer.isEnabled()) {
-          LOGGER.debug("Applying {} to file manager {}", configurer, fileManager);
-          // Configurers can totally replace the existing file manager
-          // if they choose.
-          fileManager = configurer.configure(fileManager);
-        } else {
-          LOGGER.trace("Skipping {}", configurer);
-        }
-      }
-    } finally {
-      lock.unlock();
-    }
+    configurers.stream()
+        .filter(JctFileManagerConfigurer::isEnabled)
+        .peek(configurer -> LOGGER.debug("Applying {} to file manager {}", configurer, fileManager))
+        .forEach(configurer -> configurer.configure(fileManager));
 
     return fileManager;
   }
