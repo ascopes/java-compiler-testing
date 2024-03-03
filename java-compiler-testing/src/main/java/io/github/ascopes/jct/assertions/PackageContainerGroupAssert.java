@@ -102,9 +102,7 @@ public final class PackageContainerGroupAssert
       }
     }
 
-    if (errors.size() == 1) {
-      throw errors.get(0);
-    } else if (errors.size() > 1) {
+    if (errors.size() >= 1) {
       throw new MultipleAssertionsError(
           new TextDescription(
               "Expected all paths in %s to exist but one or more did not",
