@@ -144,7 +144,7 @@ jobs:
         run: ./mvnw -B -U -Dcheckstyle.skip=true -Dlicense.skip=true clean verify
 
       - name: Upload to codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v3
         with:
           name: tests-java-${{ matrix.java-version }}-os-${{ matrix.os-name }}
 
