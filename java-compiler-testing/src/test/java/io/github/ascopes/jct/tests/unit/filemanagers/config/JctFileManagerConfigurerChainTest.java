@@ -18,9 +18,10 @@ package io.github.ascopes.jct.tests.unit.filemanagers.config;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerConfigurer;
@@ -150,10 +151,6 @@ class JctFileManagerConfigurerChainTest {
     when(configurer6.isEnabled()).thenReturn(true);
     when(configurer6.configure(any())).then(returnParameter());
 
-    var order = inOrder(
-        configurer1, configurer2, configurer3, configurer4, configurer5, configurer6
-    );
-
     chain
         .addLast(configurer1)
         .addLast(configurer2)
@@ -166,18 +163,23 @@ class JctFileManagerConfigurerChainTest {
     var resultFileManager = chain.configure(fileManager1);
 
     // Then
-    order.verify(configurer1).isEnabled();
-    order.verify(configurer1).configure(fileManager1);
-    order.verify(configurer2).isEnabled();
-    order.verify(configurer2).configure(fileManager1);
-    order.verify(configurer3).isEnabled();
-    order.verify(configurer3).configure(fileManager1);
-    order.verify(configurer4).isEnabled();
-    order.verify(configurer4).configure(fileManager2);
-    order.verify(configurer5).isEnabled();
-    order.verify(configurer6).isEnabled();
-    order.verify(configurer6).configure(fileManager3);
-    order.verifyNoMoreInteractions();
+    verify(configurer1).isEnabled();
+    verify(configurer1).configure(fileManager1);
+    verify(configurer2).isEnabled();
+    verify(configurer2).configure(fileManager1);
+    verify(configurer3).isEnabled();
+    verify(configurer3).configure(fileManager1);
+    verify(configurer4).isEnabled();
+    verify(configurer4).configure(fileManager2);
+    verify(configurer5).isEnabled();
+    verify(configurer6).isEnabled();
+    verify(configurer6).configure(fileManager3);
+    verifyNoMoreInteractions(configurer1);
+    verifyNoMoreInteractions(configurer2);
+    verifyNoMoreInteractions(configurer3);
+    verifyNoMoreInteractions(configurer4);
+    verifyNoMoreInteractions(configurer5);
+    verifyNoMoreInteractions(configurer6);
 
     assertThat(resultFileManager)
         .isSameAs(fileManager3);

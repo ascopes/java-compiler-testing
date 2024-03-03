@@ -103,11 +103,16 @@ public final class JctFileManagerConfigurerChain {
    *     parameter, depending on how the configurers manipulate the input object.
    */
   public JctFileManager configure(JctFileManager fileManager) {
-    configurers.stream()
-        .filter(JctFileManagerConfigurer::isEnabled)
-        .peek(configurer -> LOGGER.debug("Applying {} to file manager {}", configurer, fileManager))
-        .forEach(configurer -> configurer.configure(fileManager));
-
+    for (var configurer : configurers) {
+      if (configurer.isEnabled()) {
+        LOGGER.debug("Applying {} to file manager {}", configurer, fileManager);
+        // Configurers can totally replace the existing file manager
+        // if they choose.
+        fileManager = configurer.configure(fileManager);
+      } else {
+        LOGGER.trace("Skipping {}", configurer);
+      }
+    }
     return fileManager;
   }
 }
