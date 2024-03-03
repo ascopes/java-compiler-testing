@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(JctCompilationFactoryImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(JctCompilationFactoryImpl.class);
   private static final String ROOT_PACKAGE = "";
   
   private final JctCompiler compiler;
@@ -106,7 +106,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
       var preparationExecutionTimeMs = timeDeltaMs(startPreparation);
 
-      LOGGER
+      log
           .atInfo()
           .setMessage("Starting compilation with {} (found {} compilation units in approx {}ms)")
           .addArgument(compiler::getName)
@@ -125,7 +125,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       // Ensure we commit the writer contents to the wrapped output stream in full.
       writer.flush();
 
-      LOGGER
+      log
           .atInfo()
           .setMessage("Compilation with {} {} after approximately {}ms (roughly {} classes/sec)")
           .addArgument(compiler::getName)
@@ -191,12 +191,12 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
     var locations = IterableUtils.flatten(deepLocations);
 
     if (locations.isEmpty()) {
-      LOGGER.info(
+      log.info(
           "No multi-module sources found, will use the source path to find classes to compile"
       );
       locations = List.of(StandardLocation.SOURCE_PATH);
     } else {
-      LOGGER.info(
+      log.info(
           "Multi-module sources found, will use the module source path to find classes to compile"
       );
     }
@@ -231,7 +231,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
       }
     }
 
-    LOGGER.atDebug()
+    log.atDebug()
         .setMessage("Filtered {} candidate compilation units down to {} via class whitelist {}")
         .addArgument(compilationUnits::size)
         .addArgument(binaryNamesToCompilationUnits::size)

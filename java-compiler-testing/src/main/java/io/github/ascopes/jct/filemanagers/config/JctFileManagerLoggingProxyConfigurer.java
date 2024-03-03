@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.STABLE)
 public final class JctFileManagerLoggingProxyConfigurer implements JctFileManagerConfigurer {
 
-  private static final Logger LOGGER = LoggerFactory
+  private static final Logger log = LoggerFactory
       .getLogger(JctFileManagerLoggingProxyConfigurer.class);
 
   private final JctCompiler compiler;
@@ -50,14 +50,14 @@ public final class JctFileManagerLoggingProxyConfigurer implements JctFileManage
 
   @Override
   public JctFileManager configure(JctFileManager fileManager) {
-    LOGGER.debug("Configuring compiler operation audit logging");
+    log.debug("Configuring compiler operation audit logging");
 
     switch (compiler.getFileManagerLoggingMode()) {
       case STACKTRACES:
-        LOGGER.trace("Decorating file manager {} in a logger proxy with stack traces", fileManager);
+        log.trace("Decorating file manager {} in a logger proxy with stack traces", fileManager);
         return LoggingFileManagerProxy.wrap(fileManager, true);
       case ENABLED:
-        LOGGER.trace("Decorating file manager {} in a logger proxy", fileManager);
+        log.trace("Decorating file manager {} in a logger proxy", fileManager);
         return LoggingFileManagerProxy.wrap(fileManager, false);
       default:
         throw new IllegalStateException("Cannot configure logger proxy");

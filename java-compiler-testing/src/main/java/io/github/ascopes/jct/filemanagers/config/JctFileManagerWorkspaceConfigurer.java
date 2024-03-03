@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.STABLE)
 public final class JctFileManagerWorkspaceConfigurer implements JctFileManagerConfigurer {
 
-  private static final Logger LOGGER
+  private static final Logger log
       = LoggerFactory.getLogger(JctFileManagerWorkspaceConfigurer.class);
 
   private final Workspace workspace;
@@ -48,10 +48,10 @@ public final class JctFileManagerWorkspaceConfigurer implements JctFileManagerCo
 
   @Override
   public JctFileManager configure(JctFileManager fileManager) {
-    LOGGER.debug("Configuring file manager with user-provided paths");
+    log.debug("Configuring file manager with user-provided paths");
 
     workspace.getAllPaths().forEach((location, paths) -> {
-      LOGGER
+      log
           .atTrace()
           .setMessage("Adding paths from workspace location {} into file manager ({})")
           .addArgument(() -> StringUtils.quoted(location.getName()))

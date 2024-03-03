@@ -170,7 +170,7 @@ class PackageContainerGroupUrlClassLoaderTest {
    */
   private static final class SomeClassFile {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SomeClassFile.class);
+    private static final Logger log = LoggerFactory.getLogger(SomeClassFile.class);
 
     private final String packageName;
     private final String className;
@@ -201,7 +201,7 @@ class PackageContainerGroupUrlClassLoaderTest {
 
       var outputFile = packageDir.resolve(classFileName);
 
-      LOGGER.trace(
+      log.trace(
           "Using cached class file for {}.{}, writing to {}",
           packageName,
           className,
@@ -222,7 +222,7 @@ class PackageContainerGroupUrlClassLoaderTest {
           packageDir = packageDir.resolve(part);
         }
 
-        LOGGER.trace("Compiling {}.{} in temp dir {}", packageName, className, packageDir);
+        log.trace("Compiling {}.{} in temp dir {}", packageName, className, packageDir);
 
         Files.createDirectories(packageDir);
         try (var sourceStream = Files.newOutputStream(packageDir.resolve(sourceFileName))) {
@@ -254,7 +254,7 @@ class PackageContainerGroupUrlClassLoaderTest {
         }
 
         cachedClassFile = Files.readAllBytes(packageDir.resolve(classFileName));
-        LOGGER.trace(
+        log.trace(
             "{}.{} compiled to {} bytes of binary data",
             packageName,
             className,
@@ -265,7 +265,7 @@ class PackageContainerGroupUrlClassLoaderTest {
           @Override
           public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
               throws IOException {
-            LOGGER.trace("Deleting file {}", file);
+            log.trace("Deleting file {}", file);
             Files.delete(file);
             return FileVisitResult.CONTINUE;
           }
@@ -273,7 +273,7 @@ class PackageContainerGroupUrlClassLoaderTest {
           @Override
           public FileVisitResult postVisitDirectory(Path dir, IOException exc)
               throws IOException {
-            LOGGER.trace("Deleting directory {}", dir);
+            log.trace("Deleting directory {}", dir);
             Files.delete(dir);
             return FileVisitResult.CONTINUE;
           }

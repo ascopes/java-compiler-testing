@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.STABLE)
 public final class JctFileManagerConfigurerChain {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(JctFileManagerConfigurerChain.class);
+  private static final Logger log = LoggerFactory.getLogger(JctFileManagerConfigurerChain.class);
 
   private final LinkedList<JctFileManagerConfigurer> configurers;
 
@@ -105,12 +105,12 @@ public final class JctFileManagerConfigurerChain {
   public JctFileManager configure(JctFileManager fileManager) {
     for (var configurer : configurers) {
       if (configurer.isEnabled()) {
-        LOGGER.debug("Applying {} to file manager {}", configurer, fileManager);
+        log.debug("Applying {} to file manager {}", configurer, fileManager);
         // Configurers can totally replace the existing file manager
         // if they choose.
         fileManager = configurer.configure(fileManager);
       } else {
-        LOGGER.trace("Skipping {}", configurer);
+        log.trace("Skipping {}", configurer);
       }
     }
     return fileManager;

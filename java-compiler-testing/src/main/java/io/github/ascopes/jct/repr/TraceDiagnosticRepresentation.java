@@ -54,7 +54,7 @@ public final class TraceDiagnosticRepresentation implements Representation {
     return INSTANCE;
   }
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(TraceDiagnosticRepresentation.class);
+  private static final Logger log = LoggerFactory.getLogger(TraceDiagnosticRepresentation.class);
   private static final int ADDITIONAL_CONTEXT_LINES = 2;
   private static final String PADDING = " ".repeat(4);
 
@@ -174,7 +174,7 @@ public final class TraceDiagnosticRepresentation implements Representation {
         return content.toString();
       }
     } catch (Exception ex) {
-      LOGGER.debug("Failed to read char content for file object {} ({})", uri, implName, ex);
+      log.debug("Failed to read char content for file object {} ({})", uri, implName, ex);
     }
 
     // If that fails, attempt to use an input stream to deal with this.
@@ -183,11 +183,11 @@ public final class TraceDiagnosticRepresentation implements Representation {
       input.transferTo(contentBytes);
       return contentBytes.toString(StandardCharsets.UTF_8);
     } catch (Exception ex) {
-      LOGGER.debug("Failed to read input stream for file object {} ({})", uri, implName, ex);
+      log.debug("Failed to read input stream for file object {} ({})", uri, implName, ex);
     }
 
     // If we still cannot get anywhere, we should just give up.
-    LOGGER.warn(
+    log.warn(
         "Failed to read content for file object {} ({}), cannot produce a snippet preview. "
             + "Enable debug logs to see the cause of this issue.",
         uri,

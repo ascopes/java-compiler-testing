@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class FileBuilderImpl implements FileBuilder {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(FileBuilderImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(FileBuilderImpl.class);
   private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
   private final ManagedDirectory parent;
@@ -179,7 +179,7 @@ public final class FileBuilderImpl implements FileBuilder {
       case "ram":
         return input;
       default:
-        LOGGER.trace("Decided to wrap input {} in a buffer - scheme was {}", input, scheme);
+        log.trace("Decided to wrap input {} in a buffer - scheme was {}", input, scheme);
         return new BufferedInputStream(input);
     }
   }

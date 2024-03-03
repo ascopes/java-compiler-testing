@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class ModuleDiscoverer extends UtilityClass {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ModuleDiscoverer.class);
+  private static final Logger log = LoggerFactory.getLogger(ModuleDiscoverer.class);
 
   private ModuleDiscoverer() {
     // Static-only class.
@@ -68,7 +68,7 @@ public final class ModuleDiscoverer extends UtilityClass {
           ))
           .collect(Collectors.toUnmodifiableSet());
     } catch (FindException ex) {
-      LOGGER.debug("Failed to find modules in {}, will ignore this error", path, ex);
+      log.debug("Failed to find modules in {}, will ignore this error", path, ex);
       return Set.of();
     }
   }

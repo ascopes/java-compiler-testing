@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class TempDirectoryImpl extends AbstractManagedDirectory {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(TempDirectoryImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(TempDirectoryImpl.class);
 
   private final Path rootDirectory;
 
@@ -59,7 +59,7 @@ public final class TempDirectoryImpl extends AbstractManagedDirectory {
 
   @Override
   public void close() throws IOException {
-    LOGGER.trace(
+    log.trace(
         "Deleting temporary directory ('{}' @ {})",
         rootDirectory.toUri(),
         rootDirectory.getFileSystem()
@@ -69,14 +69,14 @@ public final class TempDirectoryImpl extends AbstractManagedDirectory {
       @Override
       public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         Files.delete(file);
-        LOGGER.trace("Deleted file '{}' from temporary directory '{}'", file, rootDirectory);
+        log.trace("Deleted file '{}' from temporary directory '{}'", file, rootDirectory);
         return super.visitFile(file, attrs);
       }
 
       @Override
       public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
         Files.delete(dir);
-        LOGGER.trace("Deleted directory '{}' within temporary directory '{}'", dir, rootDirectory);
+        log.trace("Deleted directory '{}' within temporary directory '{}'", dir, rootDirectory);
         return super.postVisitDirectory(dir, exc);
       }
     });
@@ -93,7 +93,7 @@ public final class TempDirectoryImpl extends AbstractManagedDirectory {
     // TODO(ascopes): are MS-DOS file name length limits a potential issue here?
     assertValidRootName(name);
     var tempDir = uncheckedIo(() -> Files.createTempDirectory("jct-" + name + "_"));
-    LOGGER.debug("Initialized new root '{}' using temporary directory at '{}'", name, tempDir);
+    log.debug("Initialized new root '{}' using temporary directory at '{}'", name, tempDir);
     return new TempDirectoryImpl(name, tempDir);
   }
 }

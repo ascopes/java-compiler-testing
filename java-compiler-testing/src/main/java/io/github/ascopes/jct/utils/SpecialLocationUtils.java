@@ -49,7 +49,7 @@ public final class SpecialLocationUtils extends UtilityClass {
       "idea_rt.jar"
   );
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SpecialLocationUtils.class);
+  private static final Logger log = LoggerFactory.getLogger(SpecialLocationUtils.class);
   private static final String NO_PATH = "";
   private static final URI JAVA_RUNTIME_URI = URI.create("jrt:/");
   private static final String JDK_MODULE_PROPERTY = "jdk.module.path";
@@ -130,7 +130,7 @@ public final class SpecialLocationUtils extends UtilityClass {
     var fileName = path.getFileName().toString();
 
     if (BLACKLISTED_FILE_NAMES.contains(fileName)) {
-      LOGGER.debug("Excluding {} from path list as it is a blacklisted file", fileName);
+      log.debug("Excluding {} from path list as it is a blacklisted file", fileName);
       return false;
     }
 

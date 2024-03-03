@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public final class JctFileManagerAnnotationProcessorClassPathConfigurer implements
     JctFileManagerConfigurer {
 
-  private static final Logger LOGGER = LoggerFactory
+  private static final Logger log = LoggerFactory
       .getLogger(JctFileManagerAnnotationProcessorClassPathConfigurer.class);
 
   private static final Map<StandardLocation, StandardLocation> INHERITED_AP_PATHS = Map.of(
@@ -65,18 +65,18 @@ public final class JctFileManagerAnnotationProcessorClassPathConfigurer implemen
 
   @Override
   public JctFileManager configure(JctFileManager fileManager) {
-    LOGGER.debug("Configuring annotation processor discovery mechanism");
+    log.debug("Configuring annotation processor discovery mechanism");
 
     switch (compiler.getAnnotationProcessorDiscovery()) {
       case ENABLED:
-        LOGGER.trace("Annotation processor discovery is enabled, ensuring empty location exists");
+        log.trace("Annotation processor discovery is enabled, ensuring empty location exists");
 
         INHERITED_AP_PATHS.values().forEach(fileManager::createEmptyLocation);
 
         return fileManager;
 
       case INCLUDE_DEPENDENCIES:
-        LOGGER.trace("Annotation processor discovery is enabled, copying classpath dependencies "
+        log.trace("Annotation processor discovery is enabled, copying classpath dependencies "
             + "into the annotation processor path");
 
         INHERITED_AP_PATHS.forEach(fileManager::copyContainers);
