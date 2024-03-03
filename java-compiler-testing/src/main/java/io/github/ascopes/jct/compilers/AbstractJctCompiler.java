@@ -130,11 +130,6 @@ public abstract class AbstractJctCompiler implements JctCompiler {
     // There is no reason to invoke this overload with null values, so
     // prevent this.
     requireNonNullValues(classNames, "classNames");
-
-    if (classNames.isEmpty()) {
-      throw new IllegalArgumentException("classNames must not be empty");
-    }
-
     return performCompilation(workspace, classNames);
   }
 
