@@ -238,5 +238,47 @@ class ModuleDiscovererTest {
       assertThat(candidate1).isNotEqualTo(candidate2);
       assertThat(candidate1).doesNotHaveSameHashCodeAs(candidate2);
     }
+
+    @DisplayName("Candidates are not equal to null")
+    @Test
+    void candidatesAreNotEqualToNull() {
+      // Given
+      var name = someModuleName();
+      var path = somePath();
+      var ref = someModuleRef(name, path);
+      var candidate = new ModuleCandidate(name, path, ref.descriptor());
+
+      // Then
+      // (Purposely using isNotEqual here rather than isNull, so do not
+      // change it).
+      assertThat(candidate).isNotEqualTo(null);
+    }
+
+    @DisplayName("Candidates are not equal to random objects")
+    @Test
+    void candidatesAreNotEqualToRandomObjects() {
+      // Given
+      var name = someModuleName();
+      var path = somePath();
+      var ref = someModuleRef(name, path);
+      var candidate = new ModuleCandidate(name, path, ref.descriptor());
+
+      // Then
+      assertThat(candidate).isNotEqualTo(new Object());
+    }
+
+    @DisplayName("Candidates have the expected toString representation")
+    @Test
+    void candidatesHaveExpectedToStringRepresentation() {
+      // Given
+      var name = someModuleName();
+      var path = somePath();
+      var ref = someModuleRef(name, path);
+      var candidate = new ModuleCandidate(name, path, ref.descriptor());
+
+      // Then
+      assertThat(candidate)
+          .hasToString("ModuleCandidate{name=\"%s\", path=\"%s\"}", name, path);
+    }
   }
 }
