@@ -232,11 +232,17 @@ class ModuleDiscovererTest {
 
       // When
       var candidate1 = new ModuleCandidate(name1, path1, ref1.descriptor());
-      var candidate2 = new ModuleCandidate(name2, path2, ref2.descriptor());
+      var candidate2 = new ModuleCandidate(name2, path1, ref2.descriptor());
+      var candidate3 = new ModuleCandidate(name1, path2, ref1.descriptor());
+      var candidate4 = new ModuleCandidate(name2, path2, ref2.descriptor());
 
       // Then
       assertThat(candidate1).isNotEqualTo(candidate2);
       assertThat(candidate1).doesNotHaveSameHashCodeAs(candidate2);
+      assertThat(candidate1).isNotEqualTo(candidate3);
+      assertThat(candidate1).doesNotHaveSameHashCodeAs(candidate3);
+      assertThat(candidate1).isNotEqualTo(candidate4);
+      assertThat(candidate1).doesNotHaveSameHashCodeAs(candidate4);
     }
 
     @DisplayName("Candidates are not equal to null")
