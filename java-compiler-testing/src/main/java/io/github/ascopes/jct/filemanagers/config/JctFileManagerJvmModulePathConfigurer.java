@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.STABLE)
 public final class JctFileManagerJvmModulePathConfigurer implements JctFileManagerConfigurer {
 
-  private static final Logger LOGGER = LoggerFactory
+  private static final Logger log = LoggerFactory
       .getLogger(JctFileManagerJvmModulePathConfigurer.class);
 
   private final JctCompiler compiler;
@@ -54,12 +54,12 @@ public final class JctFileManagerJvmModulePathConfigurer implements JctFileManag
 
   @Override
   public JctFileManager configure(JctFileManager fileManager) {
-    LOGGER.debug("Configuring module path");
+    log.debug("Configuring module path");
 
     SpecialLocationUtils
         .currentModulePathLocations()
         .stream()
-        .peek(loc -> LOGGER
+        .peek(loc -> log
             .atTrace()
             .setMessage("Adding {} ({}) to file manager module path (inherited from JVM))")
             .addArgument(() -> StringUtils.quoted(loc.toAbsolutePath()))

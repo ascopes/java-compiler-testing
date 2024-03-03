@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.STABLE)
 public final class JctFileManagerJvmClassPathModuleConfigurer implements JctFileManagerConfigurer {
 
-  private static final Logger LOGGER = LoggerFactory
+  private static final Logger log = LoggerFactory
       .getLogger(JctFileManagerJvmClassPathModuleConfigurer.class);
 
   private final JctCompiler compiler;
@@ -61,14 +61,14 @@ public final class JctFileManagerJvmClassPathModuleConfigurer implements JctFile
 
   @Override
   public JctFileManager configure(JctFileManager fileManager) {
-    LOGGER.debug(
+    log.debug(
         "Copying any misplaced modules that exist within the class path onto the module path"
     );
 
     SpecialLocationUtils
         .currentClassPathLocations()
         .stream()
-        .peek(loc -> LOGGER
+        .peek(loc -> log
             .atTrace()
             .setMessage("Adding {} ({}) to file manager module path (inherited from JVM))")
             .addArgument(() -> StringUtils.quoted(loc.toAbsolutePath()))
@@ -76,7 +76,7 @@ public final class JctFileManagerJvmClassPathModuleConfigurer implements JctFile
             .log())
         .map(ModuleDiscoverer::findModulesIn)
         .flatMap(Set::stream)
-        .peek(module -> LOGGER
+        .peek(module -> log
             .atDebug()
             .setMessage("Discovered module {}")
             .addArgument(module)

@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class PathWrappingContainerImpl implements Container {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(PathWrappingContainerImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(PathWrappingContainerImpl.class);
 
   private final Location location;
   private final PathRoot root;
@@ -184,7 +184,7 @@ public final class PathWrappingContainerImpl implements Container {
           .map(path -> new PathFileObjectImpl(location, root.getPath(), path))
           .forEach(collection::add);
     } catch (NoSuchFileException ex) {
-      LOGGER.trace("Directory {} does not exist so is being ignored", root.getPath());
+      log.trace("Directory {} does not exist so is being ignored", root.getPath());
     }
   }
 

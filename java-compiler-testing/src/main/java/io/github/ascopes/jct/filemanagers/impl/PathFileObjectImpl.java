@@ -65,7 +65,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "1.0.0", status = Status.INTERNAL)
 public final class PathFileObjectImpl implements PathFileObject {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(PathFileObjectImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(PathFileObjectImpl.class);
   private static final Charset CHARSET = StandardCharsets.UTF_8;
 
   private final Location location;
@@ -112,7 +112,7 @@ public final class PathFileObjectImpl implements PathFileObject {
     try {
       return Files.deleteIfExists(absolutePath);
     } catch (IOException ex) {
-      LOGGER.debug("Ignoring error deleting {}", uri, ex);
+      log.debug("Ignoring error deleting {}", uri, ex);
       return false;
     }
   }
@@ -152,7 +152,7 @@ public final class PathFileObjectImpl implements PathFileObject {
     try {
       return Files.getLastModifiedTime(absolutePath).toMillis();
     } catch (IOException ex) {
-      LOGGER.debug("Ignoring error reading last modified time for {}", uri, ex);
+      log.debug("Ignoring error reading last modified time for {}", uri, ex);
       return NOT_MODIFIED;
     }
   }

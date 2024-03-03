@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.STABLE)
 public final class ContainerGroupRepositoryImpl implements AutoCloseable {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ContainerGroupRepositoryImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(ContainerGroupRepositoryImpl.class);
 
   private final String release;
   private final Map<Location, PackageContainerGroup> packageInputs;
@@ -352,7 +352,7 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
     var modules = ModuleDiscoverer.findModulesIn(pathRoot.getPath());
 
     if (modules.isEmpty()) {
-      LOGGER.debug("Not adding module root {} as no modules were found inside it", location);
+      log.debug("Not adding module root {} as no modules were found inside it", location);
       return;
     }
 

@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class RamDirectoryImpl extends AbstractManagedDirectory {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(RamDirectoryImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(RamDirectoryImpl.class);
 
   private final String name;
   private final Path rootDirectory;
@@ -69,7 +69,7 @@ public final class RamDirectoryImpl extends AbstractManagedDirectory {
 
   @Override
   public void close() throws IOException {
-    LOGGER.trace(
+    log.trace(
         "Closing RAM file system '{}' ('{}' @ {})",
         name,
         rootDirectory.toUri(),
@@ -98,7 +98,7 @@ public final class RamDirectoryImpl extends AbstractManagedDirectory {
 
     var fs = new RamDirectoryImpl(name, fileSystem, path);
 
-    LOGGER.debug(
+    log.debug(
         "Initialized new root '{}' using RAM disk at '{}'",
         name,
         path.toUri()

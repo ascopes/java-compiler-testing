@@ -139,7 +139,7 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
 
   private static class TempPaths implements Closeable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TempPaths.class);
+    private static final Logger log = LoggerFactory.getLogger(TempPaths.class);
     private final Path root;
     private final List<Path> paths;
 
@@ -147,14 +147,14 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
       // Has to be on the default file system.
       root = Files.createTempDirectory("SpecialLocationsTest_" + UUID.randomUUID());
       Files.createDirectories(root);
-      LOGGER.trace("Created temporary directory location at '{}'", root);
+      log.trace("Created temporary directory location at '{}'", root);
 
       paths = new ArrayList<>();
       for (var i = 0; i < 10; ++i) {
         var nextPath = Files
             .createDirectory(root.resolve(someText()))
             .toAbsolutePath();
-        LOGGER.trace(
+        log.trace(
             "Created directory '{}' within temporary directory location '{}'", nextPath, root
         );
         paths.add(nextPath);
@@ -198,14 +198,14 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
           Files.delete(file);
-          LOGGER.trace("Deleted file '{}' within temporary location '{}'", file, root);
+          log.trace("Deleted file '{}' within temporary location '{}'", file, root);
           return FileVisitResult.CONTINUE;
         }
 
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
           Files.delete(dir);
-          LOGGER.trace("Deleted directory '{}' within temporary location '{}'", dir, root);
+          log.trace("Deleted directory '{}' within temporary location '{}'", dir, root);
           return FileVisitResult.CONTINUE;
         }
       });

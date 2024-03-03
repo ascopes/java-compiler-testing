@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class JarContainerImpl implements Container {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(JarContainerImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(JarContainerImpl.class);
 
   private static final Lazy<FileSystemProvider> JAR_FS_PROVIDER = new Lazy<>(() -> {
     for (var fsProvider : FileSystemProvider.installedProviders()) {
@@ -265,7 +265,7 @@ public final class JarContainerImpl implements Container {
 
     private PackageFileSystemHolder() throws IOException {
       var actualJarPath = jarPath.getPath();
-      LOGGER.trace("Preparing virtual file system holder for JAR {}", actualJarPath);
+      log.trace("Preparing virtual file system holder for JAR {}", actualJarPath);
 
       // It turns out that we can open more than one ZIP file system pointing to the
       // same file at once, but we cannot do this with the JAR file system itself.
@@ -300,7 +300,7 @@ public final class JarContainerImpl implements Container {
       // process the actual values here.
       
       packages = new Lazy<>(() -> uncheckedIo(() -> {
-        LOGGER.trace("Indexing packages in JAR {}...", actualJarPath);
+        log.trace("Indexing packages in JAR {}...", actualJarPath);
         try (var walker = Files.walk(rootDirectory)) {
           return walker
               .filter(Files::isDirectory)
@@ -309,7 +309,7 @@ public final class JarContainerImpl implements Container {
                   FileUtils::pathToBinaryName,
                   path -> new WrappingDirectoryImpl(rootDirectory.resolve(path)),
                   (a, b) -> {
-                    LOGGER.trace(
+                    log.trace(
                         "Found duplicate entry {}. This copy will be silently dropped.", 
                         b
                     );
@@ -320,7 +320,7 @@ public final class JarContainerImpl implements Container {
       }));
 
       files = new Lazy<>(() -> uncheckedIo(() -> {
-        LOGGER.trace("Indexing files in JAR {}...", actualJarPath);
+        log.trace("Indexing files in JAR {}...", actualJarPath);
         var allPaths = new ArrayList<Path>(6);
 
         // We have to do this eagerly all at once as the walker streams must be closed to
@@ -334,7 +334,7 @@ public final class JarContainerImpl implements Container {
     }
 
     private void close() throws IOException {
-      LOGGER.trace(
+      log.trace(
           "Closing JAR file system handle ({} @ {})",
           jarPath.getUri(),
           fileSystem.getRootDirectories()

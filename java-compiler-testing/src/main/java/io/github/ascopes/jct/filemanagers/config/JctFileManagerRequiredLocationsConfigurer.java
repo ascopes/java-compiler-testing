@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.STABLE)
 public final class JctFileManagerRequiredLocationsConfigurer implements JctFileManagerConfigurer {
 
-  private static final Logger LOGGER
+  private static final Logger log
       = LoggerFactory.getLogger(JctFileManagerRequiredLocationsConfigurer.class);
 
   // Locations that we have to ensure exist before the compiler is run.
@@ -69,12 +69,12 @@ public final class JctFileManagerRequiredLocationsConfigurer implements JctFileM
 
   @Override
   public JctFileManager configure(JctFileManager fileManager) {
-    LOGGER.debug("Configuring required locations that do not yet exist");
+    log.debug("Configuring required locations that do not yet exist");
 
     REQUIRED_LOCATIONS
         .stream()
         .filter(not(fileManager::hasLocation))
-        .peek(location -> LOGGER.atTrace()
+        .peek(location -> log.atTrace()
             .setMessage("Required location {} does not exist, so will be created in the workspace")
             .addArgument(() -> StringUtils.quoted(location.getName()))
             .log())

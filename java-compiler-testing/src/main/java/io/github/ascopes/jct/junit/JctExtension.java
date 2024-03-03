@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
 public final class JctExtension
     implements Extension, BeforeEachCallback, BeforeAllCallback, AfterEachCallback, AfterAllCallback {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(JctExtension.class);
+  private static final Logger log = LoggerFactory.getLogger(JctExtension.class);
 
   /**
    * Initialise this extension.
@@ -141,7 +141,7 @@ public final class JctExtension
   }
 
   private void initWorkspaceForField(Field field, @Nullable Object instance) throws Exception {
-    LOGGER
+    log
         .atTrace()
         .setMessage("Initialising workspace for field in {}: {} {} on instance {}")
         .addArgument(() -> field.getDeclaringClass().getSimpleName())
@@ -156,7 +156,7 @@ public final class JctExtension
   }
 
   private void closeWorkspaceForField(Field field, @Nullable Object instance) throws Exception {
-    LOGGER
+    log
         .atTrace()
         .setMessage("Closing workspace for field in {}: {} {} on instance {}")
         .addArgument(() -> field.getDeclaringClass().getSimpleName())

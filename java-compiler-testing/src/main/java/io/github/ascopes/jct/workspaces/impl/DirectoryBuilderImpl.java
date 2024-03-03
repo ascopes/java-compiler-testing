@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.INTERNAL)
 public final class DirectoryBuilderImpl implements DirectoryBuilder {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DirectoryBuilderImpl.class);
+  private static final Logger log = LoggerFactory.getLogger(DirectoryBuilderImpl.class);
 
   private final ManagedDirectory parent;
   private final Path targetPath;
@@ -86,7 +86,7 @@ public final class DirectoryBuilderImpl implements DirectoryBuilder {
           // Fix windows-style separators if needed.
           var targetChildDirectory = targetPath.resolve(collapsePath(rootDir.relativize(dir)));
 
-          LOGGER.trace("Creating directory from {} to {}", dir, targetChildDirectory);
+          log.trace("Creating directory from {} to {}", dir, targetChildDirectory);
 
           // Ignore if the directory already exists (will occur for the root).
           Files.createDirectories(targetChildDirectory);
@@ -101,7 +101,7 @@ public final class DirectoryBuilderImpl implements DirectoryBuilder {
           // Fix windows-style separators if needed.
           var targetFile = targetPath.resolve(collapsePath(rootDir.relativize(file)));
 
-          LOGGER.trace("Copying file from {} to {}", file, targetFile);
+          log.trace("Copying file from {} to {}", file, targetFile);
 
           Files.copy(file, targetFile);
           return FileVisitResult.CONTINUE;
