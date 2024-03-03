@@ -270,7 +270,7 @@ class JavacJctFlagBuilderImplTest {
 
     @DisplayName("Setting .release(String) adds the '--release <version>' flag")
     @ValueSource(strings = {"8", "11", "17"})
-    @ParameterizedTest(name = "Setting .release(String) adds the '--release {0}' flag")
+    @ParameterizedTest(name = "Setting .release(String) adds the \"--release {0}\" flag")
     void addsFlagIfPresent(String version) {
       // When
       flagBuilder.release(version);
@@ -304,7 +304,7 @@ class JavacJctFlagBuilderImplTest {
 
     @DisplayName("Setting .source(String) adds the '-source <version>' flag")
     @ValueSource(strings = {"8", "11", "17"})
-    @ParameterizedTest(name = "Setting .source(String) adds the '-source {0}' flag")
+    @ParameterizedTest(name = "Setting .source(String) adds the \"-source {0}\" flag")
     void addsFlagIfPresent(String version) {
       // When
       flagBuilder.source(version);
@@ -339,7 +339,7 @@ class JavacJctFlagBuilderImplTest {
 
     @DisplayName("Setting .target(String) adds the '-target <version>' flag")
     @ValueSource(strings = {"8", "11", "17"})
-    @ParameterizedTest(name = "Setting .target(String) adds the '-target {0}' flag")
+    @ParameterizedTest(name = "Setting .target(String) adds the \"-target {0}\" flag")
     void addsFlagIfPresent(String version) {
       // When
       flagBuilder.target(version);
