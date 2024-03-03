@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -381,8 +382,23 @@ class JavacJctFlagBuilderImplTest {
     }
 
     @DisplayName("Setting .debuggingInfo with some values set adds the '-g:xxx' flags")
+    @CsvSource({
+        " LINES,  -g:lines",
+        "SOURCE, -g:source",
+        "  VARS,   -g:vars",
+    })
+    @ParameterizedTest(name = "expect {0} to set flag {1}")
+    void correctFlagsAreSet(DebuggingInfo flag, String flagString) {
+      // When
+      flagBuilder.debuggingInfo(DebuggingInfo.just(flag));
+
+      // Then
+      assertThat(flagBuilder.build()).containsExactly(flagString);
+    }
+
+    @DisplayName("Setting .debuggingInfo with all values set adds the '-g:xxx' flags")
     @Test
-    void nonEmptySetAddsValues() {
+    void allAddsValues() {
       // When
       flagBuilder.debuggingInfo(DebuggingInfo.all());
 
