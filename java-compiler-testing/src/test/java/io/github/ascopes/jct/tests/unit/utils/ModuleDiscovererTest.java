@@ -278,7 +278,12 @@ class ModuleDiscovererTest {
 
       // Then
       assertThat(candidate)
-          .hasToString("ModuleCandidate{name=\"%s\", path=\"%s\"}", name, path);
+          .hasToString(
+              "ModuleCandidate{name=\"%s\", path=\"%s\"}",
+              name,
+              // Replace handles string escaping on Windows paths
+              path.toString().replace("\\", "\\\\")
+          );
     }
   }
 }
