@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.tests.helpers.Fixtures.someBoolean;
 import static io.github.ascopes.jct.tests.helpers.Fixtures.someRelease;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 import io.github.ascopes.jct.compilers.CompilationMode;
 import io.github.ascopes.jct.compilers.DebuggingInfo;
@@ -211,14 +212,36 @@ class JavacJctFlagBuilderImplTest {
       assertThat(flagBuilder.build()).containsExactly("-proc:only");
     }
 
-    @DisplayName(".compilationMode(COMPILATION_AND_ANNOTATION_PROCESSING) adds -proc:full")
+    @DisplayName(".compilationMode(COMPILATION_AND_ANNOTATION_PROCESSING) adds -proc:full (JDK22)")
     @Test
-    void compilationAndAnnotationProcessingAddsProcAll() {
+    void compilationAndAnnotationProcessingAddsProcFullOnJdk22() {
+      // Given
+      assumeThat(Runtime.version().feature())
+          .as("JDK version")
+          .withFailMessage("this test only works on JDK 22 and newer")
+          .isGreaterThanOrEqualTo(22);
+
       // When
       flagBuilder.compilationMode(CompilationMode.COMPILATION_AND_ANNOTATION_PROCESSING);
 
       // Then
       assertThat(flagBuilder.build()).containsExactly("-proc:full");
+    }
+
+    @DisplayName(".compilationMode(COMPILATION_AND_ANNOTATION_PROCESSING) adds nothing (<JDK22)")
+    @Test
+    void compilationAndAnnotationProcessingAddsNothingBeforeJdk22() {
+      // Given
+      assumeThat(Runtime.version().feature())
+          .as("JDK version")
+          .withFailMessage("this test only works on JDK 21 and older")
+          .isLessThan(22);
+
+      // When
+      flagBuilder.compilationMode(CompilationMode.COMPILATION_AND_ANNOTATION_PROCESSING);
+
+      // Then
+      assertThat(flagBuilder.build()).isEmpty();
     }
 
     @DisplayName(".compilationMode(...) returns the flag builder")
