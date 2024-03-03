@@ -250,8 +250,6 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
   // for PathFileObjects directly to prevent the cast back to JavaFileObject that
   // makes us need this hack.
   private PathFileObject forceUpcastJavaFileObject(JavaFileObject jfo) {
-    assert jfo instanceof PathFileObject
-        : "Unexpected state: JavaFileObject " + jfo + " was not a PathFileObject!";
     return (PathFileObject) jfo;
   }
 
