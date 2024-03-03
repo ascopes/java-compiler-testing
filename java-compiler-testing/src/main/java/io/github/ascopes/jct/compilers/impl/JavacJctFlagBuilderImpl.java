@@ -126,20 +126,19 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   public JctFlagBuilder debuggingInfo(Set<DebuggingInfo> set) {
     if (set.isEmpty()) {
       craftedFlags.add(DEBUG_NONE);
-    } else {
-      for (var flag : set) {
-        switch (flag) {
-          case LINES:
-            craftedFlags.add(DEBUG_LINES);
-            break;
-          case SOURCE:
-            craftedFlags.add(DEBUG_SOURCE);
-            break;
-          case VARS:
-            craftedFlags.add(DEBUG_VARS);
-            break;
-        }
-      }
+      return this;
+    }
+
+    if (set.contains(DebuggingInfo.LINES)) {
+      craftedFlags.add(DEBUG_LINES);
+    }
+
+    if (set.contains(DebuggingInfo.SOURCE)) {
+      craftedFlags.add(DEBUG_SOURCE);
+    }
+
+    if (set.contains(DebuggingInfo.VARS)) {
+      craftedFlags.add(DEBUG_VARS);
     }
 
     return this;
