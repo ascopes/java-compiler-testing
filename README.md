@@ -41,7 +41,7 @@ Full JUnit5 integration is provided to help streamline the development process.
 - Enables running compilations on combinations of real files, class path
   resources, in-memory files, JARs, WARs, EARs, ZIP files, etc.
 - Null-safe API (using [JSpecify](https://jspecify.dev/)).
-- [Tested on multiple existing frameworks](acceptance-tests/) including 
+- [Tested on multiple existing frameworks](java-compiler-testing/src/it) including 
   Avaje, Spring, Lombok, MapStruct, ErrorProne, and CheckerFramework.
 - Supports Java 9 JPMS modules.
 - Ability to customise a large assortment of configuration parameters
