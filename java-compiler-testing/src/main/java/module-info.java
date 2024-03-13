@@ -47,6 +47,22 @@ import java.net.spi.URLStreamHandlerProvider;
  * href="https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing/"> Maven
  * Central</a>.
  *
+ * <h4>Common elements</h4>
+ *
+ * <ul>
+ *   <li><strong>JctCompiler</strong> - an encapsulation of the compiler API that can be
+ *     interacted with to configure how the compiler runs.
+ *   <li><strong>JctCompilation</strong> - the result of calling {@code compile()} on a
+ *     JctCompiler object. It holds information about whether the compilation succeeded, what
+ *     was logged, and can be asserted upon to verify various conditions.
+ *   <li><strong>Workspace</strong> - a wrapper around a temporary file system that holds
+ *     all the compiler inputs and outputs. This can be asserted upon to verify various 
+ *     conditions, and is designed to be created per test case to help keep your tests
+ *     reproducible.
+ * </ul>
+ *
+ * <h4>A simple example</h4>
+ *
  * <pre><code>
  *    import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
  *
