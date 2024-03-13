@@ -47,7 +47,7 @@ import java.net.spi.URLStreamHandlerProvider;
  * href="https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing/"> Maven
  * Central</a>.
  *
- * <h4>Common elements</h4>
+ * <h1>Common elements</h1>
  *
  * <ul>
  *   <li><strong>JctCompiler</strong> - an encapsulation of the compiler API that can be
@@ -61,7 +61,7 @@ import java.net.spi.URLStreamHandlerProvider;
  *     reproducible.
  * </ul>
  *
- * <h4>A simple example</h4>
+ * <h1>A simple example</h1>
  *
  * <pre><code>
  *    import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
