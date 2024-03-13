@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Implementation details for the JSR-199 file manager API.
+ * APIs that integrate with the JSR-199 FileManager APIs.
  */
 @API(since = "0.0.1", status = Status.STABLE)
 @NullMarked

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * File manager configuration rules.
+ * Reusable components for setting up JSR-199 file managers.
  */
 @API(since = "0.0.1", status = Status.STABLE)
 @NullMarked

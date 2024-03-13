@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Exceptions used within this API.
+ * Common exceptions used within this API.
  */
 @API(since = "0.0.1", status = Status.STABLE)
 @NullMarked

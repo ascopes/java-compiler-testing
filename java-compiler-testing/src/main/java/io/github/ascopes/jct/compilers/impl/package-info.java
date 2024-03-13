@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Internal common shared compiler components.
+ * Compiler backend integrations.
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 @NullMarked

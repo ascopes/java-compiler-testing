@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Compiler frontends that allow invoking compilers easily from tests.
+ * APIs for performing compiler passes across user-defined workspaces.
  */
 @API(since = "0.0.1", status = Status.STABLE)
 @NullMarked

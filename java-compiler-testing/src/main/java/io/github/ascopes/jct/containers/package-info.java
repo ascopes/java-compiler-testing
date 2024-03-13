@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 /**
- * Containers used to integrate with the JSR-199 API in a modular way.
+ * APIs for representing the various file management locations across
+ * multiple file system implementations.
  */
 @API(since = "0.0.1", status = Status.STABLE)
 @NullMarked

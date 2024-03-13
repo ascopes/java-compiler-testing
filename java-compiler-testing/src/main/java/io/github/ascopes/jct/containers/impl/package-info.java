@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Container and container group implementations.
+ * Implementations of compiler container hierarchies.
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
 @NullMarked

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Assertions to perform on the result of a compilation.
+ * AssertJ extensions for testing the results of compilations.
  */
 @API(since = "0.0.1", status = Status.STABLE)
 @NullMarked
