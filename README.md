@@ -259,13 +259,16 @@ support, running the Lombok annotation processor over the input. This assumes th
 JAR is already on the classpath for the JUnit test runner (e.g. is a test dependency in your
 project).
 
+You will want to make sure you do not attempt to target anything older than Java 9 in this case, since
+module support was only introduced in Java 9.
+
 ```java
 
 @DisplayName("Example tests")
 class ExampleTest {
 
   @DisplayName("I can compile a module that is using Lombok")
-  @JavacCompilerTest(modules = true)
+  @JavacCompilerTest(minVersion = 9)
   void canCompileModuleUsingLombok(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace()) {
       // Given
