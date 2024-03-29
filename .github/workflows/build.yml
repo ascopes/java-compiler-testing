@@ -130,9 +130,8 @@ jobs:
     needs:
       - linting
 
-    # Do not run multiple builds at once, as it can fail.
     concurrency:
-      cancel-in-progress: true
+      cancel-in-progress: false
       group: snapshot-javadocs
 
     steps:
