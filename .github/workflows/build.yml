@@ -102,9 +102,10 @@ jobs:
 
       # TODO: work out why the v4 plugin does not work.
       - name: Upload to codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           name: tests-java-${{ matrix.java-version }}-os-${{ matrix.os-name }}
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Stash reports
         uses: actions/upload-artifact@v4
