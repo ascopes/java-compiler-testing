@@ -95,7 +95,7 @@
     <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
     <license-maven-plugin.version>4.3</license-maven-plugin.version>
     <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
-    <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
     <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
     <maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
     <maven-gpg-plugin.version>3.2.1</maven-gpg-plugin.version>
