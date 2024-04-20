@@ -23,6 +23,7 @@
     <groupId>io.github.ascopes.jct</groupId>
     <artifactId>java-compiler-testing-parent</artifactId>
     <version>@project.version@</version>
+    <relativePath>../../../../pom.xml</relativePath>
   </parent>
 
   <artifactId>acceptance-tests-google-auto-factory</artifactId>
@@ -74,14 +75,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>com.mycila</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-    </plugins>
+      </plugin>    </plugins>
   </build>
 </project>
