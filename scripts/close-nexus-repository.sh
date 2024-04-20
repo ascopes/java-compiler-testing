@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2022 - 2024, the original author or authors.
+# Copyright (C) 2023, ascopes
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@
 ###
 ### Note: this targets Sonatype Nexus Manager v2.x, not v3.x.
 ###
+### Author: ascopes
+
 
 set -o errexit
 set -o nounset
@@ -43,7 +45,7 @@ if [[ -n ${DEBUG+undef} ]]; then
 fi
 
 function usage() {
-  echo "USAGE: ${BASH_SOURCE[0]} [-h] -a <artifactId> -g <groupId> -v <version> -u <userName> -p <password> -s <server> [-r <maxRetries>]"
+  echo "USAGE: ${BASH_SOURCE[0]} [-h] -a <artifactId> -g <groupId> -v <version> -u <userName> -p <password> -s <server>"
   echo "    -a    <artifactId>   The base artifact ID to use. This can be any artifact ID in the project"
   echo "                         and is only used to determine the correct staging repository on Nexus"
   echo "                         to deploy."
@@ -54,23 +56,18 @@ function usage() {
   echo "    -p    <password>     The Nexus password to use."
   echo "    -s    <server>       The Nexus server to use."
   echo "    -h                   Show this message and exit."
-  echo "    -r    <maxRetries>   Set the maximum number of times to retry while waiting for closure to complete."
-  echo "                         Defaults to 500 seconds."
-  echo
-  echo "    Set the DEBUG environment variable to enable debug output."
   echo
 }
 
 artifact_id=""
 operation="promote"
 group_id=""
-max_retries=500
 version=""
 username=""
 password=""
 server=""
 
-while getopts "a:dg:hp:r:s:u:v:" opt; do
+while getopts "a:dg:hp:s:u:v:" opt; do
   case "${opt}" in
   a)
     artifact_id="${OPTARG}"
@@ -87,15 +84,6 @@ while getopts "a:dg:hp:r:s:u:v:" opt; do
     ;;
   p)
     password="${OPTARG}"
-    ;;
-  r)
-    if [[ "${OPTARG}" =~ ^[1-9][0-9]*$ ]]; then
-      max_retries="${OPTARG}"
-    else
-      echo "ERROR: Invalid value for max retries" >&2
-      usage
-      exit 1
-    fi
     ;;
   s)
     # Remove https:// or http:// at the start, remove trailing forward-slash
@@ -131,6 +119,10 @@ for command in base64 curl jq; do
   fi
 done
 
+function print() {
+  printf "%s" "${*}"
+}
+
 function try-jq() {
   local file
   file="$(mktemp)"
@@ -149,16 +141,15 @@ function try-jq() {
 }
 
 function accept-json-header() {
-  echo "Accept: application/json"
+  print "Accept: application/json"
 }
 
 function authorization-header() {
-  # Have to use echo -n to avoid the newline at the end.
-  echo -n "Authorization: Basic: $(echo -n "${username}:${password}" | base64)"
+  print "Authorization: Basic $(print "${username}:${password}" | base64)"
 }
 
 function content-type-json-header() {
-  echo "Content-Type: application/json"
+  print "Content-Type: application/json"
 }
 
 function get-staging-repositories() {
@@ -185,6 +176,7 @@ function get-staging-repositories() {
 function is-artifact-in-repository() {
   # Group ID has . replaced with /
   local path="${group_id//./\/}/${artifact_id}/${version}"
+  local repository_id="${1?Pass the repository ID}"
   local url="https://${server}/service/local/repositories/${repository_id}/content/${path}/"
 
   echo -e "\e[1;33m[GET ${url}]\e[0m" >&2
@@ -218,8 +210,10 @@ function find-correct-repository-id() {
 }
 
 function close-staging-repository() {
+  local repository_id="${1?Pass the repository ID}"
   local url="https://${server}/service/local/staging/bulk/close"
   local payload
+  
   payload="$(
     jq -cn '{ data: { description: $description, stagedRepositoryIds: [ $repository_id ] } }' \
       --arg description "" \
@@ -250,10 +244,12 @@ function close-staging-repository() {
 }
 
 function wait-for-closure-to-end() {
+  local repository_id="${1?Pass the repository ID}"
   local url="https://${server}/service/local/staging/repository/${repository_id}/activity"
 
   echo -e "\e[1;33m[GET ${url}]\e[0m Waiting for the repository to complete the closure process" >&2
-  for i in $(seq 1 "${max_retries}"); do
+  local attempt=1
+  while true; do
     # In our case, the "close" activity will gain the attribute named "stopped" once the process
     # is over (we then need to check if it passed or failed separately).
     if curl \
@@ -265,19 +261,18 @@ function wait-for-closure-to-end() {
       "${url}" |
       try-jq -e '.[] | select(.name == "close") | .stopped != null' >/dev/null; then
 
-      echo -e "\e[1;32mClosure process completed\e[0m" >&2
+      echo -e "\e[1;32mClosure process completed after ${attempt} attempts (@ $(date))}\e[0m" >&2
       return 0
     else
-      echo -e "\e[1;32mStill waiting for closure to complete... (attempt ${i}/${max_retries})\e[0m" >&2
+      echo -e "\e[1;32mStill waiting for closure to complete... - attempt $attempt (@ $(date))\e[0m" >&2
+      ((attempt++))
     fi
-    sleep 1
+    sleep 5
   done
-
-  echo -e "\e[1;31mERROR: Repository did not close after 50 iterations. Is Nexus down?\e[0m" >&2
-  return 104
 }
 
 function ensure-closure-succeeded() {
+  local repository_id="${1?Pass the repository ID}"
   local url="https://${server}/service/local/staging/repository/${repository_id}/activity"
 
   echo -e "\e[1;33m[GET ${url}]\e[0m Checking the closure process succeeded" >&2
@@ -301,6 +296,7 @@ function ensure-closure-succeeded() {
 }
 
 function trigger-drop-or-promote() {
+  local repository_id="${1?Pass the repository ID}"
   local url="https://${server}/service/local/staging/bulk/${operation}"
   local payload
   payload="$(
@@ -331,9 +327,9 @@ function trigger-drop-or-promote() {
 }
 
 repository_id="$(find-correct-repository-id)"
-close-staging-repository
-wait-for-closure-to-end
-ensure-closure-succeeded
-trigger-drop-or-promote
+close-staging-repository "${repository_id}"
+wait-for-closure-to-end "${repository_id}"
+ensure-closure-succeeded "${repository_id}"
+trigger-drop-or-promote "${repository_id}"
 
 echo -e "\e[1;32mRelease ${operation} for repository ${repository_id} completed. Have a nice day :-)\e[0m" >&2
