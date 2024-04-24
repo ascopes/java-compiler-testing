@@ -89,7 +89,7 @@
     <junit.version>5.10.2</junit.version>
     <memoryfilesystem.version>2.8.0</memoryfilesystem.version>
     <mockito.version>5.11.0</mockito.version>
-    <slf4j.version>2.0.12</slf4j.version>
+    <slf4j.version>2.0.13</slf4j.version>
 
     <!-- Plugins -->
     <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
