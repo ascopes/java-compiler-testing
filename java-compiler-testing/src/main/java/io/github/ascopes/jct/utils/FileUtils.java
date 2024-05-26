@@ -146,7 +146,7 @@ public final class FileUtils extends UtilityClass {
     var names = new String[count];
 
     for (var i = 0; i < count; ++i) {
-      names[i] = FileUtils.stripFileExtension(path.getName(i).toString());
+      names[i] = stripFileExtension(path.getName(i).toString());
     }
 
     return String.join(".", names);
@@ -307,10 +307,7 @@ public final class FileUtils extends UtilityClass {
   }
 
   private static Path resolve(Path root, String... parts) {
-    for (var part : parts) {
-      root = root.resolve(part);
-    }
-    return root.normalize();
+    return resolve(root, List.of(parts));
   }
 
   private static Path resolve(Path root, Iterable<String> parts) {
