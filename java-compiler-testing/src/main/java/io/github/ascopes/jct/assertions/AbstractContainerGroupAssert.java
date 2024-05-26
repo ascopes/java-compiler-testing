@@ -16,7 +16,7 @@
 package io.github.ascopes.jct.assertions;
 
 import static java.util.Objects.requireNonNull;
-import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.containers.ContainerGroup;
 import java.util.ArrayList;
@@ -80,6 +80,6 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
     var items = new ArrayList<T>();
     actual.getServiceLoader(type).iterator().forEachRemaining(items::add);
 
-    return assertThat(items, Assertions::assertThat);
+    return assertThat(items);
   }
 }
