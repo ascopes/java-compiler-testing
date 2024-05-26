@@ -61,13 +61,12 @@ public final class JctCompilationAssert extends
    * @return a list assertion object to perform assertions on the arguments with.
    * @throws AssertionError if the compilation was null.
    */
+  @SuppressWarnings("deprecation")  // No alternative present at the moment
   public AbstractListAssert<?, List<? extends String>, String, ? extends AbstractStringAssert<?>> arguments() {
     isNotNull();
 
     var arguments = actual.getArguments();
 
-    // TODO(ascopes): find a way to use Assertions::assertThat here instead of passing the
-    //   StringAssert constructor around.
     return FactoryBasedNavigableListAssert
         .assertThat(arguments, StringAssert::new)
         .as("Compiler arguments %s", StringUtils.quotedIterable(arguments));
