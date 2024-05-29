@@ -1,0 +1,42 @@
+name: Snapshot Pages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  pages:
+    name: Deploy Pages
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      pages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 22
+          distribution: 'temurin'
+
+      - name: Generate JavaDocs
+        shell: bash
+        run: >-
+          ./mvnw  -B -U -am -pl java-compiler-testing
+          -Dmaven.test.skip=true
+          -Dcheckstyle.skip=true
+          -Dlicense.skip=true
+          clean compile javadoc:jar
+
+      - name: Upload JavaDocs as a build artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: java-compiler-testing/target/apidocs
+
+      - name: Deploy JavaDocs build artifact to GitHub Pages
+        id: snapshot-javadocs
+        uses: actions/deploy-pages@v4

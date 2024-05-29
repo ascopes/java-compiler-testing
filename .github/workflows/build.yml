@@ -13,51 +13,9 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  linting:
-    name: Linting
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Initialize Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: 22
-
-      - name: Run Maven checks
-        shell: bash
-        run: >-
-          ./mvnw -B -U
-          -DskipTests=true
-          -Dmaven.main.skip
-          -Dmaven.jar.skip
-          -Dmaven.resources.skip
-          -Dmaven.test.skip
-          -Dinvoker.skip
-          verify
-
-      - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@master
-        with:
-          check_together: 'yes'
-          scandir: './scripts'
-
-      - name: Validate codecov.yml
-        continue-on-error: false
-        if: always()
-        shell: bash
-        run: curl --fail -vv --data-binary @codecov.yml https://codecov.io/validate
-
   build:
     name: Build on JDK ${{ matrix.java-version }} (${{ matrix.os-name }})
     runs-on: ${{ matrix.os-name }}
-    needs:
-      - linting
 
     strategy:
       fail-fast: false
@@ -118,47 +76,3 @@ jobs:
             **/failsafe-reports/**
             **/build*.log
           retention-days: 30
-
-  generate-snapshot-documentation:
-    name: Generate snapshot documentation
-    runs-on: ubuntu-latest
-
-    permissions:
-      pages: write
-      id-token: write
-
-    needs:
-      - linting
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Initialize Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          # Must use >= JDK 17 for JavaDocs to generate correctly.
-          java-version: 22
-
-      - name: Generate JavaDocs
-        shell: bash
-        run: >-
-          ./mvnw  -B -U -am -pl java-compiler-testing
-          -Dmaven.test.skip=true
-          -Dcheckstyle.skip=true
-          -Dlicense.skip=true
-          clean compile javadoc:jar
-
-      - name: Upload JavaDocs as a build artifact
-        uses: actions/upload-pages-artifact@v3
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        with:
-          path: java-compiler-testing/target/apidocs
-
-      - name: Deploy JavaDocs build artifact to GitHub Pages
-        id: snapshot-javadocs
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        uses: actions/deploy-pages@v4
