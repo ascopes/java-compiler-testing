@@ -28,6 +28,7 @@ import me.xdrop.fuzzywuzzy.ToStringFunction;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Utilities for string manipulation used internally in this library.
@@ -198,7 +199,7 @@ public final class StringUtils extends UtilityClass {
    * @param iterable the iterable to process.
    * @return the string representation of the iterable, with each member quoted (unless null).
    */
-  public static String quotedIterable(Iterable<?> iterable) {
+  public static String quotedIterable(@Nullable Iterable<?> iterable) {
     if (iterable == null) {
       return NULL_STRING;
     }
@@ -218,7 +219,7 @@ public final class StringUtils extends UtilityClass {
     return builder.append(']').toString();
   }
 
-  private static void appendQuoted(StringBuilder builder, Object object) {
+  private static void appendQuoted(StringBuilder builder, @Nullable Object object) {
     if (object == null) {
       builder.append(NULL_STRING);
       return;
