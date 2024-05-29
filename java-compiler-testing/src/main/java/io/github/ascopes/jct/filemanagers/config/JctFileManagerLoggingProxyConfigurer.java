@@ -32,7 +32,8 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-public final class JctFileManagerLoggingProxyConfigurer implements JctFileManagerConfigurer {
+public final class JctFileManagerLoggingProxyConfigurer
+    implements JctFileManagerConfigurer {
 
   private static final Logger log = LoggerFactory
       .getLogger(JctFileManagerLoggingProxyConfigurer.class);
