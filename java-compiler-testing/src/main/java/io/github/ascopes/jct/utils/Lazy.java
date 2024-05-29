@@ -133,6 +133,9 @@ public final class Lazy<T> {
     if (data != null) {
       lock.lock();
       try {
+        @SuppressWarnings("DataFlowIssue")
+        var data = this.data;
+
         if (data != null) {
           consumer.consume(data);
         }
