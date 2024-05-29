@@ -120,15 +120,15 @@ public final class TeeWriter extends Writer {
   }
 
   @Override
-  public void write(char[] cbuf, int off, int len) throws IOException {
+  public void write(char[] buffer, int offset, int length) throws IOException {
     lock.lock();
     try {
       ensureOpen();
 
-      writer.write(cbuf, off, len);
+      writer.write(buffer, offset, length);
       // Only append to the buffer once we know that the writing
       // operation has completed.
-      builder.append(cbuf, off, len);
+      builder.append(buffer, offset, length);
     } finally {
       lock.unlock();
     }
