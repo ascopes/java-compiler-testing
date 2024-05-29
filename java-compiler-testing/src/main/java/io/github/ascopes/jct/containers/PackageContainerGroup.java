@@ -138,10 +138,10 @@ public interface PackageContainerGroup extends ContainerGroup {
    *   // to achieve the same outcome with simpler syntax.
    *
    *   ClassLoader cl = containerGroup.getClassLoader();
-   *   try (InputStream is = cl.getResourceAsStream("META-INF/spring.factories")) {
-   *     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-   *     is.transferTo(baos);
-   *     String content = new String(baos.toByteArray(), ...);
+   *   try (InputStream inputStream = cl.getResourceAsStream("META-INF/spring.factories")) {
+   *     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+   *     inputStream.transferTo(outputStream);
+   *     String content = new String(outputStream.toByteArray(), ...);
    *     ...
    *   }
    * </code></pre>
@@ -187,6 +187,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    * @see java.nio.file.Path
    * @see java.nio.file.Files
    */
+  @Nullable
   Path getFile(String fragment, String... fragments);
 
   /**
@@ -247,6 +248,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * @return the package-oriented location.
    */
+  @Override
   Location getLocation();
 
   /**

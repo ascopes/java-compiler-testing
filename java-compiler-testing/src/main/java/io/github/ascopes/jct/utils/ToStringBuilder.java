@@ -63,7 +63,7 @@ public final class ToStringBuilder {
   );
 
   private final Object owner;
-  private final Map<String, Object> attributes;
+  private final Map<String, @Nullable Object> attributes;
 
   /**
    * Initialise the builder.
@@ -115,7 +115,7 @@ public final class ToStringBuilder {
         .toString();
   }
 
-  private static void appendToString(StringBuilder builder, Object object) {
+  private static void appendToString(StringBuilder builder, @Nullable Object object) {
     if (object == null) {
       builder.append(NULL);
     } else if (TYPES_TO_TREAT_AS_STRINGS.stream().anyMatch(cls -> cls.isInstance(object))) {

@@ -25,7 +25,7 @@ import org.apiguardian.api.API.Status;
 /**
  * Utility to efficiently split strings using a delimiter without using regular expressions.
  *
- * <p>This implementation is stateless and threadsafe.
+ * <p>This implementation is stateless and thread safe.
  *
  * @author Ashley Scopes
  * @since 0.0.1

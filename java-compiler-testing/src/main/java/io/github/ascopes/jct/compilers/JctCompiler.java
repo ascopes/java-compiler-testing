@@ -31,6 +31,7 @@ import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base definition of a compiler that can be configured to perform a compilation run against
@@ -429,7 +430,7 @@ public interface JctCompiler {
    * {@link #DEFAULT_PREVIEW_FEATURES}.
    *
    * <p>Generally, this feature should be avoided if testing across multiple versions
-   * of Java, as preview features are oftenvnot finalised and may change without warning.
+   * of Java, as preview features are often not finalised and may change without warning.
    *
    * @param enabled {@code true} to enable preview features, or {@code false} to disable them.
    * @return this compiler object for further call chaining.
@@ -573,6 +574,7 @@ public interface JctCompiler {
    *
    * @return the release version string, if set.
    */
+  @Nullable
   String getRelease();
 
   /**
@@ -590,7 +592,7 @@ public interface JctCompiler {
    * @param release the version to set.
    * @return this compiler object for further call chaining.
    */
-  JctCompiler release(String release);
+  JctCompiler release(@Nullable String release);
 
   /**
    * Set the release version.
@@ -632,6 +634,7 @@ public interface JctCompiler {
    * @param release the version to set.
    * @return this compiler object for further call chaining.
    * @throws UnsupportedOperationException if the compiler does not support integer versions.
+   * @throws NullPointerException if the release is null.
    */
   default JctCompiler release(SourceVersion release) {
     return release(Integer.toString(release.ordinal()));
@@ -647,7 +650,7 @@ public interface JctCompiler {
    *
    * @return this compiler object for further call chaining.
    * @throws UnsupportedOperationException if the current JVM version does not correspond to a
-   *                                       supported Jave release version in the compiler, or if the
+   *                                       supported Java release version in the compiler, or if the
    *                                       compiler does not support integral version numbers.
    * @since 1.1.0
    */
@@ -665,6 +668,7 @@ public interface JctCompiler {
    *
    * @return the source version string, if set.
    */
+  @Nullable
   String getSource();
 
   /**
@@ -683,7 +687,7 @@ public interface JctCompiler {
    * @param source the version to set.
    * @return this compiler object for further call chaining.
    */
-  JctCompiler source(String source);
+  JctCompiler source(@Nullable String source);
 
   /**
    * Set the source version.
@@ -727,6 +731,7 @@ public interface JctCompiler {
    * @param source the version to set.
    * @return this compiler object for further call chaining.
    * @throws UnsupportedOperationException if the compiler does not support integer versions.
+   * @throws NullPointerException          if the source is null.
    */
   default JctCompiler source(SourceVersion source) {
     return source(Integer.toString(source.ordinal()));
@@ -740,6 +745,7 @@ public interface JctCompiler {
    *
    * @return the target version string, if set.
    */
+  @Nullable
   String getTarget();
 
   /**
@@ -758,7 +764,7 @@ public interface JctCompiler {
    * @param target the version to set.
    * @return this compiler object for further call chaining.
    */
-  JctCompiler target(String target);
+  JctCompiler target(@Nullable String target);
 
   /**
    * Set the target version.
@@ -802,6 +808,7 @@ public interface JctCompiler {
    * @param target the version to set.
    * @return this compiler object for further call chaining.
    * @throws UnsupportedOperationException if the compiler does not support integer versions.
+   * @throws NullPointerException          if the target is null.
    */
   default JctCompiler target(SourceVersion target) {
     return target(Integer.toString(target.ordinal()));

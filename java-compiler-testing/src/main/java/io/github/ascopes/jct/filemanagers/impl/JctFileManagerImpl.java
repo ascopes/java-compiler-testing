@@ -139,7 +139,7 @@ public final class JctFileManagerImpl implements JctFileManager {
       Location location,
       String packageName,
       String relativeName,
-      FileObject sibling
+      @Nullable FileObject sibling
   ) {
     requireOutputLocation(location);
 
@@ -182,7 +182,7 @@ public final class JctFileManagerImpl implements JctFileManager {
       Location location,
       String className,
       Kind kind,
-      FileObject sibling
+      @Nullable FileObject sibling
   ) {
     requireOutputLocation(location);
 
@@ -216,11 +216,11 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   @Nullable
   @Override
-  public ModuleLocation getLocationForModule(Location location, JavaFileObject fo) {
+  public ModuleLocation getLocationForModule(Location location, JavaFileObject fileObject) {
     requireOutputOrModuleOrientedLocation(location);
 
-    if (fo instanceof PathFileObject) {
-      var pathFileObject = (PathFileObject) fo;
+    if (fileObject instanceof PathFileObject) {
+      var pathFileObject = (PathFileObject) fileObject;
       var moduleLocation = pathFileObject.getLocation();
 
       if (moduleLocation instanceof ModuleLocation) {
@@ -234,7 +234,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     }
 
     throw new JctIllegalInputException(
-        "File object " + fo + " is not compatible with this file manager"
+        "File object " + fileObject + " is not compatible with this file manager"
     );
   }
 
@@ -352,7 +352,7 @@ public final class JctFileManagerImpl implements JctFileManager {
   }
 
   @Override
-  public Iterable<Set<Location>> listLocationsForModules(Location location) {
+  public List<Set<Location>> listLocationsForModules(Location location) {
     requireOutputOrModuleOrientedLocation(location);
     return List.of(repository.listLocationsForModules(location));
   }

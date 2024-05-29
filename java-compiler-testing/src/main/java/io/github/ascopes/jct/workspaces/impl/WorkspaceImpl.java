@@ -38,7 +38,7 @@ import org.apiguardian.api.API.Status;
 /**
  * Implementation of a workspace to use by default.
  *
- * <p>This is not threadsafe, and should only be used once per test.
+ * <p>This is not thread safe, and should only be used once per test.
  *
  * <p>Care should be taken to use instances of this class in a try-with-resources block
  * to ensure resources get closed correctly at the end of your tests.

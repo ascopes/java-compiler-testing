@@ -217,7 +217,7 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
-  public Collection<Path> listAllFiles() throws IOException {
+  public Collection<Path> listAllFiles() {
     return holder.access().getAllFiles();
   }
 
@@ -342,6 +342,7 @@ public final class JarContainerImpl implements Container {
       fileSystem.close();
     }
 
+    @Nullable
     private PathRoot getPackage(String name) {
       return packages.access().get(name);
     }

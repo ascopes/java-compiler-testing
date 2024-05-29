@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.tests.unit.assertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.github.ascopes.jct.assertions.AbstractEnumAssert;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("AbstractEnumAssert tests")
+@SuppressWarnings("DataFlowIssue")
 class AbstractEnumAssertTest {
 
   @DisplayName(".isAnyOf(...) tests")
@@ -300,11 +302,13 @@ class AbstractEnumAssertTest {
       var assertions = new Impl(DnbArtist.CULTURE_SHOCK);
 
       // Then
-      assertions.isNoneOf(
+      var result = assertions.isNoneOf(
           DnbArtist.DELTA_HEAVY,
           DnbArtist.PENDULUM,
           DnbArtist.RAMESES_B
       );
+
+      assertThat(result).isSameAs(assertions);
     }
   }
 

@@ -124,7 +124,8 @@ public interface PathFileObject extends JavaFileObject {
    * Determine when the file was last modified.
    *
    * @return the timestamp in milliseconds since UNIX epoch that the file was last modified at, or
-   *     {@link #NOT_MODIFIED} if unmodified or if the information is not available.
+   *     {@link #NOT_MODIFIED} if unmodified, if the information is not available, or if an error
+   *     occurred obtaining the information.
    */
   @Override
   long getLastModified();

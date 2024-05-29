@@ -102,17 +102,17 @@ public final class PackageContainerGroupAssert
       }
     }
 
-    if (errors.size() >= 1) {
-      throw new MultipleAssertionsError(
-          new TextDescription(
-              "Expected all paths in %s to exist but one or more did not",
-              quotedIterable(paths)
-          ),
-          errors
-      );
+    if (errors.isEmpty()) {
+      return this;
     }
 
-    return this;
+    throw new MultipleAssertionsError(
+        new TextDescription(
+            "Expected all paths in %s to exist but one or more did not",
+            quotedIterable(paths)
+        ),
+        errors
+    );
   }
 
   /**
@@ -207,6 +207,7 @@ public final class PackageContainerGroupAssert
         this::quotedUserProvidedPath,
         "file with relative path"
     );
+
     throw failure(message);
   }
 
@@ -247,7 +248,7 @@ public final class PackageContainerGroupAssert
   }
 
   private boolean fileNameIsPresent(@Nullable Path path) {
-    // Path can be null if no path elements exist in ZipPath impls.
+    // Path can be null if no path elements exist in ZipPath implementations.
     return Optional
         .ofNullable(path)
         .map(Path::getFileName)

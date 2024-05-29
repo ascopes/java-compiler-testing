@@ -113,7 +113,6 @@ public final class JctExtension
   private List<Field> getManagedWorkspaceFields(Class<?> clazz, boolean wantStatic) {
     var fields = new ArrayList<Field>();
 
-    @Nullable
     Class<?> currentClass = clazz;
 
     do {
@@ -141,8 +140,7 @@ public final class JctExtension
   }
 
   private void initWorkspaceForField(Field field, @Nullable Object instance) throws Exception {
-    log
-        .atTrace()
+    log.atTrace()
         .setMessage("Initialising workspace for field in {}: {} {} on instance {}")
         .addArgument(() -> field.getDeclaringClass().getSimpleName())
         .addArgument(() -> field.getType().getSimpleName())
@@ -156,8 +154,7 @@ public final class JctExtension
   }
 
   private void closeWorkspaceForField(Field field, @Nullable Object instance) throws Exception {
-    log
-        .atTrace()
+    log.atTrace()
         .setMessage("Closing workspace for field in {}: {} {} on instance {}")
         .addArgument(() -> field.getDeclaringClass().getSimpleName())
         .addArgument(() -> field.getType().getSimpleName())

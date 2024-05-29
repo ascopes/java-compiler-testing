@@ -108,7 +108,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
     var actualPath = path.getPath();
 
     // Null filename implies the path is the root directory of a file system (
-    // like a JIMFS RAM file system we initialize elsewhere).
+    // like a MemoryFileSystem RAM file system we initialize elsewhere).
     var isArchive = actualPath.getFileName() != null && ARCHIVE_EXTENSIONS
         .stream()
         .anyMatch(actualPath.getFileName().toString().toLowerCase(Locale.ROOT)::endsWith);

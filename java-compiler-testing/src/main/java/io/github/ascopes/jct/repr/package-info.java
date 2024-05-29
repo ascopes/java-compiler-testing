@@ -17,9 +17,7 @@
  * Representation facilities for AssertJ integration.
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NullMarked
 package io.github.ascopes.jct.repr;
 
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.jspecify.annotations.NullMarked;

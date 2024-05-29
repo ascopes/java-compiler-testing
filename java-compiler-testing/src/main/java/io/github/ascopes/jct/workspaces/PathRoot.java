@@ -32,6 +32,7 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
+@SuppressWarnings("unused")
 @API(since = "0.0.1", status = Status.STABLE)
 public interface PathRoot {
 

@@ -37,6 +37,7 @@ import org.jspecify.annotations.Nullable;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
+@SuppressWarnings("unused")
 public final class JctAssertions extends UtilityClass {
 
   private JctAssertions() {
@@ -256,7 +257,7 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static TraceDiagnosticListAssert assertThatDiagnostics(
-      @Nullable List<@Nullable ? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
+      @Nullable List<? extends TraceDiagnostic<? extends JavaFileObject>> diagnostics
   ) {
     return new TraceDiagnosticListAssert(diagnostics);
   }

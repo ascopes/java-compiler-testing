@@ -45,6 +45,7 @@ public final class TraceDiagnosticAssert
    *
    * @param value the value to assert on.
    */
+  @SuppressWarnings("DataFlowIssue")
   public TraceDiagnosticAssert(@Nullable TraceDiagnostic<? extends JavaFileObject> value) {
     super(value, TraceDiagnosticAssert.class);
     info.useRepresentation(TraceDiagnosticRepresentation.getInstance());

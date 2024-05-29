@@ -90,7 +90,7 @@ public interface ModuleContainerGroup extends ContainerGroup {
   /**
    * Get the module container impl in this group.
    *
-   * @return the container impl.
+   * @return the container implementation.
    */
   Map<ModuleLocation, PackageContainerGroup> getModules();
 

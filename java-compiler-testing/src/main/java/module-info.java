@@ -15,6 +15,7 @@
  */
 import io.github.ascopes.jct.workspaces.impl.MemoryFileSystemProvider.MemoryFileSystemUrlHandlerProvider;
 import java.net.spi.URLStreamHandlerProvider;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * A framework for performing exhaustive integration testing against Java compilers in modern Java
@@ -112,6 +113,7 @@ import java.net.spi.URLStreamHandlerProvider;
  *    }
  * </code></pre>
  */
+@NullMarked
 module io.github.ascopes.jct {
 
   ////////////////////

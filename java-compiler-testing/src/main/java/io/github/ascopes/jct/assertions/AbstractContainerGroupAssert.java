@@ -25,7 +25,6 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractListAssert;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ObjectAssert;
 import org.jspecify.annotations.Nullable;
 
@@ -47,6 +46,7 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
    * @param containerGroup the container group to assert upon.
    * @param selfType       the type of the assertion implementation to use.
    */
+  @SuppressWarnings("DataFlowIssue")
   protected AbstractContainerGroupAssert(@Nullable C containerGroup, Class<?> selfType) {
     super(containerGroup, selfType);
   }

@@ -44,6 +44,7 @@ public abstract class AbstractEnumAssert<A extends AbstractEnumAssert<A, E>, E e
    * @param value    the value to assert upon.
    * @param selfType the type of this assertion implementation.
    */
+  @SuppressWarnings("DataFlowIssue")
   protected AbstractEnumAssert(@Nullable E value, Class<?> selfType) {
     super(value, selfType);
   }

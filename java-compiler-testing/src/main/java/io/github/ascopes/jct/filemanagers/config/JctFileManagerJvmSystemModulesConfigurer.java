@@ -35,7 +35,8 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-public final class JctFileManagerJvmSystemModulesConfigurer implements JctFileManagerConfigurer {
+public final class JctFileManagerJvmSystemModulesConfigurer
+    implements JctFileManagerConfigurer {
 
   private static final Logger log = LoggerFactory
       .getLogger(JctFileManagerJvmSystemModulesConfigurer.class);

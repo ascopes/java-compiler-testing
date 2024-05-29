@@ -20,9 +20,6 @@ import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.utils.ModuleDiscoverer;
 import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.utils.StringUtils;
-import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
-import java.nio.file.Path;
-import java.util.Map.Entry;
 import java.util.Set;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
@@ -43,7 +40,8 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-public final class JctFileManagerJvmClassPathModuleConfigurer implements JctFileManagerConfigurer {
+public final class JctFileManagerJvmClassPathModuleConfigurer
+    implements JctFileManagerConfigurer {
 
   private static final Logger log = LoggerFactory
       .getLogger(JctFileManagerJvmClassPathModuleConfigurer.class);

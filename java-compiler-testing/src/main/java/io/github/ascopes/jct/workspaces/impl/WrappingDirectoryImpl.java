@@ -94,13 +94,14 @@ public final class WrappingDirectoryImpl implements PathRoot {
   @Override
   public byte[] asJar() {
     return uncheckedIo(() -> {
-      try (var baos = new ByteArrayOutputStream()) {
-        JarFactoryImpl.getInstance().createJarFrom(baos, getPath());
-        return baos.toByteArray();
+      try (var outputStream = new ByteArrayOutputStream()) {
+        JarFactoryImpl.getInstance().createJarFrom(outputStream, getPath());
+        return outputStream.toByteArray();
       }
     });
   }
 
+  @Nullable
   @Override
   public PathRoot getParent() {
     return parent;
