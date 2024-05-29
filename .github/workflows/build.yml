@@ -51,8 +51,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           check-latest: true
-          distribution: temurin
-          cache: maven
+          distribution: zulu
           java-version: ${{ matrix.java-version }}
 
       - name: Compile and run tests

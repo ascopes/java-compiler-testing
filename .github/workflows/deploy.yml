@@ -34,7 +34,7 @@ jobs:
       - name: Initialize Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: zulu
           # Must use >= JDK 17 for Javadocs to generate correctly
           java-version: 22
           server-id: ossrh
@@ -42,7 +42,6 @@ jobs:
           server-password: OSSRH_TOKEN
           gpg-passphrase: GPG_PASSPHRASE
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          cache: maven
 
       - name: Deploy to staging
         shell: bash
