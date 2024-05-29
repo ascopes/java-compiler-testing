@@ -130,10 +130,6 @@ jobs:
     needs:
       - linting
 
-    concurrency:
-      cancel-in-progress: false
-      group: snapshot-javadocs
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
