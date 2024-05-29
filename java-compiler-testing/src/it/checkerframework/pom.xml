@@ -27,8 +27,8 @@
   </parent>
 
   <artifactId>acceptance-tests-checkerframework</artifactId>
-  <name>JCT acceptance tests for CheckerFramework</name>
-  <description>Acceptance tests for CheckerFramework.</description>
+  <name>JCT acceptance tests for Checker Framework</name>
+  <description>Acceptance tests for Checker Framework.</description>
 
   <properties>
     <argLine>
@@ -46,6 +46,12 @@
       <!-- Workaround for https://youtrack.jetbrains.com/issue/IDEA-317391 -->
       -DmvnArgLinePropagated=true
     </argLine>
+    <!-- Frozen to 3.42.0 as 3.43.0 is broken:
+         SourceChecker.typeProcess: unexpected Throwable (NullPointerException) while processing
+         org/example/SadCase.java; message: Cannot invoke "java.lang.CharSequence.length()"
+         because "this.text" is null
+     -->
+
     <checkerframework.version>3.42.0</checkerframework.version>
   </properties>
 
