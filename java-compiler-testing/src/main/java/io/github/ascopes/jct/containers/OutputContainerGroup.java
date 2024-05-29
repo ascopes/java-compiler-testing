@@ -53,7 +53,6 @@ public interface OutputContainerGroup extends PackageContainerGroup, ModuleConta
   @Override
   void addPackage(PathRoot path);
 
-
   /**
    * {@inheritDoc}
    *

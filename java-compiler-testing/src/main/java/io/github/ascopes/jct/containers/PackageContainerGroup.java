@@ -248,6 +248,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    *
    * @return the package-oriented location.
    */
+  @Override
   Location getLocation();
 
   /**
