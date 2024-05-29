@@ -47,6 +47,7 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
    * @param containerGroup the container group to assert upon.
    * @param selfType       the type of the assertion implementation to use.
    */
+  @SuppressWarnings("DataFlowIssue")
   protected AbstractContainerGroupAssert(@Nullable C containerGroup, Class<?> selfType) {
     super(containerGroup, selfType);
   }

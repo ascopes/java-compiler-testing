@@ -37,6 +37,7 @@ public final class ClassLoaderAssert extends AbstractAssert<ClassLoaderAssert, C
    *
    * @param actual the class loader to assert upon.
    */
+  @SuppressWarnings("DataFlowIssue")
   public ClassLoaderAssert(@Nullable ClassLoader actual) {
     super(actual, ClassLoaderAssert.class);
   }

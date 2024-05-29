@@ -43,6 +43,7 @@ public final class StackTraceElementAssert
    *
    * @param actual the stacktrace element to assert upon.
    */
+  @SuppressWarnings("DataFlowIssue")
   public StackTraceElementAssert(@Nullable StackTraceElement actual) {
     super(actual, StackTraceElementAssert.class);
   }

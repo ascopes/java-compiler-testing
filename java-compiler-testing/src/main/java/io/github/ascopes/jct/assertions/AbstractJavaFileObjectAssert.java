@@ -54,6 +54,7 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
    * @param actual   the actual value to assert on.
    * @param selfType the type of the assertion implementation.
    */
+  @SuppressWarnings("DataFlowIssue")
   protected AbstractJavaFileObjectAssert(@Nullable A actual, Class<?> selfType) {
     super(actual, selfType);
   }

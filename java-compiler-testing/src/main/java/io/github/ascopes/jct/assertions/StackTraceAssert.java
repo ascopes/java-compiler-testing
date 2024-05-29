@@ -41,6 +41,7 @@ public final class StackTraceAssert
    *
    * @param actual the list of stack trace elements to assert upon.
    */
+  @SuppressWarnings("DataFlowIssue")
   public StackTraceAssert(@Nullable List<? extends StackTraceElement> actual) {
     super(actual, StackTraceAssert.class);
     info.useRepresentation(StackTraceRepresentation.getInstance());

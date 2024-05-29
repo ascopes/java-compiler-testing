@@ -54,8 +54,9 @@ public final class TraceDiagnosticListAssert
    *
    * @param traceDiagnostics the diagnostics to perform assertions on.
    */
+  @SuppressWarnings("DataFlowIssue")
   public TraceDiagnosticListAssert(
-      @Nullable List<@Nullable ? extends TraceDiagnostic<? extends JavaFileObject>> traceDiagnostics
+      @Nullable List<? extends TraceDiagnostic<? extends JavaFileObject>> traceDiagnostics
   ) {
     super(traceDiagnostics, TraceDiagnosticListAssert.class);
     info.useRepresentation(TraceDiagnosticListRepresentation.getInstance());
@@ -186,6 +187,7 @@ public final class TraceDiagnosticListAssert
   public TraceDiagnosticListAssert excludingKinds(Iterable<Kind> kinds) {
     requireNonNullValues(kinds, "kinds");
     isNotNull();
+    //noinspection ConstantValue -- actual CAN be null, IntelliJ just doesn't realise this.
     return actual
         .stream()
         .filter(Objects::nonNull)
@@ -353,7 +355,7 @@ public final class TraceDiagnosticListAssert
     return new TraceDiagnosticListAssert(list);
   }
 
-  private Predicate<TraceDiagnostic<? extends JavaFileObject>> kindIsOneOf(Iterable<Kind> kinds) {
+  private Predicate<@Nullable TraceDiagnostic<? extends JavaFileObject>> kindIsOneOf(Iterable<Kind> kinds) {
     var kindsSet = new LinkedHashSet<Kind>();
     kinds.forEach(kindsSet::add);
 

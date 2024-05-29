@@ -39,6 +39,7 @@ public final class LocationAssert extends AbstractAssert<LocationAssert, Locatio
    *
    * @param value the value to assert on.
    */
+  @SuppressWarnings("DataFlowIssue")
   public LocationAssert(@Nullable Location value) {
     super(value, LocationAssert.class);
     info.useRepresentation(LocationRepresentation.getInstance());

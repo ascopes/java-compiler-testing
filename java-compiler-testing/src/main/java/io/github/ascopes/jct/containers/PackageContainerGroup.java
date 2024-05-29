@@ -187,6 +187,7 @@ public interface PackageContainerGroup extends ContainerGroup {
    * @see java.nio.file.Path
    * @see java.nio.file.Files
    */
+  @Nullable
   Path getFile(String fragment, String... fragments);
 
   /**
