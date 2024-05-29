@@ -17,9 +17,7 @@
  * Internal workspace implementation details.
  */
 @API(since = "0.0.1", status = Status.INTERNAL)
-@NullMarked
 package io.github.ascopes.jct.workspaces.impl;
 
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.jspecify.annotations.NullMarked;

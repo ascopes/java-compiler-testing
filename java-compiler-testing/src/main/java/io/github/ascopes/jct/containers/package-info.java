@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 /**
- * APIs for representing the various file management locations across
- * multiple file system implementations.
+ * APIs for representing the various file management locations across multiple file system
+ * implementations.
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NullMarked
 package io.github.ascopes.jct.containers;
 
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.jspecify.annotations.NullMarked;

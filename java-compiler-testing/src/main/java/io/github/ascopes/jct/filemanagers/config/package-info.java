@@ -17,9 +17,7 @@
  * Reusable components for setting up JSR-199 file managers.
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NullMarked
 package io.github.ascopes.jct.filemanagers.config;
 
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.jspecify.annotations.NullMarked;

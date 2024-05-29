@@ -13,6 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 open module io.github.ascopes.jct.testing {
   requires awaitility;
   requires transitive io.github.ascopes.jct;

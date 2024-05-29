@@ -17,9 +17,7 @@
  * Common exceptions used within this API.
  */
 @API(since = "0.0.1", status = Status.STABLE)
-@NullMarked
 package io.github.ascopes.jct.ex;
 
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
-import org.jspecify.annotations.NullMarked;
