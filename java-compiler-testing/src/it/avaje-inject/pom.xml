@@ -31,7 +31,7 @@
   <description>Acceptance tests for Avaje Inject.</description>
 
   <properties>
-    <avaje-inject.version>9.11</avaje-inject.version>
+    <avaje-inject.version>9.12</avaje-inject.version>
   </properties>
 
   <dependencies>
@@ -74,6 +74,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-      </plugin>    </plugins>
+      </plugin>
+    </plugins>
   </build>
 </project>
