@@ -48,7 +48,8 @@ class AvajeInjectTest {
               "org/example/Pump.class",
               "org/example/CoffeeMaker$DI.class",
               "org/example/Grinder$DI.class",
-              "org/example/Pump$DI.class"
+              "org/example/Pump$DI.class",
+              "module-info.class"
           );
     }
   }
