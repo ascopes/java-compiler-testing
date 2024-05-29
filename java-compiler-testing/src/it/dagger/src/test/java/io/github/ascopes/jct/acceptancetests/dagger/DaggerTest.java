@@ -15,12 +15,12 @@
  */
 package io.github.ascopes.jct.acceptancetests.dagger;
 
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
+
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
-
-import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 
 @DisplayName("Dagger acceptance tests")
 class DaggerTest {

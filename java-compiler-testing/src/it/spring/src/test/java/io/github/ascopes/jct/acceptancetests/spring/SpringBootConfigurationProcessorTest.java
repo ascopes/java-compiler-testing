@@ -15,14 +15,14 @@
  */
 package io.github.ascopes.jct.acceptancetests.spring;
 
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
+
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.boot.configurationprocessor.ConfigurationMetadataAnnotationProcessor;
-
-import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 
 @DisplayName("Spring Boot Configuration Processor acceptance tests")
 class SpringBootConfigurationProcessorTest {

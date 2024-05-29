@@ -15,15 +15,14 @@
  */
 package io.github.ascopes.jct.acceptancetests.autofactory;
 
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
-import org.junit.jupiter.api.DisplayName;
-
 import java.time.Instant;
-
-import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import org.junit.jupiter.api.DisplayName;
 
 @DisplayName("AutoFactory integration tests")
 class AutoFactoryTest {

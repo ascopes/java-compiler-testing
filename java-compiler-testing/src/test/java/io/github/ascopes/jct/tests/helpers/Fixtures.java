@@ -57,6 +57,7 @@ import org.mockito.quality.Strictness;
  *
  * @author Ashley Scopes
  */
+@SuppressWarnings("NullableProblems")
 public final class Fixtures {
 
   private static final Random RANDOM = new Random();
@@ -459,24 +460,6 @@ public final class Fixtures {
   }
 
   /**
-   * Return some of the members of a given enum.
-   *
-   * @param cls the enum class.
-   * @param <E> the enum type.
-   * @return a set containing some of the enum members.
-   */
-  public static <E extends Enum<E>> Set<E> someOf(Class<E> cls) {
-    var set = new HashSet<E>();
-    var options = new ArrayList<>(Arrays.asList(cls.getEnumConstants()));
-
-    while (!options.isEmpty()) {
-      set.add(options.remove(someInt(options.size())));
-    }
-
-    return set;
-  }
-
-  /**
    * Return one of the given elements.
    *
    * @param items the elements to pick from.
@@ -494,6 +477,24 @@ public final class Fixtures {
       }
       return iter.next();
     }
+  }
+
+  /**
+   * Return some of the members of a given enum.
+   *
+   * @param cls the enum class.
+   * @param <E> the enum type.
+   * @return a set containing some of the enum members.
+   */
+  public static <E extends Enum<E>> Set<E> someOf(Class<E> cls) {
+    var set = new HashSet<E>();
+    var options = new ArrayList<>(Arrays.asList(cls.getEnumConstants()));
+
+    while (!options.isEmpty()) {
+      set.add(options.remove(someInt(options.size())));
+    }
+
+    return set;
   }
 
   private static void createStubMethodsFor(Diagnostic<JavaFileObject> diagnostic) {

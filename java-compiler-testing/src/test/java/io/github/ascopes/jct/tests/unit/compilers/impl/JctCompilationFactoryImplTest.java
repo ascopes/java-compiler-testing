@@ -127,7 +127,7 @@ class JctCompilationFactoryImplTest {
         somePathFileObject(someBinaryName())
     );
 
-    var allObjects = flatten(Set.of(apiObjects, implObjects));
+    final var allObjects = flatten(Set.of(apiObjects, implObjects));
 
     var multiModuleLocations = (Iterable<Set<Location>>) Set.of(
         Set.<Location>of(apiLocation, implLocation)
@@ -368,7 +368,6 @@ class JctCompilationFactoryImplTest {
 
   @DisplayName("The tee writer logs should be placed in the compilation result")
   @Test
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   void teeWriterLogsShouldBePlacedInTheCompilationResult() throws IOException {
     // Given
     try (var teeWriterStatic = mockStatic(TeeWriter.class)) {
@@ -405,7 +404,7 @@ class JctCompilationFactoryImplTest {
       "STACKTRACES, true,  true"
   })
   @ParameterizedTest(name = "- LoggingMode.{0} should use new TracingDiagnosticListener({1}, {2})")
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings({"unchecked", "rawtypes", "AssertBetweenInconvertibleTypes"})
   void correctlyConfiguredDiagnosticListenerIsUsedForCompilation(
       LoggingMode loggingMode,
       boolean expectedEnabled,
@@ -467,7 +466,7 @@ class JctCompilationFactoryImplTest {
   @DisplayName("Diagnostics get placed in the compilation result")
   @Test
   @SuppressWarnings("rawtypes")
-  void correctlyConfiguredDiagnosticListenerIsUsedForCompilation() throws IOException {
+  void diagnosticsGetPlacedInTheCompilationResult() throws IOException {
     // Given
     var diagnostics = List.of(
         someTraceDiagnostic(),

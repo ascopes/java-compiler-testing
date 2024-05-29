@@ -15,18 +15,17 @@
  */
 package io.github.ascopes.jct.acceptancetests.avajejsonb;
 
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
+
 import io.avaje.jsonb.JsonAdapter;
 import io.avaje.jsonb.Jsonb;
 import io.avaje.jsonb.generator.Processor;
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
+import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.skyscreamer.jsonassert.JSONAssert;
-
-import java.time.Instant;
-
-import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 
 @DisplayName("Avaje Jsonb acceptance tests")
 class AvajeJsonbTest {

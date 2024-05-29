@@ -15,51 +15,49 @@
  */
 package io.github.ascopes.jct.acceptancetests.mapstruct;
 
-import io.github.ascopes.jct.compilers.JctCompiler;
-import io.github.ascopes.jct.junit.JavacCompilerTest;
-import io.github.ascopes.jct.workspaces.Workspaces;
-import org.junit.jupiter.api.DisplayName;
-
-import javax.tools.StandardLocation;
-
-import java.util.stream.Stream;
-
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.JavacCompilerTest;
+import io.github.ascopes.jct.workspaces.Workspaces;
+import java.util.stream.Stream;
+import javax.tools.StandardLocation;
+import org.junit.jupiter.api.DisplayName;
 
 class MapStructTest {
 
   @DisplayName("MapStruct generates expected mapping code")
   @JavacCompilerTest
   void mapStructGeneratesExpectedMappingCode(JctCompiler compiler) throws Throwable {
-    try (var workspace = Workspaces.newWorkspace()) {
+    try (final var workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()
           .copyContentsFrom("src", "test", "resources", "code", "flat");
 
       // When
-      var compilation = compiler.compile(workspace);
+      final var compilation = compiler.compile(workspace);
 
       // Then
       assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
 
-      var classLoader = compilation.getFileManager().getClassLoader(StandardLocation.CLASS_OUTPUT);
-      var packageName = "org.example";
+      final var classLoader = compilation.getFileManager()
+          .getClassLoader(StandardLocation.CLASS_OUTPUT);
+      final var packageName = "org.example";
 
-      var carTypeClass = classLoader.loadClass(packageName + ".CarType");
-      var carClass = classLoader.loadClass(packageName + ".Car");
-      var carMapperClass = classLoader.loadClass(packageName + ".CarMapper");
+      final var carTypeClass = classLoader.loadClass(packageName + ".CarType");
+      final var carClass = classLoader.loadClass(packageName + ".Car");
+      final var carMapperClass = classLoader.loadClass(packageName + ".CarMapper");
 
-      var car = carClass.getConstructor().newInstance();
+      final var car = carClass.getConstructor().newInstance();
 
       setAttr(car, "make", "VW Polo");
       setAttr(car, "type", getAttr(carTypeClass, "HATCHBACK"));
       setAttr(car, "numberOfSeats", 5);
 
-      var carMapper = getAttr(carMapperClass, "INSTANCE");
-      var carDto = callMethod(carMapper, "carToCarDto", car);
+      final var carMapper = getAttr(carMapperClass, "INSTANCE");
+      final var carDto = callMethod(carMapper, "carToCarDto", car);
 
       assertSoftly(softly -> {
         softly.assertThat(carDto).hasFieldOrPropertyWithValue("make", "VW Polo");
@@ -72,33 +70,34 @@ class MapStructTest {
   @DisplayName("MapStruct generates expected mapping code for modules")
   @JavacCompilerTest(minVersion = 9)
   void mapStructGeneratesExpectedMappingCodeForModules(JctCompiler compiler) throws Throwable {
-    try (var workspace = Workspaces.newWorkspace()) {
+    try (final var workspace = Workspaces.newWorkspace()) {
       // Given
       workspace
           .createSourcePathPackage()
           .copyContentsFrom("src", "test", "resources", "code", "jpms");
 
       // When
-      var compilation = compiler.compile(workspace);
+      final var compilation = compiler.compile(workspace);
 
       // Then
       assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
 
-      var classLoader = compilation.getFileManager().getClassLoader(StandardLocation.CLASS_OUTPUT);
-      var packageName = "org.example";
+      final var classLoader = compilation.getFileManager()
+          .getClassLoader(StandardLocation.CLASS_OUTPUT);
+      final var packageName = "org.example";
 
-      var carTypeClass = classLoader.loadClass(packageName + ".CarType");
-      var carClass = classLoader.loadClass(packageName + ".Car");
-      var carMapperClass = classLoader.loadClass(packageName + ".CarMapper");
+      final var carTypeClass = classLoader.loadClass(packageName + ".CarType");
+      final var carClass = classLoader.loadClass(packageName + ".Car");
+      final var carMapperClass = classLoader.loadClass(packageName + ".CarMapper");
 
-      var car = carClass.getConstructor().newInstance();
+      final var car = carClass.getConstructor().newInstance();
 
       setAttr(car, "make", "VW Polo");
       setAttr(car, "type", getAttr(carTypeClass, "HATCHBACK"));
       setAttr(car, "numberOfSeats", 5);
 
-      var carMapper = getAttr(carMapperClass, "INSTANCE");
-      var carDto = callMethod(carMapper, "carToCarDto", car);
+      final var carMapper = getAttr(carMapperClass, "INSTANCE");
+      final var carDto = callMethod(carMapper, "carToCarDto", car);
 
       assertSoftly(softly -> {
         softly.assertThat(carDto).hasFieldOrPropertyWithValue("make", "VW Polo");
@@ -109,30 +108,30 @@ class MapStructTest {
   }
 
   private <T> T getAttr(Object obj, String name) throws Throwable {
-    Class<?> cls = obj instanceof Class<?>
+    final var cls = obj instanceof Class<?>
         ? (Class<?>) obj
         : obj.getClass();
 
-    var instance = cls == obj
+    final var instance = cls == obj
         ? obj
         : null;
 
-    var field = cls.getDeclaredField(name);
+    final var field = cls.getDeclaredField(name);
     field.setAccessible(true);
 
     @SuppressWarnings("unchecked")
-    var value = (T) field.get(instance);
+    final var value = (T) field.get(instance);
     return value;
   }
 
   private void setAttr(Object obj, String name, Object value) throws Throwable {
-    var field = obj.getClass().getDeclaredField(name);
+    final var field = obj.getClass().getDeclaredField(name);
     field.setAccessible(true);
     field.set(obj, value);
   }
 
   private Object callMethod(Object obj, String method, Object... args) throws Throwable {
-    var cls = obj instanceof Class<?>
+    final var cls = obj instanceof Class<?>
         ? (Class<?>) obj
         : obj.getClass();
 

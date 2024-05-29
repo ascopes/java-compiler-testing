@@ -53,6 +53,11 @@ public final class WorkspaceImpl implements Workspace {
   private final PathStrategy pathStrategy;
   private final Map<Location, List<PathRoot>> paths;
 
+  /**
+   * Initialise this workspace.
+   *
+   * @param pathStrategy the path strategy to use for creating source and target paths.
+   */
   public WorkspaceImpl(PathStrategy pathStrategy) {
     closed = false;
     this.pathStrategy = requireNonNull(pathStrategy, "pathStrategy");

@@ -782,7 +782,7 @@ class JctCompilationAssertTest {
     when(assertions.outputGroup(any())).thenReturn(expectedOutputAssertions);
 
     // When
-    var actualAssertions = assertions.classOutputPackages();
+    final var actualAssertions = assertions.classOutputPackages();
 
     // Then
     verify(assertions).classOutputPackages();
@@ -806,7 +806,7 @@ class JctCompilationAssertTest {
     when(assertions.outputGroup(any())).thenReturn(expectedOutputAssertions);
 
     // When
-    var actualAssertions = assertions.classOutputModules();
+    final var actualAssertions = assertions.classOutputModules();
 
     // Then
     verify(assertions).classOutputModules();
@@ -830,7 +830,7 @@ class JctCompilationAssertTest {
     when(assertions.outputGroup(any())).thenReturn(expectedOutputAssertions);
 
     // When
-    var actualAssertions = assertions.sourceOutputPackages();
+    final var actualAssertions = assertions.sourceOutputPackages();
 
     // Then
     verify(assertions).sourceOutputPackages();
@@ -854,7 +854,7 @@ class JctCompilationAssertTest {
     when(assertions.outputGroup(any())).thenReturn(expectedOutputAssertions);
 
     // When
-    var actualAssertions = assertions.sourceOutputModules();
+    final var actualAssertions = assertions.sourceOutputModules();
 
     // Then
     verify(assertions).sourceOutputModules();
@@ -876,7 +876,7 @@ class JctCompilationAssertTest {
     when(assertions.packageGroup(any())).thenReturn(expectedAssertions);
 
     // When
-    var actualAssertions = assertions.classPathPackages();
+    final var actualAssertions = assertions.classPathPackages();
 
     // Then
     verify(assertions).classPathPackages();
@@ -896,7 +896,7 @@ class JctCompilationAssertTest {
     when(assertions.packageGroup(any())).thenReturn(expectedAssertions);
 
     // When
-    var actualAssertions = assertions.sourcePathPackages();
+    final var actualAssertions = assertions.sourcePathPackages();
 
     // Then
     verify(assertions).sourcePathPackages();
@@ -916,7 +916,7 @@ class JctCompilationAssertTest {
     when(assertions.moduleGroup(any())).thenReturn(expectedAssertions);
 
     // When
-    var actualAssertions = assertions.moduleSourcePathModules();
+    final var actualAssertions = assertions.moduleSourcePathModules();
 
     // Then
     verify(assertions).moduleSourcePathModules();
@@ -936,7 +936,7 @@ class JctCompilationAssertTest {
     when(assertions.moduleGroup(any())).thenReturn(expectedAssertions);
 
     // When
-    var actualAssertions = assertions.modulePathModules();
+    final var actualAssertions = assertions.modulePathModules();
 
     // Then
     verify(assertions).modulePathModules();

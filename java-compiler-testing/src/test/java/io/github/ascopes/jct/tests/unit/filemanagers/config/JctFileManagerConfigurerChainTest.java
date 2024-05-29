@@ -19,9 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerConfigurer;
@@ -160,7 +160,7 @@ class JctFileManagerConfigurerChainTest {
         .addLast(configurer6);
 
     // When
-    var resultFileManager = chain.configure(fileManager1);
+    final var resultFileManager = chain.configure(fileManager1);
 
     // Then
     verify(configurer1).isEnabled();

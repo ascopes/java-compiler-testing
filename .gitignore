@@ -3,6 +3,9 @@ build/
 out/
 target/
 
+# Maven invoker plugin
+**/interpolated-pom.xml
+
 # IntelliJ junk
 *.iml
 .idea

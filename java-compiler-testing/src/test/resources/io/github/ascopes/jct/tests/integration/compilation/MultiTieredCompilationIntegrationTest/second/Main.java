@@ -17,8 +17,19 @@ package org.example.second;
 
 import org.example.first.Adder;
 
+/**
+ * A class that uses another class to add things together and is totally not an overkill or
+ * anything whatsoever.
+ */
 public class Main {
 
+  /**
+   * Add the things together.
+   *
+   * @param a the first thing.
+   * @param b the second thing.
+   * @return the things, added together externally.
+   */
   public static int addTogether(int a, int b) {
     Adder adder = new Adder();
     return adder.add(a, b);

@@ -13,11 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * Command line app that says hello to me.
  */
 public class HelloWorld {
 
+  /**
+   * Main method.
+   *
+   * @param args command line arguments.
+   */
   public static void main(String[] args) {
     System.out.println("Hello, World!");
   }

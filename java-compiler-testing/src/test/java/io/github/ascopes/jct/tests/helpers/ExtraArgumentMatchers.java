@@ -33,6 +33,14 @@ public final class ExtraArgumentMatchers {
     throw new UnsupportedOperationException("static-only class");
   }
 
+  /**
+   * Match an argument that has a given generic type.
+   *
+   * @param varargs do not specify. This is a hack to capture the generic type from the compiler
+   *                implicitly.
+   * @param <T>     the generic type to match.
+   * @return an argument matcher.
+   */
   @SafeVarargs
   public static <T> T hasGenericType(T... varargs) {
     if (varargs == null || varargs.length != 0) {
@@ -43,11 +51,27 @@ public final class ExtraArgumentMatchers {
         && varargs.getClass().getComponentType().isAssignableFrom(arg.getClass()));
   }
 
+  /**
+   * Create an argument matcher that matches any iterable containing the given elements exactly.
+   *
+   * @param expected the elements to match.
+   * @param <E> the element type.
+   * @param <T> the iterable type.
+   * @return the argument matcher.
+   */
   @SafeVarargs
   public static <E, T extends Iterable<E>> T containsExactlyElements(E... expected) {
     return containsExactlyElements(Set.of(expected));
   }
 
+  /**
+   * Create an argument matcher that matches any iterable containing the given elements exactly.
+   *
+   * @param expected the elements to match.
+   * @param <E> the element type.
+   * @param <T> the iterable type.
+   * @return the argument matcher.
+   */
   public static <E, T extends Iterable<E>> T containsExactlyElements(Collection<E> expected) {
     return argThat(new ArgumentMatcher<>() {
       @Override

@@ -15,8 +15,18 @@
  */
 package org.example.first;
 
+/**
+ * Class that adds things together.
+ */
 public class Adder {
 
+  /**
+   * Add things together.
+   *
+   * @param a the first thing.
+   * @param b the second thing.
+   * @return the things, added together.
+   */
   public int add(int a, int b) {
     return a + b;
   }

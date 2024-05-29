@@ -23,19 +23,40 @@ import io.avaje.http.api.Path;
 import io.avaje.http.api.Produces;
 import io.avaje.http.api.Put;
 
+/**
+ * API stub for a user repository REST API.
+ */
 @Client
 @Path("/users")
 public interface UserApi {
 
+  /**
+   * Get a user.
+   *
+   * @param id the ID of the user to get.
+   * @return the user.
+   */
   @Get("/{id}")
   @Produces("application/xml")
   User getUser(String id);
 
+  /**
+   * Store or update a user.
+   *
+   * @param id          the ID of the user to store.
+   * @param patchedUser the user details to store.
+   * @return the user.
+   */
   @Consumes("application/xml")
   @Produces("application/xml")
   @Put("/{id}")
   User putUser(String id, PatchedUser patchedUser);
 
+  /**
+   * Delete a user.
+   *
+   * @param id the ID of the user to delete.
+   */
   @Delete("/{id}")
   void deleteUser(String id);
 }

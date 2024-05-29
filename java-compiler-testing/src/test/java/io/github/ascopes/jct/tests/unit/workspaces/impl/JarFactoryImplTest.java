@@ -96,24 +96,34 @@ class JarFactoryImplTest {
   void theGeneratedJarContainsTheExpectedFiles() throws IOException {
     // Given
     try (var fs = Fixtures.someTemporaryFileSystem()) {
-      var inputsDir = Files.createDirectories(fs.getRootPath().resolve("inputs"));
-      var outputsDir = Files.createDirectories(fs.getRootPath().resolve("outputs"));
-      var outputJar = outputsDir.resolve("output.jar");
+      final var inputsDir = Files.createDirectories(fs.getRootPath().resolve("inputs"));
+      final var outputsDir = Files.createDirectories(fs.getRootPath().resolve("outputs"));
+      final var outputJar = outputsDir.resolve("output.jar");
 
-      var inputsFooBarBazTxt = inputsDir.resolve("foo").resolve("bar").resolve("baz.txt");
+      final var inputsFooBarBazTxt = inputsDir
+          .resolve("foo")
+          .resolve("bar")
+          .resolve("baz.txt");
       Files.createDirectories(inputsFooBarBazTxt.getParent());
       Files.writeString(inputsFooBarBazTxt, "Foo! Bar! Baz! Hello, World!");
 
-      var inputsFooBarBorkTxt = inputsDir.resolve("foo").resolve("bar").resolve("bork.txt");
+      final var inputsFooBarBorkTxt = inputsDir
+          .resolve("foo")
+          .resolve("bar")
+          .resolve("bork.txt");
       Files.writeString(inputsFooBarBorkTxt, "Foo! Bar! Baz! Bork!");
 
-      var inputsPingPongTxt = inputsDir.resolve("pingPong.txt");
+      final var inputsPingPongTxt = inputsDir.resolve("pingPong.txt");
       Files.writeString(inputsPingPongTxt, "Ping? Pong!");
 
-      var inputsFooBarTxt = inputsDir.resolve("foo").resolve("bar.txt");
+      final var inputsFooBarTxt = inputsDir
+          .resolve("foo")
+          .resolve("bar.txt");
       Files.writeString(inputsFooBarTxt, "Foo! Bar!");
 
-      var inputsLoremIpsumBin = inputsDir.resolve("lorem").resolve("ipsum.bin");
+      final var inputsLoremIpsumBin = inputsDir
+          .resolve("lorem")
+          .resolve("ipsum.bin");
       Files.createDirectories(inputsLoremIpsumBin.getParent());
       Files.write(inputsLoremIpsumBin, new byte[]{0xd, 0xe, 0xa, 0xd, 0xb, 0xe, 0xe, 0xf});
 

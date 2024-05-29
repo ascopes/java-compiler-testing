@@ -42,7 +42,6 @@ public final class LoomPolyfill extends UtilityClass {
    * @param thread the thread to use.
    * @return the thread ID.
    */
-  @SuppressWarnings("deprecation")
   public static long getThreadId(Thread thread) {
     // Note: this test will never get 100% coverage on one JDK, because it totally depends on the
     // JDK in use as to which code path runs.

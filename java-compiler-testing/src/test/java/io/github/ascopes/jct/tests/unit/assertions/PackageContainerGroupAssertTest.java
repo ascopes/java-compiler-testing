@@ -108,7 +108,7 @@ class PackageContainerGroupAssertTest {
       when(assertions.allFilesExist(any(), any(), any())).thenCallRealMethod();
 
       // When
-      var result = assertions.allFilesExist("foo", "bar", "baz");
+      final var result = assertions.allFilesExist("foo", "bar", "baz");
 
       // Then
       verify(assertions).allFilesExist("foo", "bar", "baz");

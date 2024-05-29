@@ -15,15 +15,15 @@
  */
 package io.github.ascopes.jct.acceptancetests.checkerframework;
 
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
+import static org.assertj.core.api.Assumptions.assumeThat;
+
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.checkerframework.checker.nullness.NullnessChecker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-
-import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static org.assertj.core.api.Assumptions.assumeThat;
 
 @DisplayName("Checkerframework Nullness acceptance tests")
 class CheckerNullTest {

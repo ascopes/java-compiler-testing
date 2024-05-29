@@ -35,8 +35,8 @@ import org.jspecify.annotations.Nullable;
  * Base interface representing a group of package-oriented paths.
  *
  * <p><strong>Warning</strong>: container group APIs are not designed to allow reuse between
- * compilation runs due the behaviour around providing access to class loaders. See the
- * notes for {@link #getClassLoader} for more details.
+ * compilation runs due the behaviour around providing access to class loaders. See the notes for
+ * {@link #getClassLoader} for more details.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -79,21 +79,21 @@ public interface PackageContainerGroup extends ContainerGroup {
    * <p>If a class loader has not yet been created, then calling this method is expected to create
    * a class loader first.
    *
-   * <p>This method is primarily provided to allow JCT to load components like annotation processors
-   * from provided class paths dynamically during compilation, but is also suitable for use by users
-   * to load classes compiled as part of test cases into memory to perform further tests on the results
-   * via standard reflection APIs.
+   * <p>This method is primarily provided to allow JCT to load components like annotation
+   * processors from provided class paths dynamically during compilation, but is also suitable for
+   * use by users to load classes compiled as part of test cases into memory to perform further
+   * tests on the results via standard reflection APIs.
    *
-   * <p>While not strictly required, it is recommended that any implementations of this class provide
-   * a subclass of {@link java.net.URLClassLoader} to ensure similar behaviour to the internals
-   * within OpenJDK's {@code javac} implementation.
+   * <p>While not strictly required, it is recommended that any implementations of this class
+   * provide a subclass of {@link java.net.URLClassLoader} to ensure similar behaviour to the
+   * internals within OpenJDK's {@code javac} implementation.
    *
-   * <p><strong>Warning</strong>: adding additional containers to this group after accessing this 
-   * class loader may result in the class loader being destroyed or re-created. This can result
-   * in confusing behaviour where classes may get loaded multiple times. Generally this shouldn't
-   * be an issue since the class loader is only accessed once the files have been added, but this
-   * does mean that container group types should not be reused between compilation runs if possible.
-   * Due to how the JCT API works, this means that you should avoid calling this method prior to
+   * <p><strong>Warning</strong>: adding additional containers to this group after accessing this
+   * class loader may result in the class loader being destroyed or re-created. This can result in
+   * confusing behaviour where classes may get loaded multiple times. Generally this shouldn't be an
+   * issue since the class loader is only accessed once the files have been added, but this does
+   * mean that container group types should not be reused between compilation runs if possible. Due
+   * to how the JCT API works, this means that you should avoid calling this method prior to
    * invoking the compiler itself, and likewise should try to avoid adding new packages to
    * implementations of container groups after the compiler has been invoked.
    *
@@ -165,9 +165,9 @@ public interface PackageContainerGroup extends ContainerGroup {
    * <p>Modules are treated as subdirectories where supported.
    *
    * <p>This method accepts multiple strings to prevent users from having to
-   * hard-code OS-specific file path separators that may create flaky tests.
-   * For example, {@code .getFile("foo", "bar", "baz")} is equivalent to
-   * {@code .getFile("foo/bar/baz")} on most systems.
+   * hard-code OS-specific file path separators that may create flaky tests. For example,
+   * {@code .getFile("foo", "bar", "baz")} is equivalent to {@code .getFile("foo/bar/baz")} on most
+   * systems.
    *
    * <p>Unlike {@link #getClassLoader}, this will allow access to the files
    * directly without needing to handle class loading exceptions.
@@ -279,8 +279,8 @@ public interface PackageContainerGroup extends ContainerGroup {
    * List all the file objects that match the given criteria in this group.
    *
    * <p>File objects are returned in an unordered collection, but lookup will be
-   * performed in a deterministic order corresponding to the same order as the
-   * containers returned by {@link #getPackages}.
+   * performed in a deterministic order corresponding to the same order as the containers returned
+   * by {@link #getPackages}.
    *
    * @param packageName the package name to look in.
    * @param kinds       the kinds of file to look for.

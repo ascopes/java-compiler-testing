@@ -85,7 +85,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  */
 @DisplayName("JctFileManagerImpl tests")
 @ExtendWith(MockitoExtension.class)
-@SuppressWarnings("resource")
+@SuppressWarnings({"DataFlowIssue", "resource"})
 class JctFileManagerImplTest {
 
   JctFileManagerImpl fileManager;
@@ -169,7 +169,7 @@ class JctFileManagerImplTest {
       FileObject fileObject = mock();
 
       // When
-      var result = fileManager.contains(location, fileObject);
+      final var result = fileManager.contains(location, fileObject);
 
       // Then
       assertThat(result).isFalse();
@@ -186,7 +186,7 @@ class JctFileManagerImplTest {
           .thenReturn(null);
 
       // When
-      var result = fileManager.contains(location, fileObject);
+      final var result = fileManager.contains(location, fileObject);
 
       // Then
       verify(repository).getContainerGroup(location);
@@ -207,7 +207,7 @@ class JctFileManagerImplTest {
           .thenReturn(contained);
 
       // When
-      var result = fileManager.contains(location, fileObject);
+      final var result = fileManager.contains(location, fileObject);
 
       // Then
       verify(repository).getContainerGroup(location);
@@ -273,7 +273,7 @@ class JctFileManagerImplTest {
           .thenReturn(null);
 
       // When
-      var result = fileManager.getClassLoader(location);
+      final var result = fileManager.getClassLoader(location);
 
       // Then
       verify(repository).getPackageOrientedContainerGroup(location);
@@ -295,7 +295,7 @@ class JctFileManagerImplTest {
           .thenReturn(classLoader);
 
       // When
-      var result = fileManager.getClassLoader(location);
+      final var result = fileManager.getClassLoader(location);
 
       // Then
       verify(repository).getPackageOrientedContainerGroup(location);
@@ -335,7 +335,7 @@ class JctFileManagerImplTest {
           .thenReturn(null);
 
       // When
-      var result = fileManager.getFileForInput(location, packageName, relativeName);
+      final var result = fileManager.getFileForInput(location, packageName, relativeName);
 
       // Then
       verify(repository).getPackageOrientedContainerGroup(location);
@@ -359,7 +359,7 @@ class JctFileManagerImplTest {
           .thenReturn(fileObject);
 
       // When
-      var result = fileManager.getFileForInput(location, packageName, relativeName);
+      final var result = fileManager.getFileForInput(location, packageName, relativeName);
 
       // Then
       verify(repository).getPackageOrientedContainerGroup(location);
@@ -411,7 +411,8 @@ class JctFileManagerImplTest {
           .thenReturn(null);
 
       // When
-      var result = fileManager.getFileForOutput(moduleLocation, packageName, relativeName, sibling);
+      final var result = fileManager
+          .getFileForOutput(moduleLocation, packageName, relativeName, sibling);
 
       // Then
       verify(repository).getOutputContainerGroup(parentLocation);
@@ -444,7 +445,8 @@ class JctFileManagerImplTest {
           .thenReturn(fileForOutput);
 
       // When
-      var result = fileManager.getFileForOutput(moduleLocation, packageName, relativeName, sibling);
+      final var result = fileManager
+          .getFileForOutput(moduleLocation, packageName, relativeName, sibling);
 
       // Then
       verify(repository).getOutputContainerGroup(parentLocation);
@@ -472,7 +474,7 @@ class JctFileManagerImplTest {
           .thenReturn(null);
 
       // When
-      var result = fileManager.getFileForOutput(location, packageName, relativeName, sibling);
+      final var result = fileManager.getFileForOutput(location, packageName, relativeName, sibling);
 
       // Then
       verify(repository).getOutputContainerGroup(location);
@@ -498,7 +500,7 @@ class JctFileManagerImplTest {
           .thenReturn(fileForOutput);
 
       // When
-      var result = fileManager.getFileForOutput(location, packageName, relativeName, sibling);
+      final var result = fileManager.getFileForOutput(location, packageName, relativeName, sibling);
 
       // Then
       verify(repository).getOutputContainerGroup(location);
@@ -527,7 +529,7 @@ class JctFileManagerImplTest {
           .thenReturn(null);
 
       // When
-      var result = fileManager.getJavaFileForInput(location, className, kind);
+      final var result = fileManager.getJavaFileForInput(location, className, kind);
 
       // Then
       verify(repository).getPackageOrientedContainerGroup(location);
@@ -551,7 +553,7 @@ class JctFileManagerImplTest {
           .thenReturn(fileObject);
 
       // When
-      var result = fileManager.getJavaFileForInput(location, className, kind);
+      final var result = fileManager.getJavaFileForInput(location, className, kind);
 
       // Then
       verify(repository).getPackageOrientedContainerGroup(location);
@@ -609,7 +611,7 @@ class JctFileManagerImplTest {
           .thenReturn(null);
 
       // When
-      var result = fileManager.getJavaFileForOutput(moduleLocation, className, kind, sibling);
+      final var result = fileManager.getJavaFileForOutput(moduleLocation, className, kind, sibling);
 
       // Then
       verify(repository).getOutputContainerGroup(parentLocation);
@@ -642,7 +644,7 @@ class JctFileManagerImplTest {
           .thenReturn(javaFileForOutput);
 
       // When
-      var result = fileManager.getJavaFileForOutput(moduleLocation, className, kind, sibling);
+      final var result = fileManager.getJavaFileForOutput(moduleLocation, className, kind, sibling);
 
       // Then
       verify(repository).getOutputContainerGroup(parentLocation);
@@ -670,7 +672,7 @@ class JctFileManagerImplTest {
           .thenReturn(null);
 
       // When
-      var result = fileManager.getJavaFileForOutput(location, className, kind, sibling);
+      final var result = fileManager.getJavaFileForOutput(location, className, kind, sibling);
 
       // Then
       verify(repository).getOutputContainerGroup(location);
@@ -696,7 +698,7 @@ class JctFileManagerImplTest {
           .thenReturn(javaFileForOutput);
 
       // When
-      var result = fileManager.getJavaFileForOutput(location, className, kind, sibling);
+      final var result = fileManager.getJavaFileForOutput(location, className, kind, sibling);
 
       // Then
       verify(repository).getOutputContainerGroup(location);
@@ -844,7 +846,7 @@ class JctFileManagerImplTest {
           .thenReturn(containerGroup);
 
       // When
-      var result = fileManager.getModuleContainerGroup(location);
+      final var result = fileManager.getModuleContainerGroup(location);
 
       // Then
       verify(repository).getModuleContainerGroup(location);
@@ -862,7 +864,7 @@ class JctFileManagerImplTest {
         .thenReturn(moduleContainerGroups);
 
     // When
-    var result = fileManager.getModuleContainerGroups();
+    final var result = fileManager.getModuleContainerGroups();
 
     // Then
     verify(repository).getModuleContainerGroups();
@@ -903,7 +905,7 @@ class JctFileManagerImplTest {
           .thenReturn(containerGroup);
 
       // When
-      var result = fileManager.getOutputContainerGroup(location);
+      final var result = fileManager.getOutputContainerGroup(location);
 
       // Then
       verify(repository).getOutputContainerGroup(location);
@@ -922,7 +924,7 @@ class JctFileManagerImplTest {
         .thenReturn(outputContainerGroups);
 
     // When
-    var result = fileManager.getOutputContainerGroups();
+    final var result = fileManager.getOutputContainerGroups();
 
     // Then
     verify(repository).getOutputContainerGroups();
@@ -961,7 +963,7 @@ class JctFileManagerImplTest {
           .thenReturn(containerGroup);
 
       // When
-      var result = fileManager.getPackageContainerGroup(location);
+      final var result = fileManager.getPackageContainerGroup(location);
 
       // Then
       verify(repository).getPackageContainerGroup(location);
@@ -979,7 +981,7 @@ class JctFileManagerImplTest {
         .thenReturn(packageContainerGroups);
 
     // When
-    var result = fileManager.getPackageContainerGroups();
+    final var result = fileManager.getPackageContainerGroups();
 
     // Then
     verify(repository).getPackageContainerGroups();
@@ -1016,6 +1018,7 @@ class JctFileManagerImplTest {
     void getServiceLoaderDelegatesToTheGroup() {
       // Given
       class Some {}
+
       var location = someLocation();
       ContainerGroup containerGroup = mock();
       ServiceLoader<Some> serviceLoader = mock();
@@ -1025,7 +1028,7 @@ class JctFileManagerImplTest {
           .thenAnswer(ctx -> serviceLoader);
 
       // When
-      var result = fileManager.getServiceLoader(location, Some.class);
+      final var result = fileManager.getServiceLoader(location, Some.class);
 
       // Then
       verify(repository).getContainerGroup(location);
@@ -1047,7 +1050,7 @@ class JctFileManagerImplTest {
     var flag = originalFlagIterator.next();
 
     // When
-    var result = fileManager.handleOption(flag, flagIterator);
+    final var result = fileManager.handleOption(flag, flagIterator);
 
     // Then
     assertThat(result).isFalse();
@@ -1063,7 +1066,7 @@ class JctFileManagerImplTest {
     when(repository.hasLocation(any())).thenReturn(hasLocation);
 
     // When
-    var result = fileManager.hasLocation(location);
+    final var result = fileManager.hasLocation(location);
 
     // Then
     verify(repository).hasLocation(location);
@@ -1098,7 +1101,7 @@ class JctFileManagerImplTest {
       JavaFileObject fileObject = mock();
 
       // When
-      var result = fileManager.inferBinaryName(location, fileObject);
+      final var result = fileManager.inferBinaryName(location, fileObject);
 
       // Then
       assertThat(result).isNull();
@@ -1116,7 +1119,7 @@ class JctFileManagerImplTest {
           .thenReturn(null);
 
       // When
-      var result = fileManager.inferBinaryName(location, fileObject);
+      final var result = fileManager.inferBinaryName(location, fileObject);
 
       // Then
       assertThat(result).isNull();
@@ -1139,7 +1142,7 @@ class JctFileManagerImplTest {
           .thenReturn(binaryName);
 
       // When
-      var result = fileManager.inferBinaryName(location, fileObject);
+      final var result = fileManager.inferBinaryName(location, fileObject);
 
       // Then
       assertThat(result).isEqualTo(binaryName);
@@ -1178,7 +1181,7 @@ class JctFileManagerImplTest {
       var location = StandardLocation.SOURCE_PATH;
 
       // When
-      var result = fileManager.inferModuleName(location);
+      final var result = fileManager.inferModuleName(location);
 
       // Then
       assertThat(result).isNull();
@@ -1193,7 +1196,7 @@ class JctFileManagerImplTest {
       var moduleLocation = new ModuleLocation(parentLocation, moduleName);
 
       // When
-      var result = fileManager.inferModuleName(moduleLocation);
+      final var result = fileManager.inferModuleName(moduleLocation);
 
       // Then
       assertThat(result).isEqualTo(moduleName);
@@ -1308,7 +1311,7 @@ class JctFileManagerImplTest {
           .thenReturn(null);
 
       // When
-      var result = fileManager.list(location, packageName, kinds, recurse);
+      final var result = fileManager.list(location, packageName, kinds, recurse);
 
       // Then
       assertThat(result)
@@ -1339,7 +1342,7 @@ class JctFileManagerImplTest {
           .thenReturn(files);
 
       // When
-      var result = fileManager.list(location, packageName, kinds, recurse);
+      final var result = fileManager.list(location, packageName, kinds, recurse);
 
       // Then
       assertThat(result)
@@ -1387,7 +1390,7 @@ class JctFileManagerImplTest {
           .thenReturn(expectedLocations);
 
       // When
-      var result = fileManager.listLocationsForModules(location);
+      final var result = fileManager.listLocationsForModules(location);
 
       // Then
       assertThat(result)

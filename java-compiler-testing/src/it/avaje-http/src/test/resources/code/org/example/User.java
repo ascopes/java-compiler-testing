@@ -15,25 +15,50 @@
  */
 package org.example;
 
+/**
+ * A user.
+ */
 public final class User {
   private final String id;
   private final String name;
   private final String nickName;
 
+  /**
+   * Initialise the user.
+   *
+   * @param id the user's ID.
+   * @param name the user's name.
+   * @param nickName the user's nickname.
+   */
   public User(String id, String name, String nickName) {
     this.id = id;
     this.name = name;
     this.nickName = nickName;
   }
 
+  /**
+   * Get the user's ID.
+   *
+   * @return the user's ID.
+   */
   public String getId() {
     return id;
   }
 
+  /**
+   * Get the user's name.
+   *
+   * @return the user's name.
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * Get the user's nickname.
+   *
+   * @return the user's nickname.
+   */
   public String getNickName() {
     return nickName;
   }
