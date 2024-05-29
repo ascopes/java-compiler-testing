@@ -139,7 +139,7 @@ public final class JctFileManagerImpl implements JctFileManager {
       Location location,
       String packageName,
       String relativeName,
-      FileObject sibling
+      @Nullable FileObject sibling
   ) {
     requireOutputLocation(location);
 
@@ -182,7 +182,7 @@ public final class JctFileManagerImpl implements JctFileManager {
       Location location,
       String className,
       Kind kind,
-      FileObject sibling
+      @Nullable FileObject sibling
   ) {
     requireOutputLocation(location);
 
