@@ -140,7 +140,7 @@ public final class LoggingFileManagerProxy implements InvocationHandler {
           .addArgument(returnType)
           .addArgument(methodName)
           .addArgument(paramStr)
-          .addArgument(ex.getCause())
+          .setCause(ex.getCause())
           .log();
 
       throw ex.getCause();
