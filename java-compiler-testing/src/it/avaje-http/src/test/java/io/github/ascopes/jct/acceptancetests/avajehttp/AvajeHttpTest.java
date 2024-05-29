@@ -15,6 +15,8 @@
  */
 package io.github.ascopes.jct.acceptancetests.avajehttp;
 
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
+
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
