@@ -16,15 +16,12 @@
 package io.github.ascopes.jct.acceptancetests.lombok;
 
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.condition.JRE;
 
 /**
  * Example integration test that makes use of the Lombok annotation processor.
@@ -36,13 +33,6 @@ import org.junit.jupiter.api.condition.JRE;
  */
 @DisplayName("Lombok Integration test")
 class LombokTest {
-
-  @BeforeEach
-  void setUp() {
-    assumeThat(JRE.currentVersion())
-        .withFailMessage("Lombok fails under JDK-21: See Lombok GH-3393")
-        .isLessThanOrEqualTo(JRE.JAVA_20);
-  }
 
   @DisplayName("Lombok @Data compiles the expected data class")
   @JavacCompilerTest
