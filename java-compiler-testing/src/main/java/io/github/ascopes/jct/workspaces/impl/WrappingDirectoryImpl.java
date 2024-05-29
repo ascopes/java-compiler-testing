@@ -101,6 +101,7 @@ public final class WrappingDirectoryImpl implements PathRoot {
     });
   }
 
+  @Nullable
   @Override
   public PathRoot getParent() {
     return parent;
