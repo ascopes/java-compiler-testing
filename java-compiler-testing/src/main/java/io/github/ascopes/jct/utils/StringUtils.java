@@ -61,7 +61,7 @@ public final class StringUtils extends UtilityClass {
    * <p>This is designed to be able to take an input such as {@code List.of("foo", "bar", "baz")},
    * and be able to produce a string result such as {@code "foo, bar, or baz"} (where
    * {@code connector} in this case would be {@code ", "} and {@code lastConnector} would be
-   * {@code ", or "}.
+   * {@code ", or "}).
    *
    * <p>If no arguments are available, then an empty string is output instead.
    *

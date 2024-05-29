@@ -248,7 +248,7 @@ public final class PackageContainerGroupAssert
   }
 
   private boolean fileNameIsPresent(@Nullable Path path) {
-    // Path can be null if no path elements exist in ZipPath impls.
+    // Path can be null if no path elements exist in ZipPath implementations.
     return Optional
         .ofNullable(path)
         .map(Path::getFileName)

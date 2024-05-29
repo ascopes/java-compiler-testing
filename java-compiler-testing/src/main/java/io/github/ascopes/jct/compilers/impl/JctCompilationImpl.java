@@ -216,7 +216,7 @@ public final class JctCompilationImpl implements JctCompilation {
     /**
      * Set the file manager.
      *
-     * <p>The file manager will not be closed once finshed with.
+     * <p>The file manager will not be closed once finished with.
      *
      * @param fileManager the file manager.
      * @return this builder.

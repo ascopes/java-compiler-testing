@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * This enables configurers to wrap file managers in proxies or delegating implementations
  * to intercept or override existing behaviours.
  *
- * <p>This class is not threadsafe.
+ * <p>This class is not thread-safe.
  *
  * @author Ashley Scopes
  * @since 0.0.1

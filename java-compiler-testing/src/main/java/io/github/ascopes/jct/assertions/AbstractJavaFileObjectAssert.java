@@ -168,10 +168,10 @@ public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObj
 
   private byte[] rawContent() {
     return uncheckedIo(() -> {
-      var baos = new ByteArrayOutputStream();
-      try (var is = actual.openInputStream()) {
-        is.transferTo(baos);
-        return baos.toByteArray();
+      var outputStream = new ByteArrayOutputStream();
+      try (var inputStream = actual.openInputStream()) {
+        inputStream.transferTo(outputStream);
+        return outputStream.toByteArray();
       }
     });
   }

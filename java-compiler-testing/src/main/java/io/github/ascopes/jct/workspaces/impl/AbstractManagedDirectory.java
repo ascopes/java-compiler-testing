@@ -37,7 +37,7 @@ import org.jspecify.annotations.Nullable;
  * Abstract base for implementing a reusable managed wrapper around a directory of some sort.
  *
  * <p>This is designed to simplify the creation of file and directory trees, and manage the release
- * of resources once no longer needed automatkeep test logic simple and clean.
+ * of resources once no longer needed to keep test logic simple and clean.
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -71,9 +71,9 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
   @Override
   public final byte[] asJar() {
     return uncheckedIo(() -> {
-      try (var baos = new ByteArrayOutputStream()) {
-        JarFactoryImpl.getInstance().createJarFrom(baos, getPath());
-        return baos.toByteArray();
+      try (var outputStream = new ByteArrayOutputStream()) {
+        JarFactoryImpl.getInstance().createJarFrom(outputStream, getPath());
+        return outputStream.toByteArray();
       }
     });
   }

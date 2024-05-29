@@ -430,7 +430,7 @@ public interface JctCompiler {
    * {@link #DEFAULT_PREVIEW_FEATURES}.
    *
    * <p>Generally, this feature should be avoided if testing across multiple versions
-   * of Java, as preview features are oftenvnot finalised and may change without warning.
+   * of Java, as preview features are often not finalised and may change without warning.
    *
    * @param enabled {@code true} to enable preview features, or {@code false} to disable them.
    * @return this compiler object for further call chaining.
@@ -650,7 +650,7 @@ public interface JctCompiler {
    *
    * @return this compiler object for further call chaining.
    * @throws UnsupportedOperationException if the current JVM version does not correspond to a
-   *                                       supported Jave release version in the compiler, or if the
+   *                                       supported Java release version in the compiler, or if the
    *                                       compiler does not support integral version numbers.
    * @since 1.1.0
    */

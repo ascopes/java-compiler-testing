@@ -56,7 +56,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
   private static final Logger log = LoggerFactory.getLogger(JctCompilationFactoryImpl.class);
   private static final String ROOT_PACKAGE = "";
-  
+
   private final JctCompiler compiler;
 
   public JctCompilationFactoryImpl(JctCompiler compiler) {
@@ -132,7 +132,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
           .addArgument(() -> success ? "completed successfully" : "failed")
           .addArgument(compilationExecutionTimeMs)
           .addArgument(() -> String.format(
-              "%.2f", 
+              "%.2f",
               (1000.0 * compilationUnits.size()) / compilationExecutionTimeMs
           ))
           .log();
@@ -219,7 +219,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
     for (var className : classNames) {
       var compilationUnit = binaryNamesToCompilationUnits.get(className);
       if (compilationUnit == null) {
-        throw new JctCompilerException("No compilation unit matching " + className 
+        throw new JctCompilerException("No compilation unit matching " + className
             + " found in the provided sources");
       }
     }
@@ -239,9 +239,8 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
   // interface does not expose this information consistently.
   // All JCT implementations should be using PathFileObject types internally
   // anyway, so this should be fine as a hack for now. In the future I may decide
-  // to add an additional set of methods to PathFileObject to expose searching
-  // for PathFileObjects directly to prevent the cast back to JavaFileObject that
-  // makes us need this hack.
+  // to add a set of methods to PathFileObject to expose searching for PathFileObjects
+  // directly to prevent the cast back to JavaFileObject that makes us need this hack.
   private PathFileObject forceUpcastJavaFileObject(JavaFileObject jfo) {
     return (PathFileObject) jfo;
   }
