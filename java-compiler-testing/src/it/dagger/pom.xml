@@ -31,7 +31,7 @@
   <description>Acceptance tests for Google Dagger.</description>
 
   <properties>
-    <dagger.version>2.50</dagger.version>
+    <dagger.version>2.51.1</dagger.version>
   </properties>
 
   <dependencies>
