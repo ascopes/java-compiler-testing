@@ -31,7 +31,7 @@
   <description>Acceptance tests for Micronaut.</description>
 
   <properties>
-    <micronaut.version>3.10.3</micronaut.version>
+    <micronaut-bom.version>3.10.4</micronaut-bom.version>
   </properties>
 
   <dependencyManagement>
@@ -39,7 +39,7 @@
       <dependency>
         <groupId>io.micronaut</groupId>
         <artifactId>micronaut-bom</artifactId>
-        <version>${micronaut.version}</version>
+        <version>${micronaut-bom.version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
