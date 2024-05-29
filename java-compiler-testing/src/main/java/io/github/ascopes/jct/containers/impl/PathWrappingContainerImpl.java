@@ -67,7 +67,7 @@ public final class PathWrappingContainerImpl implements Container {
   }
 
   @Override
-  public void close() throws IOException {
+  public void close() {
     // Do nothing for this implementation. We have nothing to close here. Anything wrapped in
     // this type will be managed by the Workspace object instead if it needs to be closed.
   }

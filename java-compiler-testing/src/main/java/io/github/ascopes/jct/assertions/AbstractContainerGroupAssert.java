@@ -25,7 +25,6 @@ import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractListAssert;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ObjectAssert;
 import org.jspecify.annotations.Nullable;
 

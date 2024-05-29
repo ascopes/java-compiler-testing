@@ -217,7 +217,7 @@ public final class JarContainerImpl implements Container {
   }
 
   @Override
-  public Collection<Path> listAllFiles() throws IOException {
+  public Collection<Path> listAllFiles() {
     return holder.access().getAllFiles();
   }
 

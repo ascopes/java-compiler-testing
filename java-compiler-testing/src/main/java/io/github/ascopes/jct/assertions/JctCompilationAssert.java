@@ -51,6 +51,7 @@ public final class JctCompilationAssert extends
    *
    * @param value the value to assert on.
    */
+  @SuppressWarnings("DataFlowIssue")
   public JctCompilationAssert(@Nullable JctCompilation value) {
     super(value, JctCompilationAssert.class);
   }

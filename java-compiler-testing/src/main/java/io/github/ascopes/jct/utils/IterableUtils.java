@@ -123,6 +123,7 @@ public final class IterableUtils extends UtilityClass {
    * @param <T>       the input collection type.
    * @return the input array.
    */
+  @SuppressWarnings("RedundantSuppression")
   public static <T> T[] requireNonNullValues(
       @Nullable T @Nullable[] array,
       String arrayName
@@ -149,8 +150,9 @@ public final class IterableUtils extends UtilityClass {
       throw new NullPointerException(error);
     }
 
-    // Cast is not redundant as we're casting away any nullability annotations for nullness
-    // typecheckers.
+    //noinspection RedundantCast -- Cast is not redundant as we're casting away any nullability
+    // annotations for nullness typecheckers. Don't let IntelliJ tell you otherwise as it is a
+    // bug.
     return (T[]) array;
   }
 }
