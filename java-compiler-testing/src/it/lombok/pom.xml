@@ -31,7 +31,7 @@
   <description>Acceptance tests for Lombok.</description>
 
   <properties>
-    <lombok.version>1.18.30</lombok.version>
+    <lombok.version>1.18.32</lombok.version>
   </properties>
 
   <dependencies>
