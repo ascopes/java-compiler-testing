@@ -21,18 +21,13 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.containers.ContainerGroup;
 import io.github.ascopes.jct.repr.TraceDiagnosticListRepresentation;
-import io.github.ascopes.jct.utils.StringUtils;
 import java.util.Collection;
-import java.util.List;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
-import org.assertj.core.api.AbstractListAssert;
-import org.assertj.core.api.AbstractStringAssert;
-import org.assertj.core.api.FactoryBasedNavigableListAssert;
 import org.assertj.core.api.StringAssert;
 import org.jspecify.annotations.Nullable;
 
@@ -43,8 +38,8 @@ import org.jspecify.annotations.Nullable;
  * @since 0.0.1
  */
 @API(since = "0.0.1", status = Status.STABLE)
-public final class JctCompilationAssert extends
-    AbstractAssert<JctCompilationAssert, JctCompilation> {
+public final class JctCompilationAssert
+    extends AbstractAssert<JctCompilationAssert, JctCompilation> {
 
   /**
    * Initialize this compilation assertion.
@@ -62,15 +57,12 @@ public final class JctCompilationAssert extends
    * @return a list assertion object to perform assertions on the arguments with.
    * @throws AssertionError if the compilation was null.
    */
-  @SuppressWarnings("deprecation")  // No alternative present at the moment
-  public AbstractListAssert<?, List<? extends String>, String, ? extends AbstractStringAssert<?>> arguments() {
+  public TypeAwareListAssert<String, StringAssert> arguments() {
     isNotNull();
 
     var arguments = actual.getArguments();
 
-    return FactoryBasedNavigableListAssert
-        .assertThat(arguments, StringAssert::new)
-        .as("Compiler arguments %s", StringUtils.quotedIterable(arguments));
+    return new TypeAwareListAssert<>(arguments, StringAssert::new);
   }
 
   /**
@@ -353,7 +345,6 @@ public final class JctCompilationAssert extends
   public ModuleContainerGroupAssert modulePathModules() {
     return moduleGroup(StandardLocation.MODULE_PATH);
   }
-
 
   private AssertionError failWithDiagnostics(
       Collection<? extends Kind> kindsToDisplay,
