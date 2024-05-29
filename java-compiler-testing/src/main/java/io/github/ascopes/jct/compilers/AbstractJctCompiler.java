@@ -275,7 +275,7 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   }
 
   @Override
-  public String getRelease() {
+  public @Nullable String getRelease() {
     return release;
   }
 
@@ -292,7 +292,7 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   }
 
   @Override
-  public String getSource() {
+  public @Nullable String getSource() {
     return source;
   }
 
@@ -306,7 +306,7 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   }
 
   @Override
-  public String getTarget() {
+  public @Nullable String getTarget() {
     return target;
   }
 

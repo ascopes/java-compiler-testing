@@ -86,8 +86,8 @@ public final class IterableUtils extends UtilityClass {
    * @param <T>            the input collection type.
    * @return the input iterable type.
    */
-  public static <T extends Iterable<?>> T requireNonNullValues(
-      T collection,
+  public static <T extends Iterable<@Nullable U>, U> T requireNonNullValues(
+      @Nullable T collection,
       String collectionName
   ) {
     requireNonNull(collection, collectionName);
@@ -124,7 +124,7 @@ public final class IterableUtils extends UtilityClass {
    * @return the input array.
    */
   public static <T> T[] requireNonNullValues(
-      T[] array,
+      @Nullable T @Nullable[] array,
       String arrayName
   ) {
     // Duplicate this logic so that we do not have to wrap the array in Arrays.list. This prevents
@@ -149,6 +149,8 @@ public final class IterableUtils extends UtilityClass {
       throw new NullPointerException(error);
     }
 
-    return array;
+    // Cast is not redundant as we're casting away any nullability annotations for nullness
+    // typecheckers.
+    return (T[]) array;
   }
 }
