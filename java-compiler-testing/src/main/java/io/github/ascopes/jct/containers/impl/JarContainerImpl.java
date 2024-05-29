@@ -342,6 +342,7 @@ public final class JarContainerImpl implements Container {
       fileSystem.close();
     }
 
+    @Nullable
     private PathRoot getPackage(String name) {
       return packages.access().get(name);
     }
