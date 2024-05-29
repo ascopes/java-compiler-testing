@@ -15,6 +15,9 @@
  */
 package io.github.ascopes.jct.acceptancetests.errorprone;
 
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
+import static org.assertj.core.api.Assumptions.assumeThat;
+
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.junit.JctExtension;
@@ -24,9 +27,6 @@ import io.github.ascopes.jct.workspaces.Workspace;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
-import static org.assertj.core.api.Assumptions.assumeThat;
 
 @DisplayName("Error-prone acceptance tests")
 @ExtendWith(JctExtension.class)
@@ -80,9 +80,7 @@ class ErrorProneTest {
     // Then
     assertThatCompilation(compilation).isFailure()
         .diagnostics().errors().singleElement().message()
-        .startsWith(
-            "[MustBeClosedChecker] This method returns a resource which must be managed "
-                + "carefully, not just left for garbage collection."
-        );
+        .startsWith("[MustBeClosedChecker] This method returns a resource which must be managed "
+                + "carefully, not just left for garbage collection.");
   }
 }

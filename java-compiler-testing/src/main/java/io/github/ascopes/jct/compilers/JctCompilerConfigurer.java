@@ -40,8 +40,8 @@ import org.apiguardian.api.API.Status;
  *    }
  * }
  * </code></pre>
- * <p>
- * ...tests can then make use of this configurer directly:
+ *
+ * <p>...tests can then make use of this configurer directly:
  *
  * <pre><code>
  *    {@literal @Test}

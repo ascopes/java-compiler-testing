@@ -15,19 +15,39 @@
  */
 package org.example;
 
+/**
+ * A patched user.
+ */
 public final class PatchedUser {
+
   private final String name;
   private final String nickName;
 
+  /**
+   * Initalise the user.
+   *
+   * @param name     the user's name.
+   * @param nickName the user's nickname.
+   */
   public PatchedUser(String name, String nickName) {
     this.name = name;
     this.nickName = nickName;
   }
 
+  /**
+   * Get the user's name.
+   *
+   * @return the user's name.
+   */
   public String getName() {
     return name;
   }
 
+  /**
+   * Get the user's nickname.
+   *
+   * @return the user's nickname.
+   */
   public String getNickName() {
     return nickName;
   }

@@ -32,9 +32,9 @@ import org.apiguardian.api.API.Status;
  * <p>Use static-fields to keep a workspace object alive for the duration of all the tests
  * (providing the same semantics as initialising and closing resources using the
  * {@link org.junit.jupiter.api.BeforeAll} and {@link org.junit.jupiter.api.AfterAll} annotations).
- * <p>
- * You must extend your test class with the {@link JctExtension} extension for this annotation to be
- * detected and handled.
+ *
+ * <p>You must extend your test class with the {@link JctExtension} extension for this annotation
+ * to be detected and handled.
  *
  * <p>Example usage:
  *

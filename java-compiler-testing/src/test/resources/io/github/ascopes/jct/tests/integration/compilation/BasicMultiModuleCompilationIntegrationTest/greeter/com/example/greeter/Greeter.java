@@ -15,8 +15,18 @@
  */
 package com.example.greeter;
 
+/**
+ * A class that can greet me.
+ */
 public class Greeter {
 
+
+  /**
+   * Greet me.
+   *
+   * @param name my name.
+   * @return the greeting.
+   */
   public static String greet(String name) {
     return "Hello, " + name + "!";
   }

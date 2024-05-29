@@ -38,7 +38,6 @@ import org.junit.jupiter.params.provider.CsvSource;
  *
  * @author Ashley Scopes
  */
-@SuppressWarnings("ResultOfMethodCallIgnored")
 @DisplayName("JavacJctCompilerImpl tests")
 class JavacJctCompilerImplTest {
 

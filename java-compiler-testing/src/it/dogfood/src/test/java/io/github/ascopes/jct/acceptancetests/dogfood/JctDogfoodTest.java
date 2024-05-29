@@ -15,17 +15,17 @@
  */
 package io.github.ascopes.jct.acceptancetests.dogfood;
 
+import static io.github.ascopes.jct.assertions.JctAssertions.assertThat;
+
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
-import org.junit.jupiter.api.DisplayName;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static io.github.ascopes.jct.assertions.JctAssertions.assertThat;
+import org.junit.jupiter.api.DisplayName;
 
 /**
  * Tests that try to make JCT compile itself to see if it can correctly "test itself".

@@ -311,7 +311,7 @@ class AbstractJctCompilerTest {
   }
 
   @ExtendWith(MockitoExtension.class)
-  @SuppressWarnings({"unused", "JUnitMalformedDeclaration" /* IDEA-326883 */})
+  @SuppressWarnings({"unused"  /* IDEA-326883 */})
   abstract class AbstractCompileTestTemplate {
 
     @Mock
@@ -1598,7 +1598,7 @@ class AbstractJctCompilerTest {
   @DisplayName(".getDebuggingInfo() returns the expected values")
   @EnumSource(DebuggingInfo.class)
   @ParameterizedTest(name = "for a set of = {0}")
-  void getAnnotationProcessorDiscoveryReturnsExpectedValue(DebuggingInfo expected) {
+  void getDebuggingInfoReturnsExpectedValue(DebuggingInfo expected) {
     // Given
     setFieldOnCompiler("debuggingInfo", Set.of(expected));
 

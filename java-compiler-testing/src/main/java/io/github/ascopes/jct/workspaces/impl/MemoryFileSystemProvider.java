@@ -55,6 +55,12 @@ public final class MemoryFileSystemProvider {
     // Singleton object.
   }
 
+  /**
+   * Create an in-memory file system instance.
+   *
+   * @param name the file system name.
+   * @return the file system instance.
+   */
   public FileSystem createFileSystem(String name) {
     try {
       return MemoryFileSystemBuilder.newLinux()

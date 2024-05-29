@@ -610,7 +610,6 @@
 
         <executions>
           <execution>
-            <id>check-license-headers</id>
             <phase>validate</phase>
             <goals>
               <goal>check</goal>
@@ -624,26 +623,26 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${maven-checkstyle-plugin.version}</version>
+
+        <configuration>
+          <configLocation>.mvn/checkstyle/checkstyle.xml</configLocation>
+          <consoleOutput>true</consoleOutput>
+          <failsOnError>true</failsOnError>
+          <includeResources>true</includeResources>
+          <sourceDirectories>${project.basedir}/src</sourceDirectories>
+          <suppressionsLocation>.mvn/checkstyle/suppressions.xml</suppressionsLocation>
+          <violationSeverity>info</violationSeverity>
+        </configuration>
         
         <!-- This is inherited to recurse, but each project must set 
              the <relativePath/> attribute correctly. -->
 
         <executions>
           <execution>
-            <id>check-code-style</id>
             <phase>validate</phase>
             <goals>
               <goal>check</goal>
             </goals>
-            <configuration>
-              <configLocation>.mvn/checkstyle/checkstyle.xml</configLocation>
-              <consoleOutput>true</consoleOutput>
-              <failsOnError>true</failsOnError>
-              <includeResources>true</includeResources>
-              <sourceDirectories>${project.basedir}/src</sourceDirectories>
-              <suppressionsLocation>.mvn/checkstyle/suppressions.xml</suppressionsLocation>
-              <violationSeverity>info</violationSeverity>
-            </configuration>
           </execution>
         </executions>
 

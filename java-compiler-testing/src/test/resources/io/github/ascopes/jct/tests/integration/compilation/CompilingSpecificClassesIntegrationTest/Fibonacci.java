@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 
@@ -23,6 +24,11 @@ import java.math.BigInteger;
  */
 public class Fibonacci {
 
+  /**
+   * Main method.
+   *
+   * @param args command line arguments.
+   */
   public static void main(String[] args) {
     if (args.length != 1) {
       System.out.println("USAGE: java Fibonacci <n>");

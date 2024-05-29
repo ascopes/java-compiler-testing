@@ -135,8 +135,8 @@ public @interface JavacCompilerTest {
    *   opens org.example.mytests to io.github.ascopes.jct;
    * }
    * </code></pre>
-   * <p>
-   * An example of usage:
+   *
+   * <p>An example of usage:
    *
    * <pre><code>
    *   public class WerrorConfigurer implements JctCompilerConfigurer&lt;RuntimeException&gt; {

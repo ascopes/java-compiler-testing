@@ -197,8 +197,8 @@ public final class OutputContainerGroupImpl
   private JctIllegalInputException packageAlreadySpecified(PathRoot newPathRoot) {
     var existingPathRoot = getPackages().iterator().next().getPathRoot();
     return new JctIllegalInputException(
-        "Cannot add a new package (" + newPathRoot + ") to this output container group because " +
-            "a package has already been specified (" + existingPathRoot + ")"
+        "Cannot add a new package (" + newPathRoot + ") to this output container group because "
+            + "a package has already been specified (" + existingPathRoot + ")"
     );
   }
 }

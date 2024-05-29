@@ -31,45 +31,51 @@ public enum VersionStrategy {
   /**
    * Set the {@link JctCompiler#release release}.
    */
-  RELEASE(
-      (compiler, version) -> compiler
+  RELEASE {
+    @Override
+    public void configureCompiler(JctCompiler compiler, int version) {
+      compiler
           .release(version)
-          .name(compiler.getName() + " (release = Java " + version + ")")
-  ),
+          .name(compiler.getName() + " (release = Java " + version + ")");
+    }
+  },
 
   /**
    * Set the {@link JctCompiler#source source}.
    */
-  SOURCE(
-      (compiler, version) -> compiler
+  SOURCE {
+    @Override
+    public void configureCompiler(JctCompiler compiler, int version) {
+      compiler
           .source(version)
-          .name(compiler.getName() + " (source = Java " + version + ")")
-  ),
+          .name(compiler.getName() + " (source = Java " + version + ")");
+    }
+  },
 
   /**
    * Set the {@link JctCompiler#target target}.
    */
-  TARGET(
-      (compiler, version) -> compiler
+  TARGET {
+    @Override
+    public void configureCompiler(JctCompiler compiler, int version) {
+      compiler
           .target(version)
-          .name(compiler.getName() + " (target = Java " + version + ")")
-  ),
+          .name(compiler.getName() + " (target = Java " + version + ")");
+    }
+  },
 
   /**
    * Set the {@link JctCompiler#source source} and {@link JctCompiler#target target}.
    */
-  SOURCE_AND_TARGET(
-      (compiler, version) -> compiler
+  SOURCE_AND_TARGET {
+    @Override
+    public void configureCompiler(JctCompiler compiler, int version) {
+      compiler
           .source(version)
           .target(version)
-          .name(compiler.getName() + " (source and target = Java " + version + ")")
-  );
-
-  private final VersionConfigurer versionConfigurer;
-
-  VersionStrategy(VersionConfigurer versionConfigurer) {
-    this.versionConfigurer = versionConfigurer;
-  }
+          .name(compiler.getName() + " (source and target = Java " + version + ")");
+    }
+  };
 
   /**
    * Set the given version on the compiler, according to the strategy in use.
@@ -77,12 +83,5 @@ public enum VersionStrategy {
    * @param compiler the compiler to configure.
    * @param version  the version to set.
    */
-  public void configureCompiler(JctCompiler compiler, int version) {
-    versionConfigurer.configure(compiler, version);
-  }
-
-  @FunctionalInterface
-  private interface VersionConfigurer {
-    void configure(JctCompiler compiler, int version);
-  }
+  public abstract void configureCompiler(JctCompiler compiler, int version);
 }

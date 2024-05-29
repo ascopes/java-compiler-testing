@@ -15,8 +15,16 @@
  */
 package com.example;
 
+/**
+ * A class that says hello.
+ */
 public class HelloWorld {
 
+  /**
+   * Main method.
+   *
+   * @param args command line arguments.
+   */
   public static void main(String[] args) {
     System.out.println("Hello, World");
   }

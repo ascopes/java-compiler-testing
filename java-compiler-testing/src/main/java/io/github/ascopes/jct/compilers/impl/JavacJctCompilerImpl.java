@@ -86,7 +86,6 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler {
 
     var latestSupported = SourceVersion.latestSupported().ordinal();
 
-    //noinspection NonStrictComparisonCanBeEquality
     if (latestSupported >= JAVA_20) {
       // JDK 20 marks source-version 8 as obsolete, and emits compilation
       // warnings that may break tests using "fail on warnings". To avoid this,

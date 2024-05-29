@@ -50,6 +50,11 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
   private final Map<Location, ModuleContainerGroup> moduleInputs;
   private final Map<Location, OutputContainerGroup> outputs;
 
+  /**
+   * Initialise this repository.
+   *
+   * @param release the Java release version to use for source code management.
+   */
   public ContainerGroupRepositoryImpl(String release) {
     this.release = release;
     packageInputs = new ConcurrentHashMap<>();

@@ -13,11 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * Command line app that sums together given integers.
  */
 public class Sum {
 
+  /**
+   * Main method.
+   *
+   * @param args command line arguments.
+   */
   public static void main(String[] args) {
     long sum = 0;
     for (String arg : args) {

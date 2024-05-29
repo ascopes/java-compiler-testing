@@ -84,7 +84,7 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static OutputContainerGroupAssert assertThat(
-     @Nullable OutputContainerGroup outputContainerGroup
+      @Nullable OutputContainerGroup outputContainerGroup
   ) {
     return assertThatContainerGroup(outputContainerGroup);
   }
@@ -100,7 +100,7 @@ public final class JctAssertions extends UtilityClass {
    * @return the assertion.
    */
   public static PackageContainerGroupAssert assertThat(
-     @Nullable PackageContainerGroup packageContainerGroup
+      @Nullable PackageContainerGroup packageContainerGroup
   ) {
     return assertThatContainerGroup(packageContainerGroup);
   }
