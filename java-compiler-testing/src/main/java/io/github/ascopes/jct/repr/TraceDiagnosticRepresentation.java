@@ -23,7 +23,6 @@ import io.github.ascopes.jct.utils.StringUtils;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
-import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
 import org.apiguardian.api.API;
@@ -110,7 +109,7 @@ public final class TraceDiagnosticRepresentation implements Representation {
   }
 
   @Nullable
-  private Snippet extractSnippet(Diagnostic<? extends JavaFileObject> diagnostic) {
+  private Snippet extractSnippet(TraceDiagnostic<? extends JavaFileObject> diagnostic) {
     var source = diagnostic.getSource();
 
     var noSnippet = source == null
