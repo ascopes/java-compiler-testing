@@ -37,7 +37,7 @@ class LombokTest {
   @DisplayName("Lombok @Data compiles the expected data class")
   @JavacCompilerTest
   void lombokDataCompilesTheExpectedDataClass(JctCompiler compiler) throws Throwable {
-    try (var workspace = Workspaces.newWorkspace()) {
+    Workspaces.newWorkspace().use(workspace -> {
       // Given
       workspace
           .createSourcePathPackage()
@@ -63,13 +63,13 @@ class LombokTest {
         softly.assertThat(animal).hasFieldOrPropertyWithValue("legCount", 4);
         softly.assertThat(animal).hasFieldOrPropertyWithValue("age", 5);
       });
-    }
+    });
   }
 
   @DisplayName("Lombok @Data compiles the expected data class with module support")
   @JavacCompilerTest(minVersion = 9)
   void lombokDataCompilesTheExpectedDataClassJpms(JctCompiler compiler) throws Throwable {
-    try (var workspace = Workspaces.newWorkspace()) {
+    Workspaces.newWorkspace().use(workspace -> {
       // Given
       workspace
           .createSourcePathPackage()
@@ -95,6 +95,6 @@ class LombokTest {
         softly.assertThat(animal).hasFieldOrPropertyWithValue("legCount", 4);
         softly.assertThat(animal).hasFieldOrPropertyWithValue("age", 5);
       });
-    }
+    });
   }
 }
