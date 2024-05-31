@@ -72,15 +72,24 @@ import org.apiguardian.api.API.Status;
  * <p>A simple example of usage of this interface would be the following:
  *
  * <pre><code>
- *   try (Workspace workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
- *     workspace
- *        .createSourcePathPackage()
- *        .copyContentsFrom("src", "test", "resources", "test-data");
+ * try (Workspace workspace = Workspaces.newWorkspace()) {
+ *   workspace
+ *      .createSourcePathPackage()
+ *      .copyContentsFrom("src", "test", "resources", "test-data");
  *
- *     var compilation = someCompiler.compile(workspace);
+ *   var compilation = someCompiler.compile(workspace);
  *
- *     assertThat(compilation).isSuccessful();
- *   }
+ *   assertThat(compilation).isSuccessful();
+ * }
+ * </code></pre>
+ *
+ * <p>As of 3.2.0, you can use a functional version of the above instead if this is more
+ * suitable for your use-case:
+ *
+ * <pre><code>
+ * Workspaces.newWorkspace().use(workspace -> {
+ *   ...
+ * });
  * </code></pre>
  *
  * <p>Remember that files that are created as the result of a compilation can be queried via
@@ -834,4 +843,50 @@ public interface Workspace extends AutoCloseable {
   default Map<String, List<? extends PathRoot>> getModulePathModules() {
     return getModules(StandardLocation.MODULE_PATH);
   }
+
+  ///
+  /// Functional APIs.
+  ///
+
+  /**
+   * Functional equivalent of consuming this object with a try-with-resources.
+   *
+   * <p>This workspace will be {@link #close() closed} upon completion of this method or upon
+   * an exception being raised.
+   *
+   * @param consumer the consumer to pass this object to.
+   * @param <T> the exception that the consumer can throw, or {@link RuntimeException}
+   *            if no checked exception is thrown.
+   * @throws UncheckedIOException if the closure fails after the consumer is called.
+   * @throws T the checked exception that the consumer can throw.
+   */
+  default <T extends Throwable> void use(ThrowingWorkspaceConsumer<T> consumer) throws T {
+    try {
+      consumer.accept(this);
+    } finally {
+      close();
+    }
+  }
+
+  /**
+   * A consumer functional interface that consumes a workspace and
+   * can throw a checked exception.
+   *
+   * @param <T> the exception type that can be thrown, or {@link RuntimeException}
+   *            if no checked exception is thrown.
+   * @author Ashley Scopes
+   * @since 3.2.0
+   */
+  @API(since = "3.2.0", status = Status.STABLE)
+  public interface ThrowingWorkspaceConsumer<T extends Throwable> {
+
+    /**
+     * Consume a workspace.
+     *
+     * @param workspace the workspace.
+     * @throws T the checked exception that can be thrown.
+     */
+    void accept(Workspace workspace) throws T;
+  }
 }
+
