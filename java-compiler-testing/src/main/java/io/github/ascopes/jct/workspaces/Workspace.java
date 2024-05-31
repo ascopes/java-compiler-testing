@@ -859,7 +859,9 @@ public interface Workspace extends AutoCloseable {
    *            if no checked exception is thrown.
    * @throws UncheckedIOException if the closure fails after the consumer is called.
    * @throws T the checked exception that the consumer can throw.
+   * @since 3.2.0
    */
+  @API(since = "3.2.0", status = Status.STABLE)
   default <T extends Throwable> void use(ThrowingWorkspaceConsumer<T> consumer) throws T {
     try {
       consumer.accept(this);
