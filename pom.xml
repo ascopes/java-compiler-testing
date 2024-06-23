@@ -130,6 +130,10 @@
 
       Byte Buddy experimental support enables running ByteBuddy (used by Mockito) in JDK
       experimental builds.
+
+      We force enable dynamic agent loading to remove warnings in Java 22 and onwards about
+      ByteBuddy injecting itself as an agent, as this will eventually be deprecated
+      behaviour.
     -->
     <argLine>
       -DmvnArgLinePropagated=true
@@ -139,6 +143,7 @@
       -Xshare:off
       -XX:+TieredCompilation
       -XX:TieredStopAtLevel=1
+      -XX:+EnableDynamicAgentLoading
     </argLine>
 
     <!-- Project flags -->
