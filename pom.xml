@@ -116,8 +116,8 @@
     <hide-test-logs-in-console>true</hide-test-logs-in-console>
 
     <!--
-      This argument is pulled in by Failsafe, and JaCoCo will amend it to ensure the
-      coverage agent is installed into the forked JVM running the tests. See
+      This argument is pulled in by Surefire and Failsafe, and JaCoCo will amend it to 
+      ensure the coverage agent is installed into the forked JVM running the tests. See
       https://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html for info.
 
       We also disable code sharing to prevent some other warnings during test runs, and
