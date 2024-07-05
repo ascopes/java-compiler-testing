@@ -152,7 +152,7 @@
 
     <!-- JavaDocs -->
     <current-year>2024</current-year>
-    <newest-java-version>21</newest-java-version>
+    <newest-java-version>22</newest-java-version>
     <highlight-js.version>11.9.0</highlight-js.version>
 
     <!-- Other configuration -->
