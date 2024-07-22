@@ -99,6 +99,19 @@ jobs:
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
+      - name: Abort and rollback staging release
+        if: ${{ failure() }}
+        run: |-
+          ./mvnw -B -e \
+              -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
+              -DreleaseVersion="${release_version}" \
+              -Dtag="v${release_version}" \
+              release:rollback
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
       - name: Create GitHub Release
         if: ${{ ! inputs.dry-run }}
         uses: ncipollo/release-action@v1
