@@ -64,14 +64,12 @@ jobs:
 
           ./mvnw -B -e \
               -Preleases \
-              -Pmaven-central \
-              -Darguments='-Preleases -Pmaven-central' \
               -DdryRun='${{ inputs.dry-run }}' \
               -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
               -DreleaseVersion="${release_version}" \
               -DsignTag=false \
               -Dtag="v${release_version}" \
-              clean release:prepare release:perform
+              clean verify release:prepare release:perform
 
           echo "Created staging release for ${group_id}/${artifact_id}/${release_version}"
         env:
