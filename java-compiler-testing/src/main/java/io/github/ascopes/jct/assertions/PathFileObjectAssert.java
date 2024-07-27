@@ -43,7 +43,10 @@ public final class PathFileObjectAssert
   }
 
   /**
-   * Perform an assertion on the file object's full path.
+   * Perform an assertion on the file object's relative path.
+   *
+   * <p>The path is relative to the base directory holding all the
+   * sources relative to their package names.
    *
    * @return the assertions for the path.
    * @throws AssertionError if the file object is null.
@@ -56,6 +59,8 @@ public final class PathFileObjectAssert
 
   /**
    * Perform an assertion on the file object's absolute path.
+   *
+   * <p>You generally should prefer using {@link #relativePath}.
    *
    * @return the assertions for the path.
    * @throws AssertionError if the file object is null.
