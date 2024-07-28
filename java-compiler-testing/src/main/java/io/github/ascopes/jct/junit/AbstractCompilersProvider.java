@@ -33,7 +33,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.support.AnnotationConsumer;
-import org.opentest4j.TestAbortedException;
 
 /**
  * Base for defining a compiler-supplying arguments-provider for JUnit Jupiter parameterised test
@@ -252,9 +251,10 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
 
       try {
         configurer.configure(compiler);
+  
       } catch (Exception ex) {
         if (isTestAbortedException(ex)) {
-          throw (TestAbortedException) ex;
+          throw (RuntimeException) ex;
         }
 
         throw new JctJunitConfigurerException(
@@ -272,6 +272,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
 
     try {
       constructor = configurerClass.getDeclaredConstructor();
+
     } catch (NoSuchMethodException ex) {
       throw new JctJunitConfigurerException(
           "No no-args constructor was found for configurer class " + configurerClass.getName(),
@@ -285,6 +286,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
       // If the module is not open to JCT, then we will get an InaccessibleObjectException that
       // we should wrap and rethrow.
       constructor.setAccessible(true);
+
     } catch (InaccessibleObjectException ex) {
 
       throw new JctJunitConfigurerException(
@@ -304,13 +306,13 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
 
     try {
       return constructor.newInstance();
+
     } catch (ReflectiveOperationException ex) {
       if (ex instanceof InvocationTargetException) {
         var target = ((InvocationTargetException) ex).getTargetException();
         if (isTestAbortedException(target)) {
-          // XXX: Creates a circular reference, do we care? JVM should handle this for us.
           target.addSuppressed(ex);
-          throw (TestAbortedException) target;
+          throw (RuntimeException) target;
         }
       }
 
@@ -327,9 +329,9 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   }
 
   private static boolean isTestAbortedException(Throwable ex) {
-    // Use string-based reflective lookup to prevent needing the modules loaded at runtime.
-    // We don't actually need to cover junit4 or testng here since this package specifically deals
-    // with JUnit5 only.
+    // Use string-based reflective lookup to prevent needing the OpenTest4J modules loaded at
+    // runtime. We don't need to cover JUnit4 or TestNG here since this package specifically
+    // deals with JUnit5 only.
     return ex.getClass().getName().equals("org.opentest4j.TestAbortedException");
   }
 }
