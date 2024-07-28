@@ -21,7 +21,7 @@
 
   <groupId>io.github.ascopes.jct</groupId>
   <artifactId>java-compiler-testing-parent</artifactId>
-  <version>3.2.2-SNAPSHOT</version>
+  <version>3.2.2</version>
   <packaging>pom</packaging>
 
   <name>Java Compiler Testing parent project</name>
@@ -89,7 +89,7 @@
     <url>https://github.com/ascopes/java-compiler-testing</url>
     <connection>scm:git:https://github.com/ascopes/java-compiler-testing</connection>
     <developerConnection>scm:git:https://github.com/ascopes/java-compiler-testing</developerConnection>
-    <tag>vHEAD</tag>
+    <tag>v3.2.2</tag>
   </scm>
 
   <properties>
