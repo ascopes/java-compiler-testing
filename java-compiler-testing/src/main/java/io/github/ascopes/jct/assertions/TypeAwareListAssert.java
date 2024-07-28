@@ -36,6 +36,8 @@ import org.jspecify.annotations.Nullable;
  * {@link org.assertj.core.api.FactoryBasedNavigableListAssert} has been deprecated. Users should
  * treat this object like any other kind of {@link AbstractListAssert} for all purposes.
  *
+ * @param <E> the element type to assert upon.
+ * @param <A> the assertion type for the element.
  * @author Ashley Scopes
  * @since 3.1.0
  */
