@@ -180,15 +180,15 @@ public interface PackageContainerGroup extends ContainerGroup {
    *   containerGroup.getFile("foo/bar/baz.txt")...;
    * </code></pre>
    *
-   * @param fragment  the first part of the path.
-   * @param fragments any additional parts of the path.
+   * @param fragments parts of the path.
    * @return the first occurrence of the path in this group, or null if not found.
    * @throws IllegalArgumentException if the provided path is absolute.
+   * @throws IllegalArgumentException if no path fragments are provided.
    * @see java.nio.file.Path
    * @see java.nio.file.Files
    */
   @Nullable
-  Path getFile(String fragment, String... fragments);
+  Path getFile(String... fragments);
 
   /**
    * Get a {@link FileObject} that can have content read from it.

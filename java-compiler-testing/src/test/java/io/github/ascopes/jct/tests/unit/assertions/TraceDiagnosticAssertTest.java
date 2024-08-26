@@ -305,7 +305,7 @@ class TraceDiagnosticAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticAssert#message() tests")
+  @DisplayName("TraceDiagnosticAssert.message() tests")
   @Nested
   class MessageTest {
 
@@ -336,7 +336,7 @@ class TraceDiagnosticAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticAssert#message(Locale) tests")
+  @DisplayName("TraceDiagnosticAssert.message(Locale) tests")
   @Nested
   class MessageLocaleTest {
 

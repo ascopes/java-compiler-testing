@@ -15,10 +15,11 @@
  */
 package io.github.ascopes.jct.compilers;
 
+import static io.github.ascopes.jct.utils.IterableUtils.requireAtLeastOne;
+
 import io.github.ascopes.jct.ex.JctCompilerException;
 import io.github.ascopes.jct.filemanagers.AnnotationProcessorDiscovery;
 import io.github.ascopes.jct.filemanagers.LoggingMode;
-import io.github.ascopes.jct.utils.IterableUtils;
 import io.github.ascopes.jct.workspaces.Workspace;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
@@ -139,7 +140,7 @@ public interface JctCompiler {
    * Invoke the compilation and return the compilation result.
    *
    * <p>The actual classes to compile will be dynamically discovered. If you wish to
-   * specify the specific classes to compile, see {@link #compile(Workspace, String, String...)} or
+   * specify the specific classes to compile, see {@link #compile(Workspace, String...)} or
    * {@link #compile(Workspace, Collection)}.
    *
    * @param workspace the workspace to compile.
@@ -148,7 +149,7 @@ public interface JctCompiler {
    *                               occur for compilation failures generally.
    * @throws IllegalStateException if no compilation units were found.
    * @throws UncheckedIOException  if an IO error occurs.
-   * @see #compile(Workspace, String, String...)
+   * @see #compile(Workspace, String...)
    * @see #compile(Workspace, Collection)
    */
   JctCompilation compile(Workspace workspace);
@@ -165,20 +166,19 @@ public interface JctCompiler {
    * here. To compile them, you must also compile their outer class that they are defined within.
    *
    * @param workspace            the workspace to compile.
-   * @param firstClassName       the first class name to compile.
-   * @param additionalClassNames any additional class names to compile.
+   * @param classNames           the class names to compile.
    * @return the compilation result.
    * @throws JctCompilerException  if the compiler threw an unhandled exception. This should not
    *                               occur for compilation failures generally.
-   * @throws NullPointerException  if any class names are null.
+   * @throws NullPointerException  if any class names are null, or if the array is null.
    * @throws IllegalStateException if no compilation units were found.
    * @throws UncheckedIOException  if an IO error occurs.
    * @see #compile(Workspace)
    * @see #compile(Workspace, Collection)
    */
-  default JctCompilation compile(Workspace workspace, String firstClassName,
-      String... additionalClassNames) {
-    return compile(workspace, IterableUtils.combineOneOrMore(firstClassName, additionalClassNames));
+  default JctCompilation compile(Workspace workspace, String... classNames) {
+    requireAtLeastOne(classNames, "classNames");
+    return compile(workspace, List.of(classNames));
   }
 
   /**
@@ -203,7 +203,7 @@ public interface JctCompiler {
    * @throws IllegalStateException    if no compilation units were found.
    * @throws UncheckedIOException     if an IO error occurs.
    * @see #compile(Workspace)
-   * @see #compile(Workspace, String, String...)
+   * @see #compile(Workspace, String...)
    */
   JctCompilation compile(Workspace workspace, Collection<String> classNames);
 
@@ -306,17 +306,11 @@ public interface JctCompiler {
   /**
    * Add options to pass to any annotation processors.
    *
-   * @param annotationProcessorOption  the first option to pass.
-   * @param annotationProcessorOptions additional options to pass.
+   * @param annotationProcessorOptions options to pass.
    * @return this compiler object for further call chaining.
    */
-  default JctCompiler addAnnotationProcessorOptions(
-      String annotationProcessorOption,
-      String... annotationProcessorOptions
-  ) {
-    return addAnnotationProcessorOptions(
-        IterableUtils.combineOneOrMore(annotationProcessorOption, annotationProcessorOptions)
-    );
+  default JctCompiler addAnnotationProcessorOptions(String... annotationProcessorOptions) {
+    return addAnnotationProcessorOptions(List.of(annotationProcessorOptions));
   }
 
   /**
@@ -346,16 +340,11 @@ public interface JctCompiler {
    * provided in the annotation processor path and annotation processor module paths, as well as any
    * other locations such as class paths and module paths.
    *
-   * @param annotationProcessor  the first processor to invoke.
-   * @param annotationProcessors additional processors to invoke.
+   * @param annotationProcessors processors to invoke.
    * @return this compiler object for further call chaining.
    */
-  default JctCompiler addAnnotationProcessors(
-      Processor annotationProcessor,
-      Processor... annotationProcessors
-  ) {
-    return addAnnotationProcessors(
-        IterableUtils.combineOneOrMore(annotationProcessor, annotationProcessors));
+  default JctCompiler addAnnotationProcessors(Processor... annotationProcessors) {
+    return addAnnotationProcessors(List.of(annotationProcessors));
   }
 
   /**
@@ -376,12 +365,11 @@ public interface JctCompiler {
   /**
    * Add command line options to pass to {@code javac}.
    *
-   * @param compilerOption  the first option to add.
-   * @param compilerOptions additional options to add.
+   * @param compilerOptions options to add.
    * @return this compiler object for further call chaining.
    */
-  default JctCompiler addCompilerOptions(String compilerOption, String... compilerOptions) {
-    return addCompilerOptions(IterableUtils.combineOneOrMore(compilerOption, compilerOptions));
+  default JctCompiler addCompilerOptions(String... compilerOptions) {
+    return addCompilerOptions(List.of(compilerOptions));
   }
 
   /**
@@ -1001,7 +989,7 @@ public interface JctCompiler {
    *
    * <p>Specifying any annotation processors explicitly with
    * {@link #addAnnotationProcessors(Iterable)} or
-   * {@link #addAnnotationProcessors(Processor, Processor...)} will bypass this setting, treating it
+   * {@link #addAnnotationProcessors(Processor...)} will bypass this setting, treating it
    * as being disabled.
    *
    * @return the processor discovery mode to use.
@@ -1016,7 +1004,7 @@ public interface JctCompiler {
    *
    * <p>Specifying any annotation processors explicitly with
    * {@link #addAnnotationProcessors(Iterable)} or
-   * {@link #addAnnotationProcessors(Processor, Processor...)} will bypass this setting, treating it
+   * {@link #addAnnotationProcessors(Processor...)} will bypass this setting, treating it
    * as being disabled.
    *
    * @param annotationProcessorDiscovery the processor discovery mode to use.

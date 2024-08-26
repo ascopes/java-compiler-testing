@@ -15,7 +15,7 @@
  */
 package io.github.ascopes.jct.utils;
 
-import static io.github.ascopes.jct.utils.IterableUtils.combineOneOrMore;
+import static io.github.ascopes.jct.utils.IterableUtils.requireAtLeastOne;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
 import io.github.ascopes.jct.ex.JctIllegalInputException;
@@ -258,16 +258,12 @@ public final class FileUtils extends UtilityClass {
    * Convert a relative class path resource path to a NIO path.
    *
    * @param directory the directory the resource sits within.
-   * @param fragment  the first part of the path.
-   * @param fragments the rest of the path.
+   * @param pathFragments the path fragments to put together.
    * @return the path to the resource on the file system.
    */
-  public static Path relativeResourceNameToPath(
-      Path directory,
-      String fragment,
-      String... fragments
-  ) {
-    return resolve(directory, combineOneOrMore(fragment, fragments));
+  public static Path relativeResourceNameToPath(Path directory, String... pathFragments) {
+    requireAtLeastOne(pathFragments, "pathFragments");
+    return resolve(directory, pathFragments);
   }
 
   /**

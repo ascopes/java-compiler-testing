@@ -52,12 +52,13 @@ public interface DirectoryBuilder {
    *   directoryBuilder.copyContentsFrom("foo\\bar\\baz");
    * </code></pre>
    *
-   * @param first the first part of the path to the directory to copy from.
-   * @param rest  any additional parts of the path.
+   * @param fragments parts of the path.
    * @return the root managed directory for further configuration.
+   * @throws IllegalArgumentException if no path fragments are provided.
+   * @throws NullPointerException     if any null path fragments are provided.
    * @see #copyContentsFrom(Path)
    */
-  ManagedDirectory copyContentsFrom(String first, String... rest);
+  ManagedDirectory copyContentsFrom(String... fragments);
 
   /**
    * Copy the contents of the directory at the given path recursively into this directory.

@@ -63,22 +63,22 @@ class AbstractEnumAssertTest {
       var assertions = new Impl(DnbArtist.FEINT);
 
       // Then
-      assertThatThrownBy(() -> assertions.isAnyOf(null))
+      assertThatThrownBy(() -> assertions.isAnyOf((DnbArtist) null))
           .isInstanceOf(NullPointerException.class);
     }
 
     @DisplayName("Expect error if we assert against a null array")
     @Test
-    void errorsIfExpectedIsNullOnMultipleElementsArray() {
+    void errorsIfExpectedIsNullArray() {
       // Given
       var assertions = new Impl(DnbArtist.FEINT);
 
       // Then
-      assertThatThrownBy(() -> assertions.isAnyOf(DnbArtist.CULTURE_SHOCK, (DnbArtist[]) null))
+      assertThatThrownBy(() -> assertions.isAnyOf((DnbArtist[]) null))
           .isInstanceOf(NullPointerException.class);
     }
 
-    @DisplayName("Expect error if we against multiple elements that are be null")
+    @DisplayName("Expect error if we against multiple null elements")
     @Test
     void errorsIfExpectedIsNullOnMultipleElements() {
       // Given
@@ -88,6 +88,18 @@ class AbstractEnumAssertTest {
       assertThatThrownBy(() -> assertions.isAnyOf(DnbArtist.SUB_FOCUS, null, null))
           .isInstanceOf(NullPointerException.class);
     }
+
+    @DisplayName("Expect error if we assert against an empty array")
+    @Test
+    void errorsIfExpectedIsEmptyArray() {
+      // Given
+      var assertions = new Impl(DnbArtist.FEINT);
+
+      // Then
+      assertThatThrownBy(assertions::isAnyOf)
+          .isInstanceOf(IllegalArgumentException.class);
+    }
+
 
     @DisplayName("Expect failure if no match against a single element")
     @Test
@@ -180,6 +192,17 @@ class AbstractEnumAssertTest {
           .isInstanceOf(NullPointerException.class);
     }
 
+    @DisplayName("Expect error if we assert against an empty collection")
+    @Test
+    void errorsIfExpectedIsEmptyCollection() {
+      // Given
+      var assertions = new Impl(DnbArtist.FEINT);
+
+      // Then
+      assertThatThrownBy(() -> assertions.isAnyOfElements(List.of()))
+          .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("Expect failure if no match against multiple elements")
     @Test
     void failsIfNoMatchOnMultipleElements() {
@@ -243,7 +266,7 @@ class AbstractEnumAssertTest {
       var assertions = new Impl(DnbArtist.FEINT);
 
       // Then
-      assertThatThrownBy(() -> assertions.isNoneOf(null))
+      assertThatThrownBy(() -> assertions.isNoneOf((DnbArtist) null))
           .isInstanceOf(NullPointerException.class);
     }
 
@@ -254,11 +277,11 @@ class AbstractEnumAssertTest {
       var assertions = new Impl(DnbArtist.FEINT);
 
       // Then
-      assertThatThrownBy(() -> assertions.isNoneOf(DnbArtist.CULTURE_SHOCK, (DnbArtist[]) null))
+      assertThatThrownBy(() -> assertions.isNoneOf((DnbArtist[]) null))
           .isInstanceOf(NullPointerException.class);
     }
 
-    @DisplayName("Expect error if we against multiple elements that are be null")
+    @DisplayName("Expect error if we against multiple null elements")
     @Test
     void errorsIfExpectedIsNullOnMultipleElements() {
       // Given
@@ -267,6 +290,17 @@ class AbstractEnumAssertTest {
       // Then
       assertThatThrownBy(() -> assertions.isNoneOf(DnbArtist.SUB_FOCUS, null, null))
           .isInstanceOf(NullPointerException.class);
+    }
+
+    @DisplayName("Expect error if we assert against an empty array")
+    @Test
+    void errorsIfExpectedIsEmptyArray() {
+      // Given
+      var assertions = new Impl(DnbArtist.FEINT);
+
+      // Then
+      assertThatThrownBy(assertions::isNoneOf)
+          .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("Expect failure if match against a single element")
@@ -349,6 +383,18 @@ class AbstractEnumAssertTest {
           .isInstanceOf(NullPointerException.class);
     }
 
+    @DisplayName("Expect error if we assert against an empty collection")
+    @Test
+    void errorsIfExpectedIsEmptyCollection() {
+      // Given
+      var assertions = new Impl(DnbArtist.FEINT);
+
+      // Then
+      assertThatThrownBy(() -> assertions.isNoneOfElements(List.of()))
+          .isInstanceOf(IllegalArgumentException.class);
+    }
+
+
     @DisplayName("Expect failure if match against any elements")
     @Test
     void failsIfMatchOnElement() {
@@ -370,12 +416,14 @@ class AbstractEnumAssertTest {
       // Given
       var assertions = new Impl(DnbArtist.CULTURE_SHOCK);
 
-      // Then
-      assertions.isNoneOfElements(List.of(
+      // When
+      var result = assertions.isNoneOfElements(List.of(
           DnbArtist.RAMESES_B,
           DnbArtist.DELTA_HEAVY,
           DnbArtist.PENDULUM
       ));
+
+      assertThat(result).isSameAs(assertions);
     }
   }
 

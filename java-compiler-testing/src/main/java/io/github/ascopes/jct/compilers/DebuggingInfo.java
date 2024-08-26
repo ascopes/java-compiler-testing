@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.compilers;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import org.apiguardian.api.API;
@@ -60,12 +61,13 @@ public enum DebuggingInfo {
   /**
    * Return a set of the given debugger info flags.
    *
-   * @param flag  the first flag.
-   * @param flags additional flags.
+   * @param flags flags.
    * @return the set of the debugger info flags.
    */
-  public static Set<DebuggingInfo> just(DebuggingInfo flag, DebuggingInfo... flags) {
-    return EnumSet.of(flag, flags);
+  public static Set<DebuggingInfo> just(DebuggingInfo... flags) {
+    var set = none();
+    Collections.addAll(set, flags);
+    return set;
   }
 
   /**

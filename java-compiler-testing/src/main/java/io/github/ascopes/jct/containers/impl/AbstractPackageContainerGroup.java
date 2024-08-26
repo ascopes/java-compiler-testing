@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.containers.impl;
 
+import static io.github.ascopes.jct.utils.IterableUtils.requireAtLeastOne;
 import static java.util.Collections.synchronizedSet;
 import static java.util.Objects.requireNonNull;
 
@@ -151,9 +152,11 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
 
   @Nullable
   @Override
-  public Path getFile(String fragment, String... fragments) {
+  public Path getFile(String... fragments) {
+    requireAtLeastOne(fragments, "fragments");
+
     for (var container : containers) {
-      var result = container.getFile(fragment, fragments);
+      var result = container.getFile(fragments);
       if (result != null) {
         return result;
       }

@@ -96,11 +96,12 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
    *   dir.createDirectory("foo", "bar", "baz")...;
    * </code></pre>
    *
-   * @param first the first part of the path.
-   * @param rest  any additional parts of the path.
+   * @param fragments the parts of the path.
    * @return the directory builder.
+   * @throws IllegalArgumentException if no path fragments are provided.
+   * @throws NullPointerException     if any of the path fragments are {@code null}.
    */
-  DirectoryBuilder createDirectory(String first, String... rest);
+  DirectoryBuilder createDirectory(String... fragments);
 
   /**
    * Create a file builder for the given path in this RAM file system.
@@ -113,11 +114,12 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
    *   dir.createFile("foo", "bar", "baz.txt")...;
    * </code></pre>
    *
-   * @param fragment  the first part of the path.
-   * @param fragments any additional parts of the path.
+   * @param fragments the parts of the path.
    * @return the file builder.
+   * @throws IllegalArgumentException if no path fragments are provided.
+   * @throws NullPointerException     if any of the path fragments are {@code null}.
    */
-  FileBuilder createFile(String fragment, String... fragments);
+  FileBuilder createFile(String... fragments);
 
   /**
    * Get the identifying name of the temporary file system.

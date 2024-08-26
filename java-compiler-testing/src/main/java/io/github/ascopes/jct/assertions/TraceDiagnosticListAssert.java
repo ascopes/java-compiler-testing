@@ -15,9 +15,8 @@
  */
 package io.github.ascopes.jct.assertions;
 
-import static io.github.ascopes.jct.utils.IterableUtils.combineOneOrMore;
+import static io.github.ascopes.jct.utils.IterableUtils.requireAtLeastOne;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
-import static java.util.Objects.requireNonNull;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toUnmodifiableList;
@@ -47,7 +46,8 @@ import org.jspecify.annotations.Nullable;
  */
 @API(since = "0.0.1", status = Status.STABLE)
 public final class TraceDiagnosticListAssert
-    extends AbstractListAssert<TraceDiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, TraceDiagnosticAssert> {
+    extends
+    AbstractListAssert<TraceDiagnosticListAssert, List<? extends TraceDiagnostic<? extends JavaFileObject>>, TraceDiagnostic<? extends JavaFileObject>, TraceDiagnosticAssert> {
 
   /**
    * Initialize this assertion.
@@ -133,16 +133,16 @@ public final class TraceDiagnosticListAssert
    * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to any of the
    * given {@link Kind kinds}.
    *
-   * @param kind      the first kind to match.
-   * @param moreKinds additional kinds to match.
+   * @param kinds the kinds to match.
    * @return the assertion object for the filtered diagnostics.
-   * @throws AssertionError       if this list is null.
-   * @throws NullPointerException if any of the kinds are null.
+   * @throws AssertionError           if this list is null.
+   * @throws NullPointerException     if any of the kinds are null.
+   * @throws IllegalArgumentException if no kinds are provided.
    */
-  public TraceDiagnosticListAssert filteringByKinds(Kind kind, Kind... moreKinds) {
-    requireNonNull(kind, "kind");
-    requireNonNullValues(moreKinds, "moreKinds");
-    return filteringByKinds(combineOneOrMore(kind, moreKinds));
+  public TraceDiagnosticListAssert filteringByKinds(Kind... kinds) {
+    requireNonNullValues(kinds, "kinds");
+    requireAtLeastOne(kinds, "kinds");
+    return filteringByKinds(List.of(kinds));
   }
 
   /**
@@ -163,16 +163,16 @@ public final class TraceDiagnosticListAssert
    * Get a {@link TraceDiagnosticListAssert} that contains diagnostics corresponding to none of the
    * given {@link Kind kinds}.
    *
-   * @param kind      the first kind to ensure are not matched.
-   * @param moreKinds additional kinds to ensure are not matched.
+   * @param kinds kinds to ensure are not matched.
    * @return the assertion object for the filtered diagnostics.
-   * @throws AssertionError       if this list is null.
-   * @throws NullPointerException if any of the kinds are null.
+   * @throws AssertionError           if this list is null.
+   * @throws NullPointerException     if any of the kinds are null.
+   * @throws IllegalArgumentException if no kinds are provided.
    */
-  public TraceDiagnosticListAssert excludingKinds(Kind kind, Kind... moreKinds) {
-    requireNonNull(kind, "kind");
-    requireNonNullValues(moreKinds, "moreKinds");
-    return excludingKinds(combineOneOrMore(kind, moreKinds));
+  public TraceDiagnosticListAssert excludingKinds(Kind... kinds) {
+    requireNonNullValues(kinds, "kinds");
+    requireAtLeastOne(kinds, "kinds");
+    return excludingKinds(List.of(kinds));
   }
 
   /**
@@ -184,10 +184,10 @@ public final class TraceDiagnosticListAssert
    * @throws AssertionError       if this list is null.
    * @throws NullPointerException if any of the kinds are null.
    */
+  @SuppressWarnings("ConstantValue")  // actual CAN be null, IntelliJ just doesn't realise this.
   public TraceDiagnosticListAssert excludingKinds(Iterable<Kind> kinds) {
     requireNonNullValues(kinds, "kinds");
     isNotNull();
-    //noinspection ConstantValue -- actual CAN be null, IntelliJ just doesn't realise this.
     return actual
         .stream()
         .filter(Objects::nonNull)
@@ -270,16 +270,15 @@ public final class TraceDiagnosticListAssert
   /**
    * Assert that this list has no diagnostics matching any of the given kinds.
    *
-   * @param kind      the first kind to check for.
-   * @param moreKinds any additional kinds to check for.
+   * @param kinds kinds to check for.
    * @return this assertion object for further call chaining.
    * @throws AssertionError       if the diagnostic list is null.
    * @throws NullPointerException if the kind or more kinds are null.
    */
-  public TraceDiagnosticListAssert hasNoDiagnosticsOfKinds(Kind kind, Kind... moreKinds) {
-    requireNonNull(kind, "kind");
-    requireNonNullValues(moreKinds, "moreKinds");
-    return hasNoDiagnosticsOfKinds(combineOneOrMore(kind, moreKinds));
+  public TraceDiagnosticListAssert hasNoDiagnosticsOfKinds(Kind... kinds) {
+    requireNonNullValues(kinds, "kinds");
+    requireAtLeastOne(kinds, "kinds");
+    return hasNoDiagnosticsOfKinds(List.of(kinds));
   }
 
   /**
@@ -355,7 +354,8 @@ public final class TraceDiagnosticListAssert
     return new TraceDiagnosticListAssert(list);
   }
 
-  private Predicate<@Nullable TraceDiagnostic<? extends JavaFileObject>> kindIsOneOf(Iterable<Kind> kinds) {
+  private Predicate<@Nullable TraceDiagnostic<? extends JavaFileObject>> kindIsOneOf(
+      Iterable<Kind> kinds) {
     var kindsSet = new LinkedHashSet<Kind>();
     kinds.forEach(kindsSet::add);
 

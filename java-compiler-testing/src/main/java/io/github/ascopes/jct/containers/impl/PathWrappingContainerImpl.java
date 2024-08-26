@@ -80,8 +80,8 @@ public final class PathWrappingContainerImpl implements Container {
 
   @Nullable
   @Override
-  public Path getFile(String fragment, String... fragments) {
-    var realPath = FileUtils.relativeResourceNameToPath(root.getPath(), fragment, fragments);
+  public Path getFile(String... fragments) {
+    var realPath = FileUtils.relativeResourceNameToPath(root.getPath(), fragments);
 
     return Files.isRegularFile(realPath)
         ? realPath
