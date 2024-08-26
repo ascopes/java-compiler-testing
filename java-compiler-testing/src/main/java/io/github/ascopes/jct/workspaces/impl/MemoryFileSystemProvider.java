@@ -39,8 +39,7 @@ public final class MemoryFileSystemProvider {
   // We could initialise this lazily, but this class has fewer fields and initialisation
   // overhead than a lazy-loaded object would, so it doesn't really make sense to do it
   // here.
-  private static final MemoryFileSystemProvider INSTANCE
-      = new MemoryFileSystemProvider();
+  private static final MemoryFileSystemProvider INSTANCE = new MemoryFileSystemProvider();
 
   /**
    * Get the singleton instance of this provider.

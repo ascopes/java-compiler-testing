@@ -18,8 +18,10 @@ package io.github.ascopes.jct.workspaces;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.util.List;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -176,7 +178,6 @@ public interface FileBuilder {
    */
   ManagedDirectory thatIsEmpty();
 
-
   /**
    * Create the file with the given byte contents.
    *
@@ -211,8 +212,52 @@ public interface FileBuilder {
    *
    * @param contents the bytes to write.
    * @return the root managed directory for further configuration.
+   * @see #withContents(ByteBuffer)
    */
   ManagedDirectory withContents(byte[] contents);
+
+  /**
+   * An overload of {@link #withContents(byte[])} that consumes a NIO byte buffer.
+   *
+   * @param buffer the byte buffer to consume.
+   * @return the managed directory.
+   * @since 4.0.0
+   */
+  @API(since = "4.0.0", status = Status.STABLE)
+  default ManagedDirectory withContents(ByteBuffer buffer) {
+    var array = new byte[buffer.remaining()];
+    buffer.get(array);
+    return withContents(array);
+  }
+
+  /**
+   * Create the file with the given contents.
+   *
+   * <pre><code>
+   *   directory
+   *      .createFile("org", "example", "HelloWorld.java")
+   *      .withContents(StandardCharsets.US_ASCII, List.of(
+   *        "package org.example;",
+   *        "",
+   *        "public class HelloWorld {",
+   *        "  public static void main(String[] args) {",
+   *        "    System.out.println(\"Hello, World!\");",
+   *        "  }",
+   *        "}"
+   *      ));
+   * </code></pre>
+   *
+   * @param charset the character encoding to use.
+   * @param lines   the lines to write.
+   * @return the root managed directory for further configuration.
+   * @see #withContents(Charset, String...)
+   * @see #withContents(String...)
+   * @see #withContents(List)
+   * @see #withContents(byte[])
+   * @since 4.0.0
+   */
+  @API(since = "4.0.0", status = Status.STABLE)
+  ManagedDirectory withContents(Charset charset, List<String> lines);
 
   /**
    * Create the file with the given contents.
@@ -253,10 +298,44 @@ public interface FileBuilder {
    * @param charset the character encoding to use.
    * @param lines   the lines to write.
    * @return the root managed directory for further configuration.
+   * @see #withContents(List)
+   * @see #withContents(Charset, List)
    * @see #withContents(String...)
    * @see #withContents(byte[])
    */
-  ManagedDirectory withContents(Charset charset, String... lines);
+  default ManagedDirectory withContents(Charset charset, String... lines) {
+    return withContents(charset, List.of(lines));
+  }
+
+  /**
+   * Create the file with the given contents as UTF-8.
+   *
+   * <p>If you are using multi-line strings, an example of usage would be:
+   *
+   * <pre><code>
+   *   directory
+   *      .createFile("org", "example", "HelloWorld.java")
+   *      .withContents(List.of(
+   *        "package org.example;",
+   *        "",
+   *        "public class HelloWorld {",
+   *        "  public static void main(String[] args) {",
+   *        "    System.out.println(\"Hello, World!\");",
+   *        "  }",
+   *        "}"
+   *      ));
+   * </code></pre>
+   *
+   * @param lines the lines to write using the default charset.
+   * @return the root managed directory for further configuration.
+   * @see #withContents(Charset, String...)
+   * @see #withContents(String...)
+   * @see #withContents(Charset, List)
+   * @see #withContents(byte[])
+   * @since 4.0.0
+   */
+  @API(since = "4.0.0", status = Status.STABLE)
+  ManagedDirectory withContents(List<String> lines);
 
   /**
    * Create the file with the given contents as UTF-8.
@@ -298,7 +377,11 @@ public interface FileBuilder {
    * @param lines the lines to write using the default charset.
    * @return the root managed directory for further configuration.
    * @see #withContents(Charset, String...)
+   * @see #withContents(List)
+   * @see #withContents(Charset, List)
    * @see #withContents(byte[])
    */
-  ManagedDirectory withContents(String... lines);
+  default ManagedDirectory withContents(String... lines) {
+    return withContents(List.of(lines));
+  }
 }

@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.List;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
@@ -72,7 +73,7 @@ public final class WrappingDirectoryImpl implements PathRoot {
    *                                  protocol handler is registered for the associated
    *                                  {@link java.nio.file.FileSystem} providing the path).
    */
-  public WrappingDirectoryImpl(PathRoot parent, String... parts) {
+  public WrappingDirectoryImpl(PathRoot parent, List<String> parts) {
     this(
         requireNonNull(parent, "parent"),
         resolvePathRecursively(parent.getPath(), requireNonNullValues(parts, "parts"))

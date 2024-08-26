@@ -28,6 +28,7 @@ import io.github.ascopes.jct.workspaces.PathRoot;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.tools.JavaFileManager.Location;
@@ -186,7 +187,7 @@ public final class OutputContainerGroupImpl
     var group = new AbstractPackageContainerGroup(moduleLocation, release) {};
     var pathWrapper = new WrappingDirectoryImpl(
         getPackages().iterator().next().getPathRoot(),
-        moduleLocation.getModuleName()
+        List.of(moduleLocation.getModuleName())
     );
     uncheckedIo(() -> Files.createDirectories(pathWrapper.getPath()));
     group.addPackage(pathWrapper);
