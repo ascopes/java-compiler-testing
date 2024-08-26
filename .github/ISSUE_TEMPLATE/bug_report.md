@@ -28,8 +28,9 @@ If applicable, add screenshots to help explain your problem.
 
 **Additional context**
 
-JDK version: _Please enter the JDK you are using here (e.g. 17.0.1)_
-JDK vendor: _Please enter the JDK vendor being used (e.g. Amazon Corretto, Adoptium)_
-Platform: _Please enter details about your platform (e.g. Fedora Linux ARM64, Windows 11 AMD64).
+- JCT library version: _Please enter the library version you are using here (e.g. v3.4.5)_
+- JDK version: _Please enter the JDK you are using here (e.g. 17.0.1)_
+- JDK vendor: _Please enter the JDK vendor being used (e.g. Amazon Corretto, Adoptium)_
+- Platform: _Please enter details about your platform (e.g. Fedora Linux ARM64, Windows 11 AMD64).
 
 Add any other context about the problem here.
