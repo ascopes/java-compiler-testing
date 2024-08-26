@@ -64,12 +64,13 @@ public interface Container extends Closeable {
    *   container.getFile("foo", "bar", "baz.txt");
    * </code></pre>
    *
-   * @param fragment  the first part of the file name.
-   * @param fragments any additional parts of the file name to find.
+   * @param fragments parts of the file name to find.
    * @return the path if the file exists, or null if it does not exist.
+   * @throws NullPointerException     if any of the path fragments are {@code null}.
+   * @throws IllegalArgumentException if there are no path fragments provided.
    */
   @Nullable
-  Path getFile(String fragment, String... fragments);
+  Path getFile(String... fragments);
 
   /**
    * Get a {@link FileObject} for reading, if it exists.

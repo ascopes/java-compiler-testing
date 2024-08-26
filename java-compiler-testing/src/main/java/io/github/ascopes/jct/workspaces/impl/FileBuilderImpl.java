@@ -16,7 +16,10 @@
 package io.github.ascopes.jct.workspaces.impl;
 
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
+import static io.github.ascopes.jct.utils.IterableUtils.requireAtLeastOne;
+import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 
+import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.workspaces.FileBuilder;
 import io.github.ascopes.jct.workspaces.ManagedDirectory;
 import io.github.ascopes.jct.workspaces.PathRoot;
@@ -59,18 +62,14 @@ public final class FileBuilderImpl implements FileBuilder {
    * Initialise a new file builder.
    *
    * @param parent the parent managed directory to chain calls back onto.
-   * @param first  the first part of the file path.
-   * @param rest   additional parts of the file path.
+   * @param fragments the parts of the file path.
    */
-  public FileBuilderImpl(ManagedDirectory parent, String first, String... rest) {
+  public FileBuilderImpl(ManagedDirectory parent, String... fragments) {
+    requireNonNullValues(fragments, "fragments");
+    requireAtLeastOne(fragments, "fragments");
+
     this.parent = parent;
-
-    var targetPath = parent.getPath().resolve(first);
-    for (var next : rest) {
-      targetPath = targetPath.resolve(next);
-    }
-
-    this.targetPath = targetPath;
+    targetPath = FileUtils.resolvePathRecursively(parent.getPath(), fragments);
   }
 
   @Override

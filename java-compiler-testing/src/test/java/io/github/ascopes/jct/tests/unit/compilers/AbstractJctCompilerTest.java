@@ -472,7 +472,7 @@ class AbstractJctCompilerTest {
     }
   }
 
-  @DisplayName("AbstractJctCompiler#compile(Workspace) tests")
+  @DisplayName("AbstractJctCompiler.compile(Workspace) tests")
   @Nested
   class CompileAllTest extends AbstractCompileTestTemplate {
 
@@ -488,7 +488,7 @@ class AbstractJctCompilerTest {
     }
   }
 
-  @DisplayName("AbstractJctCompiler#compile(Workspace, Collection<String>) tests")
+  @DisplayName("AbstractJctCompiler.compile(Workspace, Collection<String>) tests")
   @Nested
   class CompileClassNamesTest extends AbstractCompileTestTemplate {
 

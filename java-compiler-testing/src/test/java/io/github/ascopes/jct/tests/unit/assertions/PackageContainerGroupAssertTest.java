@@ -58,37 +58,25 @@ import org.mockito.quality.Strictness;
 @DisplayName("PackageContainerGroupAssert tests")
 class PackageContainerGroupAssertTest {
 
-  @DisplayName("PackageContainerGroupAssert#allFilesExist(String, String...) tests")
+  @DisplayName("PackageContainerGroupAssert.allFilesExist(String...) tests")
   @Nested
   class AllFilesExistStringArrayTest {
 
-    @DisplayName(".allFilesExist(String, String...) throws an exception if the string is null")
-    @Test
-    void allFilesExistThrowsExceptionIfFirstStringIsNull() {
-      // Given
-      var assertions = new PackageContainerGroupAssert(mock());
-
-      // Then
-      assertThatThrownBy(() -> assertions.allFilesExist(null, new String[0]))
-          .isInstanceOf(NullPointerException.class)
-          .hasMessage("path");
-    }
-
-    @DisplayName(".allFilesExist(String, String...) throws an exception if the array is null")
+    @DisplayName(".allFilesExist(String...) throws an exception if the array is null")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void allFilesExistThrowsExceptionIfArrayIsNull() {
       // Given
       var assertions = new PackageContainerGroupAssert(mock());
 
       // Then
-      assertThatThrownBy(() -> assertions.allFilesExist("foo", (String[]) null))
+      assertThatThrownBy(() -> assertions.allFilesExist((String[]) null))
           .isInstanceOf(NullPointerException.class)
           .hasMessage("paths");
     }
 
-    @DisplayName(
-        ".allFilesExist(String, String...) throws an exception if the array has null values"
-    )
+    @DisplayName(".allFilesExist(String...) throws an exception if the array has null values")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void allFilesExistThrowsExceptionIfArrayHasNullValues() {
       // Given
@@ -97,10 +85,22 @@ class PackageContainerGroupAssertTest {
       // Then
       assertThatThrownBy(() -> assertions.allFilesExist("foo", "bar", "baz", null))
           .isInstanceOf(NullPointerException.class)
-          .hasMessage("paths[2]");
+          .hasMessage("paths[3]");
     }
 
-    @DisplayName(".allFilesExist(String, String...) calls .allFilesExist(Iterable<String>)")
+    @DisplayName(".allFilesExist(String...) throws an exception if the array is empty")
+    @Test
+    void allFilesExistThrowsExceptionIfArrayIsEmpty() {
+      // Given
+      var assertions = new PackageContainerGroupAssert(mock());
+
+      // Then
+      assertThatThrownBy(assertions::allFilesExist)
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessage("paths must not be empty");
+    }
+
+    @DisplayName(".allFilesExist(String...) calls .allFilesExist(Iterable<String>)")
     @Test
     void allFilesExistCallsIterableStringOverload() {
       // Given
@@ -119,14 +119,14 @@ class PackageContainerGroupAssertTest {
   }
 
   // Not entirely sure what is defining the precedence between .allFilesExist(null) calling
-  // .allFilesExist(String, String...) or .allFilesExist(Iterable<String>) here, so I am keeping
+  // .allFilesExist(String...) or .allFilesExist(Iterable<String>) here, so I am keeping
   // this explicit to prevent the test behaviour changing in the future.
-  @SuppressWarnings("RedundantCast")
-  @DisplayName("PackageContainerGroupAssert#allFilesExist(Iterable<String>) tests")
+  @DisplayName("PackageContainerGroupAssert.allFilesExist(Iterable<String>) tests")
   @Nested
   class AllFilesExistStringIterableTest {
 
     @DisplayName(".allFilesExist(Iterable<String>) throws an exception if the iterable is null")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void allFilesExistThrowsExceptionIfIterableIsNull() {
       // Given
@@ -247,33 +247,21 @@ class PackageContainerGroupAssertTest {
   @Nested
   class FileDoesNotExistTest {
 
-    @DisplayName(".fileDoesNotExist(String, String...) throws an exception if the string is null")
-    @Test
-    void fileDoesNotExistThrowsExceptionIfFirstStringIsNull() {
-      // Given
-      var assertions = new PackageContainerGroupAssert(mock());
-
-      // Then
-      assertThatThrownBy(() -> assertions.fileDoesNotExist(null, new String[0]))
-          .isInstanceOf(NullPointerException.class)
-          .hasMessage("fragment");
-    }
-
-    @DisplayName(".fileDoesNotExist(String, String...) throws an exception if the array is null")
+    @DisplayName(".fileDoesNotExist(String...) throws an exception if the array is null")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void fileDoesNotExistThrowsExceptionIfArrayIsNull() {
       // Given
       var assertions = new PackageContainerGroupAssert(mock());
 
       // Then
-      assertThatThrownBy(() -> assertions.fileDoesNotExist("foo", (String[]) null))
+      assertThatThrownBy(() -> assertions.fileDoesNotExist((String[]) null))
           .isInstanceOf(NullPointerException.class)
           .hasMessage("fragments");
     }
 
-    @DisplayName(
-        ".fileDoesNotExist(String, String...) throws an exception if the array has null values"
-    )
+    @DisplayName(".fileDoesNotExist(String...) throws an exception if the array has null values")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void fileDoesNotExistThrowsExceptionIfArrayHasNullValues() {
       // Given
@@ -282,11 +270,23 @@ class PackageContainerGroupAssertTest {
       // Then
       assertThatThrownBy(() -> assertions.fileDoesNotExist("foo", "bar", "baz", null))
           .isInstanceOf(NullPointerException.class)
-          .hasMessage("fragments[2]");
+          .hasMessage("fragments[3]");
+    }
+
+    @DisplayName(".fileDoesNotExist(String...) throws an exception if the array is empty")
+    @Test
+    void fileDoesNotExistThrowsExceptionIfArrayIsEmpty() {
+      // Given
+      var assertions = new PackageContainerGroupAssert(mock());
+
+      // Then
+      assertThatThrownBy(assertions::fileDoesNotExist)
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessage("fragments must not be empty");
     }
 
     @DisplayName(
-        ".fileDoesNotExist(String, String...) throws an exception if the container group is null"
+        ".fileDoesNotExist(String...) throws an exception if the container group is null"
     )
     @Test
     void fileDoesNotExistThrowsExceptionIfContainerGroupIsNull() {
@@ -299,7 +299,8 @@ class PackageContainerGroupAssertTest {
           .isInstanceOf(AssertionError.class);
     }
 
-    @DisplayName(".fileDoesNotExist(String, String...) fails if the file exists")
+    @DisplayName(".fileDoesNotExist(String...) fails if the file exists")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void fileDoesNotExistFailsIfFileExists() {
       // Given
@@ -323,7 +324,8 @@ class PackageContainerGroupAssertTest {
           );
     }
 
-    @DisplayName(".fileDoesNotExist(String, String...) succeeds if the file does not exist")
+    @DisplayName(".fileDoesNotExist(String...) succeeds if the file does not exist")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void fileDoesNotExistSucceedsIfFileDoesNotExist() {
       // Given
@@ -349,33 +351,21 @@ class PackageContainerGroupAssertTest {
   @Nested
   class FileExistsTest {
 
-    @DisplayName(".fileExists(String, String...) throws an exception if the string is null")
-    @Test
-    void fileExistsThrowsExceptionIfFirstStringIsNull() {
-      // Given
-      var assertions = new PackageContainerGroupAssert(mock());
-
-      // Then
-      assertThatThrownBy(() -> assertions.fileExists(null, new String[0]))
-          .isInstanceOf(NullPointerException.class)
-          .hasMessage("fragment");
-    }
-
-    @DisplayName(".fileExists(String, String...) throws an exception if the array is null")
+    @DisplayName(".fileExists(String...) throws an exception if the array is null")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void fileExistsThrowsExceptionIfArrayIsNull() {
       // Given
       var assertions = new PackageContainerGroupAssert(mock());
 
       // Then
-      assertThatThrownBy(() -> assertions.fileExists("foo", (String[]) null))
+      assertThatThrownBy(() -> assertions.fileExists((String[]) null))
           .isInstanceOf(NullPointerException.class)
           .hasMessage("fragments");
     }
 
-    @DisplayName(
-        ".fileExists(String, String...) throws an exception if the array has null values"
-    )
+    @DisplayName(".fileExists(String...) throws an exception if the array has null values")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void fileExistsThrowsExceptionIfArrayHasNullValues() {
       // Given
@@ -384,12 +374,23 @@ class PackageContainerGroupAssertTest {
       // Then
       assertThatThrownBy(() -> assertions.fileExists("foo", "bar", "baz", null))
           .isInstanceOf(NullPointerException.class)
-          .hasMessage("fragments[2]");
+          .hasMessage("fragments[3]");
     }
 
-    @DisplayName(
-        ".fileExists(String, String...) throws an exception if the container group is null"
-    )
+    @DisplayName(".fileExists(String...) throws an exception if the array is empty")
+    @Test
+    void fileExistsThrowsExceptionIfArrayIsEmpty() {
+      // Given
+      var assertions = new PackageContainerGroupAssert(mock());
+
+      // Then
+      assertThatThrownBy(assertions::fileExists)
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessage("fragments must not be empty");
+    }
+
+
+    @DisplayName(".fileExists(String...) throws an exception if the container group is null")
     @Test
     void fileExistsThrowsExceptionIfContainerGroupIsNull() {
       // Given
@@ -401,9 +402,8 @@ class PackageContainerGroupAssertTest {
           .isInstanceOf(AssertionError.class);
     }
 
-    @DisplayName(
-        ".fileExists(String, String...) fails with fuzzy suggestions if the file does not exist"
-    )
+    @DisplayName(".fileExists(String...) fails with fuzzy suggestions if the file does not exist")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void fileExistsFailsWithFuzzySuggestionsIfTheFileDoesNotExist() throws IOException {
       // Given
@@ -478,7 +478,8 @@ class PackageContainerGroupAssertTest {
 
     }
 
-    @DisplayName(".fileExists(String, String...) succeeds if the file exists")
+    @DisplayName(".fileExists(String...) succeeds if the file exists")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void fileExistsSucceedsIfFileExists() {
       // Given

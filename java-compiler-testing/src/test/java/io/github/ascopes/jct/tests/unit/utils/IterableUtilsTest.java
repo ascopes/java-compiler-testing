@@ -15,16 +15,17 @@
  */
 package io.github.ascopes.jct.tests.unit.utils;
 
-import static io.github.ascopes.jct.utils.IterableUtils.combineOneOrMore;
 import static io.github.ascopes.jct.utils.IterableUtils.flatten;
+import static io.github.ascopes.jct.utils.IterableUtils.requireAtLeastOne;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.github.ascopes.jct.tests.helpers.UtilityClassTestTemplate;
 import io.github.ascopes.jct.utils.IterableUtils;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
@@ -64,30 +65,78 @@ class IterableUtilsTest implements UtilityClassTestTemplate {
         .containsExactlyElementsOf(expectedItems);
   }
 
-  @DisplayName("combineOneOrMore(T, T...) returns the expected value")
+  @DisplayName("requireAtLeastOne(T[], String) raises an exception if the argument is null")
   @Test
-  void combineOneOrMoreReturnsTheExpectedValue() {
-    // Given
-    var foo = new Object();
-    var bar = new Object();
-    var baz = new Object();
-    var bork = new Object();
-
+  void requireAtLeastOneArrayRaisesExceptionIfArgumentIsNull() {
     // Then
-    assertThat(combineOneOrMore(foo))
-        .isEqualTo(List.of(foo));
-
-    assertThat(combineOneOrMore(foo, bar))
-        .isEqualTo(List.of(foo, bar));
-
-    assertThat(combineOneOrMore(foo, bar, baz))
-        .isEqualTo(List.of(foo, bar, baz));
-
-    assertThat(combineOneOrMore(foo, bar, baz, bork))
-        .isEqualTo(List.of(foo, bar, baz, bork));
+    assertThatException()
+        .isThrownBy(() -> requireAtLeastOne((Object[]) null, "dave"))
+        .isExactlyInstanceOf(NullPointerException.class)
+        .withMessage("dave");
   }
 
-  @DisplayName("requireNonNullValues(Iterable<?>) succeeds when no null elements are present")
+  @DisplayName("requireAtLeastOne(T[], String) raises an exception if the argument is empty")
+  @Test
+  void requireAtLeastOneArrayRaisesExceptionIfArgumentIsEmpty() {
+    // Then
+    assertThatException()
+        .isThrownBy(() -> requireAtLeastOne(new Object[0], "dave"))
+        .isExactlyInstanceOf(IllegalArgumentException.class)
+        .withMessage("dave must not be empty");
+  }
+
+  @DisplayName("requireAtLeastOne(T[], String) returns the array if it has elements")
+  @Test
+  void requireAtLeastOneArrayReturnsArrayIfItHasElements() {
+    // Given
+    var array = new Object[1];
+
+    // When
+    var returnedArray = requireAtLeastOne(array, "dave");
+
+    // Then
+    assertThat(returnedArray).isSameAs(array);
+  }
+
+
+  @DisplayName(
+      "requireAtLeastOne(Collection<?>, String) raises an exception if the argument is null")
+  @Test
+  void requireAtLeastOneCollectionRaisesExceptionIfArgumentIsNull() {
+    // Then
+    assertThatException()
+        .isThrownBy(() -> requireAtLeastOne((Collection<?>) null, "dave"))
+        .isExactlyInstanceOf(NullPointerException.class)
+        .withMessage("dave");
+  }
+
+  @DisplayName(
+      "requireAtLeastOne(Collection<?>, String) raises an exception if the argument is empty")
+  @Test
+  void requireAtLeastOneCollectionRaisesExceptionIfArgumentIsEmpty() {
+    // Then
+    assertThatException()
+        .isThrownBy(() -> requireAtLeastOne(List.of(), "dave"))
+        .isExactlyInstanceOf(IllegalArgumentException.class)
+        .withMessage("dave must not be empty");
+  }
+
+  @DisplayName(
+      "requireAtLeastOne(Collection<?>, String) returns the collection if it has elements")
+  @Test
+  void requireAtLeastOneCollectionReturnsCollectionIfItHasElements() {
+    // Given
+    var collection = List.of("foo");
+
+    // When
+    var returnedCollection = requireAtLeastOne(collection, "dave");
+
+    // Then
+    assertThat(returnedCollection).isSameAs(collection);
+  }
+
+  @DisplayName(
+      "requireNonNullValues(Iterable<?>, String) succeeds when no null elements are present")
   @Test
   void requireNonNullValuesIterableSucceedsWhenNoNullElementsArePresent() {
     // Given
@@ -98,40 +147,45 @@ class IterableUtilsTest implements UtilityClassTestTemplate {
         .isThrownBy(() -> requireNonNullValues(collection, "dave"));
   }
 
-  @DisplayName("requireNonNullValues(Iterable<?>) fails when the collection is null")
+  @DisplayName("requireNonNullValues(Iterable<?>, String) fails when the collection is null")
   @Test
   void requireNonNullValuesIterableFailsWhenCollectionIsNull() {
     // Then
-    assertThatThrownBy(() -> requireNonNullValues((Iterable<?>) null, "dave"))
+    assertThatException()
+        .isThrownBy(() -> requireNonNullValues((Iterable<?>) null, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
-        .hasMessage("dave");
+        .withMessage("dave");
   }
 
-  @DisplayName("requireNonNullValues(Iterable<?>) fails when a single null element is present")
+  @DisplayName(
+      "requireNonNullValues(Iterable<?>, String) fails when a single null element is present")
   @Test
   void requireNonNullValuesIterableFailsWhenSingleNullElementIsPresent() {
     // Given
     var collection = Arrays.asList("foo", "bar", "", null, "baz", "bork");
 
     // Then
-    assertThatThrownBy(() -> requireNonNullValues(collection, "dave"))
+    assertThatException()
+        .isThrownBy(() -> requireNonNullValues(collection, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
-        .hasMessage("dave[3]");
+        .withMessage("dave[3]");
   }
 
-  @DisplayName("requireNonNullValues(Iterable<?>) fails when multiple null elements are present")
+  @DisplayName(
+      "requireNonNullValues(Iterable<?>. String) fails when multiple null elements are present")
   @Test
   void requireNonNullValuesIterableFailsWhenMultipleNullElementsArePresent() {
     // Given
     var collection = Arrays.asList("foo", "bar", null, "", null, null, "baz", "bork");
 
     // Then
-    assertThatThrownBy(() -> requireNonNullValues(collection, "dave"))
+    assertThatException()
+        .isThrownBy(() -> requireNonNullValues(collection, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
-        .hasMessage("dave[2], dave[4], dave[5]");
+        .withMessage("dave[2], dave[4], dave[5]");
   }
 
-  @DisplayName("requireNonNullValues(T[]) succeeds when no null elements are present")
+  @DisplayName("requireNonNullValues(T[], String) succeeds when no null elements are present")
   @Test
   void requireNonNullValuesArraySucceedsWhenNoNullElementsArePresent() {
     // Given
@@ -142,36 +196,41 @@ class IterableUtilsTest implements UtilityClassTestTemplate {
         .isThrownBy(() -> requireNonNullValues(array, "dave"));
   }
 
-  @DisplayName("requireNonNullValues(T[]) fails when the collection is null")
+  @DisplayName("requireNonNullValues(T[], String) fails when the collection is null")
   @Test
   void requireNonNullValuesArrayFailsWhenCollectionIsNull() {
     // Then
-    assertThatThrownBy(() -> requireNonNullValues((String[]) null, "dave"))
+    assertThatException()
+        .isThrownBy(() -> requireNonNullValues((String[]) null, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
-        .hasMessage("dave");
+        .withMessage("dave");
   }
 
-  @DisplayName("requireNonNullValues(T[]) fails when a single null element is present")
+  @DisplayName("requireNonNullValues(T[], String) fails when a single null element is present")
+  @SuppressWarnings("DataFlowIssue")
   @Test
   void requireNonNullValuesArrayFailsWhenSingleNullElementIsPresent() {
     // Given
     var array = new String[]{"foo", "bar", "", null, "baz", "bork"};
 
     // Then
-    assertThatThrownBy(() -> requireNonNullValues(array, "dave"))
+    assertThatException()
+        .isThrownBy(() -> requireNonNullValues(array, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
-        .hasMessage("dave[3]");
+        .withMessage("dave[3]");
   }
 
-  @DisplayName("requireNonNullValues(T[]) fails when multiple null elements are present")
+  @DisplayName("requireNonNullValues(T[], String) fails when multiple null elements are present")
+  @SuppressWarnings("DataFlowIssue")
   @Test
   void requireNonNullValuesArrayFailsWhenMultipleNullElementsArePresent() {
     // Given
     var array = new String[]{"foo", "bar", null, "", null, null, "baz", "bork"};
 
     // Then
-    assertThatThrownBy(() -> requireNonNullValues(array, "dave"))
+    assertThatException()
+        .isThrownBy(() -> requireNonNullValues(array, "dave"))
         .isExactlyInstanceOf(NullPointerException.class)
-        .hasMessage("dave[2], dave[4], dave[5]");
+        .withMessage("dave[2], dave[4], dave[5]");
   }
 }

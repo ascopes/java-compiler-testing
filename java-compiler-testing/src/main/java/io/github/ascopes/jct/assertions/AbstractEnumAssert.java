@@ -15,11 +15,11 @@
  */
 package io.github.ascopes.jct.assertions;
 
+import static io.github.ascopes.jct.utils.IterableUtils.requireAtLeastOne;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
-import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.ascopes.jct.utils.IterableUtils;
+import java.util.Collection;
 import java.util.List;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -52,19 +52,25 @@ public abstract class AbstractEnumAssert<A extends AbstractEnumAssert<A, E>, E e
   /**
    * Assert that the value is one of the given values.
    *
-   * @param first the first value to check for.
-   * @param more  any additional values to check for.
+   * @param elements the elements to check for.
    * @return this assertion object.
-   * @throws NullPointerException if any of the elements to test against are null.
-   * @throws AssertionError       if the actual value is null, or if the value is not in the given
-   *                              group of acceptable values.
+   * @throws NullPointerException     if any of the elements to test against are null.
+   * @throws IllegalArgumentException if the elements array is empty.
+   * @throws AssertionError           if the actual value is null, or if the value is not in the
+   *                                  given group of acceptable values.
    */
   @SafeVarargs
-  public final A isAnyOf(E first, E... more) {
-    requireNonNull(first, "first must not be null");
-    requireNonNullValues(more, "more");
+  @SuppressWarnings("varargs")
+  public final A isAnyOf(E... elements) {
+    requireNonNullValues(elements, "elements");
+    requireAtLeastOne(elements, "elements");
+    isNotNull();
 
-    return isAnyOfElements(IterableUtils.combineOneOrMore(first, more));
+    assertThat(List.of(actual))
+        .as(description())
+        .containsAnyOf(elements);
+
+    return myself;
   }
 
   /**
@@ -72,13 +78,14 @@ public abstract class AbstractEnumAssert<A extends AbstractEnumAssert<A, E>, E e
    *
    * @param elements the elements to check for.
    * @return this assertion object.
-   * @throws NullPointerException if any of the elements to test against are null.
-   * @throws AssertionError       if the actual value is null, or if the value is not in the given
-   *                              iterable of acceptable values.
+   * @throws NullPointerException     if any of the elements to test against are null.
+   * @throws IllegalArgumentException if the elements collection is empty.
+   * @throws AssertionError           if the actual value is null, or if the value is not in the
+   *                                  given iterable of acceptable values.
    */
-  public final A isAnyOfElements(Iterable<E> elements) {
+  public final A isAnyOfElements(Collection<E> elements) {
     requireNonNullValues(elements, "elements");
-
+    requireAtLeastOne(elements, "elements");
     isNotNull();
 
     assertThat(List.of(actual))
@@ -91,19 +98,24 @@ public abstract class AbstractEnumAssert<A extends AbstractEnumAssert<A, E>, E e
   /**
    * Assert that the value is none of the given values.
    *
-   * @param first the first value to check for.
-   * @param more  any additional values to check for.
+   * @param elements any elements to check for.
    * @return this assertion object.
-   * @throws NullPointerException if any of the elements to test against are null.
-   * @throws AssertionError       if the actual value is null, or if the value is in the given group
-   *                              of acceptable values.
+   * @throws NullPointerException     if any of the elements to test against are null.
+   * @throws IllegalArgumentException if the elements array is empty.
+   * @throws AssertionError           if the actual value is null, or if the value is in the given
+   *                                  group of acceptable values.
    */
   @SafeVarargs
-  public final A isNoneOf(E first, E... more) {
-    requireNonNull(first, "first must not be null");
-    requireNonNullValues(more, "more");
+  public final A isNoneOf(E... elements) {
+    requireNonNullValues(elements, "elements");
+    requireAtLeastOne(elements, "elements");
+    isNotNull();
 
-    return isNoneOfElements(IterableUtils.combineOneOrMore(first, more));
+    assertThat(List.of(actual))
+        .as(description())
+        .doesNotContain(elements);
+
+    return myself;
   }
 
   /**
@@ -111,13 +123,14 @@ public abstract class AbstractEnumAssert<A extends AbstractEnumAssert<A, E>, E e
    *
    * @param elements the elements to check for.
    * @return this assertion object.
-   * @throws NullPointerException if any of the elements to test against are null.
-   * @throws AssertionError       if the actual value is null, or if the value is in the given
-   *                              iterable of acceptable values.
+   * @throws NullPointerException     if any of the elements to test against are null.
+   * @throws IllegalArgumentException if the elements collection is empty.
+   * @throws AssertionError           if the actual value is null, or if the value is in the given
+   *                                  iterable of acceptable values.
    */
-  public final A isNoneOfElements(Iterable<E> elements) {
+  public final A isNoneOfElements(Collection<E> elements) {
     requireNonNullValues(elements, "elements");
-
+    requireAtLeastOne(elements, "elements");
     isNotNull();
 
     assertThat(List.of(actual))

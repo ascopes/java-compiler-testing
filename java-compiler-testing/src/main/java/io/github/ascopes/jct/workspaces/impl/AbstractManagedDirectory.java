@@ -17,6 +17,8 @@ package io.github.ascopes.jct.workspaces.impl;
 
 import static io.github.ascopes.jct.utils.FileUtils.retrieveRequiredUrl;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
+import static io.github.ascopes.jct.utils.IterableUtils.requireAtLeastOne;
+import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.utils.ToStringBuilder;
@@ -110,18 +112,24 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
   }
 
   @Override
-  public FileBuilder createFile(String fragment, String... fragments) {
-    return new FileBuilderImpl(this, fragment, fragments);
+  public FileBuilder createFile(String... fragments) {
+    requireNonNullValues(fragments, "fragments");
+    requireAtLeastOne(fragments, "fragments");
+    return new FileBuilderImpl(this, fragments);
   }
 
   @Override
-  public DirectoryBuilder createDirectory(String first, String... rest) {
-    return new DirectoryBuilderImpl(this, first, rest);
+  public DirectoryBuilder createDirectory(String... fragments) {
+    requireNonNullValues(fragments, "fragments");
+    requireAtLeastOne(fragments, "fragments");
+    return new DirectoryBuilderImpl(this, fragments);
   }
 
   @Override
-  public ManagedDirectory copyContentsFrom(String first, String... rest) {
-    return rootDirectory().copyContentsFrom(first, rest);
+  public ManagedDirectory copyContentsFrom(String... fragments) {
+    requireNonNullValues(fragments, "fragments");
+    requireAtLeastOne(fragments, "fragments");
+    return rootDirectory().copyContentsFrom(fragments);
   }
 
   @Override

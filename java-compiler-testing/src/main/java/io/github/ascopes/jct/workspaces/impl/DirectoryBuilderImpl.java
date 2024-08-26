@@ -16,7 +16,10 @@
 package io.github.ascopes.jct.workspaces.impl;
 
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
+import static io.github.ascopes.jct.utils.IterableUtils.requireAtLeastOne;
+import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 
+import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.workspaces.DirectoryBuilder;
 import io.github.ascopes.jct.workspaces.ManagedDirectory;
 import java.io.File;
@@ -49,23 +52,29 @@ public final class DirectoryBuilderImpl implements DirectoryBuilder {
   /**
    * Initialise a new directory builder.
    *
-   * @param parent the parent managed directory to chain calls back onto.
-   * @param first  the first part of the directory path.
-   * @param rest   additional parts of the directory path.
+   * @param parent    the parent managed directory to chain calls back onto.
+   * @param fragments parts of the directory path.
    */
-  public DirectoryBuilderImpl(ManagedDirectory parent, String first, String... rest) {
+  public DirectoryBuilderImpl(ManagedDirectory parent, String... fragments) {
+    requireNonNullValues(fragments, "fragments");
+    requireAtLeastOne(fragments, "fragments");
+
     this.parent = parent;
-    var targetPath = parent.getPath().resolve(first);
-    for (var next : rest) {
-      targetPath = targetPath.resolve(next);
-    }
-    this.targetPath = targetPath;
+    targetPath = FileUtils.resolvePathRecursively(parent.getPath(), fragments);
   }
 
   @Override
-  public ManagedDirectory copyContentsFrom(String first, String... rest) {
+  public ManagedDirectory copyContentsFrom(String... fragments) {
+    requireNonNullValues(fragments, "fragments");
+    requireAtLeastOne(fragments, "fragments");
+
     // Path.of is fine here as it is for the default file system.
-    return copyContentsFrom(Path.of(first, rest));
+    var path = Path.of(fragments[0]);
+    for (var i = 1; i < fragments.length; ++i) {
+      path = path.resolve(fragments[i]);
+    }
+
+    return copyContentsFrom(path);
   }
 
   @Override

@@ -16,11 +16,10 @@
 package io.github.ascopes.jct.assertions;
 
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
-import static io.github.ascopes.jct.utils.IterableUtils.combineOneOrMore;
+import static io.github.ascopes.jct.utils.IterableUtils.requireAtLeastOne;
 import static io.github.ascopes.jct.utils.IterableUtils.requireNonNullValues;
 import static io.github.ascopes.jct.utils.StringUtils.quoted;
 import static io.github.ascopes.jct.utils.StringUtils.quotedIterable;
-import static java.util.Objects.requireNonNull;
 import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,6 +28,7 @@ import io.github.ascopes.jct.repr.LocationRepresentation;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -63,18 +63,18 @@ public final class PackageContainerGroupAssert
   /**
    * Assert that all given files exist.
    *
-   * @param path  the first path to check for
-   * @param paths additional paths to check for.
+   * @param paths paths to check for.
    * @return this object for further call chaining.
-   * @throws AssertionError       if the container group is null, or if any of the files do not
-   *                              exist.
-   * @throws NullPointerException if any of the paths are null.
+   * @throws AssertionError           if the container group is null, or if any of the files do not
+   *                                  exist.
+   * @throws NullPointerException     if any of the paths are null.
+   * @throws IllegalArgumentException if no fragments are provided.
    */
-  public PackageContainerGroupAssert allFilesExist(String path, String... paths) {
-    requireNonNull(path, "path");
+  public PackageContainerGroupAssert allFilesExist(String... paths) {
     requireNonNullValues(paths, "paths");
+    requireAtLeastOne(paths, "paths");
 
-    allFilesExist(combineOneOrMore(path, paths));
+    allFilesExist(List.of(paths));
     return this;
   }
 
@@ -138,19 +138,19 @@ public final class PackageContainerGroupAssert
    *   assertions.fileDoesNotExist("foo", "bar", "baz.txt");
    * </code></pre>
    *
-   * @param fragment  the first part of the path.
    * @param fragments any additional parts of the path.
    * @return this assertion object for further assertions.
-   * @throws AssertionError       if the file exists, or if the container group is null.
-   * @throws NullPointerException if any of the fragments are null.
+   * @throws AssertionError           if the file exists, or if the container group is null.
+   * @throws NullPointerException     if any of the fragments are null.
+   * @throws IllegalArgumentException if no fragments are provided.
    */
-  public PackageContainerGroupAssert fileDoesNotExist(String fragment, String... fragments) {
-    requireNonNull(fragment, "fragment");
+  public PackageContainerGroupAssert fileDoesNotExist(String... fragments) {
     requireNonNullValues(fragments, "fragments");
+    requireAtLeastOne(fragments, "fragments");
 
     isNotNull();
 
-    var actualFile = actual.getFile(fragment, fragments);
+    var actualFile = actual.getFile(fragments);
 
     if (actualFile == null) {
       return this;
@@ -158,7 +158,7 @@ public final class PackageContainerGroupAssert
 
     throw failure(
         "Expected path %s to not exist in %s but it was found at %s",
-        quotedUserProvidedPath(combineOneOrMore(fragment, fragments)),
+        quotedUserProvidedPath(List.of(fragments)),
         LocationRepresentation.getInstance().toStringOf(actual.getLocation()),
         quoted(actualFile)
     );
@@ -178,27 +178,28 @@ public final class PackageContainerGroupAssert
    * <p>If the file does not exist, then this object will attempt to find the
    * closest matches and list them in an error message along with the assertion error.
    *
-   * @param fragment  the first part of the path.
-   * @param fragments any additional parts of the path.
+   * @param fragments parts of the path.
    * @return assertions to perform on the path of the file that exists.
-   * @throws AssertionError       if the file does not exist, or if the container group is null.
-   * @throws NullPointerException if any of the fragments are null.
+   * @throws AssertionError           if the file does not exist, or if the container group is
+   *                                  null.
+   * @throws NullPointerException     if any of the fragments are null.
+   * @throws IllegalArgumentException if no fragments are provided.
    */
 
-  public AbstractPathAssert<?> fileExists(String fragment, String... fragments) {
-    requireNonNull(fragment, "fragment");
+  public AbstractPathAssert<?> fileExists(String... fragments) {
     requireNonNullValues(fragments, "fragments");
+    requireAtLeastOne(fragments, "fragments");
 
     isNotNull();
 
-    var actualFile = actual.getFile(fragment, fragments);
+    var actualFile = actual.getFile(fragments);
 
     if (actualFile != null) {
       // File exists with this path. Hooray, lets return assertions on it.
       return assertThat(actualFile);
     }
 
-    var expected = combineOneOrMore(fragment, fragments);
+    var expected = List.of(fragments);
     var message = StringUtils.resultNotFoundWithFuzzySuggestions(
         fuzzySafePath(expected),
         quotedUserProvidedPath(expected),

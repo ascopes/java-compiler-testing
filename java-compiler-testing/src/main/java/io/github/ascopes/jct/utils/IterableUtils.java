@@ -18,7 +18,7 @@ package io.github.ascopes.jct.utils;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,44 +58,83 @@ public final class IterableUtils extends UtilityClass {
   }
 
   /**
-   * Convert variadic arguments with an enforced first element into a list of those elements.
+   * Ensure that an array has at least one item, raising an exception if it doesn't.
    *
-   * <p>This pattern is used to ensure vararg overloads take at least one element, by enforcing
-   * this at compile-time.
+   * <p>This also fails if the array is {@code null}.
    *
-   * @param first the enforced first element.
-   * @param rest  the rest of the elements.
-   * @param <T>   the type of the elements.
-   * @return the list of the elements.
+   * @param elements  the array to check.
+   * @param arrayName the name of the array to show in the error message if the check fails.
+   * @param <T>       the element type within the array.
+   * @throws IllegalArgumentException if the argument is empty.
+   * @throws NullPointerException     if the array is {@code null}.
+   * @since 4.0.0
    */
-  @SafeVarargs
-  public static <T> List<T> combineOneOrMore(T first, T... rest) {
-    var list = new ArrayList<T>(1 + rest.length);
-    list.add(first);
-    list.addAll(Arrays.asList(rest));
-    return Collections.unmodifiableList(list);
+  @API(status = Status.INTERNAL, since = "4.0.0")
+  public static <T> @Nullable T[] requireAtLeastOne(
+      @Nullable T @Nullable [] elements,
+      String arrayName
+  ) {
+    requireNonNull(elements, arrayName);
+
+    if (elements.length == 0) {
+      throw new IllegalArgumentException(arrayName + " must not be empty");
+    }
+
+    return elements;
   }
 
   /**
-   * Ensure there are no {@code null} elements in the given collection.
+   * Ensure that a collection has at least one item, raising an exception if it doesn't.
    *
-   * <p>This also ensures the iterable itself is not null either.
+   * <p>This also fails if the collection is {@code null}.
    *
-   * @param collection     the iterable to check.
-   * @param collectionName the name to give in the error message if anything is null.
+   * @param collection     the collection to check.
+   * @param collectionName the name of the collection to show in the error message if the check
+   *                       fails.
    * @param <T>            the input collection type.
-   * @return the input iterable type.
+   * @param <U>            the element type within the collection.
+   * @throws IllegalArgumentException if the iterable is empty.
+   * @throws NullPointerException     if the iterable is {@code null}.
+   * @since 4.0.0
    */
-  public static <T extends Iterable<@Nullable U>, U> T requireNonNullValues(
+  @API(status = Status.INTERNAL, since = "4.0.0")
+  public static <T extends Collection<@Nullable U>, U> T requireAtLeastOne(
       @Nullable T collection,
       String collectionName
   ) {
     requireNonNull(collection, collectionName);
 
+    if (collection.isEmpty()) {
+      throw new IllegalArgumentException(collectionName + " must not be empty");
+    }
+
+    return collection;
+  }
+
+  /**
+   * Ensure there are no {@code null} elements in the given iterable.
+   *
+   * <p>This also ensures the iterable itself is not {@code null} either.
+   *
+   * @param iterable       the iterable to check.
+   * @param collectionName the name of the collection to show in the error message if the check
+   *                       fails.
+   * @param <T>            the input collection type.
+   * @param <U>            the element type within the collection.
+   * @return the input iterable type.
+   * @throws NullPointerException if any of the values are null or if the collection itself is
+   *                              null.
+   */
+  public static <T extends Iterable<@Nullable U>, U> T requireNonNullValues(
+      @Nullable T iterable,
+      String collectionName
+  ) {
+    requireNonNull(iterable, collectionName);
+
     var badElements = Stream.<String>builder();
 
     var index = 0;
-    for (@Nullable Object element : collection) {
+    for (@Nullable Object element : iterable) {
       if (element == null) {
         badElements.add(collectionName + "[" + index + "]");
       }
@@ -110,7 +149,7 @@ public final class IterableUtils extends UtilityClass {
       throw new NullPointerException(error);
     }
 
-    return collection;
+    return iterable;
   }
 
   /**
@@ -125,7 +164,7 @@ public final class IterableUtils extends UtilityClass {
    */
   @SuppressWarnings("RedundantSuppression")
   public static <T> T[] requireNonNullValues(
-      @Nullable T @Nullable[] array,
+      @Nullable T @Nullable [] array,
       String arrayName
   ) {
     // Duplicate this logic so that we do not have to wrap the array in Arrays.list. This prevents

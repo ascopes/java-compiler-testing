@@ -390,7 +390,6 @@ class FileUtilsTest implements UtilityClassTestTemplate {
   )
   void relativeResourceNameToPathShouldReturnTheExpectedOutput(
       String directory,
-      String fragment,
       String[] fragments,
       String expected
   ) {
@@ -400,7 +399,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       var expectedPath = fs.getFileSystem().getPath(expected);
 
       // When
-      var actualPath = relativeResourceNameToPath(directoryPath, fragment, fragments);
+      var actualPath = relativeResourceNameToPath(directoryPath, fragments);
 
       // Then
       assertSoftly(softly -> {
@@ -531,63 +530,52 @@ class FileUtilsTest implements UtilityClassTestTemplate {
     return Stream.of(
         arguments(
             "/foo/bar",
-            "com",
-            new String[]{"example", "something-cool"},
+            new String[]{"com", "example", "something-cool"},
             "/foo/bar/com/example/something-cool"
         ),
         arguments(
             "/foo/bar",
-            "com/example/something-cool",
-            new String[0],
+            new String[]{"com/example/something-cool"},
             "/foo/bar/com/example/something-cool"
         ),
         arguments(
             "foo/bar",
-            "com",
-            new String[]{"example", "something-cool.txt"},
+            new String[]{"com", "example", "something-cool.txt"},
             "foo/bar/com/example/something-cool.txt"
         ),
         arguments(
             "foo/bar",
-            "com/example/something-cool.txt",
-            new String[0],
+            new String[]{"com/example/something-cool.txt"},
             "foo/bar/com/example/something-cool.txt"
         ),
         arguments(
             "./foo/bar",
-            "com",
-            new String[]{"example", "something-cool.txt"},
+            new String[]{"com", "example", "something-cool.txt"},
             "foo/bar/com/example/something-cool.txt"
         ),
-
         arguments(
             "/foo/bar",
-            "com/example/something-cool.txt",
-            new String[0],
+            new String[]{"com/example/something-cool.txt"},
             "/foo/bar/com/example/something-cool.txt"
         ),
         arguments(
             "/",
-            "com",
-            new String[]{"example", "something-cool.txt"},
+            new String[]{"com", "example", "something-cool.txt"},
             "/com/example/something-cool.txt"
         ),
         arguments(
             "/",
-            "com/example/something-cool.txt",
-            new String[0],
+            new String[]{"com/example/something-cool.txt"},
             "/com/example/something-cool.txt"
         ),
         arguments(
             "",
-            "com",
-            new String[]{"example", "something-cool.txt"},
+            new String[]{"com", "example", "something-cool.txt"},
             "com/example/something-cool.txt"
         ),
         arguments(
             "",
-            "com/example/something-cool.txt",
-            new String[0],
+            new String[]{"com/example/something-cool.txt"},
             "com/example/something-cool.txt"
         )
     );

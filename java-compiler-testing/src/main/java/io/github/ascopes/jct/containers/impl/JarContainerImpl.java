@@ -115,9 +115,9 @@ public final class JarContainerImpl implements Container {
 
   @Nullable
   @Override
-  public Path getFile(String fragment, String... fragments) {
+  public Path getFile(String... fragments) {
     var root = holder.access().getPath();
-    var fullPath = FileUtils.relativeResourceNameToPath(root, fragment, fragments);
+    var fullPath = FileUtils.relativeResourceNameToPath(root, fragments);
     if (Files.isRegularFile(fullPath)) {
       return fullPath;
     }

@@ -322,23 +322,12 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#filteringByKinds(Kind, Kind...) tests")
+  @DisplayName("TraceDiagnosticListAssert.filteringByKinds(Kind, Kind...) tests")
   @Nested
   class FilteringByKindsVarargsTest {
 
-    @DisplayName(".filteringByKinds(Kind, Kind...) fails if the first kind is null")
-    @Test
-    void failsIfFirstKindIsNull() {
-      // Given
-      var assertions = new TraceDiagnosticListAssert(mock());
-
-      // Then
-      assertThatExceptionOfType(NullPointerException.class)
-          .isThrownBy(() -> assertions.filteringByKinds(null, new Kind[0]))
-          .withMessage("kind");
-    }
-
-    @DisplayName(".filteringByKinds(Kind, Kind...) fails if the vararg array is null")
+    @DisplayName(".filteringByKinds(Kind...) fails if the vararg array is null")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void failsIfVarargArrayIsNull() {
       // Given
@@ -346,11 +335,12 @@ class TraceDiagnosticListAssertTest {
 
       // Then
       assertThatExceptionOfType(NullPointerException.class)
-          .isThrownBy(() -> assertions.filteringByKinds(Kind.NOTE, (Kind[]) null))
-          .withMessage("moreKinds");
+          .isThrownBy(() -> assertions.filteringByKinds((Kind[]) null))
+          .withMessage("kinds");
     }
 
-    @DisplayName(".filteringByKinds(Kind, Kind...) fails if any varargs are null")
+    @DisplayName(".filteringByKinds(Kind...) fails if any varargs are null")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void failsIfAnyVarargsAreNull() {
       // Given
@@ -359,10 +349,22 @@ class TraceDiagnosticListAssertTest {
       // Then
       assertThatExceptionOfType(NullPointerException.class)
           .isThrownBy(() -> assertions.filteringByKinds(Kind.NOTE, Kind.WARNING, null, Kind.ERROR))
-          .withMessage("moreKinds[1]");
+          .withMessage("kinds[2]");
     }
 
-    @DisplayName(".filteringByKinds(Kind, Kind...) fails if the diagnostic list is null")
+    @DisplayName(".filteringByKinds(Kind...) fails if the array is empty")
+    @Test
+    void failsIfNoKindsProvided() {
+      // Given
+      var assertions = new TraceDiagnosticListAssert(mock());
+
+      // Then
+      assertThatExceptionOfType(IllegalArgumentException.class)
+          .isThrownBy(assertions::filteringByKinds)
+          .withMessage("kinds must not be empty");
+    }
+
+    @DisplayName(".filteringByKinds(Kind...) fails if the diagnostic list is null")
     @Test
     void failsIfDiagnosticListIsNull() {
       // Given
@@ -373,7 +375,7 @@ class TraceDiagnosticListAssertTest {
           .isThrownBy(() -> assertions.filteringByKinds(Kind.NOTE, Kind.ERROR));
     }
 
-    @DisplayName(".filteringByKinds(Kind, Kind...) filters diagnostics by kind")
+    @DisplayName(".filteringByKinds(Kind...) filters diagnostics by kind")
     @Test
     void filtersDiagnosticsByKind() {
       // Given
@@ -402,12 +404,12 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#filteringByKinds(Iterable<Kind>) tests")
+  @DisplayName("TraceDiagnosticListAssert.filteringByKinds(Iterable<Kind>) tests")
   @Nested
   class FilteringByKindsIterableTest {
 
     @DisplayName(".filteringByKinds(Iterable<Kind>) fails if the iterable is null")
-    @SuppressWarnings("RedundantCast")  // Prevent ambiguity
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void failsIfKindIterableIsNull() {
       // Given
@@ -471,23 +473,12 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#excludingKinds(Kind, Kind...) tests")
+  @DisplayName("TraceDiagnosticListAssert.excludingKinds(Kind, Kind...) tests")
   @Nested
   class ExcludingKindsVarargsTest {
 
-    @DisplayName(".excludingKinds(Kind, Kind...) fails if the first kind is null")
-    @Test
-    void failsIfFirstKindIsNull() {
-      // Given
-      var assertions = new TraceDiagnosticListAssert(mock());
-
-      // Then
-      assertThatExceptionOfType(NullPointerException.class)
-          .isThrownBy(() -> assertions.excludingKinds(null, new Kind[0]))
-          .withMessage("kind");
-    }
-
-    @DisplayName(".excludingKinds(Kind, Kind...) fails if the vararg array is null")
+    @DisplayName(".excludingKinds(Kind...) fails if the vararg array is null")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void failsIfVarargArrayIsNull() {
       // Given
@@ -495,11 +486,12 @@ class TraceDiagnosticListAssertTest {
 
       // Then
       assertThatExceptionOfType(NullPointerException.class)
-          .isThrownBy(() -> assertions.excludingKinds(Kind.NOTE, (Kind[]) null))
-          .withMessage("moreKinds");
+          .isThrownBy(() -> assertions.excludingKinds((Kind[]) null))
+          .withMessage("kinds");
     }
 
-    @DisplayName(".excludingKinds(Kind, Kind...) fails if any varargs are null")
+    @DisplayName(".excludingKinds(Kind...) fails if any varargs are null")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void failsIfAnyVarargsAreNull() {
       // Given
@@ -508,10 +500,22 @@ class TraceDiagnosticListAssertTest {
       // Then
       assertThatExceptionOfType(NullPointerException.class)
           .isThrownBy(() -> assertions.excludingKinds(Kind.NOTE, Kind.WARNING, null, Kind.ERROR))
-          .withMessage("moreKinds[1]");
+          .withMessage("kinds[2]");
     }
 
-    @DisplayName(".excludingKinds(Kind, Kind...) fails if the diagnostic list is null")
+    @DisplayName(".excludingKinds(Kind...) fails if the array is empty")
+    @Test
+    void failsIfNoKindsProvided() {
+      // Given
+      var assertions = new TraceDiagnosticListAssert(mock());
+
+      // Then
+      assertThatExceptionOfType(IllegalArgumentException.class)
+          .isThrownBy(assertions::excludingKinds)
+          .withMessage("kinds must not be empty");
+    }
+
+    @DisplayName(".excludingKinds(Kind...) fails if the diagnostic list is null")
     @Test
     void failsIfDiagnosticListIsNull() {
       // Given
@@ -522,7 +526,7 @@ class TraceDiagnosticListAssertTest {
           .isThrownBy(() -> assertions.excludingKinds(Kind.NOTE, Kind.ERROR));
     }
 
-    @DisplayName(".excludingKinds(Kind, Kind...) filters diagnostics by kind")
+    @DisplayName(".excludingKinds(Kind...) filters diagnostics by kind")
     @Test
     void filtersDiagnosticsByKind() {
       // Given
@@ -552,12 +556,12 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#excludingKinds(Iterable<Kind>) tests")
+  @DisplayName("TraceDiagnosticListAssert.excludingKinds(Iterable<Kind>) tests")
   @Nested
   class ExcludingKindsIterableTest {
 
     @DisplayName(".excludingKinds(Iterable<Kind>) fails if the iterable is null")
-    @SuppressWarnings("RedundantCast")  // Prevent ambiguity
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void failsIfKindIterableIsNull() {
       // Given
@@ -1008,23 +1012,12 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#hasNoDiagnosticsOfKinds(Kind, Kind...) tests")
+  @DisplayName("TraceDiagnosticListAssert.hasNoDiagnosticsOfKinds(Kind, Kind...) tests")
   @Nested
   class HasNoDiagnosticsOfKindsVarargsTest {
 
-    @DisplayName(".hasNoDiagnosticsOfKinds(Kind, Kind...) fails if the first kind is null")
-    @Test
-    void failsIfFirstKindIsNull() {
-      // Given
-      var assertions = new TraceDiagnosticListAssert(mock());
-
-      // Then
-      assertThatExceptionOfType(NullPointerException.class)
-          .isThrownBy(() -> assertions.hasNoDiagnosticsOfKinds(null, new Kind[0]))
-          .withMessage("kind");
-    }
-
-    @DisplayName(".hasNoDiagnosticsOfKinds(Kind, Kind...) fails if the vararg array is null")
+    @DisplayName(".hasNoDiagnosticsOfKinds(Kind...) fails if the vararg array is null")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void failsIfVarargArrayIsNull() {
       // Given
@@ -1032,11 +1025,12 @@ class TraceDiagnosticListAssertTest {
 
       // Then
       assertThatExceptionOfType(NullPointerException.class)
-          .isThrownBy(() -> assertions.hasNoDiagnosticsOfKinds(Kind.NOTE, (Kind[]) null))
-          .withMessage("moreKinds");
+          .isThrownBy(() -> assertions.hasNoDiagnosticsOfKinds((Kind[]) null))
+          .withMessage("kinds");
     }
 
-    @DisplayName(".hasNoDiagnosticsOfKinds(Kind, Kind...) fails if any varargs are null")
+    @DisplayName(".hasNoDiagnosticsOfKinds(Kind...) fails if any varargs are null")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void failsIfAnyVarargsAreNull() {
       // Given
@@ -1046,10 +1040,22 @@ class TraceDiagnosticListAssertTest {
       assertThatExceptionOfType(NullPointerException.class)
           .isThrownBy(() -> assertions
               .hasNoDiagnosticsOfKinds(Kind.NOTE, Kind.WARNING, null, Kind.ERROR))
-          .withMessage("moreKinds[1]");
+          .withMessage("kinds[2]");
     }
 
-    @DisplayName(".hasNoDiagnosticsOfKinds(Kind, Kind...) fails if the diagnostic list is null")
+    @DisplayName(".hasNoDiagnosticsOfKinds(Kind...) fails if the array is empty")
+    @Test
+    void failsIfNoKindsProvided() {
+      // Given
+      var assertions = new TraceDiagnosticListAssert(mock());
+
+      // Then
+      assertThatExceptionOfType(IllegalArgumentException.class)
+          .isThrownBy(assertions::hasNoDiagnosticsOfKinds)
+          .withMessage("kinds must not be empty");
+    }
+
+    @DisplayName(".hasNoDiagnosticsOfKinds(Kind...) fails if the diagnostic list is null")
     @Test
     void failsIfDiagnosticListIsNull() {
       // Given
@@ -1060,7 +1066,8 @@ class TraceDiagnosticListAssertTest {
           .isThrownBy(() -> assertions.hasNoDiagnosticsOfKinds(Kind.NOTE, Kind.ERROR));
     }
 
-    @DisplayName(".hasNoDiagnosticsOfKinds(Kind, Kind...) fails if any provided kinds are present")
+    @DisplayName(".hasNoDiagnosticsOfKinds(Kind...) fails if any provided kinds are present")
+    @SuppressWarnings("ConstantValue")
     @Test
     void failsIfAnyProvidedKindsArePresent() {
       // Given
@@ -1093,9 +1100,7 @@ class TraceDiagnosticListAssertTest {
           );
     }
 
-    @DisplayName(
-        ".hasNoDiagnosticsOfKinds(Kind, Kind...) succeeds if no provided kinds are present"
-    )
+    @DisplayName(".hasNoDiagnosticsOfKinds(Kind...) succeeds if no provided kinds are present")
     @Test
     void succeedsIfNoProvidedKindsArePresent() {
       // Given
@@ -1117,12 +1122,12 @@ class TraceDiagnosticListAssertTest {
     }
   }
 
-  @DisplayName("TraceDiagnosticListAssert#hasNoDiagnosticsOfKinds(Iterable<Kind>) tests")
+  @DisplayName("TraceDiagnosticListAssert.hasNoDiagnosticsOfKinds(Iterable<Kind>) tests")
   @Nested
   class HasNoDiagnosticsOfKindsIterableTest {
 
     @DisplayName(".hasNoDiagnosticsOfKinds(Iterable<Kind>) fails if the iterable is null")
-    @SuppressWarnings("RedundantCast")  // Prevent reading ambiguity
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void failsIfIterableIsNull() {
       // Given
@@ -1159,6 +1164,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".hasNoDiagnosticsOfKinds(Iterable<Kind>) fails if any provided kinds are present")
+    @SuppressWarnings("ConstantValue")
     @Test
     void failsIfAnyProvidedKindsArePresent() {
       // Given
