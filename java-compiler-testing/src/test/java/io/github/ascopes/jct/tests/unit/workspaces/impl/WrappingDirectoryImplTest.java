@@ -27,6 +27,8 @@ import static org.mockito.Mockito.when;
 import io.github.ascopes.jct.utils.FileUtils;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import io.github.ascopes.jct.workspaces.impl.WrappingDirectoryImpl;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,6 +52,7 @@ class WrappingDirectoryImplTest {
   class ConstructorTest {
 
     @DisplayName("Initialising without a parent configures the object correctly")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void initialisingWithoutParentConfiguresTheObjectCorrectly() {
       // Given
@@ -76,13 +79,14 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("Initialising with a parent configures the object correctly")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void initialisingWithParentConfiguresTheObjectCorrectly() {
       // Given
       var parent = mock(PathRoot.class);
       var rootPath = somePath();
       when(parent.getPath()).thenReturn(rootPath);
-      var parts = new String[]{"foo", "bar", "baz"};
+      var parts = List.of("foo", "bar", "baz");
       var expectedPath = FileUtils.resolvePathRecursively(rootPath, parts);
 
       // When
@@ -106,6 +110,7 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("Null paths are disallowed for parentless instances")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void nullPathsAreDisallowedForParentlessInstances() {
       // Then
@@ -115,28 +120,34 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("Null parents are disallowed for instances with parents")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void nullParentsAreDisallowedForInstancesWithParents() {
       // Then
-      assertThatThrownBy(() -> new WrappingDirectoryImpl(null, "xxx"))
+      assertThatThrownBy(() -> new WrappingDirectoryImpl(null, List.of("xxx")))
           .isInstanceOf(NullPointerException.class)
           .hasMessage("parent");
     }
 
-    @DisplayName("Null parts arrays are disallowed for instances with parents")
+    @DisplayName("Null parts lists are disallowed for instances with parents")
+    @SuppressWarnings("DataFlowIssue")
     @Test
-    void nullPartsArraysAreDisallowedForInstancesWithParents() {
+    void nullPartsListsAreDisallowedForInstancesWithParents() {
       // Then
-      assertThatThrownBy(() -> new WrappingDirectoryImpl(mock(PathRoot.class), (String[]) null))
+      assertThatThrownBy(() -> new WrappingDirectoryImpl(mock(PathRoot.class), null))
           .isInstanceOf(NullPointerException.class)
           .hasMessage("parts");
     }
 
     @DisplayName("Null parts are disallowed for instances with parents")
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void nullPartsAreDisallowedForInstancesWithParents() {
       // Then
-      assertThatThrownBy(() -> new WrappingDirectoryImpl(mock(PathRoot.class), (String) null))
+      var list = new ArrayList<String>();
+      list.add(null);
+
+      assertThatThrownBy(() -> new WrappingDirectoryImpl(mock(PathRoot.class), list))
           .isInstanceOf(NullPointerException.class)
           .hasMessage("parts[0]");
     }
@@ -182,6 +193,7 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("objects equal themselves")
+    @SuppressWarnings("EqualsWithItself")  // Intentional, duh!
     @Test
     void equalThemselves() {
       // Then
@@ -220,7 +232,7 @@ class WrappingDirectoryImplTest {
     var parent = mock(PathRoot.class, "some path root parent");
     when(parent.getPath()).thenReturn(somePath());
 
-    var parentCase = new WrappingDirectoryImpl(parent, "foo", "bar", "baz");
+    var parentCase = new WrappingDirectoryImpl(parent, List.of("foo", "bar", "baz"));
     var parentExpected = String.format(
         "WrappingDirectoryImpl{parent=some path root parent, uri=\"%s\"}",
         parentCase.getUri()

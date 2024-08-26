@@ -36,6 +36,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.Locale;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -64,7 +65,7 @@ public final class FileBuilderImpl implements FileBuilder {
    * @param parent the parent managed directory to chain calls back onto.
    * @param fragments the parts of the file path.
    */
-  public FileBuilderImpl(ManagedDirectory parent, String... fragments) {
+  public FileBuilderImpl(ManagedDirectory parent, List<String> fragments) {
     requireNonNullValues(fragments, "fragments");
     requireAtLeastOne(fragments, "fragments");
 
@@ -136,12 +137,12 @@ public final class FileBuilderImpl implements FileBuilder {
   }
 
   @Override
-  public ManagedDirectory withContents(Charset charset, String... lines) {
+  public ManagedDirectory withContents(Charset charset, List<String> lines) {
     return withContents(String.join("\n", lines).getBytes(charset));
   }
 
   @Override
-  public ManagedDirectory withContents(String... lines) {
+  public ManagedDirectory withContents(List<String> lines) {
     return withContents(DEFAULT_CHARSET, lines);
   }
 

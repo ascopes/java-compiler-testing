@@ -95,7 +95,7 @@ public final class FileUtils extends UtilityClass {
    * @param parts the parts to resolve.
    * @return the resolved path.
    */
-  public static Path resolvePathRecursively(Path root, String... parts) {
+  public static Path resolvePathRecursively(Path root, List<String> parts) {
     return resolve(root, parts);
   }
 

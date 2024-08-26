@@ -18,6 +18,7 @@ package io.github.ascopes.jct.workspaces;
 import java.io.File;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
+import java.util.List;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -30,6 +31,38 @@ import org.apiguardian.api.API.Status;
 @SuppressWarnings("unused")
 @API(since = "0.0.1", status = Status.STABLE)
 public interface DirectoryBuilder {
+
+  /**
+   * Copy the contents of the directory at the given path recursively into this directory.
+   *
+   * <p>Symbolic links will not be followed.
+   *
+   * <p>This uses the default file system. If you want to use a different {@link FileSystem}
+   * as your source, then use {@link #copyContentsFrom(Path)} instead.
+   *
+   * <p>Examples:
+   *
+   * <pre><code>
+   *   // Letting JCT infer the correct path separators to use (recommended).
+   *   directoryBuilder.copyContentsFrom(List.of("foo", "bar", "baz"));
+   *
+   *   // Using POSIX platform-specific separators (may cause issues if your tests run on Windows)
+   *   directoryBuilder.copyContentsFrom(List.of("foo/bar/baz"));
+   *
+   *   // Using Windows platform-specific separators (may cause issues if your tests run on POSIX)
+   *   directoryBuilder.copyContentsFrom(List.of("foo\\bar\\baz"));
+   * </code></pre>
+   *
+   * @param fragments parts of the path.
+   * @return the root managed directory for further configuration.
+   * @throws IllegalArgumentException if no path fragments are provided.
+   * @throws NullPointerException     if any null path fragments are provided.
+   * @see #copyContentsFrom(Path)
+   * @see #copyContentsFrom(String...)
+   * @since 4.0.0
+   */
+  @API(since = "4.0.0", status = Status.STABLE)
+  ManagedDirectory copyContentsFrom(List<String> fragments);
 
   /**
    * Copy the contents of the directory at the given path recursively into this directory.
@@ -57,8 +90,11 @@ public interface DirectoryBuilder {
    * @throws IllegalArgumentException if no path fragments are provided.
    * @throws NullPointerException     if any null path fragments are provided.
    * @see #copyContentsFrom(Path)
+   * @see #copyContentsFrom(List)
    */
-  ManagedDirectory copyContentsFrom(String... fragments);
+  default ManagedDirectory copyContentsFrom(String... fragments) {
+    return copyContentsFrom(List.of(fragments));
+  }
 
   /**
    * Copy the contents of the directory at the given path recursively into this directory.

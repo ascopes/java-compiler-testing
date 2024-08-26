@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 import java.util.StringJoiner;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
@@ -55,7 +56,7 @@ public final class DirectoryBuilderImpl implements DirectoryBuilder {
    * @param parent    the parent managed directory to chain calls back onto.
    * @param fragments parts of the directory path.
    */
-  public DirectoryBuilderImpl(ManagedDirectory parent, String... fragments) {
+  public DirectoryBuilderImpl(ManagedDirectory parent, List<String> fragments) {
     requireNonNullValues(fragments, "fragments");
     requireAtLeastOne(fragments, "fragments");
 
@@ -64,14 +65,15 @@ public final class DirectoryBuilderImpl implements DirectoryBuilder {
   }
 
   @Override
-  public ManagedDirectory copyContentsFrom(String... fragments) {
+  public ManagedDirectory copyContentsFrom(List<String> fragments) {
     requireNonNullValues(fragments, "fragments");
     requireAtLeastOne(fragments, "fragments");
 
     // Path.of is fine here as it is for the default file system.
-    var path = Path.of(fragments[0]);
-    for (var i = 1; i < fragments.length; ++i) {
-      path = path.resolve(fragments[i]);
+    var iter = fragments.iterator();
+    var path = Path.of(iter.next());
+    while (iter.hasNext()) {
+      path = path.resolve(iter.next());
     }
 
     return copyContentsFrom(path);

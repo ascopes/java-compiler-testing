@@ -17,6 +17,7 @@ package io.github.ascopes.jct.workspaces;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.List;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
@@ -101,7 +102,31 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
    * @throws IllegalArgumentException if no path fragments are provided.
    * @throws NullPointerException     if any of the path fragments are {@code null}.
    */
-  DirectoryBuilder createDirectory(String... fragments);
+  default DirectoryBuilder createDirectory(String... fragments) {
+    return createDirectory(List.of(fragments));
+  }
+
+  /**
+   * Create a directory builder for the given path in this RAM file system.
+   *
+   * <p>Examples:
+   *
+   * <pre><code>
+   *   // Using platform-specific separators.
+   *   dir.createDirectory(List.of("foo/bar/baz"))...;
+   *
+   *   // Letting JCT infer the correct path separators to use (recommended).
+   *   dir.createDirectory(List.of("foo", "bar", "baz"))...;
+   * </code></pre>
+   *
+   * @param fragments the parts of the path.
+   * @return the directory builder.
+   * @throws IllegalArgumentException if no path fragments are provided.
+   * @throws NullPointerException     if any of the path fragments are {@code null}.
+   * @since 4.0.0
+   */
+  @API(since = "4.0.0", status = Status.STABLE)
+  DirectoryBuilder createDirectory(List<String> fragments);
 
   /**
    * Create a file builder for the given path in this RAM file system.
@@ -119,7 +144,29 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
    * @throws IllegalArgumentException if no path fragments are provided.
    * @throws NullPointerException     if any of the path fragments are {@code null}.
    */
-  FileBuilder createFile(String... fragments);
+  default FileBuilder createFile(String... fragments) {
+    return createFile(List.of(fragments));
+  }
+
+  /**
+   * Create a file builder for the given path in this RAM file system.
+   *
+   * <pre><code>
+   *   // Using platform-specific separators.
+   *   dir.createFile(List.of("foo/bar/baz.txt"))...;
+   *
+   *   // Letting JCT infer the correct path separators to use (recommended).
+   *   dir.createFile(List.of("foo", "bar", "baz.txt"))...;
+   * </code></pre>
+   *
+   * @param fragments the parts of the path.
+   * @return the file builder.
+   * @throws IllegalArgumentException if no path fragments are provided.
+   * @throws NullPointerException     if any of the path fragments are {@code null}.
+   * @since 4.0.0
+   */
+  @API(since = "4.0.0", status = Status.STABLE)
+  FileBuilder createFile(List<String> fragments);
 
   /**
    * Get the identifying name of the temporary file system.

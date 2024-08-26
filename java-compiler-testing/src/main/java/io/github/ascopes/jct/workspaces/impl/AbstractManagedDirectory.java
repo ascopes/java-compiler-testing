@@ -31,6 +31,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.List;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
@@ -112,21 +113,21 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
   }
 
   @Override
-  public FileBuilder createFile(String... fragments) {
+  public FileBuilder createFile(List<String> fragments) {
     requireNonNullValues(fragments, "fragments");
     requireAtLeastOne(fragments, "fragments");
     return new FileBuilderImpl(this, fragments);
   }
 
   @Override
-  public DirectoryBuilder createDirectory(String... fragments) {
+  public DirectoryBuilder createDirectory(List<String> fragments) {
     requireNonNullValues(fragments, "fragments");
     requireAtLeastOne(fragments, "fragments");
     return new DirectoryBuilderImpl(this, fragments);
   }
 
   @Override
-  public ManagedDirectory copyContentsFrom(String... fragments) {
+  public ManagedDirectory copyContentsFrom(List<String> fragments) {
     requireNonNullValues(fragments, "fragments");
     requireAtLeastOne(fragments, "fragments");
     return rootDirectory().copyContentsFrom(fragments);
@@ -167,6 +168,6 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
   }
 
   private DirectoryBuilder rootDirectory() {
-    return new DirectoryBuilderImpl(this, "");
+    return new DirectoryBuilderImpl(this, List.of(""));
   }
 }

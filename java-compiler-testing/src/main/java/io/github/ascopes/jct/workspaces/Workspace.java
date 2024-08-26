@@ -880,7 +880,7 @@ public interface Workspace extends AutoCloseable {
    * @since 3.2.0
    */
   @API(since = "3.2.0", status = Status.STABLE)
-  public interface ThrowingWorkspaceConsumer<T extends Throwable> {
+  interface ThrowingWorkspaceConsumer<T extends Throwable> {
 
     /**
      * Consume a workspace.

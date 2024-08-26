@@ -47,6 +47,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.tools.JavaFileObject.Kind;
@@ -116,7 +117,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
       "foo/bar/baz, bork/../../qux/./.././quxx, foo/bar/quxx",
   })
   @ParameterizedTest(
-      name = "resolvePathRecursively(\"{0}\", \"{1}\".split(\"/\")) should return \"{2}\""
+      name = "resolvePathRecursively(\"{0}\", List.of(\"{1}\".split(\"/\"))) should return \"{2}\""
   )
   void resolvePathRecursivelyResolvesThePathRecursively(
       String rootString,
@@ -127,7 +128,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
     try (var fs = someTemporaryFileSystem()) {
       var root = fs.getFileSystem().getPath(rootString);
       var expect = fs.getFileSystem().getPath(expectString);
-      var parts = partsString.split(fs.getFileSystem().getSeparator());
+      var parts = List.of(partsString.split(fs.getFileSystem().getSeparator()));
 
       // Then
       assertThat(resolvePathRecursively(root, parts))
