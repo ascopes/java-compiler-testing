@@ -290,7 +290,7 @@
             </includes>
 
             <runOrder>random</runOrder>
-            <useModulePath>true</useModulePath>
+            <useModulePath>false</useModulePath>
 
             <!--
               This block is needed to show @DisplayName and @ParameterizedTest
@@ -467,7 +467,7 @@
             </excludes>
 
             <runOrder>random</runOrder>
-            <useModulePath>true</useModulePath>
+            <useModulePath>false</useModulePath>
 
             <!--
               This block is needed to show @DisplayName and @ParameterizedTest
