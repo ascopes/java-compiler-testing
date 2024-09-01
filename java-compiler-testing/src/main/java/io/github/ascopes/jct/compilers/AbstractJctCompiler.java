@@ -45,7 +45,7 @@ import org.jspecify.annotations.Nullable;
  * <p>Implementations should extend this class and override anything they require.
  * In most cases, you should not need to override anything other than the constructor.
  *
- * <p>This class is <strong>not thread-safe</strong> thread-safe!
+ * <p>This class is <strong>not thread-safe</strong>.
  *
  * <p>If you wish to create a common set of configuration settings for instances of
  * this class, you should consider writing a custom {@link JctCompilerConfigurer} object to apply
