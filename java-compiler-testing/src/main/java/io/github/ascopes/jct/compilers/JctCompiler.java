@@ -634,7 +634,7 @@ public interface JctCompiler {
    *
    * <p>For example, running this on JRE 19 would set the release to "19".
    *
-   * <p>This calls {@link #release(int) internally}.
+   * <p>This calls {@link #release(int)} internally.
    *
    * @return this compiler object for further call chaining.
    * @throws UnsupportedOperationException if the current JVM version does not correspond to a
@@ -808,7 +808,7 @@ public interface JctCompiler {
    *
    * <p>This enables correct classpath and module path detection when the test pack is a module but
    * the code being compiled in the test is not, and vice versa. We need this because many build
-   * systems decide whether to populate the {@code --module-path} flat or the {@code --classpath}
+   * systems decide whether to populate the {@code --module-path} or the {@code --classpath}
    * with JPMS-enabled dependencies based on whether the project under compilation is a JPMS module
    * itself.
    *
