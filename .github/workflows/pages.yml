@@ -35,7 +35,7 @@ jobs:
       - name: Upload JavaDocs as a build artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: java-compiler-testing/target/apidocs
+          path: java-compiler-testing/target/reports/apidocs
 
       - name: Deploy JavaDocs build artifact to GitHub Pages
         id: snapshot-javadocs
