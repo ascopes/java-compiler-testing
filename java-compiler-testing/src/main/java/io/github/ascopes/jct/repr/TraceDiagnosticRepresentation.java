@@ -47,9 +47,6 @@ public final class TraceDiagnosticRepresentation implements Representation {
   private static final int MAX_SNIPPET_LINES = 5;
   private static final String PADDING = " ".repeat(4);
 
-  static {
-  }
-
   private TraceDiagnosticRepresentation() {
     // Nothing to see here, move along now.
   }
