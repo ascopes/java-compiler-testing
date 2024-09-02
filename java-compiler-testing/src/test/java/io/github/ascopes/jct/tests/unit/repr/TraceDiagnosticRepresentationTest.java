@@ -121,12 +121,8 @@ class TraceDiagnosticRepresentationTest {
         .containsExactly(
             "[" + kind.toString() + "] " + file.getName() + " (at line 6, col 16)",
             "",
-            "     4 | ",
-            "     5 | public class HelloWorld {",
             "     6 |   public static int main(String[] args) throws Throwable {",
             "       +   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^",
-            "     7 |     var scanner = new Scanner(System.in);",
-            "     8 |     System.out.print(\"What is your name? \");",
             "",
             "    Entrypoint must be a void method."
         );
@@ -170,12 +166,8 @@ class TraceDiagnosticRepresentationTest {
         .containsExactly(
             "[" + kind.toString() + "] " + file.getName() + " (at line 6, col 16)",
             "",
-            "     4 | ",
-            "     5 | public class HelloWorld {",
             "     6 |   public static int main(String[] args) throws Throwable {",
             "       +   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^",
-            "     7 |     var scanner = new Scanner(System.in);",
-            "     8 |     System.out.print(\"What is your name? \");",
             "",
             "    Entrypoint must be a void method."
         );
@@ -219,12 +211,8 @@ class TraceDiagnosticRepresentationTest {
         .containsExactly(
             "[" + kind.toString() + "] " + file.getName() + " (at line 6, col 16)",
             "",
-            "     4 | ",
-            "     5 | public class HelloWorld {",
             "     6 |   public static int main(String[] args) throws Throwable {",
             "       +   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^",
-            "     7 |     var scanner = new Scanner(System.in);",
-            "     8 |     System.out.print(\"What is your name? \");",
             "",
             "    Entrypoint must be a void method."
         );
@@ -304,14 +292,10 @@ class TraceDiagnosticRepresentationTest {
         .containsExactly(
             "[" + kind.toString() + "] " + file.getName() + " (at line 6, col 16)",
             "",
-            "     4 | ",
-            "     5 | public class HelloWorld {",
             "     6 |   public static int main(String[] args) throws Throwable {",
             "       +   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
             "     7 |     var scanner = new Scanner(System.in);",
             "       + ~~~~~~~~~~~~~~^",
-            "     8 |     System.out.print(\"What is your name? \");",
-            "     9 |     var name = scanner.nextLine();",
             "",
             "    Entrypoint must be a void method."
         );
@@ -347,8 +331,6 @@ class TraceDiagnosticRepresentationTest {
         .containsExactly(
             "[" + kind.toString() + "] " + file.getName() + " (at line 6, col 16)",
             "",
-            "     4 | ",
-            "     5 | public class HelloWorld {",
             "     6 |   public static int main(String[] args) throws Throwable {",
             "       +   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
             "     7 |     var scanner = new Scanner(System.in);",
@@ -359,10 +341,7 @@ class TraceDiagnosticRepresentationTest {
             "       + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
             "    10 |     System.out.printf(\"Hello, %s!\", name);",
             "       + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-            "    11 |   }",
-            "       + ~~~",
-            "    12 | }",
-            "       + ~",
+            "    ... output was truncated.",
             "",
             "    Entrypoint must be a void method."
         );

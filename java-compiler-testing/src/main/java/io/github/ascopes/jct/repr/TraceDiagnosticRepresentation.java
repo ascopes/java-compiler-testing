@@ -41,21 +41,14 @@ import org.slf4j.LoggerFactory;
 @API(since = "0.0.1", status = Status.STABLE)
 public final class TraceDiagnosticRepresentation implements Representation {
 
+  private static final Logger log = LoggerFactory.getLogger(TraceDiagnosticRepresentation.class);
   private static final TraceDiagnosticRepresentation INSTANCE
       = new TraceDiagnosticRepresentation();
-
-  /**
-   * Get an instance of this diagnostic representation.
-   *
-   * @return the instance.
-   */
-  public static TraceDiagnosticRepresentation getInstance() {
-    return INSTANCE;
-  }
-
-  private static final Logger log = LoggerFactory.getLogger(TraceDiagnosticRepresentation.class);
-  private static final int ADDITIONAL_CONTEXT_LINES = 2;
+  private static final int MAX_SNIPPET_LINES = 5;
   private static final String PADDING = " ".repeat(4);
+
+  static {
+  }
 
   private TraceDiagnosticRepresentation() {
     // Nothing to see here, move along now.
@@ -129,29 +122,28 @@ public final class TraceDiagnosticRepresentation implements Representation {
       return null;
     }
 
-    var startLine = Math.max(1, (int) diagnostic.getLineNumber() - ADDITIONAL_CONTEXT_LINES);
+    var startLine = Math.max(1, (int) diagnostic.getLineNumber());
     var lineStartOffset = StringUtils.indexOfLine(content, startLine);
     var endOffset = (int) diagnostic.getEndPosition();
-
-    // Advance to include the additional lines of context, and don't treat the current line as
-    // being one of those lines if we span over one and a half lines.
     var endOfSnippet = endOffset >= content.length() || content.charAt(endOffset) == '\n'
         ? endOffset
         : StringUtils.indexOfEndOfLine(content, endOffset);
 
-    for (var index = 0; index < ADDITIONAL_CONTEXT_LINES; ++index) {
-      // For each additional context line we should add, get the end of the line.
-      // We do this incrementally as we cannot compute in advance where the line
-      // is going to end.
-      endOfSnippet = StringUtils.indexOfEndOfLine(content, endOfSnippet + 1);
-    }
-
     return new Snippet(
         content.substring(lineStartOffset, endOfSnippet),
-        Math.max(1, diagnostic.getLineNumber() - ADDITIONAL_CONTEXT_LINES),
+        startLine,
         diagnostic.getStartPosition() - lineStartOffset,
         endOffset - lineStartOffset
     );
+  }
+
+  /**
+   * Get an instance of this diagnostic representation.
+   *
+   * @return the instance.
+   */
+  public static TraceDiagnosticRepresentation getInstance() {
+    return INSTANCE;
   }
 
   @Nullable
@@ -226,6 +218,12 @@ public final class TraceDiagnosticRepresentation implements Representation {
       var startOfLine = 0;
 
       for (var index = 0; index < text.length(); ++index) {
+        if (lineIndex >= MAX_SNIPPET_LINES) {
+          builder.append(PADDING)
+              .append("... output has been truncated.\n");
+          break;
+        }
+
         if (isNewLine) {
           appendLineNumberPart(builder, lineIndex);
           isNewLine = false;
@@ -280,23 +278,17 @@ public final class TraceDiagnosticRepresentation implements Representation {
       //
       // Expected output looks like this...
       //
-      //  010 | public class App {
       //  011 |   public static void main(String[[] args) {
       //      +                           ^~~~~~~~^
-      //  012 |     System.out.println("Hello, World!");
-      //  013 |   }
       //
       // ...or when across multiple lines...
       //
-      //    009 |
       //    010 |   public static void main(String[] args) {
       //        +                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
       //    011 |     System.out.println("Hello, World!");
       //        + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       //    012 |     return false;
       //        + ~~~~~~~~~~~~~~~~^
-      //    013 |   }
-      //    014 | }
 
       // If we are after the snippet or before the snippet and neither the start nor the
       // end is on the current line we are considering, then we do not do anything.
