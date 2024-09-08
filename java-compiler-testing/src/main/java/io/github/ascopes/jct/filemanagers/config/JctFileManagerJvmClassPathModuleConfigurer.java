@@ -31,8 +31,7 @@ import org.slf4j.LoggerFactory;
  * Configurer for a file manager that detects and applies classpath paths that contain JPMS modules
  * to the module path.
  *
- * <p>If classpath inheritance or module fixing is disabled in the compiler,
- * this will not run.
+ * <p>If classpath inheritance or module fixing is disabled in the compiler, this will not run.
  *
  * <p>This fixes some common configuration issues when IDEs invoke JUnit.
  *
