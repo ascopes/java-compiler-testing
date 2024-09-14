@@ -59,36 +59,6 @@ Full JUnit5 integration is provided to help streamline the development process.
 - Diagnostic reporting includes stack traces, so you can find out
   exactly what triggered a diagnostic and begin debugging any
   issues in your applications quickly.
-- Helpful error messages to assist in annotation processor development. For example:
-
-```
-[main] ERROR io.github.ascopes.jct.diagnostics.TracingDiagnosticListener - cannot find symbol
-  symbol:   class Generated
-  location: package javax.annotation
-[main] INFO io.github.ascopes.jct.compilers.CompilationFactory - Compilation with compiler Javac 9 failed after ~332.3ms
-
-java.lang.AssertionError: Expected a successful compilation, but it failed.
-
-Diagnostics:
-
- - [ERROR] compiler.err.cant.resolve.location /sources-f1728706-5de5-4b89-9a6a-b51233ce67c8/io/github/ascopes/jct/examples/immutables/dataclass/ImmutableAnimal.java (at line 25, col 18)
-
-   23 | @SuppressWarnings({"all"})
-   24 | @ParametersAreNonnullByDefault
-   25 | @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
-      +  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-   26 | @Immutable    
-   27 | @CheckReturnValue
-
-  cannot find symbol
-  symbol:   class Generated
-  location: package javax.annotation
-  
-  at io.github.ascopes.jct.acceptancetests.immutables.ImmutablesIntegrationTest.immutablesValueProducesTheExpectedClass(ImmutablesIntegrationTest.java:66)
-  at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
-  at java.base/java.lang.reflect.Method.invoke(Method.java:577)
-  ...
-```
 
 ## Installation
 
