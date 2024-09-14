@@ -20,7 +20,6 @@ package com.example.greeter;
  */
 public class Greeter {
 
-
   /**
    * Greet me.
    *
