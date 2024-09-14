@@ -23,7 +23,7 @@ jobs:
           java-version: 22
 
       - name: Submit Dependency Snapshot
-        uses: advanced-security/maven-dependency-submission-action@v4.1.1
+        uses: advanced-security/maven-dependency-submission-action@v4
         with:
           # Do not consider the acceptance test projects
           maven-args: -am -pl java-compiler-testing
