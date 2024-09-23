@@ -36,7 +36,7 @@ jobs:
         with:
           distribution: zulu
           # Must use >= JDK 17 for Javadocs to generate correctly
-          java-version: 22
+          java-version: 23
           server-id: ossrh
           server-username: OSSRH_USERNAME
           server-password: OSSRH_TOKEN
