@@ -44,8 +44,6 @@ import java.nio.file.Path;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +58,6 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 1.0.0 (renamed from PathFileObject introduced in 0.0.1)
  */
-@API(since = "1.0.0", status = Status.INTERNAL)
 public final class PathFileObjectImpl implements PathFileObject {
 
   private static final Logger log = LoggerFactory.getLogger(PathFileObjectImpl.class);

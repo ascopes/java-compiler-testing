@@ -28,8 +28,6 @@ import javax.lang.model.element.NestingKind;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -43,7 +41,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 1.0.0
  */
-@API(since = "1.0.0", status = Status.STABLE)
 public interface PathFileObject extends JavaFileObject {
 
   /**

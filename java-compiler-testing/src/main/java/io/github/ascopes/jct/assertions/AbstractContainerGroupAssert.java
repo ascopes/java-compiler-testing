@@ -21,8 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.ascopes.jct.containers.ContainerGroup;
 import java.util.ArrayList;
 import java.util.List;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractListAssert;
 import org.assertj.core.api.ObjectAssert;
@@ -36,7 +34,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGroupAssert<I, C>, C extends ContainerGroup>
     extends AbstractAssert<I, C> {
 

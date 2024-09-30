@@ -15,8 +15,6 @@
  */
 package io.github.ascopes.jct.ex;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -25,7 +23,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 1.1.0
  */
-@API(since = "1.1.0", status = Status.STABLE)
 public final class JctIllegalInputException extends JctException {
 
   /**

@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -33,7 +31,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class IterableUtils extends UtilityClass {
 
   private IterableUtils() {
@@ -69,7 +66,6 @@ public final class IterableUtils extends UtilityClass {
    * @throws NullPointerException     if the array is {@code null}.
    * @since 4.0.0
    */
-  @API(status = Status.INTERNAL, since = "4.0.0")
   public static <T> @Nullable T[] requireAtLeastOne(
       @Nullable T @Nullable [] elements,
       String arrayName
@@ -97,7 +93,6 @@ public final class IterableUtils extends UtilityClass {
    * @throws NullPointerException     if the iterable is {@code null}.
    * @since 4.0.0
    */
-  @API(status = Status.INTERNAL, since = "4.0.0")
   public static <T extends Collection<@Nullable U>, U> T requireAtLeastOne(
       @Nullable T collection,
       String collectionName

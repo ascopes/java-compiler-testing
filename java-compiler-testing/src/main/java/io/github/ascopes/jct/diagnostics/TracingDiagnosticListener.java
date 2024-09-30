@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticListener;
 import javax.tools.JavaFileObject;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -42,7 +40,6 @@ import org.slf4j.event.Level;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public class TracingDiagnosticListener<S extends JavaFileObject> implements DiagnosticListener<S> {
 
   private final ConcurrentLinkedQueue<TraceDiagnostic<S>> diagnostics;
@@ -73,12 +70,14 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
   /**
    * Only visible for testing.
    *
+   * <p>Users should <strong>NOT</strong> use this constructor. It may be changed
+   * or removed without notice.
+   *
    * @param logger       the logger to use.
    * @param threadGetter the supplier of the current thread.
    * @param logging      whether to enable logging.
    * @param stackTraces  whether to enable stack traces in the logging.
    */
-  @API(since = "0.0.1", status = Status.INTERNAL)
   @VisibleForTestingOnly
   protected TracingDiagnosticListener(
       Logger logger,

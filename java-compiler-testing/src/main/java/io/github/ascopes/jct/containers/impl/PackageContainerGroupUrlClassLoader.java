@@ -20,8 +20,6 @@ import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import java.net.URL;
 import java.net.URLClassLoader;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * An extension of the Java {@link URLClassLoader} that wraps around container groups.
@@ -29,7 +27,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class PackageContainerGroupUrlClassLoader extends URLClassLoader {
 
   /**

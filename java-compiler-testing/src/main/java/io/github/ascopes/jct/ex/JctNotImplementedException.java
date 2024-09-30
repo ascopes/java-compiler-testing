@@ -15,16 +15,12 @@
  */
 package io.github.ascopes.jct.ex;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
-
 /**
  * Exception that is raised if an internal feature is not implemented.
  *
  * @author Ashley Scopes
  * @since 1.1.0
  */
-@API(since = "1.1.0", status = Status.STABLE)
 public final class JctNotImplementedException extends JctException {
 
   /**

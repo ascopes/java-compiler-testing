@@ -16,8 +16,6 @@
 package io.github.ascopes.jct.repr;
 
 import java.util.List;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.presentation.Representation;
 import org.jspecify.annotations.Nullable;
 
@@ -27,7 +25,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class StackTraceRepresentation implements Representation {
 
   private static final StackTraceRepresentation INSTANCE = new StackTraceRepresentation();

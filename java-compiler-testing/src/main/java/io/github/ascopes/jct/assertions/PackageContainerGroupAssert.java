@@ -34,8 +34,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractPathAssert;
 import org.assertj.core.description.TextDescription;
 import org.assertj.core.error.MultipleAssertionsError;
@@ -47,7 +45,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class PackageContainerGroupAssert
     extends AbstractContainerGroupAssert<PackageContainerGroupAssert, PackageContainerGroup> {
 
@@ -185,7 +182,6 @@ public final class PackageContainerGroupAssert
    * @throws NullPointerException     if any of the fragments are null.
    * @throws IllegalArgumentException if no fragments are provided.
    */
-
   public AbstractPathAssert<?> fileExists(String... fragments) {
     requireNonNullValues(fragments, "fragments");
     requireAtLeastOne(fragments, "fragments");

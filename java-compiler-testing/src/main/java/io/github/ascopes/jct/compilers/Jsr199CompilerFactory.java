@@ -16,8 +16,6 @@
 package io.github.ascopes.jct.compilers;
 
 import javax.tools.JavaCompiler;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Factory that creates an instance of a JSR-199 compiler.
@@ -25,7 +23,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 @FunctionalInterface
 public interface Jsr199CompilerFactory {
 

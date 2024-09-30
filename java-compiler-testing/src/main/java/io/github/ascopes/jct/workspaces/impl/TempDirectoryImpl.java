@@ -24,8 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +43,6 @@ import org.slf4j.LoggerFactory;
  * @see RamDirectoryImpl
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class TempDirectoryImpl extends AbstractManagedDirectory {
 
   private static final Logger log = LoggerFactory.getLogger(TempDirectoryImpl.class);
@@ -90,7 +87,6 @@ public final class TempDirectoryImpl extends AbstractManagedDirectory {
    * @return the temporary directory.
    */
   public static TempDirectoryImpl newTempDirectory(String name) {
-    // TODO(ascopes): are MS-DOS file name length limits a potential issue here?
     assertValidRootName(name);
     var tempDir = uncheckedIo(() -> Files.createTempDirectory("jct-" + name + "_"));
     log.debug("Initialized new root '{}' using temporary directory at '{}'", name, tempDir);

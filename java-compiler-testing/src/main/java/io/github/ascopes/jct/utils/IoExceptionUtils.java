@@ -17,8 +17,6 @@ package io.github.ascopes.jct.utils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Utilities for handling {@link IOException}s and converting them to
@@ -26,7 +24,6 @@ import org.apiguardian.api.API.Status;
  *
  * @author Ashley Scopes
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class IoExceptionUtils extends UtilityClass {
 
   private IoExceptionUtils() {
@@ -85,9 +82,7 @@ public final class IoExceptionUtils extends UtilityClass {
    * A runnable interface that may throw an {@link IOException}.
    *
    * @author Ashley Scopes
-   * @since 0.0.1
    */
-  @API(since = "0.0.1", status = Status.INTERNAL)
   @FunctionalInterface
   public interface IoRunnable {
 
@@ -104,9 +99,7 @@ public final class IoExceptionUtils extends UtilityClass {
    *
    * @param <T> the return type of the supplier.
    * @author Ashley Scopes
-   * @since 0.0.1
    */
-  @API(since = "0.0.1", status = Status.INTERNAL)
   @FunctionalInterface
   public interface IoSupplier<T> {
 

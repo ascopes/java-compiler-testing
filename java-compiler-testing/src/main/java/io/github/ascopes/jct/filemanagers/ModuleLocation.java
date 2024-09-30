@@ -20,8 +20,6 @@ import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.Objects;
 import java.util.Optional;
 import javax.tools.JavaFileManager.Location;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -30,7 +28,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class ModuleLocation implements Location {
 
   private final Location parent;
@@ -123,13 +120,13 @@ public final class ModuleLocation implements Location {
 
   /**
    * Attempt to upcast a given location to a ModuleLocation if it is an instance of
-   * ModuleLocation. 
+   * ModuleLocation.
    *
    * @param location the location to attempt to upcast.
    * @return an optional containing the upcast location if it is a module location,
    *     or an empty optional if not.
+   * @since 1.1.5
    */
-  @API(since = "1.1.5", status = Status.STABLE)
   public static Optional<ModuleLocation> upcast(Location location) {
     return Optional.of(location)
         .filter(ModuleLocation.class::isInstance)

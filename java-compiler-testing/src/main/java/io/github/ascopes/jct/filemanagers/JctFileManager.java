@@ -29,8 +29,6 @@ import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardLocation;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -46,7 +44,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public interface JctFileManager extends JavaFileManager {
 
   /**

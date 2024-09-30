@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * APIs for representing the various file management locations across multiple file system
  * implementations.
  */
-@API(since = "0.0.1", status = Status.STABLE)
 package io.github.ascopes.jct.containers;
-
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;

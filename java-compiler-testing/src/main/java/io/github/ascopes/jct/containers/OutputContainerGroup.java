@@ -18,8 +18,6 @@ package io.github.ascopes.jct.containers;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import java.util.List;
 import javax.tools.JavaFileManager.Location;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * A base definition for an output-oriented container group.
@@ -38,7 +36,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public interface OutputContainerGroup extends PackageContainerGroup, ModuleContainerGroup {
 
   /**

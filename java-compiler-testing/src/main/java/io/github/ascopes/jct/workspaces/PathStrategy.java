@@ -22,8 +22,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.function.Function;
 import javax.annotation.processing.Filer;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Strategy to use for creating new test directories.
@@ -34,7 +32,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public enum PathStrategy {
   /**
    * Use RAM-based directories for any created directories.
@@ -93,7 +90,6 @@ public enum PathStrategy {
    * @param name the name to use.
    * @return the new test directory.
    */
-  @API(since = "0.0.1", status = Status.INTERNAL)
   public ManagedDirectory newInstance(String name) {
     return constructor.apply(name);
   }

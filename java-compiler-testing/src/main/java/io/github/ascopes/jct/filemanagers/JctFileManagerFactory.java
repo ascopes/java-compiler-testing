@@ -16,8 +16,6 @@
 package io.github.ascopes.jct.filemanagers;
 
 import io.github.ascopes.jct.workspaces.Workspace;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Factory interface for building a file manager object.
@@ -25,7 +23,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 @FunctionalInterface
 public interface JctFileManagerFactory {
 

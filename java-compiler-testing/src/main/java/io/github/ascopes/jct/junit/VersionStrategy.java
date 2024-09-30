@@ -16,8 +16,6 @@
 package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Strategy for setting a version on a JUnit compiler annotation.
@@ -25,7 +23,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public enum VersionStrategy {
 
   /**

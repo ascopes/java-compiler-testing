@@ -30,8 +30,6 @@ import java.util.Locale;
 import java.util.Set;
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -44,7 +42,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public interface JctCompiler {
 
   /**
@@ -642,7 +639,6 @@ public interface JctCompiler {
    *                                       compiler does not support integral version numbers.
    * @since 1.1.0
    */
-  @API(since = "1.1.0", status = Status.STABLE)
   default JctCompiler useRuntimeRelease() {
     return release(Runtime.version().feature());
   }

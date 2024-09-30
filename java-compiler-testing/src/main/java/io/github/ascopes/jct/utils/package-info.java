@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * Internal shared utilities.
  *
@@ -20,8 +21,4 @@
  * modules. As such, they are not covered by the semantic versioning policy and may change without
  * notice.
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 package io.github.ascopes.jct.utils;
-
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;

@@ -18,8 +18,6 @@ package io.github.ascopes.jct.containers.impl;
 import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.utils.StringUtils;
 import javax.tools.JavaFileManager.Location;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * A group of containers that relate to a specific location.
@@ -31,7 +29,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class PackageContainerGroupImpl extends AbstractPackageContainerGroup {
 
   /**

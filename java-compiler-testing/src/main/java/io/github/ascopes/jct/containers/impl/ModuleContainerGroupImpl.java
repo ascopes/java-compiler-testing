@@ -36,8 +36,6 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.tools.JavaFileManager.Location;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -46,7 +44,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
 
   private final Location location;

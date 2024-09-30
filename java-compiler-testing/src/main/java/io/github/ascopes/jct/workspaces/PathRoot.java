@@ -19,8 +19,6 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -33,7 +31,6 @@ import org.jspecify.annotations.Nullable;
  * @since 0.0.1
  */
 @SuppressWarnings("unused")
-@API(since = "0.0.1", status = Status.STABLE)
 public interface PathRoot {
 
   /**
@@ -47,7 +44,6 @@ public interface PathRoot {
    * @throws UnsupportedOperationException if the operation is not supported.
    * @since 0.4.0
    */
-  @API(since = "0.4.0", status = Status.STABLE)
   byte[] asJar();
 
   /**

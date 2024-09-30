@@ -49,12 +49,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apiguardian</groupId>
-      <artifactId>apiguardian-api</artifactId>
-      <optional>true</optional>
-    </dependency>
-
-    <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
     </dependency>

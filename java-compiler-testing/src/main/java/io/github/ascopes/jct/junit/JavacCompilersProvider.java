@@ -18,8 +18,6 @@ package io.github.ascopes.jct.junit;
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
 import io.github.ascopes.jct.utils.VisibleForTestingOnly;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.junit.jupiter.params.support.AnnotationConsumer;
 
 /**
@@ -28,7 +26,6 @@ import org.junit.jupiter.params.support.AnnotationConsumer;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class JavacCompilersProvider extends AbstractCompilersProvider
     implements AnnotationConsumer<JavacCompilerTest> {
 

@@ -16,8 +16,4 @@
 /**
  * AssertJ extensions for testing the results of compilations.
  */
-@API(since = "0.0.1", status = Status.STABLE)
 package io.github.ascopes.jct.assertions;
-
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;

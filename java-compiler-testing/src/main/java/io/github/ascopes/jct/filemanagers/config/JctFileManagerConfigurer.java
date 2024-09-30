@@ -16,8 +16,6 @@
 package io.github.ascopes.jct.filemanagers.config;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Interface for a {@link JctFileManager} configurer.
@@ -38,7 +36,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 @FunctionalInterface
 public interface JctFileManagerConfigurer {
 

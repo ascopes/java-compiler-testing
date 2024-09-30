@@ -21,8 +21,6 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Annotation that marks the annotated method or constructor as only being visible for testing
@@ -33,9 +31,7 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 @Documented
-@Inherited
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.CONSTRUCTOR, ElementType.METHOD})
 public @interface VisibleForTestingOnly {

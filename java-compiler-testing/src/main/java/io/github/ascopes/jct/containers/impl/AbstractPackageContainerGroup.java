@@ -43,8 +43,6 @@ import java.util.Set;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -57,7 +55,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public abstract class AbstractPackageContainerGroup implements PackageContainerGroup {
 
   // https://docs.oracle.com/cd/E19830-01/819-4712/ablgz/index.html
@@ -279,7 +276,13 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
     return Collections.unmodifiableSet(collection);
   }
 
-  @API(since = "0.6.0", status = Status.STABLE)
+  /**
+   * {@inheritdoc}
+   *
+   * @return all files in a multimap.
+   * @throws IOException if an IO exception occurs reading the file system.
+   * @since 0.6.0
+   */
   @Override
   public Map<Container, Collection<Path>> listAllFiles() throws IOException {
     var multimap = new LinkedHashMap<Container, Collection<Path>>();

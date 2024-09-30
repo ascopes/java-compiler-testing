@@ -27,8 +27,6 @@ import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -38,9 +36,7 @@ import org.jspecify.annotations.Nullable;
  * Already-opened resources passed to the implementation will not be closed.
  *
  * @author Ashley Scopes
- * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public interface Container extends Closeable {
 
   /**
@@ -110,7 +106,6 @@ public interface Container extends Closeable {
    * @return the path root.
    * @since 0.0.6
    */
-  @API(since = "0.0.6", status = Status.STABLE)
   PathRoot getInnerPathRoot();
 
   /**

@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * Support for collecting and representing diagnostics from compiler implementations.
  */
-@API(since = "0.0.1", status = Status.STABLE)
 package io.github.ascopes.jct.diagnostics;
-
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;

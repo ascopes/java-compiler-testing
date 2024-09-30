@@ -25,8 +25,6 @@ import java.util.Collection;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.StringAssert;
 import org.jspecify.annotations.Nullable;
@@ -37,7 +35,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class JctCompilationAssert
     extends AbstractAssert<JctCompilationAssert, JctCompilation> {
 
@@ -249,8 +246,8 @@ public final class JctCompilationAssert
    *
    * @return the assertions to perform on the class package outputs.
    * @throws AssertionError if the compilation was null, or no group for the location was found.
+   * @since 0.6.4
    */
-  @API(since = "0.6.4", status = Status.STABLE)
   public PackageContainerGroupAssert classOutputPackages() {
     return outputGroup(StandardLocation.CLASS_OUTPUT).packages();
   }
@@ -262,8 +259,8 @@ public final class JctCompilationAssert
    *
    * @return the assertions to perform on the class module outputs.
    * @throws AssertionError if the compilation was null, or no group for the location was found.
+   * @since 0.6.4
    */
-  @API(since = "0.6.4", status = Status.STABLE)
   public ModuleContainerGroupAssert classOutputModules() {
     return outputGroup(StandardLocation.CLASS_OUTPUT).modules();
   }
@@ -275,8 +272,8 @@ public final class JctCompilationAssert
    *
    * @return the assertions to perform on the source package outputs.
    * @throws AssertionError if the compilation was null, or no group for the location was found.
+   * @since 0.6.4
    */
-  @API(since = "0.6.4", status = Status.STABLE)
   public PackageContainerGroupAssert sourceOutputPackages() {
     return outputGroup(StandardLocation.SOURCE_OUTPUT).packages();
   }
@@ -288,8 +285,8 @@ public final class JctCompilationAssert
    *
    * @return the assertions to perform on the source module outputs.
    * @throws AssertionError if the compilation was null, or no group for the location was found.
+   * @since 0.6.4
    */
-  @API(since = "0.6.4", status = Status.STABLE)
   public ModuleContainerGroupAssert sourceOutputModules() {
     return outputGroup(StandardLocation.SOURCE_OUTPUT).modules();
   }
@@ -301,8 +298,8 @@ public final class JctCompilationAssert
    *
    * @return the assertions to perform on the class path.
    * @throws AssertionError if the compilation was null, or no group for the location was found.
+   * @since 0.6.4
    */
-  @API(since = "0.6.4", status = Status.STABLE)
   public PackageContainerGroupAssert classPathPackages() {
     return packageGroup(StandardLocation.CLASS_PATH);
   }
@@ -314,8 +311,8 @@ public final class JctCompilationAssert
    *
    * @return the assertions to perform on the source path.
    * @throws AssertionError if the compilation was null, or no group for the location was found.
+   * @since 0.6.4
    */
-  @API(since = "0.6.4", status = Status.STABLE)
   public PackageContainerGroupAssert sourcePathPackages() {
     return packageGroup(StandardLocation.SOURCE_PATH);
   }
@@ -327,8 +324,8 @@ public final class JctCompilationAssert
    *
    * @return the assertions to perform on the source path.
    * @throws AssertionError if the compilation was null, or no group for the location was found.
+   * @since 0.6.4
    */
-  @API(since = "0.6.4", status = Status.STABLE)
   public ModuleContainerGroupAssert moduleSourcePathModules() {
     return moduleGroup(StandardLocation.MODULE_SOURCE_PATH);
   }
@@ -340,8 +337,8 @@ public final class JctCompilationAssert
    *
    * @return the assertions to perform on the module path.
    * @throws AssertionError if the compilation was null, or no group for the location was found.
+   * @since 0.6.4
    */
-  @API(since = "0.6.4", status = Status.STABLE)
   public ModuleContainerGroupAssert modulePathModules() {
     return moduleGroup(StandardLocation.MODULE_PATH);
   }

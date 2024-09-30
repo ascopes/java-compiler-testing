@@ -21,8 +21,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.TestTemplate;
@@ -74,7 +72,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 @ArgumentsSource(JavacCompilersProvider.class)
 @DisabledInNativeImage
 @Documented

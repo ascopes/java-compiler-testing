@@ -27,8 +27,6 @@ import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -133,7 +131,6 @@ import org.junit.jupiter.params.support.AnnotationConsumer;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public abstract class AbstractCompilersProvider implements ArgumentsProvider {
 
   // Values that are late-bound when configure() is called from the
@@ -225,7 +222,6 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
    * @return the minimum supported compiler version.
    * @since 1.0.0
    */
-  @API(since = "1.0.0", status = Status.STABLE)
   protected abstract int minSupportedVersion();
 
   /**
@@ -234,7 +230,6 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
    * @return the minimum supported compiler version.
    * @since 1.0.0
    */
-  @API(since = "1.0.0", status = Status.STABLE)
   protected abstract int maxSupportedVersion();
 
   private JctCompiler createCompilerForVersion(int version) {

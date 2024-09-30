@@ -19,8 +19,6 @@ import java.io.File;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.util.List;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Chainable builder for creating directories.
@@ -29,7 +27,6 @@ import org.apiguardian.api.API.Status;
  * @since 0.0.1
  */
 @SuppressWarnings("unused")
-@API(since = "0.0.1", status = Status.STABLE)
 public interface DirectoryBuilder {
 
   /**
@@ -61,7 +58,6 @@ public interface DirectoryBuilder {
    * @see #copyContentsFrom(String...)
    * @since 4.0.0
    */
-  @API(since = "4.0.0", status = Status.STABLE)
   ManagedDirectory copyContentsFrom(List<String> fragments);
 
   /**

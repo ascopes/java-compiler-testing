@@ -24,8 +24,6 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +35,6 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class ModuleDiscoverer extends UtilityClass {
 
   private static final Logger log = LoggerFactory.getLogger(ModuleDiscoverer.class);
@@ -75,8 +72,8 @@ public final class ModuleDiscoverer extends UtilityClass {
 
   /**
    * Representation of a candidate module that was discovered.
+   * @since 3.0.2
    */
-  @API(status = Status.INTERNAL, since = "3.0.2")
   public static final class ModuleCandidate {
 
     private final String name;

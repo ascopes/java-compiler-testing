@@ -15,16 +15,12 @@
  */
 package io.github.ascopes.jct.compilers;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
-
 /**
  * Factory that creates a flag builder.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 @FunctionalInterface
 public interface JctFlagBuilderFactory {
 

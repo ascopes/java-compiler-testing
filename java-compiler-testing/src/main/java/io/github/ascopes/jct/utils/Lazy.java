@@ -20,8 +20,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -42,7 +40,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class Lazy<T> {
 
   private final Supplier<T> initializer;
@@ -155,7 +152,6 @@ public final class Lazy<T> {
    * @author Ashley Scopes
    * @since 0.0.1
    */
-  @API(since = "0.0.1", status = Status.INTERNAL)
   @FunctionalInterface
   public interface ThrowingConsumer<T, E extends Throwable> {
 

@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Locale;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -36,7 +34,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public class TraceDiagnostic<S extends JavaFileObject> implements Diagnostic<S> {
 
   private final Instant timestamp;

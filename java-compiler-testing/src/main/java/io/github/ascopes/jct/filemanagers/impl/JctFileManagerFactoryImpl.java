@@ -29,8 +29,6 @@ import io.github.ascopes.jct.filemanagers.config.JctFileManagerRequiredLocations
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerWorkspaceConfigurer;
 import io.github.ascopes.jct.utils.VisibleForTestingOnly;
 import io.github.ascopes.jct.workspaces.Workspace;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Basic implementation for a file manager factory that returns a {@link JctFileManagerImpl}
@@ -42,7 +40,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
 
   private final JctCompiler compiler;

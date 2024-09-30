@@ -21,8 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collection;
 import java.util.List;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.jspecify.annotations.Nullable;
 
@@ -34,7 +32,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public abstract class AbstractEnumAssert<A extends AbstractEnumAssert<A, E>, E extends Enum<E>>
     extends AbstractAssert<A, E> {
 

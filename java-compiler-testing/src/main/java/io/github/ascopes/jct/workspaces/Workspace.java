@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.StandardLocation;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Interface for a Workspace to hold files and directories within.
@@ -100,7 +98,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface Workspace extends AutoCloseable {
 
@@ -118,12 +115,7 @@ public interface Workspace extends AutoCloseable {
    * @return {@code true} if closed, {@code false} if open.
    * @since 0.4.0
    */
-  @API(since = "0.4.0", status = Status.STABLE)
   boolean isClosed();
-
-  ///
-  /// Accessor operations
-  ///
 
   /**
    * Get an immutable copy of the current paths to operate on.
@@ -192,10 +184,6 @@ public interface Workspace extends AutoCloseable {
    * @since 0.1.0
    */
   List<? extends PathRoot> getPackages(Location location);
-
-  ///
-  /// Mutative operations
-  ///
 
   /**
    * Add an existing package root to this workspace and associate it with the given location.
@@ -334,10 +322,6 @@ public interface Workspace extends AutoCloseable {
    * @see #addModule(Location, String, Path)
    */
   ManagedDirectory createModule(Location location, String moduleName);
-
-  ///
-  /// Default implementation helpers.
-  ///
 
   /**
    * Add a package to the {@link StandardLocation#CLASS_OUTPUT class outputs}.
@@ -844,10 +828,6 @@ public interface Workspace extends AutoCloseable {
     return getModules(StandardLocation.MODULE_PATH);
   }
 
-  ///
-  /// Functional APIs.
-  ///
-
   /**
    * Functional equivalent of consuming this object with a try-with-resources.
    *
@@ -861,7 +841,6 @@ public interface Workspace extends AutoCloseable {
    * @throws T the checked exception that the consumer can throw.
    * @since 3.2.0
    */
-  @API(since = "3.2.0", status = Status.STABLE)
   default <T extends Throwable> void use(ThrowingWorkspaceConsumer<T> consumer) throws T {
     try {
       consumer.accept(this);
@@ -879,7 +858,6 @@ public interface Workspace extends AutoCloseable {
    * @author Ashley Scopes
    * @since 3.2.0
    */
-  @API(since = "3.2.0", status = Status.STABLE)
   interface ThrowingWorkspaceConsumer<T extends Throwable> {
 
     /**

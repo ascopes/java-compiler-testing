@@ -20,8 +20,6 @@ import static java.util.stream.Collectors.joining;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.Collection;
 import javax.tools.JavaFileObject;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.presentation.Representation;
 import org.jspecify.annotations.Nullable;
 
@@ -31,7 +29,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class TraceDiagnosticListRepresentation implements Representation {
 
   private static final TraceDiagnosticListRepresentation INSTANCE

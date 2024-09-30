@@ -34,8 +34,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import javax.annotation.processing.Processor;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -55,7 +53,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public abstract class AbstractJctCompiler implements JctCompiler {
 
   private final List<Processor> annotationProcessors;

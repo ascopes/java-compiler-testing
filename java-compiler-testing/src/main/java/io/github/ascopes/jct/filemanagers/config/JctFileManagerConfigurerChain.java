@@ -18,8 +18,6 @@ package io.github.ascopes.jct.filemanagers.config;
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import java.util.LinkedList;
 import java.util.List;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  * <p>This is used to provide a set of ordered configuration operations to perform on newly
  * created file managers to prepare them for consumption in test cases. Common operations
- * may include: 
+ * may include:
  *
  * <ul>
  *   <li>Automatically configuring the annotation processor paths;</li>
@@ -50,7 +48,6 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class JctFileManagerConfigurerChain {
 
   private static final Logger log = LoggerFactory.getLogger(JctFileManagerConfigurerChain.class);

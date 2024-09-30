@@ -38,8 +38,6 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardLocation;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +49,6 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class JctCompilationFactoryImpl implements JctCompilationFactory {
 
   private static final Logger log = LoggerFactory.getLogger(JctCompilationFactoryImpl.class);

@@ -15,9 +15,6 @@
  */
 package io.github.ascopes.jct.utils;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
-
 /**
  * Polyfill to enable supporting using the newer Thread APIs on newer platforms.
  *
@@ -27,7 +24,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class LoomPolyfill extends UtilityClass {
 
   private LoomPolyfill() {

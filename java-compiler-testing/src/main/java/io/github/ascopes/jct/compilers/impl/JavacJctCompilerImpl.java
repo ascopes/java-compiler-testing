@@ -24,8 +24,6 @@ import io.github.ascopes.jct.filemanagers.JctFileManagerFactory;
 import io.github.ascopes.jct.filemanagers.impl.JctFileManagerFactoryImpl;
 import javax.lang.model.SourceVersion;
 import javax.tools.ToolProvider;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Implementation of a JCT compiler that integrates with the default {@code javac}
@@ -34,7 +32,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class JavacJctCompilerImpl extends AbstractJctCompiler {
 
   private static final int JAVA_8 = 8;
@@ -78,7 +75,6 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler {
    * @return the minimum supported version.
    * @since 1.0.0
    */
-  @API(since = "1.0.0", status = Status.INTERNAL)
   public static int getEarliestSupportedVersionInt() {
     // Purposely do not hardcode members of the SourceVersion enum here other
     // than utility methods, as this prevents compilation problems on various
@@ -100,8 +96,8 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler {
    * Get the maximum version of Javac that is supported.
    *
    * @return the maximum supported version.
+   * @since 1.0.0
    */
-  @API(since = "1.0.0", status = Status.INTERNAL)
   public static int getLatestSupportedVersionInt() {
     return SourceVersion.latestSupported().ordinal();
   }

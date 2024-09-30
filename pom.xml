@@ -94,7 +94,6 @@
 
   <properties>
     <!-- Dependencies -->
-    <apiguardian.version>1.1.2</apiguardian.version>
     <assertj.version>3.26.3</assertj.version>
     <awaitility.version>4.2.2</awaitility.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
@@ -187,13 +186,6 @@
         <groupId>me.xdrop</groupId>
         <artifactId>fuzzywuzzy</artifactId>
         <version>${fuzzywuzzy.version}</version>
-      </dependency>
-
-      <dependency>
-        <!-- API versioning annotations -->
-        <groupId>org.apiguardian</groupId>
-        <artifactId>apiguardian-api</artifactId>
-        <version>${apiguardian.version}</version>
       </dependency>
 
       <dependency>

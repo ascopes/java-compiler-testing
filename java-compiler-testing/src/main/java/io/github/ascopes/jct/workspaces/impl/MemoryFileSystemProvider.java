@@ -22,8 +22,6 @@ import java.io.UncheckedIOException;
 import java.net.URLStreamHandler;
 import java.net.spi.URLStreamHandlerProvider;
 import java.nio.file.FileSystem;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -33,7 +31,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes, Philippe Marschall
  * @since 0.7.0
  */
-@API(since = "0.7.0", status = Status.INTERNAL)
 public final class MemoryFileSystemProvider {
 
   // We could initialise this lazily, but this class has fewer fields and initialisation
@@ -83,7 +80,6 @@ public final class MemoryFileSystemProvider {
    * @author Ashley Scopes
    * @since 0.7.0
    */
-  @API(since = "0.7.0", status = Status.INTERNAL)
   public static final class MemoryFileSystemUrlHandlerProvider extends URLStreamHandlerProvider {
 
     private final MemoryURLStreamHandlerFactory factory;

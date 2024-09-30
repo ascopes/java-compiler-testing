@@ -15,9 +15,6 @@
  */
 package io.github.ascopes.jct.compilers;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
-
 /**
  * Function representing a configuration operation that can be applied to a compiler.
  *
@@ -91,7 +88,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 @FunctionalInterface
 public interface JctCompilerConfigurer<E extends Exception> {
 
