@@ -19,8 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.repr.LocationRepresentation;
 import javax.tools.JavaFileManager.Location;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractStringAssert;
 import org.jspecify.annotations.Nullable;
@@ -31,7 +29,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class LocationAssert extends AbstractAssert<LocationAssert, Location> {
 
   /**

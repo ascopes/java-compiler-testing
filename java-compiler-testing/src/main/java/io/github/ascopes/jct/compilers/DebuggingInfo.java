@@ -18,8 +18,6 @@ package io.github.ascopes.jct.compilers;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * An enum representing the various types of debugger info that can be included in compilations.
@@ -31,7 +29,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 3.0.0
  */
-@API(since = "3.0.0", status = Status.STABLE)
 public enum DebuggingInfo {
 
   /**

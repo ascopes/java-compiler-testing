@@ -18,8 +18,6 @@ package io.github.ascopes.jct.workspaces;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Base interface for a managed directory, including the interfaces for creating fluent-style
@@ -28,7 +26,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
 
   /**
@@ -125,7 +122,6 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
    * @throws NullPointerException     if any of the path fragments are {@code null}.
    * @since 4.0.0
    */
-  @API(since = "4.0.0", status = Status.STABLE)
   DirectoryBuilder createDirectory(List<String> fragments);
 
   /**
@@ -165,7 +161,6 @@ public interface ManagedDirectory extends DirectoryBuilder, PathRoot {
    * @throws NullPointerException     if any of the path fragments are {@code null}.
    * @since 4.0.0
    */
-  @API(since = "4.0.0", status = Status.STABLE)
   FileBuilder createFile(List<String> fragments);
 
   /**

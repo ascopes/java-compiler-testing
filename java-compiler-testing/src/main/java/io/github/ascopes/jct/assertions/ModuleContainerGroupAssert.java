@@ -20,8 +20,6 @@ import static java.util.Objects.requireNonNull;
 import io.github.ascopes.jct.containers.ModuleContainerGroup;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
 import io.github.ascopes.jct.utils.StringUtils;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -30,7 +28,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class ModuleContainerGroupAssert
     extends AbstractContainerGroupAssert<ModuleContainerGroupAssert, ModuleContainerGroup> {
 

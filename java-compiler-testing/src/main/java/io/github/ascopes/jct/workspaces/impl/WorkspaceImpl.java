@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.tools.JavaFileManager.Location;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Implementation of a workspace to use by default.
@@ -46,7 +44,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class WorkspaceImpl implements Workspace {
 
   private volatile boolean closed;

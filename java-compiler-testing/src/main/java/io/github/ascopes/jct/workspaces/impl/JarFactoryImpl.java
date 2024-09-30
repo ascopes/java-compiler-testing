@@ -27,8 +27,6 @@ import java.util.jar.JarOutputStream;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * A special singleton factory class that is used to create JAR files in memory on the fly.
@@ -36,7 +34,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.3.0
  */
-@API(since = "0.3.0", status = Status.STABLE)
 public final class JarFactoryImpl {
 
   private static final JarFactoryImpl INSTANCE = new JarFactoryImpl();

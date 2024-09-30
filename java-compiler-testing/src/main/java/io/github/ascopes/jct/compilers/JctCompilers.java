@@ -17,8 +17,6 @@ package io.github.ascopes.jct.compilers;
 
 import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
 import io.github.ascopes.jct.utils.UtilityClass;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Helpers to create new compiler instances.
@@ -26,7 +24,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class JctCompilers extends UtilityClass {
 
   private JctCompilers() {
@@ -40,7 +37,6 @@ public final class JctCompilers extends UtilityClass {
    * @return the compiler instance.
    * @since 0.2.0
    */
-  @API(status = Status.STABLE, since = "0.2.0")
   public static JctCompiler newPlatformCompiler() {
     return new JavacJctCompilerImpl();
   }

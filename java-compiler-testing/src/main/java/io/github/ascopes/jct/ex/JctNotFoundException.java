@@ -15,16 +15,12 @@
  */
 package io.github.ascopes.jct.ex;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
-
 /**
  * Exception raised if an element is not found.
  *
  * @author Ashley Scopes
  * @since 1.1.0
  */
-@API(since = "1.1.0", status = Status.STABLE)
 public final class JctNotFoundException extends JctException {
 
   /**

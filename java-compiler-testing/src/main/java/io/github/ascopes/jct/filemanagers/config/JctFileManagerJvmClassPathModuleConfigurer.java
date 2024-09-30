@@ -22,8 +22,6 @@ import io.github.ascopes.jct.utils.SpecialLocationUtils;
 import io.github.ascopes.jct.utils.StringUtils;
 import java.util.Set;
 import javax.tools.StandardLocation;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +36,6 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class JctFileManagerJvmClassPathModuleConfigurer
     implements JctFileManagerConfigurer {
 

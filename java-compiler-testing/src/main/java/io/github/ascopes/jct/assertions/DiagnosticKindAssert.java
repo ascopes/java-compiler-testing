@@ -18,8 +18,6 @@ package io.github.ascopes.jct.assertions;
 import java.util.EnumSet;
 import java.util.Set;
 import javax.tools.Diagnostic.Kind;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -28,7 +26,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class DiagnosticKindAssert
     extends AbstractEnumAssert<DiagnosticKindAssert, Kind> {
 

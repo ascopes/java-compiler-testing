@@ -15,16 +15,12 @@
  */
 package io.github.ascopes.jct.utils;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
-
 /**
  * Abstract base for a static-only class. This base cannot be initialised.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public abstract class UtilityClass {
 
   protected UtilityClass() {

@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Utility to efficiently split strings using a delimiter without using regular expressions.
@@ -30,7 +28,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class StringSlicer {
 
   private final String delimiter;

@@ -15,16 +15,12 @@
  */
 package io.github.ascopes.jct.filemanagers;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
-
 /**
  * Mode for annotation processor discovery when no explicit processors are provided.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public enum AnnotationProcessorDiscovery {
   /**
    * Discovery is enabled, and will also scan any dependencies in the classpath or module path.

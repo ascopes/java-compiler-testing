@@ -17,8 +17,6 @@ package io.github.ascopes.jct.assertions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractBooleanAssert;
 import org.assertj.core.api.AbstractIntegerAssert;
@@ -28,13 +26,9 @@ import org.jspecify.annotations.Nullable;
 /**
  * Assertions to perform on a {@link StackTraceElement stack trace frame}.
  *
- * <p>This type is a placeholder and will be replaced when AssertJ releases changes to
- * support assertions on stack traces.
- *
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(status = Status.EXPERIMENTAL)
 public final class StackTraceElementAssert
     extends AbstractAssert<StackTraceElementAssert, StackTraceElement> {
 

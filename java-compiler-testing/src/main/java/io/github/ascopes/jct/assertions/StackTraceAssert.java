@@ -18,8 +18,6 @@ package io.github.ascopes.jct.assertions;
 import io.github.ascopes.jct.repr.StackTraceRepresentation;
 import java.util.ArrayList;
 import java.util.List;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractListAssert;
 import org.jspecify.annotations.Nullable;
 
@@ -32,7 +30,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class StackTraceAssert
     extends AbstractListAssert<StackTraceAssert, List<? extends StackTraceElement>, StackTraceElement, StackTraceElementAssert> {
 
@@ -61,3 +58,4 @@ public final class StackTraceAssert
     return new StackTraceAssert(list);
   }
 }
+

@@ -22,8 +22,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.List;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Chainable builder for creating individual files.
@@ -31,7 +29,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface FileBuilder {
 
@@ -43,7 +40,6 @@ public interface FileBuilder {
    * @return the root managed directory for further configuration.
    * @since 0.3.0
    */
-  @API(since = "0.3.0", status = Status.STABLE)
   ManagedDirectory asJarFrom(PathRoot directory);
 
   /**
@@ -63,7 +59,6 @@ public interface FileBuilder {
    * @return the root managed directory for further configuration.
    * @since 0.3.0
    */
-  @API(since = "0.3.0", status = Status.STABLE)
   ManagedDirectory asJarFrom(Path directory);
 
   /**
@@ -223,7 +218,6 @@ public interface FileBuilder {
    * @return the managed directory.
    * @since 4.0.0
    */
-  @API(since = "4.0.0", status = Status.STABLE)
   default ManagedDirectory withContents(ByteBuffer buffer) {
     var array = new byte[buffer.remaining()];
     buffer.get(array);
@@ -256,7 +250,6 @@ public interface FileBuilder {
    * @see #withContents(byte[])
    * @since 4.0.0
    */
-  @API(since = "4.0.0", status = Status.STABLE)
   ManagedDirectory withContents(Charset charset, List<String> lines);
 
   /**
@@ -334,7 +327,6 @@ public interface FileBuilder {
    * @see #withContents(byte[])
    * @since 4.0.0
    */
-  @API(since = "4.0.0", status = Status.STABLE)
   ManagedDirectory withContents(List<String> lines);
 
   /**

@@ -24,8 +24,6 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * A writer that wraps an output stream and also writes any content to an in-memory buffer.
@@ -35,7 +33,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class TeeWriter extends Writer {
 
   private final Lock lock;
@@ -97,7 +94,6 @@ public final class TeeWriter extends Writer {
    * @return the content.
    * @since 0.2.1
    */
-  @API(since = "0.2.1", status = Status.STABLE)
   public String getContent() {
     lock.lock();
     try {
@@ -110,9 +106,8 @@ public final class TeeWriter extends Writer {
   /**
    * Get the content of the internal buffer.
    *
-   * <p>This calls {@link #getContent()} internally as of 0.2.1.
-   *
    * @return the content.
+   * @since 0.2.1
    */
   @Override
   public String toString() {
@@ -151,7 +146,6 @@ public final class TeeWriter extends Writer {
    * @return the Tee Writer.
    * @since 0.2.1
    */
-  @API(since = "0.2.1", status = Status.STABLE)
   public static TeeWriter wrapOutputStream(OutputStream outputStream, Charset charset) {
     requireNonNull(outputStream, "outputStream");
     requireNonNull(charset, "charset");

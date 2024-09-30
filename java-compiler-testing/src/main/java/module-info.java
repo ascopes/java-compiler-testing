@@ -124,7 +124,6 @@ module io.github.ascopes.jct {
   requires java.compiler;
   requires java.management;
   requires me.xdrop.fuzzywuzzy;
-  requires static org.apiguardian.api;
   requires org.assertj.core;
   requires static org.jspecify;
   requires static org.junit.jupiter.api;

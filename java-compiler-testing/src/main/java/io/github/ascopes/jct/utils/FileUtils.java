@@ -30,8 +30,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import javax.tools.JavaFileObject.Kind;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -40,7 +38,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class FileUtils extends UtilityClass {
 
   // Exclude any "empty" extensions. At the time of writing, this will just exclude Kind.EMPTY,

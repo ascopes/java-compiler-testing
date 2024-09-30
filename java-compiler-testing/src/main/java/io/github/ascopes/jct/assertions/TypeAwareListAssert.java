@@ -21,13 +21,12 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.StreamSupport;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractListAssert;
 import org.assertj.core.api.AssertFactory;
 import org.jspecify.annotations.Nullable;
 
+//@formatter:off
 /**
  * An implementation of {@link AbstractListAssert} that can perform type-specific assertions on the
  * members of the container being asserted upon.
@@ -41,9 +40,9 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 3.1.0
  */
-@API(since = "3.1.0", status = Status.STABLE)
 public final class TypeAwareListAssert<E, A extends AbstractAssert<A, @Nullable E>>
     extends AbstractListAssert<TypeAwareListAssert<@Nullable E, A>, @Nullable List<? extends @Nullable E>, @Nullable E, A> {
+  //@formatter:on
 
   private final AssertFactory<@Nullable E, A> assertFactory;
 

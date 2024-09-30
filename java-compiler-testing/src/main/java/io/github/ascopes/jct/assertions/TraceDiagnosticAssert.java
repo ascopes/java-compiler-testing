@@ -22,8 +22,6 @@ import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.repr.TraceDiagnosticRepresentation;
 import java.util.Locale;
 import javax.tools.JavaFileObject;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractInstantAssert;
 import org.assertj.core.api.AbstractLongAssert;
@@ -36,7 +34,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class TraceDiagnosticAssert
     extends AbstractAssert<TraceDiagnosticAssert, TraceDiagnostic<? extends JavaFileObject>> {
 

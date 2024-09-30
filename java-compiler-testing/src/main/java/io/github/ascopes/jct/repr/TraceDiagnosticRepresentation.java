@@ -17,8 +17,6 @@ package io.github.ascopes.jct.repr;
 
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import java.util.Locale;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.presentation.Representation;
 import org.jspecify.annotations.Nullable;
 
@@ -28,7 +26,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1, rewritten in 4.0.0
  */
-@API(since = "4.0.0", status = Status.STABLE)
 public final class TraceDiagnosticRepresentation implements Representation {
 
   private static final TraceDiagnosticRepresentation INSTANCE

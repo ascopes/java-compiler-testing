@@ -18,8 +18,6 @@ package io.github.ascopes.jct.assertions;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.tools.JavaFileObject.Kind;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractStringAssert;
 import org.jspecify.annotations.Nullable;
 
@@ -29,7 +27,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class JavaFileObjectKindAssert
     extends AbstractEnumAssert<JavaFileObjectKindAssert, Kind> {
 

@@ -16,8 +16,6 @@
 package io.github.ascopes.jct.assertions;
 
 import javax.tools.JavaFileObject;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -26,7 +24,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class JavaFileObjectAssert
     extends AbstractJavaFileObjectAssert<JavaFileObjectAssert, JavaFileObject> {
 

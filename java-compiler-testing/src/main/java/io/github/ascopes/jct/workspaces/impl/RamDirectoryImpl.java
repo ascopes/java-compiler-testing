@@ -23,8 +23,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +49,6 @@ import org.slf4j.LoggerFactory;
  * @see TempDirectoryImpl
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class RamDirectoryImpl extends AbstractManagedDirectory {
 
   private static final Logger log = LoggerFactory.getLogger(RamDirectoryImpl.class);

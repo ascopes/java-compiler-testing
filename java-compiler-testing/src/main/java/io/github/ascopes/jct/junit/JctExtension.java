@@ -21,8 +21,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -62,7 +60,6 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.4.0
  */
-@API(since = "0.4.0", status = Status.STABLE)
 public final class JctExtension
     implements Extension, BeforeEachCallback, BeforeAllCallback, AfterEachCallback, AfterAllCallback {
 

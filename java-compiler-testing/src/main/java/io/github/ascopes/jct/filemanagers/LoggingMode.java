@@ -15,17 +15,16 @@
  */
 package io.github.ascopes.jct.filemanagers;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
-
 /**
  * Options for how to handle logging on special internal components.
+ *
+ * <p>This primarily exists to support debugging the JCT library itself.
  *
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public enum LoggingMode {
+
   /**
    * Enable basic logging.
    */

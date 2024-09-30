@@ -27,8 +27,6 @@ import javax.tools.FileObject;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -41,7 +39,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public interface PackageContainerGroup extends ContainerGroup {
 
   /**
@@ -305,6 +302,5 @@ public interface PackageContainerGroup extends ContainerGroup {
    * @throws IOException if the file lookup fails due to an IO error somewhere.
    * @since 0.6.0
    */
-  @API(since = "0.6.0", status = Status.STABLE)
   Map<Container, Collection<Path>> listAllFiles() throws IOException;
 }

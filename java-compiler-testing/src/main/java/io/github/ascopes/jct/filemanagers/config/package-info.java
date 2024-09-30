@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * Reusable components for setting up JSR-199 file managers.
  */
-@API(since = "0.0.1", status = Status.STABLE)
 package io.github.ascopes.jct.filemanagers.config;
 
 import org.apiguardian.api.API;

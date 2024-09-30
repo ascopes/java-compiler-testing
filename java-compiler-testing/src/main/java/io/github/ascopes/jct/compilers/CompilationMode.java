@@ -15,9 +15,6 @@
  */
 package io.github.ascopes.jct.compilers;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
-
 /**
  * An enum representing the various types of compilation mode that a compiler can run under.
  *
@@ -26,7 +23,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public enum CompilationMode {
 
   /**

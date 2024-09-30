@@ -21,8 +21,6 @@ import io.github.ascopes.jct.compilers.JctFlagBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -31,7 +29,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
 
   private static final String VERBOSE = "-verbose";

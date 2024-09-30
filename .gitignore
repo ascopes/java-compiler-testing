@@ -2,6 +2,7 @@
 build/
 out/
 target/
+*.javaimport
 
 # Maven invoker plugin
 **/interpolated-pom.xml

@@ -15,8 +15,6 @@
  */
 package io.github.ascopes.jct.assertions;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.jspecify.annotations.Nullable;
 
@@ -29,7 +27,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public final class ClassLoaderAssert extends AbstractAssert<ClassLoaderAssert, ClassLoader> {
 
   /**

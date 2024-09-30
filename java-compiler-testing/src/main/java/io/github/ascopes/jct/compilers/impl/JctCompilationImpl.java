@@ -25,8 +25,6 @@ import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.List;
 import java.util.Set;
 import javax.tools.JavaFileObject;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -35,7 +33,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class JctCompilationImpl implements JctCompilation {
 
   private final List<String> arguments;
@@ -124,7 +121,6 @@ public final class JctCompilationImpl implements JctCompilation {
    * @author Ashley Scopes
    * @since 0.0.1
    */
-  @API(since = "0.0.1", status = Status.INTERNAL)
   public static final class Builder {
 
     private @Nullable List<String> arguments;

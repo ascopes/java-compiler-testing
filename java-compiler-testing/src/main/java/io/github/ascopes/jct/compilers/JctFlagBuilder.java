@@ -17,8 +17,6 @@ package io.github.ascopes.jct.compilers;
 
 import java.util.List;
 import java.util.Set;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -26,7 +24,6 @@ import org.jspecify.annotations.Nullable;
  *
  * @author Ashley Scopes
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public interface JctFlagBuilder {
 
   /**

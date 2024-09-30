@@ -28,8 +28,6 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -44,7 +42,6 @@ import org.jspecify.annotations.Nullable;
  * @see TempDirectoryImpl
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.INTERNAL)
 public final class WrappingDirectoryImpl implements PathRoot {
 
   private final @Nullable PathRoot parent;

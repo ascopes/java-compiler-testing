@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Set;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -38,15 +36,14 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public interface JctCompilation {
 
   /**
    * Get the command line arguments that were passed to the compiler.
    *
    * @return the command line arguments.
+   * @since 0.5.0
    */
-  @API(since = "0.5.0", status = Status.STABLE)
   List<String> getArguments();
 
   /**

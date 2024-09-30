@@ -19,8 +19,6 @@ import io.github.ascopes.jct.filemanagers.PathFileObject;
 import java.io.Closeable;
 import java.util.ServiceLoader;
 import javax.tools.JavaFileManager.Location;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Base container group interface.
@@ -31,7 +29,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public interface ContainerGroup extends Closeable {
 
   /**

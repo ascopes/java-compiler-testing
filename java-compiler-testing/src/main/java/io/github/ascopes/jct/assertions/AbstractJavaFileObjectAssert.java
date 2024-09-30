@@ -27,8 +27,6 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import javax.tools.JavaFileObject;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractByteArrayAssert;
 import org.assertj.core.api.AbstractInstantAssert;
@@ -44,7 +42,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public abstract class AbstractJavaFileObjectAssert<I extends AbstractJavaFileObjectAssert<I, A>, A extends JavaFileObject>
     extends AbstractAssert<I, A> {
 

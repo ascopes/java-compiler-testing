@@ -29,8 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -39,7 +37,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(status = Status.INTERNAL, since = "0.0.1")
 public final class ToStringBuilder {
 
   private static final String LSQUARE = "[";

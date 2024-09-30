@@ -18,8 +18,6 @@ package io.github.ascopes.jct.filemanagers;
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.filemanagers.impl.JctFileManagerFactoryImpl;
 import io.github.ascopes.jct.utils.UtilityClass;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Helpers to create instances of default implementations for file managers.
@@ -27,7 +25,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 1.1.0
  */
-@API(since = "1.1.0", status = Status.STABLE)
 public final class JctFileManagers extends UtilityClass {
 
   private JctFileManagers() {

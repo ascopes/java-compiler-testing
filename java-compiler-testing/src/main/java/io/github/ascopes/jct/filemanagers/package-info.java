@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * APIs that integrate with the JSR-199 FileManager APIs.
  */
-@API(since = "0.0.1", status = Status.STABLE)
 package io.github.ascopes.jct.filemanagers;
-
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;

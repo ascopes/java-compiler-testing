@@ -20,8 +20,6 @@ import io.github.ascopes.jct.filemanagers.JctFileManager;
 import java.util.Collection;
 import java.util.List;
 import javax.tools.JavaCompiler;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -31,7 +29,6 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-@API(since = "0.0.1", status = Status.STABLE)
 public interface JctCompilationFactory {
 
   /**

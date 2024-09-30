@@ -22,8 +22,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
 
 /**
  * Annotation for a {@link Workspace} field in a test class. This will ensure it gets initialised
@@ -56,7 +54,6 @@ import org.apiguardian.api.API.Status;
  * @author Ashley Scopes
  * @since 0.4.0
  */
-@API(since = "0.4.0", status = Status.STABLE)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
