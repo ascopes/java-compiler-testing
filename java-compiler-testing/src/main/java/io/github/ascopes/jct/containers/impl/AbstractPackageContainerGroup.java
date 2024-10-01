@@ -277,7 +277,7 @@ public abstract class AbstractPackageContainerGroup implements PackageContainerG
   }
 
   /**
-   * {@inheritdoc}
+   * List all files in the group.
    *
    * @return all files in a multimap.
    * @throws IOException if an IO exception occurs reading the file system.

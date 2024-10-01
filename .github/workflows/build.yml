@@ -58,7 +58,7 @@ jobs:
 
       - name: Compile and run tests
         shell: bash
-        run: ./mvnw -B -U -Dcheckstyle.skip=true -Dlicense.skip=true clean verify
+        run: ./mvnw -B -U clean verify
 
       - name: Upload to codecov
         uses: codecov/codecov-action@v4

@@ -72,6 +72,7 @@ public final class ModuleDiscoverer extends UtilityClass {
 
   /**
    * Representation of a candidate module that was discovered.
+   *
    * @since 3.0.2
    */
   public static final class ModuleCandidate {
