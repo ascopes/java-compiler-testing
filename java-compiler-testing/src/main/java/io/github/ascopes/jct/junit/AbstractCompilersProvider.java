@@ -275,29 +275,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
       );
     }
 
-    try {
-      // Force-enable reflective access. If the user is using a SecurityManager for any reason then
-      // tough luck. JVM go bang.
-      // If the module is not open to JCT, then we will get an InaccessibleObjectException that
-      // we should wrap and rethrow.
-      constructor.setAccessible(true);
-
-    } catch (InaccessibleObjectException ex) {
-
-      throw new JctJunitConfigurerException(
-          "The constructor in " + configurerClass.getSimpleName() + " cannot be called from JCT."
-              + "\n"
-              + "This is likely because JPMS modules are in use and you have not granted "
-              + "permission for JCT to access your classes reflectively."
-              + "\n"
-              + "To fix this, add the following line into your module-info.java within the "
-              + "'module' block:"
-              + "\n\n"
-              + "    opens " + constructor.getDeclaringClass().getPackageName() + " to "
-              + getClass().getModule().getName() + ";",
-          ex
-      );
-    }
+    constructor.setAccessible(true);
 
     try {
       return constructor.newInstance();
