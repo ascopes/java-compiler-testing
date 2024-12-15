@@ -122,7 +122,7 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   }
 
   @Override
-  public JctFlagBuilder debuggingInfo(Set<DebuggingInfo> set) {
+  public JavacJctFlagBuilderImpl debuggingInfo(Set<DebuggingInfo> set) {
     if (set.isEmpty()) {
       craftedFlags.add(DEBUG_NONE);
       return this;
@@ -144,7 +144,7 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   }
 
   @Override
-  public JctFlagBuilder parameterInfoEnabled(boolean enabled) {
+  public JavacJctFlagBuilderImpl parameterInfoEnabled(boolean enabled) {
     return addFlagIfTrue(enabled, PARAMETERS);
   }
 
