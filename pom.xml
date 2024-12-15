@@ -282,7 +282,7 @@
             </includes>
 
             <runOrder>random</runOrder>
-            <useModulePath>true</useModulePath>
+            <useModulePath>false</useModulePath>
 
             <!--
               This block is needed to show @DisplayName and @ParameterizedTest
@@ -459,7 +459,13 @@
             </excludes>
 
             <runOrder>random</runOrder>
-            <useModulePath>true</useModulePath>
+
+            <!--
+              If you reach here wondering why IntelliJ cannot find certain JUnit classes on the
+              classpath, make sure you set the IntelliJ test runner to "not use module-path". Seems
+              to be a bug in the IDE where this detail gets missed.
+            -->
+            <useModulePath>false</useModulePath>
 
             <!--
               This block is needed to show @DisplayName and @ParameterizedTest
