@@ -1,0 +1,66 @@
+name: Build
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+  push:
+    branches:
+      - main
+  workflow_call: {}
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: Build on JDK ${{ matrix.java-version }} (${{ matrix.os-name }})
+    runs-on: ${{ matrix.os-name }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os-name: [ubuntu-latest]
+        java-version:
+          - GA  # Latest GA JDK
+          - EA  # Current Mainline
+        include:
+          - os-name: macos-latest
+            java-version: GA
+          - os-name: windows-latest
+            java-version: GA
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Initialize JDK
+        uses: oracle-actions/setup-java@v1
+        with:
+          website: jdk.java.net
+          release: ${{ matrix.java_version }}
+
+      - name: Compile and run tests
+        shell: bash
+        run: ./mvnw -B -U clean verify
+
+      - name: Upload to codecov
+        uses: codecov/codecov-action@v4
+        with:
+          name: tests-java-${{ matrix.java-version }}-os-${{ matrix.os-name }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Stash reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reports-${{ matrix.java-version }}-${{ matrix.os-name }}
+          if-no-files-found: error
+          path: |
+            **/surefire-reports/**
+            **/failsafe-reports/**
+            **/build*.log
+          retention-days: 30
