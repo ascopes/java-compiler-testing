@@ -24,7 +24,7 @@ jobs:
         os-name: [ubuntu-latest]
         java-version:
           - GA  # Latest GA JDK
-          - EA  # Current Mainline
+         # - EA  # Current Mainline (lombok doesn't yet support)
         include:
           - os-name: macos-latest
             java-version: GA
