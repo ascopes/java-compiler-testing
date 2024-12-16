@@ -26,12 +26,6 @@ jobs:
           - 11  # LTS
           - 17  # LTS
           - 21  # LTS
-        include:
-          - os-name: macos-latest
-            java-version: 23
-          - os-name: windows-latest
-            java-version: 23
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
