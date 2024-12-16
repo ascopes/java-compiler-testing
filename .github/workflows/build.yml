@@ -26,8 +26,6 @@ jobs:
           - 11  # LTS
           - 17  # LTS
           - 21  # LTS
-          - 23
-          #- 24-ea
         include:
           - os-name: macos-latest
             java-version: 23
