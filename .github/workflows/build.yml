@@ -26,12 +26,6 @@ jobs:
           - 11  # LTS
           - 17  # LTS
           - 21  # LTS
-        include:
-          - os-name: macos-latest
-            java-version: 23
-          - os-name: windows-latest
-            java-version: 23
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -45,6 +39,15 @@ jobs:
           distribution: zulu
           java-version: ${{ matrix.java-version }}
 
+      - name: Maven cache
+        uses: actions/cache@v4
+        env:
+          cache-name: maven-cache
+        with:
+          path:
+            ~/.m2
+          key: build-${{ env.cache-name }}
+          
       - name: Compile and run tests
         shell: bash
         run: ./mvnw -B -U clean verify

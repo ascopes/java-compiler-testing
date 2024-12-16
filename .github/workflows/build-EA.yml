@@ -24,7 +24,7 @@ jobs:
         os-name: [ubuntu-latest]
         java-version:
           - GA  # Latest GA JDK
-          - EA  # Current Mainline
+         # - EA  # Current Mainline (lombok doesn't yet support)
         include:
           - os-name: macos-latest
             java-version: GA
@@ -41,8 +41,17 @@ jobs:
         uses: oracle-actions/setup-java@v1
         with:
           website: jdk.java.net
-          release: ${{ matrix.java_version }}
-
+          release: ${{ matrix.java-version }}
+          
+      - name: Maven cache
+        uses: actions/cache@v4
+        env:
+          cache-name: maven-cache
+        with:
+          path:
+            ~/.m2
+          key: build-${{ env.cache-name }}
+          
       - name: Compile and run tests
         shell: bash
         run: ./mvnw -B -U clean verify
