@@ -1,4 +1,4 @@
-name: Build
+name: Build Latest
 
 on:
   pull_request:
@@ -23,14 +23,13 @@ jobs:
       matrix:
         os-name: [ubuntu-latest]
         java-version:
-          - 11  # LTS
-          - 17  # LTS
-          - 21  # LTS
+          - GA  # Latest GA JDK
+          - EA  # Current Mainline
         include:
           - os-name: macos-latest
-            java-version: 23
+            java-version: GA
           - os-name: windows-latest
-            java-version: 23
+            java-version: GA
 
     steps:
       - name: Checkout repository
@@ -39,11 +38,10 @@ jobs:
           fetch-depth: 2
 
       - name: Initialize JDK
-        uses: actions/setup-java@v4
+        uses: oracle-actions/setup-java@v1
         with:
-          check-latest: true
-          distribution: zulu
-          java-version: ${{ matrix.java-version }}
+          website: jdk.java.net
+          release: ${{ matrix.java_version }}
 
       - name: Compile and run tests
         shell: bash
