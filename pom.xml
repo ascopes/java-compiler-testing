@@ -609,6 +609,7 @@
                 <include>**.yaml</include>
                 <include>**/pom.xml</include>
                 <include>**/security-suppressions.xml</include>
+                <include>**/src/**/*.bsh</include>
                 <include>**/src/**/*.groovy</include>
                 <include>**/src/**/*.java</include>
                 <include>**/src/it/settings.xml</include>
@@ -616,6 +617,7 @@
             </licenseSet>
           </licenseSets>
           <mapping>
+            <bsh>SLASHSTAR_STYLE</bsh>
             <groovy>SLASHSTAR_STYLE</groovy>
             <java>SLASHSTAR_STYLE</java>
             <toml>SCRIPT_STYLE</toml>
