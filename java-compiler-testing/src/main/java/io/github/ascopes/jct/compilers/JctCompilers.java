@@ -15,8 +15,9 @@
  */
 package io.github.ascopes.jct.compilers;
 
-import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
+import io.github.ascopes.jct.compilers.impl.javac.JavacJctCompilerImpl;
 import io.github.ascopes.jct.utils.UtilityClass;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Helpers to create new compiler instances.
@@ -39,5 +40,38 @@ public final class JctCompilers extends UtilityClass {
    */
   public static JctCompiler newPlatformCompiler() {
     return new JavacJctCompilerImpl();
+  }
+
+  /**
+   * Create a new instance of the ECJ compiler.
+   *
+   * @return the compiler instance.
+   * @throws UnsupportedOperationException if the current platform does not support ECJ (e.g.
+   *     because it is prior to Java 17).
+   * @since TBC
+   */
+  public static JctCompiler newEcjCompiler() {
+    try {
+      // Use reflection to avoid eagerly class-loading the Java-17 only class that may not be
+      // available on Java 11.
+      // We can remove this hack once Java 11 is no longer supported.
+      var thisClass = JctCompilers.class;
+      var constructor = thisClass.getClassLoader()
+          .loadClass(thisClass.getPackageName() + ".impl.ecj.EcjJctCompilerImpl")
+          .getConstructor();
+      constructor.setAccessible(true);
+      return (JctCompiler) constructor.newInstance();
+    } catch (NoClassDefFoundError | ClassNotFoundException ex) {
+      throw new UnsupportedOperationException(
+          "ECJ components were not found. Ensure you are running on at least Java 17, "
+              + "and have included mvn:org.eclipse.jdt:ecj in your project dependencies.",
+          ex
+      );
+    } catch (ReflectiveOperationException ex) {
+      throw new UnsupportedOperationException(
+          "Failed to load various ECJ components correctly. This is probably a bug.",
+          ex
+      );
+    }
   }
 }

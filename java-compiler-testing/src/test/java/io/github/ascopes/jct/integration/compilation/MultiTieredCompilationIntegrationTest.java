@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.integration.AbstractIntegrationTest;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +36,7 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
   @DisplayName(
       "I can compile sources to classes and provide them in the classpath to a second compilation"
   )
+  @EcjCompilerTest
   @JavacCompilerTest
   void compileSourcesToClassesAndProvideThemInClassPathToSecondCompilation(
       JctCompiler compiler
@@ -75,6 +77,7 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
       "I can compile sources to classes and provide them in the classpath to a second "
           + "compilation within a JAR"
   )
+  @EcjCompilerTest
   @JavacCompilerTest
   void compileSourcesToClassesAndProvideThemInClassPathToSecondCompilationWithinJar(
       JctCompiler compiler

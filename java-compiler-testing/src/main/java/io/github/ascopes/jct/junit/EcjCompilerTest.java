@@ -30,64 +30,35 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 /**
  * Annotation that can be applied to a JUnit parameterized test to invoke that test case across
- * multiple Javac compilers, each configured to a specific version in a range of Java language
+ * multiple ECJ compilers, each configured to a specific version in a range of Java language
  * versions.
  *
- * <p>This will also add the {@code "java-compiler-testing-test"} tag and {@code "javac-test"}
+ * <p>This will also add the {@code "java-compiler-testing-test"} tag and {@code "ecj-test"}
  * tags to your test method, meaning you can instruct your IDE or build system to optionally only
  * run tests annotated with this method for development purposes. As an example, Maven Surefire
- * could be instructed to only run these tests by passing {@code -Dgroup="javac-test"} to Maven.
+ * could be instructed to only run these tests by passing {@code -Dgroup="ecj-test"} to Maven.
  *
- * <p>If your build is running in a GraalVM Native Image, then this test will not execute, as
- * the <em>Java Compiler Testing</em> API is not yet tested within Native Images.
- *
- * <p>For example, to run a simple test on Java 11 through 17 (inclusive):
- *
- * <pre><code>
- *   class SomeTest {
- *     {@literal @JavacCompilerTest(minVersion = 11, maxVersion = 17)}
- *     void canCompileHelloWorld(JctCompiler> compiler) {
- *       // Given
- *       try (var workspace = Workspaces.newWorkspace()) {
- *         workspace
- *            .createFile("org", "example", "HelloWorld.java")
- *            .withContents("""
- *              package org.example;
- *
- *              public class HelloWorld {
- *                public static void main(String[] args) {
- *                  System.out.println("Hello, World!");
- *                }
- *              }
- *            """);
- *
- *         var compilation = compiler.compile(workspace);
- *
- *         assertThat(compilation)
- *             .isSuccessfulWithoutWarnings();
- *       }
- *     }
- *   }
- * </code></pre>
+ * <p>Note that on JVMs before Java 17, this will not invoke any tests, since ECJ is not
+ * compatible with JVMs older than Java 17.
  *
  * @author Ashley Scopes
- * @since 0.0.1
+ * @since TBC
  */
-@ArgumentsSource(JavacCompilersProvider.class)
+@ArgumentsSource(EcjCompilersProvider.class)
 @DisabledInNativeImage
 @Documented
 @ParameterizedTest(name = "for compiler \"{0}\"")
 @Retention(RetentionPolicy.RUNTIME)
 @Tags({
     @Tag("java-compiler-testing-test"),
-    @Tag("javac-test")
+    @Tag("ecj-test")
 })
 @Target({
     ElementType.ANNOTATION_TYPE,
     ElementType.METHOD,
 })
 @TestTemplate
-public @interface JavacCompilerTest {
+public @interface EcjCompilerTest {
 
   /**
    * Minimum version to use (inclusive).
@@ -147,7 +118,7 @@ public @interface JavacCompilerTest {
    *   // ...
    *
    *   class SomeTest {
-   *     {@literal @JavacCompilerTest(configurers = WerrorConfigurer.class)}
+   *     {@literal @EcjCompilerTest(configurers = WerrorConfigurer.class)}
    *     void someTest(JctCompiler compiler) {
    *       // ...
    *     }

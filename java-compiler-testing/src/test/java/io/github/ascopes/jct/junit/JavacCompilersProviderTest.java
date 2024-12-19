@@ -23,7 +23,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
-import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
+import io.github.ascopes.jct.compilers.impl.javac.JavacJctCompilerImpl;
 import java.lang.reflect.AnnotatedElement;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;

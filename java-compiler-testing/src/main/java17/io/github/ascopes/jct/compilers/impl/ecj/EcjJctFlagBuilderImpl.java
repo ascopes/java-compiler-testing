@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers.impl;
+package io.github.ascopes.jct.compilers.impl.ecj;
 
 import io.github.ascopes.jct.compilers.CompilationMode;
 import io.github.ascopes.jct.compilers.DebuggingInfo;
@@ -24,17 +24,19 @@ import java.util.Set;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Helper to build flags for a standard Javac implementation for the OpenJDK.
+ * Helper to build flags for the ECJ compiler implementation.
  *
  * @author Ashley Scopes
- * @since 0.0.1
+ * @since TBC
  */
-public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
+public final class EcjJctFlagBuilderImpl implements JctFlagBuilder {
 
   private static final String VERBOSE = "-verbose";
+  private static final String PRINT_ANNOTATION_PROCESSOR_INFO = "-XprintProcessorInfo";
+  private static final String PRINT_ANNOTATION_PROCESSOR_ROUNDS = "-XprintRounds";
   private static final String ENABLE_PREVIEW = "--enable-preview";
   private static final String NOWARN = "-nowarn";
-  private static final String WERROR = "-Werror";
+  private static final String FAIL_ON_WARNING = "--failOnWarning";
   private static final String DEPRECATION = "-deprecation";
   private static final String RELEASE = "--release";
   private static final String SOURCE = "-source";
@@ -42,7 +44,6 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   private static final String ANNOTATION_OPT = "-A";
   private static final String PROC_NONE = "-proc:none";
   private static final String PROC_ONLY = "-proc:only";
-  private static final String PROC_FULL = "-proc:full";
   private static final String DEBUG_LINES = "-g:lines";
   private static final String DEBUG_VARS = "-g:vars";
   private static final String DEBUG_SOURCE = "-g:source";
@@ -54,28 +55,30 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   /**
    * Initialize this flag builder.
    */
-  public JavacJctFlagBuilderImpl() {
-    craftedFlags = new ArrayList<>(3);
+  public EcjJctFlagBuilderImpl() {
+    craftedFlags = new ArrayList<>();
   }
 
   @Override
-  public JavacJctFlagBuilderImpl verbose(boolean enabled) {
-    return addFlagIfTrue(enabled, VERBOSE);
+  public EcjJctFlagBuilderImpl verbose(boolean enabled) {
+    return addFlagIfTrue(enabled, VERBOSE)
+        .addFlagIfTrue(enabled, PRINT_ANNOTATION_PROCESSOR_INFO)
+        .addFlagIfTrue(enabled, PRINT_ANNOTATION_PROCESSOR_ROUNDS);
   }
 
   @Override
-  public JavacJctFlagBuilderImpl previewFeatures(boolean enabled) {
+  public EcjJctFlagBuilderImpl previewFeatures(boolean enabled) {
     return addFlagIfTrue(enabled, ENABLE_PREVIEW);
   }
 
   @Override
-  public JavacJctFlagBuilderImpl showWarnings(boolean enabled) {
-    return addFlagIfFalse(enabled, NOWARN);
+  public EcjJctFlagBuilderImpl showWarnings(boolean enabled) {
+    return addFlagIfTrue(!enabled, NOWARN);
   }
 
   @Override
-  public JavacJctFlagBuilderImpl failOnWarnings(boolean enabled) {
-    return addFlagIfTrue(enabled, WERROR);
+  public EcjJctFlagBuilderImpl failOnWarnings(boolean enabled) {
+    return addFlagIfTrue(enabled, FAIL_ON_WARNING);
   }
 
   @Override
@@ -90,11 +93,7 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
         break;
 
       default:
-        if (Runtime.version().feature() >= 22) {
-          // In Java 22, the default is to disable all annotation processing by default
-          // Prior to Java 22, the default was to enable all annotation processing by default.
-          craftedFlags.add(PROC_FULL);
-        }
+        // Do nothing. The default behaviour is to allow this.
         break;
     }
 
@@ -102,27 +101,27 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   }
 
   @Override
-  public JavacJctFlagBuilderImpl showDeprecationWarnings(boolean enabled) {
+  public EcjJctFlagBuilderImpl showDeprecationWarnings(boolean enabled) {
     return addFlagIfTrue(enabled, DEPRECATION);
   }
 
   @Override
-  public JavacJctFlagBuilderImpl release(@Nullable String version) {
+  public EcjJctFlagBuilderImpl release(@Nullable String version) {
     return addVersionIfPresent(RELEASE, version);
   }
 
   @Override
-  public JavacJctFlagBuilderImpl source(@Nullable String version) {
+  public EcjJctFlagBuilderImpl source(@Nullable String version) {
     return addVersionIfPresent(SOURCE, version);
   }
 
   @Override
-  public JavacJctFlagBuilderImpl target(@Nullable String version) {
+  public EcjJctFlagBuilderImpl target(@Nullable String version) {
     return addVersionIfPresent(TARGET, version);
   }
 
   @Override
-  public JavacJctFlagBuilderImpl debuggingInfo(Set<DebuggingInfo> set) {
+  public EcjJctFlagBuilderImpl debuggingInfo(Set<DebuggingInfo> set) {
     if (set.isEmpty()) {
       craftedFlags.add(DEBUG_NONE);
       return this;
@@ -144,18 +143,18 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   }
 
   @Override
-  public JavacJctFlagBuilderImpl parameterInfoEnabled(boolean enabled) {
+  public EcjJctFlagBuilderImpl parameterInfoEnabled(boolean enabled) {
     return addFlagIfTrue(enabled, PARAMETERS);
   }
 
   @Override
-  public JavacJctFlagBuilderImpl annotationProcessorOptions(List<String> options) {
+  public EcjJctFlagBuilderImpl annotationProcessorOptions(List<String> options) {
     options.forEach(option -> craftedFlags.add(ANNOTATION_OPT + option));
     return this;
   }
 
   @Override
-  public JavacJctFlagBuilderImpl compilerOptions(List<String> options) {
+  public EcjJctFlagBuilderImpl compilerOptions(List<String> options) {
     craftedFlags.addAll(options);
     return this;
   }
@@ -166,7 +165,7 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
     return List.copyOf(craftedFlags);
   }
 
-  private JavacJctFlagBuilderImpl addFlagIfTrue(boolean condition, String flag) {
+  private EcjJctFlagBuilderImpl addFlagIfTrue(boolean condition, String flag) {
     if (condition) {
       craftedFlags.add(flag);
     }
@@ -174,12 +173,7 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
     return this;
   }
 
-  @SuppressWarnings("SameParameterValue")
-  private JavacJctFlagBuilderImpl addFlagIfFalse(boolean condition, String flag) {
-    return addFlagIfTrue(!condition, flag);
-  }
-
-  private JavacJctFlagBuilderImpl addVersionIfPresent(String flagPrefix, @Nullable String version) {
+  private EcjJctFlagBuilderImpl addVersionIfPresent(String flagPrefix, @Nullable String version) {
     if (version != null) {
       craftedFlags.add(flagPrefix);
       craftedFlags.add(version);
