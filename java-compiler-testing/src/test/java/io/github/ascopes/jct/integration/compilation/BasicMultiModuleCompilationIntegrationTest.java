@@ -20,6 +20,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatContainer
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.integration.AbstractIntegrationTest;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspaces;
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.DisplayName;
 class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest {
 
   @DisplayName("I can compile a single module using multi-module layout using a RAM disk")
+  @EcjCompilerTest
   @JavacCompilerTest(minVersion = 9)
   void singleModuleInMultiModuleLayoutRamDisk(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
@@ -62,6 +64,7 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
   }
 
   @DisplayName("I can compile a single module using multi-module layout using a temp directory")
+  @EcjCompilerTest
   @JavacCompilerTest(minVersion = 9)
   void singleModuleInMultiModuleLayoutTempDirectory(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
@@ -90,6 +93,7 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
   }
 
   @DisplayName("I can compile multiple modules using multi-module layout using a RAM disk")
+  @EcjCompilerTest
   @JavacCompilerTest(minVersion = 9)
   void multipleModulesInMultiModuleLayoutRamDisk(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
@@ -136,6 +140,7 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
   }
 
   @DisplayName("I can compile multiple modules using multi-module layout using a temp directory")
+  @EcjCompilerTest
   @JavacCompilerTest(minVersion = 9)
   void multipleModulesInMultiModuleLayoutTempDirectory(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {

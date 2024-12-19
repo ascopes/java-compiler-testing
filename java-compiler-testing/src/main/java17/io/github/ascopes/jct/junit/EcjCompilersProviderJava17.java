@@ -16,42 +16,39 @@
 package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
-import io.github.ascopes.jct.compilers.impl.javac.JavacJctCompilerImpl;
+import io.github.ascopes.jct.compilers.impl.ecj.EcjJctCompilerImpl;
 import org.junit.jupiter.params.support.AnnotationConsumer;
 
 /**
- * Argument provider for the {@link JavacCompilerTest} annotation.
+ * Argument provider for the {@link EcjCompilerTest} annotation on Java 17 platforms.
  *
  * @author Ashley Scopes
- * @since 0.0.1
+ * @since TBC
  */
-final class JavacCompilersProvider extends AbstractCompilersProvider
-    implements AnnotationConsumer<JavacCompilerTest> {
+final class EcjCompilersProviderJava17 extends AbstractCompilersProvider
+    implements AnnotationConsumer<EcjCompilerTest> {
 
-  /**
-   * Initialise the provider.
-   */
-  JavacCompilersProvider() {
+  EcjCompilersProviderJava17() {
     // Nothing to do.
   }
 
   @Override
   protected JctCompiler initializeNewCompiler() {
-    return new JavacJctCompilerImpl();
+    return new EcjJctCompilerImpl();
   }
 
   @Override
   protected int minSupportedVersion() {
-    return JavacJctCompilerImpl.getEarliestSupportedVersionInt();
+    return EcjJctCompilerImpl.getEarliestSupportedVersionInt();
   }
 
   @Override
   protected int maxSupportedVersion() {
-    return JavacJctCompilerImpl.getLatestSupportedVersionInt();
+    return EcjJctCompilerImpl.getLatestSupportedVersionInt();
   }
 
   @Override
-  public void accept(JavacCompilerTest annotation) {
+  public void accept(EcjCompilerTest annotation) {
     var min = annotation.minVersion();
     var max = annotation.maxVersion();
     var configurers = annotation.configurers();

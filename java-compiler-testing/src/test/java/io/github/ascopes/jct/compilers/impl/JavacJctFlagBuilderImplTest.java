@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 
 import io.github.ascopes.jct.compilers.CompilationMode;
 import io.github.ascopes.jct.compilers.DebuggingInfo;
+import io.github.ascopes.jct.compilers.impl.javac.JavacJctFlagBuilderImpl;
 import io.github.ascopes.jct.fixtures.Fixtures;
 import java.util.List;
 import java.util.stream.Collectors;

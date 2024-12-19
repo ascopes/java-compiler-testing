@@ -96,6 +96,7 @@
     <!-- Dependencies -->
     <assertj.version>3.27.0</assertj.version>
     <awaitility.version>4.2.2</awaitility.version>
+    <ecj.version>3.40.0</ecj.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jspecify.version>1.0.0</jspecify.version>
     <junit.version>5.11.4</junit.version>
@@ -200,6 +201,13 @@
         <groupId>org.awaitility</groupId>
         <artifactId>awaitility</artifactId>
         <version>${awaitility.version}</version>
+      </dependency>
+
+      <dependency>
+        <!-- Eclipse Java compiler -->
+        <groupId>org.eclipse.jdt</groupId>
+        <artifactId>ecj</artifactId>
+        <version>${ecj.version}</version>
       </dependency>
 
       <dependency>
@@ -361,7 +369,10 @@
                 <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
               </manifest>
               <manifestEntries>
-                <Sealed>true</Sealed>
+                <Multi-Release>true</Multi-Release>
+                <!-- Uncomment once Java 17 is the minimum version, since this confuses
+                    the JUnit5 clsssloader when using Multi-Release package structures. -->
+                <!--<Sealed>true</Sealed>-->
               </manifestEntries>
             </archive>
           </configuration>
@@ -680,6 +691,53 @@
   </build>
 
   <profiles>
+    <profile>
+      <!-- Enables Java 17 sources only if the active JDK is at least Java 17. This allows us to
+           build against ECJ only when the JDK is at least Java 17, which is the minimum supported
+           version by them. This also enables us to only make ECJ features available for Java 17
+           builds and newer by utilising the version-aware compiler features.
+      -->
+      <id>java-17</id>
+      <activatioln>
+        <jdk>[17,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+
+            <executions>
+              <execution>
+                <id>compile-java-17-sources</id>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <configuration>
+                  <multiReleaseOutput>true</multiReleaseOutput>
+                  <compileSourceRoots>
+                    <compileSourceRoot>${project.basedir}/src/main/java17</compileSourceRoot>
+                  </compileSourceRoots>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>compile-java-17-test-sources</id>
+                <goals>
+                  <goal>testCompile</goal>
+                </goals>
+                <configuration>
+                  <compileSourceRoots>
+                    <compileSourceRoot>${project.basedir}/src/main/java17</compileSourceRoot>
+                  </compileSourceRoots>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <profile>
       <id>releases</id>
 

@@ -35,7 +35,8 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: zulu
-          # Must use >= JDK 17 for Javadocs to generate correctly
+          # - Must use >= JDK 17 for Javadocs to generate correctly
+          # - Must use >= JDK 17 for Java 17-specific sources to be included.
           java-version: 23
           server-id: ossrh
           server-username: OSSRH_USERNAME

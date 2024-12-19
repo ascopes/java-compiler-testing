@@ -542,7 +542,7 @@ public abstract class AbstractJctCompiler implements JctCompiler {
   }
 
   @SuppressWarnings("ThrowFromFinallyBlock")
-  private JctCompilation performCompilation(
+  protected JctCompilation performCompilation(
         Workspace workspace, 
         @Nullable Collection<String> classNames
   ) {

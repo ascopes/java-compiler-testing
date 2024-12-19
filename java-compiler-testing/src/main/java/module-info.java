@@ -130,6 +130,10 @@ module io.github.ascopes.jct {
   requires static org.junit.jupiter.params;
   requires org.slf4j;
 
+  // TODO(ascopes): verify this doesn't eagerly break on Java 11, as the bytecode will
+  //  not be compatible.
+  requires static org.eclipse.jdt.core.compiler.batch;
+
   //////////////////
   /// PUBLIC API ///
   //////////////////
