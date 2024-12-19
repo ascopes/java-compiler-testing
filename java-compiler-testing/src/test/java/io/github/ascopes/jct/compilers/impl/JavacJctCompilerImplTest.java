@@ -22,6 +22,8 @@ import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
+import io.github.ascopes.jct.compilers.impl.javac.JavacJctCompilerImpl;
+import io.github.ascopes.jct.compilers.impl.javac.JavacJctFlagBuilderImpl;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
