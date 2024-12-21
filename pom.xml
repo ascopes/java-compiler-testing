@@ -698,7 +698,7 @@
            builds and newer by utilising the version-aware compiler features.
       -->
       <id>java-17</id>
-      <activatioln>
+      <activation>
         <jdk>[17,)</jdk>
       </activation>
       <build>
