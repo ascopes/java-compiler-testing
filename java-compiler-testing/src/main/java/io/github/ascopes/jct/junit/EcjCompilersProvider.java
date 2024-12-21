@@ -56,7 +56,8 @@ final class EcjCompilersProvider
 
   @Override
   public void accept(EcjCompilerTest annotation) {
-    tryLoadEcjClass().ifPresentOrElse(cls -> configureForJdk17(annotation), this::configureForJdk11);
+    tryLoadEcjClass()
+        .ifPresentOrElse(cls -> configureForJdk17(annotation), this::configureForJdk11);
   }
 
   @Override
