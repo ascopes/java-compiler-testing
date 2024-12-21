@@ -181,12 +181,12 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
     var locations = IterableUtils.flatten(deepLocations);
 
     if (locations.isEmpty()) {
-      log.info(
+      log.debug(
           "No multi-module sources found, will use the source path to find classes to compile"
       );
       locations = List.of(StandardLocation.SOURCE_PATH);
     } else {
-      log.info(
+      log.debug(
           "Multi-module sources found, will use the module source path to find classes to compile"
       );
     }

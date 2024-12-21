@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.compilers.JctCompilers;
 import io.github.ascopes.jct.compilers.impl.javac.JavacJctCompilerImpl;
 import org.junit.jupiter.params.support.AnnotationConsumer;
 
@@ -37,7 +38,7 @@ final class JavacCompilersProvider extends AbstractCompilersProvider
 
   @Override
   protected JctCompiler initializeNewCompiler() {
-    return new JavacJctCompilerImpl();
+    return JctCompilers.newPlatformCompiler();
   }
 
   @Override
