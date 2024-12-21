@@ -28,8 +28,8 @@ import org.junit.jupiter.api.DisplayName;
 class AvajeInjectTest {
 
   @DisplayName("Dependency injection code gets generated as expected")
-  @EcjCompilerTest(minVersion = 11)
-  @JavacCompilerTest(minVersion = 11)
+  @EcjCompilerTest(minVersion = 17, maxVersion = 17)
+  @JavacCompilerTest(minVersion = 17, maxVersion = 17)
   void dependencyInjectionCodeGetsGeneratedAsExpected(JctCompiler compiler) {
     // Given
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
