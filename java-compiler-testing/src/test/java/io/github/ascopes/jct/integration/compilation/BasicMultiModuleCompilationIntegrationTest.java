@@ -140,7 +140,7 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
   }
 
   @DisplayName("I can compile multiple modules using multi-module layout using a temp directory")
-  @EcjCompilerTest
+  @EcjCompilerTest(minVersion = 9)
   @JavacCompilerTest(minVersion = 9)
   void multipleModulesInMultiModuleLayoutTempDirectory(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {

@@ -34,7 +34,7 @@ import org.junit.jupiter.api.DisplayName;
 class BasicModuleCompilationIntegrationTest extends AbstractIntegrationTest {
 
   @DisplayName("I can compile a 'Hello, World!' module program using a RAM disk")
-  @EcjCompilerTest
+  @EcjCompilerTest(minVersion = 9)
   @JavacCompilerTest(minVersion = 9)
   void helloWorldRamDisk(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
@@ -63,7 +63,7 @@ class BasicModuleCompilationIntegrationTest extends AbstractIntegrationTest {
   }
 
   @DisplayName("I can compile a 'Hello, World!' module program using a temporary directory")
-  @EcjCompilerTest
+  @EcjCompilerTest(minVersion = 9)
   @JavacCompilerTest(minVersion = 9)
   void helloWorldUsingTempDirectory(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
