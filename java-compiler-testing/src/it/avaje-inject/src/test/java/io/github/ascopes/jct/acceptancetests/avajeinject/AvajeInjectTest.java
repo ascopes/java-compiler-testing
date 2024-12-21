@@ -18,6 +18,7 @@ package io.github.ascopes.jct.acceptancetests.avajeinject;
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspaces;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 class AvajeInjectTest {
 
   @DisplayName("Dependency injection code gets generated as expected")
+  @EcjCompilerTest(minVersion = 11)
   @JavacCompilerTest(minVersion = 11)
   void dependencyInjectionCodeGetsGeneratedAsExpected(JctCompiler compiler) {
     // Given
