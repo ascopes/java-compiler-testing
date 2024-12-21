@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers.impl;
+package io.github.ascopes.jct.compilers.impl.ecj;
 
 import static io.github.ascopes.jct.fixtures.Fixtures.someBoolean;
 import static io.github.ascopes.jct.fixtures.Fixtures.someRelease;
@@ -23,7 +23,6 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 
 import io.github.ascopes.jct.compilers.CompilationMode;
 import io.github.ascopes.jct.compilers.DebuggingInfo;
-import io.github.ascopes.jct.compilers.impl.javac.JavacJctFlagBuilderImpl;
 import io.github.ascopes.jct.fixtures.Fixtures;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,19 +40,19 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 /**
- * {@link JavacJctFlagBuilderImpl} tests.
+ * {@link EcjJctFlagBuilderImpl} tests.
  *
  * @author Ashley Scopes
  */
-@DisplayName("JavacJctFlagBuilderImpl tests")
+@DisplayName("EcjJctFlagBuilderImpl tests")
 @TestMethodOrder(OrderAnnotation.class)
-class JavacJctFlagBuilderImplTest {
+class EcjJctFlagBuilderImplTest {
 
-  JavacJctFlagBuilderImpl flagBuilder;
+  EcjJctFlagBuilderImpl flagBuilder;
 
   @BeforeEach
   void setUp() {
-    flagBuilder = new JavacJctFlagBuilderImpl();
+    flagBuilder = new EcjJctFlagBuilderImpl();
   }
 
   @DisplayName(".verbose(boolean) tests")
@@ -159,14 +158,14 @@ class JavacJctFlagBuilderImplTest {
   @Nested
   class FailOnWarningsFlagTest {
 
-    @DisplayName("Setting .failOnWarnings(true) adds the '-Werror' flag")
+    @DisplayName("Setting .failOnWarnings(true) adds the '--failOnWarning' flag")
     @Test
     void addsFlagIfTrue() {
       // When
       flagBuilder.failOnWarnings(true);
 
       // Then
-      assertThat(flagBuilder.build()).contains("-Werror");
+      assertThat(flagBuilder.build()).contains("--failOnWarning");
     }
 
     @DisplayName("Setting .failOnWarnings(false) does not add the '-Werror'  flag")
@@ -212,31 +211,9 @@ class JavacJctFlagBuilderImplTest {
       assertThat(flagBuilder.build()).containsExactly("-proc:only");
     }
 
-    @DisplayName(".compilationMode(COMPILATION_AND_ANNOTATION_PROCESSING) adds -proc:full (JDK22)")
+    @DisplayName(".compilationMode(COMPILATION_AND_ANNOTATION_PROCESSING) adds nothing")
     @Test
-    void compilationAndAnnotationProcessingAddsProcFullOnJdk22() {
-      // Given
-      assumeThat(Runtime.version().feature())
-          .as("JDK version")
-          .withFailMessage("this test only works on JDK 22 and newer")
-          .isGreaterThanOrEqualTo(22);
-
-      // When
-      flagBuilder.compilationMode(CompilationMode.COMPILATION_AND_ANNOTATION_PROCESSING);
-
-      // Then
-      assertThat(flagBuilder.build()).containsExactly("-proc:full");
-    }
-
-    @DisplayName(".compilationMode(COMPILATION_AND_ANNOTATION_PROCESSING) adds nothing (<JDK22)")
-    @Test
-    void compilationAndAnnotationProcessingAddsNothingBeforeJdk22() {
-      // Given
-      assumeThat(Runtime.version().feature())
-          .as("JDK version")
-          .withFailMessage("this test only works on JDK 21 and older")
-          .isLessThan(22);
-
+    void compilationAndAnnotationProcessingAddsNothing() {
       // When
       flagBuilder.compilationMode(CompilationMode.COMPILATION_AND_ANNOTATION_PROCESSING);
 

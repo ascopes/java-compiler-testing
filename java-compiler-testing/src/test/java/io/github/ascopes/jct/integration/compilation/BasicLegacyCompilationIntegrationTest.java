@@ -56,6 +56,7 @@ class BasicLegacyCompilationIntegrationTest extends AbstractIntegrationTest {
   }
 
   @DisplayName("I can compile a 'Hello, World!' program using a temp directory")
+  @EcjCompilerTest
   @JavacCompilerTest
   void helloWorldJavacTempDirectory(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {

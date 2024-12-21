@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers.impl;
+package io.github.ascopes.jct.compilers.impl.javac;
 
 import static io.github.ascopes.jct.fixtures.Fixtures.someInt;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,8 +22,6 @@ import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
-import io.github.ascopes.jct.compilers.impl.javac.JavacJctCompilerImpl;
-import io.github.ascopes.jct.compilers.impl.javac.JavacJctFlagBuilderImpl;
 import javax.lang.model.SourceVersion;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;

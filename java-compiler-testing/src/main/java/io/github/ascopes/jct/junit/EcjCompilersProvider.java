@@ -15,63 +15,138 @@
  */
 package io.github.ascopes.jct.junit;
 
+import io.github.ascopes.jct.compilers.JctCompiler;
+import java.lang.reflect.Modifier;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Stream;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.support.AnnotationConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Argument provider for the {@link EcjCompilerTest} annotation.
  *
- * <p>Until Java 11 support is dropped, this is a reflective harness around
- * {@code EcjCompilersProviderJava17} which may not be on the classpath if the JVM in use
- * is older than Java 17. Once Java 11 support is dropped, this class can be replaced with
- * that harness directly.
+ * <p>This implementation attempts to be "aware" of whether ECJ can be loaded by the current JVM
+ * or not. If it cannot be loaded, no tests will be emitted.
  *
  * @author Ashley Scopes
  * @since TBC
  */
-final class EcjCompilersProvider implements ArgumentsProvider, AnnotationConsumer<EcjCompilerTest> {
+final class EcjCompilersProvider
+    extends AbstractCompilersProvider
+    implements AnnotationConsumer<EcjCompilerTest> {
 
-  private @Nullable Object impl;
+  private static final String ECJ_JCT_COMPILERS_IMPL_FQN
+      = "io.github.ascopes.jct.compilers.impl.ecj.EcjJctCompilerImpl";
+
+  private static final Logger log = LoggerFactory.getLogger(EcjCompilersProvider.class);
+
+  private final ClassLoader classLoader;
 
   EcjCompilersProvider() {
-    try {
-      impl = getClass().getClassLoader()
-          .loadClass(getClass().getPackageName() + ".EcjCompilersProviderJava17")
-          .getConstructor()
-          .newInstance();
-    } catch (ReflectiveOperationException ex) {
-      impl = null;
-    }
+    this(EcjCompilersProvider.class.getClassLoader());
   }
 
-  @Override
-  public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-    return impl == null
-        ? Stream.empty()
-        : invokeMethodOnImpl(impl, "provideArguments", context);
+  EcjCompilersProvider(ClassLoader classLoader) {
+    this.classLoader = classLoader;
   }
 
   @Override
   public void accept(EcjCompilerTest annotation) {
-    if (impl != null) {
-      invokeMethodOnImpl(impl, "accept", annotation);
+    tryLoadEcjClass().ifPresentOrElse(cls -> configureForJdk17(annotation), this::configureForJdk11);
+  }
+
+  @Override
+  public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+    return tryLoadEcjClass()
+        .map(cls -> super.provideArguments(context))
+        .orElseGet(Stream::empty);
+  }
+
+  @Override
+  protected JctCompiler initializeNewCompiler() {
+    try {
+      return (JctCompiler) tryLoadEcjClass()
+          .map(Class::getDeclaredConstructors)
+          .map(Stream::of)
+          .orElseThrow(this::ecjImplementationNotFound)
+          .findFirst()
+          .orElseThrow()
+          .newInstance();
+    } catch (Exception ex) {
+      throw reflectionFailure("initialising ECJ frontend classes", ex);
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private static <T> T invokeMethodOnImpl(Object impl, String name, Object... args) {
+  @Override
+  protected int minSupportedVersion() {
     try {
-      return (T) Stream.of(impl.getClass().getMethods())
-          .filter(m -> m.getName().equals(name))
+      return (int) tryLoadEcjClass()
+          .map(Class::getDeclaredMethods)
+          .map(Stream::of)
+          .orElseThrow(this::ecjImplementationNotFound)
+          .filter(m -> Modifier.isStatic(m.getModifiers()))
+          .filter(m -> m.getName().equals("getEarliestSupportedVersionInt"))
           .findFirst()
           .orElseThrow()
-          .invoke(args);
-    } catch (ReflectiveOperationException ex) {
-      throw new IllegalStateException("Fatal error accessing ECJ frontend internals", ex);
+          .invoke(null);
+    } catch (Exception ex) {
+      throw reflectionFailure("get earliest supported language version for ECJ", ex);
     }
   }
+
+  @Override
+  protected int maxSupportedVersion() {
+    try {
+      return (int) tryLoadEcjClass()
+          .map(Class::getDeclaredMethods)
+          .map(Stream::of)
+          .orElseThrow(this::ecjImplementationNotFound)
+          .filter(m -> Modifier.isStatic(m.getModifiers()))
+          .filter(m -> m.getName().equals("getLatestSupportedVersionInt"))
+          .findFirst()
+          .orElseThrow()
+          .invoke(null);
+    } catch (Exception ex) {
+      throw reflectionFailure("get latest supported language version for ECJ", ex);
+    }
+  }
+
+  @SuppressWarnings("SameParameterValue")
+  private Optional<Class<?>> tryLoadEcjClass() {
+    try {
+      return Optional.of(classLoader.loadClass(ECJ_JCT_COMPILERS_IMPL_FQN));
+    } catch (ClassNotFoundException ex) {
+      return Optional.empty();
+    }
+  }
+
+  private NoClassDefFoundError ecjImplementationNotFound() {
+    return new NoClassDefFoundError(
+        "ECJ implementation not found (perhaps you are running on a Java version older "
+            + "than Java 17?");
+  }
+
+  private IllegalStateException reflectionFailure(String description, Exception cause) {
+    return new IllegalStateException(
+        "Failed performing operation \"" + description + "\". This is a bug.",
+        cause
+    );
+  }
+
+  private void configureForJdk17(EcjCompilerTest annotation) {
+    var min = annotation.minVersion();
+    var max = annotation.maxVersion();
+    var configurers = annotation.configurers();
+    var versioning = annotation.versionStrategy();
+    configure(min, max, configurers, versioning);
+  }
+
+  private void configureForJdk11() {
+    log.info("ECJ tests will be skipped as your JDK does not support ECJ.");
+  }
 }
+

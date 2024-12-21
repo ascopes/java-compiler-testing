@@ -133,6 +133,7 @@ module io.github.ascopes.jct {
   // TODO(ascopes): verify this doesn't eagerly break on Java 11, as the bytecode will
   //  not be compatible.
   requires static org.eclipse.jdt.core.compiler.batch;
+  requires java.sql;
 
   //////////////////
   /// PUBLIC API ///
