@@ -96,7 +96,7 @@
     <!-- Dependencies -->
     <assertj.version>3.27.0</assertj.version>
     <awaitility.version>4.2.2</awaitility.version>
-    <ecj.version>3.40.0</ecj.version>
+    <ecj.version>3.41.0-SNAPSHOT</ecj.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jspecify.version>1.0.0</jspecify.version>
     <junit.version>5.11.4</junit.version>
@@ -714,10 +714,11 @@
                   <goal>compile</goal>
                 </goals>
                 <configuration>
-                  <multiReleaseOutput>true</multiReleaseOutput>
                   <compileSourceRoots>
                     <compileSourceRoot>${project.basedir}/src/main/java17</compileSourceRoot>
                   </compileSourceRoots>
+                  <multiReleaseOutput>true</multiReleaseOutput>
+                  <release>17</release>
                 </configuration>
               </execution>
 
@@ -730,6 +731,7 @@
                   <compileSourceRoots>
                     <compileSourceRoot>${project.basedir}/src/main/java17</compileSourceRoot>
                   </compileSourceRoots>
+                  <release>17</release>
                 </configuration>
               </execution>
             </executions>
