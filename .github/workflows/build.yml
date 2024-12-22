@@ -1,12 +1,9 @@
 name: Build
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - main
-    types:
-      - opened
-      - synchronize
   push:
     branches:
       - main
