@@ -23,7 +23,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
-import io.github.ascopes.jct.compilers.impl.javac.JavacJctCompilerImpl;
+import io.github.ascopes.jct.compilers.impl.ecj.EcjJctCompilerImpl;
 import java.lang.reflect.AnnotatedElement;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
@@ -31,26 +31,30 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
- * {@link JavacCompilersProvider} tests.
+ * {@link EcjCompilersProvider} tests (Java 17+ cases).
+ *
+ * <p>These have to be run under Java 17 and newer only otherwise builds will fail in CI for
+ * Java 11-16 runners. This is because the ECJ implementation is only compatible with Java 17 and
+ * newer.
  */
-@DisplayName("JavacCompilersProvider tests")
-class JavacCompilersProviderTest {
+@DisplayName("EcjCompilersProvider tests (Java 17+ cases)")
+class EcjCompilersProviderJava17Test {
 
   @DisplayName("Provider uses the user-provided compiler version bounds when valid")
   @Test
   void providerUsesTheUserProvidedVersionRangesWhenValid() {
     // Given
-    try (var javacMock = mockStatic(JavacJctCompilerImpl.class)) {
-      javacMock.when(JavacJctCompilerImpl::getEarliestSupportedVersionInt).thenReturn(8);
-      javacMock.when(JavacJctCompilerImpl::getLatestSupportedVersionInt).thenReturn(17);
+    try (var ecjMock = mockStatic(EcjJctCompilerImpl.class)) {
+      ecjMock.when(EcjJctCompilerImpl::getEarliestSupportedVersionInt).thenReturn(8);
+      ecjMock.when(EcjJctCompilerImpl::getLatestSupportedVersionInt).thenReturn(17);
       var annotation = someAnnotation(10, 15);
       var test = someAnnotatedElement(annotation);
       var context = mock(ExtensionContext.class);
 
       // When
-      var consumer = initialize(test, new JavacCompilersProvider());
+      var consumer = initialize(test, new EcjCompilersProvider());
       var compilers = consumer.provideArguments(context)
-          .map(args -> (JavacJctCompilerImpl) args.get()[0])
+          .map(args -> (EcjJctCompilerImpl) args.get()[0])
           .collect(Collectors.toList());
 
       // Then
@@ -63,7 +67,7 @@ class JavacCompilersProviderTest {
           var compiler = compilers.get(i);
           softly.assertThat(compiler.getName())
               .as("compilers[%d].getName()", i)
-              .isEqualTo("JDK Compiler (release = Java %d)", 10 + i);
+              .isEqualTo("ECJ (release = Java %d)", 10 + i);
           softly.assertThat(compiler.getRelease())
               .as("compilers[%d].getRelease()", i)
               .isEqualTo("%d", 10 + i);
@@ -76,17 +80,17 @@ class JavacCompilersProviderTest {
   @Test
   void providerUsesTheMinCompilerVersionAllowedIfExceeded() {
     // Given
-    try (var javacMock = mockStatic(JavacJctCompilerImpl.class)) {
-      javacMock.when(JavacJctCompilerImpl::getEarliestSupportedVersionInt).thenReturn(8);
-      javacMock.when(JavacJctCompilerImpl::getLatestSupportedVersionInt).thenReturn(17);
+    try (var ecjMock = mockStatic(EcjJctCompilerImpl.class)) {
+      ecjMock.when(EcjJctCompilerImpl::getEarliestSupportedVersionInt).thenReturn(8);
+      ecjMock.when(EcjJctCompilerImpl::getLatestSupportedVersionInt).thenReturn(17);
       var annotation = someAnnotation(1, 15);
       var test = someAnnotatedElement(annotation);
       var context = mock(ExtensionContext.class);
 
       // When
-      var consumer = initialize(test, new JavacCompilersProvider());
+      var consumer = initialize(test, new EcjCompilersProvider());
       var compilers = consumer.provideArguments(context)
-          .map(args -> (JavacJctCompilerImpl) args.get()[0])
+          .map(args -> (EcjJctCompilerImpl) args.get()[0])
           .collect(Collectors.toList());
 
       // Then
@@ -99,7 +103,7 @@ class JavacCompilersProviderTest {
           var compiler = compilers.get(i);
           softly.assertThat(compiler.getName())
               .as("compilers[%d].getName()", i)
-              .isEqualTo("JDK Compiler (release = Java %d)", 8 + i);
+              .isEqualTo("ECJ (release = Java %d)", 8 + i);
           softly.assertThat(compiler.getRelease())
               .as("compilers[%d].getRelease()", i)
               .isEqualTo("%d", 8 + i);
@@ -112,17 +116,17 @@ class JavacCompilersProviderTest {
   @Test
   void providerUsesTheMaxCompilerVersionAllowedIfExceeded() {
     // Given
-    try (var javacMock = mockStatic(JavacJctCompilerImpl.class)) {
-      javacMock.when(JavacJctCompilerImpl::getEarliestSupportedVersionInt).thenReturn(8);
-      javacMock.when(JavacJctCompilerImpl::getLatestSupportedVersionInt).thenReturn(17);
+    try (var ecjMock = mockStatic(EcjJctCompilerImpl.class)) {
+      ecjMock.when(EcjJctCompilerImpl::getEarliestSupportedVersionInt).thenReturn(8);
+      ecjMock.when(EcjJctCompilerImpl::getLatestSupportedVersionInt).thenReturn(17);
       var annotation = someAnnotation(10, 17);
       var test = someAnnotatedElement(annotation);
       var context = mock(ExtensionContext.class);
 
       // When
-      var consumer = initialize(test, new JavacCompilersProvider());
+      var consumer = initialize(test, new EcjCompilersProvider());
       var compilers = consumer.provideArguments(context)
-          .map(args -> (JavacJctCompilerImpl) args.get()[0])
+          .map(args -> (EcjJctCompilerImpl) args.get()[0])
           .collect(Collectors.toList());
 
       // Then
@@ -135,7 +139,7 @@ class JavacCompilersProviderTest {
           var compiler = compilers.get(i);
           softly.assertThat(compiler.getName())
               .as("compilers[%d].getName()", i)
-              .isEqualTo("JDK Compiler (release = Java %d)", 10 + i);
+              .isEqualTo("ECJ (release = Java %d)", 10 + i);
           softly.assertThat(compiler.getRelease())
               .as("compilers[%d].getRelease()", i)
               .isEqualTo("%d", 10 + i);
@@ -145,23 +149,23 @@ class JavacCompilersProviderTest {
   }
 
   @SafeVarargs
-  final JavacCompilerTest someAnnotation(
+  final EcjCompilerTest someAnnotation(
       int min,
       int max,
       Class<? extends JctCompilerConfigurer<?>>... configurers
   ) {
-    var annotation = mock(JavacCompilerTest.class);
+    var annotation = mock(EcjCompilerTest.class);
     when(annotation.minVersion()).thenReturn(min);
     when(annotation.maxVersion()).thenReturn(max);
     when(annotation.configurers()).thenReturn(configurers);
     when(annotation.versionStrategy()).thenReturn(VersionStrategy.RELEASE);
-    when(annotation.annotationType()).thenAnswer(ctx -> JavacCompilerTest.class);
+    when(annotation.annotationType()).thenAnswer(ctx -> EcjCompilerTest.class);
     return annotation;
   }
 
-  AnnotatedElement someAnnotatedElement(JavacCompilerTest annotation) {
+  AnnotatedElement someAnnotatedElement(EcjCompilerTest annotation) {
     var element = mock(AnnotatedElement.class);
-    when(element.getDeclaredAnnotation(JavacCompilerTest.class)).thenReturn(annotation);
+    when(element.getDeclaredAnnotation(EcjCompilerTest.class)).thenReturn(annotation);
     return element;
   }
 }

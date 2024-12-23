@@ -16,8 +16,8 @@
 package io.github.ascopes.jct.junit;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
-import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
-import io.github.ascopes.jct.utils.VisibleForTestingOnly;
+import io.github.ascopes.jct.compilers.JctCompilers;
+import io.github.ascopes.jct.compilers.impl.javac.JavacJctCompilerImpl;
 import org.junit.jupiter.params.support.AnnotationConsumer;
 
 /**
@@ -26,23 +26,19 @@ import org.junit.jupiter.params.support.AnnotationConsumer;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-public final class JavacCompilersProvider extends AbstractCompilersProvider
+final class JavacCompilersProvider extends AbstractCompilersProvider
     implements AnnotationConsumer<JavacCompilerTest> {
 
   /**
    * Initialise the provider.
-   *
-   * <p>This is only visible for testing purposes, users should have no need to
-   * initialise this class directly.
    */
-  @VisibleForTestingOnly
-  public JavacCompilersProvider() {
-    // Visible for testing only.
+  JavacCompilersProvider() {
+    // Nothing to do.
   }
 
   @Override
   protected JctCompiler initializeNewCompiler() {
-    return new JavacJctCompilerImpl();
+    return JctCompilers.newPlatformCompiler();
   }
 
   @Override

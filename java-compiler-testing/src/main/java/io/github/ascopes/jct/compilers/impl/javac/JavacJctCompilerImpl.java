@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.ascopes.jct.compilers.impl;
+package io.github.ascopes.jct.compilers.impl.javac;
 
 import static java.util.Objects.requireNonNull;
 
