@@ -31,7 +31,7 @@
   <description>Acceptance tests for MapStruct.</description>
 
   <properties>
-    <mapstruct.version>1.5.5.Final</mapstruct.version>
+    <mapstruct.version>1.6.3</mapstruct.version>
   </properties>
 
   <dependencies>
