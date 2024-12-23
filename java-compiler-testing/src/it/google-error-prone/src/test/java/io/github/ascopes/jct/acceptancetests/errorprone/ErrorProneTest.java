@@ -56,7 +56,11 @@ class ErrorProneTest {
 
     // When
     var compilation = compiler
-        .addCompilerOptions("-Xplugin:ErrorProne", "-XDcompilePolicy=simple")
+        .addCompilerOptions(
+            "-Xplugin:ErrorProne",
+            "-XDcompilePolicy=simple",
+            "--should-stop=ifError=FLOW"
+        )
         .compile(workspace);
 
     // Then
@@ -74,7 +78,11 @@ class ErrorProneTest {
 
     // When
     var compilation = compiler
-        .addCompilerOptions("-Xplugin:ErrorProne", "-XDcompilePolicy=simple")
+        .addCompilerOptions(
+            "-Xplugin:ErrorProne",
+            "-XDcompilePolicy=simple",
+            "--should-stop=ifError=FLOW"
+        )
         .compile(workspace);
 
     // Then
