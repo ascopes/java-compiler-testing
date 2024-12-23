@@ -50,7 +50,7 @@
       -DmvnArgLinePropagated=true
     </argLine>
 
-    <error-prone.version>2.28.0</error-prone.version>
+    <error-prone.version>2.36.0</error-prone.version>
   </properties>
 
   <dependencies>
