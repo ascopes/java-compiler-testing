@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
+import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
 
@@ -29,7 +30,7 @@ class AvajeInjectTest {
   @JavacCompilerTest(minVersion = 11)
   void dependencyInjectionCodeGetsGeneratedAsExpected(JctCompiler compiler) {
     // Given
-    try (var workspace = Workspaces.newWorkspace()) {
+    try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
       workspace
           .createSourcePathPackage()
           .copyContentsFrom("src", "test", "resources", "code");
