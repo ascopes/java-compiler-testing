@@ -299,7 +299,7 @@
             <consoleOutputReporter>
               <disable>${hide-test-logs-in-console}</disable>
             </consoleOutputReporter>
-            <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode">
+            <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
               <disable>false</disable>
               <printStacktraceOnError>true</printStacktraceOnError>
               <printStacktraceOnFailure>true</printStacktraceOnFailure>
@@ -482,7 +482,7 @@
             <consoleOutputReporter>
               <disable>${hide-test-logs-in-console}</disable>
             </consoleOutputReporter>
-            <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode">
+            <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
               <disable>false</disable>
               <printStacktraceOnError>true</printStacktraceOnError>
               <printStacktraceOnFailure>true</printStacktraceOnFailure>
