@@ -23,7 +23,6 @@ import static io.github.ascopes.jct.fixtures.Fixtures.someLinesOfText;
 import static io.github.ascopes.jct.fixtures.Fixtures.someText;
 import static io.github.ascopes.jct.fixtures.Fixtures.someTraceDiagnostic;
 import static io.github.ascopes.jct.utils.IterableUtils.flatten;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -388,7 +387,7 @@ class JctCompilationFactoryImplTest {
 
       // Then
       assertThat(result.getOutputLines())
-          .containsExactlyElementsOf(lines.lines().collect(toList()));
+          .containsExactlyElementsOf(lines.lines().toList());
 
       // Ensure we flushed before we called toString, otherwise data might be missing.
       order.verify(teeWriter).flush();
