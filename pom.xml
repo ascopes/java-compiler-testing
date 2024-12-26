@@ -96,6 +96,7 @@
     <!-- Dependencies -->
     <assertj.version>3.27.0</assertj.version>
     <awaitility.version>4.2.2</awaitility.version>
+    <ecj.version>3.41.0-SNAPSHOT</ecj.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jspecify.version>1.0.0</jspecify.version>
     <junit.version>5.11.4</junit.version>
@@ -200,6 +201,13 @@
         <groupId>org.awaitility</groupId>
         <artifactId>awaitility</artifactId>
         <version>${awaitility.version}</version>
+      </dependency>
+
+      <dependency>
+        <!-- Eclipse Java compiler -->
+        <groupId>org.eclipse.jdt</groupId>
+        <artifactId>ecj</artifactId>
+        <version>${ecj.version}</version>
       </dependency>
 
       <dependency>
