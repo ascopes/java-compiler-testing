@@ -4,13 +4,33 @@ on:
   pull_request:
     branches:
       - main
+      - v5
   push:
     branches:
       - main
+      - v5
   workflow_call: {}
   workflow_dispatch: {}
 
 jobs:
+  validate:
+    name: Validation steps
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          check_together: 'yes'
+          scandir: './scripts'
+
+      - name: Validate codecov.yml
+        shell: bash
+        run: curl -vvv --fail --data-binary @- https://codecov.io/validate < codecov.yml
+
+
   build:
     name: Build on JDK ${{ matrix.java-version }} (${{ matrix.os-name }})
     runs-on: ${{ matrix.os-name }}
@@ -18,23 +38,45 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os-name: [ubuntu-latest]
-        java-version:
-          - 11  # LTS
-          - 17  # LTS
-          - 21  # LTS
+        include:
+          - java-version: 17
+            use-oracle: false
+            os-name: ubuntu-latest
+          - java-version: 17
+            use-oracle: false
+            os-name: windows-latest
+          - java-version: 17
+            use-oracle: false
+            os-name: macos-latest
+          - java-version: 21
+            use-oracle: false
+            os-name: ubuntu-latest
+          - java-version: GA
+            use-oracle: true
+            os-name: ubuntu-latest
+          - java-version: EA
+            use-oracle: true
+            os-name: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: Initialize JDK
+      - name: Initialize JDK from Temurin
+        if: ${{ ! matrix.use-oracle }}
         uses: actions/setup-java@v4
         with:
-          check-latest: true
-          distribution: zulu
           java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+
+      - name: Initialize JDK from Oracle
+        if: ${{ matrix.use-oracle }}
+        uses: oracle-actions/setup-java@v1
+        with:
+          website: jdk.java.net
+          release: ${{ matrix.java-version }}
 
       - name: Maven cache
         uses: actions/cache@v4
@@ -44,7 +86,7 @@ jobs:
           path:
             ~/.m2
           key: build-${{ env.cache-name }}
-          
+
       - name: Compile and run tests
         shell: bash
         run: ./mvnw -B -U clean verify
