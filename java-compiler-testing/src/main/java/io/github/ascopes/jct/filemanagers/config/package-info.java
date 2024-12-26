@@ -18,5 +18,3 @@
  */
 package io.github.ascopes.jct.filemanagers.config;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;

@@ -33,7 +33,6 @@ import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.ex.JctJunitConfigurerException;
 import io.github.ascopes.jct.fixtures.Fixtures;
 import java.lang.reflect.InvocationTargetException;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -131,7 +130,7 @@ class AbstractCompilersProviderTest {
     provider.configureInternals(10, 17, versionStrategy);
     var compilers = provider.provideArguments(mock(ExtensionContext.class))
         .map(args -> (JctCompiler) args.get()[0])
-        .collect(Collectors.toList());
+        .toList();
 
     // Then
     assertThat(compilers).hasSize(3);
@@ -155,7 +154,7 @@ class AbstractCompilersProviderTest {
     provider.configureInternals(15, 20, versionStrategy);
     var compilers = provider.provideArguments(mock(ExtensionContext.class))
         .map(args -> (JctCompiler) args.get()[0])
-        .collect(Collectors.toList());
+        .toList();
 
     // Then
     assertThat(compilers).hasSize(3);
@@ -185,7 +184,7 @@ class AbstractCompilersProviderTest {
       );
       var compilers = provider.provideArguments(mock(ExtensionContext.class))
           .map(args -> (JctCompiler) args.get()[0])
-          .collect(Collectors.toList());
+          .toList();
 
       // Then
       assertSoftly(softly -> {

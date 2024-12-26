@@ -135,7 +135,7 @@ class JctFileManagerImplTest {
     var pathRoots = Stream
         .generate(Fixtures::somePathRoot)
         .limit(10)
-        .collect(Collectors.toList());
+        .toList();
 
     // When
     fileManager.addPaths(location, pathRoots);
