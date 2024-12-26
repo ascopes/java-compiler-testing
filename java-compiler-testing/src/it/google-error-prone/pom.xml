@@ -89,17 +89,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <!-- https://github.com/google/error-prone/issues/3710 -->
-      <id>${project.artifactId}-incompatible-jdk</id>
-      <activation>
-        <jdk>[,12)</jdk>
-      </activation>
-      <properties>
-        <maven.test.skip>true</maven.test.skip>
-      </properties>
-    </profile>
-  </profiles>
 </project>
