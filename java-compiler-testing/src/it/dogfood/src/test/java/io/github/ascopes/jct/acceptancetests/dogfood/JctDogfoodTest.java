@@ -52,7 +52,7 @@ class JctDogfoodTest {
       .resolve("classes");
 
   @DisplayName("JCT can compile itself as a legacy module source")
-  @JavacCompilerTest(minVersion = 11, configurers = JctCompilationConfigurer.class)
+  @JavacCompilerTest(minVersion = 17, configurers = JctCompilationConfigurer.class)
   void jctCanCompileItselfAsLegacyModule(JctCompiler compiler) throws IOException {
     // Given
     try (var workspace = Workspaces.newWorkspace()) {
