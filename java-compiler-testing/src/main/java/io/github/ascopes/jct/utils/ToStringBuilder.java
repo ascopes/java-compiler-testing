@@ -135,25 +135,13 @@ public final class ToStringBuilder {
     for (var i = 0; i < len; ++i) {
       var next = chars.charAt(i);
       switch (next) {
-        case '\0':
-          builder.append("\\0");
-          break;
-        case '\r':
-          builder.append("\\r");
-          break;
-        case '\n':
-          builder.append("\\n");
-          break;
-        case '\t':
-          builder.append("\\t");
-          break;
-        case '\"':
-          builder.append("\\\"");
-          break;
-        case '\\':
-          builder.append("\\\\");
-          break;
-        default:
+        case '\0' -> builder.append("\\0");
+        case '\r' -> builder.append("\\r");
+        case '\n' -> builder.append("\\n");
+        case '\t' -> builder.append("\\t");
+        case '\"' -> builder.append("\\\"");
+        case '\\' -> builder.append("\\\\");
+        default -> {
           if (0x20 <= next && next <= 0x7E || 0x80 <= next && next <= 0xFF) {
             builder.append(next);
           } else {
@@ -162,7 +150,7 @@ public final class ToStringBuilder {
                 .append("0".repeat(4 - hex.length()))
                 .append(hex);
           }
-          break;
+        }
       }
     }
 

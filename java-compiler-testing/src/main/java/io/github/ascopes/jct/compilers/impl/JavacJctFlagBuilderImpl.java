@@ -81,21 +81,15 @@ public final class JavacJctFlagBuilderImpl implements JctFlagBuilder {
   @Override
   public JctFlagBuilder compilationMode(CompilationMode compilationMode) {
     switch (compilationMode) {
-      case COMPILATION_ONLY:
-        craftedFlags.add(PROC_NONE);
-        break;
-
-      case ANNOTATION_PROCESSING_ONLY:
-        craftedFlags.add(PROC_ONLY);
-        break;
-
-      default:
+      case COMPILATION_ONLY -> craftedFlags.add(PROC_NONE);
+      case ANNOTATION_PROCESSING_ONLY -> craftedFlags.add(PROC_ONLY);
+      default -> {
         if (Runtime.version().feature() >= 22) {
           // In Java 22, the default is to disable all annotation processing by default
           // Prior to Java 22, the default was to enable all annotation processing by default.
           craftedFlags.add(PROC_FULL);
         }
-        break;
+      }
     }
 
     return this;

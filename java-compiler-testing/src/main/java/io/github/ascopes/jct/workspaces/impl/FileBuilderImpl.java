@@ -169,16 +169,13 @@ public final class FileBuilderImpl implements FileBuilder {
         ? "unknown"
         : scheme.toLowerCase(Locale.ENGLISH);
 
-    switch (scheme) {
-      case "classpath":
-      case "memory":
-      case "jrt":
-      case "ram":
-        return input;
-      default:
+    return switch (scheme) {
+      case "classpath", "memory", "jrt", "ram" -> input;
+      default -> {
         log.trace("Decided to wrap input {} in a buffer - scheme was {}", input, scheme);
-        return new BufferedInputStream(input);
-    }
+        yield new BufferedInputStream(input);
+      }
+    };
   }
 
   private static ClassLoader currentCallerClassLoader() {

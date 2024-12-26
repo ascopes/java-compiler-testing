@@ -149,15 +149,11 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
   }
 
   private Level diagnosticToLevel(Diagnostic<?> diagnostic) {
-    switch (diagnostic.getKind()) {
-      case ERROR:
-        return Level.ERROR;
-      case WARNING:
-      case MANDATORY_WARNING:
-        return Level.WARN;
-      default:
-        return Level.INFO;
-    }
+    return switch (diagnostic.getKind()) {
+      case ERROR -> Level.ERROR;
+      case WARNING, MANDATORY_WARNING -> Level.WARN;
+      default -> Level.INFO;
+    };
   }
 
   private Supplier<String> messageGetter(Diagnostic<?> diagnostic) {
