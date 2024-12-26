@@ -22,6 +22,7 @@ import static org.assertj.core.api.InstanceOfAssertFactories.array;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.withSettings;
@@ -30,6 +31,7 @@ import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.ex.JctJunitConfigurerException;
+import io.github.ascopes.jct.fixtures.Fixtures;
 import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -98,13 +100,14 @@ class AbstractCompilersProviderTest {
   void configuringTheProviderWithVersionStrategyUsesThatStrategy() {
     // Given
     var provider = new CompilersProviderImpl(8, 17);
-    var versionStrategy = mock(VersionStrategy.class);
+    // Mockito refuses to mock enums past Java 17, but we _can_ still spy on them.
+    var versionStrategy = spy(Fixtures.oneOf(VersionStrategy.class));
 
     // When
     provider.configureInternals(10, 15, versionStrategy);
     var compilers = provider.provideArguments(mock(ExtensionContext.class))
         .map(args -> (JctCompiler) args.get()[0])
-        .collect(Collectors.toList());
+        .toList();
 
     // Then
     for (var i = 0; i < compilers.size(); ++i) {
@@ -121,7 +124,8 @@ class AbstractCompilersProviderTest {
   void configuringTheProviderRespectsTheMinimumVersionBound() {
     // Given
     var provider = new CompilersProviderImpl(15, 17);
-    var versionStrategy = mock(VersionStrategy.class);
+    // Mockito refuses to mock enums past Java 17, but we _can_ still spy on them.
+    var versionStrategy = spy(Fixtures.oneOf(VersionStrategy.class));
 
     // When
     provider.configureInternals(10, 17, versionStrategy);
@@ -144,7 +148,8 @@ class AbstractCompilersProviderTest {
   void configuringTheProviderRespectsTheMaximumVersionBound() {
     // Given
     var provider = new CompilersProviderImpl(15, 17);
-    var versionStrategy = mock(VersionStrategy.class);
+    // Mockito refuses to mock enums past Java 17, but we _can_ still spy on them.
+    var versionStrategy = spy(Fixtures.oneOf(VersionStrategy.class));
 
     // When
     provider.configureInternals(15, 20, versionStrategy);
