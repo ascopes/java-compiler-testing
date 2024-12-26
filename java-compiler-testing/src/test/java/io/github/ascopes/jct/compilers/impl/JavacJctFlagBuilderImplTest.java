@@ -25,7 +25,6 @@ import io.github.ascopes.jct.compilers.CompilationMode;
 import io.github.ascopes.jct.compilers.DebuggingInfo;
 import io.github.ascopes.jct.fixtures.Fixtures;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -467,7 +466,7 @@ class JavacJctFlagBuilderImplTest {
       var options = Stream
           .generate(Fixtures::someText)
           .limit(5)
-          .collect(Collectors.toList());
+          .toList();
 
       // When
       flagBuilder.annotationProcessorOptions(options);
@@ -476,7 +475,7 @@ class JavacJctFlagBuilderImplTest {
       assertThat(flagBuilder.build())
           .containsSequence(options.stream()
               .map("-A"::concat)
-              .collect(Collectors.toList()));
+              .toList());
     }
 
     @DisplayName(".annotationProcessorOptions(...) returns the flag builder")
@@ -486,7 +485,7 @@ class JavacJctFlagBuilderImplTest {
       var options = Stream
           .generate(Fixtures::someText)
           .limit(5)
-          .collect(Collectors.toList());
+          .toList();
 
       // Then
       assertThat(flagBuilder.annotationProcessorOptions(options))
@@ -505,7 +504,7 @@ class JavacJctFlagBuilderImplTest {
       var options = Stream
           .generate(Fixtures::someText)
           .limit(5)
-          .collect(Collectors.toList());
+          .toList();
 
       // When
       flagBuilder.compilerOptions(options);
@@ -522,7 +521,7 @@ class JavacJctFlagBuilderImplTest {
       var options = Stream
           .generate(Fixtures::someText)
           .limit(5)
-          .collect(Collectors.toList());
+          .toList();
 
       // Then
       assertThat(flagBuilder.compilerOptions(options))
