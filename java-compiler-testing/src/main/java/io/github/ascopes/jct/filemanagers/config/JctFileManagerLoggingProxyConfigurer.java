@@ -50,16 +50,17 @@ public final class JctFileManagerLoggingProxyConfigurer
   public JctFileManager configure(JctFileManager fileManager) {
     log.debug("Configuring compiler operation audit logging");
 
-    switch (compiler.getFileManagerLoggingMode()) {
-      case STACKTRACES:
+    return switch (compiler.getFileManagerLoggingMode()) {
+      case STACKTRACES -> {
         log.trace("Decorating file manager {} in a logger proxy with stack traces", fileManager);
-        return LoggingFileManagerProxy.wrap(fileManager, true);
-      case ENABLED:
+        yield LoggingFileManagerProxy.wrap(fileManager, true);
+      }
+      case ENABLED -> {
         log.trace("Decorating file manager {} in a logger proxy", fileManager);
-        return LoggingFileManagerProxy.wrap(fileManager, false);
-      default:
-        throw new IllegalStateException("Cannot configure logger proxy");
-    }
+        yield LoggingFileManagerProxy.wrap(fileManager, false);
+      }
+      default -> throw new IllegalStateException("Cannot configure logger proxy");
+    };
   }
 
   @Override
