@@ -3,12 +3,14 @@ on:
   pull_request:
     branches:
       - main
+      - v5
     types:
       - opened
       - synchronize
   push:
     branches:
       - main
+      - v5
   workflow_call: {}
   workflow_dispatch: {}
 
@@ -18,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     concurrency:
-      group: codeql-codeql-${{ github.head_ref || github.run_id }}
+      group: codeql-${{ github.head_ref || github.run_id }}
       cancel-in-progress: true
 
     permissions:
