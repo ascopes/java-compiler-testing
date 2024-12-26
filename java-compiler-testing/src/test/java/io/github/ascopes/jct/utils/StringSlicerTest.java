@@ -19,7 +19,6 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenCode;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -82,7 +81,7 @@ class StringSlicerTest {
     // When
     var actual = slicer
         .splitToStream(input)
-        .collect(Collectors.toList());
+        .toList();
 
     // Then
     then(actual).isEqualTo(expected);

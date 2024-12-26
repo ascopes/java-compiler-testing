@@ -180,7 +180,7 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
       return paths
           .stream()
           .filter(not(List.of(excludedPaths)::contains))
-          .collect(Collectors.toList());
+          .toList();
     }
 
     private String toPathString() {

@@ -44,7 +44,6 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
@@ -180,7 +179,7 @@ public final class Fixtures {
     return Stream
         .generate(Fixtures::someFlag)
         .limit(someInt(2, 4))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   /**

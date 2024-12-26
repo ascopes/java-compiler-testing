@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.compilers.impl;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 
 import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.compilers.JctCompilationFactory;
@@ -139,7 +138,7 @@ public final class JctCompilationFactoryImpl implements JctCompilationFactory {
           .arguments(flags)
           .compilationUnits(Set.copyOf(compilationUnits))
           .fileManager(fileManager)
-          .outputLines(writer.getContent().lines().collect(toList()))
+          .outputLines(writer.getContent().lines().toList())
           .diagnostics(diagnosticListener.getDiagnostics())
           .success(success)
           .failOnWarnings(compiler.isFailOnWarnings())

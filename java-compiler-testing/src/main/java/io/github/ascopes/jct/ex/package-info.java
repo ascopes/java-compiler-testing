@@ -19,5 +19,3 @@
  */
 package io.github.ascopes.jct.ex;
 
-import org.apiguardian.api.API;
-import org.apiguardian.api.API.Status;
