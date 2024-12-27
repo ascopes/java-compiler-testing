@@ -46,7 +46,7 @@ if [[ -d ${target_dir} ]]; then
 fi
 
 echo "Making ECJ directory"
-mkdir "${target_dir}"
+mkdir -pv "${target_dir}"
 
 echo "Working out the latest ECJ POM to use..."
 latest_published_version=$(curl --fail --silent https://repo1.maven.org/maven2/org/eclipse/jdt/ecj/maven-metadata.xml \
