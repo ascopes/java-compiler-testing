@@ -30,7 +30,6 @@ jobs:
         shell: bash
         run: curl -vvv --fail --data-binary @- https://codecov.io/validate < codecov.yml
 
-
   build:
     name: Build on JDK ${{ matrix.java-version }} (${{ matrix.os-name }})
     runs-on: ${{ matrix.os-name }}
@@ -40,22 +39,16 @@ jobs:
       matrix:
         include:
           - java-version: 17
-            use-oracle: false
             os-name: ubuntu-latest
           - java-version: 17
-            use-oracle: false
             os-name: windows-latest
           - java-version: 17
-            use-oracle: false
             os-name: macos-latest
           - java-version: 21
-            use-oracle: false
             os-name: ubuntu-latest
           - java-version: GA
-            use-oracle: true
             os-name: ubuntu-latest
           - java-version: EA
-            use-oracle: true
             os-name: ubuntu-latest
 
     steps:
@@ -65,14 +58,14 @@ jobs:
           fetch-depth: 2
 
       - name: Initialize JDK from Temurin
-        if: ${{ ! matrix.use-oracle }}
+        if: ${{ matrix.java-version != 'GA' && matrix.java-version != 'EA' }}
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java-version }}
           distribution: 'temurin'
 
       - name: Initialize JDK from Oracle
-        if: ${{ matrix.use-oracle }}
+        if: ${{ matrix.java-version == 'GA' || matrix.java-version == 'EA' }}
         uses: oracle-actions/setup-java@v1
         with:
           website: jdk.java.net
