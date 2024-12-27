@@ -56,7 +56,7 @@ latest_published_version=$(curl --fail --silent https://repo1.maven.org/maven2/o
 
 echo "Making ECJ POM derived from the POM for v${latest_published_version}"
 curl --fail --silent https://repo1.maven.org/maven2/org/eclipse/jdt/ecj/"${latest_published_version}"/ecj-"${latest_published_version}".pom \
-    | sed 's@<version>'${latest_published_version}'</version>@<version>'${version}'</version>@g' \
+    | sed 's@<version>'"${latest_published_version}"'</version>@<version>'"${version}"'</version>@g' \
     > "${target_dir}/ecj-${version}.pom"
 
 echo "Downloading ECJ JAR"
