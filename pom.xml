@@ -127,6 +127,7 @@
 
     <!-- Log verbosity -->
     <hide-test-logs-in-console>true</hide-test-logs-in-console>
+    <test-log-verbosity>INFO</test-log-verbosity>
 
     <!--
       This argument is pulled in by Surefire and Failsafe, and JaCoCo will amend it to 
@@ -152,7 +153,7 @@
       -DmvnArgLinePropagated=true
       -Dnet.bytebuddy.experimental=true
       -Dorg.slf4j.simpleLogger.log=WARN
-      -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=INFO
+      -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=${test-log-verbosity}
       -Xshare:off
       -XX:+TieredCompilation
       -XX:TieredStopAtLevel=1
