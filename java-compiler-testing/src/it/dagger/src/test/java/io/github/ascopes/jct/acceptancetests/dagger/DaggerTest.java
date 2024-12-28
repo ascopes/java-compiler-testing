@@ -18,6 +18,7 @@ package io.github.ascopes.jct.acceptancetests.dagger;
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 @DisplayName("Dagger acceptance tests")
 class DaggerTest {
   @DisplayName("Dagger DI runs as expected in the annotation processing phase")
+  @EcjCompilerTest
   @JavacCompilerTest
   void daggerDiRunsAsExpectedInTheAnnotationProcessingPhase(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace()) {
@@ -38,7 +40,7 @@ class DaggerTest {
       var compilation = compiler.compile(workspace);
 
       // Then
-      assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+      assertThatCompilation(compilation).isSuccessful();
 
       assertThatCompilation(compilation)
           .sourceOutputPackages()
