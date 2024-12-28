@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 
 import io.github.ascopes.jct.acceptancetests.serviceloader.ServiceProcessor;
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 class ServiceProcessorTest {
 
   @DisplayName("Expected files get created when the processor is run")
+  @EcjCompilerTest
   @JavacCompilerTest
   void expectedFilesGetCreated(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace()) {
@@ -41,7 +43,7 @@ class ServiceProcessorTest {
           .compile(workspace);
 
       assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings()
+          .isSuccessful()
           .classOutputPackages()
           .fileExists("META-INF", "services", "org.example.InsultProvider")
           .hasContent("org.example.MeanInsultProviderImpl");

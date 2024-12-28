@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThat;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.integration.AbstractIntegrationTest;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.DisplayName;
 class CompilingSpecificClassesIntegrationTest extends AbstractIntegrationTest {
 
   @DisplayName("Only the classes that I specify get compiled")
+  @EcjCompilerTest
   @JavacCompilerTest
   void onlyTheClassesSpecifiedGetCompiled(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace()) {
