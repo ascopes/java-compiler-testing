@@ -69,9 +69,9 @@ public final class WorkspaceImpl implements Workspace {
 
       for (var list : paths.values()) {
         for (var path : list) {
-          if (path instanceof AbstractManagedDirectory) {
+          if (path instanceof AbstractManagedDirectory dir) {
             try {
-              ((AbstractManagedDirectory) path).close();
+              dir.close();
 
             } catch (Exception ex) {
               exceptions.add(ex);
@@ -206,8 +206,7 @@ public final class WorkspaceImpl implements Workspace {
     var results = new HashMap<String, List<PathRoot>>();
 
     paths.forEach((pathLocation, pathRoots) -> {
-      if (pathLocation instanceof ModuleLocation) {
-        var modulePathLocation = (ModuleLocation) pathLocation;
+      if (pathLocation instanceof ModuleLocation modulePathLocation) {
         if (modulePathLocation.getParent().equals(location)) {
           results.computeIfAbsent(modulePathLocation.getModuleName(), name -> new ArrayList<>())
               .addAll(pathRoots);
