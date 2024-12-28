@@ -20,12 +20,18 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
+import io.github.ascopes.jct.utils.IoExceptionUtils;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import io.github.ascopes.jct.workspaces.ManagedDirectory;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspace;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,8 +53,9 @@ import javax.tools.JavaFileManager.Location;
 public final class WorkspaceImpl implements Workspace {
 
   private volatile boolean closed;
+  private final String id;
   private final PathStrategy pathStrategy;
-  private final Map<Location, List<PathRoot>> paths;
+  private final Map<Location, List<PathRoot>> locations;
 
   /**
    * Initialise this workspace.
@@ -56,9 +63,10 @@ public final class WorkspaceImpl implements Workspace {
    * @param pathStrategy the path strategy to use for creating source and target paths.
    */
   public WorkspaceImpl(PathStrategy pathStrategy) {
+    id = UUID.randomUUID().toString();
     closed = false;
     this.pathStrategy = requireNonNull(pathStrategy, "pathStrategy");
-    paths = new HashMap<>();
+    locations = new HashMap<>();
   }
 
   @Override
@@ -67,7 +75,7 @@ public final class WorkspaceImpl implements Workspace {
       // Close everything in a best-effort fashion.
       var exceptions = new ArrayList<Throwable>();
 
-      for (var list : paths.values()) {
+      for (var list : locations.values()) {
         for (var path : list) {
           if (path instanceof AbstractManagedDirectory dir) {
             try {
@@ -91,6 +99,64 @@ public final class WorkspaceImpl implements Workspace {
   }
 
   @Override
+  public void dump(Appendable appendable) {
+    IoExceptionUtils.uncheckedIo(() -> {
+      appendable.append(toString()).append("\n");
+      for (var location : locations.keySet().stream().sorted().toList()) {
+        appendable.append("  Location ").append(location.toString()).append(": \n");
+
+        for (var pathRoot : locations.get(location)) {
+          appendable.append("    - ").append(pathRoot.getUri().toString()).append(" contents:\n");
+
+          var baseIndent = 8;
+          var basePath = pathRoot.getPath();
+
+          Files.walkFileTree(basePath, new SimpleFileVisitor<>() {
+            private int indent = 0;
+
+            @Override
+            public FileVisitResult preVisitDirectory(
+                Path dir,
+                BasicFileAttributes attrs
+            ) throws IOException {
+              if (!dir.equals(basePath)) {
+                appendIndent();
+                appendable.append(dir.getFileName().toString()).append("/\n");
+                indent += 2;
+              }
+
+              return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+              indent -= 2;
+              return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFile(
+                Path file,
+                BasicFileAttributes attrs
+            ) throws IOException {
+              appendIndent();
+              appendable.append(file.getFileName().toString()).append("\n");
+              return FileVisitResult.CONTINUE;
+            }
+
+            private void appendIndent() throws IOException {
+              appendable.append(" ".repeat(baseIndent))
+                  .append("·".repeat(indent));
+            }
+          });
+        }
+
+        appendable.append("\n");
+      }
+    });
+  }
+
+  @Override
   public boolean isClosed() {
     return closed;
   }
@@ -109,7 +175,7 @@ public final class WorkspaceImpl implements Workspace {
     }
 
     var dir = new WrappingDirectoryImpl(path);
-    paths.computeIfAbsent(location, unused -> new ArrayList<>()).add(dir);
+    locations.computeIfAbsent(location, unused -> new ArrayList<>()).add(dir);
   }
 
   @Override
@@ -139,13 +205,12 @@ public final class WorkspaceImpl implements Workspace {
       throw new JctIllegalInputException("Location must not be module-oriented");
     }
 
-    // Needs to be unique, and JIMFS cannot hold a file system name containing stuff like
-    // underscores.
+    // Needs to be unique.
     var fsName = location.getName().replaceAll("[^A-Za-z0-9]", "")
         + UUID.randomUUID();
 
     var dir = pathStrategy.newInstance(fsName);
-    paths.computeIfAbsent(location, unused -> new ArrayList<>()).add(dir);
+    locations.computeIfAbsent(location, unused -> new ArrayList<>()).add(dir);
     return dir;
   }
 
@@ -170,9 +235,9 @@ public final class WorkspaceImpl implements Workspace {
   @Override
   public Map<Location, List<? extends PathRoot>> getAllPaths() {
     // Create an immutable copy.
-    var pathsCopy = new HashMap<Location, List<PathRoot>>();
-    paths.forEach((location, list) -> pathsCopy.put(location, List.copyOf(list)));
-    return unmodifiableMap(pathsCopy);
+    var locationsCopy = new HashMap<Location, List<PathRoot>>();
+    locations.forEach((location, list) -> locationsCopy.put(location, List.copyOf(list)));
+    return unmodifiableMap(locationsCopy);
   }
 
   @Override
@@ -205,7 +270,7 @@ public final class WorkspaceImpl implements Workspace {
 
     var results = new HashMap<String, List<PathRoot>>();
 
-    paths.forEach((pathLocation, pathRoots) -> {
+    locations.forEach((pathLocation, pathRoots) -> {
       if (pathLocation instanceof ModuleLocation modulePathLocation) {
         if (modulePathLocation.getParent().equals(location)) {
           results.computeIfAbsent(modulePathLocation.getModuleName(), name -> new ArrayList<>())
@@ -233,9 +298,19 @@ public final class WorkspaceImpl implements Workspace {
       );
     }
 
-    var roots = paths.get(location);
+    var roots = locations.get(location);
     return roots == null
         ? List.of()
         : List.copyOf(roots);
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("id", id)
+        .attribute("pathStrategy", pathStrategy)
+        .attribute("closed", closed)
+        .attribute("numberOfLocations", locations.size())
+        .toString();
   }
 }
