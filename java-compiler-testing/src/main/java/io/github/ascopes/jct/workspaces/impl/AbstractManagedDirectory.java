@@ -148,9 +148,9 @@ public abstract sealed class AbstractManagedDirectory
   }
 
   @Override
-  public boolean equals(@Nullable Object that) {
-    return that instanceof AbstractManagedDirectory
-        && ((AbstractManagedDirectory) that).uri.equals(uri);
+  public boolean equals(@Nullable Object other) {
+    return other instanceof AbstractManagedDirectory that
+        && uri.equals(that.uri);
   }
 
   @Override

@@ -117,12 +117,12 @@ public final class ToStringBuilder {
       builder.append(NULL);
     } else if (TYPES_TO_TREAT_AS_STRINGS.stream().anyMatch(cls -> cls.isInstance(object))) {
       appendToStringCharSequence(builder, object.toString());
-    } else if (object instanceof Map<?, ?>) {
-      appendToStringMap(builder, (Map<?, ?>) object);
+    } else if (object instanceof Map<?, ?> map) {
+      appendToStringMap(builder, map);
     } else if (object.getClass().isArray()) {
       appendToStringArray(builder, object);
-    } else if (object instanceof Iterable<?>) {
-      appendToStringIterable(builder, ((Iterable<?>) object));
+    } else if (object instanceof Iterable<?> iterable) {
+      appendToStringIterable(builder, iterable);
     } else {
       builder.append(object);
     }

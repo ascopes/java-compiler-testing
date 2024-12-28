@@ -76,10 +76,9 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    * @throws JctIllegalInputException if the location is an output location and is misconfigured.
    */
   public void addPath(Location location, PathRoot pathRoot) {
-    if (location instanceof ModuleLocation) {
+    if (location instanceof ModuleLocation moduleLocation) {
       // If we are adding a specific module, we should resolve where it needs to live
       // using custom logic so that we know it gets registered in the right place.
-      var moduleLocation = (ModuleLocation) location;
       addModulePath(moduleLocation, pathRoot);
     } else if (location.isModuleOrientedLocation()) {
       // If we are adding a module-oriented location of any type, then we should discover
@@ -268,8 +267,7 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    */
   @Nullable
   public PackageContainerGroup getPackageOrientedContainerGroup(Location location) {
-    if (location instanceof ModuleLocation) {
-      var moduleLocation = (ModuleLocation) location;
+    if (location instanceof ModuleLocation moduleLocation) {
       var group = getModuleOrientedContainerGroup(moduleLocation.getParent());
       return group == null
           ? null
@@ -298,8 +296,7 @@ public final class ContainerGroupRepositoryImpl implements AutoCloseable {
    * @return {@code true} if the location exists, or {@code false} if it does not.
    */
   public boolean hasLocation(Location location) {
-    if (location instanceof ModuleLocation) {
-      var moduleLocation = (ModuleLocation) location;
+    if (location instanceof ModuleLocation moduleLocation) {
       var parentLocation = moduleLocation.getParent();
       var group = parentLocation.isOutputLocation()
           ? outputs.get(parentLocation)
