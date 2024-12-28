@@ -49,6 +49,9 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
           .copyContentsFrom(resourcesDirectory().resolve("first"));
 
       var firstCompilation = compiler.compile(firstWorkspace);
+
+      firstWorkspace.dump(System.err);
+
       assertThatCompilation(firstCompilation)
           .isSuccessfulWithoutWarnings()
           .classOutputPackages()
@@ -62,6 +65,9 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
           .copyContentsFrom(resourcesDirectory().resolve("second"));
 
       var secondCompilation = compiler.compile(secondWorkspace);
+
+      secondWorkspace.dump(System.err);
+
       assertThatCompilation(secondCompilation)
           .isSuccessfulWithoutWarnings()
           .classOutputPackages()
@@ -88,6 +94,7 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
           .copyContentsFrom(resourcesDirectory().resolve("first"));
 
       var firstCompilation = compiler.compile(firstWorkspace);
+
       assertThatCompilation(firstCompilation)
           .isSuccessfulWithoutWarnings()
           .classOutputPackages()
@@ -100,6 +107,8 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
           .createFile("first.jar")
           .asJarFrom(firstWorkspace.getClassOutputPackages().get(0));
 
+      firstWorkspace.dump(System.err);
+
       var firstJar = firstWorkspace.getClassOutputPackages().get(1).getPath().resolve("first.jar");
       secondWorkspace.addClassPathPackage(firstJar);
       secondWorkspace
@@ -107,6 +116,9 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
           .copyContentsFrom(resourcesDirectory().resolve("second"));
 
       var secondCompilation = compiler.compile(secondWorkspace);
+
+      secondWorkspace.dump(System.err);
+
       assertThatCompilation(secondCompilation)
           .isSuccessfulWithoutWarnings()
           .classOutputPackages()
