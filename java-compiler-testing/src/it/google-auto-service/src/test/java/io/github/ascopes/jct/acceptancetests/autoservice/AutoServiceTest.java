@@ -18,6 +18,7 @@ package io.github.ascopes.jct.acceptancetests.autoservice;
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.DisplayName;
 class AutoServiceTest {
 
   @DisplayName("The AutoService descriptor is created as expected")
+  @EcjCompilerTest
   @JavacCompilerTest
   void autoServiceDescriptorIsCreatedAsExpected(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace()) {
@@ -40,7 +42,7 @@ class AutoServiceTest {
 
       // Then
       assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings()
+          .isSuccessful()
           .classOutputPackages()
           .fileExists("META-INF", "services", "org.example.SomeInterface")
           .hasContent("org.example.SomeImpl");

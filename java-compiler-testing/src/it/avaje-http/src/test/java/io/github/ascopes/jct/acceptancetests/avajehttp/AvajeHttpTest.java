@@ -18,6 +18,7 @@ package io.github.ascopes.jct.acceptancetests.avajehttp;
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.DisplayName;
 class AvajeHttpTest {
 
   @DisplayName("HTTP client code gets generated as expected")
+  @EcjCompilerTest(minVersion = 11)
   @JavacCompilerTest(minVersion = 11)
   void httpClientCodeGetsGeneratedAsExpected(JctCompiler compiler) {
     // Given
@@ -40,7 +42,7 @@ class AvajeHttpTest {
 
       // Then
       assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings()
+          .isSuccessful()
           .classOutputPackages()
           .allFilesExist(
               "org/example/httpclient/GeneratedHttpComponent.class",
