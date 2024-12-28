@@ -41,6 +41,8 @@ class CompilingSpecificClassesIntegrationTest extends AbstractIntegrationTest {
 
       var compilation = compiler.compile(workspace, "Fibonacci", "HelloWorld");
 
+      workspace.dump(System.err);
+
       assertThat(compilation)
           .isSuccessfulWithoutWarnings()
           .classOutputPackages()

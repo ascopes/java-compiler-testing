@@ -43,6 +43,8 @@ class BasicLegacyCompilationIntegrationTest extends AbstractIntegrationTest {
           .copyContentsFrom(resourcesDirectory());
       var compilation = compiler.compile(workspace);
 
+      workspace.dump(System.err);
+
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings();
 
@@ -63,6 +65,8 @@ class BasicLegacyCompilationIntegrationTest extends AbstractIntegrationTest {
           .copyContentsFrom(resourcesDirectory());
 
       var compilation = compiler.compile(workspace);
+
+      workspace.dump(System.err);
 
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings();
