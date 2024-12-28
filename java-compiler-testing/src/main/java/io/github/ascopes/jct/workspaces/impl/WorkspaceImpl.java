@@ -20,18 +20,13 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
-import io.github.ascopes.jct.utils.IoExceptionUtils;
 import io.github.ascopes.jct.utils.ToStringBuilder;
 import io.github.ascopes.jct.workspaces.ManagedDirectory;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspace;
-import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,60 +95,7 @@ public final class WorkspaceImpl implements Workspace {
 
   @Override
   public void dump(Appendable appendable) {
-    IoExceptionUtils.uncheckedIo(() -> {
-      appendable.append(toString()).append("\n");
-      for (var location : locations.keySet().stream().sorted().toList()) {
-        appendable.append("  Location ").append(location.toString()).append(": \n");
-
-        for (var pathRoot : locations.get(location)) {
-          appendable.append("    - ").append(pathRoot.getUri().toString()).append(" contents:\n");
-
-          var baseIndent = 8;
-          var basePath = pathRoot.getPath();
-
-          Files.walkFileTree(basePath, new SimpleFileVisitor<>() {
-            private int indent = 0;
-
-            @Override
-            public FileVisitResult preVisitDirectory(
-                Path dir,
-                BasicFileAttributes attrs
-            ) throws IOException {
-              if (!dir.equals(basePath)) {
-                appendIndent();
-                appendable.append(dir.getFileName().toString()).append("/\n");
-                indent += 2;
-              }
-
-              return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-              indent -= 2;
-              return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult visitFile(
-                Path file,
-                BasicFileAttributes attrs
-            ) throws IOException {
-              appendIndent();
-              appendable.append(file.getFileName().toString()).append("\n");
-              return FileVisitResult.CONTINUE;
-            }
-
-            private void appendIndent() throws IOException {
-              appendable.append(" ".repeat(baseIndent))
-                  .append("·".repeat(indent));
-            }
-          });
-        }
-
-        appendable.append("\n");
-      }
-    });
+    new WorkspaceDumper(appendable).dump(toString(), locations);
   }
 
   @Override

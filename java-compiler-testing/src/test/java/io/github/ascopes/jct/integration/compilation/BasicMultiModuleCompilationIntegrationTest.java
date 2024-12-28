@@ -45,6 +45,8 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
       // When
       var compilation = compiler.compile(workspace);
 
+      workspace.dump(System.err);
+
       // Then
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings()
@@ -72,6 +74,8 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
 
       // When
       var compilation = compiler.compile(workspace);
+
+      workspace.dump(System.err);
 
       // Then
       assertThatCompilation(compilation)
@@ -104,6 +108,8 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
 
       // When
       var compilation = compiler.compile(workspace);
+
+      workspace.dump(System.err);
 
       // Then
       assertThatCompilation(compilation)
@@ -150,6 +156,8 @@ class BasicMultiModuleCompilationIntegrationTest extends AbstractIntegrationTest
 
       // When
       var compilation = compiler.compile(workspace);
+
+      workspace.dump(System.err);
 
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings();
