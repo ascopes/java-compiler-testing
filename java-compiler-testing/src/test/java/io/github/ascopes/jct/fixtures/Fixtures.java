@@ -465,17 +465,18 @@ public final class Fixtures {
    * @param <T>   the type.
    * @return the element.
    */
+  @SuppressWarnings("unchecked")
   public static <T> T oneOf(Collection<T> items) {
     var index = RANDOM.nextInt(items.size());
-    if (items instanceof List) {
-      return ((List<T>) items).get(index);
-    } else {
-      var iter = items.iterator();
-      for (var i = 0; i < index - 1; ++i) {
-        iter.next();
-      }
-      return iter.next();
+    if (items instanceof List<?> list) {
+      return (T) list.get(index);
     }
+
+    var iter = items.iterator();
+    for (var i = 0; i < index - 1; ++i) {
+      iter.next();
+    }
+    return iter.next();
   }
 
   /**
