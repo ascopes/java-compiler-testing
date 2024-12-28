@@ -17,6 +17,7 @@ package io.github.ascopes.jct.workspaces;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
+import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -108,6 +109,17 @@ public interface Workspace extends AutoCloseable {
    */
   @Override
   void close();
+
+  /**
+   * Dump a visual representation of this workspace to the given appendable.
+   *
+   * <p>This provides a utility method for debugging.
+   *
+   * @param appendable the appendable to write to.
+   * @throws UncheckedIOException if an IO error occurs when writing to the appendable.
+   * @since 5.0.0
+   */
+  void dump(Appendable appendable);
 
   /**
    * Determine if the workspace is closed or not.
