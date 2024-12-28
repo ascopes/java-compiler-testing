@@ -48,6 +48,8 @@ class BasicModuleCompilationIntegrationTest extends AbstractIntegrationTest {
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings();
 
+      workspace.dump(System.out);
+
       assertThatCompilation(compilation)
           .classOutputPackages()
           .fileExists("com", "example", "HelloWorld.class")
@@ -71,6 +73,8 @@ class BasicModuleCompilationIntegrationTest extends AbstractIntegrationTest {
 
       // When
       var compilation = compiler.compile(workspace);
+
+      workspace.dump(System.out);
 
       // Then
       assertThatCompilation(compilation)
