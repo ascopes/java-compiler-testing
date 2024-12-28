@@ -114,8 +114,8 @@ public final class ModuleContainerGroupImpl implements ModuleContainerGroup {
   public boolean contains(PathFileObject fileObject) {
     var location = fileObject.getLocation();
 
-    if (location instanceof ModuleLocation) {
-      var module = modules.get((ModuleLocation) location);
+    if (location instanceof ModuleLocation moduleLocation) {
+      var module = modules.get(moduleLocation);
       if (module != null) {
         return module.contains(fileObject);
       }

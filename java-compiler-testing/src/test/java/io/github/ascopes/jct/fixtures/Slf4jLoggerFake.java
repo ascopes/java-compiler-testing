@@ -167,16 +167,13 @@ public final class Slf4jLoggerFake extends AbstractLogger {
     }
 
     @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof LogRecord)) {
-        return false;
+    public boolean equals(Object other) {
+      if (other instanceof LogRecord that) {
+        return Objects.equals(ex, that.ex)
+            && Objects.equals(message, that.message)
+            && Arrays.deepEquals(args, that.args);
       }
-
-      var that = (LogRecord) obj;
-
-      return Objects.equals(ex, that.ex)
-          && Objects.equals(message, that.message)
-          && Arrays.deepEquals(args, that.args);
+      return false;
     }
 
     @Override

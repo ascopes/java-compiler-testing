@@ -280,8 +280,8 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
       return constructor.newInstance();
 
     } catch (ReflectiveOperationException ex) {
-      if (ex instanceof InvocationTargetException) {
-        var target = ((InvocationTargetException) ex).getTargetException();
+      if (ex instanceof InvocationTargetException iee) {
+        var target = iee.getTargetException();
         if (isTestAbortedException(target)) {
           target.addSuppressed(ex);
           throw (RuntimeException) target;

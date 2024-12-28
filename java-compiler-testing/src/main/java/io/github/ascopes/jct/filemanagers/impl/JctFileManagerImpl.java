@@ -74,13 +74,12 @@ public final class JctFileManagerImpl implements JctFileManager {
   }
 
   @Override
-  public boolean contains(Location location, FileObject fo) {
-    if (!(fo instanceof PathFileObject)) {
-      return false;
+  public boolean contains(Location location, FileObject fileObject) {
+    if (fileObject instanceof PathFileObject pathFileObject) {
+      var group = repository.getContainerGroup(location);
+      return group != null && group.contains(pathFileObject);
     }
-
-    var group = repository.getContainerGroup(location);
-    return group != null && group.contains((PathFileObject) fo);
+    return false;
   }
 
   @Override
@@ -143,8 +142,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     PackageContainerGroup group = null;
 
     // If we have a module, we may need to create a brand-new location for it.
-    if (location instanceof ModuleLocation) {
-      var moduleLocation = ((ModuleLocation) location);
+    if (location instanceof ModuleLocation moduleLocation) {
       var parentGroup = repository.getOutputContainerGroup(moduleLocation.getParent());
 
       if (parentGroup != null) {
@@ -186,8 +184,7 @@ public final class JctFileManagerImpl implements JctFileManager {
     PackageContainerGroup group = null;
 
     // If we have a module, we may need to create a brand-new location for it.
-    if (location instanceof ModuleLocation) {
-      var moduleLocation = ((ModuleLocation) location);
+    if (location instanceof ModuleLocation moduleLocation) {
       var parentGroup = repository.getOutputContainerGroup(moduleLocation.getParent());
 
       if (parentGroup != null) {
@@ -216,18 +213,13 @@ public final class JctFileManagerImpl implements JctFileManager {
   public ModuleLocation getLocationForModule(Location location, JavaFileObject fileObject) {
     requireOutputOrModuleOrientedLocation(location);
 
-    if (fileObject instanceof PathFileObject) {
-      var pathFileObject = (PathFileObject) fileObject;
-      var moduleLocation = pathFileObject.getLocation();
-
-      if (moduleLocation instanceof ModuleLocation) {
-        return (ModuleLocation) moduleLocation;
-      }
-
+    if (fileObject instanceof PathFileObject pathFileObject) {
       // The expectation is to return null if this is not for a module. Certain frameworks like
       // manifold expect this behaviour, despite it not being documented very clearly in the
       // Java compiler API.
-      return null;
+      return pathFileObject.getLocation() instanceof ModuleLocation moduleLocation
+          ? moduleLocation
+          : null;
     }
 
     throw new JctIllegalInputException(
@@ -297,18 +289,17 @@ public final class JctFileManagerImpl implements JctFileManager {
 
   @Nullable
   @Override
-  public String inferBinaryName(Location location, JavaFileObject file) {
+  public String inferBinaryName(Location location, JavaFileObject fileObject) {
     requirePackageOrientedLocation(location);
 
-    if (!(file instanceof PathFileObject)) {
-      return null;
+    if (fileObject instanceof PathFileObject pathFileObject) {
+      var group = repository.getPackageOrientedContainerGroup(location);
+      if (group != null) {
+        return group.inferBinaryName(pathFileObject);
+      }
     }
 
-    var group = repository.getPackageOrientedContainerGroup(location);
-
-    return group == null
-        ? null
-        : group.inferBinaryName((PathFileObject) file);
+    return null;
   }
 
   @Nullable
@@ -316,8 +307,8 @@ public final class JctFileManagerImpl implements JctFileManager {
   public String inferModuleName(Location location) {
     requirePackageOrientedLocation(location);
 
-    return location instanceof ModuleLocation
-        ? ((ModuleLocation) location).getModuleName()
+    return location instanceof ModuleLocation moduleLocation
+        ? moduleLocation.getModuleName()
         : null;
   }
 
