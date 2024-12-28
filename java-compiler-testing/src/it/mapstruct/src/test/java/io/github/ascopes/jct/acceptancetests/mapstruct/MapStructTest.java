@@ -108,8 +108,8 @@ class MapStructTest {
   }
 
   private <T> T getAttr(Object obj, String name) throws Throwable {
-    final var cls = obj instanceof Class<?>
-        ? (Class<?>) obj
+    final var cls = obj instanceof Class<?> castCls
+        ? castCls
         : obj.getClass();
 
     final var instance = cls == obj
