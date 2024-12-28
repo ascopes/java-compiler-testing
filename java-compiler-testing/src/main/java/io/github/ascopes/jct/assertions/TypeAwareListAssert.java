@@ -57,6 +57,7 @@ public final class TypeAwareListAssert<E, A extends AbstractAssert<A, @Nullable 
       Iterable<? extends @Nullable E> iterable
   ) {
     var list = StreamSupport.stream(iterable.spliterator(), false).toList();
+
     return new TypeAwareListAssert<>(list, assertFactory);
   }
 }
