@@ -95,14 +95,11 @@ public final class ModuleLocation implements Location {
 
   @Override
   public boolean equals(@Nullable Object other) {
-    if (!(other instanceof ModuleLocation)) {
-      return false;
+    if (other instanceof ModuleLocation that) {
+      return parent.equals(that.parent)
+          && moduleName.equals(that.moduleName);
     }
-
-    var that = (ModuleLocation) other;
-
-    return parent.equals(that.parent)
-        && moduleName.equals(that.moduleName);
+    return false;
   }
 
   @Override
