@@ -79,14 +79,6 @@ jobs:
           path: ~/.m2
           key: build-${{ env.cache-name }}
 
-      ### TODO(ascopes): remove this before merging.
-      - name: Inject development version of ECJ
-        shell: bash
-        run: >-
-            ./scripts/add-development-ecj-to-maven-repository.sh
-            https://ci.eclipse.org/jdt/job/eclipse.jdt.core-Github/job/PR-3446/6/artifact/repository/target/repository/plugins/org.eclipse.jdt.core.compiler.batch_3.41.0.v20241224-1732.jar
-            3.41.0-SNAPSHOT
-
       - name: Compile and run tests
         shell: bash
         run: ./mvnw -B -U clean verify
