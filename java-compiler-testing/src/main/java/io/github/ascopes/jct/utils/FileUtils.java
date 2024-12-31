@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.utils;
 
 import static io.github.ascopes.jct.utils.IterableUtils.requireAtLeastOne;
-import static java.util.stream.Collectors.toUnmodifiableList;
 
 import io.github.ascopes.jct.ex.JctIllegalInputException;
 import java.net.MalformedURLException;
@@ -47,7 +46,7 @@ public final class FileUtils extends UtilityClass {
   private static final List<Kind> KINDS = Stream
       .of(Kind.values())
       .filter(kind -> !kind.extension.isEmpty())
-      .collect(toUnmodifiableList());
+      .toList();
 
   private static final StringSlicer PACKAGE_SLICER = new StringSlicer(".");
   private static final StringSlicer RESOURCE_SLICER = new StringSlicer("/");
@@ -254,7 +253,7 @@ public final class FileUtils extends UtilityClass {
   /**
    * Convert a relative class path resource path to a NIO path.
    *
-   * @param directory the directory the resource sits within.
+   * @param directory     the directory the resource sits within.
    * @param pathFragments the path fragments to put together.
    * @return the path to the resource on the file system.
    */

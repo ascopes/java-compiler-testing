@@ -294,7 +294,7 @@ public final class TraceDiagnosticListAssert
     var actualDiagnostics = actual
         .stream()
         .filter(kindIsOneOf(kinds))
-        .collect(toUnmodifiableList());
+        .toList();
 
     if (actualDiagnostics.isEmpty()) {
       return myself;
