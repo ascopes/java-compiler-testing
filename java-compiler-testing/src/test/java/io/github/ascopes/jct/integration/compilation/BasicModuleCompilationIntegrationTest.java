@@ -44,8 +44,6 @@ class BasicModuleCompilationIntegrationTest extends AbstractIntegrationTest {
       // When
       var compilation = compiler.compile(workspace);
 
-      workspace.dump(System.err);
-
       // Then
       assertThatCompilation(compilation)
           .isSuccessfulWithoutWarnings();
@@ -73,8 +71,6 @@ class BasicModuleCompilationIntegrationTest extends AbstractIntegrationTest {
 
       // When
       var compilation = compiler.compile(workspace);
-
-      workspace.dump(System.err);
 
       // Then
       assertThatCompilation(compilation)
