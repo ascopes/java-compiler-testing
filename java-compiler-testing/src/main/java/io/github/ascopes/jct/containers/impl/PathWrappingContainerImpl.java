@@ -31,7 +31,6 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
@@ -160,7 +159,7 @@ public final class PathWrappingContainerImpl implements Container {
   @Override
   public Collection<Path> listAllFiles() throws IOException {
     try (var walker = Files.walk(root.getPath(), FileVisitOption.FOLLOW_LINKS)) {
-      return walker.collect(Collectors.toUnmodifiableList());
+      return walker.toList();
     }
   }
 

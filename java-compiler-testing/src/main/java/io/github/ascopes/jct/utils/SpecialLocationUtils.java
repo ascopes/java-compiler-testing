@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,7 +115,7 @@ public final class SpecialLocationUtils extends UtilityClass {
         // src/main/java do not exist.
         .distinct()
         .filter(Files::exists)
-        .collect(Collectors.toUnmodifiableList());
+        .toList();
   }
 
   private static boolean isNotBlank(String string) {
