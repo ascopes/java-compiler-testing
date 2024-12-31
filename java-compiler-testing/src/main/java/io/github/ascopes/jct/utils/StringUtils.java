@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.ToStringFunction;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
@@ -229,14 +228,9 @@ public final class StringUtils extends UtilityClass {
     for (var i = 0; i < objectStr.length(); ++i) {
       var c = objectStr.charAt(i);
       switch (c) {
-        case '\\':
-          builder.append("\\\\");
-          break;
-        case '"':
-          builder.append("\\\"");
-          break;
-        default:
-          builder.append(c);
+        case '\\' -> builder.append("\\\\");
+        case '"' -> builder.append("\\\"");
+        default -> builder.append(c);
       }
     }
 
@@ -282,7 +276,7 @@ public final class StringUtils extends UtilityClass {
         .map(BoundExtractedResult::getReferent)
         .map(userFriendlyStringifier)
         .sorted()
-        .collect(Collectors.toList());
+        .toList();
 
     if (!closestMatches.isEmpty()) {
       errorBuilder.append(" Maybe you meant:");

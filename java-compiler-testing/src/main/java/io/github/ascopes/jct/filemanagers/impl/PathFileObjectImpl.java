@@ -115,7 +115,8 @@ public final class PathFileObjectImpl implements PathFileObject {
   @Override
   public boolean equals(@Nullable Object other) {
     // Roughly the same as what Javac does.
-    return other instanceof FileObject && uri.equals(((FileObject) other).toUri());
+    return other instanceof FileObject that
+        && uri.equals(that.toUri());
   }
 
   @Override

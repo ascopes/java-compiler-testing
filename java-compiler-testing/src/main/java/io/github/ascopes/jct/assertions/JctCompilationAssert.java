@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.assertions;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toUnmodifiableList;
 
 import io.github.ascopes.jct.compilers.JctCompilation;
 import io.github.ascopes.jct.containers.ContainerGroup;
@@ -351,7 +350,7 @@ public final class JctCompilationAssert
         .getDiagnostics()
         .stream()
         .filter(diagnostic -> kindsToDisplay.contains(diagnostic.getKind()))
-        .collect(toUnmodifiableList());
+        .toList();
 
     return failure(
         "%s\n\nDiagnostics:\n%s",

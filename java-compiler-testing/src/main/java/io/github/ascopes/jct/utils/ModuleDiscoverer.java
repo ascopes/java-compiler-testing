@@ -132,13 +132,10 @@ public final class ModuleDiscoverer extends UtilityClass {
 
     @Override
     public boolean equals(@Nullable Object other) {
-      if (!(other instanceof ModuleCandidate)) {
-        return false;
+      if (other instanceof ModuleCandidate that) {
+        return name.equals(that.name) && path.equals(that.path);
       }
-
-      var that = (ModuleCandidate) other;
-
-      return name.equals(that.name) && path.equals(that.path);
+      return false;
     }
 
     @Override
