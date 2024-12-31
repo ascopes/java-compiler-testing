@@ -115,6 +115,7 @@ final class WorkspaceDumper {
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
       doIndent();
       appendable.append(file.getFileName().toString()).append("\n");
+      ++index;
       return super.visitFile(file, attrs);
     }
 
