@@ -91,6 +91,7 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
     ) {
       firstWorkspace
           .createSourcePathPackage()
+          .createDirectory("org", "example", "first")
           .copyContentsFrom(resourcesDirectory().resolve("first"));
 
       var firstCompilation = compiler.compile(firstWorkspace);
@@ -113,6 +114,7 @@ class MultiTieredCompilationIntegrationTest extends AbstractIntegrationTest {
       secondWorkspace.addClassPathPackage(firstJar);
       secondWorkspace
           .createSourcePathPackage()
+          .createDirectory("org", "example", "second")
           .copyContentsFrom(resourcesDirectory().resolve("second"));
 
       var secondCompilation = compiler.compile(secondWorkspace);
