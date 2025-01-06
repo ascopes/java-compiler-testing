@@ -94,7 +94,7 @@
 
   <properties>
     <!-- Dependencies -->
-    <assertj.version>3.27.0</assertj.version>
+    <assertj.version>3.27.2</assertj.version>
     <awaitility.version>4.2.2</awaitility.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jspecify.version>1.0.0</jspecify.version>
