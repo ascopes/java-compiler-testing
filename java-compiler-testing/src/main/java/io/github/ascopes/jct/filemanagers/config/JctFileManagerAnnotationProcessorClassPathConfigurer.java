@@ -64,26 +64,28 @@ public final class JctFileManagerAnnotationProcessorClassPathConfigurer
   public JctFileManager configure(JctFileManager fileManager) {
     log.debug("Configuring annotation processor discovery mechanism");
 
-    switch (compiler.getAnnotationProcessorDiscovery()) {
-      case ENABLED:
+    return switch (compiler.getAnnotationProcessorDiscovery()) {
+      case ENABLED -> {
         log.trace("Annotation processor discovery is enabled, ensuring empty location exists");
 
         INHERITED_AP_PATHS.values().forEach(fileManager::createEmptyLocation);
 
-        return fileManager;
+        yield fileManager;
+      }
 
-      case INCLUDE_DEPENDENCIES:
+      case INCLUDE_DEPENDENCIES -> {
         log.trace("Annotation processor discovery is enabled, copying classpath dependencies "
             + "into the annotation processor path");
 
         INHERITED_AP_PATHS.forEach(fileManager::copyContainers);
         INHERITED_AP_PATHS.values().forEach(fileManager::createEmptyLocation);
 
-        return fileManager;
+        yield fileManager;
+      }
 
-      default:
-        throw new JctIllegalInputException("Cannot configure annotation processor discovery");
-    }
+      default -> throw new JctIllegalInputException(
+          "Cannot configure annotation processor discovery");
+    };
   }
 
   @Override

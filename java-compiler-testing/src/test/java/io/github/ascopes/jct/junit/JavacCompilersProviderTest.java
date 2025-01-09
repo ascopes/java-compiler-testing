@@ -25,7 +25,6 @@ import static org.mockito.Mockito.when;
 import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
 import java.lang.reflect.AnnotatedElement;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -51,7 +50,7 @@ class JavacCompilersProviderTest {
       var consumer = initialize(test, new JavacCompilersProvider());
       var compilers = consumer.provideArguments(context)
           .map(args -> (JavacJctCompilerImpl) args.get()[0])
-          .collect(Collectors.toList());
+          .toList();
 
       // Then
       assertThat(compilers)
@@ -87,7 +86,7 @@ class JavacCompilersProviderTest {
       var consumer = initialize(test, new JavacCompilersProvider());
       var compilers = consumer.provideArguments(context)
           .map(args -> (JavacJctCompilerImpl) args.get()[0])
-          .collect(Collectors.toList());
+          .toList();
 
       // Then
       assertThat(compilers)
@@ -123,7 +122,7 @@ class JavacCompilersProviderTest {
       var consumer = initialize(test, new JavacCompilersProvider());
       var compilers = consumer.provideArguments(context)
           .map(args -> (JavacJctCompilerImpl) args.get()[0])
-          .collect(Collectors.toList());
+          .toList();
 
       // Then
       assertThat(compilers)
