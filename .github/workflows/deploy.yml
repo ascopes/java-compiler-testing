@@ -77,6 +77,19 @@ jobs:
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
+      - name: Abort and rollback staging release
+        if: ${{ failure() }}
+        run: |-
+          ./mvnw -B -e \
+              -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
+              -DreleaseVersion="${release_version}" \
+              -Dtag="v${release_version}" \
+              release:rollback
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
       - name: Promote Maven Central Staging Release
         if: ${{ ! inputs.dry-run }}
         shell: bash
@@ -92,19 +105,6 @@ jobs:
               -s "https://s01.oss.sonatype.org/"
 
           echo "Promoted staging ${group_id}/${artifact_id}/${release_version} to Maven Central successfully"
-        env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-
-      - name: Abort and rollback staging release
-        if: ${{ failure() }}
-        run: |-
-          ./mvnw -B -e \
-              -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
-              -DreleaseVersion="${release_version}" \
-              -Dtag="v${release_version}" \
-              release:rollback
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
