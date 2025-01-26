@@ -23,18 +23,32 @@ jobs:
           - 11  # LTS
           - 17  # LTS
           - 21  # LTS
+          - GA  # General access
+        include:
+          - os-name: ubuntu-latest
+            java-version: GA
+          - os-name: macos-latest
+            java-version: GA
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: Initialize JDK
+      - name: Initialize Zulu JDK
+        if: matrix.java-version != 'GA'
         uses: actions/setup-java@v4
         with:
           check-latest: true
           distribution: zulu
           java-version: ${{ matrix.java-version }}
+
+      - name: Initialize Oracle JDK
+        if: matrix.java-version == 'GA'
+        uses: oracle-actions/setup-java@v1
+        with:
+          website: jdk.java.net
+          release: ${{ matrix.java-version }}
 
       - name: Maven cache
         uses: actions/cache@v4
@@ -66,3 +80,22 @@ jobs:
             **/failsafe-reports/**
             **/build*.log
           retention-days: 30
+
+  notify-coverage:
+    name: Notify of coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs:
+      - build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Publish code coverage
+        uses: codecov/codecov-action@v5
+        continue-on-error: true
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          run_command: send-notifications
