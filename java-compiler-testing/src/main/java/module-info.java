@@ -129,6 +129,7 @@ module io.github.ascopes.jct {
   requires static org.junit.jupiter.api;
   requires static org.junit.jupiter.params;
   requires org.slf4j;
+  requires java.desktop;
 
   //////////////////
   /// PUBLIC API ///

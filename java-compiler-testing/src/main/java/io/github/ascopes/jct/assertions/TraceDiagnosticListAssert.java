@@ -294,7 +294,7 @@ public final class TraceDiagnosticListAssert
     var actualDiagnostics = actual
         .stream()
         .filter(kindIsOneOf(kinds))
-        .collect(toUnmodifiableList());
+        .toList();
 
     if (actualDiagnostics.isEmpty()) {
       return myself;
@@ -353,7 +353,8 @@ public final class TraceDiagnosticListAssert
   }
 
   private Predicate<@Nullable TraceDiagnostic<? extends JavaFileObject>> kindIsOneOf(
-      Iterable<Kind> kinds) {
+      Iterable<Kind> kinds
+  ) {
     var kindsSet = new LinkedHashSet<Kind>();
     kinds.forEach(kindsSet::add);
 

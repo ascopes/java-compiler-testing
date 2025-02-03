@@ -23,7 +23,6 @@ import io.github.ascopes.jct.compilers.JctCompilerConfigurer;
 import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.ex.JctJunitConfigurerException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -281,8 +280,8 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
       return constructor.newInstance();
 
     } catch (ReflectiveOperationException ex) {
-      if (ex instanceof InvocationTargetException) {
-        var target = ((InvocationTargetException) ex).getTargetException();
+      if (ex instanceof InvocationTargetException iee) {
+        var target = iee.getTargetException();
         if (isTestAbortedException(target)) {
           target.addSuppressed(ex);
           throw (RuntimeException) target;
