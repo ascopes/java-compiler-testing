@@ -11,8 +11,9 @@ check the issues tab to see if anything is of interest.
 If you want further clarification, feel free to drop a
 comment.
 
-You could alternatively add a message on the discussions
-tab!
+> [!TIP]
+> You could alternatively add a message on the discussions
+> tab!
 
 Contributions do not necessarily need to be code changes
 either. You can also contribute by:
@@ -71,8 +72,9 @@ unnecessarily!
 
 ## Building this project
 
-This project uses Apache Maven as the build system, and
-requires JDK 11 or newer. 
+> [!IMPORTANT]
+> This project uses Apache Maven as the build system, and
+> requires JDK 11 or newer. 
 
 To build this project and run the tests, you can run the
 following in your terminal:
@@ -103,9 +105,11 @@ You can find out more about what this means at
 [TLDRLegal](https://tldrlegal.com/license/apache-license-2.0-(apache-2.0))!
 
 Each file that you create must have a special header
-comment at the top that mentions this license. If you
-need to add this header to your files, you can run
-`./mvnw license:format` to do it for you automatically!
+comment at the top that mentions this license.
+
+> [!TIP]
+> If you need to add this header to your files, you can run
+> `./mvnw license:format` to do it for you automatically!
 
 ## Code style
 
@@ -125,8 +129,10 @@ Good things to remember:
 - Keep naming clear and simple!
 
 A tool called CheckStyle will attempt to enforce these rules
-for you. You can run `./mvnw checkstyle:check` to verify
-your code matches these rules.
+for you.
+
+> [!TIP]
+> You can run `./mvnw checkstyle:check` to verify your code matches these rules.
 
 ## Commits
 
