@@ -15,11 +15,7 @@
  */
 package io.github.ascopes.jct.assertions;
 
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
-
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.StreamSupport;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractListAssert;
@@ -60,12 +56,7 @@ public final class TypeAwareListAssert<E, A extends AbstractAssert<A, @Nullable 
   protected TypeAwareListAssert<@Nullable E, A> newAbstractIterableAssert(
       Iterable<? extends @Nullable E> iterable
   ) {
-    return StreamSupport
-        .stream(iterable.spliterator(), false)
-        .collect(collectingAndThen(toList(), curry()));
-  }
-
-  private Function<@Nullable List<@Nullable E>, TypeAwareListAssert<@Nullable E, A>> curry() {
-    return list -> new TypeAwareListAssert<>(list, assertFactory);
+    var list = StreamSupport.stream(iterable.spliterator(), false).toList();
+    return new TypeAwareListAssert<>(list, assertFactory);
   }
 }

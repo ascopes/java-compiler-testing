@@ -30,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -54,7 +53,7 @@ class MemoryFileSystemProviderImplTest {
     var instances = Stream
         .generate(MemoryFileSystemProvider::getInstance)
         .limit(10)
-        .collect(Collectors.toList());
+        .toList();
 
     // Then
     assertThat(instances)

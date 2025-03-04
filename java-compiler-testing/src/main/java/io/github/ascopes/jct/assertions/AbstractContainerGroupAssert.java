@@ -19,8 +19,8 @@ import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.ascopes.jct.containers.ContainerGroup;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.AbstractListAssert;
 import org.assertj.core.api.ObjectAssert;
@@ -74,9 +74,9 @@ public abstract class AbstractContainerGroupAssert<I extends AbstractContainerGr
     requireNonNull(type, "type must not be null");
     isNotNull();
 
-    var items = new ArrayList<T>();
-    actual.getServiceLoader(type).iterator().forEachRemaining(items::add);
-
+    var items = actual.getServiceLoader(type)
+        .stream()
+        .map(ServiceLoader.Provider::get);
     return assertThat(items);
   }
 }
