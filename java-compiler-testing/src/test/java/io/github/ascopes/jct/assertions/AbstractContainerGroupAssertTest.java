@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 import io.github.ascopes.jct.containers.ContainerGroup;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.stream.Stream;
 import org.assertj.core.api.AbstractListAssert;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.DisplayName;
@@ -117,7 +118,8 @@ class AbstractContainerGroupAssertTest {
       var impl3 = mock(SomeServiceType.class);
 
       ServiceLoader<SomeServiceType> serviceLoader = mock();
-      when(serviceLoader.iterator()).then(ctx -> List.of(impl1, impl2, impl3).iterator());
+      when(serviceLoader.stream()).then(ctx -> Stream.of(impl1, impl2, impl3)
+          .map(ServiceLoaderProvider::new));
 
       var containerGroup = mock(ContainerGroup.class);
       when(containerGroup.getServiceLoader(any())).then(ctx -> serviceLoader);
@@ -146,6 +148,24 @@ class AbstractContainerGroupAssertTest {
 
     AssertionImpl(@Nullable ContainerGroup containerGroup) {
       super(containerGroup, AssertionImpl.class);
+    }
+  }
+
+  static class ServiceLoaderProvider<T> implements ServiceLoader.Provider<T> {
+    private final T service;
+
+    ServiceLoaderProvider(T service) {
+      this.service = service;
+    }
+
+    @Override
+    public T get() {
+      return service;
+    }
+
+    @Override
+    public Class<? extends T> type() {
+      return (Class<T>) service.getClass();
     }
   }
 }

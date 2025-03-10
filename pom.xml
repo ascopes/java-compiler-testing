@@ -94,7 +94,7 @@
 
   <properties>
     <!-- Dependencies -->
-    <assertj.version>3.27.3</assertj.version>
+    <assertj.version>4.0.0-M1</assertj.version>
     <awaitility.version>4.3.0</awaitility.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jspecify.version>1.0.0</jspecify.version>
@@ -160,7 +160,7 @@
 
     <!-- Project flags -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java-release>11</java-release>
+    <java-release>17</java-release>
 
     <!-- JavaDocs -->
     <current-year>2025</current-year>

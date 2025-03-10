@@ -55,7 +55,7 @@ class JctCompilationImplTest {
     var arguments = Stream
         .generate(Fixtures::someFlag)
         .limit(argumentCount)
-        .collect(Collectors.toList());
+        .toList();
 
     var compilation = filledBuilder()
         .arguments(arguments)
@@ -102,7 +102,7 @@ class JctCompilationImplTest {
         .generate(UUID::randomUUID)
         .map(Objects::toString)
         .limit(lineCount)
-        .collect(Collectors.toList());
+        .toList();
 
     var compilation = filledBuilder()
         .outputLines(lines)
@@ -141,7 +141,7 @@ class JctCompilationImplTest {
     var diagnostics = Stream
         .generate(Fixtures::someTraceDiagnostic)
         .limit(diagnosticCount)
-        .collect(Collectors.toList());
+        .toList();
 
     var compilation = filledBuilder()
         .diagnostics(diagnostics)

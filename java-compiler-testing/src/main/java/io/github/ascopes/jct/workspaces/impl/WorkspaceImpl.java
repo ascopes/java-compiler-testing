@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.ex.JctIllegalInputException;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
+import io.github.ascopes.jct.utils.ToStringBuilder;
 import io.github.ascopes.jct.workspaces.ManagedDirectory;
 import io.github.ascopes.jct.workspaces.PathRoot;
 import io.github.ascopes.jct.workspaces.PathStrategy;
@@ -47,8 +48,9 @@ import javax.tools.JavaFileManager.Location;
 public final class WorkspaceImpl implements Workspace {
 
   private volatile boolean closed;
+  private final String id;
   private final PathStrategy pathStrategy;
-  private final Map<Location, List<PathRoot>> paths;
+  private final Map<Location, List<PathRoot>> locations;
 
   /**
    * Initialise this workspace.
@@ -56,9 +58,10 @@ public final class WorkspaceImpl implements Workspace {
    * @param pathStrategy the path strategy to use for creating source and target paths.
    */
   public WorkspaceImpl(PathStrategy pathStrategy) {
+    id = UUID.randomUUID().toString();
     closed = false;
     this.pathStrategy = requireNonNull(pathStrategy, "pathStrategy");
-    paths = new HashMap<>();
+    locations = new HashMap<>();
   }
 
   @Override
@@ -67,11 +70,11 @@ public final class WorkspaceImpl implements Workspace {
       // Close everything in a best-effort fashion.
       var exceptions = new ArrayList<Throwable>();
 
-      for (var list : paths.values()) {
+      for (var list : locations.values()) {
         for (var path : list) {
-          if (path instanceof AbstractManagedDirectory) {
+          if (path instanceof AbstractManagedDirectory dir) {
             try {
-              ((AbstractManagedDirectory) path).close();
+              dir.close();
 
             } catch (Exception ex) {
               exceptions.add(ex);
@@ -88,6 +91,11 @@ public final class WorkspaceImpl implements Workspace {
     } finally {
       closed = true;
     }
+  }
+
+  @Override
+  public void dump(Appendable appendable) {
+    new WorkspaceDumper(appendable).dump(toString(), locations);
   }
 
   @Override
@@ -109,7 +117,7 @@ public final class WorkspaceImpl implements Workspace {
     }
 
     var dir = new WrappingDirectoryImpl(path);
-    paths.computeIfAbsent(location, unused -> new ArrayList<>()).add(dir);
+    locations.computeIfAbsent(location, unused -> new ArrayList<>()).add(dir);
   }
 
   @Override
@@ -139,13 +147,12 @@ public final class WorkspaceImpl implements Workspace {
       throw new JctIllegalInputException("Location must not be module-oriented");
     }
 
-    // Needs to be unique, and JIMFS cannot hold a file system name containing stuff like
-    // underscores.
+    // Needs to be unique.
     var fsName = location.getName().replaceAll("[^A-Za-z0-9]", "")
         + UUID.randomUUID();
 
     var dir = pathStrategy.newInstance(fsName);
-    paths.computeIfAbsent(location, unused -> new ArrayList<>()).add(dir);
+    locations.computeIfAbsent(location, unused -> new ArrayList<>()).add(dir);
     return dir;
   }
 
@@ -170,9 +177,9 @@ public final class WorkspaceImpl implements Workspace {
   @Override
   public Map<Location, List<? extends PathRoot>> getAllPaths() {
     // Create an immutable copy.
-    var pathsCopy = new HashMap<Location, List<PathRoot>>();
-    paths.forEach((location, list) -> pathsCopy.put(location, List.copyOf(list)));
-    return unmodifiableMap(pathsCopy);
+    var locationsCopy = new HashMap<Location, List<PathRoot>>();
+    locations.forEach((location, list) -> locationsCopy.put(location, List.copyOf(list)));
+    return unmodifiableMap(locationsCopy);
   }
 
   @Override
@@ -205,9 +212,8 @@ public final class WorkspaceImpl implements Workspace {
 
     var results = new HashMap<String, List<PathRoot>>();
 
-    paths.forEach((pathLocation, pathRoots) -> {
-      if (pathLocation instanceof ModuleLocation) {
-        var modulePathLocation = (ModuleLocation) pathLocation;
+    locations.forEach((pathLocation, pathRoots) -> {
+      if (pathLocation instanceof ModuleLocation modulePathLocation) {
         if (modulePathLocation.getParent().equals(location)) {
           results.computeIfAbsent(modulePathLocation.getModuleName(), name -> new ArrayList<>())
               .addAll(pathRoots);
@@ -234,9 +240,19 @@ public final class WorkspaceImpl implements Workspace {
       );
     }
 
-    var roots = paths.get(location);
+    var roots = locations.get(location);
     return roots == null
         ? List.of()
         : List.copyOf(roots);
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .attribute("id", id)
+        .attribute("pathStrategy", pathStrategy)
+        .attribute("closed", closed)
+        .attribute("numberOfLocations", locations.size())
+        .toString();
   }
 }

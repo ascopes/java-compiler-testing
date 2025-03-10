@@ -43,7 +43,9 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-public abstract class AbstractManagedDirectory implements ManagedDirectory {
+public abstract sealed class AbstractManagedDirectory
+    implements ManagedDirectory
+    permits RamDirectoryImpl, TempDirectoryImpl {
 
   private final String name;
   private final Path rootDirectory;
@@ -146,9 +148,9 @@ public abstract class AbstractManagedDirectory implements ManagedDirectory {
   }
 
   @Override
-  public boolean equals(@Nullable Object that) {
-    return that instanceof AbstractManagedDirectory
-        && ((AbstractManagedDirectory) that).uri.equals(uri);
+  public boolean equals(@Nullable Object other) {
+    return other instanceof AbstractManagedDirectory that
+        && uri.equals(that.uri);
   }
 
   @Override

@@ -108,16 +108,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>${project.artifactId}-incompatible-jdk</id>
-      <activation>
-        <jdk>[,17)</jdk>
-      </activation>
-      <properties>
-        <maven.test.skip>true</maven.test.skip>
-      </properties>
-    </profile>
-  </profiles>
 </project>

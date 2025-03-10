@@ -85,10 +85,10 @@ public final class RamDirectoryImpl extends AbstractManagedDirectory {
     assertValidRootName(name);
 
     // MemoryFileSystem needs unique FS names to work correctly, so use a UUID to enforce this.
-
-    var uniqueName = name + "-" + UUID.randomUUID();
-    var fileSystem = MemoryFileSystemProvider.getInstance().createFileSystem(uniqueName);
-    var path = fileSystem.getRootDirectories().iterator().next().resolve(uniqueName);
+    var fileSystem = MemoryFileSystemProvider.getInstance()
+        .createFileSystem(UUID.randomUUID().toString());
+    var path = fileSystem.getRootDirectories().iterator().next()
+        .resolve(name);
 
     // Ensure the base directory exists.
     uncheckedIo(() -> Files.createDirectories(path));

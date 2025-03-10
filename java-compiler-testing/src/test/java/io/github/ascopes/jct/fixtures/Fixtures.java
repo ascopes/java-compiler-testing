@@ -44,7 +44,6 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
@@ -180,7 +179,7 @@ public final class Fixtures {
     return Stream
         .generate(Fixtures::someFlag)
         .limit(someInt(2, 4))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   /**
@@ -466,17 +465,18 @@ public final class Fixtures {
    * @param <T>   the type.
    * @return the element.
    */
+  @SuppressWarnings("unchecked")
   public static <T> T oneOf(Collection<T> items) {
     var index = RANDOM.nextInt(items.size());
-    if (items instanceof List) {
-      return ((List<T>) items).get(index);
-    } else {
-      var iter = items.iterator();
-      for (var i = 0; i < index - 1; ++i) {
-        iter.next();
-      }
-      return iter.next();
+    if (items instanceof List<?> list) {
+      return (T) list.get(index);
     }
+
+    var iter = items.iterator();
+    for (var i = 0; i < index - 1; ++i) {
+      iter.next();
+    }
+    return iter.next();
   }
 
   /**

@@ -100,8 +100,8 @@ class ImmutablesTest {
   }
 
   private Object callMethod(Object obj, String method, Object... args) throws Throwable {
-    var cls = obj instanceof Class<?>
-        ? (Class<?>) obj
+    var cls = obj instanceof Class<?> castCls
+        ? castCls
         : obj.getClass();
 
     // Enforce reflective access to be allowed.
