@@ -30,8 +30,15 @@
   <name>JCT acceptance tests for Lombok</name>
   <description>Acceptance tests for Lombok.</description>
 
+  <repositories>
+    <repository>
+      <id>projectlombok.org</id>
+      <url>https://projectlombok.org/edge-releases</url>
+    </repository>
+  </repositories>
+
   <properties>
-    <lombok.version>1.18.36</lombok.version>
+    <lombok.version>edge-SNAPSHOT</lombok.version>
   </properties>
 
   <dependencies>
