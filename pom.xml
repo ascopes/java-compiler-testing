@@ -121,7 +121,7 @@
     <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
 
     <!-- Plugin dependencies -->
-    <checkstyle.version>10.21.4</checkstyle.version>
+    <checkstyle.version>10.22.0</checkstyle.version>
     <maven-surefire-junit5-tree-reporter.version>1.4.0</maven-surefire-junit5-tree-reporter.version>
 
     <!-- Log verbosity -->
