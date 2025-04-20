@@ -48,12 +48,6 @@ jobs:
           git config user.name '${{ github.actor }}'
           git config user.email '${{ github.actor }}@users.noreply.github.com'
 
-          group_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.groupId")"
-          echo "group_id=${group_id}" >> "${GITHUB_ENV}"
-
-          artifact_id="$(./mvnw help:evaluate -q -DforceStdout -Dexpression="project.artifactId")"
-          echo "artifact_id=${artifact_id}" >> "${GITHUB_ENV}"
-
           if [[ '${{ inputs.version }}' == "" ]]; then
             release_version="$(./mvnw -B help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//g')"
           else
@@ -84,26 +78,6 @@ jobs:
               -DreleaseVersion="${release_version}" \
               -Dtag="v${release_version}" \
               release:rollback
-        env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-
-      - name: Promote Maven Central Staging Release
-        if: ${{ ! inputs.dry-run }}
-        shell: bash
-        run: |-
-          echo "Will now promote ${group_id}/${artifact_id}/${release_version} to Maven Central"
-
-          ./scripts/close-nexus-repository.sh \
-              -u "${OSSRH_USERNAME}" \
-              -p "${OSSRH_TOKEN}" \
-              -g "${group_id}" \
-              -a "${artifact_id}" \
-              -v "${release_version}" \
-              -s "https://s01.oss.sonatype.org/"
-
-          echo "Promoted staging ${group_id}/${artifact_id}/${release_version} to Maven Central successfully"
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
