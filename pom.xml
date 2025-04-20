@@ -21,7 +21,7 @@
 
   <groupId>io.github.ascopes.jct</groupId>
   <artifactId>java-compiler-testing-parent</artifactId>
-  <version>5.0.1-SNAPSHOT</version>
+  <version>5.0.1-rc3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Java Compiler Testing parent project</name>
@@ -119,6 +119,7 @@
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+    <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
 
     <!-- Plugin dependencies -->
     <checkstyle.version>10.23.0</checkstyle.version>
@@ -674,6 +675,25 @@
             <version>${checkstyle.version}</version>
           </dependency>
         </dependencies>
+      </plugin>
+
+      <plugin>
+        <!--
+            Intercepts the default deploy phase and replaces it with goals that
+            handle pushing to Sonatype Nexus (Maven Central's registry backend)
+            and then triggering a "closure" operation that will promote it to
+            the public Maven repository.
+        -->
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>${nexus-staging-maven-plugin.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+          <serverId>ossrh</serverId>
+          <stagingProgressTimeoutMinutes>10</stagingProgressTimeoutMinutes>
+        </configuration>
       </plugin>
     </plugins>
   </build>

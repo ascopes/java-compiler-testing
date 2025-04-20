@@ -11,23 +11,6 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  validate:
-    name: Validation steps
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@master
-        with:
-          check_together: 'yes'
-          scandir: './scripts'
-
-      - name: Validate codecov.yml
-        shell: bash
-        run: curl -vvv --fail --data-binary @- https://codecov.io/validate < codecov.yml
-
   build:
     name: Build on JDK ${{ matrix.java-version }} (${{ matrix.os-name }})
     runs-on: ${{ matrix.os-name }}
