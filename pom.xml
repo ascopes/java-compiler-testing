@@ -412,8 +412,7 @@
               <link>https://javadoc.io/doc/org.assertj/assertj-core/${assertj.version}</link>
               <link>https://javadoc.io/doc/org.jspecify/jspecify/${jspecify.version}</link>
               <link>https://javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}</link>
-              <link>https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/${junit.version}</link>
-              <link>https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-params/${junit.version}</link>
+              <link>https://junit.org/junit5/docs/${junit.version}/api</link>
             </links>
             <quiet>true</quiet>
             <release>${java-release}</release>
