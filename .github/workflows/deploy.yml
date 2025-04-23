@@ -47,12 +47,14 @@ jobs:
           gpg-passphrase: GPG_PASSPHRASE
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
 
-      - name: Create Maven Central Release
-        shell: bash
+      - name: Configure Git
         run: |-
           git config user.name '${{ github.actor }}'
           git config user.email '${{ github.actor }}@users.noreply.github.com'
 
+      - name: Create Maven Central Release
+        shell: bash
+        run: |-
           if [[ '${{ inputs.version }}' == "" ]]; then
             release_version="$(./mvnw -B help:evaluate -Dexpression=project.version -q -DforceStdout | sed 's/-SNAPSHOT//g')"
           else
