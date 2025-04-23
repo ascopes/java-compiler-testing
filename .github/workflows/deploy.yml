@@ -1,4 +1,4 @@
-name: Deploy a branch
+name: Release new version
 
 on:
   workflow_dispatch:
@@ -8,14 +8,19 @@ on:
         default: false
         type: boolean
 
+      skip-tests:
+        description: "Skip unit and integration tests"
+        default: false
+        type: boolean
+
       version:
         description: "Override deployment version"
         default: ""
         type: string
 
 jobs:
-  maven-central:
-    name: Deploy to Maven Central
+  release:
+    name: Release
     environment:
       name: maven-central
       url: https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing/
@@ -35,14 +40,14 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: zulu
-          java-version: 23
-          server-id: ossrh
-          server-username: OSSRH_USERNAME
-          server-password: OSSRH_TOKEN
+          java-version: 24
+          server-id: central
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_TOKEN
           gpg-passphrase: GPG_PASSPHRASE
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
 
-      - name: Deploy to staging
+      - name: Create Maven Central Release
         shell: bash
         run: |-
           git config user.name '${{ github.actor }}'
@@ -58,19 +63,19 @@ jobs:
           ./mvnw -B -e \
               -Preleases \
               -DdryRun='${{ inputs.dry-run }}' \
+              -Dinvoker.skip='${{ inputs.skip-tests }}' \
               -Dpassword='${{ secrets.GITHUB_TOKEN }}' \
               -DreleaseVersion="${release_version}" \
               -DsignTag=false \
+              -DskipTests='${{ inputs.skip-tests }}' \
               -Dtag="v${release_version}" \
               clean verify release:prepare release:perform
-
-          echo "Created staging release for ${group_id}/${artifact_id}/${release_version}"
         env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
-      - name: Abort and rollback staging release
+      - name: Revert Maven Central Release
         if: ${{ failure() }}
         run: |-
           ./mvnw -B -e \
@@ -78,10 +83,6 @@ jobs:
               -DreleaseVersion="${release_version}" \
               -Dtag="v${release_version}" \
               release:rollback
-        env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Create GitHub Release
         if: ${{ ! inputs.dry-run }}
