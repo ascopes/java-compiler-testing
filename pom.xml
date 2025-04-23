@@ -21,7 +21,7 @@
 
   <groupId>io.github.ascopes.jct</groupId>
   <artifactId>java-compiler-testing-parent</artifactId>
-  <version>5.0.2-SNAPSHOT</version>
+  <version>5.0.2-rc2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Java Compiler Testing parent project</name>
@@ -57,15 +57,10 @@
 
   <distributionManagement>
     <repository>
-      <id>ossrh</id>
-      <name>Maven Central Releases</name>
-      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <id>central</id>
+      <name>Maven Central</name>
+      <url>https://central.sonatype.com</url>
     </repository>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <name>Maven Central Snapshots</name>
-      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
   </distributionManagement>
 
   <issueManagement>
@@ -104,6 +99,7 @@
     <slf4j.version>2.0.17</slf4j.version>
 
     <!-- Plugins -->
+    <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
     <license-maven-plugin.version>5.0.0</license-maven-plugin.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
@@ -119,7 +115,6 @@
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
-    <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
 
     <!-- Plugin dependencies -->
     <checkstyle.version>10.23.0</checkstyle.version>
@@ -684,15 +679,14 @@
             and then triggering a "closure" operation that will promote it to
             the public Maven repository.
         -->
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>${nexus-staging-maven-plugin.version}</version>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>${central-publishing-maven-plugin.version}</version>
         <extensions>true</extensions>
         <configuration>
-          <autoReleaseAfterClose>true</autoReleaseAfterClose>
-          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-          <serverId>ossrh</serverId>
-          <stagingProgressTimeoutMinutes>10</stagingProgressTimeoutMinutes>
+          <autoPublish>true</autoPublish>
+          <publishingServerId>central</publishingServerId>
+          <waitUntil>published</waitUntil>
         </configuration>
       </plugin>
     </plugins>
