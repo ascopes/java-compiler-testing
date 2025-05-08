@@ -99,7 +99,7 @@
     <!-- Dependencies -->
     <assertj.version>4.0.0-M1</assertj.version>
     <awaitility.version>4.3.0</awaitility.version>
-    <ecj.version>3.41.0-SNAPSHOT</ecj.version>
+    <ecj.version>3.41.0</ecj.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jspecify.version>1.0.0</jspecify.version>
     <junit.version>6.0.0</junit.version>
