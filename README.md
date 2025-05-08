@@ -1,4 +1,5 @@
-![Java 11+](https://img.shields.io/badge/Java-11--24-brown?logo=openjdk&logoColor=white)
+![Java 11+](https://img.shields.io/badge/V4-jdk11%2B-green?logo=openjdk&logoColor=white)
+![Java 17+](https://img.shields.io/badge/V5-jdk17%2B-blue?logo=openjdk&logoColor=white)
 [![Build Status](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.ascopes.jct/java-compiler-testing)](https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing)
 [![Code Coverage](https://codecov.io/gh/ascopes/java-compiler-testing/branch/main/graph/badge.svg?token=VT74BP2742)](https://codecov.io/gh/ascopes/java-compiler-testing)
@@ -84,6 +85,12 @@ dependencies {
   testImplementation("io.github.ascopes.jct:java-compiler-testing:$jctVersion")
 }
 ```
+
+For Java 11 support, you should use the v4.x version of this library. If you
+only need to build on Java 17 or newer, you should use the v5.x version of this
+library. This does not affect the versions of Java you can write tests to cross
+compile against, but affects the versions of various dependencies and the
+bytecode version of this library itself.
 
 ## JPMS
 
@@ -229,8 +236,9 @@ support, running the Lombok annotation processor over the input. This assumes th
 JAR is already on the classpath for the JUnit test runner (e.g. is a test dependency in your
 project).
 
-You will want to make sure you do not attempt to target anything older than Java 9 in this case, since
-module support was only introduced in Java 9.
+> [!IMPORTANT]
+> You will want to make sure you do not attempt to target anything older than Java 9 in this case, since
+> module support was only introduced in Java 9.
 
 ```java
 
@@ -330,9 +338,7 @@ holding the flags you wish to use.
    `-XX:+TieredCompilation -XX:TieredStopAtLevel=1` to set this up. Enabling this in the JCT
    builds reduced the overall build time by around 20 seconds.
 2. Use the ZGC - the ZGC will reduce lag when performing garbage collection on code that
-   has a high churn of objects. On Java 11, the ZGC is an experimental feature, which needs
-   to be enabled with `-XX:+UnlockExperimentalOptions -XX:+UseZGC`. On Java 17, you just
-   need to pass `-XX:+UseZGC` alone.
+   has a high churn of objects. You just need to pass `-XX:+UseZGC` alone.
 
 ## Third-party compiler support
 
