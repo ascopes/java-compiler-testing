@@ -21,6 +21,9 @@ import org.jspecify.annotations.NullMarked;
  * A framework for performing exhaustive integration testing against Java compilers in modern Java
  * libraries, with a focus on full JPMS support.
  *
+ * <p><strong>For Java 11 support, please use version 4 of this library, which is still kept up to date.
+ * Version 5 of this library only supports Java 17 onwards.</strong>
+ *
  * <p>The <em>Java Compiler Testing</em> API has a number of facilities for assisting in testing
  * anything related to the Java compiler. This includes Javac plugins and JSR-199 annotation
  * processors.
