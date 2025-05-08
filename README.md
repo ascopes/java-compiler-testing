@@ -1,4 +1,5 @@
-![Java 17+](https://img.shields.io/badge/Java-17%2B-brown?logo=openjdk&logoColor=white)
+![Java 11+](https://img.shields.io/badge/V4-jdk11%2B-green?logo=openjdk&logoColor=white)
+![Java 17+](https://img.shields.io/badge/V5-jdk17%2B-blue?logo=openjdk&logoColor=white)
 [![Build Status](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/ascopes/java-compiler-testing/actions/workflows/build.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.ascopes.jct/java-compiler-testing)](https://repo1.maven.org/maven2/io/github/ascopes/jct/java-compiler-testing)
 [![Code Coverage](https://codecov.io/gh/ascopes/java-compiler-testing/branch/main/graph/badge.svg?token=VT74BP2742)](https://codecov.io/gh/ascopes/java-compiler-testing)
@@ -84,6 +85,12 @@ dependencies {
   testImplementation("io.github.ascopes.jct:java-compiler-testing:$jctVersion")
 }
 ```
+
+For Java 11 support, you should use the v4.x version of this library. If you
+only need to build on Java 17 or newer, you should use the v5.x version of this
+library. This does not affect the versions of Java you can write tests to cross
+compile against, but affects the versions of various dependencies and the
+bytecode version of this library itself.
 
 ## JPMS
 
