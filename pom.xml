@@ -80,14 +80,6 @@
     <url>https://github.com/ascopes</url>
   </organization>
 
-  <repositories>
-    <repository>
-      <id>eclipse-snapshots</id>
-      <name>Eclipse Snapshots</name>
-      <url>https://repo.eclipse.org/content/repositories/eclipse-snapshots</url>
-    </repository>
-  </repositories>
-
   <scm>
     <url>https://github.com/ascopes/java-compiler-testing</url>
     <connection>scm:git:https://github.com/ascopes/java-compiler-testing</connection>
