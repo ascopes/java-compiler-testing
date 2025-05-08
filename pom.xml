@@ -21,7 +21,7 @@
 
   <groupId>io.github.ascopes.jct</groupId>
   <artifactId>java-compiler-testing-parent</artifactId>
-  <version>4.0.3</version>
+  <version>4.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Java Compiler Testing parent project</name>
@@ -57,15 +57,10 @@
 
   <distributionManagement>
     <repository>
-      <id>ossrh</id>
-      <name>Maven Central Releases</name>
-      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <id>central</id>
+      <name>Maven Central</name>
+      <url>https://central.sonatype.com</url>
     </repository>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <name>Maven Central Snapshots</name>
-      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
   </distributionManagement>
 
   <issueManagement>
@@ -89,39 +84,40 @@
     <url>https://github.com/ascopes/java-compiler-testing</url>
     <connection>scm:git:https://github.com/ascopes/java-compiler-testing</connection>
     <developerConnection>scm:git:https://github.com/ascopes/java-compiler-testing</developerConnection>
-    <tag>v4.0.3</tag>
+    <tag>vHEAD</tag>
   </scm>
 
   <properties>
     <!-- Dependencies -->
-    <assertj.version>3.27.2</assertj.version>
-    <awaitility.version>4.2.2</awaitility.version>
+    <assertj.version>3.27.3</assertj.version>
+    <awaitility.version>4.3.0</awaitility.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jspecify.version>1.0.0</jspecify.version>
-    <junit.version>5.11.4</junit.version>
+    <junit.version>5.12.2</junit.version>
     <memoryfilesystem.version>2.8.1</memoryfilesystem.version>
-    <mockito.version>5.15.2</mockito.version>
-    <slf4j.version>2.0.16</slf4j.version>
+    <mockito.version>5.17.0</mockito.version>
+    <slf4j.version>2.0.17</slf4j.version>
 
     <!-- Plugins -->
-    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-    <license-maven-plugin.version>4.6</license-maven-plugin.version>
+    <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
+    <license-maven-plugin.version>5.0.0</license-maven-plugin.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
-    <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-    <maven-deploy-plugin.version>3.1.3</maven-deploy-plugin.version>
-    <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
+    <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+    <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
+    <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
     <maven-gpg-plugin.version>3.2.1</maven-gpg-plugin.version>
-    <maven-install-plugin.version>3.1.3</maven-install-plugin.version>
+    <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
     <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
     <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
     <maven-invoker-plugin.version>3.9.0</maven-invoker-plugin.version>
     <maven-release-plugin.version>3.0.0-M7</maven-release-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-    <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
 
     <!-- Plugin dependencies -->
-    <checkstyle.version>10.21.1</checkstyle.version>
+    <checkstyle.version>10.23.1</checkstyle.version>
     <maven-surefire-junit5-tree-reporter.version>1.4.0</maven-surefire-junit5-tree-reporter.version>
 
     <!-- Log verbosity -->
@@ -164,7 +160,7 @@
 
     <!-- JavaDocs -->
     <current-year>2025</current-year>
-    <newest-java-version>23</newest-java-version>
+    <newest-java-version>24</newest-java-version>
     <highlight-js.version>11.9.0</highlight-js.version>
 
     <!-- Other configuration -->
@@ -412,8 +408,7 @@
               <link>https://javadoc.io/doc/org.assertj/assertj-core/${assertj.version}</link>
               <link>https://javadoc.io/doc/org.jspecify/jspecify/${jspecify.version}</link>
               <link>https://javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}</link>
-              <link>https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-api/${junit.version}</link>
-              <link>https://javadoc.io/doc/org.junit.jupiter/junit-jupiter-params/${junit.version}</link>
+              <link>https://junit.org/junit5/docs/${junit.version}/api</link>
             </links>
             <quiet>true</quiet>
             <release>${java-release}</release>
@@ -675,6 +670,24 @@
             <version>${checkstyle.version}</version>
           </dependency>
         </dependencies>
+      </plugin>
+
+      <plugin>
+        <!--
+            Intercepts the default deploy phase and replaces it with goals that
+            handle pushing to Sonatype Nexus (Maven Central's registry backend)
+            and then triggering a "closure" operation that will promote it to
+            the public Maven repository.
+        -->
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>${central-publishing-maven-plugin.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <autoPublish>true</autoPublish>
+          <publishingServerId>central</publishingServerId>
+          <waitUntil>published</waitUntil>
+        </configuration>
       </plugin>
     </plugins>
   </build>
