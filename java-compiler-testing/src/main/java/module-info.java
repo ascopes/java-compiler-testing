@@ -78,7 +78,8 @@ import org.jspecify.annotations.NullMarked;
  *
  *    class JsonSchemaAnnotationProcessorTest {
  *
- *      {@literal @JavacCompilerTest(minVersion=11, maxVersion=19)}
+ *      {@literal @EcjCompilerTest(minVersion=17)}
+ *      {@literal @JavacCompilerTest(minVersion=17)}
  *      void theJsonSchemaIsCreatedFromTheInputCode(JctCompiler compiler) {
  *
  *        try (var workspace = Workspaces.newWorkspace()) {
@@ -128,6 +129,7 @@ module io.github.ascopes.jct {
   requires java.management;
   requires me.xdrop.fuzzywuzzy;
   requires org.assertj.core;
+  requires org.eclipse.jdt.core.compiler.batch;
   requires static org.jspecify;
   requires static org.junit.jupiter.api;
   requires static org.junit.jupiter.params;
