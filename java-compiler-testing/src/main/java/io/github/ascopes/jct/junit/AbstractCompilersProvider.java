@@ -26,10 +26,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.support.AnnotationConsumer;
+import org.junit.jupiter.params.support.ParameterDeclarations;
 
 /**
  * Base for defining a compiler-supplying arguments-provider for JUnit Jupiter parameterised test
@@ -150,7 +152,16 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   }
 
   @Override
+  @SuppressWarnings("deprecation")
   public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+    return provideArguments(null, context);
+  }
+
+  @Override
+  public Stream<? extends Arguments> provideArguments(
+      @Nullable ParameterDeclarations declarations,
+      ExtensionContext context
+  ) {
     return IntStream
         .rangeClosed(minVersion, maxVersion)
         .mapToObj(this::createCompilerForVersion)
