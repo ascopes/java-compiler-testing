@@ -22,6 +22,7 @@ jobs:
       matrix:
         os-name: [ubuntu-latest]
         java-version:
+          - 11  # LTS
           - 17  # LTS
           - 21  # LTS
           - GA  # General access
