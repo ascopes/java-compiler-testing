@@ -26,6 +26,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -150,12 +151,25 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
   }
 
   @Override
+  @SuppressWarnings("deprecation")
   public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
     return IntStream
         .rangeClosed(minVersion, maxVersion)
         .mapToObj(this::createCompilerForVersion)
         .peek(this::applyConfigurers)
         .map(Arguments::of);
+  }
+
+  // Do not @Override as this does not exist prior to JUnit 5.13.
+  // Use a generic Object for the ParameterDeclarations argument as that
+  // also does not exist prior to JUnit 5.13, and we do not want to trigger
+  // NoClassDefFoundExceptions on older versions of JUnit.
+  @SuppressWarnings("override")
+  public Stream<? extends Arguments> provideArguments(
+      @Nullable Object parameters,
+      ExtensionContext context
+  ) {
+    return provideArguments(context);
   }
 
   /**
