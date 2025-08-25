@@ -39,7 +39,7 @@ jobs:
 
       - name: Initialize Zulu JDK
         if: matrix.java-version != 'GA'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           check-latest: true
           distribution: zulu
