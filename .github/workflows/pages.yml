@@ -20,13 +20,13 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
-          java-version: 23
-          distribution: 'temurin'
+          java-version: 25
+          distribution: zulu
 
       - name: Generate JavaDocs
         shell: bash
         run: >-
-          ./mvnw  -B -U -am -pl java-compiler-testing
+          ./mvnw -B -U -am -pl java-compiler-testing
           -Dmaven.test.skip=true
           -Dcheckstyle.skip=true
           -Dlicense.skip=true

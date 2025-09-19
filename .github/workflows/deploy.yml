@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: zulu
-          java-version: 24
+          java-version: 25
           server-id: central
           server-username: CENTRAL_USERNAME
           server-password: CENTRAL_TOKEN
@@ -94,3 +94,4 @@ jobs:
           name: v${{ env.release_version }}
           generateReleaseNotes: true
           token: ${{ secrets.GITHUB_TOKEN }}
+
