@@ -1835,15 +1835,7 @@ class AbstractJctCompilerTest {
   ///
 
   AbstractObjectAssert<?, ?> assertThatCompilerField(String field) {
-    try {
-      var fieldObj = AbstractJctCompiler.class.getDeclaredField(field);
-      fieldObj.setAccessible(true);
-      var fieldValue = fieldObj.get(compiler);
-      return assertThat(fieldValue)
-          .as("CompilerImpl.%s (%s)", field, fieldValue);
-    } catch (ReflectiveOperationException ex) {
-      return fail("Failed to extract field " + field, ex);
-    }
+    return assertThat(compiler).extracting(field);
   }
 
   <T> T setFieldOnCompiler(String field, T value) {
