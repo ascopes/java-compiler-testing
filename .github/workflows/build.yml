@@ -24,12 +24,12 @@ jobs:
         java-version:
           - 17  # LTS
           - 21  # LTS
-          - GA  # General access
+          - 25  # LTS
         include:
           - os-name: windows-latest
-            java-version: GA
+            java-version: 25  # LTS
           - os-name: macos-latest
-            java-version: GA
+            java-version: 25  # LTS
 
     steps:
       - name: Checkout repository
@@ -38,19 +38,11 @@ jobs:
           fetch-depth: 2
 
       - name: Initialize Zulu JDK
-        if: matrix.java-version != 'GA'
         uses: actions/setup-java@v5
         with:
           check-latest: true
           distribution: zulu
           java-version: ${{ matrix.java-version }}
-
-      - name: Initialize Oracle JDK
-        if: matrix.java-version == 'GA'
-        uses: oracle-actions/setup-java@v1
-        with:
-          website: jdk.java.net
-          release: ${{ matrix.java-version }}
 
       - name: Maven cache
         uses: actions/cache@v4
