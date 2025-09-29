@@ -5,10 +5,7 @@ updates:
     open-pull-requests-limit: 99
     rebase-strategy: auto
     schedule:
-      interval: weekly
-      day: monday
-      time: "06:00"
-      timezone: Europe/London
+      interval: monthly
     target-branch: main
     assignees:
       - ascopes
@@ -19,10 +16,7 @@ updates:
     open-pull-requests-limit: 99
     rebase-strategy: auto
     schedule:
-      interval: weekly
-      day: monday
-      time: "06:00"
-      timezone: Europe/London
+      interval: monthly
     target-branch: main
     assignees:
       - ascopes
