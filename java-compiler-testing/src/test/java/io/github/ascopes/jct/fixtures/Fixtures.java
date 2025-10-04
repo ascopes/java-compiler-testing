@@ -49,6 +49,7 @@ import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileManager.Location;
 import javax.tools.JavaFileObject;
+import org.jspecify.annotations.Nullable;
 import org.mockito.quality.Strictness;
 
 /**
@@ -477,6 +478,17 @@ public final class Fixtures {
       iter.next();
     }
     return iter.next();
+  }
+
+  /**
+   * Hack to shut up javac about unused attributes within try-with-resources, because
+   * Mockito really gives us no sensible choice when mocking statics/construction. Side
+   * effects are fairly regular in this library as well unfortunately.
+   *
+   * @param whatever whatever you want to not use.
+   */
+  public static void unused(@SuppressWarnings("unused") @Nullable Object whatever) {
+    // Do nothing what-so-ever, but spook javac into leaving us alone.
   }
 
   /**

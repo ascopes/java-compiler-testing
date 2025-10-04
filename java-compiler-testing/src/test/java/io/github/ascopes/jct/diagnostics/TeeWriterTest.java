@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.diagnostics;
 
 import static io.github.ascopes.jct.fixtures.Fixtures.someText;
+import static io.github.ascopes.jct.fixtures.Fixtures.unused;
 import static java.nio.charset.Charset.defaultCharset;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -117,14 +118,13 @@ class TeeWriterTest {
   }
 
   @DisplayName(".close() delegates to the writer")
-  @SuppressWarnings("EmptyTryBlock")
   @Test
   void closeDelegatesToTheWriter() throws IOException {
     // Given
     var writer = mock(Writer.class);
 
-    try (var ignoredTee = new TeeWriter(writer)) {
-      // Do nothing
+    try (var tee = new TeeWriter(writer)) {
+      unused(tee);
     }
 
     // Then

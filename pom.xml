@@ -248,6 +248,9 @@
           <version>${maven-compiler-plugin.version}</version>
 
           <configuration>
+            <compilerArgs>
+              <compilerArg>-Xlint:all,-classfile,-processing,-requires-automatic,-serial</compilerArg>
+            </compilerArgs>
             <failOnWarning>true</failOnWarning>
             <parameters>true</parameters>
             <release>${java-release}</release>

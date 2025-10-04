@@ -411,9 +411,9 @@ public interface JctFileManager extends JavaFileManager {
   @Override
   Iterable<Set<Location>> listLocationsForModules(Location location) throws IOException;
 
-  ///
-  /// Default helper overrides
-  ///
+  /*
+   * Default helper overrides
+   */
 
   /**
    * Get the location holding the {@link StandardLocation#CLASS_OUTPUT class outputs}.

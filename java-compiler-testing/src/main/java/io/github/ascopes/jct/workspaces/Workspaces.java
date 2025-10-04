@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.workspaces;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
-import io.github.ascopes.jct.utils.UtilityClass;
 import io.github.ascopes.jct.workspaces.impl.WorkspaceImpl;
 
 /**
@@ -25,7 +24,7 @@ import io.github.ascopes.jct.workspaces.impl.WorkspaceImpl;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-public final class Workspaces extends UtilityClass {
+public final class Workspaces {
 
   private Workspaces() {
     // Do nothing.

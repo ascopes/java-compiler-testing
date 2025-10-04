@@ -17,6 +17,7 @@ package io.github.ascopes.jct.utils;
 
 import static io.github.ascopes.jct.fixtures.Fixtures.oneOf;
 import static io.github.ascopes.jct.fixtures.Fixtures.someText;
+import static io.github.ascopes.jct.fixtures.Fixtures.unused;
 import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -39,8 +40,6 @@ import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.api.parallel.Isolated;
@@ -118,8 +117,10 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
     // Given
     try (
         var tempPaths = new TempPaths();
-        var ignored = new MockedSystemProperty("jdk.module.path", tempPaths.toPathString())
+        var property = new MockedSystemProperty("jdk.module.path", tempPaths.toPathString())
     ) {
+      unused(property);
+
       // We always exclude this path.
       var ideaRt = tempPaths.addFile("idea_rt.jar");
 

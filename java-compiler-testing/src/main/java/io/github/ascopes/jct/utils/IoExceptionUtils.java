@@ -24,7 +24,7 @@ import java.io.UncheckedIOException;
  *
  * @author Ashley Scopes
  */
-public final class IoExceptionUtils extends UtilityClass {
+public final class IoExceptionUtils {
 
   private IoExceptionUtils() {
     // Disallow initialisation.

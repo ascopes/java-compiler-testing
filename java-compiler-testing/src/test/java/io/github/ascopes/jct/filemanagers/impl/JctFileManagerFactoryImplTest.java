@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.filemanagers.impl;
 
+import static io.github.ascopes.jct.fixtures.Fixtures.unused;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_MOCKS;
@@ -80,7 +81,8 @@ class JctFileManagerFactoryImplTest {
   @Test
   void createdFileManagersUseTheEffectiveRelease() {
     // Given
-    try (var ignored = configurerChainMock()) {
+    try (var chain = configurerChainMock()) {
+      unused(chain);
       var release = Fixtures.someRelease();
       when(compiler.getEffectiveRelease()).thenReturn(release);
 

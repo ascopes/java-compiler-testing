@@ -21,7 +21,6 @@ import io.github.ascopes.jct.containers.OutputContainerGroup;
 import io.github.ascopes.jct.containers.PackageContainerGroup;
 import io.github.ascopes.jct.diagnostics.TraceDiagnostic;
 import io.github.ascopes.jct.filemanagers.PathFileObject;
-import io.github.ascopes.jct.utils.UtilityClass;
 import java.util.List;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileManager.Location;
@@ -35,7 +34,7 @@ import org.jspecify.annotations.Nullable;
  * @since 0.0.1
  */
 @SuppressWarnings("unused")
-public final class JctAssertions extends UtilityClass {
+public final class JctAssertions {
 
   private JctAssertions() {
     // Disallow initialisation.

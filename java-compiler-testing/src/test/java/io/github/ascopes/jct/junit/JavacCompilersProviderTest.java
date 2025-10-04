@@ -144,6 +144,7 @@ class JavacCompilersProviderTest {
   }
 
   @SafeVarargs
+  @SuppressWarnings("varargs")
   final JavacCompilerTest someAnnotation(
       int min,
       int max,

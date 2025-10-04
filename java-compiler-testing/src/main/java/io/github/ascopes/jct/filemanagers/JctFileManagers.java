@@ -17,7 +17,6 @@ package io.github.ascopes.jct.filemanagers;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.filemanagers.impl.JctFileManagerFactoryImpl;
-import io.github.ascopes.jct.utils.UtilityClass;
 
 /**
  * Helpers to create instances of default implementations for file managers.
@@ -25,7 +24,7 @@ import io.github.ascopes.jct.utils.UtilityClass;
  * @author Ashley Scopes
  * @since 1.1.0
  */
-public final class JctFileManagers extends UtilityClass {
+public final class JctFileManagers {
 
   private JctFileManagers() {
     // Static-only class.

@@ -372,6 +372,7 @@ class AbstractCompilersProviderTest {
     }
 
     @SafeVarargs
+    @SuppressWarnings("varargs")
     final void configureInternals(
         int min,
         int max,

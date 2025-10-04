@@ -17,13 +17,11 @@ package io.github.ascopes.jct.fixtures;
 
 import static java.util.function.Predicate.not;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatObject;
 import static org.assertj.core.api.InstanceOfAssertFactories.BOOLEAN;
 import static org.assertj.core.api.InstanceOfAssertFactories.array;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-import io.github.ascopes.jct.utils.UtilityClass;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -60,13 +58,6 @@ public interface UtilityClassTestTemplate {
     // We probably do not need to do this, but it saves hassle of adding this later
     // by ensuring we open the module so that we can inspect it with reflection.
     type.getModule().addOpens(type.getPackageName(), getClass().getModule());
-  }
-
-  @DisplayName("Class should extend UtilityClass")
-  @Test
-  default void testClassExtendsUtilityClass() {
-    assertThat(getTypeBeingTested())
-        .hasSuperclass(UtilityClass.class);
   }
 
   @DisplayName("Class should not implement any interfaces")
@@ -106,15 +97,6 @@ public interface UtilityClassTestTemplate {
     assertThatObject(getSingleConstructor())
         .extracting(Constructor::getParameterCount)
         .isEqualTo(0);
-  }
-
-  @DisplayName("Class constructor should throw an UnsupportedOperationException")
-  @Test
-  default void testClassConstructorThrowsUnsupportedOperationException() {
-    assertThatCode(() -> getSingleConstructor().newInstance())
-        .cause()
-        .isInstanceOf(UnsupportedOperationException.class)
-        .hasMessage("this is a utility class that cannot be initialised or extended");
   }
 
   @DisplayName("All methods should be static")

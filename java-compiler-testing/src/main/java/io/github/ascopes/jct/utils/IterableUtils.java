@@ -31,7 +31,7 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-public final class IterableUtils extends UtilityClass {
+public final class IterableUtils {
 
   private IterableUtils() {
     // Disallow initialisation.
@@ -184,9 +184,7 @@ public final class IterableUtils extends UtilityClass {
       throw new NullPointerException(error);
     }
 
-    //noinspection RedundantCast -- Cast is not redundant as we're casting away any nullability
-    // annotations for nullness typecheckers. Don't let IntelliJ tell you otherwise as it is a
-    // bug.
-    return (T[]) array;
+    //noinspection NullableProblems
+    return array;
   }
 }

@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-public final class ModuleDiscoverer extends UtilityClass {
+public final class ModuleDiscoverer {
 
   private static final Logger log = LoggerFactory.getLogger(ModuleDiscoverer.class);
 

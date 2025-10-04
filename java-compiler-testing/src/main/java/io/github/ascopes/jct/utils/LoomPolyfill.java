@@ -24,7 +24,7 @@ package io.github.ascopes.jct.utils;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-public final class LoomPolyfill extends UtilityClass {
+public final class LoomPolyfill {
 
   private LoomPolyfill() {
     // Static-only class.
