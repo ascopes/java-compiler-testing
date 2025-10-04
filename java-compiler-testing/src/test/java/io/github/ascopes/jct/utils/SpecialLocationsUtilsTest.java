@@ -76,7 +76,6 @@ class SpecialLocationsUtilsTest implements UtilityClassTestTemplate {
   }
 
   @DisplayName("javaRuntimeLocations() returns the JRT location")
-  @EnabledForJreRange(min = JRE.JAVA_9, disabledReason = "unavailable without JPMS")
   @Test
   void javaRuntimeLocationsReturnsTheJrtLocation() {
     // When

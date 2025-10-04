@@ -25,7 +25,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import io.github.ascopes.jct.containers.ContainerGroup;
-import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Stream;
 import org.assertj.core.api.AbstractListAssert;
@@ -164,6 +163,7 @@ class AbstractContainerGroupAssertTest {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Class<? extends T> type() {
       return (Class<T>) service.getClass();
     }

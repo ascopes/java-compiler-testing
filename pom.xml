@@ -21,7 +21,7 @@
 
   <groupId>io.github.ascopes.jct</groupId>
   <artifactId>java-compiler-testing-parent</artifactId>
-  <version>5.0.5-SNAPSHOT</version>
+  <version>6.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Java Compiler Testing parent project</name>
@@ -93,7 +93,7 @@
     <awaitility.version>4.3.0</awaitility.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jspecify.version>1.0.0</jspecify.version>
-    <junit.version>5.13.4</junit.version>
+    <junit.version>6.0.0</junit.version>
     <memoryfilesystem.version>2.8.1</memoryfilesystem.version>
     <mockito.version>5.20.0</mockito.version>
     <slf4j.version>2.0.17</slf4j.version>
@@ -379,7 +379,6 @@
             <bottom>© ${project.inceptionYear} - ${current-year}, Ashley Scopes --
               Apache License V2
             </bottom>
-            <defaultSince>0.0.1</defaultSince>
             <detectLinks>false</detectLinks>
             <header>
               <![CDATA[
