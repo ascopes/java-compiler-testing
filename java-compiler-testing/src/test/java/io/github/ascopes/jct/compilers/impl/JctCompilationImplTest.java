@@ -472,11 +472,13 @@ class JctCompilationImplTest {
   }
 
   @SafeVarargs
+  @SuppressWarnings("varargs")
   static <T> Set<T> nullableSetOf(T... values) {
     return new LinkedHashSet<>(Arrays.asList(values));
   }
 
   @SafeVarargs
+  @SuppressWarnings("varargs")
   static <T> List<T> nullableListOf(T... values) {
     return Arrays.asList(values);
   }

@@ -123,15 +123,15 @@ module io.github.ascopes.jct {
   /// DEPENDENCIES ///
   ////////////////////
 
-  requires com.github.marschall.memoryfilesystem;
-  requires java.compiler;
-  requires java.management;
-  requires me.xdrop.fuzzywuzzy;
-  requires org.assertj.core;
-  requires static org.jspecify;
-  requires static org.junit.jupiter.api;
-  requires static org.junit.jupiter.params;
-  requires org.slf4j;
+  requires transitive com.github.marschall.memoryfilesystem;
+  requires transitive java.compiler;
+  requires transitive java.management;
+  requires me.xdrop.fuzzywuzzy;  // automatic module
+  requires transitive org.assertj.core;
+  requires transitive org.jspecify;
+  requires static transitive org.junit.jupiter.api;
+  requires static transitive org.junit.jupiter.params;
+  requires transitive org.slf4j;
 
   //////////////////
   /// PUBLIC API ///

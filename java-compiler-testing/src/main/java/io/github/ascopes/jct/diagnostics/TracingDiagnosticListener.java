@@ -18,7 +18,6 @@ package io.github.ascopes.jct.diagnostics;
 import static java.util.Objects.requireNonNull;
 
 import io.github.ascopes.jct.utils.LoomPolyfill;
-import io.github.ascopes.jct.utils.VisibleForTestingOnly;
 import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
@@ -67,19 +66,7 @@ public class TracingDiagnosticListener<S extends JavaFileObject> implements Diag
     );
   }
 
-  /**
-   * Only visible for testing.
-   *
-   * <p>Users should <strong>NOT</strong> use this constructor. It may be changed
-   * or removed without notice.
-   *
-   * @param logger       the logger to use.
-   * @param threadGetter the supplier of the current thread.
-   * @param logging      whether to enable logging.
-   * @param stackTraces  whether to enable stack traces in the logging.
-   */
-  @VisibleForTestingOnly
-  protected TracingDiagnosticListener(
+  TracingDiagnosticListener(
       Logger logger,
       Supplier<? extends Thread> threadGetter,
       boolean logging,

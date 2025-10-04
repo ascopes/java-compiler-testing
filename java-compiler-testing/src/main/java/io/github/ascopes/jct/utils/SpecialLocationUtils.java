@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-public final class SpecialLocationUtils extends UtilityClass {
+public final class SpecialLocationUtils {
 
   // Files we don't want to propagate by default as they may clash with the environment.
   private static final Set<String> BLACKLISTED_FILE_NAMES = Set.of(

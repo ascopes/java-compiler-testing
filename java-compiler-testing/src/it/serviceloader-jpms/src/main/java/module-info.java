@@ -17,7 +17,7 @@ import io.github.ascopes.jct.acceptancetests.serviceloaderjpms.ServiceProcessor;
 import javax.annotation.processing.Processor;
 
 module io.github.ascopes.jct.acceptancetests.serviceloaderjpms {
-  requires java.compiler;
+  requires transitive java.compiler;
   exports io.github.ascopes.jct.acceptancetests.serviceloaderjpms;
   provides Processor with ServiceProcessor;
 }

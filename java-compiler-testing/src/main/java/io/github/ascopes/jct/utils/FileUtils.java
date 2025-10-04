@@ -37,7 +37,7 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-public final class FileUtils extends UtilityClass {
+public final class FileUtils {
 
   // Exclude any "empty" extensions. At the time of writing, this will just exclude Kind.EMPTY,
   // but doing this will prevent future API changes from breaking any assumptions we make. In

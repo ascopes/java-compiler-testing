@@ -17,7 +17,6 @@ package io.github.ascopes.jct.workspaces;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
 import io.github.ascopes.jct.filemanagers.ModuleLocation;
-import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.List;

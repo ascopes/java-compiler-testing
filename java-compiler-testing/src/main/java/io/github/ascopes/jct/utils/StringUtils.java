@@ -33,7 +33,7 @@ import org.jspecify.annotations.Nullable;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-public final class StringUtils extends UtilityClass {
+public final class StringUtils {
 
   // Number formatting stuff
   private static final BigDecimal THOUSAND = BigDecimal.valueOf(1_000);

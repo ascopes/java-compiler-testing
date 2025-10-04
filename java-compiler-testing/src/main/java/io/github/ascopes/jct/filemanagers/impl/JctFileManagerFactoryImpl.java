@@ -27,7 +27,6 @@ import io.github.ascopes.jct.filemanagers.config.JctFileManagerJvmSystemModulesC
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerLoggingProxyConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerRequiredLocationsConfigurer;
 import io.github.ascopes.jct.filemanagers.config.JctFileManagerWorkspaceConfigurer;
-import io.github.ascopes.jct.utils.VisibleForTestingOnly;
 import io.github.ascopes.jct.workspaces.Workspace;
 
 /**
@@ -54,12 +53,10 @@ public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
   }
 
   /**
-   * Get the compiler that was set on this file manager factory.
+   * Get the associated compiler.
    *
-   * @return the compiler
-   * @since 1.1.0
+   * @return the associated compiler.
    */
-  @VisibleForTestingOnly
   public JctCompiler getCompiler() {
     return compiler;
   }
@@ -72,16 +69,7 @@ public final class JctFileManagerFactoryImpl implements JctFileManagerFactory {
         .configure(fileManager);
   }
 
-  /**
-   * Create the default configurer chain to use for the given workspace.
-   *
-   * <p>This is visible for testing only.
-   *
-   * @param workspace the workspace to configure with.
-   * @return the chain to use.
-   */
-  @VisibleForTestingOnly
-  public JctFileManagerConfigurerChain createConfigurerChain(Workspace workspace) {
+  JctFileManagerConfigurerChain createConfigurerChain(Workspace workspace) {
     // The order here is important. Do not adjust it without testing extensively first!
     return new JctFileManagerConfigurerChain()
         .addLast(new JctFileManagerWorkspaceConfigurer(workspace))

@@ -609,6 +609,7 @@ class FileUtilsTest implements UtilityClassTestTemplate {
   }
 
   @SafeVarargs
+  @SuppressWarnings("varargs")
   static <T> Set<T> set(T... args) {
     return Set.of(args);
   }

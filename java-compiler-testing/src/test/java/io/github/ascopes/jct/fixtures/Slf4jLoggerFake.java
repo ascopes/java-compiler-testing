@@ -17,7 +17,6 @@ package io.github.ascopes.jct.fixtures;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.ascopes.jct.utils.ToStringBuilder;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -150,21 +149,7 @@ public final class Slf4jLoggerFake extends AbstractLogger {
     return true;
   }
 
-  private static class LogRecord {
-
-    private final Throwable ex;
-    private final String message;
-    private final Object[] args;
-
-    LogRecord(
-        Throwable ex,
-        String message,
-        Object... args
-    ) {
-      this.ex = ex;
-      this.message = message;
-      this.args = args;
-    }
+  private record LogRecord(Throwable ex, String message, Object... args) {
 
     @Override
     public boolean equals(Object other) {
@@ -174,15 +159,6 @@ public final class Slf4jLoggerFake extends AbstractLogger {
             && Arrays.deepEquals(args, that.args);
       }
       return false;
-    }
-
-    @Override
-    public String toString() {
-      return new ToStringBuilder(this)
-          .attribute("ex", ex)
-          .attribute("message", message)
-          .attribute("args", args)
-          .toString();
     }
   }
 }

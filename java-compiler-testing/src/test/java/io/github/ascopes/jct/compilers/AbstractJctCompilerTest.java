@@ -21,6 +21,7 @@ import static io.github.ascopes.jct.fixtures.Fixtures.someInt;
 import static io.github.ascopes.jct.fixtures.Fixtures.someOf;
 import static io.github.ascopes.jct.fixtures.Fixtures.someRelease;
 import static io.github.ascopes.jct.fixtures.Fixtures.someText;
+import static io.github.ascopes.jct.fixtures.Fixtures.unused;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
@@ -396,6 +397,8 @@ class AbstractJctCompilerTest {
           )
       ) {
         // Given
+        unused(compilationFactoryConstructor);
+
         fileManagersCls.when(() -> JctFileManagers.newJctFileManagerFactory(any()))
             .thenReturn(fileManagerFactory);
 
@@ -418,6 +421,7 @@ class AbstractJctCompilerTest {
           )
       ) {
         // Given
+        unused(compilationFactoryConstructor);
         fileManagersCls.when(() -> JctFileManagers.newJctFileManagerFactory(any()))
             .thenReturn(fileManagerFactory);
 
@@ -447,6 +451,7 @@ class AbstractJctCompilerTest {
           )
       ) {
         // Given
+        unused(compilationFactoryConstructor);
         fileManagersCls.when(() -> JctFileManagers.newJctFileManagerFactory(any()))
             .thenReturn(fileManagerFactory);
 
@@ -1757,9 +1762,7 @@ class AbstractJctCompilerTest {
     assertThat(actualFlags).isEqualTo(expectedFlags);
   }
 
-  /////////////////////
-  /// Param sources ///
-  /////////////////////
+  /// ////////////////// Param sources /// //////////////////
 
   static Stream<Locale> locales() {
     return Stream.of(
@@ -1781,9 +1784,7 @@ class AbstractJctCompilerTest {
     );
   }
 
-  ////////////////////////////////
-  /// Helper methods and types ///
-  ////////////////////////////////
+  /// ///////////////////////////// Helper methods and types /// /////////////////////////////
 
   class CompilerImpl extends AbstractJctCompiler {
 
@@ -1828,11 +1829,9 @@ class AbstractJctCompilerTest {
     return newList;
   }
 
-  ///
   /// Reflection logic in tests is nasty, but this helps keep the tests for the constructor,
-  /// accessors, and mutators separate.
-  /// Since the AbstractJctCompiler is mostly just a fat POJO, I will allow it this time.
-  ///
+  /// accessors, and mutators separate. Since the AbstractJctCompiler is mostly just a fat POJO, I
+  /// will allow it this time.
 
   AbstractObjectAssert<?, ?> assertThatCompilerField(String field) {
     return assertThat(compiler).extracting(field);

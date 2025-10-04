@@ -309,7 +309,7 @@ public abstract class AbstractCompilersProvider implements ArgumentsProvider {
     }
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"rawtypes", "unchecked", "RedundantSuppression"})
   private static <T> Class<T>[] emptyArray() {
     return (Class<T>[]) new Class[0];
   }

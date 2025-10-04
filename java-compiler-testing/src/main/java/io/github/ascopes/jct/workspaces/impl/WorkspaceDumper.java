@@ -18,7 +18,6 @@ package io.github.ascopes.jct.workspaces.impl;
 import static io.github.ascopes.jct.utils.IoExceptionUtils.uncheckedIo;
 
 import io.github.ascopes.jct.workspaces.PathRoot;
-import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;

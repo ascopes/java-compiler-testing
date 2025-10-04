@@ -41,6 +41,10 @@ import javax.tools.StandardLocation;
  */
 public class ServiceProcessor extends AbstractProcessor {
 
+  public ServiceProcessor() {
+    // Hope you are happy, javac. I made a constructor for you.
+  }
+
   @Override
   public Set<String> getSupportedAnnotationTypes() {
     return Set.of(Service.class.getName());

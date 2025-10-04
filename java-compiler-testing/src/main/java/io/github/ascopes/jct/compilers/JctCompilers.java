@@ -16,7 +16,6 @@
 package io.github.ascopes.jct.compilers;
 
 import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
-import io.github.ascopes.jct.utils.UtilityClass;
 
 /**
  * Helpers to create new compiler instances.
@@ -24,7 +23,7 @@ import io.github.ascopes.jct.utils.UtilityClass;
  * @author Ashley Scopes
  * @since 0.0.1
  */
-public final class JctCompilers extends UtilityClass {
+public final class JctCompilers {
 
   private JctCompilers() {
     // Static-only class.

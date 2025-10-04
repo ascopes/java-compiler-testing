@@ -60,6 +60,7 @@ public final class ExtraArgumentMatchers {
    * @return the argument matcher.
    */
   @SafeVarargs
+  @SuppressWarnings("varargs")
   public static <E, T extends Iterable<E>> T containsExactlyElements(E... expected) {
     return containsExactlyElements(Set.of(expected));
   }

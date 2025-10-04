@@ -103,6 +103,7 @@ public abstract class AbstractEnumAssert<A extends AbstractEnumAssert<A, E>, E e
    *                                  group of acceptable values.
    */
   @SafeVarargs
+  @SuppressWarnings("varargs")
   public final A isNoneOf(E... elements) {
     requireNonNullValues(elements, "elements");
     requireAtLeastOne(elements, "elements");

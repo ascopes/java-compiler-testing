@@ -22,6 +22,7 @@ import static io.github.ascopes.jct.fixtures.Fixtures.someFlags;
 import static io.github.ascopes.jct.fixtures.Fixtures.someLinesOfText;
 import static io.github.ascopes.jct.fixtures.Fixtures.someText;
 import static io.github.ascopes.jct.fixtures.Fixtures.someTraceDiagnostic;
+import static io.github.ascopes.jct.fixtures.Fixtures.unused;
 import static io.github.ascopes.jct.utils.IterableUtils.flatten;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -476,7 +477,9 @@ class JctCompilationFactoryImplTest {
     MockInitializer<TracingDiagnosticListener> configurer =
         (mock, ctx) -> when(mock.getDiagnostics()).thenReturn(diagnostics);
 
-    try (var ignored = mockConstruction(TracingDiagnosticListener.class, configurer)) {
+    try (var mockedConstruction = mockConstruction(TracingDiagnosticListener.class, configurer)) {
+      unused(mockedConstruction);
+
       // Do not inline this, it will break in Mockito's stubber backend.
       var fileObjects = Set.of(somePathFileObject(someBinaryName()));
       when(fileManager.list(any(), any(), any(), anyBoolean()))
