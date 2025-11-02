@@ -27,7 +27,7 @@ jobs:
           - 25  # LTS
         include:
           - os-name: windows-11-arm
-            java-version: 25  # LTS
+            java-version: 23  # Latest Temurin for ARM
           - os-name: macos-latest
             java-version: 25  # LTS
 
