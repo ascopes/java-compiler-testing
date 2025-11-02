@@ -37,11 +37,11 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Initialize Zulu JDK
+      - name: Initialize JDK
         uses: actions/setup-java@v5
         with:
           check-latest: true
-          distribution: zulu
+          distribution: temurin
           java-version: ${{ matrix.java-version }}
 
       - name: Maven cache
