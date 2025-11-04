@@ -92,6 +92,6 @@ jobs:
         with:
           tag: v${{ env.release_version }}
           name: v${{ env.release_version }}
-          generateReleaseNotes: true
+          generateReleaseNotes: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
