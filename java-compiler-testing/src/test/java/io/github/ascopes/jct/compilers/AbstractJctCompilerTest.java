@@ -1834,7 +1834,13 @@ class AbstractJctCompilerTest {
   /// will allow it this time.
 
   AbstractObjectAssert<?, ?> assertThatCompilerField(String field) {
-    return assertThat(compiler).extracting(field);
+    try {
+      var fieldObj = AbstractJctCompiler.class.getDeclaredField(field);
+      fieldObj.setAccessible(true);
+      return assertThat(fieldObj.get(compiler));
+    } catch (ReflectiveOperationException ex) {
+      return fail("Failed to get field " + field, ex);
+    }
   }
 
   <T> T setFieldOnCompiler(String field, T value) {
