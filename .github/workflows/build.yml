@@ -49,8 +49,7 @@ jobs:
         env:
           cache-name: maven-cache
         with:
-          path:
-            ~/.m2
+          path: ~/.m2
           key: build-${{ env.cache-name }}
 
       - name: Compile and run tests
