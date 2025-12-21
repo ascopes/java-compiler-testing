@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (C) 2022 - 2025, the original author or authors.
+    Copyright (C) 2022 Ashley Scopes
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -159,7 +159,6 @@
     <java-release>17</java-release>
 
     <!-- JavaDocs -->
-    <current-year>2025</current-year>
     <newest-java-version>23</newest-java-version>
     <highlight-js.version>11.9.0</highlight-js.version>
 
@@ -379,9 +378,7 @@
               <option>-use</option>
               <option>-Xdoclint:all</option>
             </additionalOptions>
-            <bottom>© ${project.inceptionYear} - ${current-year}, Ashley Scopes --
-              Apache License V2
-            </bottom>
+            <bottom>Copyright © 2022 Ashley Scopes, licensed under Apache License V2</bottom>
             <detectLinks>false</detectLinks>
             <header>
               <![CDATA[
@@ -619,10 +616,6 @@
             <java>SLASHSTAR_STYLE</java>
             <toml>SCRIPT_STYLE</toml>
           </mapping>
-          <properties>
-            <currentYear>${current-year}</currentYear>
-            <inceptionYear>${project.inceptionYear}</inceptionYear>
-          </properties>
           <strictCheck>true</strictCheck>
         </configuration>
 
