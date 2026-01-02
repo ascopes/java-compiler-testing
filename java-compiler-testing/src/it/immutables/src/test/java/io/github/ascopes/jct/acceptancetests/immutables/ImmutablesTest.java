@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import java.util.stream.Stream;
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.DisplayName;
 class ImmutablesTest {
 
   @DisplayName("Immutables @Value produces the expected class")
+  @EcjCompilerTest
   @JavacCompilerTest
   void immutablesValueProducesTheExpectedClass(JctCompiler compiler) throws Throwable {
     try (var workspace = Workspaces.newWorkspace()) {
@@ -68,6 +70,7 @@ class ImmutablesTest {
   }
 
   @DisplayName("Immutables @Value produces the expected class for modules")
+  @EcjCompilerTest(minVersion = 9)
   @JavacCompilerTest(minVersion = 9)
   void immutablesValueProducesTheExpectedClassForModules(JctCompiler compiler) throws Throwable {
     try (var workspace = Workspaces.newWorkspace()) {
