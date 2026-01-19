@@ -13,9 +13,73 @@ on:
   workflow_dispatch: {}
 
 jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      ###
+      ### Lint scripts and configuration files.
+      ###
+
+      - name: Validate shell scripts
+        uses: ludeeus/action-shellcheck@master
+        if: ${{ ! cancelled() }}
+        with:
+          check_together: 'yes'
+          scandir: ./scripts
+
+      - name: Validate codecov.yml
+        shell: bash
+        if: ${{ ! cancelled() }}
+        run: curl -si --fail-with-body --data-binary @codecov.yml https://codecov.io/validate
+
+      ###
+      ### Lint GitHub Actions for issues.
+      ###
+
+      - name: Lint GitHub Actions
+        shell: bash
+        if: ${{ ! cancelled() }}
+        run: >-
+          docker run
+          --rm
+          --user "$(id -u "${USER}"):$(id -g "${USER}")"
+          --volume "$(pwd):/repo"
+          --workdir /repo
+          rhysd/actionlint:latest
+          -color
+          -verbose
+
+      ###
+      ### Lint Java, export information about current environment for
+      ### the next jobs to utilise.
+      ###
+
+      - name: Initialize Java
+        uses: actions/setup-java@v5
+        if: always()
+        with:
+          cache: maven
+          distribution: zulu
+          java-version: 25
+
+      - name: Validate license headers and code style
+        shell: bash
+        if: ${{ ! cancelled() }}
+        # Purposely compile here so errorprone can run when we turn it on
+        run: ./mvnw -B validate compile test-compile -DskipTests
+
   build:
     name: Build on JDK ${{ matrix.java-version }} (${{ matrix.os-name }})
     runs-on: ${{ matrix.os-name }}
+
+    needs:
+      - validate
 
     strategy:
       fail-fast: false
