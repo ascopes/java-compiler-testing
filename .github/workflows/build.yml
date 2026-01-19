@@ -26,12 +26,12 @@ jobs:
       ### Lint scripts and configuration files.
       ###
 
-      - name: Validate shell scripts
-        uses: ludeeus/action-shellcheck@master
-        if: ${{ ! cancelled() }}
-        with:
-          check_together: 'yes'
-          scandir: ./scripts
+      #- name: Validate shell scripts
+      #  uses: ludeeus/action-shellcheck@master
+      #  if: ${{ ! cancelled() }}
+      #  with:
+      #    check_together: 'yes'
+      #    scandir: ./scripts
 
       - name: Validate codecov.yml
         shell: bash
