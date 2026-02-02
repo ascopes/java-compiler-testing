@@ -121,39 +121,35 @@ jobs:
         shell: bash
         run: ./mvnw -B -U clean verify
 
-      - name: Upload to codecov
+      - name: Publish code coverage to Codecov
         uses: codecov/codecov-action@v5
+        continue-on-error: true
+        if: ${{ ! cancelled() }}
         with:
-          name: tests-java-${{ matrix.java-version }}-os-${{ matrix.os-name }}
+          flags: java-${{ matrix.java-version }}-${{ matrix.os-name }}
+          report_type: coverage
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Stash reports
+      - name: Publish test results to Codecov
+        uses: codecov/codecov-action@v5
+        if: ${{ ! cancelled() }}
+        with:
+          flags: java-${{ matrix.java-version }}-${{ matrix.os-name }}
+          report_type: test_results
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload build logs as artifacts
         uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: reports-${{ matrix.java-version }}-${{ matrix.os-name }}
-          if-no-files-found: error
-          path: |
-            **/surefire-reports/**
-            **/failsafe-reports/**
-            **/build*.log
-          retention-days: 30
-
-  notify-coverage:
-    name: Notify of coverage
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    needs:
-      - build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Publish code coverage
-        uses: codecov/codecov-action@v5
-        continue-on-error: true
-        if: always()
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          run_command: send-notifications
+          name: jdk-${{ matrix.java-version }}-${{ matrix.os-name }}
+          path: |-
+            **/build.log
+            **/maven-status/**
+            **/*-reports/**.txt
+            **/*-reports/**.xml
+            **/*.dumpstream
+          compression-level: 9
+          retention-days: 7
+          include-hidden-files: true
+          if-no-files-found: warn
