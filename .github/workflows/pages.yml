@@ -39,4 +39,4 @@ jobs:
 
       - name: Deploy JavaDocs build artifact to GitHub Pages
         id: snapshot-javadocs
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
