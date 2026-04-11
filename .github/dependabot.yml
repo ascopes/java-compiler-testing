@@ -13,6 +13,11 @@ updates:
       - ci
   - package-ecosystem: maven
     directory: /
+    groups:
+      # Group all Maven updates into a single PR.
+      maven:
+        patterns:
+          - "*"
     open-pull-requests-limit: 99
     rebase-strategy: auto
     schedule:
