@@ -46,6 +46,7 @@ import org.mockito.Answers;
  *
  * @author Ashley Scopes
  */
+@SuppressWarnings("resource")
 @DisplayName("JctExtension tests")
 @Execution(ExecutionMode.SAME_THREAD)
 @Isolated("This modifies global state in some test cases")
@@ -61,6 +62,7 @@ class JctExtensionTest {
   }
 
   @DisplayName("The beforeAll hook initialises annotated static workspace fields")
+  @SuppressWarnings("NullAway")
   @Test
   void beforeAllHookInitialisesAnnotatedStaticWorkspaceFields() {
     // Given
@@ -130,25 +132,32 @@ class JctExtensionTest {
   static class StaticWorkspaceTestCase {
 
     @Managed
+    @SuppressWarnings("NullAway")
     static Workspace staticWorkspace1;
 
     @Managed(pathStrategy = PathStrategy.RAM_DIRECTORIES)
+    @SuppressWarnings("NullAway")
     static Workspace staticWorkspace2;
 
     @Managed(pathStrategy = PathStrategy.TEMP_DIRECTORIES)
+    @SuppressWarnings("NullAway")
     static Workspace staticWorkspace3;
 
     // These all get ignored because they don't match the typing/annotation criteria.
+    @SuppressWarnings("NullAway")
     static Workspace someIgnoredStaticWorkspace;
 
     @Managed
+    @SuppressWarnings("NullAway")
     static Object someInvalidStaticWorkspace;
 
     // These should be ignored because they are not static, so no instance exists to apply them on.
     @Managed
+    @SuppressWarnings("NullAway")
     Object someInvalidInstanceWorkspace;
 
     @Managed
+    @SuppressWarnings("NullAway")
     Workspace someIgnoredInstanceWorkspace;
 
     @Test
@@ -163,6 +172,7 @@ class JctExtensionTest {
   }
 
   @DisplayName("The beforeEach hook initialises annotated instance workspace fields")
+  @SuppressWarnings("NullAway")
   @Test
   void beforeEachHookInitialisesAnnotatedInstanceWorkspaceFields() {
     // Given
@@ -296,25 +306,32 @@ class JctExtensionTest {
   static class InstanceWorkspaceTestCase {
 
     @Managed
+    @SuppressWarnings("NullAway")
     Workspace workspace1;
 
     @Managed(pathStrategy = PathStrategy.RAM_DIRECTORIES)
+    @SuppressWarnings("NullAway")
     Workspace workspace2;
 
     @Managed(pathStrategy = PathStrategy.TEMP_DIRECTORIES)
+    @SuppressWarnings("NullAway")
     Workspace workspace3;
 
     // These all get ignored because they don't match the typing/annotation criteria.
+    @SuppressWarnings("NullAway")
     Workspace someIgnoredInstanceWorkspace;
 
     @Managed
+    @SuppressWarnings("NullAway")
     Object someInvalidInstanceWorkspace;
 
     // These should be ignored because they are static.
     @Managed
+    @SuppressWarnings("NullAway")
     static Object someInvalidStaticWorkspace;
 
     @Managed
+    @SuppressWarnings("NullAway")
     static Workspace someIgnoredStaticWorkspace;
 
     @Test
@@ -360,6 +377,7 @@ class JctExtensionTest {
   }
 
   @DisplayName("The afterEach hook will close workspaces in any superclasses")
+  @SuppressWarnings("NullAway")
   @Test
   void afterEachHookWillCloseWorkspacesInAnySuperClasses() {
     // Given
@@ -391,24 +409,28 @@ class JctExtensionTest {
   static class TestCaseBase1 {
 
     @Managed
+    @SuppressWarnings("NullAway")
     Workspace testCaseBase1Workspace;
   }
 
   static class TestCaseBase2 extends TestCaseBase1 {
 
     @Managed
+    @SuppressWarnings("NullAway")
     Workspace testCaseBase2Workspace;
   }
 
   static class TestCaseBase3 extends TestCaseBase2 {
 
     @Managed
+    @SuppressWarnings("NullAway")
     Workspace testCaseBase3Workspace;
   }
 
   static class TestCaseImpl extends TestCaseBase3 {
 
     @Managed
+    @SuppressWarnings("NullAway")
     Workspace testCaseImplWorkspace;
   }
 }

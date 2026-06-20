@@ -147,6 +147,7 @@ class JavacJctCompilerImplTest {
       "                    21,              9",
   })
   @ParameterizedTest(name = "expect {1} when using Javac for JDK {0}")
+  @SuppressWarnings({"EnumOrdinal", "ResultOfMethodCallIgnored"})
   void earliestSupportedVersionReturnsTheExpectedValue(int latest, int expectedResult) {
     // Given
     try (var sourceVersionMock = mockStatic(SourceVersion.class)) {
@@ -183,6 +184,7 @@ class JavacJctCompilerImplTest {
       "                    21,             21",
   })
   @ParameterizedTest(name = "expect {1} when using Javac for JDK {0}")
+  @SuppressWarnings({"EnumOrdinal", "ResultOfMethodCallIgnored"})
   void latestSupportedVersionReturnsTheExpectedValue(int latest, int expectedResult) {
     // Given
     try (var sourceVersionMock = mockStatic(SourceVersion.class)) {

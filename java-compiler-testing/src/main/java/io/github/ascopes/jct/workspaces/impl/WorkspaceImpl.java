@@ -123,7 +123,7 @@ public final class WorkspaceImpl implements Workspace {
   @Override
   public void addModule(Location location, String moduleName, Path path) {
     requireNonNull(location, "location");
-    requireNonNull(location, "moduleName");
+    requireNonNull(moduleName, "moduleName");
     requireNonNull(path, "path");
 
     if (!location.isModuleOrientedLocation() && !location.isOutputLocation()) {
@@ -159,7 +159,7 @@ public final class WorkspaceImpl implements Workspace {
   @Override
   public ManagedDirectory createModule(Location location, String moduleName) {
     requireNonNull(location, "location");
-    requireNonNull(location, "moduleName");
+    requireNonNull(moduleName, "moduleName");
 
     if (!location.isModuleOrientedLocation() && !location.isOutputLocation()) {
       throw new JctIllegalInputException(

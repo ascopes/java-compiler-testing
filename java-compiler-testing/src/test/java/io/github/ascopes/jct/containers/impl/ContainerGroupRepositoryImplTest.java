@@ -17,6 +17,7 @@ package io.github.ascopes.jct.containers.impl;
 
 import static io.github.ascopes.jct.fixtures.Fixtures.somePathRoot;
 import static io.github.ascopes.jct.fixtures.Fixtures.someRelease;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static org.mockito.ArgumentMatchers.any;
@@ -111,7 +112,7 @@ class ContainerGroupRepositoryImplTest {
           .hasSize(1)
           .containsKey(moduleLocation);
 
-      var module = modules.get(moduleLocation);
+      var module = requireNonNull(modules.get(moduleLocation), "modules.get");
       assertThat(module.getLocation())
           .as("module group location")
           .isEqualTo(moduleLocation);

@@ -106,7 +106,7 @@ public final class PathWrappingContainerImpl implements Container {
    * <p>This implementation returns the same value as {@link #getPathRoot}, since this
    * implementation is not an opaque wrapper for an archive or serialized resource.
    *
-   * @returns the path root.
+   * @return the path root.
    */
   @Override
   public PathRoot getInnerPathRoot() {

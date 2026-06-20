@@ -196,6 +196,7 @@ class AbstractJavaFileObjectAssertTest {
     }
 
     @DisplayName(".content(Charset) fails if the charset is null")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void charsetArgsFailsIfCharsetIsNull() {
       // Given
@@ -241,6 +242,7 @@ class AbstractJavaFileObjectAssertTest {
     }
 
     @DisplayName(".content(CharsetDecoder) fails if the charset is null")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void charsetDecoderArgsFailsIfCharsetIsNull() {
       // Given

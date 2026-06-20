@@ -38,6 +38,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 class ToStringBuilderTest {
 
   @DisplayName("Owner cannot be null")
+  @SuppressWarnings({"DataFlowIssue", "NullAway"})
   @Test
   void ownerCannotBeNull() {
     // Then
@@ -216,6 +217,7 @@ class ToStringBuilderTest {
         .hasToString("Bar{input=" + expected + "}");
   }
 
+  @SuppressWarnings("IllegalTokenText")
   static Stream<Arguments> stringRepresentations() {
     return Stream.of(
         // (input, expected output)
@@ -224,7 +226,7 @@ class ToStringBuilderTest {
         Arguments.of("hello, m'lady", "\"hello, m'lady\""),
         Arguments.of("quotes: \"hello!\" <--", "\"quotes: \\\"hello!\\\" <--\""),
         Arguments.of("back slash: \\ <--", "\"back slash: \\\\ <--\""),
-        Arguments.of("form feed: \f <--", "\"form feed: \f <--\""),
+        Arguments.of("form feed: \f <--", "\"form feed: \\u000c <--\""),
         Arguments.of("\1", "\"\\u0001\""),
         Arguments.of("\u000b", "\"\\u000b\""),
         Arguments.of("\u007f", "\"\\u007f\""),

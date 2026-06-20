@@ -115,7 +115,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <compilerArgs>
+          <annotationProcessorPaths combine.children="append"/>
+          <compilerArgs combine.children="append">
             <!--
               Disable warnings about modules. We cannot do much about some of these due to how Maven
               works with modules with Surefire.
@@ -212,6 +213,70 @@
             </plugin>
           </plugins>
         </pluginManagement>
+      </build>
+    </profile>
+
+    <profile>
+      <!-- ErrorProne only works with Java 21 and newer. If we're on Java 17, we cannot
+           enable it within the compiler. This is somewhat unfortunate but should be okay
+           as a workaround for now since we build on multiple JDKs on GitHub. -->
+      <id>errorprone</id>
+      <activation>
+        <jdk>[21,)</jdk>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+
+            <configuration>
+              <annotationProcessorPaths>
+                <annotationProcessorPath>
+                  <groupId>com.google.errorprone</groupId>
+                  <artifactId>error_prone_core</artifactId>
+                  <version>${errorprone.version}</version>
+                </annotationProcessorPath>
+                <annotationProcessorPath>
+                  <!-- Override what Maven is pulling in. This is fine during compilation as our
+                       code doesn't use Guava at all. This is needed for ErrorProne to not crash
+                       on startup. -->
+                  <groupId>com.google.guava</groupId>
+                  <artifactId>guava</artifactId>
+                  <version>[33,)</version>
+                </annotationProcessorPath>
+                <annotationProcessorPath>
+                  <groupId>com.uber.nullaway</groupId>
+                  <artifactId>nullaway</artifactId>
+                  <version>${nullaway.version}</version>
+                </annotationProcessorPath>
+              </annotationProcessorPaths>
+
+              <compilerArgs>
+                <!--
+                  Disable warnings about modules. We cannot do much about some of these due to how Maven
+                  works with modules with Surefire.
+                -->
+                <arg>-Xlint:-module</arg>
+                <!-- ErrorProne configuration -->
+                <compilerArg>--should-stop=ifError=FLOW</compilerArg>
+                <compilerArg>
+                  -Xplugin:ErrorProne
+                  -XepDisableWarningsInGeneratedCode
+                  -XepExcludedPaths:.*/target/generated.*?/.*
+                  -XepOpt:NullAway:AnnotatedPackages=io.github.ascopes.jct
+                  <!-- See https://github.com/uber/NullAway/issues/1319 -->
+                  -XepOpt:NullAway:ExcludedFieldAnnotations=org.junit.jupiter.*,org.mockito.*
+                  -XepOpt:NullAway:KnownInitializers=io.github.ascopes.jct.annotations.Initializer,io.github.ascopes.jct.junit.Managed
+                </compilerArg>
+                <!-- Needed for ErrorProne to be able to run -->
+                <compilerArg>-XDaddTypeAnnotationsToSymbol=true</compilerArg>
+                <compilerArg>-XDcompilePolicy=simple</compilerArg>
+              </compilerArgs>
+            </configuration>
+          </plugin>
+        </plugins>
       </build>
     </profile>
   </profiles>

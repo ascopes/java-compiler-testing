@@ -66,6 +66,7 @@ class StringUtilsTest implements UtilityClassTestTemplate {
     assertThat(actual).isEqualTo(expected);
   }
 
+  @SuppressWarnings("BadImport")
   static Stream<Arguments> toWordedListCases() {
     return Stream.of(
         of(List.of(), ", ", ", and ", ""),
@@ -167,6 +168,7 @@ class StringUtilsTest implements UtilityClassTestTemplate {
       "'hello\nworld\n\nblahblah\nblah\n', 100_000, 27",
   })
   @ParameterizedTest(name = "indexOfEndOfLine(..., {1}) returns {2}")
+  @SuppressWarnings("TextBlockMigration")
   void indexOfEndOfLineReturnsExpectedValue(String input, int startAt, int expectedIndex) {
     // When
     var actualIndex = StringUtils.indexOfEndOfLine(input, startAt);
@@ -228,6 +230,7 @@ class StringUtilsTest implements UtilityClassTestTemplate {
     then(StringUtils.quoted(input)).isEqualTo(expected);
   }
 
+  @SuppressWarnings("BadImport")
   static Stream<Arguments> singleObjectCases() {
     return Stream.of(
         of(Object.class, null, "null"),
@@ -257,6 +260,7 @@ class StringUtilsTest implements UtilityClassTestTemplate {
     then(StringUtils.quotedIterable(input)).isEqualTo(expected);
   }
 
+  @SuppressWarnings({"BadImport", "JdkObsolete"})
   static Stream<Arguments> iterableCases() {
     return Stream.of(
         of(Iterable.class, null, "null"),

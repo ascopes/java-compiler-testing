@@ -219,6 +219,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Building with null arguments raises a NullPointerException")
+    @SuppressWarnings({"NullableProblems", "NullAway"})
     @Test
     void buildingWithNullArgumentsRaisesNullPointerException() {
       // Given
@@ -277,6 +278,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Setting null compilation units raises a NullPointerException")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void settingNullCompilationUnitsRaisesNullPointerException() {
       // Given
@@ -308,6 +310,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Building with null compilation units raises a NullPointerException")
+    @SuppressWarnings({"NullableProblems", "NullAway"})
     @Test
     void buildingWithNullCompilationUnitsRaisesNullPointerException() {
       // Given
@@ -334,6 +337,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Setting null diagnostics raises a NullPointerException")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void settingNullDiagnosticsRaisesNullPointerException() {
       // Given
@@ -365,6 +369,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Building with null diagnostics raises a NullPointerException")
+    @SuppressWarnings("NullAway")
     @Test
     void buildingWithNullDiagnosticsRaisesNullPointerException() {
       // Given
@@ -389,6 +394,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Setting null file managers raises a NullPointerException")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void settingNullFileManagerRaisesNullPointerException() {
       // Given
@@ -420,6 +426,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Setting null output lines raises a NullPointerException")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void settingNullOutputLinesRaisesNullPointerException() {
       // Given
@@ -451,6 +458,7 @@ class JctCompilationImplTest {
     }
 
     @DisplayName("Building with null output lines raises a NullPointerException")
+    @SuppressWarnings({"NullableProblems", "NullAway"})
     @Test
     void buildingWithNullOutputLinesRaisesNullPointerException() {
       // Given

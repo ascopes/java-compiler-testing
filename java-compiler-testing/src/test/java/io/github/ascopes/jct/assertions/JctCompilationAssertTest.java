@@ -475,6 +475,7 @@ class JctCompilationAssertTest {
     }
 
     @DisplayName(".packageGroup(...) fails if the compilation is null")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void packageGroupFailsIfLocationIsNull() {
       // Given
@@ -585,6 +586,7 @@ class JctCompilationAssertTest {
     }
 
     @DisplayName(".moduleGroup(...) fails if the compilation is null")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void moduleGroupFailsIfLocationIsNull() {
       // Given
@@ -694,6 +696,7 @@ class JctCompilationAssertTest {
     }
 
     @DisplayName(".outputGroup(...) fails if the compilation is null")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void outputGroupFailsIfLocationIsNull() {
       // Given

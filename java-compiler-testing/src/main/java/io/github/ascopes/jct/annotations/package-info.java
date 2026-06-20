@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// Use bsh rather than groovy since groovy does not support arbitrary JVM bytecode versions.
-if (Runtime.version().major() < 21) {
-  System.out.println("Micronaut does not support JVMs before Java 21");
-  return false;
-} else {
-  return true;
-}
+/**
+ * Annotations used for various metadata purposes.
+ */
+package io.github.ascopes.jct.annotations;

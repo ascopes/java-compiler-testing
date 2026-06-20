@@ -163,6 +163,7 @@ class LoggingFileManagerProxyTest {
   @DisplayName("Method invocations are logged without stacktraces")
   @MethodSource("proxiedMethods")
   @ParameterizedTest(name = "for method {0}")
+  @SuppressWarnings("NullAway")
   void methodInvocationsGetLoggedWithoutStacktraces(String ignored, Method method)
       throws Throwable {
 
@@ -207,6 +208,7 @@ class LoggingFileManagerProxyTest {
   @DisplayName("Method invocations are logged with stacktraces")
   @MethodSource("proxiedMethods")
   @ParameterizedTest(name = "for method {0}")
+  @SuppressWarnings("NullAway")
   void methodInvocationsGetLoggedWithStacktraces(String ignored, Method method) throws Throwable {
     // Given
     try (
@@ -254,6 +256,7 @@ class LoggingFileManagerProxyTest {
   @DisplayName("Method results are logged")
   @MethodSource("proxiedMethods")
   @ParameterizedTest(name = "for method {0}")
+  @SuppressWarnings("NullAway")
   void methodResultsGetLogged(String ignored, Method method) throws Throwable {
     // Given
     try (

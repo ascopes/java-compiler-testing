@@ -111,6 +111,7 @@ class JctCompilationFactoryImplTest {
   }
 
   @DisplayName("Multi-module sources are used when they exist")
+  @SuppressWarnings("DistinctVarargsChecker")
   @Test
   void multiModuleSourcesAreUsedWhenTheyExist() throws IOException {
     // Given
@@ -161,6 +162,7 @@ class JctCompilationFactoryImplTest {
   }
 
   @DisplayName("Legacy sources are used when multi-module sources do not exist")
+  @SuppressWarnings("DistinctVarargsChecker")
   @Test
   void legacySourcesAreUsedWhenMultiModuleSourcesDoNotExist() throws IOException {
     // Given
@@ -403,7 +405,7 @@ class JctCompilationFactoryImplTest {
       "STACKTRACES, true,  true"
   })
   @ParameterizedTest(name = "- LoggingMode.{0} should use new TracingDiagnosticListener({1}, {2})")
-  @SuppressWarnings({"unchecked", "rawtypes", "AssertBetweenInconvertibleTypes"})
+  @SuppressWarnings({"unchecked", "rawtypes"})
   void correctlyConfiguredDiagnosticListenerIsUsedForCompilation(
       LoggingMode loggingMode,
       boolean expectedEnabled,
@@ -652,6 +654,7 @@ class JctCompilationFactoryImplTest {
   }
 
   @DisplayName("Exceptions during compilation get wrapped and rethrown")
+  @SuppressWarnings("MockIllegalThrows")
   @Test
   void exceptionsDuringCompilationGetWrappedAndRethrown() throws IOException {
     // Given

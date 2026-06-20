@@ -326,7 +326,7 @@ class TraceDiagnosticListAssertTest {
   class FilteringByKindsVarargsTest {
 
     @DisplayName(".filteringByKinds(Kind...) fails if the vararg array is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void failsIfVarargArrayIsNull() {
       // Given
@@ -339,7 +339,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".filteringByKinds(Kind...) fails if any varargs are null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void failsIfAnyVarargsAreNull() {
       // Given
@@ -375,6 +375,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".filteringByKinds(Kind...) filters diagnostics by kind")
+    @SuppressWarnings({"NullAway", "NullableProblems"})
     @Test
     void filtersDiagnosticsByKind() {
       // Given
@@ -408,7 +409,7 @@ class TraceDiagnosticListAssertTest {
   class FilteringByKindsIterableTest {
 
     @DisplayName(".filteringByKinds(Iterable<Kind>) fails if the iterable is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void failsIfKindIterableIsNull() {
       // Given
@@ -421,6 +422,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".filteringByKinds(Iterable<Kind>) fails if any kinds are null")
+    @SuppressWarnings({"NullAway", "NullableProblems"})
     @Test
     void failsIfAnyKindsAreNull() {
       // Given
@@ -444,6 +446,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".filteringByKinds(Iterable<Kind>) filters diagnostics by kind")
+    @SuppressWarnings({"NullAway", "NullableProblems"})
     @Test
     void filtersDiagnosticsByKind() {
       // Given
@@ -477,7 +480,7 @@ class TraceDiagnosticListAssertTest {
   class ExcludingKindsVarargsTest {
 
     @DisplayName(".excludingKinds(Kind...) fails if the vararg array is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void failsIfVarargArrayIsNull() {
       // Given
@@ -490,7 +493,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".excludingKinds(Kind...) fails if any varargs are null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void failsIfAnyVarargsAreNull() {
       // Given
@@ -526,6 +529,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".excludingKinds(Kind...) filters diagnostics by kind")
+    @SuppressWarnings({"NullAway", "NullableProblems"})
     @Test
     void filtersDiagnosticsByKind() {
       // Given
@@ -560,7 +564,7 @@ class TraceDiagnosticListAssertTest {
   class ExcludingKindsIterableTest {
 
     @DisplayName(".excludingKinds(Iterable<Kind>) fails if the iterable is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void failsIfKindIterableIsNull() {
       // Given
@@ -573,6 +577,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".excludingKinds(Iterable<Kind>) fails if any kinds are null")
+    @SuppressWarnings({"NullAway", "NullableProblems"})
     @Test
     void failsIfAnyKindsAreNull() {
       // Given
@@ -596,6 +601,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".excludingKinds(Iterable<Kind>) filters diagnostics by kind")
+    @SuppressWarnings({"NullAway", "NullableProblems"})
     @Test
     void filtersDiagnosticsByKind() {
       // Given
@@ -1016,7 +1022,7 @@ class TraceDiagnosticListAssertTest {
   class HasNoDiagnosticsOfKindsVarargsTest {
 
     @DisplayName(".hasNoDiagnosticsOfKinds(Kind...) fails if the vararg array is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void failsIfVarargArrayIsNull() {
       // Given
@@ -1029,7 +1035,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".hasNoDiagnosticsOfKinds(Kind...) fails if any varargs are null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void failsIfAnyVarargsAreNull() {
       // Given
@@ -1066,7 +1072,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".hasNoDiagnosticsOfKinds(Kind...) fails if any provided kinds are present")
-    @SuppressWarnings("ConstantValue")
+    @SuppressWarnings({"NullAway", "NullableProblems"})
     @Test
     void failsIfAnyProvidedKindsArePresent() {
       // Given
@@ -1100,6 +1106,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".hasNoDiagnosticsOfKinds(Kind...) succeeds if no provided kinds are present")
+    @SuppressWarnings({"NullAway", "NullableProblems"})
     @Test
     void succeedsIfNoProvidedKindsArePresent() {
       // Given
@@ -1126,7 +1133,7 @@ class TraceDiagnosticListAssertTest {
   class HasNoDiagnosticsOfKindsIterableTest {
 
     @DisplayName(".hasNoDiagnosticsOfKinds(Iterable<Kind>) fails if the iterable is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void failsIfIterableIsNull() {
       // Given
@@ -1139,6 +1146,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".hasNoDiagnosticsOfKinds(Iterable<Kind>) fails if the iterable has null members")
+    @SuppressWarnings({"NullAway", "NullableProblems"})
     @Test
     void failsIfIterableHasNullMembers() {
       // Given
@@ -1163,7 +1171,7 @@ class TraceDiagnosticListAssertTest {
     }
 
     @DisplayName(".hasNoDiagnosticsOfKinds(Iterable<Kind>) fails if any provided kinds are present")
-    @SuppressWarnings("ConstantValue")
+    @SuppressWarnings({"NullAway", "NullableProblems"})
     @Test
     void failsIfAnyProvidedKindsArePresent() {
       // Given
@@ -1199,6 +1207,7 @@ class TraceDiagnosticListAssertTest {
     @DisplayName(
         ".hasNoDiagnosticsOfKinds(Iterable<Kind>) succeeds if no provided kinds are present"
     )
+    @SuppressWarnings({"NullAway", "NullableProblems"})
     @Test
     void succeedsIfNoProvidedKindsArePresent() {
       // Given

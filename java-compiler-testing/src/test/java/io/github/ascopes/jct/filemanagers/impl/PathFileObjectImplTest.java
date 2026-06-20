@@ -55,6 +55,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 class PathFileObjectImplTest {
 
   @DisplayName("Passing a null location to the constructor raises an exception")
+  @SuppressWarnings("NullAway")
   @Test
   void passingNullLocationToConstructorRaisesException() {
     // Then
@@ -64,6 +65,7 @@ class PathFileObjectImplTest {
   }
 
   @DisplayName("Passing a null root path to the constructor raises an exception")
+  @SuppressWarnings("NullAway")
   @Test
   void passingNullRootPathToConstructorRaisesException() {
     // Then
@@ -73,6 +75,7 @@ class PathFileObjectImplTest {
   }
 
   @DisplayName("Passing a null relative path to the constructor raises an exception")
+  @SuppressWarnings("NullAway")
   @Test
   void passingNullRelativePathToConstructorRaisesException() {
     // Then

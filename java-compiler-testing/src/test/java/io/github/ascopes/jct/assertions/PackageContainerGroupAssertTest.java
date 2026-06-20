@@ -38,12 +38,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.spi.FileSystemProvider;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipOutputStream;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -62,7 +63,7 @@ class PackageContainerGroupAssertTest {
   class AllFilesExistStringArrayTest {
 
     @DisplayName(".allFilesExist(String...) throws an exception if the array is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void allFilesExistThrowsExceptionIfArrayIsNull() {
       // Given
@@ -75,7 +76,7 @@ class PackageContainerGroupAssertTest {
     }
 
     @DisplayName(".allFilesExist(String...) throws an exception if the array has null values")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void allFilesExistThrowsExceptionIfArrayHasNullValues() {
       // Given
@@ -125,7 +126,7 @@ class PackageContainerGroupAssertTest {
   class AllFilesExistStringIterableTest {
 
     @DisplayName(".allFilesExist(Iterable<String>) throws an exception if the iterable is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void allFilesExistThrowsExceptionIfIterableIsNull() {
       // Given
@@ -140,14 +141,20 @@ class PackageContainerGroupAssertTest {
     @DisplayName(
         ".allFilesExist(Iterable<String>) throws an exception if the iterable has null members"
     )
+    @SuppressWarnings({"NullAway", "NullableProblems"})
     @Test
     void allFilesExistThrowsExceptionIfIterableHasNullMembers() {
       // Given
+      var files = new ArrayList<@Nullable String>();
+      files.add("foo");
+      files.add("bar");
+      files.add(null);
+
       var assertions = new PackageContainerGroupAssert(mock());
 
       // Then
       // Arrays#asList does not NPE if any members are null. List#of does throw NPE.
-      assertThatThrownBy(() -> assertions.allFilesExist(Arrays.asList("foo", "bar", null)))
+      assertThatThrownBy(() -> assertions.allFilesExist(files))
           .isInstanceOf(NullPointerException.class)
           .hasMessage("paths[2]");
     }
@@ -247,7 +254,7 @@ class PackageContainerGroupAssertTest {
   class FileDoesNotExistTest {
 
     @DisplayName(".fileDoesNotExist(String...) throws an exception if the array is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void fileDoesNotExistThrowsExceptionIfArrayIsNull() {
       // Given
@@ -260,7 +267,7 @@ class PackageContainerGroupAssertTest {
     }
 
     @DisplayName(".fileDoesNotExist(String...) throws an exception if the array has null values")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void fileDoesNotExistThrowsExceptionIfArrayHasNullValues() {
       // Given
@@ -299,7 +306,6 @@ class PackageContainerGroupAssertTest {
     }
 
     @DisplayName(".fileDoesNotExist(String...) fails if the file exists")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void fileDoesNotExistFailsIfFileExists() {
       // Given
@@ -324,7 +330,6 @@ class PackageContainerGroupAssertTest {
     }
 
     @DisplayName(".fileDoesNotExist(String...) succeeds if the file does not exist")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void fileDoesNotExistSucceedsIfFileDoesNotExist() {
       // Given
@@ -351,7 +356,7 @@ class PackageContainerGroupAssertTest {
   class FileExistsTest {
 
     @DisplayName(".fileExists(String...) throws an exception if the array is null")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void fileExistsThrowsExceptionIfArrayIsNull() {
       // Given
@@ -364,7 +369,7 @@ class PackageContainerGroupAssertTest {
     }
 
     @DisplayName(".fileExists(String...) throws an exception if the array has null values")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void fileExistsThrowsExceptionIfArrayHasNullValues() {
       // Given
@@ -402,7 +407,6 @@ class PackageContainerGroupAssertTest {
     }
 
     @DisplayName(".fileExists(String...) fails with fuzzy suggestions if the file does not exist")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void fileExistsFailsWithFuzzySuggestionsIfTheFileDoesNotExist() throws IOException {
       // Given
@@ -478,7 +482,6 @@ class PackageContainerGroupAssertTest {
     }
 
     @DisplayName(".fileExists(String...) succeeds if the file exists")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void fileExistsSucceedsIfFileExists() {
       // Given

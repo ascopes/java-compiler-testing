@@ -19,11 +19,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.assertj.core.util.Arrays;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
 import org.slf4j.helpers.AbstractLogger;
@@ -52,7 +53,7 @@ public final class Slf4jLoggerFake extends AbstractLogger {
    */
   public void assertThatEntryLogged(
       Level level,
-      Throwable ex,
+      @Nullable Throwable ex,
       String message,
       Object... args
   ) {
@@ -60,7 +61,7 @@ public final class Slf4jLoggerFake extends AbstractLogger {
         .stream()
         .filter(entry -> entry.getKey().equals(level));
 
-    var expect = new LogRecord(ex, message, args);
+    var expect = new LogRecord(ex, message, List.of(args));
 
     assertThat(levelEntries)
         .withFailMessage("Expected at least one %s entry to be logged", level)
@@ -94,7 +95,7 @@ public final class Slf4jLoggerFake extends AbstractLogger {
     entries.add(new SimpleImmutableEntry<>(level, new LogRecord(
         throwable,
         format,
-        args
+        Arrays.asList(args)
     )));
   }
 
@@ -149,14 +150,14 @@ public final class Slf4jLoggerFake extends AbstractLogger {
     return true;
   }
 
-  private record LogRecord(Throwable ex, String message, Object... args) {
+  private record LogRecord(@Nullable Throwable ex, String message, List<Object> args) {
 
     @Override
     public boolean equals(Object other) {
       if (other instanceof LogRecord that) {
         return Objects.equals(ex, that.ex)
             && Objects.equals(message, that.message)
-            && Arrays.deepEquals(args, that.args);
+            && args.equals(that.args);
       }
       return false;
     }

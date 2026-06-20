@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.junit;
 
+import io.github.ascopes.jct.annotations.Initializer;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspace;
 import java.lang.annotation.Documented;
@@ -55,6 +56,7 @@ import java.lang.annotation.Target;
  * @since 0.4.0
  */
 @Documented
+@Initializer
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Managed {

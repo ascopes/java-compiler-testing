@@ -60,7 +60,7 @@ public final class ExtraArgumentMatchers {
    * @return the argument matcher.
    */
   @SafeVarargs
-  @SuppressWarnings("varargs")
+  @SuppressWarnings({"varargs", "TypeParameterUnusedInFormals"})
   public static <E, T extends Iterable<E>> T containsExactlyElements(E... expected) {
     return containsExactlyElements(Set.of(expected));
   }
@@ -73,6 +73,7 @@ public final class ExtraArgumentMatchers {
    * @param <T>      the iterable type.
    * @return the argument matcher.
    */
+  @SuppressWarnings("TypeParameterUnusedInFormals")
   public static <E, T extends Iterable<E>> T containsExactlyElements(Collection<E> expected) {
     return argThat(new ArgumentMatcher<>() {
       @Override

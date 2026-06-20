@@ -13,10 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// Use bsh rather than groovy since groovy does not support arbitrary JVM bytecode versions.
-if (Runtime.version().major() < 21) {
-  System.out.println("Micronaut does not support JVMs before Java 21");
-  return false;
-} else {
-  return true;
+package io.github.ascopes.jct.annotations;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Marks the annotation as being an initialiser annotation, which keeps NullAway happy.
+ *
+ * @author Ashley Scopes
+ * @since 6.0.1
+ */
+@Documented
+@Retention(RetentionPolicy.CLASS)
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface Initializer {
 }

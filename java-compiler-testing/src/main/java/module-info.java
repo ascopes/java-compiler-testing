@@ -119,10 +119,6 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 module io.github.ascopes.jct {
 
-  ////////////////////
-  /// DEPENDENCIES ///
-  ////////////////////
-
   requires transitive com.github.marschall.memoryfilesystem;
   requires transitive java.compiler;
   requires transitive java.management;
@@ -133,10 +129,7 @@ module io.github.ascopes.jct {
   requires static transitive org.junit.jupiter.params;
   requires transitive org.slf4j;
 
-  //////////////////
-  /// PUBLIC API ///
-  //////////////////
-
+  exports io.github.ascopes.jct.annotations;
   exports io.github.ascopes.jct.assertions;
   exports io.github.ascopes.jct.containers;
   exports io.github.ascopes.jct.compilers;
@@ -147,10 +140,6 @@ module io.github.ascopes.jct {
   exports io.github.ascopes.jct.junit;
   exports io.github.ascopes.jct.repr;
   exports io.github.ascopes.jct.workspaces;
-
-  ///////////////////////////////////
-  /// SERVICE PROVIDER INTERFACES ///
-  ///////////////////////////////////
 
   provides URLStreamHandlerProvider with MemoryFileSystemUrlHandlerProvider;
 }

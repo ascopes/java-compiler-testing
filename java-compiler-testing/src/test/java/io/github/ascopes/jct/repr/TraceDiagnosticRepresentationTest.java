@@ -54,6 +54,7 @@ class TraceDiagnosticRepresentationTest {
       + "with no source")
   @EnumSource(value = Kind.class)
   @ParameterizedTest(name = "for kind {0}")
+  @SuppressWarnings("StringConcatToTextBlock")
   void toStringOfTraceDiagnosticReturnsTheExpectedMessageWhenNoCodeIsProvidedWithNoSource(
       Kind kind
   ) {
@@ -82,6 +83,7 @@ class TraceDiagnosticRepresentationTest {
       + "with a source")
   @EnumSource(value = Kind.class)
   @ParameterizedTest(name = "for kind {0}")
+  @SuppressWarnings("StringConcatToTextBlock")
   void toStringOfTraceDiagnosticReturnsTheExpectedMessageWhenNoCodeIsProvidedWithSource(Kind kind) {
     // Given
     PathFileObject fileObject = mock();
@@ -113,6 +115,7 @@ class TraceDiagnosticRepresentationTest {
       + "with no source")
   @EnumSource(value = Kind.class)
   @ParameterizedTest(name = "for kind {0}")
+  @SuppressWarnings("StringConcatToTextBlock")
   void toStringOfTraceDiagnosticReturnsTheExpectedMessageWhenCodeIsProvidedWithNoSource(Kind kind) {
     // Given
     TraceDiagnostic<?> diagnostic = mock();
@@ -139,6 +142,7 @@ class TraceDiagnosticRepresentationTest {
       + "with a source")
   @EnumSource(value = Kind.class)
   @ParameterizedTest(name = "for kind {0}")
+  @SuppressWarnings("StringConcatToTextBlock")
   void toStringOfTraceDiagnosticReturnsTheExpectedMessageWhenCodeIsProvidedWithSource(Kind kind) {
     // Given
     PathFileObject fileObject = mock();

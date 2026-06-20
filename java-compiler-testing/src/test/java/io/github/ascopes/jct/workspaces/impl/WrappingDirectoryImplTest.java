@@ -51,7 +51,6 @@ class WrappingDirectoryImplTest {
   class ConstructorTest {
 
     @DisplayName("Initialising without a parent configures the object correctly")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void initialisingWithoutParentConfiguresTheObjectCorrectly() {
       // Given
@@ -78,7 +77,6 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("Initialising with a parent configures the object correctly")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void initialisingWithParentConfiguresTheObjectCorrectly() {
       // Given
@@ -109,7 +107,7 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("Null paths are disallowed for parentless instances")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void nullPathsAreDisallowedForParentlessInstances() {
       // Then
@@ -119,7 +117,7 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("Null parents are disallowed for instances with parents")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void nullParentsAreDisallowedForInstancesWithParents() {
       // Then
@@ -129,7 +127,7 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("Null parts lists are disallowed for instances with parents")
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void nullPartsListsAreDisallowedForInstancesWithParents() {
       // Then
@@ -139,7 +137,6 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("Null parts are disallowed for instances with parents")
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void nullPartsAreDisallowedForInstancesWithParents() {
       // Then
@@ -192,7 +189,7 @@ class WrappingDirectoryImplTest {
     }
 
     @DisplayName("objects equal themselves")
-    @SuppressWarnings("EqualsWithItself")  // Intentional, duh!
+    @SuppressWarnings({"EqualsWithItself", "SelfAssertion"})  // Intentional, duh!
     @Test
     void equalThemselves() {
       // Then

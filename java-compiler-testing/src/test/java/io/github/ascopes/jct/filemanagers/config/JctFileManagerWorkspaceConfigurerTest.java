@@ -53,6 +53,7 @@ class JctFileManagerWorkspaceConfigurerTest {
   JctFileManagerWorkspaceConfigurer configurer;
 
   @DisplayName(".configure(...) will copy all workspace paths to the file manager")
+  @SuppressWarnings("DistinctVarargsChecker")
   @Test
   void configureWillCopyAllWorkspacePathsToTheFileManager() {
     // Given

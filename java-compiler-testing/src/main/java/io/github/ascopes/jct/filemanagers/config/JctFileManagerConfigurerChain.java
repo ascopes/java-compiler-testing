@@ -16,7 +16,8 @@
 package io.github.ascopes.jct.filemanagers.config;
 
 import io.github.ascopes.jct.filemanagers.JctFileManager;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,13 +53,13 @@ public final class JctFileManagerConfigurerChain {
 
   private static final Logger log = LoggerFactory.getLogger(JctFileManagerConfigurerChain.class);
 
-  private final LinkedList<JctFileManagerConfigurer> configurers;
+  private final Deque<JctFileManagerConfigurer> configurers;
 
   /**
    * Initialise this chain.
    */
   public JctFileManagerConfigurerChain() {
-    configurers = new LinkedList<>();
+    configurers = new ArrayDeque<>();
   }
 
   /**

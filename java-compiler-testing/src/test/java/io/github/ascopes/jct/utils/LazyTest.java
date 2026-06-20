@@ -59,6 +59,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 class LazyTest {
 
   @DisplayName("Initialising with a null supplier throws a NullPointerException")
+  @SuppressWarnings("NullAway")
   @Test
   @Timeout(15)
   void initialisingWithNullSupplierThrowsNullPointerException() {
@@ -93,6 +94,7 @@ class LazyTest {
   @DisplayName("access() synchronizes correctly on initial accesses")
   @MethodSource("concurrentRepeatCases")
   @ParameterizedTest(name = "for {0} concurrent read(s)")
+  @SuppressWarnings("FutureReturnValueIgnored")
   @Timeout(15)
   void accessSynchronizesCorrectlyOnInitialAccesses(int concurrency) {
     // This is closeable in Java 19, but not before.
@@ -145,6 +147,7 @@ class LazyTest {
   @DisplayName("access() synchronizes correctly on subsequent accesses")
   @MethodSource("concurrentRepeatCases")
   @ParameterizedTest(name = "for {0} concurrent read(s)")
+  @SuppressWarnings("FutureReturnValueIgnored")
   @Timeout(15)
   void accessSynchronizesCorrectlyOnSubsequentAccesses(int concurrency) {
     // This is closeable in Java 19, but not before.

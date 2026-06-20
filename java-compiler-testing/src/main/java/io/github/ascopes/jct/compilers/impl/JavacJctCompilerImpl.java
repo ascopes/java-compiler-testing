@@ -80,6 +80,7 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler {
     // than utility methods, as this prevents compilation problems on various
     // versions of the JDK when certain members are unavailable.
 
+    @SuppressWarnings("EnumOrdinal")
     var latestSupported = SourceVersion.latestSupported().ordinal();
 
     if (latestSupported >= JAVA_20) {
@@ -99,6 +100,9 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler {
    * @since 1.0.0
    */
   public static int getLatestSupportedVersionInt() {
-    return SourceVersion.latestSupported().ordinal();
+    @SuppressWarnings("EnumOrdinal")
+    var ordinal = SourceVersion.latestSupported().ordinal();
+
+    return ordinal;
   }
 }

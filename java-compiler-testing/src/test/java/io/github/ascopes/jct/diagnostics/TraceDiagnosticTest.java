@@ -52,6 +52,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 class TraceDiagnosticTest {
 
   @DisplayName("null original diagnostics are rejected")
+  @SuppressWarnings({"DataFlowIssue", "NullAway"})
   @Test
   void nullDiagnosticsAreRejected() {
     // Given
@@ -192,6 +193,7 @@ class TraceDiagnosticTest {
   }
 
   @DisplayName("null timestamps are rejected")
+  @SuppressWarnings({"DataFlowIssue", "NullAway"})
   @Test
   void nullTimestampsAreRejected() {
     var diag = someDiagnostic();
@@ -202,6 +204,7 @@ class TraceDiagnosticTest {
   }
 
   @DisplayName("null stack traces are rejected")
+  @SuppressWarnings({"DataFlowIssue", "NullAway"})
   @Test
   void nullStackTracesAreRejected() {
     var now = now();
@@ -310,6 +313,7 @@ class TraceDiagnosticTest {
     assertThat(actualStackTrace).isEqualTo(expectedStackTrace);
   }
 
+  @SuppressWarnings("DataFlowIssue")
   @DisplayName("getStackTrace() returns an immutable list")
   @Test
   void getStackTraceReturnsAnImmutableStackTrace() {
@@ -331,6 +335,7 @@ class TraceDiagnosticTest {
   }
 
   @DisplayName("toString() returns the expected value")
+  @SuppressWarnings({"DataFlowIssue", "NullAway"})
   @RepeatedTest(5)
   void toStringReturnsExpectedValue() {
     // Given

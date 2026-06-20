@@ -91,11 +91,13 @@
     <!-- Dependencies -->
     <assertj.version>4.0.0-M1</assertj.version>
     <awaitility.version>4.3.0</awaitility.version>
+    <errorprone.version>2.50.0</errorprone.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jspecify.version>1.0.0</jspecify.version>
     <junit.version>6.0.0</junit.version>
     <memoryfilesystem.version>2.8.2</memoryfilesystem.version>
     <mockito.version>5.23.0</mockito.version>
+    <nullaway.version>0.13.7</nullaway.version>
     <slf4j.version>2.0.18</slf4j.version>
 
     <!-- Plugins -->
@@ -177,6 +179,22 @@
       </dependency>
 
       <dependency>
+        <!-- Included here to allow dependabot to keep the version up to date.
+             Only actually used within Maven Compiler Plugin. -->
+        <groupId>com.google.errorprone</groupId>
+        <artifactId>error_prone_core</artifactId>
+        <version>${errorprone.version}</version>
+      </dependency>
+
+      <dependency>
+        <!-- Included here to allow dependabot to keep the version up to date.
+             Only actually used within Maven Compiler Plugin. -->
+        <groupId>com.uber.nullaway</groupId>
+        <artifactId>nullaway</artifactId>
+        <version>${nullaway.version}</version>
+      </dependency>
+
+      <dependency>
         <!-- Fuzzy string matching -->
         <groupId>me.xdrop</groupId>
         <artifactId>fuzzywuzzy</artifactId>
@@ -241,13 +259,57 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>com.mycila</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>${license-maven-plugin.version}</version>
+
+          <configuration>
+            <aggregate>true</aggregate>
+            <licenseSets>
+              <licenseSet>
+                <header>.mvn/license/license-header.txt</header>
+                <!-- Useful flags: https://mycila.carbou.me/license-maven-plugin/ -->
+                <includes>
+                  <include>**.toml</include>
+                  <include>**.yml</include>
+                  <include>**.yaml</include>
+                  <include>**/pom.xml</include>
+                  <include>**/security-suppressions.xml</include>
+                  <include>**/src/**/*.bsh</include>
+                  <include>**/src/**/*.groovy</include>
+                  <include>**/src/**/*.java</include>
+                  <include>**/src/it/settings.xml</include>
+                </includes>
+              </licenseSet>
+            </licenseSets>
+            <mapping>
+              <bsh>SLASHSTAR_STYLE</bsh>
+              <groovy>SLASHSTAR_STYLE</groovy>
+              <java>SLASHSTAR_STYLE</java>
+              <toml>SCRIPT_STYLE</toml>
+            </mapping>
+            <strictCheck>true</strictCheck>
+          </configuration>
+
+          <executions>
+            <execution>
+              <phase>validate</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
           <!-- Java compiler config -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${maven-compiler-plugin.version}</version>
 
           <configuration>
-            <compilerArgs>
+            <annotationProcessorPaths combine.children="append"/>
+            <compilerArgs combine.children="append">
               <compilerArg>-Xlint:all,-classfile,-processing,-requires-automatic,-serial</compilerArg>
             </compilerArgs>
             <failOnWarning>true</failOnWarning>
@@ -585,48 +647,10 @@
 
     <plugins>
       <plugin>
-        <!-- Enforces our license header and allows adding it automatically to code. -->
+        <!-- Enforces our licence header and allows adding it automatically to code. -->
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
-        <version>${license-maven-plugin.version}</version>
         <inherited>false</inherited>
-
-        <configuration>
-          <aggregate>true</aggregate>
-          <licenseSets>
-            <licenseSet>
-              <header>file:.mvn/license/license-header.txt</header>
-              <!-- Useful flags: https://mycila.carbou.me/license-maven-plugin/ -->
-              <includes>
-                <include>**.toml</include>
-                <include>**.yml</include>
-                <include>**.yaml</include>
-                <include>**/pom.xml</include>
-                <include>**/security-suppressions.xml</include>
-                <include>**/src/**/*.bsh</include>
-                <include>**/src/**/*.groovy</include>
-                <include>**/src/**/*.java</include>
-                <include>**/src/it/settings.xml</include>
-              </includes>
-            </licenseSet>
-          </licenseSets>
-          <mapping>
-            <bsh>SLASHSTAR_STYLE</bsh>
-            <groovy>SLASHSTAR_STYLE</groovy>
-            <java>SLASHSTAR_STYLE</java>
-            <toml>SCRIPT_STYLE</toml>
-          </mapping>
-          <strictCheck>true</strictCheck>
-        </configuration>
-
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
       <plugin>

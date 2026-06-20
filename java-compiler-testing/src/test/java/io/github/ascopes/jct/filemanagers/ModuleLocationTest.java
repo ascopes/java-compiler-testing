@@ -43,6 +43,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 class ModuleLocationTest {
 
   @DisplayName("Passing a null parent to the constructor raises an exception")
+  @SuppressWarnings({"DataFlowIssue", "NullAway"})
   @Test
   void passingNullParentToConstructorRaisesException() {
     // Then
@@ -52,6 +53,7 @@ class ModuleLocationTest {
   }
 
   @DisplayName("Passing a null module name to the constructor raises an exception")
+  @SuppressWarnings({"DataFlowIssue", "NullAway"})
   @Test
   void passingNullNameToConstructorRaisesException() {
     // Then
@@ -151,6 +153,7 @@ class ModuleLocationTest {
   }
 
   @DisplayName(".equals(...) returns true for the same object")
+  @SuppressWarnings({"EqualsWithItself", "SelfAssertion"})
   @Test
   void equalsReturnsTrueForSameObject() {
     // Given
