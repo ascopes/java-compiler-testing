@@ -326,6 +326,7 @@ public interface JctFileManager extends JavaFileManager {
    * @throws IllegalStateException    if {@link #close} has been called and this file manager cannot
    *                                  be reopened.
    */
+  @Override
   boolean handleOption(String current, Iterator<String> remaining);
 
   /**
@@ -334,6 +335,7 @@ public interface JctFileManager extends JavaFileManager {
    * @param location a location.
    * @return true if the location is known to this file manager.
    */
+  @Override
   boolean hasLocation(Location location);
 
   /**

@@ -49,8 +49,6 @@
       <!-- Workaround for https://youtrack.jetbrains.com/issue/IDEA-317391 -->
       -DmvnArgLinePropagated=true
     </argLine>
-
-    <error-prone.version>2.36.0</error-prone.version>
   </properties>
 
   <dependencies>
@@ -64,7 +62,7 @@
     <dependency>
       <groupId>com.google.errorprone</groupId>
       <artifactId>error_prone_core</artifactId>
-      <version>${error-prone.version}</version>
+      <version>${errorprone.version}</version>
       <scope>test</scope>
     </dependency>
 

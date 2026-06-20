@@ -36,12 +36,11 @@ public abstract class AbstractEnumAssert<A extends AbstractEnumAssert<A, E>, E e
     extends AbstractAssert<A, E> {
 
   /**
-   * Initialize this enum assertion.
+   * Initialise this enum assertion.
    *
    * @param value    the value to assert upon.
    * @param selfType the type of this assertion implementation.
    */
-  @SuppressWarnings("DataFlowIssue")
   protected AbstractEnumAssert(@Nullable E value, Class<?> selfType) {
     super(value, selfType);
   }
@@ -139,6 +138,6 @@ public abstract class AbstractEnumAssert<A extends AbstractEnumAssert<A, E>, E e
   }
 
   private String description() {
-    return String.format("%s enum value <%s>", actual.getClass().getSimpleName(), actual);
+    return String.format("%s enum value <%s>", actual.getDeclaringClass().getSimpleName(), actual);
   }
 }

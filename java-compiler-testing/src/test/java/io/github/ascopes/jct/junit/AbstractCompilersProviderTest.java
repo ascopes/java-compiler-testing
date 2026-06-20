@@ -83,6 +83,7 @@ class AbstractCompilersProviderTest {
   }
 
   @DisplayName("Configuring the provider with a null version strategy will raise an exception")
+  @SuppressWarnings("NullAway")
   @Test
   void configuringTheProviderWithNullVersionStrategyWillRaiseException() {
     // Given

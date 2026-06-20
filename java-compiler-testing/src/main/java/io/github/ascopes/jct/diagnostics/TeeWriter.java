@@ -35,14 +35,14 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public final class TeeWriter extends Writer {
 
-  private final Lock lock;
+  private final Lock operationLock;
 
   private volatile boolean closed;
 
   private final Writer writer;
 
-  // We use a StringBuilder and manually synchronise it rather than
-  // a string buffer, as we want to manually synchronise the builder
+  // We use a StringBuilder and manually synchronize it rather than
+  // a string buffer, as we want to manually synchronize the builder
   // and the delegated output writer at the same time.
   private final StringBuilder builder;
 
@@ -52,7 +52,7 @@ public final class TeeWriter extends Writer {
    * @param writer the underlying writer to "tee" to.
    */
   public TeeWriter(Writer writer) {
-    lock = new ReentrantLock();
+    operationLock = new ReentrantLock();
     closed = false;
 
     this.writer = requireNonNull(writer, "writer");
@@ -64,7 +64,7 @@ public final class TeeWriter extends Writer {
   public void close() throws IOException {
     // release to set and acquire to check ensures in-order operations to prevent
     // a very minute chance of a race condition.
-    lock.lock();
+    operationLock.lock();
     try {
       if (!closed) {
         closed = true;
@@ -73,18 +73,18 @@ public final class TeeWriter extends Writer {
         writer.close();
       }
     } finally {
-      lock.unlock();
+      operationLock.unlock();
     }
   }
 
   @Override
   public void flush() throws IOException {
-    lock.lock();
+    operationLock.lock();
     try {
       ensureOpen();
       writer.flush();
     } finally {
-      lock.unlock();
+      operationLock.unlock();
     }
   }
 
@@ -95,11 +95,11 @@ public final class TeeWriter extends Writer {
    * @since 0.2.1
    */
   public String getContent() {
-    lock.lock();
+    operationLock.lock();
     try {
       return builder.toString();
     } finally {
-      lock.unlock();
+      operationLock.unlock();
     }
   }
 
@@ -116,7 +116,7 @@ public final class TeeWriter extends Writer {
 
   @Override
   public void write(char[] buffer, int offset, int length) throws IOException {
-    lock.lock();
+    operationLock.lock();
     try {
       ensureOpen();
 
@@ -125,7 +125,7 @@ public final class TeeWriter extends Writer {
       // operation has completed.
       builder.append(buffer, offset, length);
     } finally {
-      lock.unlock();
+      operationLock.unlock();
     }
   }
 

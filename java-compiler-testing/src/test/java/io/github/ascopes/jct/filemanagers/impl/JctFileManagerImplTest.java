@@ -103,7 +103,7 @@ class JctFileManagerImplTest {
   }
 
   @DisplayName("Constructor disallows null releases")
-  @SuppressWarnings("resource")
+  @SuppressWarnings({"NullAway", "resource"})
   @Test
   void constructorDisallowsNullReleases() {
     // Then
@@ -1322,6 +1322,7 @@ class JctFileManagerImplTest {
     }
 
     @DisplayName(".list(...) returns the file listing for the location")
+    @SuppressWarnings("DistinctVarargsChecker")
     @Test
     void listReturnsFileListingForTheLocation() throws IOException {
       // Given

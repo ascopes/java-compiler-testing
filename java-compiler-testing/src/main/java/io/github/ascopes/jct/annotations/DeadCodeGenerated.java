@@ -13,10 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// Use bsh rather than groovy since groovy does not support arbitrary JVM bytecode versions.
-if (Runtime.version().major() < 21) {
-  System.out.println("Micronaut does not support JVMs before Java 21");
-  return false;
-} else {
-  return true;
+package io.github.ascopes.jct.annotations;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Marks a method as being known to have uncoverable code-paths by design.
+ *
+ * <p>The {@code Generated} suffix tells JaCoCo to ignore coverage for this method.
+ *
+ * @author Ashley Scopes
+ * @since 6.0.1
+ */
+@Retention(RetentionPolicy.CLASS)
+@Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.TYPE})
+public @interface DeadCodeGenerated {
 }

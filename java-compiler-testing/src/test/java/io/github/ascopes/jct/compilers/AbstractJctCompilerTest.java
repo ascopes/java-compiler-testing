@@ -117,6 +117,7 @@ class AbstractJctCompilerTest {
   class ConstructorTest {
 
     @DisplayName("constructor raises a NullPointerException if name is null")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void constructorRaisesNullPointerExceptionIfNameIsNull() {
       // Then
@@ -511,6 +512,7 @@ class AbstractJctCompilerTest {
   class ConfigureTest {
 
     @DisplayName(".configure(...) raises a NullPointerException if the input is null")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void configureRaisesNullPointerExceptionOnNullInput() {
       // Then
@@ -611,6 +613,7 @@ class AbstractJctCompilerTest {
     }
 
     @DisplayName(".name(null) throws a NullPointerException")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void passingNullToNameThrowsNullPointerException() {
       // Then
@@ -1385,6 +1388,7 @@ class AbstractJctCompilerTest {
     }
 
     @DisplayName(".locale(...) throws a NullPointerException if the locale is null")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void localeThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1431,6 +1435,7 @@ class AbstractJctCompilerTest {
     }
 
     @DisplayName(".logCharset(...) throws a NullPointerException if the logCharset is null")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void logCharsetThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1478,6 +1483,7 @@ class AbstractJctCompilerTest {
 
     @DisplayName(".fileManagerLoggingMode(...) throws a NullPointerException if "
         + "fileManagerLoggingMode is null")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void fileManagerLoggingModeThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1525,6 +1531,7 @@ class AbstractJctCompilerTest {
 
     @DisplayName(".diagnosticLoggingMode(...) throws a NullPointerException "
         + "if diagnosticLoggingMode is null")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void diagnosticLoggingModeThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1572,6 +1579,7 @@ class AbstractJctCompilerTest {
 
     @DisplayName(".annotationProcessorDiscovery(...) throws a NullPointerException "
         + "if annotationProcessorDiscovery is null")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void annotationProcessorDiscoveryThrowsNullPointerExceptionIfNull() {
       // Then
@@ -1622,6 +1630,7 @@ class AbstractJctCompilerTest {
     }
 
     @DisplayName(".debuggingInfo(...) throws a NullPointerException if debugging info is null")
+    @SuppressWarnings({"DataFlowIssue", "NullAway"})
     @Test
     void debuggingInfoThrowsNullPointerExceptionIfNull() {
       // Then

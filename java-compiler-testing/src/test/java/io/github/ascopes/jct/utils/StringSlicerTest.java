@@ -35,6 +35,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 class StringSlicerTest {
 
   @DisplayName("Initializing with a null delimiter throws a NullPointerException")
+  @SuppressWarnings({"DataFlowIssue", "NullAway"})
   @Test
   void initializingWithNullDelimiterThrowsNullPointerException() {
     thenCode(() -> new StringSlicer(null))

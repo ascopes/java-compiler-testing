@@ -142,7 +142,7 @@ public final class ToStringBuilder {
         case '\"' -> builder.append("\\\"");
         case '\\' -> builder.append("\\\\");
         default -> {
-          if (0x20 <= next && next <= 0x7E || 0x80 <= next && next <= 0xFF) {
+          if ((0x20 <= next && next <= 0x7E) || (0x80 <= next && next <= 0xFF)) {
             builder.append(next);
           } else {
             var hex = Integer.toHexString(next);

@@ -44,6 +44,7 @@ import org.junit.jupiter.api.Test;
 class TeeWriterTest {
 
   @DisplayName("Null writers are disallowed")
+  @SuppressWarnings({"DataFlowIssue", "NullAway"})
   @Test
   void nullWritersAreDisallowed() {
     assertThatCode(() -> new TeeWriter(null))
@@ -180,6 +181,7 @@ class TeeWriterTest {
   }
 
   @DisplayName(".wrapOutputStream(null, Charset) throws a NullPointerException")
+  @SuppressWarnings({"DataFlowIssue", "NullAway"})
   @Test
   void wrapOutputStreamWithNullOutputStreamThrowsNullPointerException() {
     // Then
@@ -189,6 +191,7 @@ class TeeWriterTest {
   }
 
   @DisplayName(".wrapOutputStream(OutputStream, null) throws a NullPointerException")
+  @SuppressWarnings({"DataFlowIssue", "NullAway"})
   @Test
   void wrapOutputStreamWithNullCharsetThrowsNullPointerException() {
     // Then

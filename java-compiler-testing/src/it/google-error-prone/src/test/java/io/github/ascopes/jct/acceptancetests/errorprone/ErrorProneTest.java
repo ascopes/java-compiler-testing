@@ -57,6 +57,7 @@ class ErrorProneTest {
     // When
     var compilation = compiler
         .addCompilerOptions(
+            "-XDaddTypeAnnotationsToSymbol=true",
             "-Xplugin:ErrorProne",
             "-XDcompilePolicy=simple",
             "--should-stop=ifError=FLOW"
@@ -79,6 +80,7 @@ class ErrorProneTest {
     // When
     var compilation = compiler
         .addCompilerOptions(
+            "-XDaddTypeAnnotationsToSymbol=true",
             "-Xplugin:ErrorProne",
             "-XDcompilePolicy=simple",
             "--should-stop=ifError=FLOW"

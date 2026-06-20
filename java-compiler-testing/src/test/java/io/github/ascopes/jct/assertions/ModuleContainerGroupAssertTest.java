@@ -45,6 +45,7 @@ class ModuleContainerGroupAssertTest {
   class ModuleExistsTest {
 
     @DisplayName(".moduleExists(...) fails if the module name is null")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void moduleExistsFailsIfModuleNameIsNull() {
       // Given
@@ -68,6 +69,7 @@ class ModuleContainerGroupAssertTest {
     }
 
     @DisplayName(".moduleExists(...) fails with fuzzy suggestions when the module does not exist")
+    @SuppressWarnings({"NullAway", "StringConcatToTextBlock"})
     @Test
     void moduleExistsFailsWithFuzzySuggestionsWhenTheModuleDoesNotExist() {
       // Given
@@ -124,6 +126,7 @@ class ModuleContainerGroupAssertTest {
   class ModuleDoesNotExistTest {
 
     @DisplayName(".moduleDoesNotExist(...) fails if the module name is null")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void moduleDoesNotExistFailsIfModuleNameIsNull() {
       // Given

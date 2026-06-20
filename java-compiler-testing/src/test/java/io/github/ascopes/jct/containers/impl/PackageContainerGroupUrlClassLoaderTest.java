@@ -16,6 +16,7 @@
 package io.github.ascopes.jct.containers.impl;
 
 import static io.github.ascopes.jct.fixtures.Fixtures.oneOf;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,6 +38,7 @@ import java.util.List;
 import javax.lang.model.SourceVersion;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -167,6 +169,7 @@ class PackageContainerGroupUrlClassLoaderTest {
    * Since Mockito struggles to mock classloading mechanisms, we make real class files to use in our
    * test cases. This reduces the dependencies on other JCT components for this test.
    */
+  @SuppressWarnings("EffectivelyPrivate")
   private static final class SomeClassFile {
 
     private static final Logger log = LoggerFactory.getLogger(SomeClassFile.class);
@@ -176,7 +179,7 @@ class PackageContainerGroupUrlClassLoaderTest {
     private final String sourceFileName;
     private final String classFileName;
     private final String qualifiedName;
-    private volatile byte[] cachedClassFile;
+    private volatile byte @Nullable[] cachedClassFile;
 
     public SomeClassFile(String packageName, String className) {
       this.packageName = packageName;
@@ -192,7 +195,7 @@ class PackageContainerGroupUrlClassLoaderTest {
       }
 
       var packageDir = path;
-      for (var part : packageName.split("\\.")) {
+      for (var part : packageName.split("\\.", -1)) {
         packageDir = packageDir.resolve(part);
       }
 
@@ -208,7 +211,7 @@ class PackageContainerGroupUrlClassLoaderTest {
       );
 
       try (var stream = Files.newOutputStream(outputFile)) {
-        stream.write(cachedClassFile);
+        stream.write(requireNonNull(cachedClassFile));
       }
     }
 
@@ -217,7 +220,7 @@ class PackageContainerGroupUrlClassLoaderTest {
 
       try {
         var packageDir = dir;
-        for (var part : packageName.split("\\.")) {
+        for (var part : packageName.split("\\.", -1)) {
           packageDir = packageDir.resolve(part);
         }
 
@@ -243,6 +246,7 @@ class PackageContainerGroupUrlClassLoaderTest {
         sfm.setLocation(StandardLocation.SOURCE_PATH, List.of(dir.toFile()));
         sfm.setLocation(StandardLocation.CLASS_OUTPUT, List.of(dir.toFile()));
 
+        @SuppressWarnings("EnumOrdinal")
         var options = List.of("--release", "" + SourceVersion.latestSupported().ordinal());
         var compilationUnits = sfm.getJavaFileObjects(packageDir.resolve(sourceFileName));
 
@@ -257,7 +261,7 @@ class PackageContainerGroupUrlClassLoaderTest {
             "{}.{} compiled to {} bytes of binary data",
             packageName,
             className,
-            cachedClassFile.length
+            requireNonNull(cachedClassFile).length
         );
       } finally {
         Files.walkFileTree(dir, new SimpleFileVisitor<>() {

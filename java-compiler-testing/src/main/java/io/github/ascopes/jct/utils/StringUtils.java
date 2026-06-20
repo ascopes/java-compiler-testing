@@ -43,7 +43,6 @@ public final class StringUtils {
   // Other stuff
   private static final char LF = '\n';
   private static final String NULL_STRING = "null";
-  private static final String EMPTY_STRING = "";
 
   private StringUtils() {
     // Disallow initialisation.
@@ -75,7 +74,7 @@ public final class StringUtils {
       CharSequence lastConnector
   ) {
     if (words.isEmpty()) {
-      return EMPTY_STRING;
+      return "";
     }
 
     if (words.size() == 1) {

@@ -138,6 +138,7 @@ class TracingDiagnosticListenerTest {
   @DisplayName("Diagnostics are logged with the expected timestamp")
   @MethodSource("loggingArgs")
   @ParameterizedTest(name = "for logging={0}, stackTraces={1}")
+  @SuppressWarnings("ReturnValueIgnored")
   void diagnosticsAreLoggedWithTheExpectedTimestamp(boolean logging, boolean stackTraces) {
     // Given
     var listener = new AccessibleImpl<>(logging, stackTraces);
@@ -283,6 +284,7 @@ class TracingDiagnosticListenerTest {
   @DisplayName("Errors should be logged as errors when stacktraces are disabled")
   @EnumSource(value = Kind.class, names = "ERROR")
   @ParameterizedTest(name = "for kind = {0}")
+  @SuppressWarnings("NullAway")
   void errorsShouldBeLoggedAsErrorsWhenStackTracesAreDisabled(Kind kind) {
     // Given
     var logger = new Slf4jLoggerFake();
@@ -307,6 +309,7 @@ class TracingDiagnosticListenerTest {
   @DisplayName("Errors should be logged as errors when stacktraces are enabled")
   @EnumSource(value = Kind.class, names = "ERROR")
   @ParameterizedTest(name = "for kind = {0}")
+  @SuppressWarnings("NullAway")
   void errorsShouldBeLoggedAsErrorsWhenStackTracesAreEnabled(Kind kind) {
     // Given
     var logger = new Slf4jLoggerFake();
@@ -341,6 +344,7 @@ class TracingDiagnosticListenerTest {
   @DisplayName("Warnings should be logged as warnings when stacktraces are disabled")
   @EnumSource(value = Kind.class, names = {"WARNING", "MANDATORY_WARNING"})
   @ParameterizedTest(name = "for kind = {0}")
+  @SuppressWarnings("NullAway")
   void warningsShouldBeLoggedAsWarningsWhenStackTracesAreDisabled(Kind kind) {
     // Given
     var logger = new Slf4jLoggerFake();
@@ -365,6 +369,7 @@ class TracingDiagnosticListenerTest {
   @DisplayName("Warnings should be logged as warnings when stacktraces are enabled")
   @EnumSource(value = Kind.class, names = {"WARNING", "MANDATORY_WARNING"})
   @ParameterizedTest(name = "for kind = {0}")
+  @SuppressWarnings("NullAway")
   void warningsShouldBeLoggedAsWarningsWhenStackTracesAreEnabled(Kind kind) {
     // Given
     var logger = new Slf4jLoggerFake();
@@ -398,6 +403,7 @@ class TracingDiagnosticListenerTest {
   @DisplayName("Info should be logged as info when stacktraces are disabled")
   @EnumSource(value = Kind.class, names = {"NOTE", "OTHER"})
   @ParameterizedTest(name = "for kind = {0}")
+  @SuppressWarnings("NullAway")
   void infoShouldBeLoggedAsInfoWhenStackTracesAreDisabled(Kind kind) {
     // Given
     var logger = new Slf4jLoggerFake();
@@ -422,6 +428,7 @@ class TracingDiagnosticListenerTest {
   @DisplayName("Info should be logged as info when stacktraces are enabled")
   @EnumSource(value = Kind.class, names = {"NOTE", "OTHER"})
   @ParameterizedTest(name = "for kind = {0}")
+  @SuppressWarnings("NullAway")
   void infoShouldBeLoggedAsInfoWhenStackTracesAreEnabled(Kind kind) {
     // Given
     var logger = new Slf4jLoggerFake();

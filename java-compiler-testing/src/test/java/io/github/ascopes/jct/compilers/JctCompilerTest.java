@@ -290,12 +290,13 @@ class JctCompilerTest {
     var thirdClass = "com.organisation.FooBar";
 
     // When
-    var result = compiler.compile(workspace, firstClass, secondClass, thirdClass);
+    compiler.compile(workspace, firstClass, secondClass, thirdClass);
 
     // Then
     then(compiler).should().compile(workspace, List.of(firstClass, secondClass, thirdClass));
   }
 
+  @SuppressWarnings("EnumOrdinal")
   static Stream<Arguments> sourceVersions() {
     return Stream
         .of(SourceVersion.values())

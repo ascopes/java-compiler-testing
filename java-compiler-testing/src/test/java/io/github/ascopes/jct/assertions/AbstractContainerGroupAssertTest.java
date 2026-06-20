@@ -85,6 +85,7 @@ class AbstractContainerGroupAssertTest {
   class ServicesTest {
 
     @DisplayName(".services() throws a NullPointerException if the class parameter is null")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void servicesThrowsNullPointerExceptionIfClassParameterIsNull() {
       // Given

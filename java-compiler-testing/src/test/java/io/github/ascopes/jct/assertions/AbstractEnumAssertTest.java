@@ -56,6 +56,7 @@ class AbstractEnumAssertTest {
     }
 
     @DisplayName("Expect error if we assert against a single null element")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void errorsIfExpectedIsNullOnSingleElement() {
       // Given
@@ -67,6 +68,7 @@ class AbstractEnumAssertTest {
     }
 
     @DisplayName("Expect error if we assert against a null array")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void errorsIfExpectedIsNullArray() {
       // Given
@@ -78,6 +80,7 @@ class AbstractEnumAssertTest {
     }
 
     @DisplayName("Expect error if we against multiple null elements")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void errorsIfExpectedIsNullOnMultipleElements() {
       // Given
@@ -170,6 +173,7 @@ class AbstractEnumAssertTest {
     }
 
     @DisplayName("Expect error if we assert against a null iterable")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void errorsIfExpectedIsNull() {
       // Given
@@ -259,6 +263,7 @@ class AbstractEnumAssertTest {
     }
 
     @DisplayName("Expect error if we assert against a single null element")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void errorsIfExpectedIsNullOnSingleElement() {
       // Given
@@ -270,6 +275,7 @@ class AbstractEnumAssertTest {
     }
 
     @DisplayName("Expect error if we assert against a null array")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void errorsIfExpectedIsNullOnMultipleElementsArray() {
       // Given
@@ -281,6 +287,7 @@ class AbstractEnumAssertTest {
     }
 
     @DisplayName("Expect error if we against multiple null elements")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void errorsIfExpectedIsNullOnMultipleElements() {
       // Given
@@ -361,6 +368,7 @@ class AbstractEnumAssertTest {
     }
 
     @DisplayName("Expect error if we assert against a null iterable")
+    @SuppressWarnings({"NullAway", "DataFlowIssue"})
     @Test
     void errorsIfExpectedIsNull() {
       // Given

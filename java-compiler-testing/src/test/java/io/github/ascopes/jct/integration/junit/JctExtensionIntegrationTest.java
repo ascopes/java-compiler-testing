@@ -50,10 +50,12 @@ import org.junit.platform.testkit.engine.EngineTestKit;
  *
  * @author Ashley Scopes
  */
+@SuppressWarnings({"Convert2MethodRef", "resource"})
 @DisplayName("JctExtension integration tests")
 class JctExtensionIntegrationTest {
 
   @DisplayName("Static workspaces are initialized and closed for all tests")
+  @SuppressWarnings("resource")
   @Test
   void staticWorkspacesAreInitializedAndClosedOnceForAllTests() {
     var workspace = mock(Workspace.class);
@@ -78,6 +80,7 @@ class JctExtensionIntegrationTest {
   static class StaticLifecycleTestCase {
 
     @Managed
+    @SuppressWarnings("NullAway")
     static Workspace workspace;
 
     @Test
@@ -129,12 +132,15 @@ class JctExtensionIntegrationTest {
   static class InstanceLifecycleTestCase {
 
     @Managed
+    @SuppressWarnings("NullAway")
     Workspace workspace1;
 
     @Managed
+    @SuppressWarnings("NullAway")
     Workspace workspace2;
 
     @Managed
+    @SuppressWarnings("NullAway")
     Workspace workspace3;
 
     @Test
@@ -192,6 +198,7 @@ class JctExtensionIntegrationTest {
   static class ParameterizedLifecycleTestCase {
 
     @Managed
+    @SuppressWarnings("NullAway")
     Workspace workspace;
 
     @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})
@@ -236,6 +243,7 @@ class JctExtensionIntegrationTest {
   static class DynamicLifecycleTestCase {
 
     @Managed
+    @SuppressWarnings("NullAway")
     Workspace workspace;
 
     @TestFactory
@@ -274,15 +282,19 @@ class JctExtensionIntegrationTest {
   static class CustomPathStrategyTestCase {
 
     @Managed(pathStrategy = PathStrategy.RAM_DIRECTORIES)
+    @SuppressWarnings("NullAway")
     static Workspace staticRamDirectoriesWorkspace;
 
     @Managed(pathStrategy = PathStrategy.TEMP_DIRECTORIES)
+    @SuppressWarnings("NullAway")
     static Workspace staticTempDirectoriesWorkspace;
 
     @Managed(pathStrategy = PathStrategy.RAM_DIRECTORIES)
+    @SuppressWarnings("NullAway")
     Workspace ramDirectoriesWorkspace;
 
     @Managed(pathStrategy = PathStrategy.TEMP_DIRECTORIES)
+    @SuppressWarnings("NullAway")
     Workspace tempDirectoriesWorkspace;
 
     @Test

@@ -621,8 +621,11 @@ public interface JctCompiler {
    * @throws UnsupportedOperationException if the compiler does not support integer versions.
    * @throws NullPointerException if the release is null.
    */
+
   default JctCompiler release(SourceVersion release) {
-    return release(Integer.toString(release.ordinal()));
+    @SuppressWarnings("EnumOrdinal")
+    var ordinal = release.ordinal();
+    return release(Integer.toString(ordinal));
   }
 
   /**
@@ -718,7 +721,9 @@ public interface JctCompiler {
    * @throws NullPointerException          if the source is null.
    */
   default JctCompiler source(SourceVersion source) {
-    return source(Integer.toString(source.ordinal()));
+    @SuppressWarnings("EnumOrdinal")
+    var ordinal = source.ordinal();
+    return source(Integer.toString(ordinal));
   }
 
   /**
@@ -795,7 +800,9 @@ public interface JctCompiler {
    * @throws NullPointerException          if the target is null.
    */
   default JctCompiler target(SourceVersion target) {
-    return target(Integer.toString(target.ordinal()));
+    @SuppressWarnings("EnumOrdinal")
+    var ordinal = target.ordinal();
+    return target(Integer.toString(ordinal));
   }
 
   /**

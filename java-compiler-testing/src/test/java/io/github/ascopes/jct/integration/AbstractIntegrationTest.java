@@ -38,7 +38,7 @@ public abstract class AbstractIntegrationTest {
     // classes.
     var dirName = getClass().getCanonicalName() + "_resources";
 
-    for (var part : dirName.split("[./]")) {
+    for (var part : dirName.split("[./]", -1)) {
       path = path.resolve(part);
     }
 
