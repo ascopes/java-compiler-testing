@@ -133,6 +133,9 @@
       We also disable code sharing to prevent some other warnings during test runs, and
       force the SLF4J simple logger defaults to use in tests here.
 
+      We disable method handle customization to avoid spurious crashes on certain old JDKs
+      in tests when using reflection.
+
       URL support for the memory filesystem requires enablement by system property.
 
       Tired compilation is modified to reduce the amount of time the JVM wastes JITing
@@ -146,6 +149,7 @@
       behaviour.
     -->
     <argLine>
+      -Djava.lang.invoke.MethodHandle.CUSTOMIZE_THRESHOLD=0
       -DmvnArgLinePropagated=true
       -Dnet.bytebuddy.experimental=true
       -Dorg.slf4j.simpleLogger.log=WARN
