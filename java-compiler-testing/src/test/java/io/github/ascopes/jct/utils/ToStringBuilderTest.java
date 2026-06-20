@@ -224,7 +224,7 @@ class ToStringBuilderTest {
         Arguments.of("hello, m'lady", "\"hello, m'lady\""),
         Arguments.of("quotes: \"hello!\" <--", "\"quotes: \\\"hello!\\\" <--\""),
         Arguments.of("back slash: \\ <--", "\"back slash: \\\\ <--\""),
-        Arguments.of("form feed: \f <--", "\"form feed: \\u000c <--\""),
+        Arguments.of("form feed: \f <--", "\"form feed: \f <--\""),
         Arguments.of("\1", "\"\\u0001\""),
         Arguments.of("\u000b", "\"\\u000b\""),
         Arguments.of("\u007f", "\"\\u007f\""),
