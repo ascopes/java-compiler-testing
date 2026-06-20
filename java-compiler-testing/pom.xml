@@ -22,7 +22,7 @@
   <parent>
     <groupId>io.github.ascopes.jct</groupId>
     <artifactId>java-compiler-testing-parent</artifactId>
-    <version>6.0.1-SNAPSHOT</version>
+    <version>6.0.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -115,7 +115,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <annotationProcessorPaths combine.children="append"/>
+          <annotationProcessorPaths combine.children="append" />
           <compilerArgs combine.children="append">
             <!--
               Disable warnings about modules. We cannot do much about some of these due to how Maven
