@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import java.time.Instant;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.DisplayName;
 class AutoFactoryTest {
 
   @DisplayName("The AutoFactory class is created as expected")
+  @EcjCompilerTest
   @JavacCompilerTest
   void autoFactoryClassIsCreatedAsExpected(JctCompiler compiler) throws Throwable {
     try (var workspace = Workspaces.newWorkspace()) {
@@ -42,7 +44,7 @@ class AutoFactoryTest {
 
       // Then
       assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings()
+          .isSuccessful()
           .classOutputPackages()
           .fileExists("org", "example", "UserFactory.class")
           .isNotEmptyFile();

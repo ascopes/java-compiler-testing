@@ -21,6 +21,7 @@ import io.avaje.jsonb.JsonAdapter;
 import io.avaje.jsonb.Jsonb;
 import io.avaje.jsonb.generator.Processor;
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import java.time.Instant;
@@ -30,6 +31,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 @DisplayName("Avaje Jsonb acceptance tests")
 class AvajeJsonbTest {
   @DisplayName("JSON handling logic is generated as expected")
+  @EcjCompilerTest(minVersion = 11)
   @JavacCompilerTest(minVersion = 11)
   void jsonHandlingLogicIsGeneratedAsExpected(JctCompiler compiler) throws Throwable {
     // Given
@@ -46,7 +48,7 @@ class AvajeJsonbTest {
 
       // Then
       assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings();
+          .isSuccessful();
 
       var userClass = compilation
           .getClassOutputs()

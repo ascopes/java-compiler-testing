@@ -92,6 +92,7 @@
     <assertj.version>4.0.0-M1</assertj.version>
     <awaitility.version>4.3.0</awaitility.version>
     <errorprone.version>2.50.0</errorprone.version>
+    <ecj.version>3.46.0</ecj.version>
     <fuzzywuzzy.version>1.4.0</fuzzywuzzy.version>
     <jspecify.version>1.0.0</jspecify.version>
     <junit.version>6.0.0</junit.version>
@@ -124,6 +125,7 @@
 
     <!-- Log verbosity -->
     <hide-test-logs-in-console>true</hide-test-logs-in-console>
+    <test-log-verbosity>INFO</test-log-verbosity>
 
     <!--
       This argument is pulled in by Surefire and Failsafe, and JaCoCo will amend it to 
@@ -153,7 +155,7 @@
       -DmvnArgLinePropagated=true
       -Dnet.bytebuddy.experimental=true
       -Dorg.slf4j.simpleLogger.log=WARN
-      -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=INFO
+      -Dorg.slf4j.simpleLogger.log.io.github.ascopes.jct=${test-log-verbosity}
       -Xshare:off
       -XX:+TieredCompilation
       -XX:TieredStopAtLevel=1
@@ -217,6 +219,13 @@
         <groupId>org.awaitility</groupId>
         <artifactId>awaitility</artifactId>
         <version>${awaitility.version}</version>
+      </dependency>
+
+      <dependency>
+        <!-- Eclipse Java compiler -->
+        <groupId>org.eclipse.jdt</groupId>
+        <artifactId>ecj</artifactId>
+        <version>${ecj.version}</version>
       </dependency>
 
       <dependency>
