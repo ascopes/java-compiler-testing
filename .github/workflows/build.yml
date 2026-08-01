@@ -61,7 +61,7 @@ jobs:
       ###
 
       - name: Initialize Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v5.6.0
         if: always()
         with:
           cache: maven
@@ -102,7 +102,7 @@ jobs:
           fetch-depth: 2
 
       - name: Initialize JDK
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v5.6.0
         with:
           check-latest: true
           distribution: temurin
