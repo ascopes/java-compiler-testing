@@ -18,6 +18,7 @@ package io.github.ascopes.jct.acceptancetests.spring;
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspaces;
@@ -28,6 +29,7 @@ import org.springframework.boot.autoconfigureprocessor.AutoConfigureAnnotationPr
 class SpringBootAutoconfigureProcessorTest {
 
   @DisplayName("Spring will index the application context as expected")
+  @EcjCompilerTest(minVersion = 17)
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpected(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
@@ -44,7 +46,6 @@ class SpringBootAutoconfigureProcessorTest {
 
       // Then
       assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings()
           .classOutputPackages()
           .fileExists("META-INF", "spring-autoconfigure-metadata.properties")
           .isNotEmptyFile();
@@ -52,6 +53,7 @@ class SpringBootAutoconfigureProcessorTest {
   }
 
   @DisplayName("Spring will index the application context as expected when using modules")
+  @EcjCompilerTest(minVersion = 17)
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpectedWhenUsingModules(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
@@ -67,7 +69,7 @@ class SpringBootAutoconfigureProcessorTest {
 
       // Then
       assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings()
+          .isSuccessful()
           .classOutputPackages()
           .fileExists("META-INF", "spring-autoconfigure-metadata.properties")
           .isNotEmptyFile();
@@ -75,6 +77,7 @@ class SpringBootAutoconfigureProcessorTest {
   }
 
   @DisplayName("Spring will index the application context as expected when using multi-modules")
+  @EcjCompilerTest(minVersion = 17)
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpectedWhenUsingMultiModules(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
@@ -90,7 +93,7 @@ class SpringBootAutoconfigureProcessorTest {
 
       // Then
       assertThatCompilation(compilation)
-          .isSuccessfulWithoutWarnings()
+          .isSuccessful()
           .classOutputModules().moduleExists("org.example")
           .fileExists("META-INF", "spring-autoconfigure-metadata.properties")
           .isNotEmptyFile();

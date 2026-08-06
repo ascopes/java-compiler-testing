@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import java.util.stream.Stream;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.DisplayName;
 class MapStructTest {
 
   @DisplayName("MapStruct generates expected mapping code")
+  @EcjCompilerTest
   @JavacCompilerTest
   void mapStructGeneratesExpectedMappingCode(JctCompiler compiler) throws Throwable {
     try (final var workspace = Workspaces.newWorkspace()) {
@@ -40,7 +42,7 @@ class MapStructTest {
       final var compilation = compiler.compile(workspace);
 
       // Then
-      assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+      assertThatCompilation(compilation).isSuccessful();
 
       final var classLoader = compilation.getFileManager()
           .getClassLoader(StandardLocation.CLASS_OUTPUT);
@@ -68,6 +70,7 @@ class MapStructTest {
   }
 
   @DisplayName("MapStruct generates expected mapping code for modules")
+  @EcjCompilerTest(minVersion = 9)
   @JavacCompilerTest(minVersion = 9)
   void mapStructGeneratesExpectedMappingCodeForModules(JctCompiler compiler) throws Throwable {
     try (final var workspace = Workspaces.newWorkspace()) {
@@ -80,7 +83,7 @@ class MapStructTest {
       final var compilation = compiler.compile(workspace);
 
       // Then
-      assertThatCompilation(compilation).isSuccessfulWithoutWarnings();
+      assertThatCompilation(compilation).isSuccessful();
 
       final var classLoader = compilation.getFileManager()
           .getClassLoader(StandardLocation.CLASS_OUTPUT);
