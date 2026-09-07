@@ -1,11 +1,28 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "name": "Development Environment",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
-    "ghcr.io/devcontainers/features/java:1": {
-      "version": "22",
-      "jdkDistro": "tem",
-      "installMaven": true
+    "ghcr.io/devcontainers/features/java": {
+      "version": "17",
+      "installMaven": "false"
     },
-    "ghcr.io/devcontainers/features/common-utils:2": {}
+    "ghcr.io/devcontainers/features/common-utils": {
+      "installZsh": true,
+      "installOhMyZsh": true,
+      "installOhMyZshConfig": true,
+      "configureZshAsDefaultShell": true
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "java.compile.nullAnalysis.mode": "automatic",
+        "java.configuration.updateBuildConfiguration": "automatic"
+      },
+      "extensions": [
+        "vscjava.vscode-java-pack"
+      ]
+    }
   }
 }
