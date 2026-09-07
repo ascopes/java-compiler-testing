@@ -658,44 +658,6 @@
       </plugin>
 
       <plugin>
-        <!-- Checking style of code matches the Google code style -->
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${maven-checkstyle-plugin.version}</version>
-
-        <configuration>
-          <configLocation>.mvn/checkstyle/checkstyle.xml</configLocation>
-          <consoleOutput>true</consoleOutput>
-          <failsOnError>true</failsOnError>
-          <includeResources>true</includeResources>
-          <sourceDirectories>${project.basedir}/src</sourceDirectories>
-          <suppressionsLocation>.mvn/checkstyle/suppressions.xml</suppressionsLocation>
-          <violationSeverity>info</violationSeverity>
-        </configuration>
-        
-        <!-- This is inherited to recurse, but each project must set 
-             the <relativePath/> attribute correctly. -->
-
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-
-        <dependencies>
-          <dependency>
-            <!-- Force the usage of checkstyle v10 rather than v8.28 -->
-            <groupId>com.puppycrawl.tools</groupId>
-            <artifactId>checkstyle</artifactId>
-            <version>${checkstyle.version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-
-      <plugin>
         <!--
             Intercepts the default deploy phase and replaces it with goals that
             handle pushing to Sonatype Nexus (Maven Central's registry backend)
@@ -723,6 +685,54 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>checkstyle</id>
+      <activation>
+        <jdk>[21,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <!-- Checking style of code matches the Google code style -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>${maven-checkstyle-plugin.version}</version>
+    
+            <configuration>
+              <configLocation>.mvn/checkstyle/checkstyle.xml</configLocation>
+              <consoleOutput>true</consoleOutput>
+              <failsOnError>true</failsOnError>
+              <includeResources>true</includeResources>
+              <sourceDirectories>${project.basedir}/src</sourceDirectories>
+              <suppressionsLocation>.mvn/checkstyle/suppressions.xml</suppressionsLocation>
+              <violationSeverity>info</violationSeverity>
+            </configuration>
+            
+            <!-- This is inherited to recurse, but each project must set 
+                 the <relativePath/> attribute correctly. -->
+    
+            <executions>
+              <execution>
+                <phase>validate</phase>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+    
+            <dependencies>
+              <dependency>
+                <!-- Force the usage of checkstyle v10 rather than v8.28 -->
+                <groupId>com.puppycrawl.tools</groupId>
+                <artifactId>checkstyle</artifactId>
+                <version>${checkstyle.version}</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <profile>
       <id>releases</id>
 
