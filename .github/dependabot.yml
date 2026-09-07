@@ -11,6 +11,11 @@ updates:
       - ascopes
     labels:
       - ci
+    groups:
+      actions:
+        patterns:
+          - "*"
+
   - package-ecosystem: maven
     directory: /
     open-pull-requests-limit: 99
@@ -22,3 +27,12 @@ updates:
       - ascopes
     labels:
       - maven
+    groups:
+      maven:
+        patterns:
+          - "*"
+        exclude-patterns:
+          # Excluded from grouping to generate individual PRs:
+          # Error Prone and NullAway versions must be kept in lockstep.
+          - "com.google.errorprone:*"
+          - "com.uber.nullaway:*"
