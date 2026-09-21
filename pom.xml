@@ -150,6 +150,7 @@
     -->
     <argLine>
       -Djava.lang.invoke.MethodHandle.CUSTOMIZE_THRESHOLD=0
+      -Djava.lang.invoke.MethodHandle.DUMP_CLASS_FILES=false
       -DmvnArgLinePropagated=true
       -Dnet.bytebuddy.experimental=true
       -Dorg.slf4j.simpleLogger.log=WARN
