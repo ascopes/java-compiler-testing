@@ -166,7 +166,7 @@
     <java-release>17</java-release>
 
     <!-- JavaDocs -->
-    <newest-java-version>23</newest-java-version>
+    <newest-java-version>27</newest-java-version>
     <highlight-js.version>11.9.0</highlight-js.version>
 
     <!-- Other configuration -->
