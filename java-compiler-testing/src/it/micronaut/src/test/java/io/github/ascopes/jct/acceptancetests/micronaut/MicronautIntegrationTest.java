@@ -18,6 +18,7 @@ package io.github.ascopes.jct.acceptancetests.micronaut;
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilation;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.DisplayName;
 class MicronautIntegrationTest {
 
   @DisplayName("Micronaut generates the expected code")
+  @EcjCompilerTest(configurers = MicronautConfigurer.class)
   @JavacCompilerTest(configurers = MicronautConfigurer.class)
   void micronautGeneratesTheExpectedCode(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace()) {

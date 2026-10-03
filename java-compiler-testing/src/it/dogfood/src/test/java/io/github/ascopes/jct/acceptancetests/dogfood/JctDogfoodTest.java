@@ -18,6 +18,7 @@ package io.github.ascopes.jct.acceptancetests.dogfood;
 import static io.github.ascopes.jct.assertions.JctAssertions.assertThat;
 
 import io.github.ascopes.jct.compilers.JctCompiler;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.Workspaces;
 import java.io.IOException;
@@ -52,6 +53,7 @@ class JctDogfoodTest {
       .resolve("classes");
 
   @DisplayName("JCT can compile itself as a legacy module source")
+  @EcjCompilerTest(minVersion = 17, configurers = JctCompilationConfigurer.class)
   @JavacCompilerTest(minVersion = 17, configurers = JctCompilationConfigurer.class)
   void jctCanCompileItselfAsLegacyModule(JctCompiler compiler) throws IOException {
     // Given

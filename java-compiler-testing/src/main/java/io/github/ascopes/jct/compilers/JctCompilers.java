@@ -15,6 +15,7 @@
  */
 package io.github.ascopes.jct.compilers;
 
+import io.github.ascopes.jct.compilers.impl.EcjJctCompilerImpl;
 import io.github.ascopes.jct.compilers.impl.JavacJctCompilerImpl;
 
 /**
@@ -38,5 +39,15 @@ public final class JctCompilers {
    */
   public static JctCompiler newPlatformCompiler() {
     return new JavacJctCompilerImpl();
+  }
+
+  /**
+   * Create a new instance of the ECJ compiler (Eclipse Compiler for Java).
+   *
+   * @return the compiler instance.
+   * @since 5.0.0
+   */
+  public static JctCompiler newEcjCompiler() {
+    return new EcjJctCompilerImpl();
   }
 }

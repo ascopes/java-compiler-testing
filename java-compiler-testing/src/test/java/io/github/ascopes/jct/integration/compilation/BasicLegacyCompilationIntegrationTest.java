@@ -19,6 +19,7 @@ import static io.github.ascopes.jct.assertions.JctAssertions.assertThatCompilati
 
 import io.github.ascopes.jct.compilers.JctCompiler;
 import io.github.ascopes.jct.integration.AbstractIntegrationTest;
+import io.github.ascopes.jct.junit.EcjCompilerTest;
 import io.github.ascopes.jct.junit.JavacCompilerTest;
 import io.github.ascopes.jct.workspaces.PathStrategy;
 import io.github.ascopes.jct.workspaces.Workspaces;
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.DisplayName;
 class BasicLegacyCompilationIntegrationTest extends AbstractIntegrationTest {
 
   @DisplayName("I can compile a 'Hello, World!' program using a RAM directory")
+  @EcjCompilerTest
   @JavacCompilerTest
   void helloWorldJavacRamDirectory(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.RAM_DIRECTORIES)) {
@@ -54,6 +56,7 @@ class BasicLegacyCompilationIntegrationTest extends AbstractIntegrationTest {
   }
 
   @DisplayName("I can compile a 'Hello, World!' program using a temp directory")
+  @EcjCompilerTest
   @JavacCompilerTest
   void helloWorldJavacTempDirectory(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {

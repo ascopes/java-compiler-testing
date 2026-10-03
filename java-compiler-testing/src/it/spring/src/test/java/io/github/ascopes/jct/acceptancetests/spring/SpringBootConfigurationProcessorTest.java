@@ -28,6 +28,7 @@ import org.springframework.boot.configurationprocessor.ConfigurationMetadataAnno
 class SpringBootConfigurationProcessorTest {
 
   @DisplayName("Spring will index the application context as expected")
+  @EcjCompilerTest(minVersion = 17)
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpected(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
@@ -52,6 +53,7 @@ class SpringBootConfigurationProcessorTest {
   }
 
   @DisplayName("Spring will index the application context as expected with modules")
+  @EcjCompilerTest(minVersion = 17)
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpectedWithModules(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
@@ -75,6 +77,7 @@ class SpringBootConfigurationProcessorTest {
   }
 
   @DisplayName("Spring will index the application context as expected with multi-modules")
+  @EcjCompilerTest(minVersion = 17)
   @JavacCompilerTest(minVersion = 17)
   void springWillIndexTheApplicationContextAsExpectedWithMultiModules(JctCompiler compiler) {
     try (var workspace = Workspaces.newWorkspace(PathStrategy.TEMP_DIRECTORIES)) {
