@@ -66,7 +66,7 @@ The project can be found on Maven Central.
 
 ```xml
 <dependency>
-  <groupId>org.github.ascopes.jct</groupId>
+  <groupId>io.github.ascopes.jct</groupId>
   <artifactId>java-compiler-testing</artifactId>
   <version>${java-compiler-testing.version}</version>
 </dependency>
