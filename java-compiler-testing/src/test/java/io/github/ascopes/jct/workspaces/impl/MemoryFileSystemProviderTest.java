@@ -23,6 +23,7 @@ import io.github.ascopes.jct.workspaces.impl.MemoryFileSystemProvider.MemoryFile
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -43,8 +44,8 @@ import org.junit.jupiter.params.provider.ValueSource;
  *
  * @author Ashley Scopes
  */
-@DisplayName("MemoryFileSystemProviderImpl tests")
-class MemoryFileSystemProviderImplTest {
+@DisplayName("MemoryFileSystemProvider tests")
+class MemoryFileSystemProviderTest {
 
   @DisplayName("The class is a singleton")
   @Test
@@ -213,7 +214,7 @@ class MemoryFileSystemProviderImplTest {
     @ParameterizedTest(name = "for URL {0}")
     void providerReturnsHandlerForMemoryProtocol(String urlString) throws MalformedURLException {
       // Given
-      var url = new URL(urlString);
+      var url = URI.create(urlString).toURL();
       var provider = new MemoryFileSystemUrlHandlerProvider();
 
       // When
@@ -232,7 +233,7 @@ class MemoryFileSystemProviderImplTest {
     @ParameterizedTest(name = "for URL {0}")
     void providerReturnsNullHandlerForOtherProtocol(String urlString) throws MalformedURLException {
       // Given
-      var url = new URL(urlString);
+      var url = URI.create(urlString).toURL();
       var provider = new MemoryFileSystemUrlHandlerProvider();
 
       // When
