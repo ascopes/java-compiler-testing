@@ -15,13 +15,14 @@
  */
 package io.github.ascopes.jct.utils;
 
-import io.github.ascopes.jct.annotations.DeadCodeGenerated;
-
 /**
  * Polyfill to enable supporting using the newer Thread APIs on newer platforms.
  *
  * <p>This specifically targets the new APIs introduced as part of Project Loom
  * in Java 19.
+ *
+ * <p><strong>This class is now suitable to be removed as we only target Java 21 and
+ * newer.</strong>
  *
  * @author Ashley Scopes
  * @since 0.0.1
@@ -40,18 +41,9 @@ public final class LoomPolyfill {
    * @param thread the thread to use.
    * @return the thread ID.
    */
-  @DeadCodeGenerated
   public static long getThreadId(Thread thread) {
-    // Note: this test will never get 100% coverage on one JDK, because it totally depends on the
-    // JDK in use as to which code path runs.
-    try {
-      // Where possible, use the newer Loom API to fetch the thread ID.
-      var method = Thread.class.getDeclaredMethod("threadId");
-      return (long) method.invoke(thread);
-    } catch (Exception ex) {
-      // Fall back to the old API (which is the only method prior to Java 19).
-      return thread.getId();
-    }
+    // Now we baseline to Java 21, we don't have to use reflection to invoke this Java 19 API.
+    return thread.threadId();
   }
 
   /**

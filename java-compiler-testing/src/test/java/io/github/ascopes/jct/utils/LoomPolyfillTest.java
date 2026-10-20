@@ -26,8 +26,6 @@ import io.github.ascopes.jct.fixtures.Fixtures;
 import io.github.ascopes.jct.fixtures.UtilityClassTestTemplate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
 /**
  * {@link LoomPolyfill} tests.
@@ -41,29 +39,9 @@ class LoomPolyfillTest implements UtilityClassTestTemplate {
     return LoomPolyfill.class;
   }
 
-  @DisplayName(".getThreadId(Thread) on JRE <= 18 calls .getId()")
-  @EnabledForJreRange(max = JRE.JAVA_18)
+  @DisplayName(".getThreadId(Thread) calls .threadId()")
   @Test
-  void getThreadIdOnJre18AndOlderUsesThreadGetId() throws Throwable {
-    // Given
-    var expectedThreadId = Fixtures.someLong(1, Short.MAX_VALUE);
-    var thread = mock(Thread.class);
-    var getIdMethod = Thread.class.getDeclaredMethod("getId");
-
-    when((long) getIdMethod.invoke(thread)).thenReturn(expectedThreadId);
-
-    // When
-    var actualThreadId = LoomPolyfill.getThreadId(thread);
-
-    // Then
-    assertThat(actualThreadId).isEqualTo(expectedThreadId);
-    getIdMethod.invoke(verify(thread));
-  }
-
-  @DisplayName(".getThreadId(Thread) on JRE >= 19 calls .threadId()")
-  @EnabledForJreRange(min = JRE.JAVA_19)
-  @Test
-  void getThreadIdOnJre19AndNewerUsesThreadId() throws Throwable {
+  void getThreadIdUsesThreadId() throws Throwable {
     // Given
     var expectedThreadId = Fixtures.someLong(1, Short.MAX_VALUE);
     var thread = mock(Thread.class);

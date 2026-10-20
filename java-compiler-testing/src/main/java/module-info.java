@@ -24,6 +24,9 @@ import org.jspecify.annotations.NullMarked;
  * <p><strong>For Java 11 support, please use version 4 of this library, which is still kept up to date.
  * Version 5 of this library only supports Java 17 onwards.</strong>
  *
+ * <p><strong>For Java 17 support, please use version 6 of this library, which is still kept up to date.
+ * Version 7 of this library only supports Java 17 onwards.</strong>
+ *
  * <p>The <em>Java Compiler Testing</em> API has a number of facilities for assisting in testing
  * anything related to the Java compiler. This includes Javac plugins and JSR-199 annotation
  * processors.

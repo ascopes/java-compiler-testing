@@ -552,7 +552,6 @@ class AbstractJctCompilerTest {
         IllegalThreadStateException.class,
         NoClassDefFoundError.class,
         ClassNotFoundException.class,
-        ThreadDeath.class,
     })
     @ParameterizedTest(name = "for exception of type {0}")
     void configurePropagatesAnyException(Class<? extends Exception> exceptionCls) throws Throwable {
