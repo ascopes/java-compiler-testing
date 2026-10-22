@@ -34,9 +34,7 @@ import javax.tools.ToolProvider;
  */
 public final class JavacJctCompilerImpl extends AbstractJctCompiler {
 
-  private static final int JAVA_8 = 8;
   private static final int JAVA_9 = 9;
-  private static final int JAVA_20 = 20;
   private static final String NAME = "JDK Compiler";
 
   /**
@@ -60,7 +58,7 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler {
   public Jsr199CompilerFactory getCompilerFactory() {
     // RequireNonNull to ensure the return result is non-null, since the ToolProvider
     // method is not annotated.
-    return () -> requireNonNull(ToolProvider.getSystemJavaCompiler(), 
+    return () -> requireNonNull(ToolProvider.getSystemJavaCompiler(),
         "ToolProvider.getSystemJavaCompiler()");
   }
 
@@ -76,21 +74,10 @@ public final class JavacJctCompilerImpl extends AbstractJctCompiler {
    * @since 1.0.0
    */
   public static int getEarliestSupportedVersionInt() {
-    // Purposely do not hardcode members of the SourceVersion enum here other
-    // than utility methods, as this prevents compilation problems on various
-    // versions of the JDK when certain members are unavailable.
-
-    @SuppressWarnings("EnumOrdinal")
-    var latestSupported = SourceVersion.latestSupported().ordinal();
-
-    if (latestSupported >= JAVA_20) {
-      // JDK 20 marks source-version 8 as obsolete, and emits compilation
-      // warnings that may break tests using "fail on warnings". To avoid this,
-      // disallow compiling Java 8 sources under Javac in JDK 20 or newer
-      return JAVA_9;
-    }
-
-    return JAVA_8;
+    // JDK 20 marks source-version 8 as obsolete, and emits compilation
+    // warnings that may break tests using "fail on warnings". To avoid this,
+    // disallow compiling Java 8 sources under Javac in JDK 20 or newer
+    return JAVA_9;
   }
 
   /**

@@ -227,7 +227,7 @@ class MemoryFileSystemProviderTest {
     @ValueSource(strings = {
         "file://foo/bar/baz",
         "jar:file://foo/bar/baz.jar!/Bork.class",
-        "jrt:",
+        "jrt:/",
     })
     @ParameterizedTest(name = "for URL {0}")
     void providerReturnsNullHandlerForOtherProtocol(String urlString) throws MalformedURLException {

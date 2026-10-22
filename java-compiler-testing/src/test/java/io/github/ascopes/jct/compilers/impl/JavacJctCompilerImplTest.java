@@ -130,21 +130,13 @@ class JavacJctCompilerImplTest {
   @DisplayName("the earliest supported version int has the expected value")
   @CsvSource(useHeadersInDisplayName = true, value = {
       "SourceVersion.latest(), expectedResult",
-      "                     9,              8",
-      "                    10,              8",
-      "                    11,              8",
-      "                    12,              8",
-      "                    13,              8",
-      "                    14,              8",
-      "                    15,              8",
-      "                    16,              8",
-      "                    17,              8",
-      "                    18,              8",
-      "                    19,              8",
-      // JDK-20 marks Java 8 as obsolete, so we do not support it.
-      // We default to Java 9 regardless in this case.
-      "                    20,              9",
       "                    21,              9",
+      "                    22,              9",
+      "                    23,              9",
+      "                    24,              9",
+      "                    25,              9",
+      "                    26,              9",
+      "                    27,              9",
   })
   @ParameterizedTest(name = "expect {1} when using Javac for JDK {0}")
   @SuppressWarnings({"EnumOrdinal", "ResultOfMethodCallIgnored"})
@@ -166,22 +158,16 @@ class JavacJctCompilerImplTest {
     }
   }
 
-  @DisplayName("the earliest supported version int has the expected value")
+  @DisplayName("the latest supported version int has the expected value")
   @CsvSource(useHeadersInDisplayName = true, value = {
       "SourceVersion.latest(), expectedResult",
-      "                     9,              9",
-      "                    10,             10",
-      "                    11,             11",
-      "                    12,             12",
-      "                    13,             13",
-      "                    14,             14",
-      "                    15,             15",
-      "                    16,             16",
-      "                    17,             17",
-      "                    18,             18",
-      "                    19,             19",
-      "                    20,             20",
       "                    21,             21",
+      "                    22,             22",
+      "                    23,             23",
+      "                    24,             24",
+      "                    25,             25",
+      "                    26,             26",
+      "                    27,             27",
   })
   @ParameterizedTest(name = "expect {1} when using Javac for JDK {0}")
   @SuppressWarnings({"EnumOrdinal", "ResultOfMethodCallIgnored"})

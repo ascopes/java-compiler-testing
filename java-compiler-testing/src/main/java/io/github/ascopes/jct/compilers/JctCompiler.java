@@ -632,7 +632,7 @@ public interface JctCompiler {
    * Request that the compiler uses a language version that corresponds to the runtime language
    * version in use on the current JVM.
    *
-   * <p>For example, running this on JRE 19 would set the release to "19".
+   * <p>For example, running this on JRE 25 would set the release to "25".
    *
    * <p>This calls {@link #release(int)} internally.
    *
